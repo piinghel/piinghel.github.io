@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-12-23T12:01:54+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
+</subtitle><author><name>GitHub User</name><email>your-email@domain.com</email></author><entry><title type="html">The Low Volatility Factor</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<p>The <strong>low-volatility factor</strong> is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. Interestingly, these more stable, often “boring” stocks tend to outperform their more volatile counterparts on a <strong>risk-adjusted</strong> basis. You might be thinking—doesn’t higher risk mean higher returns? Well, not always. In this post, I’ll dive into whether this conventional belief still holds true.</p>
+
+<p>I’ll show you how to construct a <strong>simple long-short portfolio</strong> using the low-volatility factor, drawing on the <strong>Russell 1000 universe</strong>. I’ll also explain how <strong>volatility targeting</strong> can further enhance your strategy’s performance.</p>
+
+<h3 id="tradeable-universe"><strong>Tradeable Universe</strong></h3>
+
+<p>Let’s start by defining our tradeable universe. I’m using the <strong>Russell 1000</strong> index, which includes the largest 1000 companies in the U.S. Over time, I’ve excluded stocks trading below $5. The analysis spans from <strong>1995 to 2024</strong>, and I’ve visualized the number of tradable stocks during this period, which hovers around 1000. It’s also worth mentioning that we have over <strong>3,300 different stocks</strong> in our universe, as stocks enter and exit over time. Most importantly, these are the <strong>point-in-time constituents</strong>, helping to avoid <strong>survivorship bias</strong>. Check out the figure below for a visual representation.</p>
+
+<p><img src="/assets/2024-12-15-low-volatility-factor/nr_stocks.svg" alt="Figure 1" /></p>
+
+<p><strong>Figure 1</strong>: Number of tradable stocks over time.</p>
+
+<h3 id="defining-the-low-volatility-factor"><strong>Defining the Low Volatility Factor</strong></h3>
+
+<p>The <strong>low-volatility factor</strong> targets stocks that have historically demonstrated lower price fluctuations. To identify these stocks, I calculated volatility over three different time windows: <strong>5</strong>, <strong>10</strong>, and <strong>21 days</strong>.</p>
+
+<p>For a more robust measure of volatility, I use multiple time windows:</p>
+
+<ul>
+  <li><strong>5-day volatility</strong></li>
+  <li><strong>10-day volatility</strong></li>
+  <li><strong>21-day volatility</strong></li>
+</ul>
+
+<p>Each stock’s combined volatility score determines which quintile it falls into. While you could use just one time window for simplicity, this combined approach helps smooth out short-term noise and generally delivers better results in the long run (before considering transaction costs). Below, you can see the distribution of annualized volatilities across over <strong>3,000 stocks</strong> throughout the entire sample period. I winsorized the data, capping the lower bound at 5% and the upper bound at 200%. The average volatility is 33%, with quartile 1 at 26%, quartile 3 at 39%, and a median of 26%. The winsorization explains the small bump seen at the right tail of the distribution.</p>
+
+<p>The distribution of volatilities shows a <strong>positively skewed</strong> pattern, resembling a <strong>log-normal</strong> distribution. This suggests that while the majority of stocks have low volatility, a smaller number of stocks exhibit high volatility.</p>
+
+<p><img src="/assets/2024-12-15-low-volatility-factor/distribution_volatilities.svg" alt="Figure 2" /></p>
+
+<p><strong>Figure 2</strong>: Histogram showing the distribution of volatility across the tradeable universe.</p>
+
+<h3 id="a-quick-look-at-the-volatility-distribution"><strong>A Quick Look at the Volatility Distribution</strong></h3>
+
+<h4 id="portfolio-bucketing"><strong>Portfolio Bucketing</strong></h4>
+
+<p>Next, I mapped each stock’s volatility score to a uniform <strong>0 to 1</strong> distribution and categorized them into one of five portfolios based on their volatility rankings:</p>
+
+<ul>
+  <li><strong>Portfolio 1</strong>: Lowest 10% of stocks (low volatility)</li>
+  <li><strong>Portfolio 2</strong>: 10% to 20% of stocks</li>
+  <li><strong>Portfolio 3</strong>: 20% to 80% of stocks</li>
+  <li><strong>Portfolio 4</strong>: 80% to 90% of stocks</li>
+  <li><strong>Portfolio 5</strong>: Highest 10% of stocks (high volatility)</li>
+</ul>
+
+<h4 id="rebalancing"><strong>Rebalancing</strong></h4>
+
+<p>The portfolios are rebalanced <strong>weekly</strong> to reflect changes in volatility over time. For simplicity, I haven’t factored in transaction costs in this analysis.</p>
+
+<h3 id="constructing-a-long-only-and-long-short-portfolio"><strong>Constructing a Long-Only and Long-Short Portfolio</strong></h3>
+
+<p>Once the stocks are bucketed, I created two types of portfolios: <strong>equal-weighted</strong> and <strong>volatility-targeted</strong>.</p>
+
+<h4 id="1-equal-weighted-portfolio"><strong>1. Equal-Weighted Portfolio</strong></h4>
+
+<p>In the <strong>equal-weighted portfolio</strong>, all stocks are given equal weight, and I remain fully invested at all times. However, this creates a mismatch between the volatilities of the long and short positions, which I will explain further below. To construct the long-short portfolio, I simply take the difference between the low-volatility and high-volatility portfolios.</p>
+
+<h4 id="2-volatility-targeted-portfolio"><strong>2. Volatility-Targeted Portfolio</strong></h4>
+
+<p><strong>Volatility targeting</strong> adjusts the weight of each stock based on its volatility to stabilize the portfolio. Here’s how it works:</p>
+
+<ol>
+  <li><strong>Target Volatility</strong>: Set a target volatility of 20% annualized.</li>
+  <li><strong>Compute Volatility Ratio</strong>: For each stock, calculate:
+\(\text{vol_ratio} = \frac{\text{vol_target}}{\text{vol_estimated}}\)
+where:
+    <ul>
+      <li>$\text{vol_target} = 20\%$</li>
+      <li>$\text{vol_estimated}$ is the stock’s historical volatility.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Adjust Equal Weights</strong>: Multiply the equal weight of each stock by its $\text{vol_ratio}$:
+\(w_i = \text{equal_weight} \times \text{vol_ratio}\)</p>
+  </li>
+  <li><strong>Cap Individual Weights</strong>: Ensure no stock weight exceeds 0.05.</li>
+  <li><strong>Portfolio Weight Constraint</strong>: Ensure that the portfolio weights total 1. In periods of high volatility, the total weight may be reduced to limit exposure. While this may seem like market timing, I view it more as <strong>dynamically adjusting risk</strong>—a technique commonly used in <strong>CTA</strong> strategies.</li>
+</ol>
+
+<p>The resulting portfolio balances the long and short legs by dynamically adjusting stock weights to achieve the target volatility.</p>
+
+<h3 id="performance-analysis"><strong>Performance Analysis</strong></h3>
+
+<h4 id="equal-weighted-portfolio"><strong>Equal-Weighted Portfolio</strong></h4>
+
+<p>The performance of the equal-weighted long-short portfolio is summarized below. The metrics visualized include return, volatility, and Sharpe ratio—all annualized. Surprisingly, the return in the low-volatility portfolio is significantly higher than in the high-volatility portfolio, which contradicts the <strong>CAMP</strong> theorem. As expected, the lowest-volatility stocks exhibit the lowest volatility, while the highest-volatility stocks show the highest volatility. Consequently, the low-volatility portfolio exhibits significantly better <strong>risk-adjusted performance</strong>. However, the mismatch between the low-volatility and high-volatility portfolios results in a less-than-optimal performance for the long-short portfolio.</p>
+
+<p><strong>Metrics Before Volatility Targeting</strong>:</p>
+
+<p><img src="/assets/2024-12-15-low-volatility-factor/barplot_metrics_ew.svg" alt="Figure 3" /></p>
+
+<p><strong>Figure 3</strong>: Bar chart showing Geometric Return, Volatility, and Sharpe Ratio for equal-weighted portfolios (before volatility targeting).</p>
+
+<hr />
+
+<h3 id="improving-performance-with-volatility-targeting"><strong>Improving Performance with Volatility Targeting</strong></h3>
+
+<p>As shown in the previous figure, volatility targeting adjusts weights to balance risk between the long and short legs, resulting in more stable performance. After applying volatility targeting, we see that the volatility is much more stable across the portfolios. This adjustment significantly improves the <strong>Sharpe ratio</strong> for both the long-short portfolio and the long-only portfolios. The figure below demonstrates the improvement.</p>
+
+<p><img src="/assets/2024-12-15-low-volatility-factor/barplot_metrics_ew_vt.svg" alt="Figure 4" /></p>
+
+<h4 id="metrics-after-volatility-targeting"><strong>Metrics After Volatility Targeting</strong>:</h4>
+
+<p><img src="/assets/2024-12-15-low-volatility-factor/perf_backtest_ew_vt.png" alt="Figure 5" /></p>
+
+<p><strong>Figure 5</strong>: Net Asset Value of the volatility-targeted portfolio (after volatility targeting).</p>
+
+<h3 id="key-takeaways"><strong>Key Takeaways</strong></h3>
+
+<ol>
+  <li>The low-volatility factor has historically delivered strong <strong>risk-adjusted returns</strong>.</li>
+  <li>Equal weighting in long-short portfolios leads to volatility imbalances, resulting in suboptimal performance.</li>
+  <li>Volatility targeting effectively balances risk between long and short positions, significantly improving portfolio stability and performance.</li>
+</ol>
+
+<p>Harnessing the low-volatility factor requires careful portfolio construction. By incorporating volatility targeting, investors can create a more balanced and high-performing long-short portfolio.</p>]]></content><author><name>GitHub User</name><email>your-email@domain.com</email></author><category term="Quant" /><summary type="html"><![CDATA[The low-volatility factor is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. Interestingly, these more stable, often “boring” stocks tend to outperform their more volatile counterparts on a risk-adjusted basis. You might be thinking—doesn’t higher risk mean higher returns? Well, not always. In this post, I’ll dive into whether this conventional belief still holds true.]]></summary></entry></feed>
