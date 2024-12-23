@@ -5,7 +5,7 @@ date: 2024-12-15
 categories: [Quant]
 ---
 
-### **The Low Volatility Factor: A Boring Way to Make Money?**
+
 
 The **low-volatility factor** is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. These more stable, often "boring" stocks tend to outperform their more volatile counterparts on a **risk-adjusted** basis. Now, you might be thinking—doesn’t higher risk always mean higher returns? Well, as with most things in life, not always. In this post, I’ll take a look at whether the conventional belief about risk and return still holds true.
 
@@ -96,7 +96,7 @@ The performance of the equal-weighted long-short portfolio is summarized below. 
 
 **Figure 3**: Bar chart showing Geometric Return, Volatility, and Sharpe Ratio for equal-weighted portfolios (before volatility targeting).
 
----
+
 
 ### **Improving Performance with Volatility Targeting**
 
