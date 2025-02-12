@@ -1,19 +1,283 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-12-23T17:37:49+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
-</subtitle><author><name>GitHub User</name><email>your-email@domain.com</email></author><entry><title type="html">The Low Volatility Factor: A Boring Way to Make Money?</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Boring Way to Make Money?" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<p>The <strong>low-volatility factor</strong> is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. These more stable, often “boring” stocks tend to outperform their more volatile counterparts on a <strong>risk-adjusted</strong> basis. Now, you might be thinking—doesn’t higher risk always mean higher returns? Well, as with most things in life, not always. In this post, I’ll take a look at whether the conventional belief about risk and return still holds true.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4001/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4001/" rel="alternate" type="text/html" /><updated>2025-02-12T13:42:51+01:00</updated><id>http://localhost:4001/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
+</subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">Ridge regression</title><link href="http://localhost:4001/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Ridge regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4001/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4001/quants/2025/02/09/ridge.html"><![CDATA[<p>In the previous article, I introduced the low volatility factor and demonstrated how a simple volatility scaling approach can significantly boost performance. This time, I’m taking it a step further by combining multiple predictors using a multiple linear regression model. I’ll also explore key modeling decisions, including normalization techniques and the choice of target variable for training.</p>
+
+<p>Constructing effective stock selection models involves handling the wide variability in stock prices, volumes, and risk profiles. The goal is to rank stocks by their relative performance over the next period (e.g., 20 days), which makes normalization a critical step. By integrating multiple predictors and testing various modeling approaches, this article highlights how including more predictors and different preprocessing methods can improve overall strategy performance.</p>
+
+<h2 id="feature-engineering">Feature Engineering</h2>
+
+<p>An important point is that we let the model, in this case a linear regression model, define the form of relationships. Since we use a linear model, we limit ourselves to linear relationships and do not include interaction terms for now. Obviously, we need to define our predictive features and also choose a target variable. For the predictive features, we focus on price, volume, market capitalization, and market derived features. To make this more concrete, we compute the following families of features for every stock (around 3300) in our universe:</p>
+
+<ol>
+  <li><strong>Momentum Features</strong>
+    <ul>
+      <li>Captures the trend-following behavior of stocks.</li>
+      <li>Examples:
+        <ul>
+          <li>Lagged returns over short horizons (e.g., 1 to 10 days).</li>
+          <li>Rolling cumulative returns over longer windows (e.g., 21 to 252 days).</li>
+          <li>Moving Average Convergence Divergence (MACD) to identify shifts in momentum.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Volatility Features</strong>
+    <ul>
+      <li>Focuses on the risk profile of stocks.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling historical volatility computed over time windows (e.g., 21, 63, or 126 days).</li>
+          <li>Downside and upside volatility, separating negative and positive deviations in price.</li>
+          <li>Average True Range (ATR) for a normalized measure of price range volatility.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Liquidity Features</strong>
+    <ul>
+      <li>Assesses trading activity.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling mean and standard deviation of adjusted trading volume.</li>
+          <li>Ratio of current volume to its rolling maximum to highlight unusual trading activity.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Size Features</strong>
+    <ul>
+      <li>Measures the size of a stock using market capitalization.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling transformations of market cap, such as mean and minimum values over time.</li>
+          <li>Helps differentiate between small-cap and large-cap stocks.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Short Mean Reversion Features</strong>
+    <ul>
+      <li>Identifies conditions where prices revert to a historical mean.</li>
+      <li>Examples:
+        <ul>
+          <li>Deviation of the price from its rolling moving average.</li>
+          <li>Price position relative to rolling minimum or maximum values.</li>
+          <li>Bollinger Bands to highlight overbought or oversold conditions.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Correlation with the Market</strong>
+    <ul>
+      <li>Captures the systematic risk of a stock by measuring its relationship with the market index.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling correlation with the Russell 1000 over time windows (e.g., 63 days).</li>
+          <li>Useful for identifying defensive stocks or those with high beta.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<p>In total we have around 150 predictive features, some of them will be very correlated obviously. Next is determining our target variable. I will focus on predicting the return for the next 20 days and predicting the sharpe ratio for the next 20 days. Obviously we could epxlore different periods as well but for the sake of simplicity let’s keep it at 20 days.</p>
+
+<h2 id="preprocessing-steps">Preprocessing Steps</h2>
+
+<p>An important step in this process is normalizing the data. To understand why this is necessary, let’s take a step back. The goal is to identify, for each period (e.g., each day), the stocks that are most likely to perform well. We define “performing well” as having the highest return or Sharpe ratio over the next 20 days.</p>
+
+<p>Think of it as creating a ranking: we want to push the best-performing stocks to the top of the list and the worst-performing stocks to the bottom. This means we’re not focused on the actual numbers (like the exact return or Sharpe ratio of each stock); instead, we care about how each stock compares to the others. In other words, the problem is relative—we only need to know if stock A is likely to do better than stock B.</p>
+
+<p>To simplify the problem, we normalize the data for each day across all stocks. This process, called cross-sectional normalization, adjusts the predictive features and the target variable so they are on a consistent scale. For example, this could involve scaling the values to have a mean of zero and a standard deviation of one also know as Z-scoring. By doing this, we make it easier for the model to compare stocks and focus on their relative rankings, rather than being influenced by differences in scale or magnitude.</p>
+
+<p>I will compare the following normalization methods:</p>
+
+<ol>
+  <li><strong>No normalization (Raw):</strong> Used as a baseline to compare the performance of other methods.</li>
+  <li><strong>Ranking and mapping to a range (0 to 100):</strong> The lowest value is mapped to 0, and the highest value is mapped to 100.</li>
+  <li><strong>Z-scoring:</strong> Values are normalized to have a mean of 0 and a standard deviation of 1. To handle outliers, we clip values greater than 5 or less than -5 to 5 and -5, respectively.</li>
+</ol>
+
+<p>Ranking maps all values to a uniform distribution, making the data stationary and naturally handling outliers. This method increases stability by compressing all values into a fixed range, but it also has a downside: some information is lost because the values are “squeezed” into the interval. Z-scoring, on the other hand, provides more freedom by preserving the magnitude of differences between values, while still managing outliers with clipping.</p>
+
+<p>Finally, we will compare one additional approach:</p>
+
+<ul>
+  <li><strong>Sector-specific ranking of the target variable:</strong> The target variable is ranked within each sector, which is similar to making your stock selection sector-neutral.</li>
+</ul>
+
+<p>These comparisons will help us understand the trade-offs and advantages of different normalization methods.</p>
+
+<p>Maybe very briefly. For missing data, we use the following logic. We start with doing forward fill, when forward fill is not an option, meaning there are no pevious data points. We will using the cross sectional mean by from the others stock in the same sector for that specific date. When this is not an option, I will impute just by the mean after normalizing the data;  0 for z scoring and 50 for ranking. Obviously this topic on it’s own deserved a whole post on itself as it’s important and many possibility better approaches exist.</p>
+
+<h2 id="model-and-validation-procedure">Model and Validation Procedure</h2>
+
+<h3 id="motivation-for-using-ridge-regression">Motivation for Using Ridge Regression</h3>
+
+<p>So, we have defined our preprocessing steps, let’s move on to our validation procedure to train our linear regression model. 
+s</p>
+<ul>
+  <li>Ridge regression is ideal when predictors are highly correlated or when the dataset has more features than observations, as it addresses multicollinearity effectively.</li>
+  <li>By adding an $L_2$ penalty to the loss function, it stabilizes coefficient estimates, improving the model’s robustness and predictive accuracy.</li>
+  <li>It reduces overfitting by shrinking coefficients, striking a balance between bias and variance.</li>
+</ul>
+
+<p>The ridge regression loss function is:</p>
+
+\[\text{Minimize: } \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf{x}_i^\top \boldsymbol{\beta})^2 + \lambda \sum_{j=1}^p \beta_j^2\]
+
+<h3 id="expanding-walkforward-validation-procedure">Expanding Walkforward Validation Procedure</h3>
+
+<p>To evaluate and refine the ridge regression model, we use an <strong>expanding walkforward validation procedure</strong> with a burn-in period of 3 years. After the initial period, the model is refit approximately every 2 years using all the data available up to that point. This approach ensures the model continuously adapts to new information while leveraging the full historical dataset for more robust predictions.</p>
+
+<p>In my experience, using an <strong>expanding walkforward approach</strong>—which incorporates all available data—consistently outperforms rolling walkforward validation methods. Rolling validation, which limits the training window to recent data, may miss valuable long-term patterns and lead to less stable predictions.</p>
+
+<p>Below is a detailed representation of the expanding walkforward procedure:</p>
+
+<h2 id="portfolio-construction">Portfolio Construction</h2>
+
+<p>For portfolio construction, we follow a systematic approach to leverage the model’s predictions effectively. Each day, the model assigns a prediction score (or ranking) to every stock in our universe, with higher scores corresponding to higher expected performance and lower scores indicating lower expected performance.</p>
+
+<p>To build the portfolio:</p>
+<ol>
+  <li>We select an <strong>arbitrary number of stocks</strong> for the long and short sides. For this article, we choose <strong>75 stocks with the highest scores</strong> to go long (buy) and <strong>75 stocks with the lowest scores</strong> to go short (sell). Numbers like 50, 100, or 150 would work equally well and would not materially affect our conclusions.</li>
+  <li>We apply a <strong>volatility targeting approach</strong> at the stock level to ensure that each stock contributes approximately the same amount of risk to the portfolio. This step makes sure every stock has a similar risk contribution.</li>
+</ol>
+
+<p>By combining the model’s predictions with risk-aware allocation, we create a balanced portfolio that maximizes the use of available information while maintaining a consistent risk profile.</p>
+
+<hr />
+
+<h2 id="results">Results</h2>
+
+<p>So in total we will have 10 different modelling choices; 5 on the normalization(Raw, Z-score overall, Ranking overall, Z score by industry, and Ranking by industry) and 2 on the target label (SR 20 and Return 20). Below I’ve plotted performance for all of them and removed labels to keep some tension hhihi. As you can see there is quite some variation in performance.</p>
+
+<p>Let’s take a closer look if we find some superior modelling choices. Starting by looking at the whether we should normalize and if so which one performs better (Ranking or Z score). Below I’ve visualized the cumultative performance for the normalization methods. I’ve rescaled volatility to 10 % in the graph and I also show some key performance metrics. Clearly normalization helps, both z score and ranking performing better than the raw (no normaiztaion).</p>
+
+<p>So I have listed a table before of the 10 different modelling combinations as well as included the combo which is the average off all combinations. Models are ranked in desceding order based on sharpe ratio. To make the patterns a bit more clear I’ve aggregate performance based on sharpe ratio based on the 3 modelling choices; normalizatoin, target ranked within sector or global ranking and finally target label sharpe ratio or return. It’s very clearly that ranking within sector and training the model on sharpe ratio are the superior choice here. For the  normalization part it’s not clear. I did expect the both z scoring and ranking to outperform here. But let’s zoom in a bit and look at performance a bit more closely. In figures below I visualize performance for the normaization techniques by further conditoin on the target label. It’s interesting to see now that for the sharpe ratio both ranking and z scroing clearly perform better here whereras when the model is training on return this is not the case.</p>
+
+<p>Finally, let’s look at our target label SR or Return. Sharpe ratio here is the better choice.</p>
+
+<p><img src="/assets/ridge/all_lines.png" alt="Figure 1" /></p>
+
+<p><strong>Figure 1</strong>: Performance of all different modelling choices. All lin es are scaled to the same level of volatility.</p>
+
+<p><img src="/assets/ridge/summary_barplot.png" alt="" width="900" height="250" /></p>
+
+<p><strong>Figure 1</strong>: Barplot.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Return (ann. %)</th>
+      <th>Volatility (ann. %)</th>
+      <th>Sharpe Ratio (ann.)</th>
+      <th>Maximum Drawdown (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>sr_zscore_by_sector</td>
+      <td>10.82</td>
+      <td>8.07</td>
+      <td>1.34</td>
+      <td>12.56</td>
+    </tr>
+    <tr>
+      <td>combo</td>
+      <td>8.41</td>
+      <td>6.69</td>
+      <td>1.26</td>
+      <td>13.41</td>
+    </tr>
+    <tr>
+      <td>sr_ranking_by_sector</td>
+      <td>9.82</td>
+      <td>7.97</td>
+      <td>1.23</td>
+      <td>12.85</td>
+    </tr>
+    <tr>
+      <td>sr_zscore_globally</td>
+      <td>10.14</td>
+      <td>8.55</td>
+      <td>1.19</td>
+      <td>19.00</td>
+    </tr>
+    <tr>
+      <td>sr_ranking_globally</td>
+      <td>9.26</td>
+      <td>8.54</td>
+      <td>1.08</td>
+      <td>16.91</td>
+    </tr>
+    <tr>
+      <td>sr_raw_globally</td>
+      <td>8.94</td>
+      <td>8.54</td>
+      <td>1.05</td>
+      <td>16.12</td>
+    </tr>
+    <tr>
+      <td>return_ranking_by_sector</td>
+      <td>7.57</td>
+      <td>7.62</td>
+      <td>0.99</td>
+      <td>14.85</td>
+    </tr>
+    <tr>
+      <td>return_raw_globally</td>
+      <td>7.19</td>
+      <td>7.28</td>
+      <td>0.99</td>
+      <td>16.72</td>
+    </tr>
+    <tr>
+      <td>return_ranking_globally</td>
+      <td>7.45</td>
+      <td>7.67</td>
+      <td>0.97</td>
+      <td>18.41</td>
+    </tr>
+    <tr>
+      <td>return_zscore_by_sector</td>
+      <td>6.62</td>
+      <td>7.40</td>
+      <td>0.89</td>
+      <td>20.13</td>
+    </tr>
+    <tr>
+      <td>return_zscore_globally</td>
+      <td>5.45</td>
+      <td>7.47</td>
+      <td>0.73</td>
+      <td>20.97</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 1</strong>: Statistics of all different modelling choices. Ranked in ascending order based on sharpe ratio.</p>
+
+<h2 id="todo">TODO</h2>
+<ul>
+  <li>How to make my point for the normalization</li>
+  <li>include graphs</li>
+  <li>results be a bit more in detail about the performance</li>
+</ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[In the previous article, I introduced the low volatility factor and demonstrated how a simple volatility scaling approach can significantly boost performance. This time, I’m taking it a step further by combining multiple predictors using a multiple linear regression model. I’ll also explore key modeling decisions, including normalization techniques and the choice of target variable for training.]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Boring Way to Make Money?</title><link href="http://localhost:4001/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Boring Way to Make Money?" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4001/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4001/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<p>The <strong>low-volatility factor</strong> is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. These more stable, often “boring” stocks tend to outperform their more volatile counterparts on a <strong>risk-adjusted</strong> basis. Now, you might be thinking—doesn’t higher risk always mean higher returns? Well, as with most things in life, not always. In this post, I’ll take a look at whether the conventional belief about risk and return still holds true.</p>
 
 <p>I’ll show you how to construct a <strong>simple long-short portfolio</strong> using the low-volatility factor, drawing on the <strong>Russell 1000 universe</strong>. I’ll also explain how <strong>volatility targeting</strong> can further enhance your strategy’s performance.</p>
 
-<h3 id="tradable-universe"><strong>Tradable Universe</strong></h3>
+<h3 id="tradeable-universe"><strong>Tradeable Universe</strong></h3>
 
-<p>Let’s start by defining our tradable universe. For this, I’m using the <strong>Russell 1000</strong> index, which includes the largest 1000 companies in the U.S. Over time, I’ve excluded stocks trading below $5. The analysis spans from <strong>1995 to 2024</strong>, and I’ve visualized the number of tradable stocks during this period, which hovers around 1000. It’s also worth mentioning that we have over <strong>3,300 different stocks</strong> in our universe, as stocks enter and exit over time. Most importantly, these are the <strong>point-in-time constituents</strong>, which help to avoid <strong>survivorship bias</strong>. I plotted the number of tradable stocks in Figure 1, which naturally fluctuates around 1000.</p>
+<p>Let’s start by defining our tradeable universe. For this, I’m using the <strong>Russell 1000</strong> index, which includes the largest 1000 companies in the U.S. Over time, I’ve excluded stocks trading below $5. The analysis spans from <strong>1995 to 2024</strong>, and I’ve visualized the number of tradeable stocks during this period, which hovers around 1000. In total, we have around <strong>3,300 different stocks</strong> in our universe, as stocks enter and exit over time. Most importantly, these are the <strong>point-in-time constituents</strong>, which help to avoid <strong>survivorship bias</strong>. I plotted the number of tradeable stocks in Figure 1, which naturally fluctuates around 1000.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/nr_stocks.svg" alt="Figure 1" /></p>
 
-<p><strong>Figure 1</strong>: Number of tradable stocks over time.</p>
+<p><strong>Figure 1</strong>: Number of tradeable stocks over time.</p>
 
 <h3 id="defining-the-low-volatility-factor"><strong>Defining the Low Volatility Factor</strong></h3>
 
-<p>The <strong>low-volatility factor</strong> targets stocks that have historically demonstrated lower price fluctuations. To identify these stocks, I calculated volatility over three different time windows:</p>
+<p>The <strong>low-volatility factor</strong> targets stocks that have historically demonstrated lower price fluctuations. To identify these stocks, I calculate volatility over three different time windows:</p>
 
 <ul>
   <li><strong>5-day volatility</strong></li>
@@ -23,29 +287,35 @@
 
 <p>I use multiple time windows for a simple reason—it just works better. This combined approach smooths out short-term noise and provides a more robust measure of volatility. The average volatility across these timeframes is 33%, with the first quartile at 18%, the third quartile at 39%, and a median of 26%. I winsorized the data, capping the lower bound at 5% and the upper bound at 200%, which explains the small bump at the right tail of the distribution.</p>
 
-<p>Below, you can see the distribution of annualized volatilities across over <strong>3,300 stocks</strong> throughout the entire sample period. This distribution is positively skewed, resembling a <strong>log-normal</strong> pattern—most stocks have moderate volatility, but a smaller number exhibit high volatility.</p>
-
-<p>The distribution of volatilities shows a <strong>positively skewed</strong> pattern, resembling a <strong>log-normal</strong> distribution. This suggests that while most stocks have volatilities between 18% and 39%, a smaller number of stocks exhibit high volatility.</p>
+<p>Below, you can see the distribution of annualized volatilities across <strong>3,300 stocks</strong> throughout the entire sample period. This distribution is positively skewed, resembling a <strong>log-normal</strong> pattern—most stocks have moderate volatility, but a smaller number exhibit high volatility. This suggests that while most stocks have volatilities between 18% and 39%, a smaller number of stocks exhibit high volatility.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/distribution_volatilities.svg" alt="Figure 2" /></p>
 
-<p><strong>Figure 2</strong>: Histogram showing the distribution of volatility across the tradable universe.</p>
+<p><strong>Figure 2</strong>: Histogram showing the distribution of volatility across the tradeable universe.</p>
 
-<p>As a first check, I computed the correlation with the raw annualized volatility and forward return and Sharpe ratio for the next 10 days. Interestingly, when using Pearson correlation, we find a 0.03 positive correlation. However, when changing to Spearman (more robust), the correlation drops to 0, indicating no relationship. For the Sharpe ratio, I find the opposite results: a negative correlation of -0.035 for Pearson, which strengthens to -0.04 when using Spearman. These numbers may seem small to anyone new to finance, but trust me—you get used to it after a while. The signal-to-noise ratio is very low.</p>
+<p>As a first check, I computed the correlation with the raw annualized volatility and forward return and Sharpe ratio for the next 10 days. Interestingly, when using Pearson correlation, we find a 0.03 positive correlation meaning stocks with higher volatility leads to more return. However, when changing to Spearman , a more robust measure, the correlation drops to 0, indicating no relationship at all. For the Sharpe ratio, I find the opposite results: a negative correlation of -0.035 for Pearson, which strengthens to -0.04 when using Spearman. These numbers may seem small to anyone new to finance, but trust me—you get used to it after a while. The signal-to-noise ratio is very low.</p>
 
-<h4 id="portfolio-bucketing"><strong>Portfolio Bucketing</strong></h4>
+<h3 id="portfolio-bucketing"><strong>Portfolio Bucketing</strong></h3>
 
-<p>Next, I mapped each stock’s volatility score to a uniform <strong>0 to 1</strong> distribution and categorized them into one of five portfolios based on their volatility rankings:</p>
+<p>To construct the portfolios, I performed a <strong>cross-sectional ranking</strong> of stocks based on their volatilities at each point in time. Specifically, I ranked all stocks in the universe by their volatility and mapped these ranks to a uniform <strong>0 to 1</strong> distribution. Then, I assigned each stock to one of five portfolios according to its percentile rank.</p>
+
+<p>Let $r_{i,t}$ be the cross-sectional rank of stock $i$ at point $t$ based on its volatility, and $N$ be the total number of stocks at a given time. The normalized rank is computed as:</p>
+
+\[\text{Rank Score}_i = \frac{r_{i,t}}{N}\]
+
+<p>Using this score, stocks are bucketed into the following volatility-based portfolios:</p>
 
 <ul>
-  <li><strong>Portfolio 1</strong>: Lowest 10% of stocks (low volatility)</li>
-  <li><strong>Portfolio 2</strong>: 10% to 20% of stocks</li>
-  <li><strong>Portfolio 3</strong>: 20% to 80% of stocks</li>
-  <li><strong>Portfolio 4</strong>: 80% to 90% of stocks</li>
-  <li><strong>Portfolio 5</strong>: Highest 10% of stocks (high volatility)</li>
+  <li><strong>Portfolio 1</strong>: Lowest 10% of stocks ($ 0 \leq \text{Rank Score} &lt; 0.1 $) → <strong>Low volatility</strong></li>
+  <li><strong>Portfolio 2</strong>: 10% to 20% of stocks ($ 0.1 \leq \text{Rank Score} &lt; 0.2 $)</li>
+  <li><strong>Portfolio 3</strong>: 20% to 80% of stocks ($ 0.2 \leq \text{Rank Score} &lt; 0.8 $)</li>
+  <li><strong>Portfolio 4</strong>: 80% to 90% of stocks ($ 0.8 \leq \text{Rank Score} &lt; 0.9 $)</li>
+  <li><strong>Portfolio 5</strong>: Highest 10% of stocks ($ 0.9 \leq \text{Rank Score} \leq 1.0 $) → <strong>High volatility</strong></li>
 </ul>
 
-<h4 id="rebalancing"><strong>Rebalancing</strong></h4>
+<p>This process ensures that each stock’s portfolio assignment is determined <strong>relative to the cross-sectional volatility distribution</strong> at that specific point</p>
+
+<h3 id="rebalancing"><strong>Rebalancing</strong></h3>
 
 <p>The portfolios are rebalanced <strong>weekly</strong> to reflect changes in volatility over time. For simplicity, I haven’t factored in transaction costs in this analysis.</p>
 
@@ -64,11 +334,11 @@
 <ol>
   <li><strong>Target Volatility</strong>: Set a target volatility of 20% annualized.</li>
   <li><strong>Compute Volatility Ratio</strong>: For each stock, calculate:
-\(\text{vol_ratio} = \frac{\text{vol_target}}{\text{vol_estimated}}\)
+\(\text{vol_ratio} = \frac{\sigma_{target}}{\hat{\sigma}_{i,t}}\)
 where:
     <ul>
-      <li>$\text{vol_target} = 20\%$</li>
-      <li>$\text{vol_estimated}$ is the stock’s historical volatility.</li>
+      <li>$\sigma_{target} = 20\%$</li>
+      <li>${\hat{\sigma}_{i,t}}$ is the stock’s ex-ante volatility estimate (e.g., a rolling 60-day standard deviation).</li>
     </ul>
   </li>
   <li>
@@ -76,7 +346,7 @@ where:
 \(w_i = \text{equal_weight} \times \text{vol_ratio}\)</p>
   </li>
   <li><strong>Cap Individual Weights</strong>: Ensure no stock weight exceeds 0.05.</li>
-  <li><strong>Portfolio Weight Constraint</strong>: Ensure that the portfolio weights total 1. In periods of high volatility, the total weight may be reduced to limit exposure. While this may seem like market timing, I view it more as <strong>dynamically adjusting risk</strong>—a technique commonly used in <strong>Trend following</strong> strategies.</li>
+  <li><strong>Portfolio Weight Constraint</strong>: Ensure that the portfolio weights total does not exceed 1, where 1 means being fully invested. In periods of high volatility, the total weight may be reduced to limit exposure. While this may seem like market timing, I view it more as <strong>dynamically adjusting risk</strong>—a technique commonly used in <strong>Trend following</strong> strategies.</li>
 </ol>
 
 <p>The resulting portfolio balances the long and short legs by dynamically adjusting stock weights to achieve the target volatility.</p>
@@ -87,7 +357,7 @@ where:
 
 <p>The performance of the equal-weighted long-short portfolio is summarized below. The metrics visualized include return, volatility, and Sharpe ratio—all annualized. Interestingly, the return in the low-volatility portfolio is significantly higher than in the high-volatility portfolio. As expected, the lowest-volatility stocks exhibit the lowest volatility, while the highest-volatility stocks show the highest volatility. Consequently, the low-volatility portfolio exhibits significantly better <strong>risk-adjusted performance</strong>. However, the mismatch between the low-volatility and high-volatility portfolios results in less-than-optimal performance for the long-short portfolio.</p>
 
-<p><strong>Metrics Before Volatility Targeting</strong>:</p>
+<p><strong>Performane Before Volatility Targeting</strong>:</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/barplot_metrics_ew.svg" alt="Figure 3" /></p>
 
@@ -95,9 +365,15 @@ where:
 
 <h3 id="improving-performance-with-volatility-targeting"><strong>Improving Performance with Volatility Targeting</strong></h3>
 
-<p>As shown in the previous figure, volatility targeting adjusts weights to balance risk between the long and short legs, resulting in more stable performance. After applying volatility targeting, we see that the volatility is much more stable across the portfolios. This adjustment improves the <strong>Sharpe ratio</strong> for both the long-short portfolio and the long-only portfolios. The figure below demonstrates the improvement.</p>
+<p>As shown in the previous figure, volatility targeting adjusts portfolio weights to balance risk between the long and short legs, leading to more stable performance. After applying volatility scaling, volatility becomes more uniform across portfolios, reducing imbalances. This adjustment enhances the Sharpe ratio for both the long-short and long-only portfolios.</p>
+
+<p>Figure 4 illustrates this effect, showing that the volatilities of the five portfolios are now much more aligned, eliminating the previous mismatch. As a result, the L/S portfolio improves its performance, benefiting from a more balanced risk distribution.</p>
+
+<p>Figure 5 visualizes the performance of the long, short, and L/S portfolios, while Table 1 presents key financial performance metrics. All performance figures are reported before accounting for transaction costs.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/barplot_metrics_ew_vt.svg" alt="Figure 4" /></p>
+
+<p><strong>Figure 4</strong>: Bar chart showing Geometric Return, Volatility, and Sharpe Ratio for equal-weighted portfolios (after volatility targeting).</p>
 
 <h4 id="metrics-after-volatility-targeting"><strong>Metrics After Volatility Targeting</strong>:</h4>
 
@@ -105,7 +381,52 @@ where:
 
 <p><strong>Figure 5</strong>: Net Asset Value of the volatility-targeted portfolio (after volatility targeting).</p>
 
-<p>Here in Figure 6 below, I visualize the portfolio weights of the long (low volatility, 1) portfolio and the short (high volatility, 5) portfolio. Clearly, the portfolio weight for the high-volatility portfolio is substantially lower. It fluctuates between 0.2 and 0.6, while the portfolio weights for the low-volatility portfolio are almost always close to being fully invested. Only during significant events like the 2000 dot-com bubble, 2009, and the more recent COVID crisis do we see a sudden drop in portfolio weights due to higher volatility.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Long</th>
+      <th>Short</th>
+      <th>Long-Short</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Geometric Return (ann. %)</td>
+      <td>11.1</td>
+      <td>2.9</td>
+      <td>7.7</td>
+    </tr>
+    <tr>
+      <td>Volatility (ann. %)</td>
+      <td>9.7</td>
+      <td>9.7</td>
+      <td>8.3</td>
+    </tr>
+    <tr>
+      <td>Modified Sharpe Ratio (ann.)</td>
+      <td>1.1</td>
+      <td>0.3</td>
+      <td>0.9</td>
+    </tr>
+    <tr>
+      <td>Maximum Drawdown (%)</td>
+      <td>29.5</td>
+      <td>36.7</td>
+      <td>33.6</td>
+    </tr>
+    <tr>
+      <td>Maximum Time Under Water</td>
+      <td>612.0</td>
+      <td>1647.0</td>
+      <td>944.0</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 1</strong>: Portfolio statistics for the long, short and long/short portfolio the after volatility targeting.</p>
+
+<p>Finally, Figure 6 visualizes the portfolio weights of the long (low volatility, 1) portfolio and the short (high volatility, 5) portfolio. Clearly, the portfolio weight for the high-volatility portfolio is substantially lower. It fluctuates between 0.2 and 0.6, while the portfolio weights for the low-volatility portfolio are almost always close to being fully invested. This makes sense since the high volatility portfolio will invest in stocks whith relatively high volatility while the low volatlity portfolio invest in stocks with low relatively volatility Only during significant events like the 2000 dot-com bubble, 2009, and the more recent COVID crisis do we see a sudden drop in portfolio weights due to higher volatility.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/portfolio_weights_long_short_vol_target.svg" alt="Figure 6" /></p>
 
@@ -119,4 +440,4 @@ where:
   <li>Incorporating a simple volatility-targeting approach effectively balances risk between long and short positions, significantly improving portfolio stability and performance.</li>
 </ol>
 
-<p>By incorporating a simple volatility-targeting approach, one can create a more robust and high-performing long-short portfolio. In the next blog, I’ll explore how to combine multiple factors in a portfolio.</p>]]></content><author><name>GitHub User</name><email>your-email@domain.com</email></author><category term="Quant" /><summary type="html"><![CDATA[The low-volatility factor is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. These more stable, often “boring” stocks tend to outperform their more volatile counterparts on a risk-adjusted basis. Now, you might be thinking—doesn’t higher risk always mean higher returns? Well, as with most things in life, not always. In this post, I’ll take a look at whether the conventional belief about risk and return still holds true.]]></summary></entry></feed>
+<p>By incorporating a simple volatility-targeting approach, one can create a more robust and high-performing long-short portfolio. In the next blog, I’ll explore how to combine multiple factors in a portfolio.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quant" /><summary type="html"><![CDATA[The low-volatility factor is a well-known and widely researched concept in factor investing. Simply put, it focuses on selecting stocks with smaller price swings. These more stable, often “boring” stocks tend to outperform their more volatile counterparts on a risk-adjusted basis. Now, you might be thinking—doesn’t higher risk always mean higher returns? Well, as with most things in life, not always. In this post, I’ll take a look at whether the conventional belief about risk and return still holds true.]]></summary></entry></feed>

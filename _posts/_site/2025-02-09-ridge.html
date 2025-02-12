@@ -1,0 +1,276 @@
+<p>In the previous article, I explored the volatility factor and demonstrated how a volatility scaling approach drastically improves performance. Building on that foundation, this article takes a step further by combining multiple factors using a multiple linear regression model. The aim is to explore how these factors interact and assess their predictive power.</p>
+
+<p>A key challenge in constructing predictive models for stock selection is handling the variability and scale of the data. Stocks vary significantly in price levels, trading volumes, and risk characteristics, which can make direct comparisons misleading. Additionally, our primary goal is relative ranking: identifying which stocks are likely to perform better than others in the next period (e.g., 20 days). This makes normalization a critical preprocessing step.</p>
+
+<p>In this article, we tackle two main tasks:</p>
+<ol>
+  <li><strong>Combining multiple predictive features</strong> derived from price, volume, market capitalization, and market-related data. These features are carefully engineered to capture key characteristics of stocks, such as momentum, volatility, liquidity, size, and their relationship with the broader market.</li>
+  <li><strong>Normalizing the data</strong> to ensure that the predictive features and target variable are on a consistent scale across all stocks. This allows us to focus on relative rankings rather than absolute values, simplifying the problem and making it easier for the model to identify meaningful patterns.</li>
+</ol>
+
+<p>By combining these factors and testing different normalization techniques, we aim to identify the most effective approach for predicting stock performance. This methodology helps us evaluate not only which stocks are likely to perform well but also how different ways of handling the data impact the model’s outcomes.</p>
+
+<h2 id="feature-engineering">Feature Engineering</h2>
+
+<p>An important point is that we let the model, in this case a linear regression model, define the form of relationships. Since we use a linear model, we limit ourselves to linear relationships and do not include interaction terms for now. Obviously, we need to define our predictive features and also choose a target variable. For the predictive features, we focus on price, volume, market capitalization, and market derived features. To make this more concrete, we compute the following families of features for every stock (around 3300) in our universe:</p>
+
+<ol>
+  <li><strong>Momentum Features</strong>
+    <ul>
+      <li>Captures the trend-following behavior of stocks.</li>
+      <li>Examples:
+        <ul>
+          <li>Lagged returns over short horizons (e.g., 1 to 10 days).</li>
+          <li>Rolling cumulative returns over longer windows (e.g., 21 to 252 days).</li>
+          <li>Moving Average Convergence Divergence (MACD) to identify shifts in momentum.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Volatility Features</strong>
+    <ul>
+      <li>Focuses on the risk profile of stocks.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling historical volatility computed over time windows (e.g., 21, 63, or 126 days).</li>
+          <li>Downside and upside volatility, separating negative and positive deviations in price.</li>
+          <li>Average True Range (ATR) for a normalized measure of price range volatility.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Liquidity Features</strong>
+    <ul>
+      <li>Assesses trading activity.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling mean and standard deviation of adjusted trading volume.</li>
+          <li>Ratio of current volume to its rolling maximum to highlight unusual trading activity.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Size Features</strong>
+    <ul>
+      <li>Measures the size of a stock using market capitalization.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling transformations of market cap, such as mean and minimum values over time.</li>
+          <li>Helps differentiate between small-cap and large-cap stocks.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Short Mean Reversion Features</strong>
+    <ul>
+      <li>Identifies conditions where prices revert to a historical mean.</li>
+      <li>Examples:
+        <ul>
+          <li>Deviation of the price from its rolling moving average.</li>
+          <li>Price position relative to rolling minimum or maximum values.</li>
+          <li>Bollinger Bands to highlight overbought or oversold conditions.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Correlation with the Market</strong>
+    <ul>
+      <li>Captures the systematic risk of a stock by measuring its relationship with the market index.</li>
+      <li>Examples:
+        <ul>
+          <li>Rolling correlation with the Russell 1000 over time windows (e.g., 63 days).</li>
+          <li>Useful for identifying defensive stocks or those with high beta.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<p>In total we have around 150 predictive features, some of them will be very correlated obviously. Next is determining our target variable. I will focus on predicting the return for the next 20 days and predicting the sharpe ratio for the next 20 days. Obviously we could epxlore different periods as well but for the sake of simplicity let’s keep it at 20 days.</p>
+
+<h2 id="preprocessing-steps">Preprocessing Steps</h2>
+
+<p>An important step in this process is normalizing the data. To understand why this is necessary, let’s take a step back. The goal is to identify, for each period (e.g., each day), the stocks that are most likely to perform well. We define “performing well” as having the highest return or Sharpe ratio over the next 20 days.</p>
+
+<p>Think of it as creating a ranking: we want to push the best-performing stocks to the top of the list and the worst-performing stocks to the bottom. This means we’re not focused on the actual numbers (like the exact return or Sharpe ratio of each stock); instead, we care about how each stock compares to the others. In other words, the problem is relative—we only need to know if stock A is likely to do better than stock B.</p>
+
+<p>To simplify the problem, we normalize the data for each day across all stocks. This process, called cross-sectional normalization, adjusts the predictive features and the target variable so they are on a consistent scale. For example, this could involve scaling the values to have a mean of zero and a standard deviation of one also know as Z-scoring. By doing this, we make it easier for the model to compare stocks and focus on their relative rankings, rather than being influenced by differences in scale or magnitude.</p>
+
+<p>I will compare the following normalization methods:</p>
+
+<ol>
+  <li><strong>No normalization (Raw):</strong> Used as a baseline to compare the performance of other methods.</li>
+  <li><strong>Ranking and mapping to a range (0 to 100):</strong> The lowest value is mapped to 0, and the highest value is mapped to 100.</li>
+  <li><strong>Z-scoring:</strong> Values are normalized to have a mean of 0 and a standard deviation of 1. To handle outliers, we clip values greater than 5 or less than -5 to 5 and -5, respectively.</li>
+</ol>
+
+<p>Ranking maps all values to a uniform distribution, making the data stationary and naturally handling outliers. This method increases stability by compressing all values into a fixed range, but it also has a downside: some information is lost because the values are “squeezed” into the interval. Z-scoring, on the other hand, provides more freedom by preserving the magnitude of differences between values, while still managing outliers with clipping.</p>
+
+<p>Finally, we will compare one additional approach:</p>
+
+<ul>
+  <li><strong>Sector-specific ranking of the target variable:</strong> The target variable is ranked within each sector, which is similar to making your stock selection sector-neutral.</li>
+</ul>
+
+<p>These comparisons will help us understand the trade-offs and advantages of different normalization methods.</p>
+
+<p>Maybe very briefly. For missing data, we use the following logic. We start with doing forward fill, when forward fill is not an option, meaning there are not pevious data points. We will using the cross sectional mean by from the others stock in the same sector for that specific date. When this is not an option, I will impute just by the mean after normalizing the data;  0 for z scoring and 50 for ranking. Obviously this topic on it’s own deserved a whole post on itself as it’s important and many possibility better approaches exist.</p>
+
+<h2 id="model-and-validation-procedure">Model and Validation Procedure</h2>
+
+<h3 id="motivation-for-using-ridge-regression">Motivation for Using Ridge Regression</h3>
+
+<p>So, we have defined our preprocessing steps, let’s move on to our validation procedure to train our linear regression model.</p>
+
+<ul>
+  <li>Ridge regression is ideal when predictors are highly correlated or when the dataset has more features than observations, as it addresses multicollinearity effectively.</li>
+  <li>By adding an ( L_2 ) penalty to the loss function, it stabilizes coefficient estimates, improving the model’s robustness and predictive accuracy.</li>
+  <li>It reduces overfitting by shrinking coefficients, striking a balance between bias and variance.</li>
+</ul>
+
+<p>The ridge regression loss function is:</p>
+
+<p>[
+\text{Minimize: } \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf{x}<em>i^\top \boldsymbol{\beta})^2 + \lambda \sum</em>{j=1}^p \beta_j^2
+]</p>
+
+<ul>
+  <li>(\frac{1}{n} \sum_{i=1}^n (y_i - \mathbf{x}_i^\top \boldsymbol{\beta})^2 ): Ordinary least squares (OLS) loss.</li>
+  <li>(\lambda \sum_{j=1}^p \beta_j^2 ): ( L_2 ) regularization term, with ( \lambda ) controlling the strength of shrinkage.</li>
+</ul>
+
+<h3 id="expanding-walkforward-validation-procedure">Expanding Walkforward Validation Procedure</h3>
+
+<p>To evaluate and refine the ridge regression model, we use an <strong>expanding walkforward validation procedure</strong> with a burn-in period of 3 years. After the initial period, the model is refit approximately every 2 years using all the data available up to that point. This approach ensures the model continuously adapts to new information while leveraging the full historical dataset for more robust predictions.</p>
+
+<p>In my experience, using an <strong>expanding walkforward approach</strong>—which incorporates all available data—consistently outperforms rolling walkforward validation methods. Rolling validation, which limits the training window to recent data, may miss valuable long-term patterns and lead to less stable predictions.</p>
+
+<p>Below is a detailed representation of the expanding walkforward procedure:</p>
+
+<h2 id="portfolio-construction">Portfolio Construction</h2>
+
+<p>For portfolio construction, we follow a systematic approach to leverage the model’s predictions effectively. Each day, the model assigns a prediction score (or ranking) to every stock in our universe, with higher scores corresponding to higher expected performance and lower scores indicating lower expected performance.</p>
+
+<p>To build the portfolio:</p>
+<ol>
+  <li>We select an <strong>arbitrary number of stocks</strong> for the long and short sides. For this article, we choose <strong>75 stocks with the highest scores</strong> to go long (buy) and <strong>75 stocks with the lowest scores</strong> to go short (sell). Numbers like 50, 100, or 150 would work equally well and would not materially affect our conclusions.</li>
+  <li>We apply a <strong>volatility targeting approach</strong> at the stock level to ensure that each stock contributes approximately the same amount of risk to the portfolio. This step makes sure every stock has a similar risk contribution.</li>
+</ol>
+
+<p>By combining the model’s predictions with risk-aware allocation, we create a balanced portfolio that maximizes the use of available information while maintaining a consistent risk profile.</p>
+
+<hr />
+
+<h2 id="results">Results</h2>
+
+<p>So in total we will have 10 different modelling choices; 5 on the normalization(Raw, Z-score overall, Ranking overall, Z score by industry, and Ranking by industry) and 2 on the target label (SR 20 and Return 20). Below I’ve plotted performance for all of them and removed labels to keep some tension hhihi. As you can see there is quite some variation in performance.</p>
+
+<p>Let’s take a closer look if we find some superior modelling choices. Starting by looking at the whether we should normalize and if so which one performs better (Ranking or Z score). Below I’ve visualized the cumultative performance for the normalization methods. I’ve rescaled volatility to 10 % in the graph and I also show some key performance metrics. Clearly normalization helps, both z score and ranking performing better than the raw (no normaiztaion).</p>
+
+<p>Next let’s have a look wether it’s benficial to perform the normalisation on the target label by sector. Again, the evidence is pretty clear in favour of ranking by sector is the superior choice here.</p>
+
+<p>Finally, let’s look at our target label SR or Return. Sharpe ratio here is the better choice.</p>
+
+<p><img src="/assets/ridge/all_lines.png" alt="Figure 1" /></p>
+
+<p><strong>Figure 1</strong>: Performance of all different modelling choices. All lin es are scaled to the same level of volatility.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Return (ann. %)</th>
+      <th>Volatility (ann. %)</th>
+      <th>Sharpe Ratio (ann.)</th>
+      <th>Maximum Drawdown (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>return_20_zscore_false</td>
+      <td>5.45</td>
+      <td>7.47</td>
+      <td>0.73</td>
+      <td>20.97</td>
+    </tr>
+    <tr>
+      <td>return_20_zscore_true</td>
+      <td>6.62</td>
+      <td>7.40</td>
+      <td>0.89</td>
+      <td>20.13</td>
+    </tr>
+    <tr>
+      <td>return_20_ranking_false</td>
+      <td>7.45</td>
+      <td>7.67</td>
+      <td>0.97</td>
+      <td>18.41</td>
+    </tr>
+    <tr>
+      <td>return_20_ranking_true</td>
+      <td>7.57</td>
+      <td>7.62</td>
+      <td>0.99</td>
+      <td>14.85</td>
+    </tr>
+    <tr>
+      <td>return_20_raw_false</td>
+      <td>7.19</td>
+      <td>7.28</td>
+      <td>0.99</td>
+      <td>16.72</td>
+    </tr>
+    <tr>
+      <td>sr_20_raw_false</td>
+      <td>8.94</td>
+      <td>8.54</td>
+      <td>1.05</td>
+      <td>16.12</td>
+    </tr>
+    <tr>
+      <td>sr_20_ranking_false</td>
+      <td>9.26</td>
+      <td>8.54</td>
+      <td>1.08</td>
+      <td>16.91</td>
+    </tr>
+    <tr>
+      <td>sr_20_zscore_false</td>
+      <td>10.14</td>
+      <td>8.55</td>
+      <td>1.19</td>
+      <td>19.00</td>
+    </tr>
+    <tr>
+      <td>sr_20_ranking_true</td>
+      <td>9.82</td>
+      <td>7.97</td>
+      <td>1.23</td>
+      <td>12.85</td>
+    </tr>
+    <tr>
+      <td>combo</td>
+      <td>8.41</td>
+      <td>6.69</td>
+      <td>1.26</td>
+      <td>13.41</td>
+    </tr>
+    <tr>
+      <td>sr_20_zscore_true</td>
+      <td>10.82</td>
+      <td>8.07</td>
+      <td>1.34</td>
+      <td>12.56</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 1</strong>: Statistics of all different modelling choices. Ranked in ascending order based on sharpe ratio.</p>
+
+<h2 id="todo">TODO</h2>
+<ul>
+  <li>How to make my point for the normalization</li>
+  <li>include graphs</li>
+  <li>results be a bit more in detail about the performance</li>
+</ul>
