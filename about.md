@@ -8,9 +8,10 @@ permalink: /about/
 
 
 
-Hi, I’m Pieter-Jan – a quantitative researcher who’s passionate about markets, data, and building systematic trading strategies. I’ve spent the last few years nerding out on machine learning for long/short equity, trend following, and portfolio optimization. 
+Hi, I’m Pieter-Jan. I’m a quant researcher who enjoys exploring markets, data, and systematic strategies. Over the years, I’ve worked on machine learning for long/short equity, trend following, and portfolio optimization—but honestly, I’m just figuring things out as I go.  
 
-On this blog I'll share insights, experiments, and lessons learned—mostly about machine learning, trading strategies, and the process of building systematic approaches to markets. Whether you’re into data science, finance, or just curious about algorithmic trading, I hope you find something here worth reading!  
+This blog is where I share insights, experiments, and whatever I find interesting. Most of it will probably be about trading, data, and machine learning, but who knows—life takes unexpected turns. If you’re into any of that, I hope you find something here worth reading.  
 
 **Feel free to connect with me via [LinkedIn](https://www.linkedin.com/in/PieterJanInghelbrecht) or drop me an email at [pjinghelbrecht@gmail.com](mailto:pjinghelbrecht@gmail.com).**  
+
 
