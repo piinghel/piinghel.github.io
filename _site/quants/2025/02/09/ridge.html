@@ -30,8 +30,8 @@
 <meta property="og:title" content="Ridge regression" />
 <meta name="author" content="piinghel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In the last article, we saw how a simple low-volatility ranking strategy delivered solid returns. By scaling returns based on volatility, we could improve performance with minimal complexity. But what if we could do better?" />
-<meta property="og:description" content="In the last article, we saw how a simple low-volatility ranking strategy delivered solid returns. By scaling returns based on volatility, we could improve performance with minimal complexity. But what if we could do better?" />
+<meta name="description" content="In the last article, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?" />
+<meta property="og:description" content="In the last article, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?" />
 <link rel="canonical" href="http://localhost:4000/quants/2025/02/09/ridge.html" />
 <meta property="og:url" content="http://localhost:4000/quants/2025/02/09/ridge.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
@@ -40,7 +40,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Ridge regression" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-09T00:00:00+01:00","datePublished":"2025-02-09T00:00:00+01:00","description":"In the last article, we saw how a simple low-volatility ranking strategy delivered solid returns. By scaling returns based on volatility, we could improve performance with minimal complexity. But what if we could do better?","headline":"Ridge regression","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/09/ridge.html"},"url":"http://localhost:4000/quants/2025/02/09/ridge.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-09T00:00:00+01:00","datePublished":"2025-02-09T00:00:00+01:00","description":"In the last article, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?","headline":"Ridge regression","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/09/ridge.html"},"url":"http://localhost:4000/quants/2025/02/09/ridge.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -73,19 +73,19 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, we saw how a simple <strong>low-volatility ranking strategy</strong> delivered solid returns. By scaling returns based on volatility, we could improve performance with minimal complexity. But what if we could do better?</p>
+    <p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?</p>
 
-<p>Rather than relying on a single heuristic, why not let the data determine the optimal ranking function? That’s exactly what we’ll do here—<strong>combine multiple features</strong> and use <strong>a linear regression model</strong> to rank stocks based on expected performance.</p>
+<p>This time, we’ll predict stock rankings using a linear regression model that combines multiple features—like price changes, trading volume, and risk levels—and learns the optimal ranking based on a target label. A target label is simply the outcome we want the model to predict, such as stock returns or Sharpe ratio. By learning to predict this label, the model will rank the stocks accordingly.</p>
 
-<p>Stock selection isn’t straightforward. We deal with <strong>price changes, trading volume, and risk levels</strong>, all measured on different scales. Without proper normalization, large features like market cap will overshadow smaller ones like short-term returns. In the previous approach, we used a <strong>single low-volatility rule</strong> to rank stocks, which worked well. This time, we’ll refine the process by using <strong>multiple linear regression</strong> to integrate several predictive signals into one model.</p>
+<p>Predicting stock rankings isn’t as simple as it seems. We’re dealing with features on different scales—price changes, trading volume, risk—and if we don’t normalize them, bigger features like market cap will overshadow smaller ones, like short-term returns. Additionally, the signal-to-noise ratio is quite low, meaning there’s a lot of random fluctuation in the data, which makes it harder for the model to find meaningful patterns. My intuition tells me normalizing these features will help the model learn a better ranking. I’m not totally sure yet, but that’s exactly what I’m testing today. If we get the normalization right, the model might perform better—but we’ll see.</p>
 
-<p>The dataset remains the same—<strong>daily price, volume, and market capitalization data</strong> for all <strong>Russell 1000</strong> constituents, covering <strong>3,300 stocks historically</strong>. Since the investable universe changes over time, we apply basic liquidity filters, excluding stocks priced below <strong>$5</strong> to ensure realistic implementation.</p>
+<p>The dataset stays the same as the one used in <a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">the previous article</a>: daily price, volume, and market capitalization data for all Russell 1000 (RIY) constituents, covering about 3,300 stocks historically. We use point-in-time constituents of the RIY and apply basic liquidity filters, excluding stocks priced below $5 to ensure realistic implementation.</p>
 
 <h2 id="feature-engineering">Feature Engineering</h2>
 
-<p>A key advantage of using a regression model is that it learns how to combine features on its own. Since we’re using <strong>linear regression</strong>, we’re assuming all relationships are <strong>linear</strong>—no interaction terms for now.</p>
+<p>Coming from a statistical and computer science background, it makes sense to let the data figure out how the relationships should be learned, instead of imposing too many assumptions. This contrasts with the typical approach in multifactor portfolios, where the modeler decides how features should be combined. The advantage of using a regression model is that it learns the weights for how features should be combined. We’re sticking with linear regression for now, assuming the relationships are linear and no interaction terms. It’s a simple, data-driven approach that focuses on finding those direct, linear connections between features and the target.</p>
 
-<p>Obviously, we need to define our predictive features and choose a target variable. We focus on <strong>price, volume, market capitalization, and market-derived features</strong>. Below is a breakdown of the main feature groups, computed daily for all <strong>3,300 stocks</strong> in our universe.</p>
+<p>Obviously, we need to define our predictive features and choose a target variable. We focus on price, volume, market capitalization, and market-derived features. Below is a breakdown of the main feature groups, computed daily for all 3,300 stocks in our universe.</p>
 
 <ol>
   <li><strong>Momentum Features</strong>
@@ -159,25 +159,25 @@
   </li>
 </ol>
 
-<p>That leaves us with <strong>around 150 predictive features</strong>, some of which are obviously correlated.</p>
+<p>That leaves us with around 150 predictive features, some of which are obviously correlated.</p>
 
 <h3 id="target-variable">Target Variable</h3>
 <p>Now, what exactly are we trying to predict? We’ll focus on two targets:</p>
 
 <ul>
-  <li><strong>Return over the next 20 days</strong></li>
-  <li><strong>Sharpe ratio over the next 20 days</strong></li>
+  <li>Return over the next 20 days</li>
+  <li>Sharpe ratio over the next 20 days</li>
 </ul>
 
-<p>Could we explore other horizons? Sure. But to keep things simple, we’ll stick to <strong>20 days</strong> for now.</p>
+<p>Could we explore other horizons? Sure. But to keep things simple, we’ll stick to 20 days for now.</p>
 
-<h2 id="preprocessing-normalizing-the-data">Preprocessing: Normalizing the Data</h2>
+<h2 id="preprocessing-cross-sectional-normalizaton">Preprocessing: Cross-Sectional Normalizaton</h2>
 
-<p>Stock features come in all shapes and sizes. Some, like market cap, have values in the billions, while others, like daily returns, are tiny. <strong>The model will still work without normalization</strong>, but features on vastly different scales might lead to <strong>weird or unintended rankings</strong>.</p>
+<p>To help the model learn more effectively, we apply cross-sectional normalization. This means adjusting each feature relative to all other stocks on the same day so the model can focus on relative differences rather than raw values.</p>
 
-<p>The intuition is simple: putting everything on a similar scale <strong>should</strong> improve ranking consistency. But is that actually true? That’s what we’re testing here.</p>
+<p>Stock features vary widely—some, like market cap, are in the billions, while others, like daily returns, are much smaller. The model will still work without normalization, but when features are on vastly different scales, it can make it harder to learn relationships effectively.</p>
 
-<p>To do this, we apply <strong>cross-sectional normalization</strong>, meaning we adjust each feature <strong>relative to all other stocks on the same day</strong>. That way, the model focuses on <strong>relative differences</strong> rather than raw values.</p>
+<p>Cross-sectional normalization helps with stationarity, stabilizing the data and ensuring the model focuses on how features relate to each other rather than their absolute values. This improves ranking consistency across time. To make this clearer, let’s introduce some mathematical notation.</p>
 
 <p>For a given feature $X$, the normalized value for stock $i$ on time $t$ is:</p>
 
@@ -186,21 +186,21 @@
 <p>where:</p>
 <ul>
   <li>$X_{i,t}$ is the raw feature value for stock $i$ at time $t$.</li>
-  <li>$X_{1:N,t}$ is the set of values for all stocks on time $t$.</li>
+  <li>$X_{1:N,t}$ is the set of values for all stocks at time $t$.</li>
   <li>$f(\cdot)$ is the chosen normalization method.</li>
 </ul>
 
-<p>There are a few ways to do this:</p>
+<p>Below, I discuss z-scoring and ranking, two common normalization techniques.</p>
 
-<h4 id="1-z-scoring"><strong>1. Z-Scoring</strong></h4>
-<p>Z-scoring transforms values so they have a <strong>mean of 0</strong> and a <strong>standard deviation of 1</strong>:</p>
+<h3 id="1-z-scoring">1. Z-Scoring</h3>
+<p>Z-scoring standardizes features to have a mean of 0 and a standard deviation of 1:</p>
 
 \[X^{\text{norm}}_{i,t} = \frac{X_{i,t} - \mu_t}{\sigma_t}\]
 
 <p>where:</p>
 <ul>
   <li>
-    <p>$\mu_t$ is the mean across all stocks on day $t$:</p>
+    <p>$\mu_t$ is the mean across all stocks at time $t$:</p>
 
 \[\mu_t = \frac{1}{N} \sum_{i=1}^{N} X_{i,t}\]
   </li>
@@ -211,10 +211,10 @@
   </li>
 </ul>
 
-<p>To prevent extreme values from distorting results, we clip any outliers beyond <strong>±5 standard deviations</strong>.</p>
+<p>To prevent extreme values from distorting results, we clip any outliers beyond ±5 standard deviations.</p>
 
-<h4 id="2-ranking-normalization"><strong>2. Ranking Normalization</strong></h4>
-<p>Instead of working with raw values, we <strong>rank stocks</strong> and scale the ranks between <strong>0 and 1</strong>:</p>
+<h3 id="2-ranking-normalization">2. Ranking Normalization</h3>
+<p>Instead of standardizing, we rank stocks and scale the ranks between 0 and 1:</p>
 
 \[R_{i,t} = \frac{r_{i,t}}{N}\]
 
@@ -224,30 +224,37 @@
   <li>$R_{i,t}$ is the normalized rank.</li>
 </ul>
 
-<p>This method is <strong>less sensitive to extreme values</strong> and works well for features with skewed distributions.</p>
+<p>This approach is sometimes called uniformization, as it transforms a feature into a uniform distribution over $[0,1]$, ensuring all features are comparable while preserving their relative rankings.</p>
 
-<h3 id="does-normalization-actually-help"><strong>Does Normalization Actually Help?</strong></h3>
+<h3 id="global-vs-sector-specific-normalization">Global vs. Sector-Specific Normalization</h3>
 
-<p>The model doesn’t <strong>need</strong> normalization to work—it will still produce rankings using raw features. But does normalization lead to <strong>better</strong> rankings? That’s what we’re testing.</p>
+<p>Normalization can be applied in two ways:</p>
+
+<ul>
+  <li><strong>Global normalization</strong>: Features are normalized across the entire stock universe at each time step.</li>
+  <li><strong>Sector-specific normalization</strong>: Features are normalized within each sector separately.</li>
+</ul>
+
+<p>Applying normalization within sectors prevents biases where certain sectors dominate due to large-scale differences (e.g., tech stocks having higher market caps than utilities). Sector-specific normalization ensures that features remain meaningful within each sector group while preserving their relative differences globally.</p>
+
+<h3 id="does-normalization-actually-help">Does Normalization Actually Help?</h3>
+
+<p>The model doesn’t need normalization to work—it will still produce rankings using raw features. But does normalization lead to better rankings? That’s what we’re testing.</p>
 
 <p>We compare four approaches:</p>
 
 <ol>
-  <li><strong>No Normalization (Raw Features)</strong> – A baseline.</li>
-  <li><strong>Z-Scoring (Global)</strong> – Standardizes each feature across all stocks.</li>
-  <li><strong>Ranking (Global)</strong> – Maps feature values to a uniform scale.</li>
-  <li><strong>Sector-Specific Normalization</strong> – Normalizes features <strong>within each sector</strong> instead of across the entire market.</li>
+  <li>No normalization (raw features) – A baseline.</li>
+  <li>Z-scoring (global) – Standardizes each feature across all stocks.</li>
+  <li>Ranking (global) – Maps feature values to a uniform scale.</li>
+  <li>Sector-specific normalization – Normalizes features within each sector instead of across the entire market.</li>
 </ol>
 
-<h3 id="why-this-matters">Why This Matters</h3>
-
-<p>Without normalization, features like <strong>market cap</strong> might completely overshadow others like <strong>short-term returns</strong>. The question is whether that distorts the model’s ability to rank stocks effectively.</p>
-
-<p>Below, in <strong>Figure 1</strong>, we show how different normalization methods affect a single feature (20-day return). From left to right: the original distribution, Z-scored, and ranked.</p>
+<p>Below, in Figure 1, we show how different normalization methods affect a single feature (20-day return). From left to right: the original distribution, z-scored, and ranked.</p>
 
 <p><img src="/assets/ridge/example_normalization.png" alt="Figure 1" /></p>
 
-<p><strong>Figure 1</strong>: Effect of Normalization on 20-Day Return Distribution. Left: Original data, Middle: Z-scored, Right: Ranked between 0 and 1.</p>
+<p><strong>Figure 1</strong>: Effect of normalization on 20-day return distribution. Left: Original data, Middle: Z-scored, Right: Ranked between 0 and 1.</p>
 
 <h3 id="handling-missing-data">Handling Missing Data</h3>
 
@@ -256,99 +263,74 @@
 <p>We keep it simple:</p>
 
 <ul>
-  <li><strong>Forward fill:</strong> If a stock has prior data, we use the last known value.</li>
-  <li><strong>Cross-sectional mean imputation:</strong> If no past data exists, we replace the missing value with the <strong>sector average</strong> for that day.</li>
-  <li><strong>Default values:</strong> If neither of the above works, we apply:
+  <li>Forward fill: If a stock has prior data, we use the last known value.</li>
+  <li>Cross-sectional mean imputation: If no past data exists, we replace the missing value with the sector average for that day.</li>
+  <li>Default values: If neither of the above works, we apply:
     <ul>
-      <li><strong>Z-scoring:</strong> Missing values are set to <code class="language-plaintext highlighter-rouge">0</code>.</li>
-      <li><strong>Ranking:</strong> Missing values are set to <code class="language-plaintext highlighter-rouge">0.5</code> (midpoint of the ranking scale).</li>
+      <li>Z-scoring: Missing values are set to 0.</li>
+      <li>Ranking: Missing values are set to 0.5 (midpoint of the ranking scale).</li>
     </ul>
   </li>
 </ul>
 
-<p>Could we get more sophisticated? Absolutely. There are plenty of ways to handle missing data, from advanced statistical methods to ML-based imputations. But for now, we’re sticking with a <strong>simple, reliable approach</strong>.</p>
+<p>Could we get more sophisticated? Absolutely. There are plenty of ways to handle missing data, from advanced statistical methods to ML-based imputations. But for now, I’m sticking with a simple, reliable approach.  A deeper dive into missing data strategies is a topic for another time.</p>
 
-<p>A deeper dive into missing data strategies is a topic for another time.</p>
+<h2 id="modeling-the-cross-sectional-normalized-score">Modeling the Cross-Sectional Normalized Score</h2>
 
-<h2 id="modeling-the-ranking-score">Modeling the Ranking Score</h2>
+<p>At the core of this strategy, I’m building a model to predict a stock’s cross-sectional normalized score, which could be its Sharpe ratio, return, or another performance measure. I think of this as a function mapping available information at time $t$ to an expected score at $t+1$. To ensure comparability across stocks, the score is normalized in the cross-section before modeling.</p>
 
-<p>At the core of this strategy is a model that predicts a stock’s <strong>ranking score</strong>—which could be its <strong>Sharpe ratio, return, or any other performance measure</strong>.</p>
+<p>Mathematically, I assume that there exists a function $g(\cdot)$ such that:</p>
 
-<p>We frame this as a <strong>prediction problem</strong>:</p>
-
-\[s_{i,t+1} = \mathbb{E}_t[s_{i,t+1}] + \epsilon_{i,t+1}\]
+\[s_{i,t+1} = g(\mathbf{z}_{i,t}) + \epsilon_{i,t+1}\]
 
 <p>where:</p>
 <ul>
-  <li>$s_{i,t+1}$ is the <strong>true ranking score</strong> for stock $i$ at time $t+1$.</li>
-  <li>\(\mathbb{E}_t[s_{i,t+1}]\) is the <strong>model’s expected ranking score</strong> given available information at time $t$.</li>
-  <li>$\epsilon_{i,t+1}$ is the <strong>error term</strong>—things the model can’t predict.</li>
+  <li>$s_{i,t+1}$ is the true cross-sectional normalized score for stock $i$ at time $t+1$.</li>
+  <li>$z_{i,t}$ is a vector of predictor variables for stock $i$ at time $t$.</li>
+  <li>$\epsilon_{i,t+1}$ is the error term, representing what the model cannot predict.</li>
 </ul>
 
-<p>The goal is to model:</p>
-
-\[\mathbb{E}_t[s_{i,t+1}] = g(\mathbf{z}_{i,t})\]
-
-<p>where:</p>
-<ul>
-  <li>$\mathbf{z}_{i,t}$ is a vector of predictor variables for stock $i$ at time $t$.</li>
-  <li>$g(\cdot)$ is a function mapping predictors to ranking scores.</li>
-</ul>
-
-<p>This function $g(\cdot)$ follows two key rules:</p>
-
-<ol>
-  <li><strong>It’s consistent across stocks and time.</strong>
-    <ul>
-      <li>The same function applies to every stock and every time period.</li>
-      <li>This ensures stable and comparable rankings across the dataset.</li>
-    </ul>
-  </li>
-  <li><strong>It only depends on the features $\mathbf{z}_{i,t}$.</strong>
-    <ul>
-      <li>The model only considers a stock’s own characteristics at time $t$.</li>
-      <li>No direct dependencies on past predictions or other stocks.</li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="why-ridge-regression">Why Ridge Regression?</h3>
-
-<p>We approximate $g(\cdot)$ using <strong>Ridge Regression</strong>, a linear model that works well when predictors are highly correlated.</p>
-
-<p>What makes Ridge a good fit?</p>
+<p>The objective is to approximate $g(\cdot)$ using historical data. This function follows two key principles:</p>
 
 <ul>
-  <li><strong>Handles multicollinearity</strong> – Stocks with similar characteristics tend to move together. Ridge prevents unstable coefficients.</li>
-  <li><strong>Adds an $L_2$ penalty</strong> – Shrinks large coefficients, reducing overfitting and improving generalization.</li>
-  <li><strong>Balances bias and variance</strong> – Helps the model stay stable across different time periods.</li>
+  <li>it leverage the entire panel of stockd, meaning the same functional form applies universally.</li>
+  <li>It depends only on stock-specific features at time $t$. While some features contain past information (such as return over the past 20 days), these are explicitly engineered rather than dynamically learned. In addition, the model does not learn interactions between different stocks.</li>
 </ul>
 
-<p>The loss function for Ridge Regression is:</p>
+<h3 id="ridge-regression-as-a-baseline">Ridge Regression as a Baseline</h3>
 
-\[\text{Minimize: } \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf{x}_i^\top \boldsymbol{\beta})^2 + \lambda \sum_{j=1}^p \beta_j^2\]
+<p>To estimate $g(\cdot)$, I use Ridge Regression, a simple yet effective baseline, particularly when predictors are highly correlated. It solves the following optimization problem:</p>
 
-<p>The second term ($\lambda \sum_{j=1}^p \beta_j^2$) <strong>penalizes large coefficients</strong>, keeping things smooth and stable.</p>
+\[\underset{\boldsymbol{\beta}}{\min} \frac{1}{n} \sum_{i=1}^n (s_{i,t+1} - \mathbf{x}_i^\top \boldsymbol{\beta})^2 + \lambda \sum_{j=1}^p \beta_j^2\]
 
-<p>With the model set up, the next step is <strong>validation</strong>—training Ridge Regression on historical data and evaluating its ability to rank stocks effectively.</p>
+<p>where the second term, $\lambda \sum_{j=1}^p \beta_j^2$, regularizes the coefficients to prevent instability.</p>
+
+<p>Ridge is a reasonable choice here because:</p>
+<ul>
+  <li>Stocks with similar characteristics often exhibit collinearity, and Ridge helps stabilize coefficient estimates.</li>
+  <li>The regularization term shrinks extreme values, reducing sensitivity to noise.</li>
+  <li>It provides a simple reference point before exploring more complex models.</li>
+</ul>
+
+<p>The model is estimated using historical data, and to assess its effectiveness, I apply an expanding walkforward validation which I explain just below in a bit more detail.</p>
 
 <h2 id="expanding-walkforward-validation">Expanding Walkforward Validation</h2>
 
-<p>To evaluate the model, we use an <strong>expanding walkforward validation procedure</strong>. It works like this:</p>
+<p>To see how well the model holds up over time, I use an expanding walkforward validation. The idea is simple:</p>
 
 <ol>
-  <li><strong>Start with a 3-year burn-in period</strong> – The model isn’t tested yet; it just learns from the data.</li>
-  <li><strong>Update the model every 2 years</strong> – Each update incorporates all available data up to that point.</li>
-  <li><strong>Keep expanding the dataset</strong> – Older data stays in, while new data gets added.</li>
+  <li>Start with a 3-year burn-in period – The model isn’t tested yet; it just learns from the data.</li>
+  <li>Update the model every 2 years – Each time, I add the latest data and refit the model.</li>
+  <li>Keep expanding the dataset – Older data stays in, and new data gets added.</li>
 </ol>
 
-<p>This approach ensures the model <strong>keeps learning from new market conditions</strong> while retaining long-term patterns.</p>
+<p>With stock data, I’ve always found that the more historical data, the better. The signal-to-noise ratio is low, so keeping as much information as possible helps stabilize the model.</p>
 
-<p>Why not use a <strong>rolling validation window</strong>? Because it <strong>only keeps recent data</strong>, discarding older information that could still be useful. In my experience, an <strong>expanding</strong> window works better because it helps the model recognize long-term relationships, leading to more stable predictions.</p>
+<p>A rolling validation window could be an alternative, but it discards older data that might still be valuable. In my experience, an expanding window works better because it allows the model to pick up long-term relationships, leading to more stable predictions.</p>
 
-<p>For hyperparameter tuning, you can <strong>split each training period into train and validation sets</strong>. It’s not always necessary, but it helps fine-tune parameters before making predictions.</p>
+<p>For hyperparameter tuning, one option is to split the training set into separate train and validation sets. But honestly, I’ve never found this to be worth the extra time. Optimizing hyperparameters can take a while, and in most cases, default values that make sense are already a very good starting point.</p>
 
-<p>Below is a <strong>schematic of the expanding walkforward approach</strong>:</p>
+<p>Below is a schematic of the expanding walkforward approach:</p>
 
 <p><img src="/assets/ridge/walk-forward.png" alt="Figure 2" /></p>
 
@@ -356,104 +338,70 @@
 
 <h2 id="portfolio-construction">Portfolio Construction</h2>
 
-<p>Once we have stock rankings, we <strong>build a long-short portfolio</strong>:</p>
+<p>Once I have stock rankings, I build a long-short portfolio:</p>
 
 <ul>
-  <li><strong>Go long</strong> on the top 75 ranked stocks.</li>
-  <li><strong>Short</strong> the bottom 75 ranked stocks.</li>
+  <li>I go long on the 75 stocks with the highest scores.</li>
+  <li>I short the 75 stocks with the lowest scores.</li>
 </ul>
 
-<p>Would different numbers (e.g., 50, 100, 150) change the outcome? Not really—the approach is robust across portfolio sizes.</p>
+<p>The approach is robust across different portfolio sizes, whether using 50, 100, or 150 stocks.</p>
 
-<p>To balance risk, we apply <strong>volatility targeting</strong>. This means:</p>
+<p>To keep risk under control, I use volatility targeting:</p>
 <ul>
-  <li><strong>Higher-volatility stocks get lower weights.</strong></li>
-  <li><strong>Lower-volatility stocks get higher weights.</strong></li>
+  <li>Higher-volatility stocks get smaller weights.</li>
+  <li>Lower-volatility stocks get larger weights.</li>
 </ul>
 
-<p>This ensures the portfolio maintains a <strong>consistent risk profile</strong>, rather than being dominated by volatile stocks.</p>
+<p>This ensures that the portfolio maintains a stable risk profile instead of being dominated by a few volatile names.</p>
 
-<p>By combining <strong>data-driven rankings</strong> with <strong>risk-aware position sizing</strong>, we get a <strong>well-diversified portfolio</strong> that dynamically adjusts over time.</p>
+<p>For a deeper dive into my portfolio construction process, check out my <a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">previous article</a> where I go into more detail.</p>
 
 <h2 id="results">Results</h2>
 
-<p>To compare different modeling choices, we plot the <strong>cumulative returns of all strategies</strong>, scaled to <strong>8% volatility</strong> (Figure 3). This ensures a fair comparison by normalizing risk across models.</p>
+<p>I tested different modeling choices, scaling all strategies to 8% volatility to keep things fair. The goal was to see how different ways of normalizing data, adjusting for sectors, and defining the target label would impact performance. To make it more interesting, I plotted cumulative performance without labels—just to add some suspense. While all models delivered positive returns, there’s a lot of variability in how they performed.</p>
 
-<p>We evaluate <strong>10 different model variations</strong>, combining:</p>
-<ul>
-  <li><strong>5 normalization methods</strong>: Raw, Z-score (global &amp; sector), Ranking (global &amp; sector).</li>
-  <li><strong>2 target labels</strong>: Sharpe Ratio (SR 20) and Return (Return 20).</li>
-  <li><strong>A combined strategy (“Combo”)</strong>, which equally weights all strategies.</li>
-</ul>
+<h3 id="why-normalization-matters">Why Normalization Matters</h3>
 
-<p>For now, Figure 3 remains unlabeled—but what’s clear is that some strategies perform significantly better than others.</p>
+<p>Normalization plays a huge role. Interestingly, Z-scoring turned out to be the best performer, followed by ranking, while raw features performed the worst. This was unexpected—I initially had a strong bias towards ranking because it stabilizes things and helps with stationarity. However, it turns out that ranking might also remove some valuable signals. Meanwhile, raw features introduce too much noise, making them the weakest option.</p>
 
 <p><img src="/assets/ridge/all_lines.png" alt="Figure 3" /></p>
 
 <p><strong>Figure 3</strong>: Performance comparison of different modeling choices, all scaled to 8% volatility.</p>
 
-<h2 id="the-biggest-impact-comes-from-the-target-label">The biggest impact comes from the target label</h2>
+<h3 id="the-power-of-sector-normalization">The Power of Sector Normalization</h3>
 
-<p>Figure 4 breaks down performance across three key dimensions:</p>
-<ul>
-  <li><strong>Target label</strong>: Are models trained on <strong>Sharpe Ratio</strong> more effective than those trained on <strong>raw returns</strong>?</li>
-  <li><strong>Sector-based normalization</strong>: Does normalizing within industries improve stock rankings?</li>
-  <li><strong>Normalization method</strong>: Does ranking or Z-scoring help relative to using raw features?</li>
-</ul>
+<p>Adjusting for sectors had an even bigger impact than I initially expected. Normalizing within sectors instead of across the entire universe significantly improved Sharpe Ratios. This reinforces the idea that comparing stocks within their peer groups, rather than against the whole market, leads to better rankings. Each sector has its own unique characteristics, and normalizing within sectors helps separate the true signal from sector-wide noise.</p>
+
+<h3 id="the-impact-of-target-labels">The Impact of Target Labels</h3>
+
+<p>The choice of target label also made a big difference. Training on the Sharpe Ratio delivered better results than training on raw returns, likely because risk-adjusted rankings provide a more stable signal and reduce noise.</p>
 
 <p><img src="/assets/ridge/summary_barplot.png" alt="Figure 4" /></p>
 
 <p><strong>Figure 4</strong>: Sharpe Ratio performance across key modeling choices.</p>
 
-<p>The results are <strong>not what we might have expected</strong>.</p>
+<h2 id="normalization-effects-depend-on-the-target-label">Normalization Effects Depend on the Target Label</h2>
 
-<ul>
-  <li><strong>The most important factor is the target label</strong>—models trained on <strong>Sharpe Ratio significantly outperform those trained on raw returns</strong>. This suggests that risk-adjusted rankings provide more stable predictive signals.</li>
-  <li><strong>Sector-based normalization improves performance</strong>, but to a lesser degree. It still provides a clear benefit over global normalization, reinforcing that stocks should be compared within their peer groups.</li>
-  <li><strong>Surprisingly, the choice of normalization method (ranking or Z-scoring) doesn’t make a huge difference</strong>. We expected standardization to matter more, but raw features perform nearly as well, suggesting that the model is already capturing key relationships.</li>
-</ul>
+<p>Looking at Figure 5, normalization interacts differently depending on whether the model is trained on the Sharpe Ratio or raw returns.</p>
 
-<p>While this gives a high-level overview, Figure 5 dives deeper into <strong>why the target label interacts with normalization choices in unexpected ways</strong>.</p>
+<p>For models trained on 20-day returns, the differences between normalization methods were smaller, but ranking and Z-scoring still outperformed raw features. Interestingly, Z-scoring has made a strong comeback in recent years, which I didn’t initially expect.</p>
 
-<h2 id="normalization-effects-depend-on-the-target-label">Normalization effects depend on the target label</h2>
-
-<p>Figure 5 examines <strong>how normalization impacts performance depending on whether the model is trained on Sharpe Ratio or raw returns</strong>.</p>
+<p>For Sharpe Ratio models, all normalization methods worked reasonably well, but Z-scoring was clearly the best performer, followed by ranking, and then raw features.</p>
 
 <p><img src="/assets/ridge/normalization_target.png" alt="Figure 5" /></p>
 
 <p><strong>Figure 5</strong>: Cumulative return of different normalization methods, conditioned on the target label.</p>
 
-<ul>
-  <li><strong>For Sharpe Ratio (right panel), both ranking and Z-scoring perform well.</strong>
-    <ul>
-      <li>Sharpe Ratio already accounts for risk, so standardizing features helps extract meaningful signals.</li>
-      <li>Raw (unprocessed) features lag behind, as expected.</li>
-    </ul>
-  </li>
-  <li><strong>For Return (left panel), normalization makes a much bigger difference.</strong>
-    <ul>
-      <li>Ranking is the best choice, while Z-scoring surprisingly <strong>performs worse than raw features</strong>.</li>
-      <li>This suggests that return-based training is <strong>more sensitive to normalization artifacts</strong>, possibly because extreme values distort the model.</li>
-    </ul>
-  </li>
-</ul>
+<p>The main takeaway? Sector normalization, normalization method, and target label choice all matter, but they influence performance in different ways. Normalization improves signal stability, sector-based adjustments refine comparisons, and target label choice affects robustness.</p>
 
-<p>The takeaway: <strong>target label is the primary driver of differences, followed by sector normalization, while normalization type itself has surprisingly little impact</strong>.</p>
+<h2 id="the-combo-strategy-holds-up-well">The “Combo” Strategy Holds Up Well</h2>
 
-<h2 id="the-combo-strategy-performs-surprisingly-well">The “Combo” strategy performs surprisingly well</h2>
+<p>One of the more surprising findings was how well the “Combo” strategy performed. Instead of relying on a single best model, this approach equally weighted all models—and still ranked second overall in terms of Sharpe Ratio. Even without fine-tuning, blending multiple signals led to smoother and more stable performance. This highlights an important insight: rather than obsessing over the best model, sometimes combining different perspectives leads to better results.</p>
 
-<p>One unexpected finding is that the <strong>“Combo” strategy</strong>, which equally weights all models, performs almost as well as the best individual model.</p>
+<h2 id="full-performance-breakdown">Full Performance Breakdown</h2>
 
-<ul>
-  <li>Despite not being optimized for a single approach, <strong>blending multiple signals leads to robust performance.</strong></li>
-  <li>The Combo strategy ranks <strong>second overall in terms of Sharpe Ratio</strong>, highlighting the benefits of diversification.</li>
-</ul>
-
-<p>Instead of searching for a single “best” normalization method, this suggests that <strong>combining multiple perspectives can be a stronger approach</strong>.</p>
-
-<h2 id="full-performance-breakdown">Full performance breakdown</h2>
-
-<p>To quantify these findings, Table 1 presents a full breakdown of returns, volatility, and Sharpe Ratios across all models.</p>
+<p>To put some numbers behind these insights, here’s a breakdown of returns, volatility, and Sharpe Ratios across all models.</p>
 
 <table>
   <thead>
@@ -462,111 +410,103 @@
       <th>Return (ann. %)</th>
       <th>Volatility (ann. %)</th>
       <th>Sharpe Ratio (ann.)</th>
-      <th>Maximum Drawdown (%)</th>
+      <th>Max. Drawdown (%)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>SR Zscore By Sector</td>
-      <td>10.8</td>
-      <td>8.1</td>
-      <td>1.3</td>
-      <td>12.6</td>
+      <td>SR Z-Score By Sector</td>
+      <td>13.36</td>
+      <td>7.87</td>
+      <td>1.70</td>
+      <td>11.58</td>
     </tr>
     <tr>
       <td>Combo</td>
-      <td>8.4</td>
-      <td>6.7</td>
-      <td>1.3</td>
-      <td>13.4</td>
+      <td>9.98</td>
+      <td>6.71</td>
+      <td>1.49</td>
+      <td>10.90</td>
     </tr>
     <tr>
       <td>SR Ranking By Sector</td>
-      <td>9.8</td>
-      <td>8.0</td>
-      <td>1.2</td>
-      <td>12.9</td>
+      <td>10.68</td>
+      <td>7.90</td>
+      <td>1.35</td>
+      <td>11.82</td>
     </tr>
     <tr>
-      <td>SR Zscore Globally</td>
-      <td>10.1</td>
-      <td>8.6</td>
-      <td>1.2</td>
-      <td>19.0</td>
+      <td>Return Z-Score By Sector</td>
+      <td>9.67</td>
+      <td>7.38</td>
+      <td>1.31</td>
+      <td>15.37</td>
     </tr>
     <tr>
-      <td>SR Ranking Globally</td>
-      <td>9.3</td>
-      <td>8.5</td>
-      <td>1.1</td>
-      <td>16.9</td>
+      <td>SR Z-Score Global</td>
+      <td>10.68</td>
+      <td>8.30</td>
+      <td>1.29</td>
+      <td>18.39</td>
     </tr>
     <tr>
-      <td>SR Raw Globally</td>
-      <td>8.9</td>
-      <td>8.5</td>
-      <td>1.1</td>
-      <td>16.1</td>
+      <td>SR Ranking Global</td>
+      <td>10.40</td>
+      <td>8.41</td>
+      <td>1.24</td>
+      <td>15.93</td>
     </tr>
     <tr>
       <td>Return Ranking By Sector</td>
-      <td>7.6</td>
-      <td>7.6</td>
-      <td>1.0</td>
-      <td>14.9</td>
+      <td>9.31</td>
+      <td>7.64</td>
+      <td>1.22</td>
+      <td>10.63</td>
     </tr>
     <tr>
-      <td>Return Raw Globally</td>
-      <td>7.2</td>
-      <td>7.3</td>
-      <td>1.0</td>
-      <td>16.7</td>
+      <td>SR Raw Global</td>
+      <td>9.98</td>
+      <td>8.39</td>
+      <td>1.19</td>
+      <td>15.49</td>
     </tr>
     <tr>
-      <td>Return Ranking Globally</td>
-      <td>7.5</td>
-      <td>7.7</td>
-      <td>1.0</td>
-      <td>18.4</td>
+      <td>Return Raw Global</td>
+      <td>8.42</td>
+      <td>7.28</td>
+      <td>1.16</td>
+      <td>10.96</td>
     </tr>
     <tr>
-      <td>Return Zscore By Sector</td>
-      <td>6.6</td>
-      <td>7.4</td>
-      <td>0.9</td>
-      <td>20.1</td>
+      <td>Return Ranking Global</td>
+      <td>8.54</td>
+      <td>7.63</td>
+      <td>1.12</td>
+      <td>13.62</td>
     </tr>
     <tr>
-      <td>Return Zscore Globally</td>
-      <td>5.5</td>
-      <td>7.5</td>
-      <td>0.7</td>
-      <td>21.0</td>
+      <td>Return Z-Score Global</td>
+      <td>7.95</td>
+      <td>7.45</td>
+      <td>1.07</td>
+      <td>21.23</td>
     </tr>
   </tbody>
 </table>
 
 <p><strong>Table 1</strong>: Performance metrics across different modeling choices, ranked by Sharpe Ratio. Results exclude transaction costs and slippage.</p>
 
-<h2 id="final-thoughts">Final thoughts</h2>
+<h2 id="final-thoughts">Final Thoughts</h2>
 
+<p>Sector normalization, normalization method, and target label choice all had a meaningful impact on performance:</p>
 <ul>
-  <li><strong>The biggest driver of performance is the target label.</strong> Training on <strong>Sharpe Ratio</strong> leads to significantly better results than training on returns.</li>
-  <li><strong>Sector-based normalization improves rankings.</strong> Normalization stocks within their industry provides more stable and accurate signals than global normalization.</li>
-  <li>Normalization method (<strong>ranking vs. Z-scoring</strong>) has <strong>less impact than expected</strong>. Raw features perform nearly as well, suggesting the model already captures key relationships.</li>
-  <li>The <strong>“Combo” strategy performs surprisingly well</strong>, ranking second overall. Diversifying across different approaches stabilizes performance.</li>
-  <li>Instead of searching for a single “best” model, <strong>combining multiple perspectives provides a more robust and stable approach.</strong></li>
+  <li><strong>Sector normalization</strong> was a bigger game-changer than I expected. Comparing stocks within their sector made a huge difference.</li>
+  <li><strong>Normalization method</strong> played a major role. Z-scoring surprisingly outperformed ranking, which I initially thought would be stronger due to its stabilizing effect.</li>
+  <li><strong>Target label choice</strong> still mattered, with Sharpe Ratio models generally outperforming those trained on raw returns.</li>
 </ul>
 
-<p>The key takeaway? <strong>The target label matters most, followed by sector-based normalization. Normalization method itself is less critical than expected.</strong></p>
+<p>Instead of focusing too much on a single best model, combining different perspectives may be a smarter way to go. The “Combo” strategy showed that diversification across methodologies stabilized results, even without fine-tuning. Sometimes, having multiple approaches working together just makes everything more robust.</p>
 
-<h2 id="todo">TODO</h2>
-<ul>
-  <li>results be a bit more in detail about the performance; talk also about the combo</li>
-  <li>Maybe add the normaliation a bit more clear with a fomula</li>
-  <li>Conclude</li>
-  <li>Feature engineering is a bit weird with already speaking about the model without having introducted the model</li>
-</ul>
 
   </div><a class="u-url" href="/quants/2025/02/09/ridge.html" hidden></a>
 </article>
