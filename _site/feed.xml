@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-02-28T14:02:41+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-03-03T14:45:52+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
 </subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">Unleashing The Beast: LightGBM</title><link href="http://localhost:4000/quants/2025/02/20/beast.html" rel="alternate" type="text/html" title="Unleashing The Beast: LightGBM" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/beast</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/beast.html"><![CDATA[<h1 id="roadmap">Roadmap</h1>
 <ul>
   <li>The idea to show performance of Lighgbm first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including new linearities</li>
@@ -100,68 +100,88 @@
 
 <p>Could we explore other horizons? Sure. But to keep things simple, we’ll stick to 20 days for now.</p>
 
-<h2 id="preprocessing-cross-sectional-normalizaton">Preprocessing: Cross-Sectional Normalizaton</h2>
+<h2 id="preprocessing-cross-sectional-normalization">Preprocessing: Cross-Sectional Normalization</h2>
 
-<p>To help the model learn more effectively, we apply cross-sectional normalization. This means adjusting each feature relative to all other stocks on the same day so the model can focus on relative differences rather than raw values.</p>
+<p>Cross-sectional normalization adjusts each feature relative to all other stocks on the same day, ensuring the model focuses on relative differences rather than absolute values. This transformation also improves interpretation—when features are normalized consistently, it’s easier to recognize high or low values across time.</p>
 
-<p>Stock features vary widely—some, like market cap, are in the billions, while others, like daily returns, are much smaller. The model will still work without normalization, but when features are on vastly different scales, it can make it harder to learn relationships effectively.</p>
+<p>By applying this normalization, we ensure that stocks are evaluated in a comparable way at each point in time, which helps stabilize model inputs and prevents certain features from disproportionately influencing rankings.</p>
 
-<p>Cross-sectional normalization helps with stationarity, stabilizing the data and ensuring the model focuses on how features relate to each other rather than their absolute values. This improves ranking consistency across time.</p>
-
-<h3 id="mathematical-formulation">Mathematical Formulation</h3>
+<h2 id="mathematical-formulation">Mathematical Formulation</h2>
 
 <p>For a given feature $X^p$, the normalized value for stock $i$ at time $t$ is:</p>
 
-\[X^{p,\text{norm}}_{i,t} = f(X^p_{i,t}, X^p_{1:N,t})\]
+\[X_{i,t}^{p,\text{norm}} = f\left(X_{i,t}^{p}, X_{1:N,t}^{p}\right)\]
 
 <p>where:</p>
+
 <ul>
   <li>$X^p_{i,t}$ is the raw feature value for stock $i$ at time $t$.</li>
   <li>$X^p_{1:N,t}$ is the set of values for all stocks at time $t$ for feature $p$.</li>
   <li>$f(\cdot)$ is the chosen normalization method.</li>
 </ul>
 
-<h3 id="z-scoring">Z-Scoring</h3>
+<p>Different methods can be used to transform the raw values, each with its own strengths and tradeoffs.</p>
 
-<p>Z-scoring standardizes features to have a mean of 0 and a standard deviation of 1:</p>
+<h2 id="z-scoring">Z-Scoring</h2>
 
-\[X^{p,\text{norm}}_{i,t} = \frac{X^p_{i,t} - \mu^p_t}{\sigma^p_t}\]
+<p>One common approach is z-scoring, which standardizes features by centering them around zero and scaling them to have a standard deviation of one:</p>
+
+\[X_{i,t}^{p,\text{norm}} = \frac{X_{i,t}^{p} - \hat{\mu}^p_t}{\hat{\sigma}^p_t}\]
 
 <p>where:</p>
+
 <ul>
   <li>
-    <p>$\mu^p_t$ is the mean across all stocks at time $t$ for feature $p$:</p>
+    <p>$\hat{\mu}^p_t$ is the estimated mean across all stocks at time $t$ for feature $p$:</p>
 
-\[\mu^p_t = \frac{1}{N} \sum_{i=1}^{N} X^p_{i,t}\]
+\[\hat{\mu}^p_t = \frac{1}{N} \sum_{i=1}^{N} X_{i,t}^{p}\]
   </li>
   <li>
-    <p>$\sigma^p_t$ is the standard deviation:</p>
+    <p>$\hat{\sigma}^p_t$ is the estimated standard deviation:</p>
 
-\[\sigma^p_t = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (X^p_{i,t} - \mu^p_t)^2}\]
+\[\hat{\sigma}^p_t = \sqrt{\frac{1}{N} \sum_{i=1}^{N} \left( X_{i,t}^{p} - \hat{\mu}^p_t \right)^2}\]
   </li>
 </ul>
 
-<p>To prevent extreme values from distorting results, any outliers beyond ±5 standard deviations are clipped.</p>
+<p>Z-scoring retains the relative magnitudes of the original values, allowing the model to distinguish between small and large variations. However, it is sensitive to extreme outliers, so values beyond ±5 standard deviations are clipped.</p>
 
-<h3 id="ranking-normalization">Ranking Normalization</h3>
+<h2 id="ranking-normalization">Ranking Normalization</h2>
 
-<p>Instead of standardizing, we rank stocks and scale the ranks between 0 and 1:</p>
+<p>Another approach is ranking normalization, sometimes referred to as uniform transformation, which transforms feature values into ranks and scales them between 0 and 1:</p>
 
-\[R^p_{i,t} = \frac{r^p_{i,t}}{N}\]
+\[R_{i,t}^{p} = \frac{r_{i,t}^{p}}{N}\]
 
 <p>where:</p>
+
 <ul>
   <li>$r^p_{i,t}$ is the rank of stock $i$ at time $t$ based on feature $p$ (0 for the lowest value, $N$ for the highest).</li>
   <li>$R^p_{i,t}$ is the normalized rank.</li>
 </ul>
 
-<p>This approach transforms a feature into a uniform distribution over $[0,1]$, ensuring all features are comparable while preserving their relative rankings.</p>
+<p>Unlike z-scoring, ranking ensures that the distribution remains stable over time. This makes it robust to extreme values but removes magnitude information—only relative positioning is preserved.</p>
 
-<h2 id="testing-whether-normalization-helps">Testing Whether Normalization Helps</h2>
+<h2 id="visualizing-the-effect-of-normalization">Visualizing the Effect of Normalization</h2>
 
-<p>The model does not require normalization to function—it will still produce rankings using raw features. The question is whether normalization leads to better rankings.</p>
+<p>Below, in Figure 1, a summary of the different normalization methods are applied to a single feature (20-day return). From left to right: the original distribution, z-scored, and ranked.</p>
 
-<p>Three approaches are tested where all features, including the target label, are normalized the same way:</p>
+<p><img src="/assets/ridge/example_normalization.png" alt="Figure 1" /></p>
+
+<p><strong>Figure 1</strong>: Effect of normalization on 20-day return distribution. Left: Original data, Middle: Z-scored, Right: Ranked between 0 and 1.</p>
+
+<h2 id="choosing-the-right-normalization-method">Choosing the Right Normalization Method</h2>
+
+<p>The choice between z-scoring and ranking depends on the specific objectives of the model.</p>
+
+<ul>
+  <li><strong>Z-scoring</strong> preserves magnitude differences but is subject to distribution shifts over time.</li>
+  <li><strong>Ranking</strong> is stable and eliminates outliers but may lose information about the strength of differences between stocks.</li>
+</ul>
+
+<p>Both methods allow the model to process stock features in a comparable way on any given day, but they emphasize different aspects of the data.</p>
+
+<h2 id="evaluating-the-impact-of-normalization">Evaluating the Impact of Normalization</h2>
+
+<p>To test whether normalization improves rankings, three approaches are compared:</p>
 
 <ol>
   <li>No normalization (raw features)</li>
@@ -169,43 +189,39 @@
   <li>Ranking across all stocks</li>
 </ol>
 
-<p>If normalization improves performance, the next step is to examine whether the target label should be normalized globally or by sector.</p>
+<p>If normalization leads to better performance, the next step is to refine how it is applied—particularly to the target label.</p>
 
 <h2 id="should-the-target-label-be-normalized-by-sector">Should the Target Label Be Normalized by Sector?</h2>
 
-<p>After evaluating the effect of normalization on all features, the focus shifts to the target label (Return 20 or Sharpe Ratio 20). The question is whether it should be normalized across all stocks or within each sector.</p>
+<p>While normalizing input features ensures consistency across time, the same consideration applies to the target label (e.g., Return 20 or Sharpe Ratio 20).</p>
+
+<p>The question is whether it should be normalized across all stocks or within each sector:</p>
 
 <ul>
-  <li><strong>Global normalization</strong> applies normalization to the target label across all stocks in the universe.</li>
-  <li><strong>Sector-specific normalization</strong> applies normalization to the target label separately within each sector, while all other features remain globally normalized.</li>
+  <li><strong>Global normalization</strong> applies normalization to the target label across the full stock universe.</li>
+  <li><strong>Sector-specific normalization</strong> applies normalization within each sector while keeping all other features globally normalized.</li>
 </ul>
 
-<p>This adjustment ensures that stocks are normalized within their sector rather than compared to the entire market. The objective is to determine whether this sector-based normalization of the target label improves ranking performance.</p>
-
-<p>Below, in Figure 1, different normalization methods are applied to a single feature (20-day return). From left to right: the original distribution, z-scored, and ranked.</p>
-
-<p><img src="/assets/ridge/example_normalization.png" alt="Figure 1" /></p>
-
-<p><strong>Figure 1</strong>: Effect of normalization on 20-day return distribution. Left: Original data, Middle: Z-scored, Right: Ranked between 0 and 1.</p>
+<p>Sector-specific normalization prevents stocks in different industries from being compared directly in terms of their returns, which can be useful if sector dynamics influence performance. The goal is to determine whether this adjustment improves ranking performance.</p>
 
 <h3 id="handling-missing-data">Handling Missing Data</h3>
 
-<p>Stock data isn’t always perfect—sometimes values are missing. The model can still run without them, but leaving gaps in the data isn’t ideal. So how do we fill them in?</p>
+<h2 id="handling-missing-data-1">Handling Missing Data</h2>
 
-<p>We keep it simple:</p>
+<p>Stock data isn’t always perfect—missing values happen. While the model can still run, leaving gaps in the data isn’t ideal. The approach here is straightforward:</p>
 
 <ul>
   <li>Forward fill: If a stock has prior data, we use the last known value.</li>
   <li>Cross-sectional mean imputation: If no past data exists, we replace the missing value with the sector average for that day.</li>
-  <li>Default values: If neither of the above works, we apply:
+  <li>Default values: When neither of the above applies:
     <ul>
-      <li>Z-scoring: Missing values are set to 0.</li>
-      <li>Ranking: Missing values are set to 0.5 (midpoint of the ranking scale).</li>
+      <li>For z-scoring, missing values are set to 0.</li>
+      <li>For ranking, missing values are set to 0.5 (midpoint of the ranking scale).</li>
     </ul>
   </li>
 </ul>
 
-<p>Could we get more sophisticated? Absolutely. There are plenty of ways to handle missing data, from advanced statistical methods to ML-based imputations. But for now, I’m sticking with a simple, reliable approach.  A deeper dive into missing data strategies is a topic for another time.</p>
+<p>There are more advanced ways to handle missing data, from statistical methods to ML-based imputations. But for now, this simple, reliable approach gets the job done. A deeper dive into missing data strategies is something for another time.</p>
 
 <h2 id="modeling-the-cross-sectional-normalized-score">Modeling the Cross-Sectional Normalized Score</h2>
 
@@ -297,17 +313,17 @@
   <li>A combined strategy (“Combo”), which equally weights all strategies.</li>
 </ul>
 
-<p>To ensure a fair comparison, all strategies were scaled to 8% volatility. The goal was to understand how normalization, sector adjustments, and target labels affect performance. Figure 3 visualizes cumulative returns across all strategies—without labels, adding a bit of suspense.</p>
+<p>To ensure a fair comparison visually, all strategies are scaled to 10% volatility. The goal is to understand how normalization, sector adjustments, and target labels affect performance. Figure 3 visualizes cumulative returns across all strategies—without labels, adding a bit of suspense.</p>
 
-<p>While all models delivered positive returns, there were clear differences in performance.</p>
+<p>While all models deliver positive returns, there is a clear differences in performance.</p>
 
 <p><img src="/assets/ridge/all_lines.png" alt="Figure 3" /></p>
 
-<p><strong>Figure 3</strong>: Cumulative returns of all strategies, scaled to 8% volatility.</p>
+<p><strong>Figure 3</strong>: Cumulative returns of all strategies, scaled to 10% volatility.</p>
 
 <p>Figure 4 provides a summary of how normalization method, sector adjustment, and target label choice affected Sharpe Ratios across all models. It highlights the performance differences between Z-scoring, ranking, and raw features, as well as the impact of normalizing within sectors versus globally. The results also show how using Sharpe Ratios as a target label compares to using raw returns.</p>
 
-<p>One of the strongest patterns in the results is the impact of normalization. Models using Z-scoring performed best, followed by ranking, while raw features consistently underperformed. This was surprising—I initially expected ranking to work better due to its stabilizing effect. However, it seems that ranking may also remove valuable signals, which could explain why Z-scoring outperformed. As expected, raw features introduced too much noise, making them the weakest option.</p>
+<p>One of the strongest patterns in the results is the impact of normalization. Models using Z-scoring performed best, followed by ranking, while raw features consistently underperform. This was surprising—I initially expected ranking to work better due to its stabilizing effect. However, it seems that ranking may also remove valuable signals, which could explain why Z-scoring outperformed. As expected, raw features introduced too much noise, making them the weakest option.</p>
 
 <p>Beyond normalization type, sector adjustments had an even greater effect. Normalizing the target label within sectors significantly improved Sharpe Ratios, reinforcing the idea that comparing stock performance within their peer group leads to better rankings. Each sector has its own dynamics, and normalizing within them helps separate true signals from sector-wide noise. This adjustment ensures that comparisons remain meaningful, making rankings more robust.</p>
 
@@ -327,7 +343,7 @@
 
 <p><img src="/assets/ridge/normalization_target.png" alt="Figure 5" /></p>
 
-<p><strong>Figure 5</strong>: Cumulative return of different normalization methods, conditioned on the target label. Volatility is set at 8% for all strategies.</p>
+<p><strong>Figure 5</strong>: Cumulative return of different normalization methods, conditioned on the target label. Volatility is set at 10% for all strategies.</p>
 
 <h3 id="key-takeaways">Key Takeaways</h3>
 <ul>
@@ -450,7 +466,7 @@
 
 <p>Instead of searching for a single best model, it may be smarter to combine perspectives. The “Combo” strategy showed that diversification across models stabilizes results—even without fine-tuning.</p>
 
-<h2 id="tood">TOOD:</h2>
+<h2 id="todo">TODO:</h2>
 <ul>
   <li>refer to combo in tabel</li>
   <li>interpration a bit better</li>
@@ -461,19 +477,16 @@
   <li>Discuss the effects of ranking and zscoring a bit more</li>
   <li>Add some numbers in the text</li>
   <li>Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model</li>
+  <li>Write in present tense</li>
 </ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[In the last article, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Boring Way to Make Money?</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Boring Way to Make Money?" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="the-low-volatility-factor-a-steady-approach">The Low-Volatility Factor: A Steady Approach</h2>
 
-<p>The low-volatility factor is a well-known concept in quantitative investing. It’s based on a simple observation: stocks that fluctuate less tend to have better risk-adjusted returns than those with more extreme price swings.</p>
+<p>The low-volatility factor is a well-known concept in quantitative investing. It’s based on a simple observation: stocks that fluctuate less tend to have better risk-adjusted returns than those with more extreme price swings. This pheneoman also exist in other asset classes. We will be focusing on stocks.</p>
 
-<p>This post is part of a series on ranking stocks. I’ll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I’ll compare all three approaches to see whether complexity actually adds value.</p>
-
-<p>For now, let’s focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.</p>
+<p>This post is part of a series on ranking stocks. I’ll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I’ll compare all three approaches to see whether complexity actually adds value. For now, let’s focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.</p>
 
 <h2 id="tradeable-universe">Tradeable Universe</h2>
 
-<p>The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep things realistic, I filter out stocks trading below $5.</p>
-
-<p>The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since the dataset uses point-in-time constituents, there’s no survivorship bias—this isn’t just a filtered list of stocks that happened to do well.</p>
+<p>The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep it realistic, I filter out stocks priced under $5. The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since it uses point-in-time constituents, there’s no survivorship bias. Figures 1 visualizes the number of tradeabel stocks over time.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/nr_stocks.svg" alt="Figure 1" /><br />
 Figure 1: Number of tradeable stocks over time.</p>
@@ -604,50 +617,70 @@ where:
 
 <p><strong>Figure 5</strong>: Net Asset Value of the volatility-targeted portfolio.</p>
 
+<h2 id="volatility-targeting-comparison">Volatility Targeting Comparison</h2>
+
 <table>
   <thead>
     <tr>
       <th>Metric</th>
-      <th>Long</th>
-      <th>Short</th>
-      <th>Long-Short</th>
+      <th>Long (No VT)</th>
+      <th>Long (VT)</th>
+      <th>Short (No VT)</th>
+      <th>Short (VT)</th>
+      <th>L/S (No VT)</th>
+      <th>L/S (VT)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Geometric Return (ann. %)</td>
+      <td>Geom. Return (%)</td>
+      <td>11.8</td>
       <td>11.1</td>
+      <td>4.7</td>
       <td>2.9</td>
+      <td>-5.3</td>
       <td>7.7</td>
     </tr>
     <tr>
-      <td>Volatility (ann. %)</td>
+      <td>Volatility (%)</td>
+      <td>12.2</td>
       <td>9.7</td>
+      <td>38.6</td>
       <td>9.7</td>
+      <td>32.6</td>
       <td>8.3</td>
     </tr>
     <tr>
-      <td>Modified Sharpe Ratio (ann.)</td>
+      <td>Sharpe Ratio</td>
+      <td>1.0</td>
       <td>1.1</td>
+      <td>0.1</td>
       <td>0.3</td>
+      <td>-0.2</td>
       <td>0.9</td>
     </tr>
     <tr>
-      <td>Maximum Drawdown (%)</td>
+      <td>Max Drawdown (%)</td>
+      <td>40.2</td>
       <td>29.5</td>
+      <td>89.6</td>
       <td>36.7</td>
+      <td>91.6</td>
       <td>33.6</td>
     </tr>
     <tr>
-      <td>Maximum Time Under Water</td>
-      <td>612.0</td>
-      <td>1647.0</td>
-      <td>944.0</td>
+      <td>Max TUW (Days)</td>
+      <td>863</td>
+      <td>612</td>
+      <td>4802</td>
+      <td>1647</td>
+      <td>5539</td>
+      <td>944</td>
     </tr>
   </tbody>
 </table>
 
-<p><strong>Table 1</strong>: Portfolio statistics for the long, short, and long-short portfolios after volatility targeting</p>
+<p><strong>Table 1</strong>: Performance metrics for long, short, and long-short portfolios before and after volatility targeting (VT). “No VT” indicates no volatility targeting, while “VT” applies it.</p>
 
 <p>Figure 6 shows the portfolio weights for both the long (low-volatility) and short (high-volatility) portfolios after volatility targeting.</p>
 
@@ -668,4 +701,12 @@ where:
   <li>Dynamic risk adjustment smooths returns. Volatility-targeted portfolios adapt to market shifts, reducing drawdowns and improving long-term stability.</li>
 </ol>
 
-<p>A simple volatility-targeting adjustment makes a long-short portfolio more stable and effective. In the next post, I’ll explore how combining multiple factors can further enhance results.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quant" /><summary type="html"><![CDATA[The Low-Volatility Factor: A Steady Approach]]></summary></entry></feed>
+<p>A simple volatility-targeting adjustment makes a long-short portfolio more stable and effective. In the next post, I’ll explore how combining multiple factors can further enhance results.</p>
+
+<h2 id="todo">TODO</h2>
+<ul>
+  <li>measuring volatitily is not so well described</li>
+  <li>Tradeable universe; check this section</li>
+  <li>use some numbers in the results</li>
+  <li>Add columns before and after vol scaling in Performance tables</li>
+</ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quant" /><summary type="html"><![CDATA[The Low-Volatility Factor: A Steady Approach]]></summary></entry></feed>

@@ -8,19 +8,15 @@ categories: [Quant]
 
 ## The Low-Volatility Factor: A Steady Approach
 
-The low-volatility factor is a well-known concept in quantitative investing. It’s based on a simple observation: stocks that fluctuate less tend to have better risk-adjusted returns than those with more extreme price swings.
+The low-volatility factor is a well-known concept in quantitative investing. It’s based on a simple observation: stocks that fluctuate less tend to have better risk-adjusted returns than those with more extreme price swings. This pheneoman also exist in other asset classes. We will be focusing on stocks.
 
-This post is part of a series on ranking stocks. I'll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I'll compare all three approaches to see whether complexity actually adds value.
-
-For now, let's focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.
+This post is part of a series on ranking stocks. I'll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I'll compare all three approaches to see whether complexity actually adds value. For now, let's focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.
 
 
 
 ## Tradeable Universe
 
-The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep things realistic, I filter out stocks trading below $5.
-
-The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since the dataset uses point-in-time constituents, there’s no survivorship bias—this isn’t just a filtered list of stocks that happened to do well.
+The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep it realistic, I filter out stocks priced under $5. The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since it uses point-in-time constituents, there’s no survivorship bias. Figures 1 visualizes the number of tradeabel stocks over time.
 
 ![Figure 1](/assets/2024-12-15-low-volatility-factor/nr_stocks.svg)  
 Figure 1: Number of tradeable stocks over time.
@@ -154,15 +150,21 @@ Figure 4 shows how this works—volatility is more aligned across the five portf
 
 **Figure 5**: Net Asset Value of the volatility-targeted portfolio.  
 
-| Metric                        |  Long  | Short  | Long-Short |
-|-------------------------------|--------|--------|------------|
-| Geometric Return (ann. %)     | 11.1   | 2.9    | 7.7        |
-| Volatility (ann. %)           | 9.7    | 9.7    | 8.3        |
-| Modified Sharpe Ratio (ann.)  | 1.1    | 0.3    | 0.9        |
-| Maximum Drawdown (%)          | 29.5   | 36.7   | 33.6       |
-| Maximum Time Under Water      | 612.0  | 1647.0 | 944.0      |
+## Volatility Targeting Comparison
 
-**Table 1**: Portfolio statistics for the long, short, and long-short portfolios after volatility targeting  
+
+| Metric              | Long (No VT) | Long (VT) | Short (No VT) | Short (VT) | L/S (No VT) | L/S (VT) |
+|---------------------|-------------|-----------|--------------|-----------|------------|----------|
+| Geom. Return (%)   | 11.8        | 11.1      | 4.7         | 2.9       | -5.3        | 7.7      |
+| Volatility (%)     | 12.2        | 9.7       | 38.6        | 9.7       | 32.6        | 8.3      |
+| Sharpe Ratio       | 1.0         | 1.1       | 0.1         | 0.3       | -0.2        | 0.9      |
+| Max Drawdown (%)   | 40.2        | 29.5      | 89.6        | 36.7      | 91.6        | 33.6     |
+| Max TUW (Days)     | 863         | 612       | 4802        | 1647      | 5539        | 944      |
+
+**Table 1**: Performance metrics for long, short, and long-short portfolios before and after volatility targeting (VT). "No VT" indicates no volatility targeting, while "VT" applies it.
+
+ 
+
 
 Figure 6 shows the portfolio weights for both the long (low-volatility) and short (high-volatility) portfolios after volatility targeting.  
 
@@ -183,3 +185,8 @@ During extreme market events like the dot-com crash (2000), the financial crisis
 
 A simple volatility-targeting adjustment makes a long-short portfolio more stable and effective. In the next post, I’ll explore how combining multiple factors can further enhance results.
   
+## TODO
+ - measuring volatitily is not so well described
+ - Tradeable universe; check this section
+ - use some numbers in the results
+ - Add columns before and after vol scaling in Performance tables
