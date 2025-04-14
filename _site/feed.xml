@@ -1,110 +1,388 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-03-03T14:45:52+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
-</subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">Unleashing The Beast: LightGBM</title><link href="http://localhost:4000/quants/2025/02/20/beast.html" rel="alternate" type="text/html" title="Unleashing The Beast: LightGBM" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/beast</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/beast.html"><![CDATA[<h1 id="roadmap">Roadmap</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-04-14T11:31:23+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
+</subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">LightGBM</title><link href="http://localhost:4000/quants/2025/02/20/beast.html" rel="alternate" type="text/html" title="LightGBM" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/beast</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/beast.html"><![CDATA[<h1 id="roadmap">Roadmap</h1>
 <ul>
-  <li>The idea to show performance of Lighgbm first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including new linearities</li>
-</ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap The idea to show performance of Lighgbm first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including new linearities]]></summary></entry><entry><title type="html">Ridge regression</title><link href="http://localhost:4000/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Ridge regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/09/ridge.html"><![CDATA[<p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?</p>
+  <li>
+    <p>The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities</p>
+  </li>
+  <li>introduce LightGBM very shortly: check</li>
+  <li>explain again a bit the process but a very brief recap. Refer to previous articles: check</li>
+  <li>The idea is to show the added value of LightGBM compared to ridge compared to the low vol factor: check</li>
+  <li>I’m thinking of also introducing the singal performance and metrics: TODO
+      - add also low vol factor here
+      - add summary statisitcs here as well; mean, min max, std, sr</li>
+  <li>Compare performance returns: low vol, linear, lightgbm: check</li>
+  <li>Should be a relatively short article</li>
+  <li>introduce transaction costs: ok will say</li>
+  <li>show turnover: nope</li>
+  <li>Quickly tell about the diminsihing performance over the last 10 years</li>
+  <li>Mentioned the neural networks approach to model weigths</li>
+</ul>
 
-<p>This time, we’ll predict stock rankings using a linear regression model that combines multiple features—like price changes, trading volume, and risk levels—and learns the optimal ranking based on a target label. A target label is simply the outcome we want the model to predict, such as stock returns or Sharpe ratio. By learning to predict this label, the model will rank the stocks accordingly.</p>
+<h2 id="introduction">Introduction</h2>
 
-<p>Predicting stock rankings isn’t as simple as it seems. We’re dealing with features on different scales—price changes, trading volume, risk—and if we don’t normalize them, bigger features like market cap will overshadow smaller ones, like short-term returns. Additionally, the signal-to-noise ratio is quite low, meaning there’s a lot of random fluctuation in the data, which makes it harder for the model to find meaningful patterns. My intuition tells me normalizing these features will help the model learn a better ranking. I’m not totally sure yet, but that’s exactly what I’m testing today. If we get the normalization right, the model might perform better—but we’ll see.</p>
+<p>In my last two articles, I explored different ways to rank stocks and build long-short portfolios.</p>
+
+<p>In the first article, I used a simple one-factor model based on volatility — ranking stocks by their recent volatility and betting on the fact that low-volatility stocks tend to outperform high-volatility ones.</p>
+
+<p>In the second article, I moved to a more flexible approach by combining multiple features — like momentum, volatility, size, and liquidity — using Ridge regression, a linear model that learns how to weigh these features. I also examined some important design choices, like whether to use ranking or z-scoring for feature normalization, and whether to normalize the target label by sector.</p>
+
+<p>Now I want to take this a step further and see what happens when I switch to a non-linear model, LightGBM. The idea is to keep everything else the same — same dataset, same features, same target label, same allocation model — and only change the model. This way, I can isolate the impact of using a non-linear approach that can capture more complex patterns in the data.</p>
+
+<p>In the end, I’ll compare LightGBM with both Ridge and the low-volatility factor, to clearly see how much is gained (or not) when moving from a simple factor to a linear model and then to a non-linear one.</p>
+
+<h2 id="recap-of-the-process">Recap of the process</h2>
+
+<p>Before diving into LightGBM, let me briefly recap the setup I’ve been using, which stays unchanged for this analysis.</p>
+
+<p>I’m working with the Russell 1000 universe, using point-in-time data and filtering out stocks priced below $5 to avoid illiquid names. The feature set is broad, covering about 150 features related to momentum, volatility, liquidity, size, mean reversion, and correlation with the market.</p>
+
+<p>For the target label, I focus on the Sharpe ratio over the next 20 days. I’ve chosen this because it provides a more stable and risk-adjusted measure of performance compared to raw returns, which are often extremely noisy.</p>
+
+<p>All features are normalized using cross-sectional ranking — turning each feature into a percentile rank between 0 and 1 on each day. Ranking has become my default because it makes features comparable across stocks and over time, and it avoids the impact of extreme outliers. I know z-scoring could sometimes be a better choice, and that’s something I want to revisit in the future, but for now I’m sticking with ranking.</p>
+
+<p>Once I have model scores, I use a volatility-targeted allocation model to build long-short portfolios. Specifically, I go long the top 75 and short the bottom 75 stocks, adjusting each position based on volatility to avoid concentrating risk in a few names. This makes the portfolio more stable over time.</p>
+
+<p>Finally, portfolios are rebalanced every three weeks. I find this strikes a good balance between adapting to new information and keeping turnover under control.</p>
+
+<h2 id="why-move-to-lightgbm">Why move to LightGBM</h2>
+
+<p>So far, the Ridge model combined multiple features in a linear way — it learned fixed weights for each feature, and that was it. But markets are rarely linear, and I suspect there are more complex patterns that Ridge simply can’t capture. For example, a feature like volatility might only matter when combined with a momentum signal, or extreme values of a feature might behave differently than moderate ones.</p>
+
+<p>To address this, I’m moving to gradient boosting, a method that builds strong predictive models by combining many small decision trees. Gradient boosting works iteratively — each new tree tries to fix the mistakes of the previous ones — making it well suited to capture non-linear effects and feature interactions.</p>
+
+<p>There are several well-known implementations of gradient boosting, like XGBoost, CatBoost, and LightGBM. I’m using LightGBM because it’s fast and efficient, especially when working with large datasets like mine. In practice, I don’t expect a big difference between these libraries, but LightGBM tends to be much quicker to train and predict, so it’s the obvious choice for this kind of project.</p>
+
+<p>Another reason to choose gradient boosting is that these models are often among the best-performing approaches for tabular datasets — including many winning solutions in Kaggle competitions. So it makes sense to see whether this kind of model can push performance beyond what Ridge and the low-volatility factor can achieve.</p>
+
+<p>With that in mind, I applied LightGBM to the same setup as before: ranking stocks in the Russell 1000, going long the top 75, short the bottom 75, and using volatility-based position sizing. This keeps everything consistent, so we can isolate the impact of the model itself.</p>
+
+<h2>Performance</h2>
+
+<p>Let’s take a look at how LightGBM performs when applied to the same setup as before — and the results are quite strong.</p>
+
+<div style="display: block; text-align: left;">
+  <img src="/assets/lightgbm/perf_lgbm.png" width="600" style="display: block; margin: 0;" />
+  <p><strong>Figure 1:</strong> Performance of the LightGBM strategy, before and after transaction costs.</p>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Short</th>
+      <th>Long</th>
+      <th>L/S (No Fees)</th>
+      <th>L/S (Fees)</th>
+      <th>Russell 1000</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Return (Ann. %)</td>
+      <td>1.46</td>
+      <td>12.48</td>
+      <td>12.33</td>
+      <td>10.69</td>
+      <td>7.29</td>
+    </tr>
+    <tr>
+      <td>Volatility (Ann. %)</td>
+      <td>9.95</td>
+      <td>10.54</td>
+      <td>6.67</td>
+      <td>6.69</td>
+      <td>19.58</td>
+    </tr>
+    <tr>
+      <td>Sharpe Ratio</td>
+      <td>0.15</td>
+      <td>1.18</td>
+      <td>1.85</td>
+      <td>1.60</td>
+      <td>0.37</td>
+    </tr>
+    <tr>
+      <td>Maximum Drawdown (%)</td>
+      <td>30.78</td>
+      <td>31.10</td>
+      <td>13.79</td>
+      <td>13.97</td>
+      <td>56.88</td>
+    </tr>
+    <tr>
+      <td>Max Time Under Water (days)</td>
+      <td>1619</td>
+      <td>599</td>
+      <td>234</td>
+      <td>265</td>
+      <td>1666</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 1:</strong> Performance statistics of the LightGBM strategy, with and without transaction costs (5 basis points per trade).</p>
+
+<p>After accounting for costs, the strategy posts a 10.7% annualized return with volatility just under 7%, leading to a Sharpe ratio of 1.60. Drawdowns stay around 14%, and the strategy tends to bounce back relatively quickly after periods of underperformance.</p>
+
+<p>What’s nice to see is that both sides of the book are doing their job. The long leg delivers a solid 12.5% return — well above the Russell 1000’s 7.3%. The short leg returns just 1.5%, meaning those bottom-ranked stocks are underperforming the market, as intended. That’s exactly the kind of clean separation you want in a ranking strategy.</p>
+
+<p>That said, it’s worth noting the Russell 1000 isn’t a proper benchmark here — it’s long-only and far more volatile — but it’s still helpful as a rough point of reference since we’re trading within that universe.</p>
+
+<p>Because both legs are volatility-targeted, the difference in returns translates cleanly into long-short performance, without relying on one side to carry all the weight. The result is a fairly smooth and balanced profile</p>
+
+<h2 id="model-performance">Model Performance</h2>
+
+<h3 id="1-statistical-model-performance">1. Statistical Model Performance</h3>
+
+<p>Before looking at portfolio returns, it’s useful to evaluate how well each model ranks stocks based on expected future performance — independently of any portfolio construction.</p>
+
+<p>Each day, the models generate a prediction for every stock $i$ in the universe. For Ridge and LightGBM, these predictions are trained to estimate the Sharpe ratio over the next 20 trading days, which we compute and rank within each sector to account for industry effects.</p>
+
+<p>This gives us, on each day $t$, a full cross-section of predicted scores and a corresponding cross-section of true future Sharpe ratios — both across all stocks.</p>
+
+<p>To evaluate signal quality, we compute the Spearman rank correlation between the predicted ranking and the true ranking:</p>
+
+\[\rho_t = \text{Spearman} \left( \{ \hat{y}_{i,t} \}, \{ y_{i,t} \} \right)\]
+
+<p>where:</p>
+
+<ul>
+  <li>$\hat{y}_{i,t}$ is the model-predicted score for stock $i$ at time $t$</li>
+  <li>$y_{i,t}$ is the realized Sharpe ratio over the next 20 days for stock $i$, cross-sectionally rank-normalized by sector</li>
+</ul>
+
+<p>This correlation is computed across all stocks on each day $t$, giving us a time series ${ \rho_t }$ of daily values.</p>
+
+<p>From this series, we compute:</p>
+
+<ul>
+  <li>Mean correlation — average predictive strength</li>
+  <li>Standard deviation — signal stability</li>
+  <li>Sharpe ratio — consistency over time (mean divided by standard deviation)</li>
+</ul>
+
+<p><img src="/assets/lightgbm/signal.png" width="600" /></p>
+<p><strong>Figure 2:</strong> Cumulative Spearman correlation between model signals and future Sharpe ratio rankings, computed daily.</p>
+<p><br /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Low Volatility</th>
+      <th>Ridge Regression</th>
+      <th>LightGBM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Mean (%)</td>
+      <td>4.96</td>
+      <td>5.14</td>
+      <td>5.43</td>
+    </tr>
+    <tr>
+      <td>Standard Deviation (%)</td>
+      <td>14.39</td>
+      <td>8.70</td>
+      <td>7.03</td>
+    </tr>
+    <tr>
+      <td>Sharpe Ratio</td>
+      <td>0.34</td>
+      <td>0.59</td>
+      <td>0.77</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 2:</strong> Daily signal quality metrics. Models are evaluated based on how well their predicted rankings align with future 20-day Sharpe ratio rankings (normalized by sector), measured using Spearman correlation across all stocks each day.</p>
+
+<p>Figure 2 plots the cumulative Spearman correlation between each model’s daily predictions and realized outcomes — giving us a running view of how consistently each signal aligns with future Sharpe ratio rankings. A steadily rising line indicates stable predictive power over time, while flatter or more erratic curves suggest a noisier, less reliable signal.</p>
+
+<p>The summary statistics in Table 2 make this more concrete. While the average correlation values are all in the 5% range, LightGBM stands out by delivering its signal more consistently — with the lowest day-to-day variability and the highest signal-level Sharpe ratio.</p>
+
+<p>This might sound modest — after all, Spearman correlation ranges from -1 to 1 (or -100% to 100%), and we’re hovering around just 5%. But this is exactly what’s meant by “low signal-to-noise” in finance: even a small but stable signal can lead to meaningful results. And that’s what we’re seeing here — LightGBM offers a modest edge in correlation that translates into significantly better downstream performance.
+The signal-level results are encouraging — LightGBM produces a stronger and more stable ranking than both Ridge regression and the low-volatility factor. But how does this translate into actual financial performance?</p>
+
+<h3 id="2-financial-performance">2. Financial Performance</h3>
+
+<p><img src="/assets/lightgbm/perf_return_comp.png" width="600" /></p>
+<p><strong>Figure 3:</strong> Performance over the full sample (1997–2024).</p>
+
+<p><img src="/assets/lightgbm/perf_return_comp_last_10yr.png" width="600" /></p>
+<p><strong>Figure 4:</strong> Performance over the last decade (2015–2024).</p>
+<p><br /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Low Vol (Full)</th>
+      <th>LR (Full)</th>
+      <th>LGBM (Full)</th>
+      <th>Low Vol (10Y)</th>
+      <th>LR (10Y)</th>
+      <th>LGBM (10Y)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Return (Ann. %)</td>
+      <td>5.62</td>
+      <td>8.76</td>
+      <td>11.68</td>
+      <td>7.94</td>
+      <td>8.91</td>
+      <td>9.33</td>
+    </tr>
+    <tr>
+      <td>Volatility (Ann. %)</td>
+      <td>8.67</td>
+      <td>7.98</td>
+      <td>7.09</td>
+      <td>9.76</td>
+      <td>8.91</td>
+      <td>8.17</td>
+    </tr>
+    <tr>
+      <td>Sharpe Ratio</td>
+      <td>0.67</td>
+      <td>1.09</td>
+      <td>1.59</td>
+      <td>0.83</td>
+      <td>1.00</td>
+      <td>1.13</td>
+    </tr>
+    <tr>
+      <td>Max. Drawdown (%)</td>
+      <td>35.27</td>
+      <td>20.18</td>
+      <td>13.71</td>
+      <td>12.11</td>
+      <td>17.07</td>
+      <td>11.69</td>
+    </tr>
+    <tr>
+      <td>Max. Time Under Water (Days)</td>
+      <td>844</td>
+      <td>862</td>
+      <td>297</td>
+      <td>350</td>
+      <td>307</td>
+      <td>297</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 3:</strong> Strategy performance over the full sample (1997–2024) and the last decade (2015–2024).</p>
+
+<p>Figures 3 and 4, along with Table 3, show a clear pattern: LightGBM outperforms both Ridge and Low Vol across nearly every metric. It delivers higher returns, lower volatility, and stronger Sharpe ratios — with significantly shallower drawdowns and faster recovery times. Over the full sample, the Sharpe ratio reaches 1.59 — a meaningful improvement over Ridge (1.09) and Low Vol (0.67).</p>
+
+<p>That said, it’s worth pointing out that performance in the last decade is lower across the board. LightGBM still leads, but the margin has narrowed. Returns are flatter, volatility is slightly higher, and Sharpe ratios have declined compared to the earlier years.</p>
+
+<p>Why is that? Is the market becoming more efficient? Are features becoming less predictive? Is it overfitting to a regime that no longer holds? These are important questions — ones I won’t tackle here, but that I plan to explore in a follow-up post.</p>
+
+<p>For now, the takeaway is simple: LightGBM shows consistent improvements over simpler models, but like all strategies, its performance evolves — and understanding <em>why</em> is just as important as measuring <em>how much</em>.</p>
+
+<h2 id="whats-next">What’s Next</h2>
+
+<p>There’s clearly room to improve. As we’ve seen, performance over the past decade has declined. It’s tempting to jump to conclusions about why — changing market dynamics, feature decay, increased competition — but the truth is, it’s hard to know. What we do know is that results have weakened, and that’s reason enough to dig deeper.</p>
+
+<p>Here are a few directions I’m thinking about:</p>
+
+<ul>
+  <li>
+    <p><strong>Understanding model exposures</strong><br />
+How much of the return is driven by known risk factors or sector tilts? Are we unknowingly taking on systematic exposures that explain most of the performance? Decomposing the P&amp;L and analyzing factor loadings would help shed light here. There are some great books and papers that go deep into this, and I plan to study those more closely.</p>
+  </li>
+  <li>
+    <p><strong>Expanding the feature set</strong><br />
+Right now, the model only sees price, market cap, and volume — a relatively narrow view. There’s likely signal in other types of data, especially when the current ones start to fade. Also, we arbitrarily chose to predict the Sharpe ratio over the next 20 days. But why not 10? Or 30? Or 60? Maybe even combine models trained on different horizons — this could help smooth out noise and pick up different return profiles.</p>
+  </li>
+  <li>
+    <p><strong>Rethinking the modeling objective</strong><br />
+One thing that’s been bothering me is the two-step setup: first, we model a score or ranking; then we convert that into positions using a separate allocation rule. But what if we skipped the middle step and directly optimized for portfolio weights? There’s some interesting work out there on end-to-end portfolio optimization that might be worth exploring.</p>
+  </li>
+  <li>
+    <p><strong>Learning the SDF directly with transformers</strong><br />
+A direction that’s particularly exciting is inspired by <em>Artificial Asset Pricing</em> by Kelly, Mazarei, and Xiu (2023). Instead of predicting returns or Sharpe ratios and then ranking stocks, they use a transformer architecture to learn the stochastic discount factor directly. This approach sidesteps traditional factor modeling entirely, allowing the network to learn pricing kernels from raw panel data. It’s an ambitious setup, but one that might help close the gap between predictive modeling and true portfolio optimization.</p>
+  </li>
+</ul>
+
+<p>All of this opens the door to a broader research direction — and I’ll dig into these ideas in future posts.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities]]></summary></entry><entry><title type="html">Ridge regression</title><link href="http://localhost:4000/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Ridge regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/09/ridge.html"><![CDATA[<p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually.</p>
+
+<p>Stock prediction is hard. Instead of trying to guess exact returns, I’m focusing on something more practical: figuring out whether stock A will perform better than stock B. I don’t need to know by how much—just which one is likely to do better.</p>
+
+<p>To do this, I’m using a multiple linear regression model that takes in many features—like price changes, trading volume, and risk levels—and learns how to weigh them optimally. The model is trained on a target label, which is just the outcome I want it to predict, like future returns or the Sharpe ratio.</p>
+
+<p>But there are a few challenges. Features behave differently over time—their distributions shift, patterns that worked before can break down, and some signals that seem useful in one market environment might completely disappear in another. On top of that, the signal-to-noise ratio is low, making it tough to extract meaningful insights.</p>
 
 <p>The dataset stays the same as the one used in <a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">the previous article</a>: daily price, volume, and market capitalization data for all Russell 1000 (RIY) constituents, covering about 3,300 stocks historically. We use point-in-time constituents of the RIY and apply basic liquidity filters, excluding stocks priced below $5 to ensure realistic implementation.</p>
 
 <h2 id="feature-engineering">Feature Engineering</h2>
 
-<p>Coming from a statistical and computer science background, it makes sense to let the data figure out how the relationships should be learned, instead of imposing too many assumptions. This contrasts with the typical approach in multifactor portfolios, where the modeler decides how features should be combined. The advantage of using a regression model is that it learns the weights for how features should be combined. We’re sticking with linear regression for now, assuming the relationships are linear and no interaction terms. It’s a simple, data-driven approach that focuses on finding those direct, linear connections between features and the target.</p>
+<p>Coming from a statistical and computer science background, I naturally lean toward letting the data determine relationships rather than imposing rigid assumptions. This contrasts with traditional multifactor portfolio approaches, where the modeler manually decides how to combine features (factors). Instead, I use a regression model that learns the optimal feature weights directly from the data.</p>
 
-<p>Obviously, we need to define our predictive features and choose a target variable. We focus on price, volume, market capitalization, and market-derived features. Below is a breakdown of the main feature groups, computed daily for all 3,300 stocks in our universe.</p>
+<p>For now, I’m keeping it simple with linear regression, assuming the relationships are linear and avoiding interaction terms. It’s a straightforward, data-driven approach that focuses on identifying direct, linear connections between features and the target variable.</p>
 
-<ol>
-  <li><strong>Momentum Features</strong>
-    <ul>
-      <li>Capture trend-following behavior.</li>
-      <li>Examples:
-        <ul>
-          <li>Lagged returns over 1 to 10 days.</li>
-          <li>Rolling cumulative returns over 21 to 252 days.</li>
-          <li>Moving Average Convergence Divergence (MACD) to detect shifts in momentum.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Volatility Features</strong>
-    <ul>
-      <li>Measure risk.</li>
-      <li>Examples:
-        <ul>
-          <li>Rolling historical volatility over 21, 63, or 126 days.</li>
-          <li>Separate downside and upside volatility.</li>
-          <li>Average True Range (ATR) to normalize price fluctuations.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Liquidity Features</strong>
-    <ul>
-      <li>Assess trading activity.</li>
-      <li>Examples:
-        <ul>
-          <li>Rolling mean and standard deviation of trading volume.</li>
-          <li>Ratio of current volume to its rolling maximum to highlight unusual trading activity.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Size Features</strong>
-    <ul>
-      <li>Measure company scale.</li>
-      <li>Examples:
-        <ul>
-          <li>Rolling mean and minimum of market cap.</li>
-          <li>Distinguishes small-cap from large-cap stocks.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Short Mean Reversion Features</strong>
-    <ul>
-      <li>Identify when prices revert to historical norms.</li>
-      <li>Examples:
-        <ul>
-          <li>Price deviation from its rolling moving average.</li>
-          <li>Position relative to rolling minimum and maximum values.</li>
-          <li>Bollinger Bands to spot overbought or oversold conditions.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><strong>Correlation with the Market</strong>
-    <ul>
-      <li>Capture systematic risk.</li>
-      <li>Examples:
-        <ul>
-          <li>Rolling correlation with the Russell 1000 over 63-day windows.</li>
-          <li>Helps separate defensive stocks from high-beta names.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ol>
+<h2 id="choosing-predictive-features">Choosing Predictive Features</h2>
+<p>Before the model can learn anything useful, I define the right features and select a target variable. I focus on price, volume, market capitalization, and market-derived indicators, computing them daily for all 3,300 stocks in my universe. Here’s a breakdown of the key feature groups:</p>
 
-<p>That leaves us with around 150 predictive features, some of which are obviously correlated.</p>
-
-<h3 id="target-variable">Target Variable</h3>
-<p>Now, what exactly are we trying to predict? We’ll focus on two targets:</p>
-
+<p><strong>1. Momentum Features</strong><br />
+Capture trend-following behavior.</p>
 <ul>
-  <li>Return over the next 20 days</li>
-  <li>Sharpe ratio over the next 20 days</li>
+  <li>Lagged returns over 1 to 10 days.</li>
+  <li>Rolling cumulative returns over 21 to 252 days.</li>
+  <li>MACD to detect shifts in momentum.</li>
 </ul>
 
-<p>Could we explore other horizons? Sure. But to keep things simple, we’ll stick to 20 days for now.</p>
+<p><strong>2. Volatility Features</strong><br />
+Measure risk.</p>
+<ul>
+  <li>Rolling historical volatility over 21, 63, or 126 days.</li>
+  <li>Average True Range (ATR) to normalize price fluctuations.</li>
+</ul>
+
+<p><strong>3. Liquidity Features</strong><br />
+Assess trading activity.</p>
+<ul>
+  <li>Rolling mean and standard deviation of trading volume.</li>
+  <li>Ratio of current volume to its rolling maximum to highlight unusual trading activity.</li>
+</ul>
+
+<p><strong>4. Size Features</strong><br />
+Measure company scale.</p>
+<ul>
+  <li>Rolling mean and minimum of market cap.</li>
+  <li>Distinguishes small-cap from large-cap stocks.</li>
+</ul>
+
+<p><strong>5. Short Mean Reversion Features</strong><br />
+Identify when prices revert to historical norms.</p>
+<ul>
+  <li>Price deviation from its rolling moving average.</li>
+  <li>Position relative to rolling minimum and maximum values.</li>
+  <li>Bollinger Bands to spot overbought or oversold conditions.</li>
+</ul>
+
+<p><strong>6. Correlation with the Market</strong><br />
+Capture systematic risk.</p>
+<ul>
+  <li>Rolling correlation with the Russell 1000 over 63-day windows.</li>
+  <li>Helps separate defensive stocks from high-beta names.</li>
+</ul>
+
+<p>In total, I work with around 150 predictive features, obviously many of which are correlated.</p>
+
+<h2 id="target-variable">Target Variable</h2>
+<p>The model is trained to predict return over the next 20 days and Sharpe ratio over the next 20 days. While other time horizons could be explored, I’m keeping it simple and focusing on 20 days for now.</p>
 
 <h2 id="preprocessing-cross-sectional-normalization">Preprocessing: Cross-Sectional Normalization</h2>
 
-<p>Cross-sectional normalization adjusts each feature relative to all other stocks on the same day, ensuring the model focuses on relative differences rather than absolute values. This transformation also improves interpretation—when features are normalized consistently, it’s easier to recognize high or low values across time.</p>
+<p>Cross-sectional normalization adjusts each feature relative to all other stocks on the same day, ensuring the model focuses on relative differences rather than absolute values. This transformation also makes interpretation easier—when features are normalized consistently, it becomes simpler to identify high or low values over time.</p>
 
-<p>By applying this normalization, we ensure that stocks are evaluated in a comparable way at each point in time, which helps stabilize model inputs and prevents certain features from disproportionately influencing rankings.</p>
+<p>By applying this normalization, I make sure stocks are evaluated on a comparable basis at each point in time. This should help the model focus on learning the relative order of stocks rather than absolute levels, while also preventing certain features from disproportionately influencing the predictions.</p>
 
 <h2 id="mathematical-formulation">Mathematical Formulation</h2>
 
@@ -120,7 +398,7 @@
   <li>$f(\cdot)$ is the chosen normalization method.</li>
 </ul>
 
-<p>Different methods can be used to transform the raw values, each with its own strengths and tradeoffs.</p>
+<p>Different methods can be used to transform the raw values, each with its own strengths and tradeoffs. I’ll be comparing Z-scoring and ranking sometimes also called uniformization.</p>
 
 <h2 id="z-scoring">Z-Scoring</h2>
 
@@ -147,7 +425,7 @@
 
 <h2 id="ranking-normalization">Ranking Normalization</h2>
 
-<p>Another approach is ranking normalization, sometimes referred to as uniform transformation, which transforms feature values into ranks and scales them between 0 and 1:</p>
+<p>Another approach is ranking normalization which transforms feature values into ranks and scales them between 0 and 1:</p>
 
 \[R_{i,t}^{p} = \frac{r_{i,t}^{p}}{N}\]
 
@@ -158,11 +436,11 @@
   <li>$R^p_{i,t}$ is the normalized rank.</li>
 </ul>
 
-<p>Unlike z-scoring, ranking ensures that the distribution remains stable over time. This makes it robust to extreme values but removes magnitude information—only relative positioning is preserved.</p>
+<p>Unlike z-scoring, ranking ensures that the distribution remains the same over time. This makes it robust to extreme values but removes magnitude information—only relative positioning is preserved.</p>
 
 <h2 id="visualizing-the-effect-of-normalization">Visualizing the Effect of Normalization</h2>
 
-<p>Below, in Figure 1, a summary of the different normalization methods are applied to a single feature (20-day return). From left to right: the original distribution, z-scored, and ranked.</p>
+<p>Below, in Figure 1, I summarize the different normalization methods applied to a single feature (20-day return). From left to right: the original distribution, z-scored, and ranked.</p>
 
 <p><img src="/assets/ridge/example_normalization.png" alt="Figure 1" /></p>
 
@@ -170,58 +448,54 @@
 
 <h2 id="choosing-the-right-normalization-method">Choosing the Right Normalization Method</h2>
 
-<p>The choice between z-scoring and ranking depends on the specific objectives of the model.</p>
+<p>How I normalize features has a big impact on how the model interprets stock differences. The choice between z-scoring and ranking depends on what I want the model to focus on.</p>
 
 <ul>
-  <li><strong>Z-scoring</strong> preserves magnitude differences but is subject to distribution shifts over time.</li>
-  <li><strong>Ranking</strong> is stable and eliminates outliers but may lose information about the strength of differences between stocks.</li>
+  <li><strong>Z-scoring</strong> keeps magnitude differences intact, which helps when the strength of a signal matters. But it more sensitive to distribution shifts over time.</li>
+  <li><strong>Ranking</strong> is more stable and removes extreme outliers since values are always mapped to a uniform distribution. However, this process also discards information about the magnitude of differences between stocks</li>
 </ul>
 
-<p>Both methods allow the model to process stock features in a comparable way on any given day, but they emphasize different aspects of the data.</p>
+<p>Both methods ensure that stocks are processed in a comparable way on any given day, but they emphasize different aspects of the data.</p>
 
 <h2 id="evaluating-the-impact-of-normalization">Evaluating the Impact of Normalization</h2>
 
-<p>To test whether normalization improves rankings, three approaches are compared:</p>
+<p>To see if normalization improves results, I compare three approaches:</p>
 
 <ol>
-  <li>No normalization (raw features)</li>
-  <li>Z-scoring across all stocks</li>
-  <li>Ranking across all stocks</li>
+  <li>Using raw, unnormalized features</li>
+  <li>Applying z-scoring across all stocks</li>
+  <li>Using ranking across all stocks</li>
 </ol>
 
-<p>If normalization leads to better performance, the next step is to refine how it is applied—particularly to the target label.</p>
+<p>If normalization improves performance, the next step is to refine how I apply it—especially to the target label.</p>
 
 <h2 id="should-the-target-label-be-normalized-by-sector">Should the Target Label Be Normalized by Sector?</h2>
 
-<p>While normalizing input features ensures consistency across time, the same consideration applies to the target label (e.g., Return 20 or Sharpe Ratio 20).</p>
-
-<p>The question is whether it should be normalized across all stocks or within each sector:</p>
+<p>Normalizing features ensures consistency over time, but what about the target label? Instead of normalizing returns across all stocks, I test whether normalizing them within each sector improves results while keeping all other features globally normalized.</p>
 
 <ul>
-  <li><strong>Global normalization</strong> applies normalization to the target label across the full stock universe.</li>
-  <li><strong>Sector-specific normalization</strong> applies normalization within each sector while keeping all other features globally normalized.</li>
+  <li><strong>Global normalization</strong> applies the same normalization across the full stock universe.</li>
+  <li><strong>Sector-specific normalization</strong> adjusts returns within each sector while keeping all other features globally normalized.</li>
 </ul>
 
-<p>Sector-specific normalization prevents stocks in different industries from being compared directly in terms of their returns, which can be useful if sector dynamics influence performance. The goal is to determine whether this adjustment improves ranking performance.</p>
+<p>My hypothesis is that sector-normalizing the target label might help by preventing cross-sector differences from distorting the model’s learning process. Stocks in different industries often have structurally different return profiles, so this adjustment could make return comparisons more meaningful. Whether this actually improves performance is something I aim to find out.</p>
 
-<h3 id="handling-missing-data">Handling Missing Data</h3>
+<h2 id="handling-missing-data">Handling Missing Data</h2>
 
-<h2 id="handling-missing-data-1">Handling Missing Data</h2>
-
-<p>Stock data isn’t always perfect—missing values happen. While the model can still run, leaving gaps in the data isn’t ideal. The approach here is straightforward:</p>
+<p>Some models, like decision trees, handle missing data automatically, but others don’t. To keep things simple, I use:</p>
 
 <ul>
-  <li>Forward fill: If a stock has prior data, we use the last known value.</li>
-  <li>Cross-sectional mean imputation: If no past data exists, we replace the missing value with the sector average for that day.</li>
-  <li>Default values: When neither of the above applies:
+  <li><strong>Forward fill:</strong> Use the last known value if past data exists.</li>
+  <li><strong>Cross-sectional mean imputation:</strong> If no past data is available, replace the missing value with the sector average for that day.</li>
+  <li><strong>Default values:</strong>
     <ul>
-      <li>For z-scoring, missing values are set to 0.</li>
-      <li>For ranking, missing values are set to 0.5 (midpoint of the ranking scale).</li>
+      <li>For z-scoring, set missing values to 0.</li>
+      <li>For ranking, set missing values to 0.5 (midpoint of the ranking scale).</li>
     </ul>
   </li>
 </ul>
 
-<p>There are more advanced ways to handle missing data, from statistical methods to ML-based imputations. But for now, this simple, reliable approach gets the job done. A deeper dive into missing data strategies is something for another time.</p>
+<p>This approach is simple, effective, and works well for now.</p>
 
 <h2 id="modeling-the-cross-sectional-normalized-score">Modeling the Cross-Sectional Normalized Score</h2>
 
@@ -321,13 +595,15 @@
 
 <p><strong>Figure 3</strong>: Cumulative returns of all strategies, scaled to 10% volatility.</p>
 
-<p>Figure 4 provides a summary of how normalization method, sector adjustment, and target label choice affected Sharpe Ratios across all models. It highlights the performance differences between Z-scoring, ranking, and raw features, as well as the impact of normalizing within sectors versus globally. The results also show how using Sharpe Ratios as a target label compares to using raw returns.</p>
+<p>Figure 4 shows how different normalization methods, sector adjustments, and target label choices affect Sharpe Ratios across the models. It compares Z-scoring, raw features, and ranking, and also looks at the effect of normalizing within sectors versus globally. Plus, it shows how using Sharpe Ratios or raw returns as the target label changes things.</p>
 
-<p>One of the strongest patterns in the results is the impact of normalization. Models using Z-scoring performed best, followed by ranking, while raw features consistently underperform. This was surprising—I initially expected ranking to work better due to its stabilizing effect. However, it seems that ranking may also remove valuable signals, which could explain why Z-scoring outperformed. As expected, raw features introduced too much noise, making them the weakest option.</p>
+<p>First off, normalization is pretty clear—Z-scoring works best, then ranking, and raw features consistently underperform. I was honestly expecting ranking to be the top performer because it’s supposed to stabilize things, but it seems like it might also take out some useful signals. Z-scoring holds onto more of that valuable information, which is why it does so well. Raw features just add noise, so they end up being the weakest choice.</p>
 
-<p>Beyond normalization type, sector adjustments had an even greater effect. Normalizing the target label within sectors significantly improved Sharpe Ratios, reinforcing the idea that comparing stock performance within their peer group leads to better rankings. Each sector has its own dynamics, and normalizing within them helps separate true signals from sector-wide noise. This adjustment ensures that comparisons remain meaningful, making rankings more robust.</p>
+<p>Then, sector adjustment comes in and has an even bigger impact. Normalizing within sectors really improves Sharpe Ratios compared to global normalization. It makes sense because comparing stocks within the same sector gives us more relevant context. By normalizing within sectors, I’m making sure that sector-wide noise doesn’t interfere with the real signals, so the rankings are more stable.</p>
 
-<p>Target label choice also played a key role. Models trained on Sharpe Ratios outperformed those trained on raw returns, highlighting the advantage of using a risk-adjusted measure. This makes sense—predicting volatility is generally easier than predicting raw returns, which may explain why Sharpe Ratio models performed better across different setups.</p>
+<p>Lastly, the target label is by far the most important factor. When I use Sharpe Ratios as the target, the models consistently perform better than when I use raw returns. This is no surprise—it’s easier to predict volatility than raw returns, so Sharpe Ratios give more reliable, risk-adjusted performance.</p>
+
+<p>To sum it up, while normalization and sector adjustments matter, the key takeaway is the target label. Sharpe Ratios beat raw returns every time, and sector normalization makes the rankings a lot stronger.</p>
 
 <p><img src="/assets/ridge/summary_barplot.png" alt="Figure 4" /></p>
 
@@ -335,7 +611,7 @@
 
 <h3 id="normalization-effects-depend-on-the-target-label">Normalization Effects Depend on the Target Label</h3>
 
-<p>Looking at Figure 5, the effect of normalization depends on the target label.</p>
+<p>Digging a little bit deeper, Figure 5 visualizes the effect of normalization conditioned on the target label.</p>
 
 <p>For Return 20 models, normalization had a smaller effect, but ranking and Z-scoring still outperformed raw features. Interestingly, Z-scoring has regained popularity in recent years.</p>
 
@@ -354,9 +630,9 @@
 
 <h2 id="the-combo-strategy-holds-up-well">The “Combo” Strategy Holds Up Well</h2>
 
-<p>One surprising result: the “Combo” strategy performed exceptionally well (see table 1). Instead of picking a single best model, it equally weights all strategies—yet still ranked second overall in Sharpe Ratio.</p>
+<p>I was surprised to see that the “Combo” strategy performed really well, coming in second for Sharpe ratio (you can see it in Table 1). Instead of picking just one top model, it weights all strategies equally—and still ended up second overall.</p>
 
-<p>Even without fine-tuning, blending multiple signals smoothed performance and improved stability. This suggests that diversification across models can outperform an individual “best” model.</p>
+<p>Even without fine-tuning, blending multiple models helped smooth the performance and made it more stable. It’s pretty clear to me that diversifying across models can outperform just sticking with a single “best” model.</p>
 
 <h2 id="full-performance-breakdown">Full Performance Breakdown</h2>
 
@@ -375,31 +651,17 @@
   <tbody>
     <tr>
       <td>SR Z-Score By Sector</td>
-      <td>13.36</td>
-      <td>7.87</td>
-      <td>1.70</td>
-      <td>11.58</td>
+      <td>12.24</td>
+      <td>7.94</td>
+      <td>1.54</td>
+      <td>16.09</td>
     </tr>
     <tr>
       <td>Combo</td>
-      <td>9.98</td>
-      <td>6.71</td>
-      <td>1.49</td>
-      <td>10.90</td>
-    </tr>
-    <tr>
-      <td>SR Ranking By Sector</td>
-      <td>10.68</td>
-      <td>7.90</td>
-      <td>1.35</td>
-      <td>11.82</td>
-    </tr>
-    <tr>
-      <td>Return Z-Score By Sector</td>
-      <td>9.67</td>
-      <td>7.38</td>
-      <td>1.31</td>
-      <td>15.37</td>
+      <td>8.99</td>
+      <td>6.62</td>
+      <td>1.36</td>
+      <td>15.19</td>
     </tr>
     <tr>
       <td>SR Z-Score Global</td>
@@ -409,6 +671,13 @@
       <td>18.39</td>
     </tr>
     <tr>
+      <td>SR Ranking By Sector</td>
+      <td>9.95</td>
+      <td>7.83</td>
+      <td>1.27</td>
+      <td>13.94</td>
+    </tr>
+    <tr>
       <td>SR Ranking Global</td>
       <td>10.40</td>
       <td>8.41</td>
@@ -416,39 +685,46 @@
       <td>15.93</td>
     </tr>
     <tr>
-      <td>Return Ranking By Sector</td>
-      <td>9.31</td>
-      <td>7.64</td>
-      <td>1.22</td>
-      <td>10.63</td>
+      <td>SR Raw Global</td>
+      <td>9.76</td>
+      <td>8.39</td>
+      <td>1.16</td>
+      <td>15.89</td>
     </tr>
     <tr>
-      <td>SR Raw Global</td>
-      <td>9.98</td>
-      <td>8.39</td>
-      <td>1.19</td>
-      <td>15.49</td>
+      <td>Return Ranking By Sector</td>
+      <td>8.14</td>
+      <td>7.50</td>
+      <td>1.09</td>
+      <td>15.96</td>
+    </tr>
+    <tr>
+      <td>Return Z-Score By Sector</td>
+      <td>8.07</td>
+      <td>7.43</td>
+      <td>1.09</td>
+      <td>19.37</td>
     </tr>
     <tr>
       <td>Return Raw Global</td>
-      <td>8.42</td>
-      <td>7.28</td>
-      <td>1.16</td>
-      <td>10.96</td>
+      <td>6.95</td>
+      <td>7.54</td>
+      <td>0.92</td>
+      <td>18.99</td>
     </tr>
     <tr>
       <td>Return Ranking Global</td>
-      <td>8.54</td>
-      <td>7.63</td>
-      <td>1.12</td>
-      <td>13.62</td>
+      <td>6.48</td>
+      <td>7.26</td>
+      <td>0.89</td>
+      <td>18.86</td>
     </tr>
     <tr>
       <td>Return Z-Score Global</td>
-      <td>7.95</td>
-      <td>7.45</td>
-      <td>1.07</td>
-      <td>21.23</td>
+      <td>6.44</td>
+      <td>7.67</td>
+      <td>0.84</td>
+      <td>25.95</td>
     </tr>
   </tbody>
 </table>
@@ -472,21 +748,18 @@
   <li>interpration a bit better</li>
   <li>also say that things are scaled to all the same vol</li>
   <li>make it a bit more personalized</li>
-  <li>go a bit more in depth about zscoring and ranking</li>
-  <li>not happy about sector should the target label be done by sector or gloablly. The transition it weird</li>
-  <li>Discuss the effects of ranking and zscoring a bit more</li>
   <li>Add some numbers in the text</li>
-  <li>Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model</li>
-  <li>Write in present tense</li>
-</ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[In the last article, by scaling returns based on volatility, we improved performance with minimal complexity. But what if we could do better?]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Boring Way to Make Money?</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Boring Way to Make Money?" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="the-low-volatility-factor-a-steady-approach">The Low-Volatility Factor: A Steady Approach</h2>
+  <li>Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model
+se</li>
+</ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[In the last article, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually.]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Boring Way to Make Money?</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Boring Way to Make Money?" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="the-low-volatility-factor-a-steady-approach">The Low-Volatility Factor: A Steady Approach</h2>
 
 <p>The low-volatility factor is a well-known concept in quantitative investing. It’s based on a simple observation: stocks that fluctuate less tend to have better risk-adjusted returns than those with more extreme price swings. This pheneoman also exist in other asset classes. We will be focusing on stocks.</p>
 
-<p>This post is part of a series on ranking stocks. I’ll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I’ll compare all three approaches to see whether complexity actually adds value. For now, let’s focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.</p>
+<p>This post is the first blog and part of a series on cross sectional stock prediction. I’ll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I’ll compare all three approaches to see whether complexity actually adds value. For now, let’s focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.</p>
 
 <h2 id="tradeable-universe">Tradeable Universe</h2>
 
-<p>The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep it realistic, I filter out stocks priced under $5. The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since it uses point-in-time constituents, there’s no survivorship bias. Figures 1 visualizes the number of tradeabel stocks over time.</p>
+<p>The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep it realistic, I filter out stocks priced under $5. The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since it uses point-in-time constituents, there’s no survivorship bias. Figures 1 visualizes the number of tradeable stocks over time.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/nr_stocks.svg" alt="Figure 1" /><br />
 Figure 1: Number of tradeable stocks over time.</p>
@@ -509,7 +782,7 @@ Figure 1: Number of tradeable stocks over time.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/distribution_volatilities.svg" alt="Figure 2" /></p>
 
-<p>Figure 2: Annualized volatility across all stocks in the dataset.</p>
+<p><strong>Figure 2</strong>: Annualized volatility across all stocks in the dataset.</p>
 
 <h2 id="does-low-volatility-matter">Does Low Volatility Matter?</h2>
 
@@ -554,24 +827,24 @@ Figure 1: Number of tradeable stocks over time.</p>
 
 <p>This way, every stock’s classification is determined relative to the cross-sectional volatility of the market at that time.</p>
 
-<h2 id="constructing-a-long-only-and-long-short-portfolio">Constructing a Long-Only and Long-Short Portfolio</h2>
+<h2 id="portfolio-construction">Portfolio Construction</h2>
 
-<p>Once the stocks are bucketed, I create two types of portfolios: equal-weighted and volatility-targeted.</p>
+<p>Once the stocks are bucketed, I create two types of portfolios: equal-weighted (1) and volatility-targeted (2).</p>
 
-<h3 id="equal-weighted-portfolio">Equal-Weighted Portfolio</h3>
+<h3 id="1equal-weighted-portfolio">1.Equal-Weighted Portfolio</h3>
 
 <p>In the equal-weighted portfolio, all stocks are given equal weight, and I remain fully invested at all times. However, this creates a mismatch between the volatilities of the long and short positions, which I’ll explain further below. To construct the long-short portfolio, I simply take the difference between the low-volatility (P1) and high-volatility portfolios (P5).</p>
 
-<h3 id="volatility-targeted-portfolio">Volatility-Targeted Portfolio</h3>
+<h3 id="2volatility-targeted-portfolio">2.Volatility-Targeted Portfolio</h3>
 
-<p>Volatility targeting adjusts stock weights based on their volatility to create a more stable portfolio. Here’s how it works:</p>
+<p>Volatility targeting adjusts stock weights based on their volatility to target a specific volatility level and create a more stable portfolio. Here’s how it works:</p>
 
 <ol>
   <li>Compute the Volatility Scaling Factor: For each stock, calculate:<br />
 \(\text{vol_ratio} = \frac{\sigma_{target}}{\hat{\sigma}_{i,t}}\)<br />
 where:
     <ul>
-      <li>$\sigma_{target} = 20\%$ is an arbitrary target, chosen because it’s close to the average stock volatility. This ensures that the overall portfolio volatility remains around 8%.</li>
+      <li>$\sigma_{target} = 20\%$ is an arbitrary target, chosen because it’s close to the average stock volatility. This ensures that the overall portfolio volatility remains around 8%. A vol ratio &gt; 1 means the stock has a lower volatility than the target volatility level and we overweight the stocks and vice versa when vol ratio &lt; 1.</li>
       <li>${\hat{\sigma}_{i,t}}$ represents the stock’s estimated future volatility, typically calculated using a rolling 60-day standard deviation. More complex models could be used, but we’ll keep it simple for now.</li>
     </ul>
   </li>
@@ -587,11 +860,11 @@ where:
 
 <p>The resulting portfolio balances the long and short legs by dynamically adjusting stock weights to achieve the target volatility. The portfolios are rebalanced weekly to reflect changes in volatility over time. For simplicity, I haven’t factored in transaction costs in this analysis.</p>
 
-<h2 id="performance-analysis">Performance Analysis</h2>
+<h2 id="results">Results</h2>
 
-<h3 id="equal-weighted-portfolio-1">Equal-Weighted Portfolio</h3>
+<h3 id="equal-weighted-portfolio">Equal-Weighted Portfolio</h3>
 
-<p>Let’s look at the performance of the equal-weighted long-short portfolio. The main metrics here are return, volatility, and Sharpe ratio—annualized, of course.</p>
+<p>Let’s look at the performance of the equal-weighted long-short portfolio. The main metrics I’m looking at  are geometric return, volatility, and Sharpe ratio—annualized, of course.</p>
 
 <p>What stands out is that the low-volatility portfolio delivers much higher returns than the high-volatility one. As expected, the low-volatility stocks show the lowest total volatility, while the high-volatility stocks show the highest. This results in the low-volatility portfolio performing better in terms of risk-adjusted returns.</p>
 
@@ -603,7 +876,7 @@ where:
 
 <h3 id="improving-performance-with-volatility-targeting">Improving Performance with Volatility Targeting</h3>
 
-<p>Volatility targeting helps adjust for the imbalance between long and short positions by scaling portfolio weights based on volatility. This adjustment leads to more stable performance and a higher Sharpe ratio for both the long-only and long-short portfolios.</p>
+<p>Volatility targeting helps adjust for the imbalance between long and short positions by scaling portfolio positions by targetting a specific volatility level (e.g. 20%) This adjustment leads to more stable performance and a higher Sharpe ratio for both the long-only and long-short portfolios.</p>
 
 <p>Figure 4 shows how this works—volatility is more aligned across the five portfolios, reducing the mismatch. As a result, the long-short portfolio improves, benefiting from more balanced risk.</p>
 
@@ -697,8 +970,7 @@ where:
 <ol>
   <li>The low-volatility factor delivers strong risk-adjusted returns. Lower-volatility stocks tend to outperform, which contradicts the idea that higher risk always leads to higher returns.</li>
   <li>Equal weighting in long-short portfolios creates a risk imbalance. Since low-volatility stocks are naturally less risky, shorting high-volatility stocks at equal weight leads to uneven exposure and weaker performance.</li>
-  <li>Volatility targeting balances risk and improves performance. Adjusting weights based on volatility evens out risk between long and short positions, leading to a more stable strategy.</li>
-  <li>Dynamic risk adjustment smooths returns. Volatility-targeted portfolios adapt to market shifts, reducing drawdowns and improving long-term stability.</li>
+  <li>Volatility targeting balances risk and smooths returns by adjusting weights based on volatility. This approach evens out risk between long and short positions, leading to a more stable strategy. In addition, this adjustment helps portfolios adapt to market shifts, reducing drawdowns and improving long-term stability</li>
 </ol>
 
 <p>A simple volatility-targeting adjustment makes a long-short portfolio more stable and effective. In the next post, I’ll explore how combining multiple factors can further enhance results.</p>
@@ -709,4 +981,6 @@ where:
   <li>Tradeable universe; check this section</li>
   <li>use some numbers in the results</li>
   <li>Add columns before and after vol scaling in Performance tables</li>
+  <li>Maybe add some intuition why this works. Volatility comes in clusters and is reasonably well predictibable</li>
+  <li>You are taking leverage in low vol enviroments and deliverage in higher risk environments.</li>
 </ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quant" /><summary type="html"><![CDATA[The Low-Volatility Factor: A Steady Approach]]></summary></entry></feed>
