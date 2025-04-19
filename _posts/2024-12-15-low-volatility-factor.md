@@ -1,16 +1,14 @@
 ---
 layout: post
-title: "The Low Volatility Factor: A Boring Way to Make Money?"
+title: "The Low Volatility Factor: A Steady Approach"
 date: 2024-12-15
 categories: [Quant]
 ---
 
 
-## The Low-Volatility Factor: A Steady Approach
+The low-volatility factor is based on a simple idea: stocks that move less tend to deliver better risk-adjusted returns than those with more extreme price swings. It’s a pattern that has been observed not only in equities but also in other asset classes.
 
-The low-volatility factor is a well-known concept in quantitative investing. It’s based on a simple observation: stocks that fluctuate less tend to have better risk-adjusted returns than those with more extreme price swings. This pheneoman also exist in other asset classes. We will be focusing on stocks.
-
-This post is the first blog and part of a series on cross sectional stock prediction. I'll start with a single-factor approach and gradually build up—first by combining multiple factors using linear regression, then testing more advanced design choices, and finally exploring interactions and non-linearities with LightGBM. At the end, I'll compare all three approaches to see whether complexity actually adds value. For now, let's focus on constructing a long-short portfolio using the low-volatility factor in the Russell 1000.
+This post is the first in a series on cross-sectional stock selection. I’ll begin with a single-factor strategy, then gradually build up: combining multiple signals using linear regression, testing more advanced design choices, and later exploring interactions and non-linearities with models like LightGBM. At the end, I’ll compare all approaches to see whether complexity actually improves performance. But first, let’s keep things simple—and see how far a basic low-volatility sort can take us.
 
 
 
@@ -25,35 +23,43 @@ Figure 1: Number of tradeable stocks over time.
 
 ## Measuring Volatility
 
-The low-volatility factor identifies stocks with more stable price movements. To measure this, I compute the standard deviation of daily returns over three short-term rolling windows:
 
-- 5-day  
-- 10-day  
-- 21-day
+To identify low-volatility stocks, I compute the standard deviation of daily returns—a standard way to quantify how much a stock’s price fluctuates. Specifically, I use three short-term rolling windows:
 
-Shorter windows help capture shifts in volatility faster, while longer ones smooth things out. A mix of these gives a balance between stability and adaptability.
+- 5 trading days  
+- 10 trading days  
+- 21 trading days  
 
-Across the dataset, the average volatility is 33%, with most stocks falling between 18% and 39%. The median is 26%. Some stocks exhibit extreme price swings, so I winsorized the data at 5% and 200% to prevent outliers from distorting the results.
+Shorter windows react more quickly to changes in market conditions, while longer windows provide more stable estimates. By combining them, I aim for a volatility signal that’s both responsive and robust.
 
-The distribution is skewed to the right, meaning most stocks cluster around moderate volatility, but a few experience significantly higher fluctuations.
+Volatility is computed as:
+
+$$
+\hat{\sigma}_{i,t} = \sqrt{\frac{1}{N-1} \sum_{j=1}^N \left( r_{i,t-j} - \bar{r}_{i,t} \right)^2}
+$$
+
+where $r_{i,t}$ is the daily return of stock $i$ at time $t$, and $N$ is the length of the rolling window. I annualize this by multiplying the daily volatility by $\sqrt{252}$, assuming 252 trading days in a year.
+
+Across the dataset, the average annualized volatility is about 33%, with most stocks falling between 18% and 39%. The median is 26%. A few names have extreme swings, so I winsorize the volatility values at 5% and 200% to prevent outliers from distorting the rankings.
+
+As shown in Figure 2, the distribution is right-skewed: most stocks cluster around moderate volatility levels, but a small number show very high fluctuations.
 
 ![Figure 2](/assets/2024-12-15-low-volatility-factor/distribution_volatilities.svg)  
+**Figure 2**: Distribution of annualized volatility across all stocks.
 
-**Figure 2**: Annualized volatility across all stocks in the dataset.
+
 
 
 ## Does Low Volatility Matter?
 
-I was testing if low-volatility stocks actually perform differently, so I checked a couple of things:
+To check whether low-volatility stocks behave differently, I looked at their returns over the next 10 trading days. I focused on two things: raw returns and risk-adjusted returns, using the Sharpe ratio.
 
-1. How they did in the next 10 days
-2. Their Sharpe ratio also for the next 10 days
+The Pearson correlation between volatility and raw return came out slightly positive, around 0.03. So, more volatile stocks seemed to perform a little better—at least at first glance. That wasn’t exactly what I expected, but it’s a small effect. Switching to Spearman correlation, which is more robust to outliers, the result flattened out to zero.
 
-For returns, the Pearson correlation was only 0.03, so higher-volatility stocks showed a tiny edge in raw returns. But when I switched to Spearman, it pretty much flattened out to zero (0.00). I prefer Spearman here because it works with ranks, not raw values, which helps avoid the noise from outliers.
+The picture changes when looking at Sharpe ratios. Here, the correlation with volatility was negative: -0.035 with Pearson, and -0.04 with Spearman. So while higher-vol stocks might deliver the occasional bigger return, they tend to do so with more noise. On a risk-adjusted basis, they come out worse.
 
-When I looked at Sharpe ratios, the pattern flipped. Pearson showed a small negative correlation (-0.035), and Spearman bumped it up to -0.04. This suggests that more volatile stocks tend to have lower Sharpe ratios.
+The signal is weak, but that’s typical. What matters is that it shows up consistently, especially when applied across a large universe.
 
-The numbers are small, but that’s to be expected—there’s always a lot of noise in finance. Even weak signals can matter if you apply them consistently over a large universe of stocks.
 
 
 ## Sorting Stocks into Portfolios 
@@ -76,7 +82,7 @@ Stocks are then grouped into these buckets:
 
 - Portfolio 1: Lowest 10% of stocks ($0 \leq \text{Rank Score} < 0.1$) → Low volatility  
 - Portfolio 2: 10% to 20% of stocks ($0.1 \leq \text{Rank Score} < 0.2$)  
-- Portfolio 3: Middle 60% ($0.2 \leq \text{Rank Score} < 0.8$)  
+- Portfolio 3: 20% to 80% ($0.2 \leq \text{Rank Score} < 0.8$)  
 - Portfolio 4: 80% to 90% of stocks ($0.8 \leq \text{Rank Score} < 0.9$)  
 - Portfolio 5: Highest 10% ($0.9 \leq \text{Rank Score} \leq 1.0$) → High volatility
 
@@ -85,108 +91,120 @@ This way, every stock’s classification is determined relative to the cross-sec
 
 ## Portfolio Construction
 
-Once the stocks are bucketed, I create two types of portfolios: equal-weighted (1) and volatility-targeted (2).
+Once the stocks are grouped into buckets, I construct two types of portfolios: one that assigns equal weights to each stock, and another that adjusts weights to target a specific volatility level.
 
-### 1.Equal-Weighted Portfolio 
+### 1. Equal-Weighted Portfolio
 
-In the equal-weighted portfolio, all stocks are given equal weight, and I remain fully invested at all times. However, this creates a mismatch between the volatilities of the long and short positions, which I’ll explain further below. To construct the long-short portfolio, I simply take the difference between the low-volatility (P1) and high-volatility portfolios (P5).  
+In the equal-weighted portfolio, each stock receives the same weight:
 
-### 2.Volatility-Targeted Portfolio
+$$
+w_{i,t} = \frac{1}{N_t}
+$$
 
+where $$N_t$$ is the number of stocks in the portfolio at time $$t$$. The portfolio remains fully invested. To create the long-short strategy, I go long the low-volatility portfolio (P1) and short the high-volatility portfolio (P5), using equal weights on both sides.
 
-Volatility targeting adjusts stock weights based on their volatility to target a specific volatility level and create a more stable portfolio. Here’s how it works:  
+This setup introduces a problem: the two legs have different levels of volatility. Low-volatility stocks naturally exhibit less risk, so the short leg tends to dominate in terms of exposure. This imbalance reduces the effectiveness of the strategy on a risk-adjusted basis.
 
-1. Compute the Volatility Scaling Factor: For each stock, calculate:  
-   $$
-   \text{vol_ratio} = \frac{\sigma_{target}}{\hat{\sigma}_{i,t}}
-   $$  
-   where:  
-   - $\sigma_{target} = 20\%$ is an arbitrary target, chosen because it’s close to the average stock volatility. This ensures that the overall portfolio volatility remains around 8%. A vol ratio > 1 means the stock has a lower volatility than the target volatility level and we overweight the stocks and vice versa when vol ratio < 1.
-   - ${\hat{\sigma}_{i,t}}$ represents the stock’s estimated future volatility, typically calculated using a rolling 60-day standard deviation. More complex models could be used, but we’ll keep it simple for now.  
+### 2. Volatility-Targeted Portfolio
 
-2. Adjust Equal Weights: Multiply the equal weight of each stock by its $\text{vol\_ratio}$:  
-   $$
-   w_i = \text{equal_weight} \times \text{vol_ratio}
-   $$  
+To correct for this imbalance, I use volatility targeting. The idea is to scale the weight of each stock based on its volatility relative to a fixed target. The scaling factor is defined as:
 
-3. Cap Individual Weights: Ensure no stock weight exceeds 4% to prevent excessive concentration. This cap is somewhat arbitrary and depends on the number of stocks in the portfolio and possibly other factors, such as sector diversification or liquidity constraints.  
+$$
+\alpha_{i,t} = \frac{\sigma_{\text{target}}}{\hat{\sigma}_{i,t}}
+$$
 
-4. Constrain Portfolio Exposure: Ensure that the total portfolio weight does not exceed $1$ (i.e., fully invested). During periods of high volatility, the total weight may decrease to limit risk. While this may resemble market timing, I see it as dynamically adjusting risk—a common technique in trend-following strategies.  
+where:
 
-The resulting portfolio balances the long and short legs by dynamically adjusting stock weights to achieve the target volatility. The portfolios are rebalanced weekly to reflect changes in volatility over time. For simplicity, I haven’t factored in transaction costs in this analysis.
+- $$\sigma_{\text{target}} = 20\%$$ is a fixed target volatility level  
+- $$\hat{\sigma}_{i,t}$$ is the estimated future volatility of stock $$i$$, computed using a 60-day rolling standard deviation  
+
+Each stock's weight becomes:
+
+$$
+w_{i,t} = \frac{1}{N_t} \cdot \alpha_{i,t}
+$$
+
+This approach increases the weight of stocks with below-target volatility and reduces the weight of those above it. To avoid excessive concentration, I cap individual weights at 4%. The total portfolio weight is also constrained to remain below or equal to 1.0.
+
+During periods of high volatility, the portfolio may become partially invested to stay within the exposure limit. This isn’t market timing—it’s a way to control portfolio-level risk dynamically.
+
+Portfolios are rebalanced weekly based on updated volatility estimates. Transaction costs are not included in this analysis.
+
 
 
 ## Results
 
-### Equal-Weighted Portfolio  
+### Equal-Weighted Portfolio
 
-Let’s look at the performance of the equal-weighted long-short portfolio. The main metrics I'm looking at  are geometric return, volatility, and Sharpe ratio—annualized, of course.  
+I start by evaluating the equal-weighted version of the strategy. The long side holds the lowest-volatility stocks (P1), and the short side holds the highest-volatility ones (P5). Within each group, stocks are given equal weight.
 
-What stands out is that the low-volatility portfolio delivers much higher returns than the high-volatility one. As expected, the low-volatility stocks show the lowest total volatility, while the high-volatility stocks show the highest. This results in the low-volatility portfolio performing better in terms of risk-adjusted returns.  
+On their own, the results make sense. The low-volatility portfolio delivers a geometric return of 11.8% with a Sharpe ratio of 1.0. The high-volatility portfolio returns 4.7%, with much higher volatility and little risk-adjusted performance.
 
-But there’s a problem. Since the long portfolio (low-volatility stocks) is much less volatile than the short portfolio (high-volatility stocks), the long-short portfolio becomes unbalanced, which hurts its performance.  
+But when combining the two into a long-short portfolio, the performance breaks down. The issue is a volatility mismatch: the short side is much more volatile than the long side—38.6% versus 12.2%. Equal weighting doesn’t account for this difference. As a result, the short leg ends up driving most of the portfolio’s risk.
 
+The final long-short portfolio has high volatility (32.6%), a negative Sharpe ratio (-0.2), and a drawdown over 90%. Figure 3 shows the key performance metrics before applying volatility targeting. A full summary is included in Table 1.
 
 
 ![Figure 3](/assets/2024-12-15-low-volatility-factor/barplot_metrics_ew.png)  
 
 **Figure 3**: Geometric Return, Volatility, and Sharpe Ratio for equal-weighted portfolios (before volatility targeting).  
 
-### Improving Performance with Volatility Targeting  
+### Volatility-Targeted Portfolio
 
-Volatility targeting helps adjust for the imbalance between long and short positions by scaling portfolio positions by targetting a specific volatility level (e.g. 20%) This adjustment leads to more stable performance and a higher Sharpe ratio for both the long-only and long-short portfolios.  
+Volatility targeting adjusts for the imbalance between long and short legs by scaling each stock’s weight relative to a fixed volatility target (set here at 20%). This helps align the total risk of the long and short portfolios and results in more stable performance.
 
-Figure 4 shows how this works—volatility is more aligned across the five portfolios, reducing the mismatch. As a result, the long-short portfolio improves, benefiting from more balanced risk.  
+After applying volatility targeting, the improvements are clear. The long-short portfolio volatility drops from 32.6% to 8.3%, and the Sharpe ratio rises from -0.2 to 0.9. The max drawdown is also cut significantly—from over 90% to 33.6%.
 
- 
+The long-only portfolio becomes slightly more stable as well. Its volatility decreases from 12.2% to 9.7%, while the Sharpe ratio improves from 1.0 to 1.1.
+
+Figure 4 shows how volatility, return, and Sharpe ratio change across the five portfolios after targeting is applied. The result is more balanced exposure and better overall risk-adjusted returns.
 
 ![Figure 4](/assets/2024-12-15-low-volatility-factor/barplot_metrics_ew_vt.png)  
+**Figure 4**: Geometric return, volatility, and Sharpe ratio after volatility targeting.
 
-**Figure 4**: Geometric Return, Volatility, and Sharpe Ratio after volatility targeting.  
+### Performance Over Time
 
-### Metrics After Volatility Targeting  
+The impact of volatility targeting is also visible over time. Figure 5 shows the net asset value of the long-short portfolio after adjustment. Compared to the equal-weighted version, returns are smoother and drawdowns less severe.
 
 ![Figure 5](/assets/2024-12-15-low-volatility-factor/perf_backtest_ew_vt.png)  
+**Figure 5**: Net asset value of the volatility-targeted long-short portfolio.
 
-**Figure 5**: Net Asset Value of the volatility-targeted portfolio.  
+### Summary Table
 
-## Volatility Targeting Comparison
-
+To summarize the improvements, here are the core metrics before and after applying volatility targeting:
 
 | Metric              | Long (No VT) | Long (VT) | Short (No VT) | Short (VT) | L/S (No VT) | L/S (VT) |
-|---------------------|-------------|-----------|--------------|-----------|------------|----------|
-| Geom. Return (%)   | 11.8        | 11.1      | 4.7         | 2.9       | -5.3        | 7.7      |
-| Volatility (%)     | 12.2        | 9.7       | 38.6        | 9.7       | 32.6        | 8.3      |
-| Sharpe Ratio       | 1.0         | 1.1       | 0.1         | 0.3       | -0.2        | 0.9      |
-| Max Drawdown (%)   | 40.2        | 29.5      | 89.6        | 36.7      | 91.6        | 33.6     |
-| Max TUW (Days)     | 863         | 612       | 4802        | 1647      | 5539        | 944      |
+|---------------------|-------------|-----------|---------------|------------|-------------|----------|
+| Geom. Return (%)    | 11.8        | 11.1      | 4.7           | 2.9        | -5.3        | 7.7      |
+| Volatility (%)      | 12.2        | 9.7       | 38.6          | 9.7        | 32.6        | 8.3      |
+| Sharpe Ratio        | 1.0         | 1.1       | 0.1           | 0.3        | -0.2        | 0.9      |
+| Max Drawdown (%)    | 40.2        | 29.5      | 89.6          | 36.7       | 91.6        | 33.6     |
+| Max TUW (Days)      | 863         | 612       | 4802          | 1647       | 5539        | 944      |
 
-**Table 1**: Performance metrics for long, short, and long-short portfolios before and after volatility targeting (VT). "No VT" indicates no volatility targeting, while "VT" applies it.
+**Table 1**: Performance metrics before and after volatility targeting. "VT" applies targeting; "No VT" uses equal weighting.
 
- 
 
-Figure 6 shows the portfolio weights for both the long (low-volatility) and short (high-volatility) portfolios after volatility targeting.  
+### Portfolio Exposure Over Time
 
-As shown, the short portfolio (high-volatility stocks) now receives a much lower allocation, fluctuating between 0.2 and 0.6. Meanwhile, the low-volatility portfolio stays almost fully invested. This makes sense—high-volatility stocks naturally experience larger price swings, so less capital is allocated to them to keep the risk balanced.  
+Figure 6 shows how total portfolio weights evolve over time for both the long (low-volatility) and short (high-volatility) sides after applying volatility targeting.
 
-During extreme market events like the dot-com crash (2000), the financial crisis (2009), and COVID (2020), both portfolios temporarily reduce exposure, reflecting overall higher volatility.  
+By total weight, I mean the sum of all individual stock weights within each leg. Since the short side holds more volatile stocks, it naturally receives less capital—typically between 0.2 and 0.6. The long side, made up of more stable names, stays closer to fully invested.
+
+This behaviour is expected. Volatility targeting reduces exposure to riskier assets and increases it for more stable ones. During periods of market stress—like the dot-com crash, the financial crisis, or COVID—both legs reduce their exposure. The mechanism reacts by shrinking position sizes to stay within the target risk level.
+
+The result is a portfolio that adapts to changing market conditions without needing explicit market timing.
 
 ![Figure 6](/assets/2024-12-15-low-volatility-factor/portfolio_weights_long_short_vol_target.svg)  
+**Figure 6:** Total weight of all positions in the long (P1) and short (P5) portfolios after volatility targeting.
 
-**Figure 6**: Portfolio weights for Long and Short portfolios after volatility targeting.  
+## Key Takeaways
 
-## Key Takeaways  
+1. The low-volatility factor delivers stronger risk-adjusted returns. Lower-vol stocks tend to outperform, which goes against the usual link between higher risk and higher return.
 
-1. The low-volatility factor delivers strong risk-adjusted returns. Lower-volatility stocks tend to outperform, which contradicts the idea that higher risk always leads to higher returns.  
-2. Equal weighting in long-short portfolios creates a risk imbalance. Since low-volatility stocks are naturally less risky, shorting high-volatility stocks at equal weight leads to uneven exposure and weaker performance.  
-3. Volatility targeting balances risk and smooths returns by adjusting weights based on volatility. This approach evens out risk between long and short positions, leading to a more stable strategy. In addition, this adjustment helps portfolios adapt to market shifts, reducing drawdowns and improving long-term stability 
+2. Equal weighting in a long-short setup creates a risk imbalance. The short leg ends up dominating volatility, which pulls down performance.
 
-A simple volatility-targeting adjustment makes a long-short portfolio more stable and effective. In the next post, I’ll explore how combining multiple factors can further enhance results.
+3. Volatility targeting fixes that imbalance. It adjusts weights to align the risk on both sides, making the strategy more stable and improving Sharpe ratios.
+
+Even this simple adjustment already helps a lot. In the next post, I’ll look at how combining multiple signals can take things a step further.
+
   
-## TODO
- - measuring volatitily is not so well described
- - Tradeable universe; check this section
- - use some numbers in the results
- - Add columns before and after vol scaling in Performance tables
- - Maybe add some intuition why this works. Volatility comes in clusters and is reasonably well predictibable
- - You are taking leverage in low vol enviroments and deliverage in higher risk environments.

@@ -30,8 +30,8 @@
 <meta property="og:title" content="Ridge regression" />
 <meta name="author" content="piinghel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In the last article, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually." />
-<meta property="og:description" content="In the last article, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually." />
+<meta name="description" content="TODO: refer to combo in tabel interpration a bit better also say that things are scaled to all the same vol make it a bit more personalized Add some numbers in the text Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model se" />
+<meta property="og:description" content="TODO: refer to combo in tabel interpration a bit better also say that things are scaled to all the same vol make it a bit more personalized Add some numbers in the text Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model se" />
 <link rel="canonical" href="http://localhost:4000/quants/2025/02/09/ridge.html" />
 <meta property="og:url" content="http://localhost:4000/quants/2025/02/09/ridge.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
@@ -40,7 +40,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Ridge regression" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-09T00:00:00+01:00","datePublished":"2025-02-09T00:00:00+01:00","description":"In the last article, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually.","headline":"Ridge regression","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/09/ridge.html"},"url":"http://localhost:4000/quants/2025/02/09/ridge.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-09T00:00:00+01:00","datePublished":"2025-02-09T00:00:00+01:00","description":"TODO: refer to combo in tabel interpration a bit better also say that things are scaled to all the same vol make it a bit more personalized Add some numbers in the text Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model se","headline":"Ridge regression","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/09/ridge.html"},"url":"http://localhost:4000/quants/2025/02/09/ridge.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -73,7 +73,18 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually.</p>
+    <h2 id="todo">TODO:</h2>
+<ul>
+  <li>refer to combo in tabel</li>
+  <li>interpration a bit better</li>
+  <li>also say that things are scaled to all the same vol</li>
+  <li>make it a bit more personalized</li>
+  <li>Add some numbers in the text</li>
+  <li>Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model
+se</li>
+</ul>
+
+<p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually.</p>
 
 <p>Stock prediction is hard. Instead of trying to guess exact returns, I’m focusing on something more practical: figuring out whether stock A will perform better than stock B. I don’t need to know by how much—just which one is likely to do better.</p>
 
@@ -504,17 +515,6 @@ Capture systematic risk.</p>
 </ul>
 
 <p>Instead of searching for a single best model, it may be smarter to combine perspectives. The “Combo” strategy showed that diversification across models stabilizes results—even without fine-tuning.</p>
-
-<h2 id="todo">TODO:</h2>
-<ul>
-  <li>refer to combo in tabel</li>
-  <li>interpration a bit better</li>
-  <li>also say that things are scaled to all the same vol</li>
-  <li>make it a bit more personalized</li>
-  <li>Add some numbers in the text</li>
-  <li>Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model
-se</li>
-</ul>
 
 
   </div><a class="u-url" href="/quants/2025/02/09/ridge.html" hidden></a>
