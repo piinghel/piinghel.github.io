@@ -1,5 +1,292 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-04-19T21:05:46+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
-</subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">LightGBM</title><link href="http://localhost:4000/quants/2025/02/20/beast.html" rel="alternate" type="text/html" title="LightGBM" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/beast</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/beast.html"><![CDATA[<h1 id="roadmap">Roadmap</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-12T13:54:27+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
+</subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">Rebalancing Luck</title><link href="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html" rel="alternate" type="text/html" title="Rebalancing Luck" /><published>2025-05-10T00:00:00+02:00</published><updated>2025-05-10T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/05/10/rebalancing%20luck</id><content type="html" xml:base="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html"><![CDATA[<h1 id="todo">Todo</h1>
+<ul>
+  <li>Can lower turnover and transaction costs but don’t fully understand how</li>
+  <li>Also refer to the the original article of concretum research</li>
+  <li>Make writing style slightly more personal. Write form the I and sometimes give your own opinion.</li>
+</ul>
+
+<h1 id="rebalancing-schedules-tranching-and-cleaner-portfolio-paths">Rebalancing Schedules, Tranching, and Cleaner Portfolio Paths</h1>
+
+<p>In most backtests, the rebalancing schedule is hardcoded — for example, every three weeks on a Friday — and rarely questioned. But that choice can have a real impact on performance. Shifting the execution day by just a few days can change inputs, alter positions, and affect returns, volatility, and drawdowns.</p>
+
+<p>What also matters is how much of the portfolio you rebalance at once. Rebalancing the full book in one shot can amplify path dependency. A more gradual approach — rebalancing just one-third each week — might lead to smoother results without changing the model at all.</p>
+
+<p>In this post, I look at both: how different rebalancing schedules affect performance, and how tranching improves stability across the board.</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>The strategy is a long-short equity model that rebalances every three weeks, always on a single weekday. Since there are three possible offset weeks and five weekdays, that gives 15 potential rebalancing schedules.</p>
+
+<p>I simulate all 15 variants. The only difference is the day on which the portfolio is rebalanced:</p>
+
+<ul>
+  <li>3 offset weeks × 5 weekdays = 15 combinations</li>
+  <li>Each run uses the same trained model, applied using the predictions available on that day</li>
+  <li>The signals, logic, and asset universe remain unchanged</li>
+</ul>
+
+<p>In the base case, I rebalance the entire portfolio once every 3 weeks — for example, always on Friday of offset week 0.</p>
+
+<p>Then I compare it to a tranching setup: the portfolio is split into three parts, and one-third is rebalanced each week. Over a three-week cycle, the full portfolio is still updated — just more gradually. This smoother execution path helps reduce sensitivity to any one day’s noise.</p>
+
+<h2 id="rebalancing-day-does-matter">Rebalancing Day Does Matter</h2>
+
+<p>Here’s the cumulative return of the 15 full-rebalance variants:</p>
+
+<p><img src="/assets/tranching/all_perf_plots.png" alt="Figure 1" /></p>
+
+<p><strong>Figure 1:</strong> Cumulative returns for each rebalancing schedule (15 variants).</p>
+
+<p>And the table of results:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tranche</th>
+      <th>Geometric Return</th>
+      <th>Volatility</th>
+      <th>Modified Sharpe</th>
+      <th>Max Drawdown</th>
+      <th>Time Underwater</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>offset=0, day=1</td>
+      <td>11.67%</td>
+      <td>6.56%</td>
+      <td>1.78</td>
+      <td>9.79%</td>
+      <td>375</td>
+    </tr>
+    <tr>
+      <td>offset=0, day=2</td>
+      <td>11.72%</td>
+      <td>6.61%</td>
+      <td>1.77</td>
+      <td>12.08%</td>
+      <td>314</td>
+    </tr>
+    <tr>
+      <td>offset=0, day=3</td>
+      <td>11.25%</td>
+      <td>6.56%</td>
+      <td>1.71</td>
+      <td>13.27%</td>
+      <td>253</td>
+    </tr>
+    <tr>
+      <td>offset=0, day=4</td>
+      <td>12.73%</td>
+      <td>6.63%</td>
+      <td>1.92</td>
+      <td>11.98%</td>
+      <td>236</td>
+    </tr>
+    <tr>
+      <td>offset=0, day=5</td>
+      <td>12.79%</td>
+      <td>6.76%</td>
+      <td>1.89</td>
+      <td>15.54%</td>
+      <td>264</td>
+    </tr>
+    <tr>
+      <td>offset=1, day=1</td>
+      <td>12.52%</td>
+      <td>6.71%</td>
+      <td>1.86</td>
+      <td>14.75%</td>
+      <td>569</td>
+    </tr>
+    <tr>
+      <td>offset=1, day=2</td>
+      <td>12.83%</td>
+      <td>6.74%</td>
+      <td>1.90</td>
+      <td>13.23%</td>
+      <td>269</td>
+    </tr>
+    <tr>
+      <td>offset=1, day=3</td>
+      <td>12.18%</td>
+      <td>6.65%</td>
+      <td>1.83</td>
+      <td>11.92%</td>
+      <td>251</td>
+    </tr>
+    <tr>
+      <td>offset=1, day=4</td>
+      <td>11.16%</td>
+      <td>6.57%</td>
+      <td>1.70</td>
+      <td>10.80%</td>
+      <td>330</td>
+    </tr>
+    <tr>
+      <td>offset=1, day=5</td>
+      <td>12.95%</td>
+      <td>6.53%</td>
+      <td>1.98</td>
+      <td>10.89%</td>
+      <td>236</td>
+    </tr>
+    <tr>
+      <td>offset=2, day=1</td>
+      <td>12.29%</td>
+      <td>6.60%</td>
+      <td>1.88</td>
+      <td>10.17%</td>
+      <td>297</td>
+    </tr>
+    <tr>
+      <td>offset=2, day=2</td>
+      <td>11.43%</td>
+      <td>6.47%</td>
+      <td>1.77</td>
+      <td>11.42%</td>
+      <td>266</td>
+    </tr>
+    <tr>
+      <td>offset=2, day=3</td>
+      <td>11.34%</td>
+      <td>6.61%</td>
+      <td>1.72</td>
+      <td>10.70%</td>
+      <td>578</td>
+    </tr>
+    <tr>
+      <td>offset=2, day=4</td>
+      <td>11.31%</td>
+      <td>6.54%</td>
+      <td>1.73</td>
+      <td>10.14%</td>
+      <td>341</td>
+    </tr>
+    <tr>
+      <td>offset=2, day=5</td>
+      <td>11.28%</td>
+      <td>6.57%</td>
+      <td>1.72</td>
+      <td>14.28%</td>
+      <td>608</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 1:</strong> Performance metrics for each full-rebalance variant.</p>
+
+<p>I found that returns were fairly stable across rebalancing schedules, which honestly surprised me a bit. I expected more divergence. That said, there’s still a meaningful spread — modified Sharpe ratios range from 1.71 to 1.98, and some variants spent quite a bit longer in drawdown than others. It’s not huge, but it’s enough to notice. And none of it comes from the model itself — it’s just small shifts in execution timing that end up compounding over time.</p>
+
+<h2 id="tranching-a-simple-effective-fix">Tranching: A Simple, Effective Fix</h2>
+
+<p>Instead of picking one rebalancing day, we can average across them.</p>
+
+<p>In the tranching setup, one-third of the portfolio is rebalanced each week, rotating through all three offsets. The full portfolio still turns over every 3 weeks, but in a staggered way.</p>
+
+<p>Then, for interpretability, I group results by weekday, averaging across the three offsets.</p>
+
+<p><img src="/assets/tranching/tranched_perf_plots.png" alt="Figure 2" /> 
+<strong>Figure 2:</strong> Cumulative returns with tranching by weekday (averaged over offsets).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Weekday</th>
+      <th>Geometric Return</th>
+      <th>Volatility</th>
+      <th>Modified Sharpe</th>
+      <th>Max Drawdown</th>
+      <th>Time Underwater</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 (Mon)</td>
+      <td>12.18%</td>
+      <td>6.06%</td>
+      <td>2.01</td>
+      <td>11.30%</td>
+      <td>388</td>
+    </tr>
+    <tr>
+      <td>2 (Tue)</td>
+      <td>12.02%</td>
+      <td>6.06%</td>
+      <td>1.98</td>
+      <td>12.23%</td>
+      <td>300</td>
+    </tr>
+    <tr>
+      <td>3 (Wed)</td>
+      <td>11.62%</td>
+      <td>6.07%</td>
+      <td>1.91</td>
+      <td>11.59%</td>
+      <td>262</td>
+    </tr>
+    <tr>
+      <td>4 (Thu)</td>
+      <td>11.73%</td>
+      <td>6.05%</td>
+      <td>1.94</td>
+      <td>10.82%</td>
+      <td>265</td>
+    </tr>
+    <tr>
+      <td>5 (Fri)</td>
+      <td>12.34%</td>
+      <td>6.06%</td>
+      <td>2.04</td>
+      <td>12.80%</td>
+      <td>364</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 2:</strong> Tranche-averaged performance by weekday.</p>
+
+<p>The improvements are not just cosmetic. Modified Sharpe ratios move up and stabilize around 1.91, 2.04. Volatility compresses, especially compared to the 6.5–6.9% range seen earlier. Drawdowns get shallower and spend less time underwater.</p>
+
+<p>This doesn’t happen because we’re adding return. It happens because we’re executing more evenly, avoiding sharp jumps.</p>
+
+<h2 id="why-it-works">Why It Works</h2>
+
+<p>Tranching reduces path dependency. A single full-book rebalance can reflect one-off shocks, price dislocations, or liquidity gaps — all of which inject noise into a strategy that’s otherwise stable.</p>
+
+<p>By spreading rebalancing over time, you soften those shocks. You’re still following the model, just in a way that filters out randomness from any specific day. The full portfolio is still turned over every three weeks, so turnover doesn’t increase — but transitions are smoother and less vulnerable to execution timing.</p>
+
+<p>There’s also an effect on the signal itself. In the standard setup, you only express the model’s predictions once every three weeks. With tranching, you use the most recent predictions each week — even though you’re only rebalancing part of the capital. That means the portfolio reflects more prediction points, more frequently, and benefits from a kind of temporal diversification across model outputs. That added reactivity may also contribute to the improvement in Sharpe ratios.</p>
+
+<h2 id="a-few-trade-offs-and-extra-benefits">A Few Trade-Offs and Extra Benefits</h2>
+
+<p>One thing to watch out for is execution complexity. Rebalancing every week means running the pipeline and sending orders more often. It’s not just the code — it’s the extra monitoring, mental overhead, and operational stress that comes with doing something three times instead of once. And if some positions are small, the trades might not even be worth it. Whether that matters depends on the signal structure and execution setup — but it’s worth keeping in mind.</p>
+
+<p>That said, I’ve found tranching to be surprisingly helpful in research. By smoothing out the noise from timing, it gives a cleaner view of the strategy’s true performance. That makes it easier to evaluate whether a new feature or model change actually adds value — instead of just getting lucky on a rebalance date.</p>
+
+<p>There’s also a small benefit I didn’t expect at first. While we still rebalance each slice only once every three weeks, we use the most recent model predictions each week. So we’re injecting new signal into the portfolio every week — just on a fraction of the AUM. That adds a bit of temporal diversification and keeps the portfolio more responsive without needing to go all-in.</p>
+
+<h2 id="final-thoughts">Final Thoughts</h2>
+
+<p>This started as a quick curiosity around rebalancing schedules, but it turned into a clear case for using tranching by default.</p>
+
+<p>It makes the strategy more stable and less path-dependent. The signal stays the same. The logic stays the same. But the outcome gets cleaner.</p>
+
+<p>For research purposes, that clarity really helps. When adding a new feature or modifying a signal, it becomes easier to see if we actually improved things.</p>
+
+<p>I’ll be using this setup going forward for any model that rebalances in fixed cycles. It’s simple, and it works.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Todo Can lower turnover and transaction costs but don’t fully understand how Also refer to the the original article of concretum research Make writing style slightly more personal. Write form the I and sometimes give your own opinion.]]></summary></entry><entry><title type="html">Dope Articles</title><link href="http://localhost:4000/quants/2025/04/20/dope-articles.html" rel="alternate" type="text/html" title="Dope Articles" /><published>2025-04-20T00:00:00+02:00</published><updated>2025-04-20T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/04/20/dope%20articles</id><content type="html" xml:base="http://localhost:4000/quants/2025/04/20/dope-articles.html"><![CDATA[<h2 id="roadmap">Roadmap</h2>
+<ul>
+  <li>just give an overview of all relevant articles that are relevant.</li>
+  <li>Might add a quick summary what I liked about these</li>
+  <li>Also update from time to time</li>
+  <li>
+    <p>Focus on Cross sectional asset pricing</p>
+  </li>
+  <li>Learning to rank</li>
+  <li>couple of articles of robeco</li>
+  <li>Article of Pictet</li>
+</ul>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap just give an overview of all relevant articles that are relevant. Might add a quick summary what I liked about these Also update from time to time Focus on Cross sectional asset pricing]]></summary></entry><entry><title type="html">LightGBM</title><link href="http://localhost:4000/quants/2025/02/20/lgbm.html" rel="alternate" type="text/html" title="LightGBM" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/lgbm</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/lgbm.html"><![CDATA[<h1 id="roadmap">Roadmap</h1>
 <ul>
   <li>
     <p>The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities</p>
@@ -292,9 +579,14 @@ The signal-level results are encouraging — LightGBM produces a stronger and mo
 <p>Here are a few directions I’m thinking about:</p>
 
 <ul>
-  <li>
-    <p><strong>Understanding model exposures</strong><br />
-How much of the return is driven by known risk factors or sector tilts? Are we unknowingly taking on systematic exposures that explain most of the performance? Decomposing the P&amp;L and analyzing factor loadings would help shed light here. There are some great books and papers that go deep into this, and I plan to study those more closely.</p>
+  <li><strong>Portfolio management</strong> 
+Reading the book advanced portfolio managements and considering buying elements of portfolio management<br />
+How much of the return is driven by known risk factors or sector tilts? Are we unknowingly taking on systematic exposures that explain most of the performance? Decomposing the P&amp;L and analyzing factor loadings would help shed light here. There are some great books and papers that go deep into this, and I plan to study those more closely.
+    <ul>
+      <li>understanding my pnl</li>
+      <li>managing my factor risk</li>
+      <li>build better allocation methods</li>
+    </ul>
   </li>
   <li>
     <p><strong>Expanding the feature set</strong><br />
@@ -303,10 +595,8 @@ Right now, the model only sees price, market cap, and volume — a relatively na
   <li>
     <p><strong>Rethinking the modeling objective</strong><br />
 One thing that’s been bothering me is the two-step setup: first, we model a score or ranking; then we convert that into positions using a separate allocation rule. But what if we skipped the middle step and directly optimized for portfolio weights? There’s some interesting work out there on end-to-end portfolio optimization that might be worth exploring.</p>
-  </li>
-  <li>
-    <p><strong>Learning the SDF directly with transformers</strong><br />
-A direction that’s particularly exciting is inspired by <em>Artificial Asset Pricing</em> by Kelly, Mazarei, and Xiu (2023). Instead of predicting returns or Sharpe ratios and then ranking stocks, they use a transformer architecture to learn the stochastic discount factor directly. This approach sidesteps traditional factor modeling entirely, allowing the network to learn pricing kernels from raw panel data. It’s an ambitious setup, but one that might help close the gap between predictive modeling and true portfolio optimization.</p>
+
+    <p>A direction that’s particularly exciting is inspired by <em>Artificial Asset Pricing</em> by Kelly, Mazarei, and Xiu (2023). Instead of predicting returns or Sharpe ratios and then ranking stocks, they use a transformer architecture to learn the stochastic discount factor directly. This approach sidesteps traditional factor modeling entirely, allowing the network to learn pricing kernels from raw panel data. It’s an ambitious setup, but one that might help close the gap between predictive modeling and true portfolio optimization.</p>
   </li>
 </ul>
 

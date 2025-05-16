@@ -32,15 +32,15 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities" />
 <meta property="og:description" content="Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities" />
-<link rel="canonical" href="http://localhost:4000/quants/2025/02/20/beast.html" />
-<meta property="og:url" content="http://localhost:4000/quants/2025/02/20/beast.html" />
+<link rel="canonical" href="http://localhost:4000/quants/2025/02/20/lgbm.html" />
+<meta property="og:url" content="http://localhost:4000/quants/2025/02/20/lgbm.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2025-02-20T00:00:00+01:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="LightGBM" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-20T00:00:00+01:00","datePublished":"2025-02-20T00:00:00+01:00","description":"Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities","headline":"LightGBM","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/20/beast.html"},"url":"http://localhost:4000/quants/2025/02/20/beast.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-20T00:00:00+01:00","datePublished":"2025-02-20T00:00:00+01:00","description":"Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities","headline":"LightGBM","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/20/lgbm.html"},"url":"http://localhost:4000/quants/2025/02/20/lgbm.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -366,9 +366,14 @@ The signal-level results are encouraging — LightGBM produces a stronger and mo
 <p>Here are a few directions I’m thinking about:</p>
 
 <ul>
-  <li>
-    <p><strong>Understanding model exposures</strong><br />
-How much of the return is driven by known risk factors or sector tilts? Are we unknowingly taking on systematic exposures that explain most of the performance? Decomposing the P&amp;L and analyzing factor loadings would help shed light here. There are some great books and papers that go deep into this, and I plan to study those more closely.</p>
+  <li><strong>Portfolio management</strong> 
+Reading the book advanced portfolio managements and considering buying elements of portfolio management<br />
+How much of the return is driven by known risk factors or sector tilts? Are we unknowingly taking on systematic exposures that explain most of the performance? Decomposing the P&amp;L and analyzing factor loadings would help shed light here. There are some great books and papers that go deep into this, and I plan to study those more closely.
+    <ul>
+      <li>understanding my pnl</li>
+      <li>managing my factor risk</li>
+      <li>build better allocation methods</li>
+    </ul>
   </li>
   <li>
     <p><strong>Expanding the feature set</strong><br />
@@ -377,16 +382,14 @@ Right now, the model only sees price, market cap, and volume — a relatively na
   <li>
     <p><strong>Rethinking the modeling objective</strong><br />
 One thing that’s been bothering me is the two-step setup: first, we model a score or ranking; then we convert that into positions using a separate allocation rule. But what if we skipped the middle step and directly optimized for portfolio weights? There’s some interesting work out there on end-to-end portfolio optimization that might be worth exploring.</p>
-  </li>
-  <li>
-    <p><strong>Learning the SDF directly with transformers</strong><br />
-A direction that’s particularly exciting is inspired by <em>Artificial Asset Pricing</em> by Kelly, Mazarei, and Xiu (2023). Instead of predicting returns or Sharpe ratios and then ranking stocks, they use a transformer architecture to learn the stochastic discount factor directly. This approach sidesteps traditional factor modeling entirely, allowing the network to learn pricing kernels from raw panel data. It’s an ambitious setup, but one that might help close the gap between predictive modeling and true portfolio optimization.</p>
+
+    <p>A direction that’s particularly exciting is inspired by <em>Artificial Asset Pricing</em> by Kelly, Mazarei, and Xiu (2023). Instead of predicting returns or Sharpe ratios and then ranking stocks, they use a transformer architecture to learn the stochastic discount factor directly. This approach sidesteps traditional factor modeling entirely, allowing the network to learn pricing kernels from raw panel data. It’s an ambitious setup, but one that might help close the gap between predictive modeling and true portfolio optimization.</p>
   </li>
 </ul>
 
 <p>All of this opens the door to a broader research direction — and I’ll dig into these ideas in future posts.</p>
 
-  </div><a class="u-url" href="/quants/2025/02/20/beast.html" hidden></a>
+  </div><a class="u-url" href="/quants/2025/02/20/lgbm.html" hidden></a>
 </article>
 
     </div>
