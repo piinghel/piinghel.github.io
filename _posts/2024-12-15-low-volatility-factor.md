@@ -174,14 +174,15 @@ The impact of volatility targeting is also visible over time. Figure 5 shows the
 To summarize the improvements, here are the core metrics before and after applying volatility targeting:
 
 | Metric              | Long (No VT) | Long (VT) | Short (No VT) | Short (VT) | L/S (No VT) | L/S (VT) |
-|---------------------|-------------|-----------|---------------|------------|-------------|----------|
-| Geom. Return (%)    | 11.8        | 11.1      | 4.7           | 2.9        | -5.3        | 7.7      |
-| Volatility (%)      | 12.2        | 9.7       | 38.6          | 9.7        | 32.6        | 8.3      |
-| Sharpe Ratio        | 1.0         | 1.1       | 0.1           | 0.3        | -0.2        | 0.9      |
-| Max Drawdown (%)    | 40.2        | 29.5      | 89.6          | 36.7       | 91.6        | 33.6     |
-| Max TUW (Days)      | 863         | 612       | 4802          | 1647       | 5539        | 944      |
+|---------------------|--------------|-----------|----------------|-------------|--------------|-----------|
+| Geometric Return    | 11.8%        | 11.1%     | 4.7%           | 2.9%        | -5.3%        | 7.7%      |
+| Volatility          | 12.2%        | 9.7%      | 38.6%          | 9.7%        | 32.6%        | 8.3%      |
+| Sharpe Ratio        | 1.00         | 1.14      | 0.12           | 0.30        | -0.19        | 0.93      |
+| Max Drawdown        | 40.2%        | 29.5%     | 89.6%          | 36.7%       | 91.6%        | 33.6%     |
+| Max Time Underwater | 863 days     | 612 days  | 4,802 days     | 1,647 days  | 5,539 days   | 944 days  |
 
-**Table 1**: Performance metrics before and after volatility targeting. "VT" applies targeting; "No VT" uses equal weighting.
+**Table 1:** Performance metrics before and after volatility targeting. "VT" applies volatility targeting; "No VT" uses equal weighting.
+
 
 
 ### Portfolio Exposure Over Time

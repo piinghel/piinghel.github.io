@@ -30,8 +30,8 @@
 <meta property="og:title" content="LightGBM" />
 <meta name="author" content="piinghel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities" />
-<meta property="og:description" content="Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities" />
+<meta name="description" content="TODO update figures and tables with more recent data. reread text and style." />
+<meta property="og:description" content="TODO update figures and tables with more recent data. reread text and style." />
 <link rel="canonical" href="http://localhost:4000/quants/2025/02/20/lgbm.html" />
 <meta property="og:url" content="http://localhost:4000/quants/2025/02/20/lgbm.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
@@ -40,7 +40,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="LightGBM" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-20T00:00:00+01:00","datePublished":"2025-02-20T00:00:00+01:00","description":"Roadmap The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities","headline":"LightGBM","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/20/lgbm.html"},"url":"http://localhost:4000/quants/2025/02/20/lgbm.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-20T00:00:00+01:00","datePublished":"2025-02-20T00:00:00+01:00","description":"TODO update figures and tables with more recent data. reread text and style.","headline":"LightGBM","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/20/lgbm.html"},"url":"http://localhost:4000/quants/2025/02/20/lgbm.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -73,23 +73,10 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <h1 id="roadmap">Roadmap</h1>
+    <h1 id="todo">TODO</h1>
 <ul>
-  <li>
-    <p>The idea to show performance of LightGBM first using the same approach as the last article and then also compare it to the low vol and linear model and compare performance and show the impressive added value you get from including non-linearities</p>
-  </li>
-  <li>introduce LightGBM very shortly: check</li>
-  <li>explain again a bit the process but a very brief recap. Refer to previous articles: check</li>
-  <li>The idea is to show the added value of LightGBM compared to ridge compared to the low vol factor: check</li>
-  <li>I’m thinking of also introducing the singal performance and metrics: TODO
-      - add also low vol factor here
-      - add summary statisitcs here as well; mean, min max, std, sr</li>
-  <li>Compare performance returns: low vol, linear, lightgbm: check</li>
-  <li>Should be a relatively short article</li>
-  <li>introduce transaction costs: ok will say</li>
-  <li>show turnover: nope</li>
-  <li>Quickly tell about the diminsihing performance over the last 10 years</li>
-  <li>Mentioned the neural networks approach to model weigths</li>
+  <li>update figures and tables with more recent data.</li>
+  <li>reread text and style.</li>
 </ul>
 
 <h2 id="introduction">Introduction</h2>
@@ -143,8 +130,8 @@
   <thead>
     <tr>
       <th>Metric</th>
-      <th>Short</th>
-      <th>Long</th>
+      <th>Short Sleeve</th>
+      <th>Long Sleeve</th>
       <th>L/S (No Fees)</th>
       <th>L/S (Fees)</th>
       <th>Russell 1000</th>
@@ -152,20 +139,20 @@
   </thead>
   <tbody>
     <tr>
-      <td>Return (Ann. %)</td>
-      <td>1.46</td>
-      <td>12.48</td>
-      <td>12.33</td>
-      <td>10.69</td>
-      <td>7.29</td>
+      <td>Return (Annualized)</td>
+      <td>1.46%</td>
+      <td>12.48%</td>
+      <td>12.33%</td>
+      <td>10.69%</td>
+      <td>7.29%</td>
     </tr>
     <tr>
-      <td>Volatility (Ann. %)</td>
-      <td>9.95</td>
-      <td>10.54</td>
-      <td>6.67</td>
-      <td>6.69</td>
-      <td>19.58</td>
+      <td>Volatility (Annualized)</td>
+      <td>9.95%</td>
+      <td>10.54%</td>
+      <td>6.67%</td>
+      <td>6.69%</td>
+      <td>19.58%</td>
     </tr>
     <tr>
       <td>Sharpe Ratio</td>
@@ -176,27 +163,27 @@
       <td>0.37</td>
     </tr>
     <tr>
-      <td>Maximum Drawdown (%)</td>
-      <td>30.78</td>
-      <td>31.10</td>
-      <td>13.79</td>
-      <td>13.97</td>
-      <td>56.88</td>
+      <td>Max Drawdown</td>
+      <td>30.78%</td>
+      <td>31.10%</td>
+      <td>13.79%</td>
+      <td>13.97%</td>
+      <td>56.88%</td>
     </tr>
     <tr>
-      <td>Max Time Under Water (days)</td>
-      <td>1619</td>
-      <td>599</td>
-      <td>234</td>
-      <td>265</td>
-      <td>1666</td>
+      <td>Max Time Underwater (days)</td>
+      <td>1,619 days</td>
+      <td>599 days</td>
+      <td>234 days</td>
+      <td>265 days</td>
+      <td>1,666 days</td>
     </tr>
   </tbody>
 </table>
 
 <p><strong>Table 1:</strong> Performance statistics of the LightGBM strategy, with and without transaction costs (5 basis points per trade).</p>
 
-<p>After accounting for costs, the strategy posts a 10.7% annualized return with volatility just under 7%, leading to a Sharpe ratio of 1.60. Drawdowns stay around 14%, and the strategy tends to bounce back relatively quickly after periods of underperformance.</p>
+<p>After accounting for transaction costs, the strategy posts a 10.7% annualized return with volatility just under 7%, leading to a Sharpe ratio of 1.60. Drawdowns stay around 14%, and the strategy tends to bounce back relatively quickly after periods of underperformance.</p>
 
 <p>What’s nice to see is that both sides of the book are doing their job. The long leg delivers a solid 12.5% return — well above the Russell 1000’s 7.3%. The short leg returns just 1.5%, meaning those bottom-ranked stocks are underperforming the market, as intended. That’s exactly the kind of clean separation you want in a ranking strategy.</p>
 
@@ -204,31 +191,19 @@
 
 <p>Because both legs are volatility-targeted, the difference in returns translates cleanly into long-short performance, without relying on one side to carry all the weight. The result is a fairly smooth and balanced profile</p>
 
-<h2 id="model-performance">Model Performance</h2>
+<h2 id="signal-quality">Signal Quality</h2>
 
-<h3 id="1-statistical-model-performance">1. Statistical Model Performance</h3>
+<p>To understand <em>why</em> LightGBM performs well, it’s useful to zoom in on signal quality — how well each model ranks stocks by expected performance before any portfolio construction takes place.</p>
 
-<p>Before looking at portfolio returns, it’s useful to evaluate how well each model ranks stocks based on expected future performance — independently of any portfolio construction.</p>
+<p>Each day, the Ridge and LightGBM models output a score for every stock $i$ in the universe. These scores are trained to predict the Sharpe ratio over the next 20 trading days, computed out-of-sample and normalized by sector to remove broad industry effects. This gives us a daily cross-section of predicted scores \(\hat{y}_{i,t}\) and realized outcomes $y_{i,t}$.</p>
 
-<p>Each day, the models generate a prediction for every stock $i$ in the universe. For Ridge and LightGBM, these predictions are trained to estimate the Sharpe ratio over the next 20 trading days, which we compute and rank within each sector to account for industry effects.</p>
+<p>The low-volatility signal, in contrast, is a simple heuristic — ranking stocks based on their trailing volatility — and does not involve model training.</p>
 
-<p>This gives us, on each day $t$, a full cross-section of predicted scores and a corresponding cross-section of true future Sharpe ratios — both across all stocks.</p>
-
-<p>To evaluate signal quality, we compute the Spearman rank correlation between the predicted ranking and the true ranking:</p>
+<p>To measure alignment between the model’s predictions and actual future performance, we compute the Spearman rank correlation between predicted and realized rankings across all stocks:</p>
 
 \[\rho_t = \text{Spearman} \left( \{ \hat{y}_{i,t} \}, \{ y_{i,t} \} \right)\]
 
-<p>where:</p>
-
-<ul>
-  <li>$\hat{y}_{i,t}$ is the model-predicted score for stock $i$ at time $t$</li>
-  <li>$y_{i,t}$ is the realized Sharpe ratio over the next 20 days for stock $i$, cross-sectionally rank-normalized by sector</li>
-</ul>
-
-<p>This correlation is computed across all stocks on each day $t$, giving us a time series ${ \rho_t }$ of daily values.</p>
-
-<p>From this series, we compute:</p>
-
+<p>This yields a daily time series ${\rho_t}$, from which we compute:</p>
 <ul>
   <li>Mean correlation — average predictive strength</li>
   <li>Standard deviation — signal stability</li>
@@ -236,7 +211,7 @@
 </ul>
 
 <p><img src="/assets/lightgbm/signal.png" width="600" /></p>
-<p><strong>Figure 2:</strong> Cumulative Spearman correlation between model signals and future Sharpe ratio rankings, computed daily.</p>
+<p>Figure 2: Cumulative Spearman correlation between model signals and future Sharpe ratio rankings, computed daily.</p>
 <p><br /></p>
 
 <table>
@@ -250,16 +225,16 @@
   </thead>
   <tbody>
     <tr>
-      <td>Mean (%)</td>
-      <td>4.96</td>
-      <td>5.14</td>
-      <td>5.43</td>
+      <td>Mean</td>
+      <td>4.96%</td>
+      <td>5.14%</td>
+      <td>5.43%</td>
     </tr>
     <tr>
-      <td>Standard Deviation (%)</td>
-      <td>14.39</td>
-      <td>8.70</td>
-      <td>7.03</td>
+      <td>Standard Deviation</td>
+      <td>14.39%</td>
+      <td>8.70%</td>
+      <td>7.03%</td>
     </tr>
     <tr>
       <td>Sharpe Ratio</td>
@@ -270,14 +245,11 @@
   </tbody>
 </table>
 
-<p><strong>Table 2:</strong> Daily signal quality metrics. Models are evaluated based on how well their predicted rankings align with future 20-day Sharpe ratio rankings (normalized by sector), measured using Spearman correlation across all stocks each day.</p>
+<p><strong>Table 2: Daily signal quality metrics based on Spearman correlation between predicted and realized Sharpe ratio rankings.</strong></p>
 
-<p>Figure 2 plots the cumulative Spearman correlation between each model’s daily predictions and realized outcomes — giving us a running view of how consistently each signal aligns with future Sharpe ratio rankings. A steadily rising line indicates stable predictive power over time, while flatter or more erratic curves suggest a noisier, less reliable signal.</p>
+<p>The results might seem modest — average correlations around 5% — but that’s expected when working with financial data. Predicting returns is noisy by nature. The key is stability. LightGBM delivers a more consistent signal than the other models, with less variability and a higher signal-level Sharpe ratio.</p>
 
-<p>The summary statistics in Table 2 make this more concrete. While the average correlation values are all in the 5% range, LightGBM stands out by delivering its signal more consistently — with the lowest day-to-day variability and the highest signal-level Sharpe ratio.</p>
-
-<p>This might sound modest — after all, Spearman correlation ranges from -1 to 1 (or -100% to 100%), and we’re hovering around just 5%. But this is exactly what’s meant by “low signal-to-noise” in finance: even a small but stable signal can lead to meaningful results. And that’s what we’re seeing here — LightGBM offers a modest edge in correlation that translates into significantly better downstream performance.
-The signal-level results are encouraging — LightGBM produces a stronger and more stable ranking than both Ridge regression and the low-volatility factor. But how does this translate into actual financial performance?</p>
+<p>This kind of stability is valuable. Even weak signals, if reliable, can drive meaningful long-term performance when applied systematically.</p>
 
 <h3 id="2-financial-performance">2. Financial Performance</h3>
 
@@ -303,21 +275,21 @@ The signal-level results are encouraging — LightGBM produces a stronger and mo
   <tbody>
     <tr>
       <td>Return (Ann. %)</td>
-      <td>5.62</td>
-      <td>8.76</td>
-      <td>11.68</td>
-      <td>7.94</td>
-      <td>8.91</td>
-      <td>9.33</td>
+      <td>5.62%</td>
+      <td>8.76%</td>
+      <td>11.68%</td>
+      <td>7.94%</td>
+      <td>8.91%</td>
+      <td>9.33%</td>
     </tr>
     <tr>
       <td>Volatility (Ann. %)</td>
-      <td>8.67</td>
-      <td>7.98</td>
-      <td>7.09</td>
-      <td>9.76</td>
-      <td>8.91</td>
-      <td>8.17</td>
+      <td>8.67%</td>
+      <td>7.98%</td>
+      <td>7.09%</td>
+      <td>9.76%</td>
+      <td>8.91%</td>
+      <td>8.17%</td>
     </tr>
     <tr>
       <td>Sharpe Ratio</td>
@@ -330,64 +302,58 @@ The signal-level results are encouraging — LightGBM produces a stronger and mo
     </tr>
     <tr>
       <td>Max. Drawdown (%)</td>
-      <td>35.27</td>
-      <td>20.18</td>
-      <td>13.71</td>
-      <td>12.11</td>
-      <td>17.07</td>
-      <td>11.69</td>
+      <td>35.27%</td>
+      <td>20.18%</td>
+      <td>13.71%</td>
+      <td>12.11%</td>
+      <td>17.07%</td>
+      <td>11.69%</td>
     </tr>
     <tr>
-      <td>Max. Time Under Water (Days)</td>
-      <td>844</td>
-      <td>862</td>
-      <td>297</td>
-      <td>350</td>
-      <td>307</td>
-      <td>297</td>
+      <td>Max. Time Under Water</td>
+      <td>844 days</td>
+      <td>862 days</td>
+      <td>297 days</td>
+      <td>350 days</td>
+      <td>307 days</td>
+      <td>297 days</td>
     </tr>
   </tbody>
 </table>
 
-<p><strong>Table 3:</strong> Strategy performance over the full sample (1997–2024) and the last decade (2015–2024).</p>
+<p><strong>Table 3: Strategy performance over the full sample (1997–2024) and the last decade (2015–2024).</strong></p>
 
-<p>Figures 3 and 4, along with Table 3, show a clear pattern: LightGBM outperforms both Ridge and Low Vol across nearly every metric. It delivers higher returns, lower volatility, and stronger Sharpe ratios — with significantly shallower drawdowns and faster recovery times. Over the full sample, the Sharpe ratio reaches 1.59 — a meaningful improvement over Ridge (1.09) and Low Vol (0.67).</p>
+<p>Figures 3 and 4, along with Table 3, show a clear pattern: LightGBM outperforms both Ridge and Low Vol across nearly every metric. It delivers higher returns and lower volatility, resulting in the strongest Sharpe ratios. Drawdowns are smaller, and recovery is faster — with time under water cut by more than half compared to the linear model.</p>
 
-<p>That said, it’s worth pointing out that performance in the last decade is lower across the board. LightGBM still leads, but the margin has narrowed. Returns are flatter, volatility is slightly higher, and Sharpe ratios have declined compared to the earlier years.</p>
+<p>That said, the last decade has been tougher. Performance has declined across the board, and while LightGBM still leads, the gap has narrowed. Its Sharpe ratio drops from 1.59 to 1.13, and Ridge isn’t far behind at 1.00. Returns are flatter, and the edge is less pronounced.</p>
 
-<p>Why is that? Is the market becoming more efficient? Are features becoming less predictive? Is it overfitting to a regime that no longer holds? These are important questions — ones I won’t tackle here, but that I plan to explore in a follow-up post.</p>
+<p>What’s driving this? Has the market become more efficient? Are the features decaying? Or is the model overfitting to an older regime? These are open questions I plan to explore in a future post.</p>
 
-<p>For now, the takeaway is simple: LightGBM shows consistent improvements over simpler models, but like all strategies, its performance evolves — and understanding <em>why</em> is just as important as measuring <em>how much</em>.</p>
+<p>For now, the takeaway is simple: LightGBM provides a consistent improvement over simpler models. But like any strategy, its performance evolves — and understanding <em>why</em> is just as important as measuring <em>how much</em>.</p>
 
 <h2 id="whats-next">What’s Next</h2>
 
-<p>There’s clearly room to improve. As we’ve seen, performance over the past decade has declined. It’s tempting to jump to conclusions about why — changing market dynamics, feature decay, increased competition — but the truth is, it’s hard to know. What we do know is that results have weakened, and that’s reason enough to dig deeper.</p>
+<p>There’s clearly still a lot to improve. The model works, but performance has softened in the last decade — and it’s not obvious why. It could be changing regimes, feature decay, more competition… or all of the above.</p>
 
-<p>Here are a few directions I’m thinking about:</p>
+<p>Here’s what I’m exploring:</p>
 
 <ul>
-  <li><strong>Portfolio management</strong> 
-Reading the book advanced portfolio managements and considering buying elements of portfolio management<br />
-How much of the return is driven by known risk factors or sector tilts? Are we unknowingly taking on systematic exposures that explain most of the performance? Decomposing the P&amp;L and analyzing factor loadings would help shed light here. There are some great books and papers that go deep into this, and I plan to study those more closely.
-    <ul>
-      <li>understanding my pnl</li>
-      <li>managing my factor risk</li>
-      <li>build better allocation methods</li>
-    </ul>
+  <li>
+    <p><strong>Portfolio construction</strong><br />
+I’ve started digging into <em>Advanced Portfolio Management</em> and <em>The Elements of Quantitative Investing</em> by Paleologo — both really solid so far. I want to better understand what’s actually driving P&amp;L. Am I just picking up factor risk? Can I improve how I size positions or manage constraints?</p>
   </li>
   <li>
-    <p><strong>Expanding the feature set</strong><br />
-Right now, the model only sees price, market cap, and volume — a relatively narrow view. There’s likely signal in other types of data, especially when the current ones start to fade. Also, we arbitrarily chose to predict the Sharpe ratio over the next 20 days. But why not 10? Or 30? Or 60? Maybe even combine models trained on different horizons — this could help smooth out noise and pick up different return profiles.</p>
+    <p><strong>Feature and target design</strong><br />
+Right now, everything is based on price, volume, and market cap. There’s probably more signal out there — or better ways to use the existing data. Also thinking about prediction horizon: why stick to 20 days? What if I blend different horizons?</p>
   </li>
   <li>
-    <p><strong>Rethinking the modeling objective</strong><br />
-One thing that’s been bothering me is the two-step setup: first, we model a score or ranking; then we convert that into positions using a separate allocation rule. But what if we skipped the middle step and directly optimized for portfolio weights? There’s some interesting work out there on end-to-end portfolio optimization that might be worth exploring.</p>
-
-    <p>A direction that’s particularly exciting is inspired by <em>Artificial Asset Pricing</em> by Kelly, Mazarei, and Xiu (2023). Instead of predicting returns or Sharpe ratios and then ranking stocks, they use a transformer architecture to learn the stochastic discount factor directly. This approach sidesteps traditional factor modeling entirely, allowing the network to learn pricing kernels from raw panel data. It’s an ambitious setup, but one that might help close the gap between predictive modeling and true portfolio optimization.</p>
+    <p><strong>Rethinking the objective</strong><br />
+The current pipeline scores stocks, then allocates separately. But maybe it makes more sense to predict portfolio weights directly. I’m especially intrigued by the recent paper <em>Artificial Intelligence Asset Pricing Models</em> (Kelly et al., 2025), which uses transformers to learn the stochastic discount factor from raw panel data. Super ambitious, but a really interesting direction.</p>
   </li>
 </ul>
 
-<p>All of this opens the door to a broader research direction — and I’ll dig into these ideas in future posts.</p>
+<p>Lots of cool stuff to explore — and I’ll share more as I go.</p>
+
 
   </div><a class="u-url" href="/quants/2025/02/20/lgbm.html" hidden></a>
 </article>

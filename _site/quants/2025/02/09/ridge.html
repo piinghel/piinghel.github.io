@@ -30,8 +30,8 @@
 <meta property="og:title" content="Ridge regression" />
 <meta name="author" content="piinghel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="TODO: refer to combo in tabel interpration a bit better also say that things are scaled to all the same vol make it a bit more personalized Add some numbers in the text Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model se" />
-<meta property="og:description" content="TODO: refer to combo in tabel interpration a bit better also say that things are scaled to all the same vol make it a bit more personalized Add some numbers in the text Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model se" />
+<meta name="description" content="TODO: update with new data reread + spelling and style." />
+<meta property="og:description" content="TODO: update with new data reread + spelling and style." />
 <link rel="canonical" href="http://localhost:4000/quants/2025/02/09/ridge.html" />
 <meta property="og:url" content="http://localhost:4000/quants/2025/02/09/ridge.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
@@ -40,7 +40,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Ridge regression" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-09T00:00:00+01:00","datePublished":"2025-02-09T00:00:00+01:00","description":"TODO: refer to combo in tabel interpration a bit better also say that things are scaled to all the same vol make it a bit more personalized Add some numbers in the text Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model se","headline":"Ridge regression","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/09/ridge.html"},"url":"http://localhost:4000/quants/2025/02/09/ridge.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-09T00:00:00+01:00","datePublished":"2025-02-09T00:00:00+01:00","description":"TODO: update with new data reread + spelling and style.","headline":"Ridge regression","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/09/ridge.html"},"url":"http://localhost:4000/quants/2025/02/09/ridge.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -75,13 +75,8 @@
   <div class="post-content e-content" itemprop="articleBody">
     <h2 id="todo">TODO:</h2>
 <ul>
-  <li>refer to combo in tabel</li>
-  <li>interpration a bit better</li>
-  <li>also say that things are scaled to all the same vol</li>
-  <li>make it a bit more personalized</li>
-  <li>Add some numbers in the text</li>
-  <li>Go a little bit deeper on why things works: Sharpe ratio because of the volatility, sector comparisoin. A lot of it is just a tradeoff between removing noise, adding simple making it simpler for the model
-se</li>
+  <li>update with new data</li>
+  <li>reread + spelling and style.</li>
 </ul>
 
 <p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a>, I showed how scaling returns by volatility helped improve performance with minimal complexity. This time, I want to take a more data-driven approach—one where the model learns how to combine different features instead of me setting the rules manually.</p>
@@ -416,89 +411,89 @@ Capture systematic risk.</p>
   <thead>
     <tr>
       <th>Model</th>
-      <th>Return (ann. %)</th>
-      <th>Volatility (ann. %)</th>
-      <th>Sharpe Ratio (ann.)</th>
-      <th>Max. Drawdown (%)</th>
+      <th>Return (ann.)</th>
+      <th>Volatility (ann.)</th>
+      <th>Sharpe Ratio</th>
+      <th>Max Drawdown</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>SR Z-Score By Sector</td>
-      <td>12.24</td>
-      <td>7.94</td>
+      <td>12.24%</td>
+      <td>7.94%</td>
       <td>1.54</td>
-      <td>16.09</td>
+      <td>16.09%</td>
     </tr>
     <tr>
       <td>Combo</td>
-      <td>8.99</td>
-      <td>6.62</td>
+      <td>8.99%</td>
+      <td>6.62%</td>
       <td>1.36</td>
-      <td>15.19</td>
+      <td>15.19%</td>
     </tr>
     <tr>
       <td>SR Z-Score Global</td>
-      <td>10.68</td>
-      <td>8.30</td>
+      <td>10.68%</td>
+      <td>8.30%</td>
       <td>1.29</td>
-      <td>18.39</td>
+      <td>18.39%</td>
     </tr>
     <tr>
       <td>SR Ranking By Sector</td>
-      <td>9.95</td>
-      <td>7.83</td>
+      <td>9.95%</td>
+      <td>7.83%</td>
       <td>1.27</td>
-      <td>13.94</td>
+      <td>13.94%</td>
     </tr>
     <tr>
       <td>SR Ranking Global</td>
-      <td>10.40</td>
-      <td>8.41</td>
+      <td>10.40%</td>
+      <td>8.41%</td>
       <td>1.24</td>
-      <td>15.93</td>
+      <td>15.93%</td>
     </tr>
     <tr>
       <td>SR Raw Global</td>
-      <td>9.76</td>
-      <td>8.39</td>
+      <td>9.76%</td>
+      <td>8.39%</td>
       <td>1.16</td>
-      <td>15.89</td>
+      <td>15.89%</td>
     </tr>
     <tr>
       <td>Return Ranking By Sector</td>
-      <td>8.14</td>
-      <td>7.50</td>
+      <td>8.14%</td>
+      <td>7.50%</td>
       <td>1.09</td>
-      <td>15.96</td>
+      <td>15.96%</td>
     </tr>
     <tr>
       <td>Return Z-Score By Sector</td>
-      <td>8.07</td>
-      <td>7.43</td>
+      <td>8.07%</td>
+      <td>7.43%</td>
       <td>1.09</td>
-      <td>19.37</td>
+      <td>19.37%</td>
     </tr>
     <tr>
       <td>Return Raw Global</td>
-      <td>6.95</td>
-      <td>7.54</td>
+      <td>6.95%</td>
+      <td>7.54%</td>
       <td>0.92</td>
-      <td>18.99</td>
+      <td>18.99%</td>
     </tr>
     <tr>
       <td>Return Ranking Global</td>
-      <td>6.48</td>
-      <td>7.26</td>
+      <td>6.48%</td>
+      <td>7.26%</td>
       <td>0.89</td>
-      <td>18.86</td>
+      <td>18.86%</td>
     </tr>
     <tr>
       <td>Return Z-Score Global</td>
-      <td>6.44</td>
-      <td>7.67</td>
+      <td>6.44%</td>
+      <td>7.67%</td>
       <td>0.84</td>
-      <td>25.95</td>
+      <td>25.95%</td>
     </tr>
   </tbody>
 </table>
