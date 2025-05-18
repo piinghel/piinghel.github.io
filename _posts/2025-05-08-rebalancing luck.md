@@ -93,13 +93,11 @@ To analyze the results, I group performance by weekday and average across the th
 **Table 2:** Tranche-averaged performance by weekday.
 
 
-The improvements aren’t massive, but they’re noticeable. Sharpe ratios rise into the 1.78–1.85 range, with Friday and Thursday performing best. Volatility tightens around 6.0%, and drawdowns are generally shallower and recover faster — especially compared to the more uneven results in individual tranches.
+The improvements are actually quite solid. Sharpe ratios climb into the 1.78–1.85 range, with Friday and Thursday performing best. Volatility compresses to just above 6%, and drawdowns are generally smaller and recover more quickly. On the cumulative return chart, the dispersion tightens massively — the lines almost sit on top of each other, which wasn't the case before.
 
-The gains aren’t just about higher returns — they mostly come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in positioning, which leads to more stable performance and less noise.
+This isn’t just about higher returns — most of the gains come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in exposure, which reduces noise and leads to more stable performance.
 
-From a research perspective, this helps a lot. It reduces the randomness from rebalance timing and makes it easier to spot whether a model improvement is real or just the result of good timing.
-
-
+From a research perspective, this makes a big difference. It cuts down the randomness introduced by timing luck and makes it easier to tell whether a model change is actually improving things — or just benefiting from better timing.
 
 
 ## Why It Works
