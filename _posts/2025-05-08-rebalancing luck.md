@@ -62,7 +62,7 @@ And the table of results:
 
 
 
-I expected more divergence between schedules, but returns ended up being fairly close — which was a bit surprising. Still, there’s meaningful variation: Sharpe ratios range from 1.50 to 1.75 for individual tranches, and time under water can differ by hundreds of days.
+I was actually surprised by how much divergence there was. Even though all tranches follow the same model, returns varied quite a bit — from around 10.1% to 12.5% annually. Sharpe ratios ranged from 1.50 to 1.75, and some tranches spent hundreds of days longer in drawdown than others. These are meaningful differences for something as simple as shifting the rebalance day.
 
 None of this comes from the model or the signal — it's purely due to small shifts in rebalance timing that compound over time. Even when overall performance looks stable, this kind of noise makes it harder to tell whether a change is genuinely better or just lucky on timing.
 
