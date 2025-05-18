@@ -5,7 +5,8 @@ date: 2025-05-10
 categories: [Quants]
 ---
 
-Rebalancing timing plays a crucial role in medium- to long-term strategies that rely on binary signals and infrequent rebalancing. Shifting the execution day by even a few days can impact performance — affecting positions, returns, volatility, and drawdowns.
+Rebalance timing plays a big role in medium- to long-term strategies that don’t trade often. Shifting the execution day by just a few days can meaningfully impact performance — changing the exact positions held, and affecting returns, volatility, and drawdowns.
+
 
 This issue is often referred to as *rebalance timing luck*: the variation in performance that comes purely from the day you happen to rebalance, even when the strategy and signals stay the same.
 

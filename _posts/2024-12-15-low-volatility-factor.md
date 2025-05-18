@@ -17,7 +17,7 @@ This post is the first in a series on cross-sectional stock selection. I’ll be
 The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep it realistic, I filter out stocks priced under $5. The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since it uses point-in-time constituents, there’s no survivorship bias. Figures 1 visualizes the number of tradeable stocks over time.
 
 ![Figure 1](/assets/2024-12-15-low-volatility-factor/nr_stocks.svg)  
-Figure 1: Number of tradeable stocks over time.
+**Figure 1**: Number of tradeable stocks over time.
 
 
 

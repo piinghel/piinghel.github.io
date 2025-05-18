@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-17T13:22:30+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-17T19:09:59+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
 </subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">Rebalancing Timing Luck</title><link href="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html" rel="alternate" type="text/html" title="Rebalancing Timing Luck" /><published>2025-05-10T00:00:00+02:00</published><updated>2025-05-10T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/05/10/rebalancing%20luck</id><content type="html" xml:base="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html"><![CDATA[<p>Rebalancing timing plays a crucial role in medium- to long-term strategies that rely on binary signals and infrequent rebalancing. Shifting the execution day by even a few days can impact performance — affecting positions, returns, volatility, and drawdowns.</p>
 
 <p>This issue is often referred to as <em>rebalance timing luck</em>: the variation in performance that comes purely from the day you happen to rebalance, even when the strategy and signals stay the same.</p>
@@ -1018,7 +1018,7 @@ Capture systematic risk.</p>
 <p>The dataset covers the Russell 1000 (RIY), which tracks the largest U.S. stocks. To keep it realistic, I filter out stocks priced under $5. The sample runs from 1995 to 2024, covering around 3,300 stocks as companies enter and exit the index. At any given time, about 1,000 stocks are tradeable. Since it uses point-in-time constituents, there’s no survivorship bias. Figures 1 visualizes the number of tradeable stocks over time.</p>
 
 <p><img src="/assets/2024-12-15-low-volatility-factor/nr_stocks.svg" alt="Figure 1" /><br />
-Figure 1: Number of tradeable stocks over time.</p>
+<strong>Figure 1</strong>: Number of tradeable stocks over time.</p>
 
 <h2 id="measuring-volatility">Measuring Volatility</h2>
 
