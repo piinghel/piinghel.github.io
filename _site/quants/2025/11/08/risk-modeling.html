@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Good Reads</title>
+  <title>Risk Modeling Approaches</title>
 
   <!-- MathJax Config -->
   <script>
@@ -25,22 +25,22 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Good Reads | Pieter-Jan</title>
+<title>Risk Modeling Approaches | Pieter-Jan</title>
 <meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="Good Reads" />
+<meta property="og:title" content="Risk Modeling Approaches" />
 <meta name="author" content="piinghel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Roadmap" />
-<meta property="og:description" content="Roadmap" />
-<link rel="canonical" href="http://localhost:4000/quants/2025/04/20/dope-articles.html" />
-<meta property="og:url" content="http://localhost:4000/quants/2025/04/20/dope-articles.html" />
+<meta name="description" content="Introduction" />
+<meta property="og:description" content="Introduction" />
+<link rel="canonical" href="http://localhost:4000/quants/2025/11/08/risk-modeling.html" />
+<meta property="og:url" content="http://localhost:4000/quants/2025/11/08/risk-modeling.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2025-04-20T00:00:00+02:00" />
+<meta property="article:published_time" content="2025-11-08T00:00:00+01:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Good Reads" />
+<meta property="twitter:title" content="Risk Modeling Approaches" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-04-20T00:00:00+02:00","datePublished":"2025-04-20T00:00:00+02:00","description":"Roadmap","headline":"Good Reads","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/04/20/dope-articles.html"},"url":"http://localhost:4000/quants/2025/04/20/dope-articles.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-11-08T00:00:00+01:00","datePublished":"2025-11-08T00:00:00+01:00","description":"Introduction","headline":"Risk Modeling Approaches","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/11/08/risk-modeling.html"},"url":"http://localhost:4000/quants/2025/11/08/risk-modeling.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -66,69 +66,67 @@
       <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Good Reads</h1>
-    <p class="post-meta"><time class="dt-published" datetime="2025-04-20T00:00:00+02:00" itemprop="datePublished">
-        Apr 20, 2025
+    <h1 class="post-title p-name" itemprop="name headline">Risk Modeling Approaches</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2025-11-08T00:00:00+01:00" itemprop="datePublished">
+        Nov 8, 2025
       </time><span class="reading-time"> • 1 min read</span></p>
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <h2 id="roadmap">Roadmap</h2>
+    <h2 id="introduction">Introduction</h2>
 
-<p>This is just a running list of articles, papers, and blog posts I’ve found interesting — mostly around cross-sectional asset pricing, machine learning models, and quant investing. I’ll keep adding to it over time as I go deeper.</p>
+<p>Risk modeling is fundamental to quantitative trading. Accurate risk forecasts enable better position sizing, portfolio construction, and risk management. Traditional approaches like GARCH and EWMA have been the workhorses for decades, but new methods are emerging that leverage machine learning, panel data, and cross-asset information.</p>
 
-<p>Some of this is academic, some more hands-on.</p>
+<p>In this article, I’ll compare different risk modeling approaches, from classical time series models to modern machine learning methods. I’ll evaluate them on their ability to forecast volatility accurately and their practical utility for portfolio management.</p>
 
-<h3 id="machine-learning--asset-pricing">Machine Learning + Asset Pricing</h3>
+<h2 id="approaches-to-compare">Approaches to Compare</h2>
 
-<ul>
-  <li><strong><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5103546">Artificial Intelligence Asset Pricing Models</a></strong><br />
-<em>Bryan T. Kelly, Boris Kuznetsov, Semyon Malamud, Teng Andrea Xu (2025)</em>
-    <ul>
-      <li>Uses transformers to directly learn the stochastic discount factor from raw panel data. A step toward end-to-end portfolio optimization.</li>
-    </ul>
-  </li>
-  <li><strong><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3751012">Building Cross-Sectional Systematic Strategies by Learning to Rank</a></strong><br />
-<em>Daniel Poh, Bryan Lim, Stefan Zohren, Stephen Roberts (2021)</em>
-    <ul>
-      <li>Applies learning-to-rank techniques to directly optimize for cross-sectional ordering instead of predicting returns. Tightly aligned with how quant signals are actually used.</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="return-predictability">Return Predictability</h3>
+<h3 id="classical-time-series-models">Classical Time Series Models</h3>
 
 <ul>
-  <li><strong><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=">Global Return Predictability</a></strong><br />
-<em>Lasse Heje Pedersen</em>
-    <ul>
-      <li>Framework for understanding global return predictability across markets and asset classes.</li>
-    </ul>
-  </li>
+  <li><strong>GARCH</strong>: Generalized Autoregressive Conditional Heteroskedasticity models capture volatility clustering</li>
+  <li><strong>EWMA</strong>: Exponentially Weighted Moving Average provides a simple, adaptive volatility estimate</li>
+  <li><strong>Realized Volatility</strong>: Using high-frequency data to measure ex-post volatility</li>
 </ul>
 
-<h3 id="risk-management">Risk Management</h3>
+<h3 id="modern-approaches">Modern Approaches</h3>
 
 <ul>
-  <li><strong><a href="https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility">Risk Everywhere: Modeling and Managing Volatility</a></strong><br />
-<em>Tim Bollerslev, Benjamin Hood, John Huss, Lasse Heje Pedersen</em>
-    <ul>
-      <li>Examines realized volatility patterns across 50+ commodities, currencies, equity indices, and fixed-income instruments. Uses panel-based estimation to achieve superior out-of-sample risk forecasts.</li>
-    </ul>
-  </li>
+  <li><strong>Panel-based Models</strong>: Leveraging cross-sectional information across assets (e.g., AQR’s “Risk Everywhere”)</li>
+  <li><strong>Machine Learning Models</strong>: Using neural networks, random forests, or other ML methods to predict volatility</li>
+  <li><strong>Factor Models</strong>: Decomposing risk into common factors and asset-specific components</li>
 </ul>
 
-<p>More coming soon — this is my scratchpad for everything worth revisiting.</p>
+<h2 id="evaluation-framework">Evaluation Framework</h2>
+
+<p>I’ll compare models on:</p>
+
+<ul>
+  <li><strong>Forecast Accuracy</strong>: Out-of-sample R², RMSE, and other statistical metrics</li>
+  <li><strong>Economic Value</strong>: Impact on portfolio Sharpe ratio, maximum drawdown, and risk-adjusted returns</li>
+  <li><strong>Robustness</strong>: Performance across different market regimes and asset classes</li>
+  <li><strong>Practical Considerations</strong>: Computational cost, implementation complexity, and data requirements</li>
+</ul>
+
+<h2 id="data-and-setup">Data and Setup</h2>
+
+<p>[To be filled in]</p>
+
+<h2 id="results">Results</h2>
+
+<p>[To be filled in]</p>
+
+<h2 id="discussion">Discussion</h2>
+
+<p>[To be filled in]</p>
+
 
   </div>
 
   <nav class="post-navigation"><div class="post-nav-prev">
         <span class="post-nav-label">Previous</span>
-        <a href="/quants/2025/02/20/lgbm.html">Stock Ranking with Boosting</a>
-      </div><div class="post-nav-next">
-        <span class="post-nav-label">Next</span>
         <a href="/quants/2025/05/10/rebalancing-luck.html">Reducing Rebalancing Timing Risk with Tranching</a>
-      </div></nav><a class="u-url" href="/quants/2025/04/20/dope-articles.html" hidden></a>
+      </div></nav><a class="u-url" href="/quants/2025/11/08/risk-modeling.html" hidden></a>
 </article>
 
     </div>

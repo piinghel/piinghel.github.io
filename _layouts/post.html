@@ -10,6 +10,12 @@ layout: base
       <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
         {{ page.date | date: date_format }}
       </time>
+      {%- assign words = content | number_of_words -%}
+      {%- if words < 360 -%}
+        <span class="reading-time"> • 1 min read</span>
+      {%- else -%}
+        <span class="reading-time"> • {{ words | divided_by: 180 }} min read</span>
+      {%- endif -%}
       {%- if page.modified_date -%}
         ~ 
         {%- assign mdate = page.modified_date | date_to_xmlschema -%}
@@ -29,6 +35,21 @@ layout: base
   <div class="post-content e-content" itemprop="articleBody">
     {{ content }}
   </div>
+
+  <nav class="post-navigation">
+    {%- if page.previous -%}
+      <div class="post-nav-prev">
+        <span class="post-nav-label">Previous</span>
+        <a href="{{ page.previous.url | relative_url }}">{{ page.previous.title | escape }}</a>
+      </div>
+    {%- endif -%}
+    {%- if page.next -%}
+      <div class="post-nav-next">
+        <span class="post-nav-label">Next</span>
+        <a href="{{ page.next.url | relative_url }}">{{ page.next.title | escape }}</a>
+      </div>
+    {%- endif -%}
+  </nav>
 
   {%- if site.disqus.shortname -%}
     {%- include disqus_comments.html -%}

@@ -1,16 +1,17 @@
 ---
 layout: post
-title: "Rebalancing Timing Luck"
+title: "Reducing Rebalancing Timing Risk with Tranching"
 date: 2025-05-10
 categories: [Quants]
 ---
 
-Rebalance timing plays a big role in medium- to long-term strategies that don’t trade often. Shifting the execution day by just a few days can meaningfully impact performance — changing the exact positions held, and affecting returns, volatility, and drawdowns.
+## Introduction
 
+Rebalance timing plays a big role in medium- to long-term strategies that don't trade often. Shifting the execution day by just a few days can meaningfully impact performance, changing the exact positions held, and affecting returns, volatility, and drawdowns.
 
 This issue is often referred to as *rebalance timing luck*: the variation in performance that comes purely from the day you happen to rebalance, even when the strategy and signals stay the same.
 
-Others have explored this too. [Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) wrote a great piece highlighting how impactful this effect can be. And the [Concretum Group](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) analyzed it in a GTAA context, showing that spreading rebalances out over time — instead of doing it all at once — can reduce timing risk and even lower turnover.
+Others have explored this too. [Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) wrote a great piece highlighting how impactful this effect can be. And the [Concretum Group](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) analyzed it in a GTAA context, showing that spreading rebalances out over time, instead of doing it all at once, can reduce timing risk and even lower turnover.
 
 That got me curious: how much does timing luck affect my own long-short strategy? And could a more gradual rebalancing approach make it more stable, without changing the core logic?
 
@@ -23,13 +24,13 @@ I simulate all 15 combinations:
 - Each uses the same trained model and applies predictions available on that specific day  
 - Signals, logic, and universe stay exactly the same  
 
-Then, I compare this to a *tranching* setup — a common approach where the portfolio is divided into parts and rebalanced gradually. Here, the portfolio is split into three equal tranches. One-third is rebalanced each week, rotating through the offsets. Over three weeks, the full portfolio is still updated — just in smaller, smoother steps. This helps reduce sensitivity to any single day’s noise.
+Then, I compare this to a *tranching* setup, a common approach where the portfolio is divided into parts and rebalanced gradually. Here, the portfolio is split into three equal tranches. One-third is rebalanced each week, rotating through the offsets. Over three weeks, the full portfolio is still updated, just in smaller, smoother steps. This helps reduce sensitivity to any single day’s noise.
 
 
 
 ## Rebalancing Day Does Matter
 
-Here’s the cumulative return of the 15 full-rebalance variants:
+Here's the cumulative return of the 15 full-rebalance variants:
 
 
 ![Figure 1](/assets/tranching/all_perf_plots.png) 
@@ -58,13 +59,13 @@ And the table of results:
 | offset=2, day=5   | 10.37%           | 6.45%      | 1.56         | 13.10%       | 593 days        |
 
 
-**Table 1:** Performance metrics for each full-rebalance variant.
+**Table 1:** Performance metrics for each full,rebalance variant.
 
 
 
-I was actually surprised by how much divergence there was. Even though all tranches follow the same model, returns varied quite a bit — from around 10.1% to 12.5% annually. Sharpe ratios ranged from 1.50 to 1.75, and some tranches spent hundreds of days longer in drawdown than others. These are meaningful differences for something as simple as shifting the rebalance day.
+I was actually surprised by how much divergence there was. Even though all variants follow the same model, returns varied quite a bit, from around 10.1% to 12.5% annually. Sharpe ratios ranged from 1.50 to 1.75, and some variants spent hundreds of days longer in drawdown than others. These are meaningful differences for something as simple as shifting the rebalance day.
 
-None of this comes from the model or the signal — it's purely due to small shifts in rebalance timing that compound over time. Even when overall performance looks stable, this kind of noise makes it harder to tell whether a change is genuinely better or just lucky on timing.
+None of this comes from the model or the signal—it's purely due to small shifts in rebalance timing that compound over time. Even when overall performance looks stable, this kind of noise makes it harder to tell whether a change is genuinely better or just lucky on timing.
 
 
 
@@ -73,11 +74,11 @@ None of this comes from the model or the signal — it's purely due to small shi
 
 Instead of picking a single rebalancing day, we can average across them.
 
-In the tranching setup, I split the portfolio into three equal parts. Each week, I rebalance one-third of the portfolio — always on the same weekday (say, every Wednesday) — but each tranche follows a different offset within the three-week cycle. So over three weeks, the full portfolio is refreshed, just not all at once.
+In the tranching setup, I split the portfolio into three equal parts. Each week, I rebalance one-third of the portfolio, always on the same weekday (say, every Wednesday), but each tranche follows a different offset within the three-week cycle. So over three weeks, the full portfolio is refreshed, just not all at once.
 
 This staggered execution spreads risk more evenly across time without changing the model or signals.
 
-To analyze the results, I group performance by weekday and average across the three offsets. This gives a cleaner comparison to the previous “all-at-once” setup.
+To analyze the results, I group performance by weekday and average across the three offsets. This gives a cleaner comparison to the previous "all-at-once" setup.
 
 ![Figure 2](/assets/tranching/tranched_perf_plots.png)  
 **Figure 2:** Cumulative returns with tranching by weekday (averaged over offsets).
@@ -90,43 +91,43 @@ To analyze the results, I group performance by weekday and average across the th
 | 4 (Thu) | 11.63%           | 6.06%      | 1.85         | 11.01%       | 303 days        |
 | 5 (Fri) | 11.43%           | 6.11%      | 1.80         | 12.37%       | 364 days        |
 
-**Table 2:** Tranche-averaged performance by weekday.
+**Table 2:** Tranche,averaged performance by weekday.
 
 
-The improvements are actually quite solid. Sharpe ratios climb into the 1.78–1.85 range, with Friday and Thursday performing best. Volatility compresses to just above 6%, and drawdowns are generally smaller and recover more quickly. On the cumulative return chart, the dispersion tightens massively — the lines almost sit on top of each other, which wasn't the case before.
+The improvements are actually quite solid. Sharpe ratios climb into the 1.78-1.85 range, with Friday and Thursday performing best. Volatility compresses to just above 6%, and drawdowns are generally smaller and recover more quickly. On the cumulative return chart, the dispersion tightens massively—the lines almost sit on top of each other, which wasn't the case before.
 
-This isn’t just about higher returns — most of the gains come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in exposure, which reduces noise and leads to more stable performance.
+This isn't just about higher returns—most of the gains come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in exposure, which reduces noise and leads to more stable performance.
 
-From a research perspective, this makes a big difference. It cuts down the randomness introduced by timing luck and makes it easier to tell whether a model change is actually improving things — or just benefiting from better timing.
+From a research perspective, this makes a big difference. It cuts down the randomness introduced by timing luck and makes it easier to tell whether a model change is actually improving things, or just benefiting from better timing.
 
 
 ## Why It Works
 
-Tranching softens the impact of short-term shocks. A single full-book rebalance can pick up temporary price dislocations or liquidity gaps — injecting noise into an otherwise stable strategy. By spreading rebalancing over time, those effects average out.
+Tranching softens the impact of short-term shocks. A single full-book rebalance can pick up temporary price dislocations or liquidity gaps, injecting noise into an otherwise stable strategy. By spreading rebalancing over time, those effects average out.
 
-The logic and signal stay exactly the same. The full portfolio still turns over every three weeks, just more gradually. That reduces sensitivity to any one day’s conditions, without changing overall turnover.
+The logic and signal stay exactly the same. The full portfolio still turns over every three weeks, just more gradually. That reduces sensitivity to any one day's conditions, without changing overall turnover.
 
-There’s also a subtle benefit on the signal side. In the standard setup, you only act on the model’s predictions once every three weeks. With tranching, you fold in new predictions each week — even if it’s only on a third of the capital. That introduces a kind of temporal diversification and makes the strategy more responsive to new information.
+There's also a subtle benefit on the signal side. In the standard setup, you only act on the model's predictions once every three weeks. With tranching, you fold in new predictions each week, even if it's only on a third of the capital. That introduces a kind of temporal diversification and makes the strategy more responsive to new information.
 
 ## A Few Trade-Offs and Extra Benefits
 
-Tranching isn’t free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds a bit of overhead — especially when some trades are small and barely move the portfolio.
+Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds a bit of overhead, especially when some trades are small and barely move the portfolio.
 
-But in practice, it’s felt worth it. Not just in research — even in live runs, it makes the strategy feel more stable and less twitchy around timing noise.
+But in practice, it's felt worth it. Not just in research—even in live runs, it makes the strategy feel more stable and less twitchy around timing noise.
 
-I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I’m not entirely sure why — maybe it avoids large shifts or cancels out trades across tranches. Still figuring that part out. If you’ve got ideas or experience with it, let me know — I’m curious.
+I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I'm not entirely sure why—maybe it avoids large shifts or cancels out trades across tranches. Still figuring that part out. If you've got ideas or experience with it, let me know—I'm curious.
 
 And a small bonus: by updating just a slice each week, you keep injecting fresh signal without going all-in. The portfolio stays a bit more responsive without overtrading.
 
 
 
-## Final Thoughts
+## Conclusion
 
 What started as a small curiosity around rebalancing schedules turned into a strong case for using tranching by default.
 
-The signal and logic don’t change — but the results become cleaner and more stable. That’s especially helpful when evaluating model tweaks, since it reduces noise from execution timing.
+The signal and logic don't change, but the results become cleaner and more stable. That's especially helpful when evaluating model tweaks, since it reduces noise from execution timing.
 
-I’ll be using this setup going forward for any strategy that rebalances on a fixed cycle. It’s simple, effective, and makes the whole process easier to trust.
+I'll be using this setup going forward for any strategy that rebalances on a fixed cycle. It's simple, effective, and makes the whole process easier to trust.
 
 
 

@@ -1,2 +1,623 @@
 // Placeholder to allow defining custom styles that override everything else.
 // (Use `_sass/minima/custom-variables.scss` to override variable defaults)
+
+// Minimal, subtle improvements inspired by calmcode.io
+
+// Softer colors with white background
+body {
+  line-height: 1.7;
+  color: #2d2d2d;
+  background-color: #ffffff;
+  font-family: "Iowan Old Style BT", Georgia, serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 21px;
+  font-weight: 500;
+}
+
+// Site header styling
+.site-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  
+  .wrapper {
+    background-color: transparent;
+    box-shadow: none;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .site-title {
+    font-weight: 400;
+    color: #2d2d2d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+  }
+  
+  .page-link {
+    color: #666;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #2d2d2d;
+      text-decoration: none;
+    }
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3;
+  color: #2d2d2d;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+// Better typography hierarchy - subtle and refined
+h1 {
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+  color: #2d2d2d;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2d2d2d;
+  line-height: 1.4;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: #2d2d2d;
+  line-height: 1.5;
+}
+
+// Home page improvements
+.home {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+  }
+}
+
+// Home intro section
+.home-intro {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e8e8e8;
+  
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #2d2d2d;
+    margin-bottom: 1rem;
+    letter-spacing: -0.005em;
+    line-height: 1.4;
+  }
+  
+  p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+  
+  a {
+    display: inline-block;
+    color: #2d2d2d;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.9rem;
+    background-color: transparent;
+    border: 1px solid #d0d0d0;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: #f5f5f5;
+      border-color: #b0b0b0;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+
+// Post list - cleaner, more scannable
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+  
+  li {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e8e8e8;
+    transition: padding-left 0.2s ease;
+    
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    &:hover {
+      padding-left: 0.5rem;
+    }
+  }
+  
+  .post-meta {
+    font-size: 0.875rem;
+    color: #888;
+    margin-bottom: 0.75rem;
+    display: block;
+    letter-spacing: 0.01em;
+  }
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d2d2d;
+    line-height: 1.3;
+  }
+  
+  .post-link {
+    color: #2d2d2d;
+    transition: all 0.2s ease;
+    position: relative;
+    
+    &:hover {
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+    
+    &::after {
+      content: '→';
+      opacity: 0;
+      margin-left: 0.5rem;
+      transition: opacity 0.2s;
+      display: inline-block;
+      transform: translateX(-4px);
+    }
+    
+    &:hover::after {
+      opacity: 0.6;
+      transform: translateX(0);
+    }
+  }
+}
+
+// Code blocks - subtle gray styling
+code {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  padding: 0.2em 0.4em;
+  font-size: 0.9em;
+  color: #2d2d2d;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+// Images - responsive sizing with consistent max-width
+.post-content img,
+article img {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin: 2.5rem auto;
+  display: block;
+  
+  // Constrain very large images - balanced size
+  &[src*=".png"],
+  &[src*=".jpg"],
+  &[src*=".jpeg"] {
+    max-width: min(100%, 750px);
+  }
+  
+  // SVG images can be smaller
+  &[src*=".svg"] {
+    max-width: min(100%, 650px);
+  }
+}
+
+// Paragraphs containing images should not interfere with caption styling
+.post-content p:has(img),
+article p:has(img) {
+  margin-bottom: 0.5rem; // Reduce margin so caption is closer
+}
+
+// Profile image on about page - keep it small
+.profile-image {
+  width: 150px !important;
+  height: auto !important;
+  max-width: 150px !important;
+  margin: 1.5rem 0 2rem 0 !important;
+  border-radius: 4px;
+}
+
+// Figure and table captions - grayish color, thicker text, larger font
+// "Figure X:" and "Table X:" are darker and bold, rest is grayish
+// Handle two cases:
+// 1. Image and caption in same paragraph: p:has(img):has(strong)
+// 2. Image and caption in separate paragraphs: p:has(img) + p
+.post-content p:has(img):has(strong),
+article p:has(img):has(strong),
+article.post p:has(img):has(strong),
+.post-content p:has(img) + p,
+article p:has(img) + p,
+article.post p:has(img) + p,
+.post-content img + p,
+article img + p,
+article.post img + p,
+.post-content table + p,
+article table + p,
+article.post table + p {
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  color: #666 !important;
+  line-height: 1.5 !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 1.5rem !important;
+  
+  // Make "Figure X:" and "Table X:" darker and bold (they're in strong tags)
+  strong {
+    font-weight: 600 !important;
+    color: #2d2d2d !important; // Darker, closer to black
+  }
+}
+
+// Post content spacing
+.post-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  
+  p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+    
+    // Don't override caption styling
+    &:not(p:has(img) + p):not(img + p):not(table + p) {
+      // This keeps normal paragraph styling
+    }
+  }
+  
+  ul, ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+    
+    li {
+      margin-bottom: 0.5rem;
+      line-height: 1.75;
+    }
+  }
+}
+
+// Wrapper max-width for better readability
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  background-color: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+// Post meta styling
+.post-meta {
+  color: #888;
+  font-size: 0.875rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+// Code blocks - subtle gray styling
+.highlight {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 2rem 0;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  
+  pre {
+    overflow-x: auto;
+    margin: 0;
+    background: transparent;
+    font-size: 0.9em;
+    line-height: 1.6;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  }
+}
+
+// Tables - responsive with horizontal scroll, fit better, bigger font
+table {
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 100%;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  
+  @media (min-width: 768px) {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  thead {
+    background: #f5f5f5;
+    
+    th {
+      padding: 0.75rem 0.875rem;
+      text-align: left;
+      font-weight: 600;
+      white-space: normal;
+      word-wrap: break-word;
+      color: #3a3a3a;
+      border-bottom: 2px solid #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background-color 0.15s ease;
+      
+      &:hover {
+        background-color: #f5f5f5;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    td {
+      padding: 0.75rem 0.875rem;
+      white-space: nowrap;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Table wrapper for better control
+.post-content {
+  table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+    
+    @media (min-width: 768px) {
+      display: table;
+      width: auto;
+      min-width: 0;
+    }
+  }
+}
+
+// Links - subtle hover effects
+a {
+  text-decoration: none;
+  color: #2d2d2d;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #1a1a1a;
+    text-decoration: underline;
+  }
+}
+
+// Reading time styling
+.reading-time {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+// Post navigation
+.post-navigation {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  
+  .post-nav-prev,
+  .post-nav-next {
+    flex: 1;
+    min-width: 200px;
+    
+    .post-nav-label {
+      display: block;
+      font-size: 0.875rem;
+      color: #888;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+    }
+    
+    a {
+      font-weight: 400;
+      display: block;
+      color: #2d2d2d;
+      transition: color 0.2s ease;
+      
+      &:hover {
+        color: #1a1a1a;
+      }
+    }
+  }
+  
+  .post-nav-next {
+    text-align: right;
+  }
+  
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 1.5rem;
+    
+    .post-nav-next {
+      text-align: left;
+    }
+  }
+}
+
+// Math equation spacing
+.MathJax {
+  margin: 1.5em 0 !important;
+}
+
+.MathJax_Display {
+  margin: 2em 0 !important;
+  padding: 0.5em 0;
+}
+
+// Article/post page improvements
+article.post {
+  .post-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e8e8e8;
+    
+    .post-title {
+      margin-bottom: 0.75rem;
+      font-size: 1.85rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      color: #2d2d2d;
+    }
+  }
+}
+
+// Better blockquote styling with subtle gray highlight (no italic)
+blockquote {
+  border-left: 3px solid #d0d0d0;
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  color: #555;
+  font-style: normal;
+  background: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 3px;
+}
+
+// Subtle highlights for important text and references
+.post-content {
+  strong {
+    font-weight: 500;
+    color: #1a1a1a;
+  }
+  
+  em {
+    color: #444;
+    font-style: normal;
+    font-weight: 500;
+  }
+  
+  // Subtle highlight for references to figures/tables (like Thinking Machines style)
+  a {
+    color: #2d2d2d;
+    text-decoration: underline;
+    text-decoration-color: #c0c0c0;
+    text-underline-offset: 2px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: #1a1a1a;
+      text-decoration-color: #888;
+    }
+  }
+}
+
+// Subtle highlight for references - removed, use standard text
+.reference {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-weight: 500;
+  color: #2d2d2d;
+  font-size: 1em;
+}
+
+// Mobile improvements
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 1.5rem 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .home {
+    padding: 2rem 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .post-content {
+    padding: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+

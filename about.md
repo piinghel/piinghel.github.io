@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-<img src="/assets/avatar/profile_pic.jpg" alt="Pieter-Jan" width="150" height="200">
+<img src="/assets/avatar/profile_pic.jpg" alt="Pieter-Jan" class="profile-image">
 
 
 

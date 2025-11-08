@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>LightGBM</title>
+  <title>Stock Ranking with Boosting</title>
 
   <!-- MathJax Config -->
   <script>
@@ -25,22 +25,22 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>LightGBM | Pieter-Jan</title>
+<title>Stock Ranking with Boosting | Pieter-Jan</title>
 <meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="LightGBM" />
+<meta property="og:title" content="Stock Ranking with Boosting" />
 <meta name="author" content="piinghel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="TODO update figures and tables with more recent data. reread text and style." />
-<meta property="og:description" content="TODO update figures and tables with more recent data. reread text and style." />
+<meta name="description" content="Introduction" />
+<meta property="og:description" content="Introduction" />
 <link rel="canonical" href="http://localhost:4000/quants/2025/02/20/lgbm.html" />
 <meta property="og:url" content="http://localhost:4000/quants/2025/02/20/lgbm.html" />
 <meta property="og:site_name" content="Pieter-Jan" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2025-02-20T00:00:00+01:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="LightGBM" />
+<meta property="twitter:title" content="Stock Ranking with Boosting" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-20T00:00:00+01:00","datePublished":"2025-02-20T00:00:00+01:00","description":"TODO update figures and tables with more recent data. reread text and style.","headline":"LightGBM","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/20/lgbm.html"},"url":"http://localhost:4000/quants/2025/02/20/lgbm.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"piinghel"},"dateModified":"2025-02-20T00:00:00+01:00","datePublished":"2025-02-20T00:00:00+01:00","description":"Introduction","headline":"Stock Ranking with Boosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/02/20/lgbm.html"},"url":"http://localhost:4000/quants/2025/02/20/lgbm.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Pieter-Jan" />
 </head>
@@ -66,65 +66,57 @@
       <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">LightGBM</h1>
+    <h1 class="post-title p-name" itemprop="name headline">Stock Ranking with Boosting</h1>
     <p class="post-meta"><time class="dt-published" datetime="2025-02-20T00:00:00+01:00" itemprop="datePublished">
         Feb 20, 2025
-      </time></p>
+      </time><span class="reading-time"> • 10 min read</span></p>
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <h1 id="todo">TODO</h1>
-<ul>
-  <li>update figures and tables with more recent data.</li>
-  <li>reread text and style.</li>
-</ul>
-
-<h2 id="introduction">Introduction</h2>
+    <h2 id="introduction">Introduction</h2>
 
 <p>In my last two articles, I explored different ways to rank stocks and build long-short portfolios.</p>
 
-<p>In the first article, I used a simple one-factor model based on volatility — ranking stocks by their recent volatility and betting on the fact that low-volatility stocks tend to outperform high-volatility ones.</p>
+<p>The first article explored a basic approach: ranking stocks by recent volatility and taking a position based on the idea that low-volatility stocks outperform higher volatility ones.</p>
 
-<p>In the second article, I moved to a more flexible approach by combining multiple features — like momentum, volatility, size, and liquidity — using Ridge regression, a linear model that learns how to weigh these features. I also examined some important design choices, like whether to use ranking or z-scoring for feature normalization, and whether to normalize the target label by sector.</p>
+<p>In the second article, I moved to a more flexible approach by combining multiple features (like momentum, volatility, size, and liquidity) using Ridge regression, a linear model that learns how to weigh these features. I also examined some important design choices, like whether to use ranking or z-scoring for feature normalization, choise of the target label, and whether to normalize the target label by sector.</p>
 
-<p>Now I want to take this a step further and see what happens when I switch to a non-linear model, LightGBM. The idea is to keep everything else the same — same dataset, same features, same target label, same allocation model — and only change the model. This way, I can isolate the impact of using a non-linear approach that can capture more complex patterns in the data.</p>
+<p>In this article, I take it a step further by replacing the linear model with a boosted decision tree model (LightGBM). The setup stays exactly the same (same dataset, features, target, and allocation), so I can isolate the effect of using a non-linear model that captures more complex relationships.</p>
 
-<p>In the end, I’ll compare LightGBM with both Ridge and the low-volatility factor, to clearly see how much is gained (or not) when moving from a simple factor to a linear model and then to a non-linear one.</p>
+<p>I’ll then compare the results to both Ridge and the original low-volatility factor to see how performance evolves as we move from a simple factor to a linear model, and then to a non-linear one.</p>
 
-<h2 id="recap-of-the-process">Recap of the process</h2>
+<h2 id="recap-of-the-process">Recap of the Process</h2>
 
-<p>Before diving into LightGBM, let me briefly recap the setup I’ve been using, which stays unchanged for this analysis.</p>
+<p>In the first two articles (<a href="https://piinghel.github.io/quants/2025/01/14/lowvol.html"><em>The Low Volatility Factor: A Steady Approach</em></a> and <a href="https://piinghel.github.io/quants/2025/02/09/ridge.html"><em>Multi-Factor Stock Selection with Ridge Regression</em></a>), I explored two ways to rank stocks: a simple volatility-based factor, and a linear model (Ridge) combining multiple features. The setup stayed consistent throughout: Russell 1000 universe, point-in-time data, a 20-day forward Sharpe ratio as the target, and a risk-aware allocation model.</p>
 
-<p>I’m working with the Russell 1000 universe, using point-in-time data and filtering out stocks priced below $5 to avoid illiquid names. The feature set is broad, covering about 150 features related to momentum, volatility, liquidity, size, mean reversion, and correlation with the market.</p>
+<p>In this third article, I’m taking the next step by replacing Ridge with a boosted tree model (LightGBM). Everything else stays the same, so I can isolate the effect of switching to a non-linear model that captures interactions and more complex patterns.</p>
 
-<p>For the target label, I focus on the Sharpe ratio over the next 20 days. I’ve chosen this because it provides a more stable and risk-adjusted measure of performance compared to raw returns, which are often extremely noisy.</p>
+<p>I’ll compare results across all three approaches to see how performance evolves as we move from a simple factor to a linear model, and then to a non-linear one.</p>
 
-<p>All features are normalized using cross-sectional ranking — turning each feature into a percentile rank between 0 and 1 on each day. Ranking has become my default because it makes features comparable across stocks and over time, and it avoids the impact of extreme outliers. I know z-scoring could sometimes be a better choice, and that’s something I want to revisit in the future, but for now I’m sticking with ranking.</p>
+<p>All features are normalized using cross-sectional ranking, turning each feature into a percentile rank between 0 and 1 on each day. Ranking has become my default because it makes features comparable across stocks and over time, and it avoids the impact of extreme outliers. I know z-scoring could sometimes be a better choice, and that’s something I want to revisit in the future, but for now I’m sticking with ranking.</p>
 
-<p>Once I have model scores, I use a volatility-targeted allocation model to build long-short portfolios. Specifically, I go long the top 75 and short the bottom 75 stocks, adjusting each position based on volatility to avoid concentrating risk in a few names. This makes the portfolio more stable over time.</p>
+<p>Once I have model scores, I use a volatility-targeted allocation model to build long-short portfolios. Specifically, I go long the top 75 and short the bottom 75 stocks, adjusting each position based on volatility to avoid concentrating risk in a few names. This helps keep the portfolio more stable over time.</p>
 
-<p>Finally, portfolios are rebalanced every three weeks. I find this strikes a good balance between adapting to new information and keeping turnover under control.</p>
+<p>Portfolios are rebalanced every three weeks, which I’ve found strikes a good balance between adapting to new information and keeping turnover manageable. To reduce sensitivity to rebalance timing, I also stagger the portfolio into three tranches, a technique I explained in more detail in <a href="https://piinghel.github.io/quants/2025/05/10/rebalancing-luck.html"><em>Rebalancing Luck</em></a>.</p>
 
-<h2 id="why-move-to-lightgbm">Why move to LightGBM</h2>
+<h2 id="why-move-to-lightgbm">Why Move to LightGBM</h2>
 
-<p>So far, the Ridge model combined multiple features in a linear way — it learned fixed weights for each feature, and that was it. But markets are rarely linear, and I suspect there are more complex patterns that Ridge simply can’t capture. For example, a feature like volatility might only matter when combined with a momentum signal, or extreme values of a feature might behave differently than moderate ones.</p>
+<p>So far, the Ridge model combined multiple features in a linear way: it learned fixed weights for each feature, and that was it. But markets are rarely linear, and I suspect there are more complex patterns that Ridge simply can’t capture. For example, a feature like volatility might only matter when combined with a momentum signal, or extreme values of a feature might behave differently than moderate ones.</p>
 
-<p>To address this, I’m moving to gradient boosting, a method that builds strong predictive models by combining many small decision trees. Gradient boosting works iteratively — each new tree tries to fix the mistakes of the previous ones — making it well suited to capture non-linear effects and feature interactions.</p>
+<p>To address this, I’m moving to gradient boosting—a method that builds strong predictive models by combining many small decision trees. Gradient boosting works iteratively: each new tree tries to fix the mistakes of the previous ones, making it well suited to capture non-linear effects and feature interactions.</p>
 
 <p>There are several well-known implementations of gradient boosting, like XGBoost, CatBoost, and LightGBM. I’m using LightGBM because it’s fast and efficient, especially when working with large datasets like mine. In practice, I don’t expect a big difference between these libraries, but LightGBM tends to be much quicker to train and predict, so it’s the obvious choice for this kind of project.</p>
 
-<p>Another reason to choose gradient boosting is that these models are often among the best-performing approaches for tabular datasets — including many winning solutions in Kaggle competitions. So it makes sense to see whether this kind of model can push performance beyond what Ridge and the low-volatility factor can achieve.</p>
+<p>Another reason to choose gradient boosting is that these models are often among the best-performing approaches for tabular datasets, including many winning solutions in Kaggle competitions. So it makes sense to see whether this kind of model can push performance beyond what Ridge and the low-volatility factor can achieve.</p>
 
-<p>With that in mind, I applied LightGBM to the same setup as before: ranking stocks in the Russell 1000, going long the top 75, short the bottom 75, and using volatility-based position sizing. This keeps everything consistent, so we can isolate the impact of the model itself.</p>
+<p>With that in mind, I applied LightGBM to the same setup as before: ranking stocks in the Russell 1000, going long the top 75, short the bottom 75, and using volatility-based position sizing. This keeps everything consistent, so I can isolate the impact of the model itself.</p>
 
-<h2>Performance</h2>
+<h2 id="performance">Performance</h2>
 
-<p>Let’s take a look at how LightGBM performs when applied to the same setup as before — and the results are quite strong.</p>
+<p>Let’s take a look at how LightGBM performs when applied to the same setup as before. The results are quite strong.</p>
 
-<div style="display: block; text-align: left;">
-  <img src="/assets/lightgbm/perf_lgbm.png" width="600" style="display: block; margin: 0;" />
-  <p><strong>Figure 1:</strong> Performance of the LightGBM strategy, before and after transaction costs.</p>
-</div>
+<p><img src="/assets/lightgbm/perf_lgbm.png" alt="Figure 1" />
+<strong>Figure 1:</strong> Performance of the LightGBM strategy, before and after transaction costs.</p>
 
 <table>
   <thead>
@@ -171,7 +163,7 @@
       <td>56.88%</td>
     </tr>
     <tr>
-      <td>Max Time Underwater (days)</td>
+      <td>Max Time Underwater</td>
       <td>1,619 days</td>
       <td>599 days</td>
       <td>234 days</td>
@@ -185,34 +177,35 @@
 
 <p>After accounting for transaction costs, the strategy posts a 10.7% annualized return with volatility just under 7%, leading to a Sharpe ratio of 1.60. Drawdowns stay around 14%, and the strategy tends to bounce back relatively quickly after periods of underperformance.</p>
 
-<p>What’s nice to see is that both sides of the book are doing their job. The long leg delivers a solid 12.5% return — well above the Russell 1000’s 7.3%. The short leg returns just 1.5%, meaning those bottom-ranked stocks are underperforming the market, as intended. That’s exactly the kind of clean separation you want in a ranking strategy.</p>
+<p>What’s nice to see is that both sides of the book are doing their job. The long leg delivers a solid 12.5% return, well above the Russell 1000’s 7.3%. The short leg returns just 1.5%, meaning those bottom-ranked stocks are underperforming the market, as intended. That’s exactly the kind of clean separation you want in a ranking strategy.</p>
 
-<p>That said, it’s worth noting the Russell 1000 isn’t a proper benchmark here — it’s long-only and far more volatile — but it’s still helpful as a rough point of reference since we’re trading within that universe.</p>
+<p>That said, it’s worth noting the Russell 1000 isn’t a proper benchmark here (it’s long-only and far more volatile), but it’s still helpful as a rough point of reference since we’re trading within that universe.</p>
 
 <p>Because both legs are volatility-targeted, the difference in returns translates cleanly into long-short performance, without relying on one side to carry all the weight. The result is a fairly smooth and balanced profile</p>
 
 <h2 id="signal-quality">Signal Quality</h2>
 
-<p>To understand <em>why</em> LightGBM performs well, it’s useful to zoom in on signal quality — how well each model ranks stocks by expected performance before any portfolio construction takes place.</p>
+<p>To get a feel for why LightGBM performs well, I like to zoom in on signal quality: how well each model ranks stocks by expected performance <em>before</em> any portfolio construction happens.</p>
 
-<p>Each day, the Ridge and LightGBM models output a score for every stock $i$ in the universe. These scores are trained to predict the Sharpe ratio over the next 20 trading days, computed out-of-sample and normalized by sector to remove broad industry effects. This gives us a daily cross-section of predicted scores \(\hat{y}_{i,t}\) and realized outcomes $y_{i,t}$.</p>
+<p>Each day, both Ridge and LightGBM assign a score to every stock $i$ in the universe. These scores are trained to predict a performance metric, specifically the Sharpe ratio over the next 20 trading days. All of this is done completely out-of-sample: the model has no access to future data when making predictions.</p>
 
-<p>The low-volatility signal, in contrast, is a simple heuristic — ranking stocks based on their trailing volatility — and does not involve model training.</p>
+<p>So for each day, I end up with a cross-section of predicted scores $\hat{y}_{i,t}$, along with realized outcomes $y_{i,t}$ based on forward-looking Sharpe ratios.</p>
 
-<p>To measure alignment between the model’s predictions and actual future performance, we compute the Spearman rank correlation between predicted and realized rankings across all stocks:</p>
+<p>The low-volatility signal works differently. It’s just a simple rule: rank stocks based on their trailing volatility. No learning, no optimization, just a static heuristic.</p>
+
+<p>To measure how well the predicted rankings align with actual performance, I compute the Spearman rank correlation between predicted and realized values:</p>
 
 \[\rho_t = \text{Spearman} \left( \{ \hat{y}_{i,t} \}, \{ y_{i,t} \} \right)\]
 
-<p>This yields a daily time series ${\rho_t}$, from which we compute:</p>
+<p>This gives a daily time series ${ \rho_t }$, from which I compute:</p>
 <ul>
-  <li>Mean correlation — average predictive strength</li>
-  <li>Standard deviation — signal stability</li>
-  <li>Sharpe ratio — consistency over time (mean divided by standard deviation)</li>
+  <li>Mean correlation: how strong the signal is on average</li>
+  <li>Standard deviation: how much it varies</li>
+  <li>Sharpe ratio: how consistent it is over time (mean divided by standard deviation)</li>
 </ul>
 
-<p><img src="/assets/lightgbm/signal.png" width="600" /></p>
-<p>Figure 2: Cumulative Spearman correlation between model signals and future Sharpe ratio rankings, computed daily.</p>
-<p><br /></p>
+<p><img src="/assets/lightgbm/signal.png" alt="Figure 2" />
+<strong>Figure 2:</strong> Cumulative Spearman correlation between model signals and future Sharpe ratio rankings, computed daily.</p>
 
 <table>
   <thead>
@@ -245,20 +238,19 @@
   </tbody>
 </table>
 
-<p><strong>Table 2: Daily signal quality metrics based on Spearman correlation between predicted and realized Sharpe ratio rankings.</strong></p>
+<p><strong>Table 2:</strong> Daily signal quality metrics based on Spearman correlation between predicted and realized Sharpe ratio rankings.</p>
 
-<p>The results might seem modest — average correlations around 5% — but that’s expected when working with financial data. Predicting returns is noisy by nature. The key is stability. LightGBM delivers a more consistent signal than the other models, with less variability and a higher signal-level Sharpe ratio.</p>
+<p>The results might seem modest (average correlations around 5%), but that’s expected when working with financial data. Predicting returns is noisy by nature. The key is stability. LightGBM delivers a more consistent signal than the other models, with less variability and a higher signal-level Sharpe ratio.</p>
 
 <p>This kind of stability is valuable. Even weak signals, if reliable, can drive meaningful long-term performance when applied systematically.</p>
 
-<h3 id="2-financial-performance">2. Financial Performance</h3>
+<h2 id="financial-performance">Financial Performance</h2>
 
-<p><img src="/assets/lightgbm/perf_return_comp.png" width="600" /></p>
-<p><strong>Figure 3:</strong> Performance over the full sample (1997–2024).</p>
+<p><img src="/assets/lightgbm/perf_return_comp.png" alt="Figure 3" />
+<strong>Figure 3:</strong> Performance over the full sample (1997–2024).</p>
 
-<p><img src="/assets/lightgbm/perf_return_comp_last_10yr.png" width="600" /></p>
-<p><strong>Figure 4:</strong> Performance over the last decade (2015–2024).</p>
-<p><br /></p>
+<p><img src="/assets/lightgbm/perf_return_comp_last_10yr.png" alt="Figure 4" />
+<strong>Figure 4:</strong> Performance over the last decade (2015–2024).</p>
 
 <table>
   <thead>
@@ -321,30 +313,30 @@
   </tbody>
 </table>
 
-<p><strong>Table 3: Strategy performance over the full sample (1997–2024) and the last decade (2015–2024).</strong></p>
+<p><strong>Table 3:</strong> Strategy performance over the full sample (1997–2024) and the last decade (2015–2024).</p>
 
-<p>Figures 3 and 4, along with Table 3, show a clear pattern: LightGBM outperforms both Ridge and Low Vol across nearly every metric. It delivers higher returns and lower volatility, resulting in the strongest Sharpe ratios. Drawdowns are smaller, and recovery is faster — with time under water cut by more than half compared to the linear model.</p>
+<p>Figures 3 and 4, along with <span class="reference">Table 3</span>, show a clear pattern: LightGBM outperforms both Ridge and Low Vol across nearly every metric. It delivers higher returns and lower volatility, resulting in the strongest Sharpe ratios. Drawdowns are smaller, and recovery is faster, with time under water cut by more than half compared to the linear model.</p>
 
 <p>That said, the last decade has been tougher. Performance has declined across the board, and while LightGBM still leads, the gap has narrowed. Its Sharpe ratio drops from 1.59 to 1.13, and Ridge isn’t far behind at 1.00. Returns are flatter, and the edge is less pronounced.</p>
 
 <p>What’s driving this? Has the market become more efficient? Are the features decaying? Or is the model overfitting to an older regime? These are open questions I plan to explore in a future post.</p>
 
-<p>For now, the takeaway is simple: LightGBM provides a consistent improvement over simpler models. But like any strategy, its performance evolves — and understanding <em>why</em> is just as important as measuring <em>how much</em>.</p>
+<p>For now, the takeaway is straightforward: LightGBM delivers more stable and stronger results than the simpler models. But like any strategy, its performance isn’t static, and understanding the conditions under which it holds up (or breaks down) is just as important.</p>
 
-<h2 id="whats-next">What’s Next</h2>
+<h2 id="conclusion">Conclusion</h2>
 
-<p>There’s clearly still a lot to improve. The model works, but performance has softened in the last decade — and it’s not obvious why. It could be changing regimes, feature decay, more competition… or all of the above.</p>
+<p>There’s clearly still a lot to improve. The model works, but performance has softened in the last decade, and it’s not obvious why. It could be changing regimes, feature decay, more competition… or all of the above.</p>
 
 <p>Here’s what I’m exploring:</p>
 
 <ul>
   <li>
     <p><strong>Portfolio construction</strong><br />
-I’ve started digging into <em>Advanced Portfolio Management</em> and <em>The Elements of Quantitative Investing</em> by Paleologo — both really solid so far. I want to better understand what’s actually driving P&amp;L. Am I just picking up factor risk? Can I improve how I size positions or manage constraints?</p>
+I’ve started digging into <em>Advanced Portfolio Management</em> and <em>The Elements of Quantitative Investing</em> by Paleologo, both really solid so far. I want to better understand what’s actually driving P&amp;L. Am I just picking up factor risk? Can I improve how I size positions or manage constraints?</p>
   </li>
   <li>
     <p><strong>Feature and target design</strong><br />
-Right now, everything is based on price, volume, and market cap. There’s probably more signal out there — or better ways to use the existing data. Also thinking about prediction horizon: why stick to 20 days? What if I blend different horizons?</p>
+Right now, everything is based on price, volume, and market cap. There’s probably more signal out there, or better ways to use the existing data. Also thinking about prediction horizon: why stick to 20 days? What if I blend different horizons?</p>
   </li>
   <li>
     <p><strong>Rethinking the objective</strong><br />
@@ -352,10 +344,18 @@ The current pipeline scores stocks, then allocates separately. But maybe it make
   </li>
 </ul>
 
-<p>Lots of cool stuff to explore — and I’ll share more as I go.</p>
+<p>Lots of cool stuff to explore, and I’ll share more as I go.</p>
 
 
-  </div><a class="u-url" href="/quants/2025/02/20/lgbm.html" hidden></a>
+  </div>
+
+  <nav class="post-navigation"><div class="post-nav-prev">
+        <span class="post-nav-label">Previous</span>
+        <a href="/quants/2025/02/09/ridge.html">Multi-Factor Stock Selection with Ridge Regression</a>
+      </div><div class="post-nav-next">
+        <span class="post-nav-label">Next</span>
+        <a href="/quants/2025/04/20/dope-articles.html">Good Reads</a>
+      </div></nav><a class="u-url" href="/quants/2025/02/20/lgbm.html" hidden></a>
 </article>
 
     </div>
