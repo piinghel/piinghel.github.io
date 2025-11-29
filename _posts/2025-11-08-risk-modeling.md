@@ -368,8 +368,8 @@ Neither helps. In fact, they slightly hurt. Why? The existing asset-level volati
 
 ### Summary
 
-<div style="overflow-x: auto; overflow-y: visible; width: 100%;">
-<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics Comparison" style="max-width: 100%; height: auto; display: block; min-width: 800px;">
+<div style="width: 100%; overflow: visible; margin: 20px 0;">
+<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics Comparison" style="width: 100%; max-width: 1000px; height: auto !important; max-height: none !important; object-fit: contain !important; display: block; margin: 0 auto;">
 </div>
 *Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.*
 
