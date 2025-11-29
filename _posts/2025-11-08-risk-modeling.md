@@ -232,6 +232,16 @@ $$
 
 I use $\alpha = 1$. This shrinks coefficients toward zero without eliminating any feature.
 
+### Clipping & Bounds
+
+Volatility data can contain outliers—stocks that jump 10x during earnings or crash during liquidations. These extreme values corrupt coefficient estimates.
+
+**Training:** I clip volatility features and targets to [2.5%, 200%]:
+- Values below 2.5% are unrealistic for daily-rebalanced portfolios (bid-ask spreads alone create this much noise)
+- Values above 200% annualized volatility are tail events that shouldn't drive regression weights
+
+**Predictions:** I clip final predictions to [2%, 200%]. This prevents nonsensical outputs (negative volatility, infinite leverage recommendations) without affecting the bulk of predictions.
+
 ### Ensemble Subsampling
 
 Instead of a single model, I run 3 models with offset estimation windows:
@@ -387,22 +397,49 @@ Do models hold up when volatility spikes? I bucket predictions by market volatil
 
 | Model | Low (<20%) | Neutral (20-30%) | High (>30%) |
 |-------|------------|------------------|-------------|
-| Global + dummies | 0.77 | 0.83 | 0.86 |
-| Per-asset | 0.67 | 0.68 | 0.76 |
-| Baseline | 0.60 | 0.62 | 0.68 |
+| Global + dummies | 0.79 | 0.83 | 0.87 |
+| Global + log dummies | 0.79 | 0.83 | 0.87 |
+| Per-sector | 0.79 | 0.82 | 0.85 |
+| Per-asset | 0.67 | 0.69 | 0.76 |
+| Baselines | 0.61-0.62 | 0.62-0.66 | 0.68-0.70 |
 
-Interestingly, all models perform better in high-vol regimes. When volatility is elevated, it's more persistent and easier to predict. The global model maintains its edge across all regimes.
+**Key observations:**
+
+1. **All models improve in high-vol regimes.** When volatility is elevated, it's more persistent and easier to predict. During calm periods, volatility is compressed and harder to differentiate.
+
+2. **Global models maintain their edge across all regimes.** The 10+ point gap vs. per-asset holds whether markets are calm or stressed.
+
+3. **Per-asset models suffer most in low-vol regimes.** With less signal, the noisy per-asset estimates hurt more. Global pooling provides stability when there's less to work with.
 
 ### Coefficient Interpretability
 
 ![Coefficient Heatmap](/assets/vol_forecasting/coefficient_heatmap.png)
-*Rolling regression coefficients over time for the global + dummies model.*
+*Rolling regression coefficients over time for the global + dummies model. Red = positive (predicts higher vol), Blue = negative.*
 
-The coefficients behave as expected:
-- **Short-term vol dominates:** 5d and 21d coefficients carry most weight
-- **Long-term vol anchors:** 126d coefficient provides mean-reversion target
-- **Sector dummies spike in crises:** Financials and Energy loadings balloon in 2008, 2020
-- **Downside > upside:** Higher coefficient on downside vol (leverage effect)
+The coefficient heatmap reveals which features drive predictions:
+
+**Most important features (by coefficient magnitude):**
+
+1. **126-day vol (dark red, ~0.5):** The strongest positive predictor. Long-term volatility acts as the anchor—it captures the "normal" volatility level for each stock. This is the mean-reversion target.
+
+2. **63-day vol (red, ~0.3):** Second strongest. Quarterly volatility bridges short-term noise and long-term structure.
+
+3. **5-day vol (blue, negative!):** Surprisingly negative coefficient. This is mean-reversion in action: when short-term vol spikes *above* longer-term vol, the model predicts it will come down. The 126d anchor dominates.
+
+4. **Log market cap (blue, ~-0.1):** Negative as expected—smaller firms are more volatile. The coefficient is stable over time.
+
+**Sector dummies tell a story:**
+
+- **Energy:** Huge positive spike in 2020 (COVID oil crash, briefly negative prices). Also elevated during 2008 and 2014-2016 oil volatility.
+- **Financials:** Spike in 2008-2009 (GFC). The model learned that Financials needed a higher volatility intercept during the crisis.
+- **Technology:** Elevated in early 2000s (dot-com bust), moderate since.
+- **Utilities:** Consistently low—defensive stocks live up to their reputation.
+
+**Asymmetric features:**
+- **Downside vol:** Small negative coefficient
+- **Upside vol:** Small negative coefficient
+
+Both are negative but downside is slightly more so. The leverage effect is present but subtle—most of the asymmetry is already captured by the level dynamics.
 
 ## Conclusion
 
