@@ -368,8 +368,10 @@ Neither helps. In fact, they slightly hurt. Why? The existing asset-level volati
 
 ### Summary
 
-![Metrics Comparison](/assets/vol_forecasting/metrics_comparison.png)
-*Comparison of all model variants across RMSE and correlation metrics.*
+<div style="overflow-x: auto; overflow-y: visible; width: 100%;">
+<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics Comparison" style="max-width: 100%; height: auto; display: block; min-width: 800px;">
+</div>
+*Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.*
 
 | Step | Model | Correlation | RMSE |
 |------|-------|-------------|------|
