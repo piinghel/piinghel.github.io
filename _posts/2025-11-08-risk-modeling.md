@@ -236,11 +236,16 @@ I use $\alpha = 1$. This shrinks coefficients toward zero without eliminating an
 
 Volatility data can contain outliers—stocks that jump 10x during earnings or crash during liquidations. These extreme values corrupt coefficient estimates.
 
-**Training:** I clip volatility features and targets to [2.5%, 200%]:
+**Training:** I clip volatility features and targets to [2.5%, 200%] during model training:
 - Values below 2.5% are unrealistic for daily-rebalanced portfolios (bid-ask spreads alone create this much noise)
 - Values above 200% annualized volatility are tail events that shouldn't drive regression weights
+- Clipping during training prevents outliers from distorting coefficient estimates
 
-**Predictions:** I clip final predictions to [2%, 200%]. This prevents nonsensical outputs (negative volatility, infinite leverage recommendations) without affecting the bulk of predictions.
+**Evaluation:** All reported metrics (correlation, RMSE, MAE) are computed on **raw, unclipped volatility**. This gives an honest assessment of model performance on real data, including tail events.
+
+**Predictions:** I clip final predictions to [2%, 200%] for visualization in figures. This prevents nonsensical outputs (negative volatility, infinite leverage recommendations) and keeps plots readable. The metrics themselves are evaluated on raw volatility.
+
+**Note:** Performance on clipped volatility would be slightly higher (outliers are easier to predict when bounded), but the difference is small. I report raw metrics to be conservative.
 
 ### Ensemble Subsampling
 
