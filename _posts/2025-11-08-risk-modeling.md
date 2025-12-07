@@ -223,13 +223,13 @@ feature_cols = ["X_feature_vol_5", "X_feature_vol_21", "X_feature_vol_63", "X_fe
 # Step 1: Estimate rolling coefficients and lag by 1 day (out-of-sample)
 df = df.with_columns(
     pl.col("y_target_vol_21")
-    .shift(1)                 # Use yesterday's target (critical!)
     .least_squares.rolling_ols(
         *[pl.col(c) for c in feature_cols],
         window_size=504,      # 2-year rolling window
         min_periods=252,      # Start after 1 year
         mode="coefficients",
     )
+    .shift(1)                 # Use yesterday's coefficients (critical!)
     .over(order_by="date")    # Pool all assets (global model)
     .alias("coefficients_oos")
 )
@@ -242,7 +242,7 @@ df = df.with_columns(
 )
 ```
 
-The `.shift(1)` on the target is critical—it ensures coefficients computed on day $t$ use target values from day $t-1$ and earlier, making predictions truly out-of-sample.
+The `.shift(1)` after `.rolling_ols()` is critical—it ensures predictions on day $t$ use coefficients estimated through day $t-1$, making predictions truly out-of-sample.
 
 **What does `.predict()` do?** The `coefficients_oos` column contains a struct with fitted coefficients (intercept + betas). The `.predict()` method computes:
 
