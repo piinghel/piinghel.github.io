@@ -182,7 +182,7 @@ Before throwing regressions at the problem, let's look at what we're working wit
 ### Volatility Distribution by Sector
 
 <figure style="margin: 0.3em 0 1em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="500" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="820" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
 </figure>
 
@@ -551,7 +551,7 @@ The progression is clear: learning weights beats heuristics, pooling beats per-a
 I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="380" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7: Model performance across different rolling window sizes (126 to 2520 days).</figcaption>
 </figure>
 
@@ -562,7 +562,7 @@ Performance is stable between 1–3 years. Very short windows are noisier; very 
 Do models hold up when volatility spikes? Here's performance bucketed by market vol regime:
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="380" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
 </figure>
 
