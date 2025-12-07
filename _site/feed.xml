@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4016/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4016/" rel="alternate" type="text/html" /><updated>2025-12-07T23:57:03+01:00</updated><id>http://localhost:4016/feed.xml</id><title type="html">Quant Notes</title><subtitle>Systematic trading and data science things.
-</subtitle><author><name>anon</name></author><entry><title type="html">Forecasting Volatility with Panel Regressions</title><link href="http://localhost:4016/quants/2025/11/08/risk-modeling.html" rel="alternate" type="text/html" title="Forecasting Volatility with Panel Regressions" /><published>2025-11-08T00:00:00+01:00</published><updated>2025-11-08T00:00:00+01:00</updated><id>http://localhost:4016/quants/2025/11/08/risk-modeling</id><content type="html" xml:base="http://localhost:4016/quants/2025/11/08/risk-modeling.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4017/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4017/" rel="alternate" type="text/html" /><updated>2025-12-08T00:03:06+01:00</updated><id>http://localhost:4017/feed.xml</id><title type="html">Quant Notes</title><subtitle>Systematic trading and data science things.
+</subtitle><author><name>anon</name></author><entry><title type="html">Forecasting Volatility with Panel Regressions</title><link href="http://localhost:4017/quants/2025/11/08/risk-modeling.html" rel="alternate" type="text/html" title="Forecasting Volatility with Panel Regressions" /><published>2025-11-08T00:00:00+01:00</published><updated>2025-11-08T00:00:00+01:00</updated><id>http://localhost:4017/quants/2025/11/08/risk-modeling</id><content type="html" xml:base="http://localhost:4017/quants/2025/11/08/risk-modeling.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>I scale positions by volatility. And so should you.</p>
 
@@ -241,7 +241,7 @@ Prediction:                                          Day t
 </span>
 <span class="n">feature_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">X_feature_vol_5</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">X_feature_vol_21</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">X_feature_vol_63</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">X_feature_vol_126</span><span class="sh">"</span><span class="p">]</span>
 
-<span class="c1"># Step 1: Estimate rolling coefficients (global model)
+<span class="c1"># Step 1: Estimate rolling coefficients and lag by 1 day (out-of-sample)
 </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">with_columns</span><span class="p">(</span>
     <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">y_target_vol_21</span><span class="sh">"</span><span class="p">)</span>
     <span class="p">.</span><span class="n">least_squares</span><span class="p">.</span><span class="nf">rolling_ols</span><span class="p">(</span>
@@ -251,18 +251,11 @@ Prediction:                                          Day t
 </span>        <span class="n">mode</span><span class="o">=</span><span class="sh">"</span><span class="s">coefficients</span><span class="sh">"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="n">order_by</span><span class="o">=</span><span class="sh">"</span><span class="s">date</span><span class="sh">"</span><span class="p">)</span>    <span class="c1"># Pool all assets (global model)
-</span>    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_raw</span><span class="sh">"</span><span class="p">)</span>
+</span>    <span class="p">.</span><span class="nf">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                 <span class="c1"># Use yesterday's coefficients (critical!)
+</span>    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">)</span>
 <span class="p">)</span>
 
-<span class="c1"># Step 2: Lag coefficients by 1 day for out-of-sample predictions
-</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">with_columns</span><span class="p">(</span>
-    <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_raw</span><span class="sh">"</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                 <span class="c1"># Use yesterday's coefficients
-</span>    <span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="n">order_by</span><span class="o">=</span><span class="sh">"</span><span class="s">date</span><span class="sh">"</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="c1"># Step 3: Generate predictions from lagged coefficients
+<span class="c1"># Step 2: Generate predictions from lagged coefficients
 </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">with_columns</span><span class="p">(</span>
     <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">)</span>
     <span class="p">.</span><span class="n">least_squares</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">feature_cols</span><span class="p">])</span>
@@ -270,7 +263,7 @@ Prediction:                                          Day t
 <span class="p">)</span>
 </code></pre></div></div>
 
-<p>The <code class="language-plaintext highlighter-rouge">.shift(1)</code> in Step 2 is critical—it ensures predictions on day $t$ only use coefficients estimated through day $t-1$.</p>
+<p>The <code class="language-plaintext highlighter-rouge">.shift(1)</code> is critical—it ensures predictions on day $t$ only use coefficients estimated through day $t-1$.</p>
 
 <p><strong>What does <code class="language-plaintext highlighter-rouge">.predict()</code> do?</strong> The <code class="language-plaintext highlighter-rouge">coefficients_oos</code> column contains a struct with fitted coefficients (intercept + betas). The <code class="language-plaintext highlighter-rouge">.predict()</code> method computes:</p>
 
@@ -857,7 +850,7 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <h2 id="whats-next">What’s Next</h2>
 
-<p>ML models (LightGBM, neural nets). Can they beat these structured regressions? The linear model can’t capture interactions—for example, how 21-day vol might predict forward vol differently for Energy vs Utilities. Tree-based models can discover these automatically. That’s the next experiment.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Reducing Rebalancing Timing Risk with Tranching</title><link href="http://localhost:4016/quants/2025/05/10/rebalancing-luck.html" rel="alternate" type="text/html" title="Reducing Rebalancing Timing Risk with Tranching" /><published>2025-05-10T00:00:00+02:00</published><updated>2025-05-10T00:00:00+02:00</updated><id>http://localhost:4016/quants/2025/05/10/rebalancing%20luck</id><content type="html" xml:base="http://localhost:4016/quants/2025/05/10/rebalancing-luck.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>ML models (LightGBM, neural nets). Can they beat these structured regressions? The linear model can’t capture interactions—for example, how 21-day vol might predict forward vol differently for Energy vs Utilities. Tree-based models can discover these automatically. That’s the next experiment.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Reducing Rebalancing Timing Risk with Tranching</title><link href="http://localhost:4017/quants/2025/05/10/rebalancing-luck.html" rel="alternate" type="text/html" title="Reducing Rebalancing Timing Risk with Tranching" /><published>2025-05-10T00:00:00+02:00</published><updated>2025-05-10T00:00:00+02:00</updated><id>http://localhost:4017/quants/2025/05/10/rebalancing%20luck</id><content type="html" xml:base="http://localhost:4017/quants/2025/05/10/rebalancing-luck.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Rebalance timing plays a big role in medium- to long-term strategies that don’t trade often. Shifting the execution day by just a few days can meaningfully impact performance, changing the exact positions held, and affecting returns, volatility, and drawdowns.</p>
 
@@ -1131,7 +1124,7 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <p>The signal and logic don’t change, but the results become cleaner and more stable. That’s especially helpful when evaluating model tweaks, since it reduces noise from execution timing.</p>
 
-<p>I’ll be using this setup going forward for any strategy that rebalances on a fixed cycle. It’s simple, effective, and makes the whole process easier to trust.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Good Reads</title><link href="http://localhost:4016/quants/2025/04/20/dope-articles.html" rel="alternate" type="text/html" title="Good Reads" /><published>2025-04-20T00:00:00+02:00</published><updated>2025-04-20T00:00:00+02:00</updated><id>http://localhost:4016/quants/2025/04/20/dope%20articles</id><content type="html" xml:base="http://localhost:4016/quants/2025/04/20/dope-articles.html"><![CDATA[<h2 id="roadmap">Roadmap</h2>
+<p>I’ll be using this setup going forward for any strategy that rebalances on a fixed cycle. It’s simple, effective, and makes the whole process easier to trust.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Good Reads</title><link href="http://localhost:4017/quants/2025/04/20/dope-articles.html" rel="alternate" type="text/html" title="Good Reads" /><published>2025-04-20T00:00:00+02:00</published><updated>2025-04-20T00:00:00+02:00</updated><id>http://localhost:4017/quants/2025/04/20/dope%20articles</id><content type="html" xml:base="http://localhost:4017/quants/2025/04/20/dope-articles.html"><![CDATA[<h2 id="roadmap">Roadmap</h2>
 
 <p>This is just a running list of articles, papers, and blog posts I’ve found interesting — mostly around cross-sectional asset pricing, machine learning models, and quant investing. I’ll keep adding to it over time as I go deeper.</p>
 
@@ -1176,7 +1169,7 @@ Model 3: trained on days 2, 5, 8, 11, ...
   </li>
 </ul>
 
-<p>More coming soon — this is my scratchpad for everything worth revisiting.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap]]></summary></entry><entry><title type="html">Stock Ranking with Boosting</title><link href="http://localhost:4016/quants/2025/02/20/lgbm.html" rel="alternate" type="text/html" title="Stock Ranking with Boosting" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4016/quants/2025/02/20/lgbm</id><content type="html" xml:base="http://localhost:4016/quants/2025/02/20/lgbm.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>More coming soon — this is my scratchpad for everything worth revisiting.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap]]></summary></entry><entry><title type="html">Stock Ranking with Boosting</title><link href="http://localhost:4017/quants/2025/02/20/lgbm.html" rel="alternate" type="text/html" title="Stock Ranking with Boosting" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4017/quants/2025/02/20/lgbm</id><content type="html" xml:base="http://localhost:4017/quants/2025/02/20/lgbm.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>In my last two articles, I explored different ways to rank stocks and build long-short portfolios.</p>
 
@@ -1447,7 +1440,7 @@ The current pipeline scores stocks, then allocates separately. But maybe it make
   </li>
 </ul>
 
-<p>Lots of cool stuff to explore, and I’ll share more as I go.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Multi-Factor Stock Selection with Ridge Regression</title><link href="http://localhost:4016/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Multi-Factor Stock Selection with Ridge Regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4016/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4016/quants/2025/02/09/ridge.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Lots of cool stuff to explore, and I’ll share more as I go.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Multi-Factor Stock Selection with Ridge Regression</title><link href="http://localhost:4017/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Multi-Factor Stock Selection with Ridge Regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4017/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4017/quants/2025/02/09/ridge.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a> I showed how scaling returns by volatility helped improve performance with minimal complexity. This time I want to let the model learn how to combine different features instead of me setting the rules manually.</p>
 
@@ -1852,7 +1845,7 @@ These capture systematic risk.</p>
   <li>Sharpe ratio models consistently outperformed return-based models, reinforcing the importance of risk-adjusted metrics</li>
 </ul>
 
-<p>Instead of searching for a single best model, it may be smarter to combine perspectives. The “Combo” strategy showed that diversifying across models stabilizes results, even without fine-tuning.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Steady Approach</title><link href="http://localhost:4016/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Steady Approach" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4016/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4016/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Instead of searching for a single best model, it may be smarter to combine perspectives. The “Combo” strategy showed that diversifying across models stabilizes results, even without fine-tuning.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Steady Approach</title><link href="http://localhost:4017/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Steady Approach" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4017/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4017/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Here’s a simple idea: stocks that move less tend to deliver better risk-adjusted returns than those with wild price swings. It’s a pattern that shows up in equities and other asset classes too.</p>
 
