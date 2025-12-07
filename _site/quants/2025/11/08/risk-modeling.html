@@ -32,17 +32,17 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Introduction" />
 <meta property="og:description" content="Introduction" />
-<link rel="canonical" href="http://localhost:4000/quants/2025/11/08/risk-modeling.html" />
-<meta property="og:url" content="http://localhost:4000/quants/2025/11/08/risk-modeling.html" />
+<link rel="canonical" href="http://localhost:4001/quants/2025/11/08/risk-modeling.html" />
+<meta property="og:url" content="http://localhost:4001/quants/2025/11/08/risk-modeling.html" />
 <meta property="og:site_name" content="Quant Notes" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2025-11-08T00:00:00+01:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Forecasting Volatility with Panel Regressions" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"anon"},"dateModified":"2025-11-08T00:00:00+01:00","datePublished":"2025-11-08T00:00:00+01:00","description":"Introduction","headline":"Forecasting Volatility with Panel Regressions","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/quants/2025/11/08/risk-modeling.html"},"url":"http://localhost:4000/quants/2025/11/08/risk-modeling.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"anon"},"dateModified":"2025-11-08T00:00:00+01:00","datePublished":"2025-11-08T00:00:00+01:00","description":"Introduction","headline":"Forecasting Volatility with Panel Regressions","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4001/quants/2025/11/08/risk-modeling.html"},"url":"http://localhost:4001/quants/2025/11/08/risk-modeling.html"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Quant Notes" />
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4001/feed.xml" title="Quant Notes" />
 </head>
 </head>
 
@@ -69,7 +69,7 @@
     <h1 class="post-title p-name" itemprop="name headline">Forecasting Volatility with Panel Regressions</h1>
     <p class="post-meta"><time class="dt-published" datetime="2025-11-08T00:00:00+01:00" itemprop="datePublished">
         Nov 8, 2025
-      </time><span class="reading-time"> • 24 min read</span></p>
+      </time><span class="reading-time"> • 25 min read</span></p>
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
@@ -259,9 +259,9 @@
 
 <h3 id="volatility-distribution-by-sector">Volatility Distribution by Sector</h3>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/sector_distribution.png" alt="Sector Distribution" style="width: 100%; max-width: 800px;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="820" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
 </figure>
 
 <p>Volatility varies a lot by sector. Median vol ranges from ~15% in Utilities to ~30% in Energy. Two things stand out:</p>
@@ -522,9 +522,9 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <p>These achieve correlations around 0.70. Here’s what the predictions look like:</p>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/residuals_baseline.png" alt="Baseline Residuals" style="width: 100%; max-width: 800px;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/residuals_baseline.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
 </figure>
 
 <p>The predictions follow the diagonal but with significant scatter. Can we do better by learning the weights from data instead of fixing them?</p>
@@ -641,9 +641,9 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <p>Here’s what the best model looks like compared to the baseline:</p>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/residuals_best.png" alt="Best Model Residuals" style="width: 100%; max-width: 800px;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/residuals_best.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
 </figure>
 
 <p>The predictions are much tighter around the diagonal. The improvement is visible.</p>
@@ -716,9 +716,9 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <h3 id="summary">Summary</h3>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics Comparison" style="width: 100%; max-width: 1000px; display: block; margin: 0 auto;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="750" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
 </figure>
 
 <table>
@@ -778,9 +778,9 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <p>I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?</p>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/window_trends.png" alt="Window Sensitivity" style="width: 100%; max-width: 800px;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 7: Model performance across different rolling window sizes (126 to 2520 days).</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7: Model performance across different rolling window sizes (126 to 2520 days).</figcaption>
 </figure>
 
 <p>Performance is stable between 1–3 years. Very short windows are noisier; very long windows lag regime changes. I use 504 days (2 years).</p>
@@ -789,9 +789,9 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <p>Do models hold up when volatility spikes? Here’s performance bucketed by market vol regime:</p>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/regime_analysis.png" alt="Regime Analysis" style="width: 100%; max-width: 800px;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
 </figure>
 
 <table>
@@ -853,9 +853,9 @@ Model 3: trained on days 2, 5, 8, 11, ...
 
 <h3 id="coefficient-interpretability">Coefficient Interpretability</h3>
 
-<figure style="margin: 1em 0;">
-<img src="/assets/vol_forecasting/coefficient_heatmap.png" alt="Coefficient Heatmap" style="width: 100%; max-width: 900px;" />
-<figcaption style="margin: 0.3em 0 0 0; font-size: 0.9em; color: #888;">Figure 9: Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" width="100%" height="620" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 9: Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
 </figure>
 
 <p>The heatmap reveals which features drive predictions.</p>
@@ -954,7 +954,7 @@ Model 3: trained on days 2, 5, 8, 11, ...
     <div class="footer-col-wrapper">
       <div class="footer-col">
         <p class="feed-subscribe">
-          <a href="http://localhost:4000/feed.xml">
+          <a href="http://localhost:4001/feed.xml">
             <svg class="svg-icon orange">
               <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
             </svg><span>Subscribe</span>

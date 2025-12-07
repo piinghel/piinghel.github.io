@@ -181,8 +181,8 @@ Before throwing regressions at the problem, let's look at what we're working wit
 
 ### Volatility Distribution by Sector
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="820" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="750" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
 </figure>
 
@@ -427,8 +427,8 @@ What most practitioners use:
 
 These achieve correlations around 0.70. Here's what the predictions look like:
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/residuals_baseline.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/residuals_baseline.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
 </figure>
 
@@ -489,8 +489,8 @@ A further boost to 0.86. The dummies let the model learn that Energy stocks have
 
 Here's what the best model looks like compared to the baseline:
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/residuals_best.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/residuals_best.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
 </figure>
 
@@ -528,8 +528,8 @@ Neither helps. In fact, they slightly hurt. Why? The asset-level vol features al
 
 ### Summary
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="750" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="650" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
 </figure>
 
@@ -550,8 +550,8 @@ The progression is clear: learning weights beats heuristics, pooling beats per-a
 
 I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7: Model performance across different rolling window sizes (126 to 2520 days).</figcaption>
 </figure>
 
@@ -561,8 +561,8 @@ Performance is stable between 1–3 years. Very short windows are noisier; very 
 
 Do models hold up when volatility spikes? Here's performance bucketed by market vol regime:
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
 </figure>
 
@@ -584,8 +584,8 @@ A few observations:
 
 ### Coefficient Interpretability
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" width="100%" height="620" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" width="100%" height="550" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 9: Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
 </figure>
 
