@@ -32,17 +32,17 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Introduction" />
 <meta property="og:description" content="Introduction" />
-<link rel="canonical" href="http://localhost:4018/quants/2025/11/08/risk-modeling.html" />
-<meta property="og:url" content="http://localhost:4018/quants/2025/11/08/risk-modeling.html" />
+<link rel="canonical" href="http://localhost:4019/quants/2025/11/08/risk-modeling.html" />
+<meta property="og:url" content="http://localhost:4019/quants/2025/11/08/risk-modeling.html" />
 <meta property="og:site_name" content="Quant Notes" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2025-11-08T00:00:00+01:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Forecasting Volatility with Panel Regressions" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"anon"},"dateModified":"2025-11-08T00:00:00+01:00","datePublished":"2025-11-08T00:00:00+01:00","description":"Introduction","headline":"Forecasting Volatility with Panel Regressions","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4018/quants/2025/11/08/risk-modeling.html"},"url":"http://localhost:4018/quants/2025/11/08/risk-modeling.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"anon"},"dateModified":"2025-11-08T00:00:00+01:00","datePublished":"2025-11-08T00:00:00+01:00","description":"Introduction","headline":"Forecasting Volatility with Panel Regressions","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4019/quants/2025/11/08/risk-modeling.html"},"url":"http://localhost:4019/quants/2025/11/08/risk-modeling.html"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4018/feed.xml" title="Quant Notes" />
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4019/feed.xml" title="Quant Notes" />
 </head>
 </head>
 
@@ -69,7 +69,7 @@
     <h1 class="post-title p-name" itemprop="name headline">Forecasting Volatility with Panel Regressions</h1>
     <p class="post-meta"><time class="dt-published" datetime="2025-11-08T00:00:00+01:00" itemprop="datePublished">
         Nov 8, 2025
-      </time><span class="reading-time"> • 24 min read</span></p>
+      </time><span class="reading-time"> • 25 min read</span></p>
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
@@ -325,7 +325,7 @@ Prediction:                                          Day t
 </span>        <span class="n">mode</span><span class="o">=</span><span class="sh">"</span><span class="s">coefficients</span><span class="sh">"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="p">.</span><span class="nf">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                 <span class="c1"># Use yesterday's coefficients (critical!)
-</span>    <span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="n">order_by</span><span class="o">=</span><span class="sh">"</span><span class="s">date</span><span class="sh">"</span><span class="p">)</span>    <span class="c1"># Pool all assets (global model)
+</span>    <span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="sh">"</span><span class="s">asset_id</span><span class="sh">"</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="sh">"</span><span class="s">date</span><span class="sh">"</span><span class="p">)</span>  <span class="c1"># Group by asset, order by date for rolling window
 </span>    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">)</span>
 <span class="p">)</span>
 
@@ -944,7 +944,7 @@ Model 3: trained on days 2, 5, 8, 11, ...
     <div class="footer-col-wrapper">
       <div class="footer-col">
         <p class="feed-subscribe">
-          <a href="http://localhost:4018/feed.xml">
+          <a href="http://localhost:4019/feed.xml">
             <svg class="svg-icon orange">
               <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
             </svg><span>Subscribe</span>

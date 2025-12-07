@@ -230,7 +230,7 @@ df = df.with_columns(
         mode="coefficients",
     )
     .shift(1)                 # Use yesterday's coefficients (critical!)
-    .over("asset_id", order_by="date")  # Group by asset, order by date for rolling window
+    .over("date", order_by="date")  # Group by date, pool all assets (global model)
     .alias("coefficients_oos")
 )
 
