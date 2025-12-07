@@ -542,6 +542,8 @@ Neither helps. In fact, they slightly hurt. Why? The asset-level vol features al
 | +Log-space | Global + dummies (log) | 0.86 | 0.124 |
 | +Risk factors | Global + dummies + market | 0.86 | 0.125 |
 
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 9: Model development progression summary.</p>
+
 The progression is clear: learning weights beats heuristics, pooling beats per-asset, sector structure squeezes out the last bit of signal. Log-space and macro factors don't help.
 
 ## Robustness & Validation
@@ -573,6 +575,8 @@ Do models hold up when volatility spikes? Here's performance bucketed by market 
 | Per-sector | 0.79 | 0.82 | 0.85 |
 | Per-asset | 0.67 | 0.69 | 0.76 |
 | Baselines | 0.61-0.62 | 0.62-0.66 | 0.68-0.70 |
+
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 10: Model correlation by market volatility regime.</p>
 
 A few observations:
 
@@ -620,6 +624,8 @@ The final model: global Ridge regression with sector dummies, 2-year rolling win
 | Pooling | Global (all assets) |
 | Implementation | polars-ols for fast rolling regressions |
 
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 11: Final model specification.</p>
+
 The key insight: volatility dynamics are shared across assets. Mean reversion, clustering, the leverage effect—they work the same way for Apple and Exxon. Per-asset models waste data chasing idiosyncratic noise. Global models with sector structure extract signal efficiently.
 
 We started with the question: is it worth predicting volatility better? The answer is yes. Perfect foresight would boost Sharpe from 1.76 to 2.65. We can't achieve perfect foresight, but improving correlation from 0.70 to 0.86 should capture a meaningful chunk of that improvement.
@@ -628,12 +634,3 @@ We started with the question: is it worth predicting volatility better? The answ
 
 ML models (LightGBM, neural nets). Can they beat these structured regressions? The linear model can't capture interactions—for example, how 21-day vol might predict forward vol differently for Energy vs Utilities. Tree-based models can discover these automatically. That's the next experiment.
 
-## Things to Work On
-
-A few things I want to improve:
-
-Heatmap interpretation. I sometimes get the interpretation wrong. The red/blue color coding and temporal patterns need clearer explanation. This is on my list.
-
-Computational performance. [polars-ols](https://github.com/azmyrajab/polars_ols) is *incredibly* fast. Rolling regression every day—refitting on a 504-day window, shifting coefficients, refitting again. Millions of regressions across thousands of assets over 20+ years. Full model run takes ~30 seconds. The Rust-based implementation makes this feasible.
-
-EGARCH testing. I mentioned EGARCH is slow, but I haven't actually benchmarked the `arch` package myself. If someone tells me it's worth testing, I'll give it a shot. I don't know everything.
