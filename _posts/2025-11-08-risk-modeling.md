@@ -529,7 +529,7 @@ Neither helps. In fact, they slightly hurt. Why? The asset-level vol features al
 ### Summary
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="720" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="850" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
 </figure>
 
@@ -562,7 +562,7 @@ Performance is stable between 1–3 years. Very short windows are noisier; very 
 Do models hold up when volatility spikes? Here's performance bucketed by market vol regime:
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="720" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="850" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
 </figure>
 
