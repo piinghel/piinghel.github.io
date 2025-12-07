@@ -182,7 +182,7 @@ Before throwing regressions at the problem, let's look at what we're working wit
 ### Volatility Distribution by Sector
 
 <figure style="margin: 0.3em 0 1em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="700" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="500" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
 </figure>
 
