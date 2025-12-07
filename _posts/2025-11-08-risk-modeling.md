@@ -23,9 +23,25 @@ This post answers that question. Spoiler: yes, it's worth it. Perfect volatility
 
 In my [previous post on the low-volatility factor]({% post_url 2024-12-15-low-volatility-factor %}), I built a long-short equity strategy. Position sizing combines two things: ML signal quality and volatility forecasts.
 
-The allocation works like this: first, I convert ML scores into weights—better predictions get more capital on the long side, worse predictions get more capital on the short side. Then I scale each position by volatility: $w_i \propto 1/\hat{\sigma}_i$. Lower volatility means larger positions. Finally, I apply constraints (5% max per stock, total exposure ≤ 100%).
+The allocation has two stages. First, I convert ML scores into initial weights $\alpha_i$. Better predictions get more capital on the long side; worse predictions get more capital on the short side (weights are always positive, just assigned to different legs).
 
-The key term is $\hat{\sigma}_i$—my volatility forecast for each stock. Currently I use simple moving averages (20-day for longs, 60-day for shorts). When these forecasts are wrong, position sizing suffers. Underestimate vol? Positions too large, deeper drawdowns. Overestimate? Positions too small, missed returns.
+Then I scale each position by volatility to target a fixed risk level:
+
+$$w_i = \alpha_i \cdot \min\left(\frac{\sigma_{\text{target}}}{\hat{\sigma}_i}, \lambda_{\max}\right)$$
+
+where:
+- \\(\hat{\sigma}_i\\) = volatility forecast for stock \\(i\\)
+- \\(\sigma_{\text{target}}\\) = target volatility (20% annualized)
+- \\(\lambda_{\max} = 3\\) = leverage cap
+
+The intuition: if a stock has half the target vol, I can take twice the position (up to the cap).
+
+Finally, I apply constraints: 5% max per stock, total exposure ≤ 100%.
+
+The key term is $\hat{\sigma}_i$. Currently I estimate it with simple moving averages—20-day rolling vol for longs, 60-day for shorts. When these forecasts are wrong, position sizing suffers:
+
+- **Underestimate vol** → positions too large → deeper drawdowns
+- **Overestimate vol** → positions too small → missed returns
 
 ### The Perfect Foresight Experiment
 
@@ -54,26 +70,87 @@ I test three scenarios:
 
 Here's the punchline. First, the long-short portfolios:
 
-| Scenario | Return | Sharpe | Max DD |
-|----------|--------|--------|--------|
-| Current | 12.3% | 1.76 | -16.2% |
-| Perfect Long | 16.0% | 2.65 | -7.8% |
-| Perfect | 12.5% | 2.18 | -7.8% |
-
-*Table 1: Long-short portfolio performance (with fees). Perfect Long = perfect foresight on long leg only.*
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; margin: 0.5em 0;">
+<thead>
+<tr>
+<th style="padding: 0.6em; text-align: left; border-bottom: 2px solid #333;">Scenario</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Return</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Sharpe</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Max DD</th>
+</tr>
+</thead>
+<tbody>
+<tr style="background: #fafafa;">
+<td style="padding: 0.6em; border-bottom: 1px solid #eee;">Current</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.3%</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.76</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; color: #b00;">-16.2%</td>
+</tr>
+<tr style="background: #e8f5e9;">
+<td style="padding: 0.6em; font-weight: bold; border-bottom: 1px solid #eee;">Perfect Long</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; color: #2e7d32; font-weight: bold;">16.0%</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; color: #2e7d32; font-weight: bold;">2.65</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; color: #2e7d32;">-7.8%</td>
+</tr>
+<tr style="background: #f5f5f5;">
+<td style="padding: 0.6em;">Perfect</td>
+<td style="padding: 0.6em; text-align: center;">12.5%</td>
+<td style="padding: 0.6em; text-align: center;">2.18</td>
+<td style="padding: 0.6em; text-align: center; color: #2e7d32;">-7.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 1: Long-short portfolio performance (with fees). Perfect Long = perfect foresight on long leg only.</p>
 
 Wait—Perfect Long beats Perfect? Yes. When you give the short leg perfect foresight, it takes larger positions in low-vol stocks that happen to be bad shorts. The long leg is where better vol forecasts really pay off.
 
 And here's the leg-by-leg breakdown:
 
-| Leg | Current | Perfect |
-|-----|---------|---------|
-| Long | 13.1% / 1.14 SR / -29.7% DD | 17.1% / 1.92 SR / -14.1% DD |
-| Short | 0.7% / 0.07 SR / -29.3% DD | 3.8% / 0.42 SR / -24.3% DD |
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; margin: 1em 0;">
+<thead>
+<tr>
+<th style="padding: 0.6em; text-align: left; border-bottom: 2px solid #333;"></th>
+<th colspan="3" style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333; background: #f8f8f8;">Current</th>
+<th colspan="3" style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333; background: #e8f5e9;">Perfect Foresight</th>
+</tr>
+<tr style="font-size: 0.8em; color: #666;">
+<th style="padding: 0.4em; border-bottom: 1px solid #ddd;"></th>
+<th style="padding: 0.4em; text-align: center; border-bottom: 1px solid #ddd; background: #f8f8f8;">Return</th>
+<th style="padding: 0.4em; text-align: center; border-bottom: 1px solid #ddd; background: #f8f8f8;">Sharpe</th>
+<th style="padding: 0.4em; text-align: center; border-bottom: 1px solid #ddd; background: #f8f8f8;">Max DD</th>
+<th style="padding: 0.4em; text-align: center; border-bottom: 1px solid #ddd; background: #e8f5e9;">Return</th>
+<th style="padding: 0.4em; text-align: center; border-bottom: 1px solid #ddd; background: #e8f5e9;">Sharpe</th>
+<th style="padding: 0.4em; text-align: center; border-bottom: 1px solid #ddd; background: #e8f5e9;">Max DD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 0.6em; font-weight: bold; border-bottom: 1px solid #eee;">Long</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; background: #fafafa;">13.1%</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; background: #fafafa;">1.14</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; background: #fafafa; color: #b00;">-29.7%</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; background: #e8f5e9; color: #2e7d32; font-weight: bold;">17.1%</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; background: #e8f5e9; color: #2e7d32; font-weight: bold;">1.92</td>
+<td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee; background: #e8f5e9; color: #2e7d32;">-14.1%</td>
+</tr>
+<tr>
+<td style="padding: 0.6em; font-weight: bold;">Short</td>
+<td style="padding: 0.6em; text-align: center; background: #fafafa;">0.7%</td>
+<td style="padding: 0.6em; text-align: center; background: #fafafa;">0.07</td>
+<td style="padding: 0.6em; text-align: center; background: #fafafa; color: #b00;">-29.3%</td>
+<td style="padding: 0.6em; text-align: center; background: #e8f5e9;">3.8%</td>
+<td style="padding: 0.6em; text-align: center; background: #e8f5e9;">0.42</td>
+<td style="padding: 0.6em; text-align: center; background: #e8f5e9;">-24.3%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 2: Individual leg performance with Current vs Perfect volatility forecasts.</p>
 
-*Table 2: Individual leg performance. Format: Return / Sharpe / Max Drawdown.*
-
-The long leg improves dramatically with better vol forecasts: +4% return, nearly double the Sharpe, half the drawdown. The short leg improves too, but it's a smaller effect. This makes sense—the long leg runs at higher leverage and benefits more from accurate position sizing.
+The long leg improves dramatically: +4% return, nearly double the Sharpe, half the drawdown. The short leg improves too, but it's a smaller effect—it runs at lower leverage and benefits less from accurate position sizing.
 
 ### So What?
 
@@ -104,8 +181,10 @@ Before throwing regressions at the problem, let's look at what we're working wit
 
 ### Volatility Distribution by Sector
 
-![Sector Distribution](/assets/vol_forecasting/sector_distribution.png)
-*Volatility distribution by sector: box plots show median and quartiles, density curves show the full distribution.*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="820" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
+</figure>
 
 Volatility varies a lot by sector. Median vol ranges from ~15% in Utilities to ~30% in Energy. Two things stand out:
 
@@ -114,11 +193,13 @@ Volatility varies a lot by sector. Median vol ranges from ~15% in Utilities to ~
 
 ### Feature Correlations
 
-| Feature | Correlation with 21d Forward Vol |
-|---------|----------------------------------|
+| Feature | Correlation |
+|---------|-------------|
 | Composite volatility (5/21/63d avg) | 0.738 |
 | EWM volatility (21d) | 0.715 |
 | Rolling volatility (21d) | 0.696 |
+
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 3: Feature correlations with 21-day forward volatility.</p>
 
 All volatility features are predictive. The composite (averaging multiple horizons) slightly outperforms single-horizon measures, motivating the use of multi-horizon features.
 
@@ -346,8 +427,10 @@ What most practitioners use:
 
 These achieve correlations around 0.70. Here's what the predictions look like:
 
-![Baseline Residuals](/assets/vol_forecasting/residuals_baseline.png)
-*Predicted vs actual volatility for the weighted blend baseline.*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/residuals_baseline.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
+</figure>
 
 The predictions follow the diagonal but with significant scatter. Can we do better by learning the weights from data instead of fixing them?
 
@@ -359,6 +442,8 @@ First attempt: fit a separate model for each stock. Each asset gets its own coef
 |-------|-------------|------|
 | Baseline (weighted avg) | 0.70 | 0.17 |
 | Per-asset regression | 0.75 | 0.15 |
+
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 4: Per-asset regression vs baseline.</p>
 
 Correlation improves to 0.75. The regression learns better weights than fixed heuristics.
 
@@ -379,6 +464,8 @@ I test two pooling levels:
 | Per-sector | 0.84 | 0.13 |
 | Global | 0.85 | 0.13 |
 
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 5: Impact of pooling across stocks.</p>
+
 Both jump to 0.84-0.85—a 10-point improvement over per-asset. Pooling works. Volatility dynamics are indeed shared across assets. Estimating them on more data reduces noise.
 
 This is bias-variance tradeoff in action. Per-asset models: low bias (flexible), high variance (noisy). Global models: slightly higher bias (same coefficients for all), much lower variance (millions of observations).
@@ -396,12 +483,16 @@ Add sector dummies to the global model:
 | Global | 0.85 | 0.130 |
 | Global + sector dummies | 0.86 | 0.124 |
 
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 6: Adding sector structure.</p>
+
 A further boost to 0.86. The dummies let the model learn that Energy stocks have higher baseline vol than Utilities, while still sharing the dynamics across all assets.
 
 Here's what the best model looks like compared to the baseline:
 
-![Best Model Residuals](/assets/vol_forecasting/residuals_best.png)
-*Predicted vs actual volatility for the global + dummies model.*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/residuals_best.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
+</figure>
 
 The predictions are much tighter around the diagonal. The improvement is visible.
 
@@ -413,6 +504,8 @@ The volatility distribution is right-skewed. Log-transforming should normalize t
 |-------|-----------|-----------|
 | Global | 0.845 | 0.849 |
 | Global + dummies | 0.857 | 0.860 |
+
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 7: Raw-space vs log-space models.</p>
 
 Marginally better (~0.003). The difference is tiny. I stick with raw-space for interpretability—coefficients are directly in volatility units, easier to sanity-check.
 
@@ -429,14 +522,16 @@ Can we improve further with macro risk factors?
 | + market factor | 0.855 |
 | + GRF | 0.844 |
 
+<p style="margin: 0.3em 0 1em 0; font-size: 0.9em; color: #888;">Table 8: Adding macro risk factors.</p>
+
 Neither helps. In fact, they slightly hurt. Why? The asset-level vol features already capture this. If the market is volatile, individual stocks are volatile, and our features pick that up. Adding redundant factors just adds noise.
 
 ### Summary
 
-<div style="width: 100%; overflow: visible; margin: 20px 0;">
-<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics Comparison" style="width: 100%; max-width: 1000px; height: auto !important; max-height: none !important; object-fit: contain !important; display: block; margin: 0 auto;">
-</div>
-*Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="750" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
+</figure>
 
 | Step | Model | Correlation | RMSE |
 |------|-------|-------------|------|
@@ -455,8 +550,10 @@ The progression is clear: learning weights beats heuristics, pooling beats per-a
 
 I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
-![Window Sensitivity](/assets/vol_forecasting/window_trends.png)
-*Model performance across different rolling window sizes (126 to 2520 days).*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7: Model performance across different rolling window sizes (126 to 2520 days).</figcaption>
+</figure>
 
 Performance is stable between 1–3 years. Very short windows are noisier; very long windows lag regime changes. I use 504 days (2 years).
 
@@ -464,8 +561,10 @@ Performance is stable between 1–3 years. Very short windows are noisier; very 
 
 Do models hold up when volatility spikes? Here's performance bucketed by market vol regime:
 
-![Regime Analysis](/assets/vol_forecasting/regime_analysis.png)
-*Correlation by market volatility regime: low (<20%), neutral (20-30%), high (>30%).*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="520" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
+</figure>
 
 | Model | Low (<20%) | Neutral (20-30%) | High (>30%) |
 |-------|------------|------------------|-------------|
@@ -485,8 +584,10 @@ A few observations:
 
 ### Coefficient Interpretability
 
-![Coefficient Heatmap](/assets/vol_forecasting/coefficient_heatmap.png)
-*Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.*
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" width="100%" height="620" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 9: Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
+</figure>
 
 The heatmap reveals which features drive predictions.
 
