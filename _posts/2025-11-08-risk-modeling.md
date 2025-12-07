@@ -7,115 +7,110 @@ categories: [Quants]
 
 ## Introduction
 
-Volatility forecasts are essential for portfolio construction. They drive position sizing, leverage decisions, and risk limits.
+I scale positions by volatility. And so should you.
 
-In my [previous post on the low-volatility factor]({% post_url 2024-12-15-low-volatility-factor %}), I used volatility targeting for portfolio construction. The algorithm combines ML signal quality and volatility forecasts in two stages, then applies constraints:
+The idea is simple: take smaller positions in volatile stocks, larger positions in stable ones. This keeps your portfolio risk roughly constant over time. It's called volatility targeting, and it works.
 
-<span style="font-weight: bold;">Step 1</span>: Signal-based allocation. Convert ML prediction scores into initial portfolio weights $\alpha_i$ (all weights are non-negative). For the long leg, better predictions lead to higher $\alpha_i$; for the short leg, worse predictions lead to higher weights (sign reversed). Weights are normalized and clipped: $\alpha_i \in [0, 0.05]$.
-
-<span style="font-weight: bold;">Step 2</span>: Risk-based scaling. Scale each position by volatility forecasts to target annualized volatility for both legs:
-
-$$w_i = \alpha_i \cdot \min\left(\frac{\sigma_{\text{target}}}{\hat{\sigma}_i}, \lambda_{\max}\right)$$
-
-where $\lambda_{\max} = 3$ is the leverage cap. This combines the ML signal weights ($\alpha_i$) with volatility scaling—better ML forecasts and lower volatility both lead to larger positions. The scaling equalizes risk across both legs.
-
-<span style="font-weight: bold;">Step 3</span>: Constraints. Apply position caps and exposure limits:
-
-$$w_i^{\text{final}} = \text{clip}(w_i, 0, 0.05), \quad \text{s.t.} \quad \sum_i w_i^{\text{final}} \leq 1.0$$
-
-During high volatility periods, the portfolio may become partially invested to respect risk constraints.
-
-The intuition behind position sizing:
-
-- **Long leg:** Better ML forecasts → higher weights (more capital on good predictions). Lower volatility → higher weights (volatility targeting scales up low-risk positions, since $w_i \propto 1/\hat{\sigma}_i$).
-- **Short leg:** Worse ML forecasts → higher weights (more capital shorting bad predictions). Lower volatility → higher weights (same volatility scaling applies).
-- **Both legs:** Higher volatility → lower weights (risk management reduces position sizes).
-
-When volatility is underestimated, we take positions that are too large and suffer deeper drawdowns. When overestimated, we take positions that are too small and miss returns. Better volatility forecasts mean better position sizing, which directly improves risk-adjusted returns.
+But here's the thing—to do this well, you need to *predict* future volatility. Not yesterday's volatility, but what volatility will be over your holding period. Most people don't spend much time on this. They use the last month's realized vol and call it a day.
 
 <div style="border: 2px solid #333; padding: 1em; margin: 1em 0; background-color: #f9f9f9;">
-<strong>The question:</strong> How much does better volatility forecasting actually matter for portfolio performance?
+<strong>The question:</strong> Is it worth spending time trying to predict volatility better?
 </div>
 
-This directly relates to our allocation formula. In **Step 2**, we scale positions by volatility forecasts:
+This post answers that question. Spoiler: yes, it's worth it. Perfect volatility forecasts would add 3-4% annualized return to my strategy. Even modest improvements (correlation 0.70 → 0.86) should capture a good chunk of that.
 
-$$w_i = \alpha_i \cdot \min\left(\frac{\sigma_{\text{target}}}{\hat{\sigma}_i}, \lambda_{\max}\right)$$
+### How I Use Volatility Forecasts
 
-The term $\hat{\sigma}_i$ is our **volatility forecast** for each stock—this is what we're trying to improve. Currently, we estimate volatility for each stock using simple moving averages: 20-day rolling volatility for the **long leg** and 60-day rolling volatility for the **short leg**. When $\hat{\sigma}_i$ is inaccurate, position sizing suffers: underestimated volatility leads to positions that are too large (higher risk), while overestimated volatility leads to positions that are too small (missed returns).
+In my [previous post on the low-volatility factor]({% post_url 2024-12-15-low-volatility-factor %}), I built a long-short equity strategy. Position sizing combines two things: ML signal quality and volatility forecasts.
 
-To establish the upper bound, I run a backtest comparing three scenarios using the same signals and portfolio construction rules:
+The allocation works like this: first, I convert ML scores into weights—better predictions get more capital on the long side, worse predictions get more capital on the short side. Then I scale each position by volatility: $w_i \propto 1/\hat{\sigma}_i$. Lower volatility means larger positions. Finally, I apply constraints (5% max per stock, total exposure ≤ 100%).
 
-1. **Current:** Uses rolling volatility estimates for each stock (20-day for long leg, 60-day for short leg) — simple moving averages
-2. **Perfect:** Uses perfect foresight volatility on both legs — for each stock, this is the realized 21-day forward volatility (the actual volatility that will occur over the next 21 days). This is the upper bound, showing what perfect volatility knowledge would deliver.
-3. **Perfect Long:** Uses perfect foresight volatility on the long leg only (short leg still uses current rolling vol) — this isolates the impact of better long-side volatility estimates
+The key term is $\hat{\sigma}_i$—my volatility forecast for each stock. Currently I use simple moving averages (20-day for longs, 60-day for shorts). When these forecasts are wrong, position sizing suffers. Underestimate vol? Positions too large, deeper drawdowns. Overestimate? Positions too small, missed returns.
 
-### Long-Short Portfolio Performance
+### The Perfect Foresight Experiment
+
+To see what's at stake, I run a backtest with perfect foresight. What if I knew the exact realized volatility for the next 21 days? This is obviously impossible in practice, but it shows the upper bound.
+
+I test three scenarios:
+- **Current:** Rolling volatility estimates (what I use now)
+- **Perfect Long:** Perfect foresight on the long leg only
+- **Perfect:** Perfect foresight on both legs (the upper bound)
+
+### Long-Short Performance
+
 <figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
 <iframe src="/assets/vol_impact/vol_impact_comparison.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 1: Cumulative returns and drawdowns for long-short portfolios using different volatility estimation methods. All strategies use the same signals and fees.</figcaption>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 1: Long-short portfolio performance with different volatility estimation methods.</figcaption>
 </figure>
-### Long and Short Legs
+
+### Individual Legs
+
 <figure style="margin: 0.25em 0 0 0; padding: 0; line-height: 1;">
 <iframe src="/assets/vol_impact/long_short_legs_comparison.html" width="100%" height="410" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.08em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 2: Cumulative returns and drawdowns for long and short legs separately. Shows how volatility estimation impacts each leg individually.</figcaption>
+<figcaption style="margin: 0.08em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 2: Long and short legs separately—where does the improvement come from?</figcaption>
 </figure>
 
+### The Numbers
 
+Here's the punchline. First, the long-short portfolios:
 
+| Scenario | Return | Sharpe | Max DD |
+|----------|--------|--------|--------|
+| Current | 12.3% | 1.76 | -16.2% |
+| Perfect Long | 16.0% | 2.65 | -7.8% |
+| Perfect | 12.5% | 2.18 | -7.8% |
 
-<p style="margin-top: 1em;"><strong>Key findings:</strong></p>
+*Table 1: Long-short portfolio performance (with fees). Perfect Long = perfect foresight on long leg only.*
 
-1. **Perfect (both legs) outperforms Current by ~3-4% annualized.** The **Perfect** scenario shows the upper bound—what perfect volatility knowledge would deliver.
+Wait—Perfect Long beats Perfect? Yes. When you give the short leg perfect foresight, it takes larger positions in low-vol stocks that happen to be bad shorts. The long leg is where better vol forecasts really pay off.
 
-2. **Perfect Long captures most of this improvement (~2-3% annualized).** Better volatility estimates on the **long leg** alone deliver most of the benefit, since the long leg is typically 2x leveraged.
+And here's the leg-by-leg breakdown:
 
-3. **Drawdowns are significantly reduced with better volatility estimates.** The **Perfect** strategy shows shallower drawdowns, especially during volatile periods (2008-2009, 2020).
+| Leg | Current | Perfect |
+|-----|---------|---------|
+| Long | 13.1% / 1.14 SR / -29.7% DD | 17.1% / 1.92 SR / -14.1% DD |
+| Short | 0.7% / 0.07 SR / -29.3% DD | 3.8% / 0.42 SR / -24.3% DD |
 
-| Scenario | Annual Return | Sharpe Ratio | Max Drawdown |
-|----------|---------------|--------------|-------------|
-| Current | 12.98% | 1.13 | -15.2% |
-| Perfect | 16.17% | 1.81 | -9.1% |
-| Perfect Long | 15.17% | 1.70 | -10.8% |
+*Table 2: Individual leg performance. Format: Return / Sharpe / Max Drawdown.*
 
-**Table 1:** Performance metrics for long-short portfolios with different volatility estimation methods (with fees).
+The long leg improves dramatically with better vol forecasts: +4% return, nearly double the Sharpe, half the drawdown. The short leg improves too, but it's a smaller effect. This makes sense—the long leg runs at higher leverage and benefits more from accurate position sizing.
 
-**The economic value is clear:** The **Perfect** scenario adds 3-4% annualized return and reduces maximum drawdown by 6 percentage points. This establishes the upper bound—better **volatility forecasts** can deliver meaningful alpha. **Perfect Long** captures most of this (2-3% annualized), showing that **long-side volatility estimation** is the bigger lever.
+### So What?
 
-The backtest uses **perfect foresight** volatility, which is unattainable in practice. But it shows what's at stake: if we can improve **volatility forecast accuracy**, we should capture a meaningful portion of this 2-3% improvement.
+The takeaway: perfect volatility forecasts on the long leg alone would boost Sharpe from 1.76 to 2.65. That's huge. Obviously we can't achieve perfect foresight, but it shows what's at stake.
 
-**This post:** I test whether pooling information across assets improves **volatility forecasts**. Specifically, I compare:
+The rest of this post is about getting closer to that upper bound. Can we beat the simple rolling averages I currently use? Spoiler: yes. Global panel regressions with sector structure achieve 0.86 correlation with realized vol (vs 0.70 for moving averages). That should translate to meaningful alpha.
 
-- **Baselines:** Simple moving averages (correlation ~0.70)
-- **Per-asset regressions:** One model per stock
-- **Per-sector regressions:** One model per sector
-- **Global regressions:** One model for all assets
-- **Global + sector dummies:** Shared dynamics, sector-specific levels
+**What I test:**
+- Baselines: simple moving averages
+- Per-asset regressions: one model per stock
+- Per-sector: one model per sector
+- Global: one model for all assets
+- Global + sector dummies: shared dynamics, sector-specific levels
 
-The result: global panel regressions with sector structure achieve 0.86 correlation with realized volatility versus 0.70 for moving averages. Since perfect foresight adds 3-4% annualized, improving forecasts from 0.70 to 0.86 correlation should add roughly **2-3% annualized** in practice.
-
-**Structure of this post:**
-1. **Motivation (above):** Perfect volatility knowledge adds 2-3% annualized—this is the upper bound
-2. **Methodology:** How to improve volatility forecasts from 0.70 to 0.86 correlation using panel regressions
-3. **Results:** Step-by-step model comparison showing what each improvement adds
-4. **Robustness:** Validation across regimes and window sizes
+**Structure:**
+1. Data exploration
+2. Walk-forward methodology (no lookahead!)
+3. Step-by-step model comparison
+4. Robustness checks
 
 ## Data
 
-I use Russell 1000 (RIY) constituents from 1995 to 2024. After filtering and cleaning, the dataset contains about 7 million date × asset observations. At any point in time, around 1,000 stocks are in the universe.
+Russell 1000 constituents, 1995–2024. After cleaning, that's about 7 million date × asset observations. Roughly 1,000 stocks in the universe at any point.
 
 ## Data Exploration
 
-Before modeling, I look at the data to understand what we're working with.
+Before throwing regressions at the problem, let's look at what we're working with.
 
 ### Volatility Distribution by Sector
 
 ![Sector Distribution](/assets/vol_forecasting/sector_distribution.png)
 *Volatility distribution by sector: box plots show median and quartiles, density curves show the full distribution.*
 
-Volatility varies significantly across sectors. Median annualized volatility ranges from ~15% in Utilities to ~30% in Energy. Two things stand out:
+Volatility varies a lot by sector. Median vol ranges from ~15% in Utilities to ~30% in Energy. Two things stand out:
 
-1. **Cross-sectional variation:** Different sectors have structurally different volatility levels → this motivates adding sector dummies to capture level differences
-2. **Right-skewed distribution:** Volatility has a long right tail → this motivates testing log-space models to normalize the target
+1. Different sectors have structurally different volatility levels. This motivates adding sector dummies.
+2. The distribution is right-skewed (long right tail). This motivates testing log-space models.
 
 ### Feature Correlations
 
@@ -129,7 +124,7 @@ All volatility features are predictive. The composite (averaging multiple horizo
 
 ## Walk-Forward Methodology
 
-All predictions use strict **day-by-day walk-forward testing**. For each day $t$, I train on days $[t-504, t-1]$ and predict on day $t$. No lookahead bias—yesterday's coefficients predict today.
+This is important: all predictions use strict day-by-day walk-forward testing. Train on the past 2 years, predict today. No lookahead bias—yesterday's coefficients predict today.
 
 ```
 Training:    Day t-504 ──────────────────── Day t-1
@@ -216,11 +211,11 @@ I evaluate predictions using:
 
 ## Feature Engineering
 
-Each feature is motivated by a specific stylized fact about volatility.
+Each feature is motivated by something we know about how volatility behaves.
 
 ### Rolling Volatility
 
-**Motivation:** Volatility clusters—high-vol days follow high-vol days. Recent realized volatility is the single best predictor of future volatility.
+Volatility clusters. High-vol days follow high-vol days. This is the most robust finding in finance. Recent realized vol is the single best predictor of future vol.
 
 For each stock, I compute rolling volatility at multiple horizons:
 
@@ -236,19 +231,17 @@ with windows $w \in \{5, 21, 63, 126\}$ days:
 
 ### Asymmetric Features (Why Not EGARCH?)
 
-**Motivation:** Volatility responds asymmetrically to returns—negative returns predict higher future volatility than positive returns of the same magnitude. This is the **leverage effect**: bad news increases uncertainty more than good news reduces it.
+Volatility responds asymmetrically to returns. Bad news increases vol more than good news reduces it—the "leverage effect." EGARCH is the standard way to model this.
 
-EGARCH is the standard way to model this.
+But EGARCH has problems for what we're doing:
 
-But EGARCH has problems for our use case:
+1. No observable target. EGARCH models latent conditional variance. You can't measure it directly—only infer it from the model. Our target (21-day realized vol) is directly observable.
 
-1. **No observable target:** EGARCH models latent conditional variance $h_t$. You can't directly measure it—you can only infer it from the model. This makes evaluation messy. Our target (21-day realized vol) is directly observable.
+2. Can't pool across assets. EGARCH is fit per asset. You can't share parameters across stocks, so you're back to the per-asset overfitting problem.
 
-2. **Can't pool across assets:** EGARCH is a time-series model fit per asset. You can't easily share parameters across stocks, which means you're back to the per-asset overfitting problem we're trying to avoid.
+3. Computationally expensive. MLE optimization for each stock, each day, in a rolling window? That's millions of optimizations.
 
-3. **Computationally expensive:** MLE optimization for each stock, each day, in a rolling window? That's millions of optimizations.
-
-**The alternative:** I capture the leverage effect with explicit downside/upside volatility features:
+The alternative: I capture the leverage effect with explicit downside/upside volatility features:
 
 $$
 \hat{\sigma}_{i,t}^{\text{down}} = \sqrt{\frac{252}{w} \sum_{k=0}^{w-1} r_{i,t-k}^2 \cdot \mathbf{1}_{r_{i,t-k} < 0}}
@@ -260,21 +253,19 @@ $$
 
 The downside volatility counts only negative return days; upside counts only positive days. If the leverage effect exists, the regression will learn a higher coefficient on downside vol than upside vol—and that's exactly what we see in the coefficient heatmap.
 
-This approach gives us:
-- **Observable target:** realized vol, not latent variance
-- **Poolable:** works in a cross-sectional regression
-- **Fast:** just rolling sums, no optimization
-- **Interpretable:** "downside vol coefficient > upside vol coefficient" = leverage effect
+This gives us:
+- Observable target (realized vol, not latent variance)
+- Poolable (works in cross-sectional regression)
+- Fast (just rolling sums, no optimization)
+- Interpretable (downside coef > upside coef = leverage effect)
 
 ### Sector Dummies
 
-**Motivation:** Different sectors have structurally different volatility levels. Utilities are stable (regulated, predictable cash flows). Energy is volatile (commodity prices, geopolitical risk). Tech sits somewhere in between.
-
-I add one-hot encoded sector dummies (BICS Level 1). As we saw in the data exploration, median volatility ranges from 15% (Utilities) to 30% (Energy). The dummies let the model learn these level differences while sharing the dynamics across all assets.
+Different sectors have structurally different vol levels. Utilities are stable. Energy is volatile. Tech sits somewhere in between. I add sector dummies (BICS Level 1) so the model can learn these level differences while sharing the dynamics across all assets.
 
 ### Log Market Cap
 
-**Motivation:** Small firms are more volatile than large firms. They have less diversified revenue streams, higher leverage, lower liquidity, and more sensitivity to idiosyncratic shocks.
+Small firms are more volatile than large firms. Less diversified revenue, higher leverage, lower liquidity, more idiosyncratic risk.
 
 I include log market cap as a feature:
 
@@ -344,70 +335,70 @@ Each model sees slightly different data. Averaging reduces variance.
 
 ## Results: Step-by-Step Model Comparison
 
-The central question: should we fit a model per asset, per sector, or globally? I build up the answer step by step, showing what each modeling choice adds.
+The central question: should we fit a model per asset, per sector, or globally? Let me build up the answer step by step.
 
 ### Step 1: Baselines
 
-I start with what most practitioners use as simple benchmarks:
+What most practitioners use:
 
-- **Composite average:** Equal-weighted average of 5, 21, and 63-day rolling volatility
-- **Weighted blend:** 70% × 21-day vol + 30% × 252-day vol (similar to RiskMetrics EWMA)
+- Composite average: equal-weighted average of 5, 21, and 63-day rolling vol
+- Weighted blend: 70% × 21-day vol + 30% × 252-day vol (RiskMetrics-style)
 
-These achieve correlations around **0.70**. Here's what the predictions look like:
+These achieve correlations around 0.70. Here's what the predictions look like:
 
 ![Baseline Residuals](/assets/vol_forecasting/residuals_baseline.png)
 *Predicted vs actual volatility for the weighted blend baseline.*
 
-The predictions follow the diagonal but with significant scatter. The model captures the broad relationship but misses a lot of variation. Can we do better by learning the weights from data instead of fixing them?
+The predictions follow the diagonal but with significant scatter. Can we do better by learning the weights from data instead of fixing them?
 
 ### Step 2: Per-Asset Regression
 
-The first regression approach: fit a separate model for each stock. Each asset gets its own coefficients estimated on its own 2-year history.
+First attempt: fit a separate model for each stock. Each asset gets its own coefficients estimated on its own 2-year history.
 
 | Model | Correlation | RMSE |
 |-------|-------------|------|
 | Baseline (weighted avg) | 0.70 | 0.17 |
-| **Per-asset regression** | **0.75** | **0.15** |
+| Per-asset regression | 0.75 | 0.15 |
 
-Result: correlation improves to **0.75**. The regression learns better weights than the fixed heuristics.
+Correlation improves to 0.75. The regression learns better weights than fixed heuristics.
 
-But there's a problem: with only ~500 observations per stock in a 2-year window, coefficients are noisy. The model overfits to idiosyncratic patterns. Can we do better by sharing information across assets?
+But there's a problem: with only ~500 observations per stock in a 2-year window, coefficients are noisy. The model overfits to idiosyncratic patterns. Can we do better by sharing information?
 
 ### Step 3: Pooling Across Stocks
 
-What if volatility dynamics are shared across assets? Mean reversion, clustering, the leverage effect—these should work similarly for Apple and Exxon.
+Here's the key insight: what if volatility dynamics are shared across assets? Mean reversion, clustering, the leverage effect—these should work similarly for Apple and Exxon.
 
 I test two pooling levels:
 
-- **Per-sector:** One model per BICS sector (~700k obs/sector)
-- **Global:** One model for all assets (~7M obs total)
+- Per-sector: one model per BICS sector (~700k obs/sector)
+- Global: one model for all assets (~7M obs total)
 
 | Model | Correlation | RMSE |
 |-------|-------------|------|
 | Per-asset | 0.75 | 0.15 |
 | Per-sector | 0.84 | 0.13 |
-| **Global** | **0.85** | **0.13** |
+| Global | 0.85 | 0.13 |
 
-Both per-sector and global models jump to **0.84-0.85**—a 10-point improvement over per-asset. Pooling works. The volatility dynamics are indeed shared; estimating them on more data reduces noise.
+Both jump to 0.84-0.85—a 10-point improvement over per-asset. Pooling works. Volatility dynamics are indeed shared across assets. Estimating them on more data reduces noise.
 
-This is the bias-variance tradeoff in action: per-asset models have low bias (flexible) but high variance (noisy estimates). Global models have slightly higher bias (same coefficients for all) but much lower variance (millions of observations).
+This is bias-variance tradeoff in action. Per-asset models: low bias (flexible), high variance (noisy). Global models: slightly higher bias (same coefficients for all), much lower variance (millions of observations).
 
 ### Step 4: Adding Sector Structure
 
-Global pooling assumes all stocks share identical dynamics. But we saw in the data exploration that volatility levels differ by sector (15% for Utilities, 30% for Energy). 
+Global pooling assumes all stocks share identical dynamics. But we saw that volatility *levels* differ by sector (15% for Utilities, 30% for Energy).
 
-Can we get the best of both worlds? Shared coefficients for dynamics, but sector-specific intercepts for levels?
+Can we get the best of both worlds? Shared coefficients for dynamics, sector-specific intercepts for levels?
 
-I add sector dummies to the global model:
+Add sector dummies to the global model:
 
 | Model | Correlation | RMSE |
 |-------|-------------|------|
 | Global | 0.85 | 0.130 |
-| **Global + sector dummies** | **0.86** | **0.124** |
+| Global + sector dummies | 0.86 | 0.124 |
 
-A further boost to **0.86**. The dummies let the model learn that Energy stocks have higher baseline volatility than Utilities, while still sharing the dynamics (how 21-day vol predicts forward vol) across all assets.
+A further boost to 0.86. The dummies let the model learn that Energy stocks have higher baseline vol than Utilities, while still sharing the dynamics across all assets.
 
-Here's what the best model predictions look like compared to the baseline:
+Here's what the best model looks like compared to the baseline:
 
 ![Best Model Residuals](/assets/vol_forecasting/residuals_best.png)
 *Predicted vs actual volatility for the global + dummies model.*
@@ -416,32 +407,29 @@ The predictions are much tighter around the diagonal. The improvement is visible
 
 ### Step 5: Log-Space Models
 
-The volatility distribution is right-skewed (we saw this in the data exploration). Log-transforming should normalize the target. Does it help?
+The volatility distribution is right-skewed. Log-transforming should normalize the target. Does it help?
 
-I test the same models but predicting $\log(\sigma)$ instead of $\sigma$, with log-transformed features:
-
-| Model | Raw-Space Correlation | Log-Space Correlation |
-|-------|----------------------|----------------------|
+| Model | Raw-Space | Log-Space |
+|-------|-----------|-----------|
 | Global | 0.845 | 0.849 |
 | Global + dummies | 0.857 | 0.860 |
 
-Log-space models are marginally better (~0.003 improvement). The difference is tiny—both approaches work well. I stick with raw-space for interpretability: coefficients are directly in volatility units, making them easier to sanity-check.
+Marginally better (~0.003). The difference is tiny. I stick with raw-space for interpretability—coefficients are directly in volatility units, easier to sanity-check.
 
 ### Step 6: Additional Risk Factors
 
-Can we improve further by adding macro risk factors?
+Can we improve further with macro risk factors?
 
-**Market Volatility Factor:** Rolling 21-day volatility of the market index. The idea: when the market is volatile, all stocks should have higher volatility.
-
-**Group Risk Factor (GRF):** Sector-level average volatility relative to its long-run norm. Inspired by AQR's "Risk Everywhere" factor. The idea: when a sector is stressed, stocks in that sector should have higher volatility.
+- Market volatility factor: rolling 21-day vol of the market index
+- Group Risk Factor (GRF): sector-level vol relative to long-run norm (AQR-style)
 
 | Model | Correlation |
 |-------|-------------|
 | Global + dummies | 0.857 |
-| Global + dummies + market factor | 0.855 |
-| Global + dummies + GRF | 0.844 |
+| + market factor | 0.855 |
+| + GRF | 0.844 |
 
-Neither helps. In fact, they slightly hurt. Why? The existing asset-level volatility features already capture this information. If the market is volatile, individual stocks are volatile, and our features pick that up. Adding a redundant market factor just adds noise.
+Neither helps. In fact, they slightly hurt. Why? The asset-level vol features already capture this. If the market is volatile, individual stocks are volatile, and our features pick that up. Adding redundant factors just adds noise.
 
 ### Summary
 
@@ -459,22 +447,22 @@ Neither helps. In fact, they slightly hurt. Why? The existing asset-level volati
 | +Log-space | Global + dummies (log) | 0.86 | 0.124 |
 | +Risk factors | Global + dummies + market | 0.86 | 0.125 |
 
-The progression is clear: learning weights beats heuristics, pooling beats per-asset, and adding sector structure squeezes out the last bit of signal. Log-space and risk factors don't add much.
+The progression is clear: learning weights beats heuristics, pooling beats per-asset, sector structure squeezes out the last bit of signal. Log-space and macro factors don't help.
 
 ## Robustness & Validation
 
 ### Window Sensitivity
 
-I swept rolling windows from 6 months to 10 years:
+I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
 ![Window Sensitivity](/assets/vol_forecasting/window_trends.png)
 *Model performance across different rolling window sizes (126 to 2520 days).*
 
-Performance is stable between 1–3 years. Very short windows (<6 months) are noisier; very long windows (>5 years) start lagging regime changes. I use 504 days (2 years).
+Performance is stable between 1–3 years. Very short windows are noisier; very long windows lag regime changes. I use 504 days (2 years).
 
 ### Regime Robustness
 
-Do models hold up when volatility spikes? I bucket predictions by market volatility regime:
+Do models hold up when volatility spikes? Here's performance bucketed by market vol regime:
 
 ![Regime Analysis](/assets/vol_forecasting/regime_analysis.png)
 *Correlation by market volatility regime: low (<20%), neutral (20-30%), high (>30%).*
@@ -487,73 +475,64 @@ Do models hold up when volatility spikes? I bucket predictions by market volatil
 | Per-asset | 0.67 | 0.69 | 0.76 |
 | Baselines | 0.61-0.62 | 0.62-0.66 | 0.68-0.70 |
 
-**Key observations:**
+A few observations:
 
-1. **All models improve in high-vol regimes.** When volatility is elevated, it's more persistent and easier to predict. During calm periods, volatility is compressed and harder to differentiate.
+1. All models improve in high-vol regimes. When vol is elevated, it's more persistent and easier to predict. During calm periods, vol is compressed and harder to differentiate.
 
-2. **Global models maintain their edge across all regimes.** The 10+ point gap vs. per-asset holds whether markets are calm or stressed.
+2. Global models maintain their edge across all regimes. The 10+ point gap vs per-asset holds whether markets are calm or stressed.
 
-3. **Per-asset models suffer most in low-vol regimes.** With less signal, the noisy per-asset estimates hurt more. Global pooling provides stability when there's less to work with.
+3. Per-asset models suffer most in low-vol regimes. With less signal, the noisy estimates hurt more. Global pooling provides stability when there's less to work with.
 
 ### Coefficient Interpretability
 
 ![Coefficient Heatmap](/assets/vol_forecasting/coefficient_heatmap.png)
-*Rolling regression coefficients over time for the global + dummies model. Red = positive (predicts higher vol), Blue = negative.*
+*Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.*
 
-The coefficient heatmap reveals which features drive predictions:
+The heatmap reveals which features drive predictions.
 
-**Most important features (by coefficient magnitude):**
+Most important features:
 
-1. **126-day vol (dark red, ~0.5):** The strongest positive predictor. Long-term volatility acts as the anchor—it captures the "normal" volatility level for each stock. This is the mean-reversion target.
+1. 126-day vol (~0.5): Strongest positive predictor. Long-term vol acts as the mean-reversion anchor.
+2. 63-day vol (~0.3): Second strongest. Bridges short-term noise and long-term structure.
+3. 5-day vol (negative!): Surprisingly negative. This is mean-reversion—when short-term vol spikes above long-term, the model predicts it will come down.
+4. Log market cap (~-0.1): Negative as expected. Smaller firms are more volatile.
 
-2. **63-day vol (red, ~0.3):** Second strongest. Quarterly volatility bridges short-term noise and long-term structure.
+The sector dummies tell a story:
 
-3. **5-day vol (blue, negative!):** Surprisingly negative coefficient. This is mean-reversion in action: when short-term vol spikes *above* longer-term vol, the model predicts it will come down. The 126d anchor dominates.
+- Energy: huge spike in 2020 (COVID oil crash, negative prices). Also elevated during 2008 and 2014-2016.
+- Financials: spike in 2008-2009 (GFC). The model learned Financials needed a higher vol intercept during the crisis.
+- Technology: elevated in early 2000s (dot-com bust), moderate since.
+- Utilities: consistently low. Defensive stocks live up to their reputation.
 
-4. **Log market cap (blue, ~-0.1):** Negative as expected—smaller firms are more volatile. The coefficient is stable over time.
-
-**Sector dummies tell a story:**
-
-- **Energy:** Huge positive spike in 2020 (COVID oil crash, briefly negative prices). Also elevated during 2008 and 2014-2016 oil volatility.
-- **Financials:** Spike in 2008-2009 (GFC). The model learned that Financials needed a higher volatility intercept during the crisis.
-- **Technology:** Elevated in early 2000s (dot-com bust), moderate since.
-- **Utilities:** Consistently low—defensive stocks live up to their reputation.
-
-**Asymmetric features:**
-- **Downside vol:** Small negative coefficient
-- **Upside vol:** Small negative coefficient
-
-Both are negative but downside is slightly more so. The leverage effect is present but subtle—most of the asymmetry is already captured by the level dynamics.
+Asymmetric features (downside/upside vol) both have small negative coefficients. The leverage effect is present but subtle—most asymmetry is already captured by the level dynamics.
 
 ## Conclusion
 
-The final model: **global Ridge regression with sector dummies, asymmetric vol features, 2-year rolling window, and 3-model ensemble**.
+The final model: global Ridge regression with sector dummies, 2-year rolling window, 3-model ensemble.
 
 | Component | Choice |
 |-----------|--------|
 | Target | 21-day forward realized vol |
 | Features | Rolling vol (5/21/63/126d), downside/upside vol, log market cap, sector dummies |
-| Model | Ridge regression ($\alpha=1$) |
+| Model | Ridge regression (α=1) |
 | Estimation | 2-year rolling window, 3-model ensemble |
 | Pooling | Global (all assets) |
 | Implementation | polars-ols for fast rolling regressions |
 
-The key insight: **volatility dynamics are shared across assets**. Mean reversion, clustering, and the leverage effect work the same way whether you're looking at Apple or Exxon. Per-asset models waste data chasing idiosyncratic noise. Global models with sector structure extract the signal efficiently.
+The key insight: volatility dynamics are shared across assets. Mean reversion, clustering, the leverage effect—they work the same way for Apple and Exxon. Per-asset models waste data chasing idiosyncratic noise. Global models with sector structure extract signal efficiently.
+
+We started with the question: is it worth predicting volatility better? The answer is yes. Perfect foresight would boost Sharpe from 1.76 to 2.65. We can't achieve perfect foresight, but improving correlation from 0.70 to 0.86 should capture a meaningful chunk of that improvement.
 
 ## What's Next
 
-In the next post, I'll test whether ML models (LightGBM, neural nets) can beat these structured regressions. The economic value question is now answered: improving volatility forecast correlation from 0.70 to 0.86 translates to roughly 1.5-2% annualized alpha in practice.
+ML models (LightGBM, neural nets). Can they beat these structured regressions? The linear model can't capture interactions—for example, how 21-day vol might predict forward vol differently for Energy vs Utilities. Tree-based models can discover these automatically. That's the next experiment.
 
 ## Things to Work On
 
-A few things I want to improve or clarify:
+A few things I want to improve:
 
-**Heatmap interpretation.** I sometimes get the interpretation wrong when explaining the coefficient heatmap. The red/blue color coding and temporal patterns need clearer explanation. This is on my list to fix.
+Heatmap interpretation. I sometimes get the interpretation wrong. The red/blue color coding and temporal patterns need clearer explanation. This is on my list.
 
-**Computational performance.** I should emphasize more clearly that [polars-ols](https://github.com/azmyrajab/polars_ols) is *incredibly* fast. We're doing rolling regression every single day—refitting the model on a 504-day window, then shifting coefficients forward one day, then refitting again. This is computationally heavy: millions of regressions across thousands of assets over 20+ years. The fact that a full model run takes ~30 seconds total is remarkable. The Rust-based implementation makes this feasible.
+Computational performance. [polars-ols](https://github.com/azmyrajab/polars_ols) is *incredibly* fast. Rolling regression every day—refitting on a 504-day window, shifting coefficients, refitting again. Millions of regressions across thousands of assets over 20+ years. Full model run takes ~30 seconds. The Rust-based implementation makes this feasible.
 
-**EGARCH testing.** I mentioned that EGARCH is computationally expensive, but I haven't actually benchmarked the `arch` package myself. I suspect it's slow for our use case (rolling MLE optimization per asset, per day), but I don't know for sure. If someone tells me it's worth testing, I'll give it a shot. I don't know everything.
-
-**Model limitations.** The current regression approach doesn't capture interactions between variables. For example, we can't model how the relationship between 21-day volatility and forward volatility might differ by sector. The sector dummies only shift the intercept; they don't allow sector-specific slopes. This is a limitation of the linear framework.
-
-**LightGBM potential.** This is what makes LightGBM attractive for future work. It can automatically discover interactions (e.g., "21-day vol × Energy sector" vs "21-day vol × Utilities sector") without explicitly specifying them. If sector-specific dynamics matter, tree-based models should pick them up.
+EGARCH testing. I mentioned EGARCH is slow, but I haven't actually benchmarked the `arch` package myself. If someone tells me it's worth testing, I'll give it a shot. I don't know everything.

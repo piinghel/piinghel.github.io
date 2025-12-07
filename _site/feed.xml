@@ -1,50 +1,818 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-11-08T21:18:32+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Pieter-Jan</title><subtitle>Systematic trading and data science things.
-</subtitle><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><entry><title type="html">Risk Modeling Approaches</title><link href="http://localhost:4000/quants/2025/11/08/risk-modeling.html" rel="alternate" type="text/html" title="Risk Modeling Approaches" /><published>2025-11-08T00:00:00+01:00</published><updated>2025-11-08T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/11/08/risk-modeling</id><content type="html" xml:base="http://localhost:4000/quants/2025/11/08/risk-modeling.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-12-06T22:38:11+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Quant Notes</title><subtitle>Systematic trading and data science things.
+</subtitle><author><name>anon</name></author><entry><title type="html">Forecasting Volatility with Panel Regressions</title><link href="http://localhost:4000/quants/2025/11/08/risk-modeling.html" rel="alternate" type="text/html" title="Forecasting Volatility with Panel Regressions" /><published>2025-11-08T00:00:00+01:00</published><updated>2025-11-08T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/11/08/risk-modeling</id><content type="html" xml:base="http://localhost:4000/quants/2025/11/08/risk-modeling.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
-<p>Risk modeling is fundamental to quantitative trading. Accurate risk forecasts enable better position sizing, portfolio construction, and risk management. Traditional approaches like GARCH and EWMA have been the workhorses for decades, but new methods are emerging that leverage machine learning, panel data, and cross-asset information.</p>
+<p>Volatility forecasts are essential for portfolio construction. They drive position sizing, leverage decisions, and risk limits.</p>
 
-<p>In this article, I’ll compare different risk modeling approaches, from classical time series models to modern machine learning methods. I’ll evaluate them on their ability to forecast volatility accurately and their practical utility for portfolio management.</p>
+<p>In my <a href="/quant/2024/12/15/low-volatility-factor.html">previous post on the low-volatility factor</a>, I used volatility targeting for portfolio construction. The algorithm combines ML signal quality and volatility forecasts in two stages, then applies constraints:</p>
 
-<h2 id="approaches-to-compare">Approaches to Compare</h2>
+<p><span style="font-weight: bold;">Step 1</span>: Signal-based allocation. Convert ML prediction scores into initial portfolio weights $\alpha_i$ (all weights are non-negative). For the long leg, better predictions lead to higher $\alpha_i$; for the short leg, worse predictions lead to higher weights (sign reversed). Weights are normalized and clipped: $\alpha_i \in [0, 0.05]$.</p>
 
-<h3 id="classical-time-series-models">Classical Time Series Models</h3>
+<p><span style="font-weight: bold;">Step 2</span>: Risk-based scaling. Scale each position by volatility forecasts to target annualized volatility for both legs:</p>
 
-<ul>
-  <li><strong>GARCH</strong>: Generalized Autoregressive Conditional Heteroskedasticity models capture volatility clustering</li>
-  <li><strong>EWMA</strong>: Exponentially Weighted Moving Average provides a simple, adaptive volatility estimate</li>
-  <li><strong>Realized Volatility</strong>: Using high-frequency data to measure ex-post volatility</li>
-</ul>
+\[w_i = \alpha_i \cdot \min\left(\frac{\sigma_{\text{target}}}{\hat{\sigma}_i}, \lambda_{\max}\right)\]
 
-<h3 id="modern-approaches">Modern Approaches</h3>
+<p>where $\lambda_{\max} = 3$ is the leverage cap. This combines the ML signal weights ($\alpha_i$) with volatility scaling—better ML forecasts and lower volatility both lead to larger positions. The scaling equalizes risk across both legs.</p>
 
-<ul>
-  <li><strong>Panel-based Models</strong>: Leveraging cross-sectional information across assets (e.g., AQR’s “Risk Everywhere”)</li>
-  <li><strong>Machine Learning Models</strong>: Using neural networks, random forests, or other ML methods to predict volatility</li>
-  <li><strong>Factor Models</strong>: Decomposing risk into common factors and asset-specific components</li>
-</ul>
+<p><span style="font-weight: bold;">Step 3</span>: Constraints. Apply position caps and exposure limits:</p>
 
-<h2 id="evaluation-framework">Evaluation Framework</h2>
+\[w_i^{\text{final}} = \text{clip}(w_i, 0, 0.05), \quad \text{s.t.} \quad \sum_i w_i^{\text{final}} \leq 1.0\]
 
-<p>I’ll compare models on:</p>
+<p>During high volatility periods, the portfolio may become partially invested to respect risk constraints.</p>
+
+<p>The intuition behind position sizing:</p>
 
 <ul>
-  <li><strong>Forecast Accuracy</strong>: Out-of-sample R², RMSE, and other statistical metrics</li>
-  <li><strong>Economic Value</strong>: Impact on portfolio Sharpe ratio, maximum drawdown, and risk-adjusted returns</li>
-  <li><strong>Robustness</strong>: Performance across different market regimes and asset classes</li>
-  <li><strong>Practical Considerations</strong>: Computational cost, implementation complexity, and data requirements</li>
+  <li><strong>Long leg:</strong> Better ML forecasts → higher weights (more capital on good predictions). Lower volatility → higher weights (volatility targeting scales up low-risk positions, since $w_i \propto 1/\hat{\sigma}_i$).</li>
+  <li><strong>Short leg:</strong> Worse ML forecasts → higher weights (more capital shorting bad predictions). Lower volatility → higher weights (same volatility scaling applies).</li>
+  <li><strong>Both legs:</strong> Higher volatility → lower weights (risk management reduces position sizes).</li>
 </ul>
 
-<h2 id="data-and-setup">Data and Setup</h2>
+<p>When volatility is underestimated, we take positions that are too large and suffer deeper drawdowns. When overestimated, we take positions that are too small and miss returns. Better volatility forecasts mean better position sizing, which directly improves risk-adjusted returns.</p>
 
-<p>[To be filled in]</p>
+<div style="border: 2px solid #333; padding: 1em; margin: 1em 0; background-color: #f9f9f9;">
+<strong>The question:</strong> How much does better volatility forecasting actually matter for portfolio performance?
+</div>
 
-<h2 id="results">Results</h2>
+<p>This directly relates to our allocation formula. In <strong>Step 2</strong>, we scale positions by volatility forecasts:</p>
 
-<p>[To be filled in]</p>
+\[w_i = \alpha_i \cdot \min\left(\frac{\sigma_{\text{target}}}{\hat{\sigma}_i}, \lambda_{\max}\right)\]
 
-<h2 id="discussion">Discussion</h2>
+<p>The term $\hat{\sigma}_i$ is our <strong>volatility forecast</strong> for each stock—this is what we’re trying to improve. Currently, we estimate volatility for each stock using simple moving averages: 20-day rolling volatility for the <strong>long leg</strong> and 60-day rolling volatility for the <strong>short leg</strong>. When $\hat{\sigma}_i$ is inaccurate, position sizing suffers: underestimated volatility leads to positions that are too large (higher risk), while overestimated volatility leads to positions that are too small (missed returns).</p>
 
-<p>[To be filled in]</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Reducing Rebalancing Timing Risk with Tranching</title><link href="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html" rel="alternate" type="text/html" title="Reducing Rebalancing Timing Risk with Tranching" /><published>2025-05-10T00:00:00+02:00</published><updated>2025-05-10T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/05/10/rebalancing%20luck</id><content type="html" xml:base="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>To establish the upper bound, I run a backtest comparing three scenarios using the same signals and portfolio construction rules:</p>
+
+<ol>
+  <li><strong>Current:</strong> Uses rolling volatility estimates for each stock (20-day for long leg, 60-day for short leg) — simple moving averages</li>
+  <li><strong>Perfect:</strong> Uses perfect foresight volatility on both legs — for each stock, this is the realized 21-day forward volatility (the actual volatility that will occur over the next 21 days). This is the upper bound, showing what perfect volatility knowledge would deliver.</li>
+  <li><strong>Perfect Long:</strong> Uses perfect foresight volatility on the long leg only (short leg still uses current rolling vol) — this isolates the impact of better long-side volatility estimates</li>
+</ol>
+
+<h3 id="long-short-portfolio-performance">Long-Short Portfolio Performance</h3>
+<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_impact/vol_impact_comparison.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 1: Cumulative returns and drawdowns for long-short portfolios using different volatility estimation methods. All strategies use the same signals and fees.</figcaption>
+</figure>
+<h3 id="long-and-short-legs">Long and Short Legs</h3>
+<figure style="margin: 0.25em 0 0 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_impact/long_short_legs_comparison.html" width="100%" height="410" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.08em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 2: Cumulative returns and drawdowns for long and short legs separately. Shows how volatility estimation impacts each leg individually.</figcaption>
+</figure>
+
+<p style="margin-top: 1em;"><strong>Key findings:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Perfect (both legs) outperforms Current by ~3-4% annualized.</strong> The <strong>Perfect</strong> scenario shows the upper bound—what perfect volatility knowledge would deliver.</p>
+  </li>
+  <li>
+    <p><strong>Perfect Long captures most of this improvement (~2-3% annualized).</strong> Better volatility estimates on the <strong>long leg</strong> alone deliver most of the benefit, since the long leg is typically 2x leveraged.</p>
+  </li>
+  <li>
+    <p><strong>Drawdowns are significantly reduced with better volatility estimates.</strong> The <strong>Perfect</strong> strategy shows shallower drawdowns, especially during volatile periods (2008-2009, 2020).</p>
+  </li>
+</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Annual Return</th>
+      <th>Sharpe Ratio</th>
+      <th>Max Drawdown</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Current</td>
+      <td>12.98%</td>
+      <td>1.13</td>
+      <td>-15.2%</td>
+    </tr>
+    <tr>
+      <td>Perfect</td>
+      <td>16.17%</td>
+      <td>1.81</td>
+      <td>-9.1%</td>
+    </tr>
+    <tr>
+      <td>Perfect Long</td>
+      <td>15.17%</td>
+      <td>1.70</td>
+      <td>-10.8%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Table 1:</strong> Performance metrics for long-short portfolios with different volatility estimation methods (with fees).</p>
+
+<p><strong>The economic value is clear:</strong> The <strong>Perfect</strong> scenario adds 3-4% annualized return and reduces maximum drawdown by 6 percentage points. This establishes the upper bound—better <strong>volatility forecasts</strong> can deliver meaningful alpha. <strong>Perfect Long</strong> captures most of this (2-3% annualized), showing that <strong>long-side volatility estimation</strong> is the bigger lever.</p>
+
+<p>The backtest uses <strong>perfect foresight</strong> volatility, which is unattainable in practice. But it shows what’s at stake: if we can improve <strong>volatility forecast accuracy</strong>, we should capture a meaningful portion of this 2-3% improvement.</p>
+
+<p><strong>This post:</strong> I test whether pooling information across assets improves <strong>volatility forecasts</strong>. Specifically, I compare:</p>
+
+<ul>
+  <li><strong>Baselines:</strong> Simple moving averages (correlation ~0.70)</li>
+  <li><strong>Per-asset regressions:</strong> One model per stock</li>
+  <li><strong>Per-sector regressions:</strong> One model per sector</li>
+  <li><strong>Global regressions:</strong> One model for all assets</li>
+  <li><strong>Global + sector dummies:</strong> Shared dynamics, sector-specific levels</li>
+</ul>
+
+<p>The result: global panel regressions with sector structure achieve 0.86 correlation with realized volatility versus 0.70 for moving averages. Since perfect foresight adds 3-4% annualized, improving forecasts from 0.70 to 0.86 correlation should add roughly <strong>2-3% annualized</strong> in practice.</p>
+
+<p><strong>Structure of this post:</strong></p>
+<ol>
+  <li><strong>Motivation (above):</strong> Perfect volatility knowledge adds 2-3% annualized—this is the upper bound</li>
+  <li><strong>Methodology:</strong> How to improve volatility forecasts from 0.70 to 0.86 correlation using panel regressions</li>
+  <li><strong>Results:</strong> Step-by-step model comparison showing what each improvement adds</li>
+  <li><strong>Robustness:</strong> Validation across regimes and window sizes</li>
+</ol>
+
+<h2 id="data">Data</h2>
+
+<p>I use Russell 1000 (RIY) constituents from 1995 to 2024. After filtering and cleaning, the dataset contains about 7 million date × asset observations. At any point in time, around 1,000 stocks are in the universe.</p>
+
+<h2 id="data-exploration">Data Exploration</h2>
+
+<p>Before modeling, I look at the data to understand what we’re working with.</p>
+
+<h3 id="volatility-distribution-by-sector">Volatility Distribution by Sector</h3>
+
+<p><img src="/assets/vol_forecasting/sector_distribution.png" alt="Sector Distribution" />
+<em>Volatility distribution by sector: box plots show median and quartiles, density curves show the full distribution.</em></p>
+
+<p>Volatility varies significantly across sectors. Median annualized volatility ranges from ~15% in Utilities to ~30% in Energy. Two things stand out:</p>
+
+<ol>
+  <li><strong>Cross-sectional variation:</strong> Different sectors have structurally different volatility levels → this motivates adding sector dummies to capture level differences</li>
+  <li><strong>Right-skewed distribution:</strong> Volatility has a long right tail → this motivates testing log-space models to normalize the target</li>
+</ol>
+
+<h3 id="feature-correlations">Feature Correlations</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Correlation with 21d Forward Vol</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Composite volatility (5/21/63d avg)</td>
+      <td>0.738</td>
+    </tr>
+    <tr>
+      <td>EWM volatility (21d)</td>
+      <td>0.715</td>
+    </tr>
+    <tr>
+      <td>Rolling volatility (21d)</td>
+      <td>0.696</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>All volatility features are predictive. The composite (averaging multiple horizons) slightly outperforms single-horizon measures, motivating the use of multi-horizon features.</p>
+
+<h2 id="walk-forward-methodology">Walk-Forward Methodology</h2>
+
+<p>All predictions use strict <strong>day-by-day walk-forward testing</strong>. For each day $t$, I train on days $[t-504, t-1]$ and predict on day $t$. No lookahead bias—yesterday’s coefficients predict today.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Training:    Day t-504 ──────────────────── Day t-1
+Prediction:                                          Day t
+</code></pre></div></div>
+
+<p>For each date, I estimate coefficients on the past 504 days, then apply them to today’s features. This is powered by <a href="https://github.com/azmyrajab/polars_ols">polars-ols</a>—a fast, Rust-based OLS implementation for Polars:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">polars</span> <span class="k">as</span> <span class="n">pl</span>
+<span class="kn">import</span> <span class="n">polars_ols</span>  <span class="c1"># Registers least_squares namespace
+</span>
+<span class="n">feature_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">X_feature_vol_5</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">X_feature_vol_21</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">X_feature_vol_63</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">X_feature_vol_126</span><span class="sh">"</span><span class="p">]</span>
+
+<span class="c1"># Step 1: Estimate rolling coefficients (global model)
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">with_columns</span><span class="p">(</span>
+    <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">y_target_vol_21</span><span class="sh">"</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">least_squares</span><span class="p">.</span><span class="nf">rolling_ols</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">[</span><span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">feature_cols</span><span class="p">],</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="mi">504</span><span class="p">,</span>      <span class="c1"># 2-year rolling window
+</span>        <span class="n">min_periods</span><span class="o">=</span><span class="mi">252</span><span class="p">,</span>      <span class="c1"># Start after 1 year
+</span>        <span class="n">mode</span><span class="o">=</span><span class="sh">"</span><span class="s">coefficients</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="n">order_by</span><span class="o">=</span><span class="sh">"</span><span class="s">date</span><span class="sh">"</span><span class="p">)</span>    <span class="c1"># Pool all assets (global model)
+</span>    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_raw</span><span class="sh">"</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 2: Lag coefficients by 1 day for out-of-sample predictions
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">with_columns</span><span class="p">(</span>
+    <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_raw</span><span class="sh">"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                 <span class="c1"># Use yesterday's coefficients
+</span>    <span class="p">.</span><span class="nf">over</span><span class="p">(</span><span class="n">order_by</span><span class="o">=</span><span class="sh">"</span><span class="s">date</span><span class="sh">"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 3: Generate predictions from lagged coefficients
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">with_columns</span><span class="p">(</span>
+    <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">least_squares</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">feature_cols</span><span class="p">])</span>
+    <span class="p">.</span><span class="nf">alias</span><span class="p">(</span><span class="sh">"</span><span class="s">prediction</span><span class="sh">"</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">.shift(1)</code> in Step 2 is critical—it ensures predictions on day $t$ only use coefficients estimated through day $t-1$.</p>
+
+<p><strong>What does <code class="language-plaintext highlighter-rouge">.predict()</code> do?</strong> The <code class="language-plaintext highlighter-rouge">coefficients_oos</code> column contains a struct with fitted coefficients (intercept + betas). The <code class="language-plaintext highlighter-rouge">.predict()</code> method computes:</p>
+
+\[\hat{\sigma} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4\]
+
+<p>This is equivalent to writing it manually:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span>
+    <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">).</span><span class="n">struct</span><span class="p">.</span><span class="nf">field</span><span class="p">(</span><span class="sh">"</span><span class="s">const</span><span class="sh">"</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">).</span><span class="n">struct</span><span class="p">.</span><span class="nf">field</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_5</span><span class="sh">"</span><span class="p">)</span> <span class="o">*</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_5</span><span class="sh">"</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">).</span><span class="n">struct</span><span class="p">.</span><span class="nf">field</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_21</span><span class="sh">"</span><span class="p">)</span> <span class="o">*</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_21</span><span class="sh">"</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">).</span><span class="n">struct</span><span class="p">.</span><span class="nf">field</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_63</span><span class="sh">"</span><span class="p">)</span> <span class="o">*</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_63</span><span class="sh">"</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">coefficients_oos</span><span class="sh">"</span><span class="p">).</span><span class="n">struct</span><span class="p">.</span><span class="nf">field</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_126</span><span class="sh">"</span><span class="p">)</span> <span class="o">*</span> <span class="n">pl</span><span class="p">.</span><span class="nf">col</span><span class="p">(</span><span class="sh">"</span><span class="s">X_feature_vol_126</span><span class="sh">"</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">.predict()</code> shortcut keeps the code clean.</p>
+
+<h2 id="target--evaluation">Target &amp; Evaluation</h2>
+
+<h3 id="target-forward-realized-volatility">Target: Forward Realized Volatility</h3>
+
+<p>The target is 21-day forward realized volatility:</p>
+
+\[\sigma_{i,t}^{\text{fwd}} = \sqrt{\frac{252}{21} \sum_{k=1}^{21} r_{i,t+k}^2}\]
+
+<p>where $r_{i,t}$ is the daily return of stock $i$ on day $t$. The factor $\sqrt{252}$ annualizes the volatility.</p>
+
+<p>This target is observable and directly measurable—unlike GARCH’s latent conditional variance. Clean target, clean evaluation.</p>
+
+<h3 id="evaluation-metrics">Evaluation Metrics</h3>
+
+<p>I evaluate predictions using:</p>
+<ul>
+  <li><strong>RMSE:</strong> Root mean squared error</li>
+  <li><strong>MAE:</strong> Mean absolute error</li>
+  <li><strong>Correlation:</strong> Spearman rank correlation with realized volatility</li>
+</ul>
+
+<h2 id="feature-engineering">Feature Engineering</h2>
+
+<p>Each feature is motivated by a specific stylized fact about volatility.</p>
+
+<h3 id="rolling-volatility">Rolling Volatility</h3>
+
+<p><strong>Motivation:</strong> Volatility clusters—high-vol days follow high-vol days. Recent realized volatility is the single best predictor of future volatility.</p>
+
+<p>For each stock, I compute rolling volatility at multiple horizons:</p>
+
+\[\hat{\sigma}_{i,t}^{(w)} = \sqrt{\frac{252}{w} \sum_{k=0}^{w-1} r_{i,t-k}^2}\]
+
+<p>with windows $w \in {5, 21, 63, 126}$ days:</p>
+<ul>
+  <li><strong>5-day:</strong> Captures very recent shocks (earnings, news)</li>
+  <li><strong>21-day:</strong> Standard monthly volatility, balances noise and signal</li>
+  <li><strong>63-day:</strong> Quarterly horizon, smooths out short-term noise</li>
+  <li><strong>126-day:</strong> Semi-annual, provides mean-reversion anchor</li>
+</ul>
+
+<h3 id="asymmetric-features-why-not-egarch">Asymmetric Features (Why Not EGARCH?)</h3>
+
+<p><strong>Motivation:</strong> Volatility responds asymmetrically to returns—negative returns predict higher future volatility than positive returns of the same magnitude. This is the <strong>leverage effect</strong>: bad news increases uncertainty more than good news reduces it.</p>
+
+<p>EGARCH is the standard way to model this.</p>
+
+<p>But EGARCH has problems for our use case:</p>
+
+<ol>
+  <li>
+    <p><strong>No observable target:</strong> EGARCH models latent conditional variance $h_t$. You can’t directly measure it—you can only infer it from the model. This makes evaluation messy. Our target (21-day realized vol) is directly observable.</p>
+  </li>
+  <li>
+    <p><strong>Can’t pool across assets:</strong> EGARCH is a time-series model fit per asset. You can’t easily share parameters across stocks, which means you’re back to the per-asset overfitting problem we’re trying to avoid.</p>
+  </li>
+  <li>
+    <p><strong>Computationally expensive:</strong> MLE optimization for each stock, each day, in a rolling window? That’s millions of optimizations.</p>
+  </li>
+</ol>
+
+<p><strong>The alternative:</strong> I capture the leverage effect with explicit downside/upside volatility features:</p>
+
+\[\hat{\sigma}_{i,t}^{\text{down}} = \sqrt{\frac{252}{w} \sum_{k=0}^{w-1} r_{i,t-k}^2 \cdot \mathbf{1}_{r_{i,t-k} &lt; 0}}\]
+
+\[\hat{\sigma}_{i,t}^{\text{up}} = \sqrt{\frac{252}{w} \sum_{k=0}^{w-1} r_{i,t-k}^2 \cdot \mathbf{1}_{r_{i,t-k} \geq 0}}\]
+
+<p>The downside volatility counts only negative return days; upside counts only positive days. If the leverage effect exists, the regression will learn a higher coefficient on downside vol than upside vol—and that’s exactly what we see in the coefficient heatmap.</p>
+
+<p>This approach gives us:</p>
+<ul>
+  <li><strong>Observable target:</strong> realized vol, not latent variance</li>
+  <li><strong>Poolable:</strong> works in a cross-sectional regression</li>
+  <li><strong>Fast:</strong> just rolling sums, no optimization</li>
+  <li><strong>Interpretable:</strong> “downside vol coefficient &gt; upside vol coefficient” = leverage effect</li>
+</ul>
+
+<h3 id="sector-dummies">Sector Dummies</h3>
+
+<p><strong>Motivation:</strong> Different sectors have structurally different volatility levels. Utilities are stable (regulated, predictable cash flows). Energy is volatile (commodity prices, geopolitical risk). Tech sits somewhere in between.</p>
+
+<p>I add one-hot encoded sector dummies (BICS Level 1). As we saw in the data exploration, median volatility ranges from 15% (Utilities) to 30% (Energy). The dummies let the model learn these level differences while sharing the dynamics across all assets.</p>
+
+<h3 id="log-market-cap">Log Market Cap</h3>
+
+<p><strong>Motivation:</strong> Small firms are more volatile than large firms. They have less diversified revenue streams, higher leverage, lower liquidity, and more sensitivity to idiosyncratic shocks.</p>
+
+<p>I include log market cap as a feature:</p>
+
+\[\text{LogMktCap}_{i,t} = \log(\text{MarketCap}_{i,t})\]
+
+<p>The log transformation handles the skewed distribution of market caps (a few mega-caps, many small-caps) and makes the relationship with volatility more linear.</p>
+
+<h2 id="model-specification">Model Specification</h2>
+
+<h3 id="the-regression">The Regression</h3>
+
+<p>For each date $t$, I fit a cross-sectional Ridge regression:</p>
+
+\[\sigma_{i,t}^{\text{fwd}} = \beta_0 + \sum_{j=1}^{J} \beta_j X_{i,t}^{(j)} + \sum_{s=1}^{S} \gamma_s D_{i,s} + \varepsilon_{i,t}\]
+
+<p>where:</p>
+<ul>
+  <li>$X_{i,t}^{(j)}$ are volatility features (5d, 21d, 63d, 126d, downside, upside) and log market cap</li>
+  <li>$D_{i,s}$ are sector dummies</li>
+  <li>$\varepsilon_{i,t}$ is the error term</li>
+</ul>
+
+<h3 id="ridge-regularization">Ridge Regularization</h3>
+
+<p>Volatility features at different horizons are highly correlated (~0.8+). OLS estimates become unstable. Ridge regression stabilizes them:</p>
+
+\[\hat{\boldsymbol{\beta}} = \arg\min_{\boldsymbol{\beta}} \left\{ \sum_{i} \left( y_i - \mathbf{X}_i \boldsymbol{\beta} \right)^2 + \alpha \|\boldsymbol{\beta}\|_2^2 \right\}\]
+
+<p>I use $\alpha = 1$. This shrinks coefficients toward zero without eliminating any feature.</p>
+
+<h3 id="clipping--bounds">Clipping &amp; Bounds</h3>
+
+<p>Volatility data can contain outliers—stocks that jump 10x during earnings or crash during liquidations. These extreme values corrupt coefficient estimates.</p>
+
+<p><strong>Training:</strong> I clip volatility features and targets to [2.5%, 200%] during model training:</p>
+<ul>
+  <li>Values below 2.5% are unrealistic for daily-rebalanced portfolios (bid-ask spreads alone create this much noise)</li>
+  <li>Values above 200% annualized volatility are tail events that shouldn’t drive regression weights</li>
+  <li>Clipping during training prevents outliers from distorting coefficient estimates</li>
+</ul>
+
+<p><strong>Evaluation:</strong> All reported metrics (correlation, RMSE, MAE) are computed on <strong>raw, unclipped volatility</strong>. This gives an honest assessment of model performance on real data, including tail events.</p>
+
+<p><strong>Predictions:</strong> I clip final predictions to [2%, 200%] for visualization in figures. This prevents nonsensical outputs (negative volatility, infinite leverage recommendations) and keeps plots readable. The metrics themselves are evaluated on raw volatility.</p>
+
+<p><strong>Note:</strong> Performance on clipped volatility would be slightly higher (outliers are easier to predict when bounded), but the difference is small. I report raw metrics to be conservative.</p>
+
+<h3 id="ensemble-subsampling">Ensemble Subsampling</h3>
+
+<p>Instead of a single model, I run 3 models with offset estimation windows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model 1: trained on days 0, 3, 6, 9, ...
+Model 2: trained on days 1, 4, 7, 10, ...
+Model 3: trained on days 2, 5, 8, 11, ...
+</code></pre></div></div>
+
+<p>Final prediction is the average:</p>
+
+\[\hat{\sigma}_{i,t}^{\text{ensemble}} = \frac{1}{3} \sum_{m=1}^{3} \hat{\sigma}_{i,t}^{(m)}\]
+
+<p>Each model sees slightly different data. Averaging reduces variance.</p>
+
+<h2 id="results-step-by-step-model-comparison">Results: Step-by-Step Model Comparison</h2>
+
+<p>The central question: should we fit a model per asset, per sector, or globally? I build up the answer step by step, showing what each modeling choice adds.</p>
+
+<h3 id="step-1-baselines">Step 1: Baselines</h3>
+
+<p>I start with what most practitioners use as simple benchmarks:</p>
+
+<ul>
+  <li><strong>Composite average:</strong> Equal-weighted average of 5, 21, and 63-day rolling volatility</li>
+  <li><strong>Weighted blend:</strong> 70% × 21-day vol + 30% × 252-day vol (similar to RiskMetrics EWMA)</li>
+</ul>
+
+<p>These achieve correlations around <strong>0.70</strong>. Here’s what the predictions look like:</p>
+
+<p><img src="/assets/vol_forecasting/residuals_baseline.png" alt="Baseline Residuals" />
+<em>Predicted vs actual volatility for the weighted blend baseline.</em></p>
+
+<p>The predictions follow the diagonal but with significant scatter. The model captures the broad relationship but misses a lot of variation. Can we do better by learning the weights from data instead of fixing them?</p>
+
+<h3 id="step-2-per-asset-regression">Step 2: Per-Asset Regression</h3>
+
+<p>The first regression approach: fit a separate model for each stock. Each asset gets its own coefficients estimated on its own 2-year history.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Correlation</th>
+      <th>RMSE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Baseline (weighted avg)</td>
+      <td>0.70</td>
+      <td>0.17</td>
+    </tr>
+    <tr>
+      <td><strong>Per-asset regression</strong></td>
+      <td><strong>0.75</strong></td>
+      <td><strong>0.15</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Result: correlation improves to <strong>0.75</strong>. The regression learns better weights than the fixed heuristics.</p>
+
+<p>But there’s a problem: with only ~500 observations per stock in a 2-year window, coefficients are noisy. The model overfits to idiosyncratic patterns. Can we do better by sharing information across assets?</p>
+
+<h3 id="step-3-pooling-across-stocks">Step 3: Pooling Across Stocks</h3>
+
+<p>What if volatility dynamics are shared across assets? Mean reversion, clustering, the leverage effect—these should work similarly for Apple and Exxon.</p>
+
+<p>I test two pooling levels:</p>
+
+<ul>
+  <li><strong>Per-sector:</strong> One model per BICS sector (~700k obs/sector)</li>
+  <li><strong>Global:</strong> One model for all assets (~7M obs total)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Correlation</th>
+      <th>RMSE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Per-asset</td>
+      <td>0.75</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>Per-sector</td>
+      <td>0.84</td>
+      <td>0.13</td>
+    </tr>
+    <tr>
+      <td><strong>Global</strong></td>
+      <td><strong>0.85</strong></td>
+      <td><strong>0.13</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Both per-sector and global models jump to <strong>0.84-0.85</strong>—a 10-point improvement over per-asset. Pooling works. The volatility dynamics are indeed shared; estimating them on more data reduces noise.</p>
+
+<p>This is the bias-variance tradeoff in action: per-asset models have low bias (flexible) but high variance (noisy estimates). Global models have slightly higher bias (same coefficients for all) but much lower variance (millions of observations).</p>
+
+<h3 id="step-4-adding-sector-structure">Step 4: Adding Sector Structure</h3>
+
+<p>Global pooling assumes all stocks share identical dynamics. But we saw in the data exploration that volatility levels differ by sector (15% for Utilities, 30% for Energy).</p>
+
+<p>Can we get the best of both worlds? Shared coefficients for dynamics, but sector-specific intercepts for levels?</p>
+
+<p>I add sector dummies to the global model:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Correlation</th>
+      <th>RMSE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global</td>
+      <td>0.85</td>
+      <td>0.130</td>
+    </tr>
+    <tr>
+      <td><strong>Global + sector dummies</strong></td>
+      <td><strong>0.86</strong></td>
+      <td><strong>0.124</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A further boost to <strong>0.86</strong>. The dummies let the model learn that Energy stocks have higher baseline volatility than Utilities, while still sharing the dynamics (how 21-day vol predicts forward vol) across all assets.</p>
+
+<p>Here’s what the best model predictions look like compared to the baseline:</p>
+
+<p><img src="/assets/vol_forecasting/residuals_best.png" alt="Best Model Residuals" />
+<em>Predicted vs actual volatility for the global + dummies model.</em></p>
+
+<p>The predictions are much tighter around the diagonal. The improvement is visible.</p>
+
+<h3 id="step-5-log-space-models">Step 5: Log-Space Models</h3>
+
+<p>The volatility distribution is right-skewed (we saw this in the data exploration). Log-transforming should normalize the target. Does it help?</p>
+
+<p>I test the same models but predicting $\log(\sigma)$ instead of $\sigma$, with log-transformed features:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Raw-Space Correlation</th>
+      <th>Log-Space Correlation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global</td>
+      <td>0.845</td>
+      <td>0.849</td>
+    </tr>
+    <tr>
+      <td>Global + dummies</td>
+      <td>0.857</td>
+      <td>0.860</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Log-space models are marginally better (~0.003 improvement). The difference is tiny—both approaches work well. I stick with raw-space for interpretability: coefficients are directly in volatility units, making them easier to sanity-check.</p>
+
+<h3 id="step-6-additional-risk-factors">Step 6: Additional Risk Factors</h3>
+
+<p>Can we improve further by adding macro risk factors?</p>
+
+<p><strong>Market Volatility Factor:</strong> Rolling 21-day volatility of the market index. The idea: when the market is volatile, all stocks should have higher volatility.</p>
+
+<p><strong>Group Risk Factor (GRF):</strong> Sector-level average volatility relative to its long-run norm. Inspired by AQR’s “Risk Everywhere” factor. The idea: when a sector is stressed, stocks in that sector should have higher volatility.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Correlation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global + dummies</td>
+      <td>0.857</td>
+    </tr>
+    <tr>
+      <td>Global + dummies + market factor</td>
+      <td>0.855</td>
+    </tr>
+    <tr>
+      <td>Global + dummies + GRF</td>
+      <td>0.844</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Neither helps. In fact, they slightly hurt. Why? The existing asset-level volatility features already capture this information. If the market is volatile, individual stocks are volatile, and our features pick that up. Adding a redundant market factor just adds noise.</p>
+
+<h3 id="summary">Summary</h3>
+
+<div style="width: 100%; overflow: visible; margin: 20px 0;">
+<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics Comparison" style="width: 100%; max-width: 1000px; height: auto !important; max-height: none !important; object-fit: contain !important; display: block; margin: 0 auto;" />
+</div>
+<p><em>Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</em></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Step</th>
+      <th>Model</th>
+      <th>Correlation</th>
+      <th>RMSE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Baseline</td>
+      <td>Moving averages</td>
+      <td>0.70</td>
+      <td>0.17</td>
+    </tr>
+    <tr>
+      <td>+Regression</td>
+      <td>Per-asset</td>
+      <td>0.75</td>
+      <td>0.15</td>
+    </tr>
+    <tr>
+      <td>+Pooling</td>
+      <td>Global</td>
+      <td>0.85</td>
+      <td>0.13</td>
+    </tr>
+    <tr>
+      <td>+Structure</td>
+      <td>Global + dummies</td>
+      <td>0.86</td>
+      <td>0.124</td>
+    </tr>
+    <tr>
+      <td>+Log-space</td>
+      <td>Global + dummies (log)</td>
+      <td>0.86</td>
+      <td>0.124</td>
+    </tr>
+    <tr>
+      <td>+Risk factors</td>
+      <td>Global + dummies + market</td>
+      <td>0.86</td>
+      <td>0.125</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The progression is clear: learning weights beats heuristics, pooling beats per-asset, and adding sector structure squeezes out the last bit of signal. Log-space and risk factors don’t add much.</p>
+
+<h2 id="robustness--validation">Robustness &amp; Validation</h2>
+
+<h3 id="window-sensitivity">Window Sensitivity</h3>
+
+<p>I swept rolling windows from 6 months to 10 years:</p>
+
+<p><img src="/assets/vol_forecasting/window_trends.png" alt="Window Sensitivity" />
+<em>Model performance across different rolling window sizes (126 to 2520 days).</em></p>
+
+<p>Performance is stable between 1–3 years. Very short windows (&lt;6 months) are noisier; very long windows (&gt;5 years) start lagging regime changes. I use 504 days (2 years).</p>
+
+<h3 id="regime-robustness">Regime Robustness</h3>
+
+<p>Do models hold up when volatility spikes? I bucket predictions by market volatility regime:</p>
+
+<p><img src="/assets/vol_forecasting/regime_analysis.png" alt="Regime Analysis" />
+<em>Correlation by market volatility regime: low (&lt;20%), neutral (20-30%), high (&gt;30%).</em></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Low (&lt;20%)</th>
+      <th>Neutral (20-30%)</th>
+      <th>High (&gt;30%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global + dummies</td>
+      <td>0.79</td>
+      <td>0.83</td>
+      <td>0.87</td>
+    </tr>
+    <tr>
+      <td>Global + log dummies</td>
+      <td>0.79</td>
+      <td>0.83</td>
+      <td>0.87</td>
+    </tr>
+    <tr>
+      <td>Per-sector</td>
+      <td>0.79</td>
+      <td>0.82</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <td>Per-asset</td>
+      <td>0.67</td>
+      <td>0.69</td>
+      <td>0.76</td>
+    </tr>
+    <tr>
+      <td>Baselines</td>
+      <td>0.61-0.62</td>
+      <td>0.62-0.66</td>
+      <td>0.68-0.70</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Key observations:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>All models improve in high-vol regimes.</strong> When volatility is elevated, it’s more persistent and easier to predict. During calm periods, volatility is compressed and harder to differentiate.</p>
+  </li>
+  <li>
+    <p><strong>Global models maintain their edge across all regimes.</strong> The 10+ point gap vs. per-asset holds whether markets are calm or stressed.</p>
+  </li>
+  <li>
+    <p><strong>Per-asset models suffer most in low-vol regimes.</strong> With less signal, the noisy per-asset estimates hurt more. Global pooling provides stability when there’s less to work with.</p>
+  </li>
+</ol>
+
+<h3 id="coefficient-interpretability">Coefficient Interpretability</h3>
+
+<p><img src="/assets/vol_forecasting/coefficient_heatmap.png" alt="Coefficient Heatmap" />
+<em>Rolling regression coefficients over time for the global + dummies model. Red = positive (predicts higher vol), Blue = negative.</em></p>
+
+<p>The coefficient heatmap reveals which features drive predictions:</p>
+
+<p><strong>Most important features (by coefficient magnitude):</strong></p>
+
+<ol>
+  <li>
+    <p><strong>126-day vol (dark red, ~0.5):</strong> The strongest positive predictor. Long-term volatility acts as the anchor—it captures the “normal” volatility level for each stock. This is the mean-reversion target.</p>
+  </li>
+  <li>
+    <p><strong>63-day vol (red, ~0.3):</strong> Second strongest. Quarterly volatility bridges short-term noise and long-term structure.</p>
+  </li>
+  <li>
+    <p><strong>5-day vol (blue, negative!):</strong> Surprisingly negative coefficient. This is mean-reversion in action: when short-term vol spikes <em>above</em> longer-term vol, the model predicts it will come down. The 126d anchor dominates.</p>
+  </li>
+  <li>
+    <p><strong>Log market cap (blue, ~-0.1):</strong> Negative as expected—smaller firms are more volatile. The coefficient is stable over time.</p>
+  </li>
+</ol>
+
+<p><strong>Sector dummies tell a story:</strong></p>
+
+<ul>
+  <li><strong>Energy:</strong> Huge positive spike in 2020 (COVID oil crash, briefly negative prices). Also elevated during 2008 and 2014-2016 oil volatility.</li>
+  <li><strong>Financials:</strong> Spike in 2008-2009 (GFC). The model learned that Financials needed a higher volatility intercept during the crisis.</li>
+  <li><strong>Technology:</strong> Elevated in early 2000s (dot-com bust), moderate since.</li>
+  <li><strong>Utilities:</strong> Consistently low—defensive stocks live up to their reputation.</li>
+</ul>
+
+<p><strong>Asymmetric features:</strong></p>
+<ul>
+  <li><strong>Downside vol:</strong> Small negative coefficient</li>
+  <li><strong>Upside vol:</strong> Small negative coefficient</li>
+</ul>
+
+<p>Both are negative but downside is slightly more so. The leverage effect is present but subtle—most of the asymmetry is already captured by the level dynamics.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The final model: <strong>global Ridge regression with sector dummies, asymmetric vol features, 2-year rolling window, and 3-model ensemble</strong>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Choice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Target</td>
+      <td>21-day forward realized vol</td>
+    </tr>
+    <tr>
+      <td>Features</td>
+      <td>Rolling vol (5/21/63/126d), downside/upside vol, log market cap, sector dummies</td>
+    </tr>
+    <tr>
+      <td>Model</td>
+      <td>Ridge regression ($\alpha=1$)</td>
+    </tr>
+    <tr>
+      <td>Estimation</td>
+      <td>2-year rolling window, 3-model ensemble</td>
+    </tr>
+    <tr>
+      <td>Pooling</td>
+      <td>Global (all assets)</td>
+    </tr>
+    <tr>
+      <td>Implementation</td>
+      <td>polars-ols for fast rolling regressions</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The key insight: <strong>volatility dynamics are shared across assets</strong>. Mean reversion, clustering, and the leverage effect work the same way whether you’re looking at Apple or Exxon. Per-asset models waste data chasing idiosyncratic noise. Global models with sector structure extract the signal efficiently.</p>
+
+<h2 id="whats-next">What’s Next</h2>
+
+<p>In the next post, I’ll test whether ML models (LightGBM, neural nets) can beat these structured regressions. The economic value question is now answered: improving volatility forecast correlation from 0.70 to 0.86 translates to roughly 1.5-2% annualized alpha in practice.</p>
+
+<h2 id="things-to-work-on">Things to Work On</h2>
+
+<p>A few things I want to improve or clarify:</p>
+
+<p><strong>Heatmap interpretation.</strong> I sometimes get the interpretation wrong when explaining the coefficient heatmap. The red/blue color coding and temporal patterns need clearer explanation. This is on my list to fix.</p>
+
+<p><strong>Computational performance.</strong> I should emphasize more clearly that <a href="https://github.com/azmyrajab/polars_ols">polars-ols</a> is <em>incredibly</em> fast. We’re doing rolling regression every single day—refitting the model on a 504-day window, then shifting coefficients forward one day, then refitting again. This is computationally heavy: millions of regressions across thousands of assets over 20+ years. The fact that a full model run takes ~30 seconds total is remarkable. The Rust-based implementation makes this feasible.</p>
+
+<p><strong>EGARCH testing.</strong> I mentioned that EGARCH is computationally expensive, but I haven’t actually benchmarked the <code class="language-plaintext highlighter-rouge">arch</code> package myself. I suspect it’s slow for our use case (rolling MLE optimization per asset, per day), but I don’t know for sure. If someone tells me it’s worth testing, I’ll give it a shot. I don’t know everything.</p>
+
+<p><strong>Model limitations.</strong> The current regression approach doesn’t capture interactions between variables. For example, we can’t model how the relationship between 21-day volatility and forward volatility might differ by sector. The sector dummies only shift the intercept; they don’t allow sector-specific slopes. This is a limitation of the linear framework.</p>
+
+<p><strong>LightGBM potential.</strong> This is what makes LightGBM attractive for future work. It can automatically discover interactions (e.g., “21-day vol × Energy sector” vs “21-day vol × Utilities sector”) without explicitly specifying them. If sector-specific dynamics matter, tree-based models should pick them up.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Reducing Rebalancing Timing Risk with Tranching</title><link href="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html" rel="alternate" type="text/html" title="Reducing Rebalancing Timing Risk with Tranching" /><published>2025-05-10T00:00:00+02:00</published><updated>2025-05-10T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/05/10/rebalancing%20luck</id><content type="html" xml:base="http://localhost:4000/quants/2025/05/10/rebalancing-luck.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Rebalance timing plays a big role in medium- to long-term strategies that don’t trade often. Shifting the execution day by just a few days can meaningfully impact performance, changing the exact positions held, and affecting returns, volatility, and drawdowns.</p>
 
@@ -318,7 +1086,7 @@
 
 <p>The signal and logic don’t change, but the results become cleaner and more stable. That’s especially helpful when evaluating model tweaks, since it reduces noise from execution timing.</p>
 
-<p>I’ll be using this setup going forward for any strategy that rebalances on a fixed cycle. It’s simple, effective, and makes the whole process easier to trust.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Good Reads</title><link href="http://localhost:4000/quants/2025/04/20/dope-articles.html" rel="alternate" type="text/html" title="Good Reads" /><published>2025-04-20T00:00:00+02:00</published><updated>2025-04-20T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/04/20/dope%20articles</id><content type="html" xml:base="http://localhost:4000/quants/2025/04/20/dope-articles.html"><![CDATA[<h2 id="roadmap">Roadmap</h2>
+<p>I’ll be using this setup going forward for any strategy that rebalances on a fixed cycle. It’s simple, effective, and makes the whole process easier to trust.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Good Reads</title><link href="http://localhost:4000/quants/2025/04/20/dope-articles.html" rel="alternate" type="text/html" title="Good Reads" /><published>2025-04-20T00:00:00+02:00</published><updated>2025-04-20T00:00:00+02:00</updated><id>http://localhost:4000/quants/2025/04/20/dope%20articles</id><content type="html" xml:base="http://localhost:4000/quants/2025/04/20/dope-articles.html"><![CDATA[<h2 id="roadmap">Roadmap</h2>
 
 <p>This is just a running list of articles, papers, and blog posts I’ve found interesting — mostly around cross-sectional asset pricing, machine learning models, and quant investing. I’ll keep adding to it over time as I go deeper.</p>
 
@@ -363,7 +1131,7 @@
   </li>
 </ul>
 
-<p>More coming soon — this is my scratchpad for everything worth revisiting.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap]]></summary></entry><entry><title type="html">Stock Ranking with Boosting</title><link href="http://localhost:4000/quants/2025/02/20/lgbm.html" rel="alternate" type="text/html" title="Stock Ranking with Boosting" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/lgbm</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/lgbm.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>More coming soon — this is my scratchpad for everything worth revisiting.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Roadmap]]></summary></entry><entry><title type="html">Stock Ranking with Boosting</title><link href="http://localhost:4000/quants/2025/02/20/lgbm.html" rel="alternate" type="text/html" title="Stock Ranking with Boosting" /><published>2025-02-20T00:00:00+01:00</published><updated>2025-02-20T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/20/lgbm</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/20/lgbm.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>In my last two articles, I explored different ways to rank stocks and build long-short portfolios.</p>
 
@@ -634,7 +1402,7 @@ The current pipeline scores stocks, then allocates separately. But maybe it make
   </li>
 </ul>
 
-<p>Lots of cool stuff to explore, and I’ll share more as I go.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Multi-Factor Stock Selection with Ridge Regression</title><link href="http://localhost:4000/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Multi-Factor Stock Selection with Ridge Regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/09/ridge.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Lots of cool stuff to explore, and I’ll share more as I go.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">Multi-Factor Stock Selection with Ridge Regression</title><link href="http://localhost:4000/quants/2025/02/09/ridge.html" rel="alternate" type="text/html" title="Multi-Factor Stock Selection with Ridge Regression" /><published>2025-02-09T00:00:00+01:00</published><updated>2025-02-09T00:00:00+01:00</updated><id>http://localhost:4000/quants/2025/02/09/ridge</id><content type="html" xml:base="http://localhost:4000/quants/2025/02/09/ridge.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p><a href="https://piinghel.github.io/quant/2024/12/15/low-volatility-factor.html">In the last article</a> I showed how scaling returns by volatility helped improve performance with minimal complexity. This time I want to let the model learn how to combine different features instead of me setting the rules manually.</p>
 
@@ -1039,7 +1807,7 @@ These capture systematic risk.</p>
   <li>Sharpe ratio models consistently outperformed return-based models, reinforcing the importance of risk-adjusted metrics</li>
 </ul>
 
-<p>Instead of searching for a single best model, it may be smarter to combine perspectives. The “Combo” strategy showed that diversifying across models stabilizes results, even without fine-tuning.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Steady Approach</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Steady Approach" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Instead of searching for a single best model, it may be smarter to combine perspectives. The “Combo” strategy showed that diversifying across models stabilizes results, even without fine-tuning.</p>]]></content><author><name>anon</name></author><category term="Quants" /><summary type="html"><![CDATA[Introduction]]></summary></entry><entry><title type="html">The Low Volatility Factor: A Steady Approach</title><link href="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html" rel="alternate" type="text/html" title="The Low Volatility Factor: A Steady Approach" /><published>2024-12-15T00:00:00+01:00</published><updated>2024-12-15T00:00:00+01:00</updated><id>http://localhost:4000/quant/2024/12/15/low-volatility-factor</id><content type="html" xml:base="http://localhost:4000/quant/2024/12/15/low-volatility-factor.html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Here’s a simple idea: stocks that move less tend to deliver better risk-adjusted returns than those with wild price swings. It’s a pattern that shows up in equities and other asset classes too.</p>
 
@@ -1274,4 +2042,4 @@ These capture systematic risk.</p>
 
 <p>Equal weighting in a long-short setup creates a risk imbalance. The short leg ends up dominating volatility, which pulls down performance. Volatility targeting fixes that imbalance by adjusting weights to align the risk on both sides, making the strategy more stable and improving Sharpe ratios.</p>
 
-<p>Even this simple adjustment already helps a lot. In the next post, I’ll look at how combining multiple signals can take things a step further.</p>]]></content><author><name>piinghel</name><email>pjinghelbrecht@gmail.com</email></author><category term="Quant" /><summary type="html"><![CDATA[Introduction]]></summary></entry></feed>
+<p>Even this simple adjustment already helps a lot. In the next post, I’ll look at how combining multiple signals can take things a step further.</p>]]></content><author><name>anon</name></author><category term="Quant" /><summary type="html"><![CDATA[Introduction]]></summary></entry></feed>
