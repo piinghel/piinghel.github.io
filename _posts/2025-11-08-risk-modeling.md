@@ -220,7 +220,7 @@ import polars_ols  # Registers least_squares namespace
 
 feature_cols = ["X_feature_vol_5", "X_feature_vol_21", "X_feature_vol_63", "X_feature_vol_126"]
 
-# Step 1: Estimate rolling coefficients (global model)
+# Step 1: Estimate rolling coefficients and lag by 1 day (out-of-sample)
 df = df.with_columns(
     pl.col("y_target_vol_21")
     .least_squares.rolling_ols(
@@ -230,18 +230,11 @@ df = df.with_columns(
         mode="coefficients",
     )
     .over(order_by="date")    # Pool all assets (global model)
-    .alias("coefficients_raw")
-)
-
-# Step 2: Lag coefficients by 1 day for out-of-sample predictions
-df = df.with_columns(
-    pl.col("coefficients_raw")
-    .shift(1)                 # Use yesterday's coefficients
-    .over(order_by="date")
+    .shift(1)                 # Use yesterday's coefficients (critical!)
     .alias("coefficients_oos")
 )
 
-# Step 3: Generate predictions from lagged coefficients
+# Step 2: Generate predictions from lagged coefficients
 df = df.with_columns(
     pl.col("coefficients_oos")
     .least_squares.predict(*[pl.col(c) for c in feature_cols])
@@ -249,7 +242,7 @@ df = df.with_columns(
 )
 ```
 
-The `.shift(1)` in Step 2 is critical—it ensures predictions on day $t$ only use coefficients estimated through day $t-1$.
+The `.shift(1)` is critical—it ensures predictions on day $t$ only use coefficients estimated through day $t-1$.
 
 **What does `.predict()` do?** The `coefficients_oos` column contains a struct with fitted coefficients (intercept + betas). The `.predict()` method computes:
 
