@@ -427,7 +427,7 @@ What most practitioners use:
 
 These achieve correlations around 0.70. Here's what the predictions look like:
 
-<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<figure style="margin: 0.3em 0 2.5em 0; padding: 0; line-height: 1;">
 <iframe src="/assets/vol_forecasting/residuals_baseline.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
 </figure>
@@ -489,7 +489,7 @@ A further boost to 0.86. The dummies let the model learn that Energy stocks have
 
 Here's what the best model looks like compared to the baseline:
 
-<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<figure style="margin: 0.3em 0 2.5em 0; padding: 0; line-height: 1;">
 <iframe src="/assets/vol_forecasting/residuals_best.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
 <figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
 </figure>
