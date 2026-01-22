@@ -7,15 +7,17 @@ categories: [Quants]
 
 ## Introduction
 
-Volatility targeting—scaling position sizes inversely to expected volatility—is a standard risk management technique. In practice, I rely on it to keep portfolio risk roughly constant: smaller positions in volatile assets, larger positions in stable ones. That means the forecast matters, not just the realized volatility you can compute after the fact.
+I've been using simple rolling averages to forecast volatility for a while now. They work fine, but I always wondered if I was leaving money on the table.
 
-Simple heuristics are common: rolling averages of recent realized volatility, often with fixed weights across horizons. They are easy to implement, but they ignore structure in volatility dynamics. Mean reversion, clustering, sector effects, and the leverage effect all contain predictive signal that simple averages discard.
+Volatility targeting—scaling position sizes inversely to expected volatility—is how I keep portfolio risk roughly constant: smaller positions in volatile assets, larger positions in stable ones. The forecast matters, not just the realized volatility you can compute after the fact.
 
-This raises two questions: (1) can we improve volatility forecasts with more sophisticated methods? And (2) do better forecasts translate to better portfolio performance?
+Simple heuristics are common: rolling averages of recent realized volatility, often with fixed weights across horizons. They're easy to implement, but they ignore structure in volatility dynamics. Mean reversion, clustering, sector effects, and the leverage effect all contain predictive signal that simple averages discard.
+
+This post tries to answer two questions I've been curious about: (1) can we actually improve volatility forecasts with more sophisticated methods? And (2) do better forecasts translate to better portfolio performance?
 
 To quantify the potential, I start with the upper bound: what if we had perfect foresight of future realized volatility? Using Russell 1000 constituents from 1995-2024—approximately 7 million date × asset observations covering roughly 1,000 stocks at any point in time—I backtest a long-short equity strategy and find that perfect volatility forecasts on the long leg alone would increase Sharpe ratio from 1.76 to 2.65—a 50% improvement. The full potential improvement is 3-4% annualized return. While perfect foresight is unattainable, this shows that better volatility forecasting could matter.
 
-The remainder of this post evaluates both questions by comparing forecasting models, from simple moving averages to dynamic panel regressions. Panel regression methods improve forecast correlation compared to simple moving averages. However, in this strategy, those improvements do not translate to better portfolio performance.
+The remainder of this post evaluates both questions by comparing forecasting models, from simple moving averages to dynamic panel regressions. Spoiler: panel regression methods do improve forecast correlation compared to simple moving averages. But—and this was a bit disappointing—those improvements don't translate to better portfolio performance in this strategy.
 
 ### Application Context
 
@@ -96,7 +98,7 @@ Long-short portfolio performance:
 </div>
 <p class="table-caption"><strong>Table 1:</strong> Long-short portfolio performance (with fees). Perfect Long = perfect foresight on long leg only.</p>
 
-Perfect Long outperforms Perfect. When the short leg has perfect foresight, it takes larger positions in low-volatility stocks that happen to be poor short candidates. The long leg is where better volatility forecasts provide most of the value.
+Wait—Perfect Long outperforms Perfect? That surprised me at first. But it makes sense: when the short leg has perfect foresight, it takes larger positions in low-volatility stocks that happen to be poor short candidates. The long leg is where better volatility forecasts provide most of the value.
 
 The leg-by-leg breakdown:
 
@@ -394,7 +396,7 @@ First attempt: fit a separate model for each stock. Each asset gets its own coef
 
 <p class="table-caption"><strong>Table 4:</strong> Baselines and per‑asset regression comparison.</p>
 
-Per-asset regressions underperform the composite baseline. With only ~500 observations per stock in a 2-year window, coefficients are noisy and the model overfits idiosyncratic patterns.
+This was humbling: per-asset regressions actually underperform the composite baseline. With only ~500 observations per stock in a 2-year window, coefficients are noisy and the model overfits idiosyncratic patterns. More sophisticated isn't always better.
 
 #### Step 3: Pooling Across Stocks
 
@@ -410,7 +412,7 @@ I test pooled models (per-sector and global) and then add sector dummies so the 
 
 <p class="table-caption"><strong>Table 5:</strong> Impact of pooling across stocks.</p>
 
-Pooling is the first real lift: correlations rise to ~0.71–0.72 across per-sector and global models. The gains are modest but consistent, and the per-sector and global results are effectively the same. Adding sector dummies does not help on this run; the global model already captures most of the level differences.
+This is where things get interesting. Pooling is the first real lift: correlations rise to ~0.71–0.72 across per-sector and global models. The gains are modest but consistent, and the per-sector and global results are effectively the same. I expected sector dummies to help more, but they don't on this run—the global model already captures most of the level differences.
 
 Here's what the pooled linear model looks like compared to the baseline:
 
@@ -497,7 +499,7 @@ Most important features:
 
 1. 126-day vol (~0.5): Strongest positive predictor. Long-term vol acts as the mean-reversion anchor.
 2. 63-day vol (~0.3): Second strongest. Bridges short-term noise and long-term structure.
-3. 5-day vol (negative!): Surprisingly negative. This is mean-reversion—when short-term vol spikes above long-term, the model predicts it will come down.
+3. 5-day vol (negative!): This one surprised me. It's mean-reversion in action—when short-term vol spikes above long-term, the model predicts it will come down.
 4. Log market cap (~-0.1): Negative as expected. Smaller firms are more volatile.
 
 The sector dummies tell a story:
@@ -535,11 +537,13 @@ The key insight is that volatility dynamics are shared across assets. Per-asset 
 
 This lines up with the global evidence in [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157) and AQR’s [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility), both of which emphasize shared structure and the benefits of panel‑style risk forecasting.
 
-We started with two questions: can we improve volatility forecasts, and do better forecasts translate to better performance? The best pooled models lift forecast correlation from ~0.70 to ~0.72. That is real signal. But in this strategy, it still does not translate to better portfolio performance. The gains are modest, which suggests we likely need more informative features and more powerful models to move the needle.
+We started with two questions: can we improve volatility forecasts, and do better forecasts translate to better performance? The best pooled models lift forecast correlation from ~0.70 to ~0.72. That's real signal. But here's the honest conclusion: in this strategy, it still doesn't translate to better portfolio performance. I was hoping for more. The gains are modest, which suggests we likely need more informative features and more powerful models to move the needle.
 
 ## What's Next
 
-The next step is to test these forecasts directly inside the position‑sizing pipeline and measure the impact on portfolio performance. I still need to run that experiment. After that, I want to add event‑timing features—especially days to earnings—as a potential driver of short‑horizon volatility. I also want to explore richer feature sets and more flexible models to capture interactions and non‑linearities. Finally, the natural extension is to optimize a loss aligned with risk‑adjusted returns or forecast the specific components that drive position‑sizing errors.
+The next step is to test these forecasts directly inside the position‑sizing pipeline and measure the impact on portfolio performance. I still need to run that experiment—it's the one that actually matters.
+
+After that, I want to add event‑timing features—especially days to earnings—as a potential driver of short‑horizon volatility. I also want to explore richer feature sets and more flexible models to capture interactions and non‑linearities. Finally, the natural extension is to optimize a loss aligned with risk‑adjusted returns or forecast the specific components that drive position‑sizing errors.
 
 Related reading: [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157); [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility). These are related, and both point to a similar theme: adding more data and sharing information across assets tends to help, but the gains are incremental.
 
