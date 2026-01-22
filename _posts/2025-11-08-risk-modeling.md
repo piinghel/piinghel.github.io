@@ -50,7 +50,7 @@ Three scenarios are tested:
 - **Perfect Long:** Perfect foresight on the long leg only
 - **Perfect:** Perfect foresight on both legs
 
-A note on the short leg: in a long-short portfolio, combined return = long return − short return. You *want* the short leg return to be as low as possible. Better vol forecasts on the short leg improve its return—but that's exactly what you don't want.
+**A note on the short leg:** In a long-short portfolio, combined return = long return − short return. This means you *want* the short leg return to be as low as possible—you're subtracting it. Better vol forecasts on the short leg improve its return, but since you're subtracting a bigger number, your combined return goes down. That's why "Perfect Long" can outperform "Perfect (both)".
 
 ### Long-Short Performance
 
@@ -100,7 +100,7 @@ Long-short portfolio performance:
 </div>
 <p class="table-caption"><strong>Table 1:</strong> Long-short portfolio performance (with fees). Perfect Long = perfect foresight on long leg only.</p>
 
-Wait—Perfect Long outperforms Perfect? That surprised me at first. But it makes sense: better vol forecasts on the short leg improve its return (0.07% → 2.77%). Since combined return = long − short, a higher short leg return *hurts* the portfolio. The long leg is where better volatility forecasts actually help.
+Wait—Perfect Long outperforms Perfect? That surprised me at first. But look at the short leg: with perfect vol forecasts, its return improves from 0.07% to 2.77%. Since combined return = long − short, you're now subtracting 2.77% instead of 0.07%. That "improvement" costs you ~2.7% on the combined portfolio. The long leg is where better volatility forecasts actually help.
 
 The leg-by-leg breakdown:
 
