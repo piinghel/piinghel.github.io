@@ -271,6 +271,7 @@ article p:has(img) {
 // Handle two cases:
 // 1. Image and caption in same paragraph: p:has(img):has(strong)
 // 2. Image and caption in separate paragraphs: p:has(img) + p
+// 3. Explicit .figure-caption class (for iframes etc)
 .post-content p:has(img):has(strong),
 article p:has(img):has(strong),
 article.post p:has(img):has(strong),
@@ -282,7 +283,10 @@ article img + p,
 article.post img + p,
 .post-content table + p,
 article table + p,
-article.post table + p {
+article.post table + p,
+.post-content .figure-caption,
+article .figure-caption,
+article.post .figure-caption {
   font-size: 1.05rem !important;
   font-weight: 500 !important;
   color: #666 !important;
