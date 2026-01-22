@@ -9,7 +9,7 @@ categories: [Quants]
 
 I've been using simple rolling averages to forecast volatility for a while now. They work fine, but I always wondered if I was leaving money on the table.
 
-Volatility targeting—scaling position sizes inversely to expected volatility—is how I keep portfolio risk roughly constant: smaller positions in volatile assets, larger positions in stable ones. The forecast matters, not just the realized volatility you can compute after the fact.
+I scale positions by predicted volatility: smaller positions in volatile stocks, larger positions in stable ones. This keeps portfolio risk roughly constant. The key word is *predicted*—I need to forecast volatility, not just measure it after the fact.
 
 Simple heuristics are common: rolling averages of recent realized volatility, often with fixed weights across horizons. They're easy to implement, but they ignore structure in volatility dynamics. Mean reversion, clustering, sector effects, and the leverage effect all contain predictive signal that simple averages discard.
 
@@ -486,10 +486,8 @@ A few observations:
 
 ##### Coefficient Interpretability
 
-<figure class="figure">
-  <iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
-  <p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
-</figure>
+<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
+<p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
 
 The heatmap shows which inputs consistently matter. The long‑horizon vol (126d, 63d) carries most of the signal; short‑horizon vol (5d) often flips negative, which reads as mean‑reversion. Market cap is negative as expected.
 Note: this coefficient view is from the log‑space specification, so both the target and features are log‑transformed; interpret magnitudes and signs with that in mind.
