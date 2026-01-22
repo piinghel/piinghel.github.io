@@ -588,10 +588,15 @@ A few observations:
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
 <iframe src="/assets/vol_forecasting/coefficient_heatmap.html" width="100%" height="550" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 9: Rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 9: Global rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
 </figure>
 
-The heatmap reveals which features drive predictions.
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/coefficient_heatmap_sector.html" width="100%" height="550" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 10: Per-sector rolling regression coefficients over time. Red = predicts higher vol, Blue = predicts lower vol.</figcaption>
+</figure>
+
+The heatmaps reveal which features drive predictions.
 
 Most important features:
 
