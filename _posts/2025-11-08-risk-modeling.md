@@ -9,7 +9,7 @@ categories: [Quants]
 
 I've been using simple rolling averages to forecast volatility for a while now. They work fine, but I always wondered if I was leaving money on the table.
 
-I scale positions by predicted volatility: smaller positions in volatile stocks, larger positions in stable ones. This keeps portfolio risk roughly constant. The key word is *predicted*—I need to forecast volatility, not just measure it after the fact.
+I scale positions by predicted volatility: smaller positions in volatile stocks, larger positions in stable ones. This keeps portfolio risk roughly constant.
 
 Simple heuristics are common: rolling averages of recent realized volatility, often with fixed weights across horizons. They're easy to implement, but they ignore structure in volatility dynamics. Mean reversion, clustering, sector effects, and the leverage effect all contain predictive signal that simple averages discard.
 
