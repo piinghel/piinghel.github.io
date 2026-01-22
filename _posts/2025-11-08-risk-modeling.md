@@ -394,7 +394,7 @@ First attempt: fit a separate model for each stock. Each asset gets its own coef
 | Weighted baseline | 0.676 | 0.184 |
 | Per-asset regression | 0.661 | 0.191 |
 
-<p class="table-caption"><strong>Table 4:</strong> Baselines and per‑asset regression comparison.</p>
+<p class="table-caption"><strong>Table 3:</strong> Baselines and per‑asset regression comparison.</p>
 
 This was humbling: per-asset regressions actually underperform the composite baseline. With only ~500 observations per stock in a 2-year window, coefficients are noisy and the model overfits idiosyncratic patterns. More sophisticated isn't always better.
 
@@ -410,7 +410,7 @@ I test pooled models (per-sector and global) and then add sector dummies so the 
 | Global | 0.715 | 0.178 |
 | Global + sector dummies | 0.714 | 0.178 |
 
-<p class="table-caption"><strong>Table 5:</strong> Impact of pooling across stocks.</p>
+<p class="table-caption"><strong>Table 4:</strong> Impact of pooling across stocks.</p>
 
 This is where things get interesting. Pooling is the first real lift: correlations rise to ~0.71–0.72 across per-sector and global models. The gains are modest but consistent, and the per-sector and global results are effectively the same. I expected sector dummies to help more, but they don't on this run—the global model already captures most of the level differences.
 
@@ -452,7 +452,7 @@ Log-space gives a small but consistent edge over the linear pooled models. The g
 | +Log-space | Global + log dummies | 0.720 | 0.178 |
 | +Risk factors | Global + log dummies + GRF | 0.722 | 0.178 |
 
-<p class="table-caption"><strong>Table 6:</strong> Model development progression summary.</p>
+<p class="table-caption"><strong>Table 5:</strong> Model development progression summary.</p>
 
 The progression is clear: per-asset regressions are too noisy, while pooling across assets provides modest but consistent gains. Log-space gives a slight edge, and macro factors help only marginally.
 
@@ -462,13 +462,10 @@ The progression is clear: per-asset regressions are too noisy, while pooling acr
 
 I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
-![Figure 7a](/assets/vol_forecasting/window_trends.png)  
-<p class="figure-caption"><strong>Figure 7a:</strong> Global model performance across different rolling window sizes (252 to 2520 days).</p>
+![Figure 7](/assets/vol_forecasting/window_trends.png)  
+<p class="figure-caption"><strong>Figure 7:</strong> Model performance across different rolling window sizes (252 to 2520 days).</p>
 
-![Figure 7b](/assets/vol_forecasting/window_trends_sector.png)  
-<p class="figure-caption"><strong>Figure 7b:</strong> Per-sector model performance across different rolling window sizes (252 to 2520 days).</p>
-
-Longer windows help a bit. For global pooling, correlation rises from 0.712 (252 days) to 0.728 (2048 days), with steady RMSE improvements. Per‑sector shows the same pattern, just slightly lower at each window. I use 504 days as a balance between stability and responsiveness.
+Longer windows help a bit. Correlation rises from 0.712 (252 days) to 0.728 (2048 days), with steady RMSE improvements. I use 504 days as a balance between stability and responsiveness.
 
 ##### Regime Robustness
 
@@ -489,7 +486,7 @@ A few observations:
 
 <figure class="figure">
   <iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
-  <figcaption><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</figcaption>
+  <p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
 </figure>
 
 The heatmap shows which inputs consistently matter. The long‑horizon vol (126d, 63d) carries most of the signal; short‑horizon vol (5d) often flips negative, which reads as mean‑reversion. Market cap is negative as expected.
@@ -511,12 +508,6 @@ The sector dummies tell a story:
 
 Asymmetric features (downside/upside vol) both have small negative coefficients. The leverage effect is present but subtle—most asymmetry is already captured by the level dynamics.
 
-<figure class="figure">
-  <iframe src="/assets/vol_forecasting/coefficient_heatmap_sector.html" title="Figure 10" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
-  <figcaption><strong>Figure 10:</strong> Sector dummy coefficients over time.</figcaption>
-</figure>
-
-Sector coefficients are stable and mostly capture level differences rather than dynamics. Utilities remain consistently low, Energy stays higher, and the “Unknown” sector is volatile and less stable—consistent with the cross‑sectional volatility distributions.
 
 ## Conclusion
 
@@ -531,7 +522,7 @@ The final model: global Ridge regression in log space with sector dummies and a 
 | Pooling | Global (all assets) |
 | Implementation | polars-ols for fast rolling regressions |
 
-<p class="table-caption"><strong>Table 8:</strong> Final model specification.</p>
+<p class="table-caption"><strong>Table 6:</strong> Final model specification.</p>
 
 The key insight is that volatility dynamics are shared across assets. Per-asset models waste data chasing idiosyncratic noise. Global and per‑sector models perform almost identically, suggesting shared dynamics dominate.
 
