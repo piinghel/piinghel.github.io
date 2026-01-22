@@ -54,16 +54,16 @@ I test three scenarios:
 
 ### Long-Short Performance
 
-<figure style="margin: 0.3em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_impact/vol_impact_comparison.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 1: Long-short portfolio performance with different volatility estimation methods.</figcaption>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<img src="/assets/vol_impact/vol_impact_comparison.png" alt="Long-short portfolio performance" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 1: Long-short portfolio performance with different volatility estimation methods.</figcaption>
 </figure>
 
 ### Individual Legs
 
-<figure style="margin: 0.25em 0 0 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_impact/long_short_legs_comparison.html" width="100%" height="410" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.08em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 2: Long and short legs separately—where does the improvement come from?</figcaption>
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<img src="/assets/vol_impact/long_short_legs_comparison.png" alt="Long and short legs comparison" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 2: Long and short legs separately—where does the improvement come from?</figcaption>
 </figure>
 
 ### The Numbers
@@ -182,8 +182,8 @@ Before throwing regressions at the problem, let's look at what we're working wit
 ### Volatility Distribution by Sector
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/sector_distribution.html" width="100%" height="580" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
+<img src="/assets/vol_forecasting/sector_distribution.png" alt="Volatility distribution by sector" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 3: Volatility distribution by sector—box plots show median and quartiles, density curves show the full distribution.</figcaption>
 </figure>
 
 Volatility varies a lot by sector. Median vol ranges from ~15% in Utilities to ~30% in Energy. Two things stand out:
@@ -421,8 +421,8 @@ What most practitioners use:
 These achieve correlations around 0.70. Here's what the predictions look like:
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/residuals_baseline.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
+<img src="/assets/vol_forecasting/residuals_baseline.png" alt="Residuals baseline" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 4: Predicted vs actual volatility for the weighted blend baseline.</figcaption>
 </figure>
 
 The predictions follow the diagonal but with significant scatter. Can we do better by learning the weights from data instead of fixing them?
@@ -483,8 +483,8 @@ A further boost to 0.86. The dummies let the model learn that Energy stocks have
 Here's what the best model looks like compared to the baseline:
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/residuals_best.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
+<img src="/assets/vol_forecasting/residuals_best.png" alt="Residuals best model" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 5: Predicted vs actual volatility for the global + dummies model.</figcaption>
 </figure>
 
 The predictions are much tighter around the diagonal. The improvement is visible.
@@ -522,8 +522,8 @@ Neither helps. In fact, they slightly hurt. Why? The asset-level vol features al
 ### Summary
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/metrics_comparison.html" width="100%" height="950" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
+<img src="/assets/vol_forecasting/metrics_comparison.png" alt="Metrics comparison" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 6: Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</figcaption>
 </figure>
 
 | Step | Model | Correlation | RMSE |
@@ -546,13 +546,13 @@ The progression is clear: learning weights beats heuristics, pooling beats per-a
 I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7a: Global model performance across different rolling window sizes (252 to 2520 days).</figcaption>
+<img src="/assets/vol_forecasting/window_trends.png" alt="Window trends global" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7a: Global model performance across different rolling window sizes (252 to 2520 days).</figcaption>
 </figure>
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/window_trends_sector.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7b: Per-sector model performance across different rolling window sizes (252 to 2520 days).</figcaption>
+<img src="/assets/vol_forecasting/window_trends_sector.png" alt="Window trends per sector" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7b: Per-sector model performance across different rolling window sizes (252 to 2520 days).</figcaption>
 </figure>
 
 Performance is stable between 1–3 years. Very short windows are noisier; very long windows lag regime changes. I use 504 days (2 years).
@@ -562,8 +562,8 @@ Performance is stable between 1–3 years. Very short windows are noisier; very 
 Do models hold up when volatility spikes? Here's performance bucketed by market vol regime:
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
-<iframe src="/assets/vol_forecasting/regime_analysis.html" width="100%" height="820" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
+<img src="/assets/vol_forecasting/regime_analysis.png" alt="Regime analysis" style="width: 100%; display: block;">
+<figcaption style="margin: 0.5em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 8: Correlation by market volatility regime—low (&lt;20%), neutral (20-30%), high (&gt;30%).</figcaption>
 </figure>
 
 | Model | Low (<20%) | Neutral (20-30%) | High (>30%) |
