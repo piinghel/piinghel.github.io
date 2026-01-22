@@ -471,7 +471,7 @@ Longer windows help a bit. Correlation rises from 0.712 (252 days) to 0.728 (204
 
 ##### Regime Robustness
 
-Do models hold up when volatility spikes? Figure 8 buckets performance by market vol regime:
+Do models hold up when volatility spikes? **Figure 8** buckets performance by market vol regime:
 
 ![Figure 8](/assets/vol_forecasting/regime_analysis.png)  
 <p class="figure-caption"><strong>Figure 8:</strong> Correlation by market volatility regime—low (<20%), neutral (20-30%), high (>30%).</p>
