@@ -508,7 +508,6 @@ The sector dummies tell a story:
 
 Asymmetric features (downside/upside vol) both have small negative coefficients. The leverage effect is present but subtle—most asymmetry is already captured by the level dynamics.
 
-
 ## Conclusion
 
 The final model: global Ridge regression in log space with sector dummies and a 2-year rolling window. It is a pragmatic choice—simple, stable, and close to the best forecasting performance in this study.
