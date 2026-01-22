@@ -48,7 +48,9 @@ To quantify the potential value of better volatility forecasts, I run a backtest
 Three scenarios are tested:
 - **Current:** Rolling volatility estimates (baseline method)
 - **Perfect Long:** Perfect foresight on the long leg only
-- **Perfect:** Perfect foresight on both legs (theoretical upper bound)
+- **Perfect:** Perfect foresight on both legs
+
+A note on the short leg: for shorts, you profit when stocks go *down*. Better volatility forecasts mean larger positions in low-vol stocks. But if those low-vol stocks are poor short candidates (they don't fall), larger positions hurt you. This is why "Perfect Long" can outperform "Perfect (both)" — improving short leg sizing can backfire.
 
 ### Long-Short Performance
 
@@ -98,7 +100,7 @@ Long-short portfolio performance:
 </div>
 <p class="table-caption"><strong>Table 1:</strong> Long-short portfolio performance (with fees). Perfect Long = perfect foresight on long leg only.</p>
 
-Wait—Perfect Long outperforms Perfect? That surprised me at first. But it makes sense: when the short leg has perfect foresight, it takes larger positions in low-volatility stocks that happen to be poor short candidates. The long leg is where better volatility forecasts provide most of the value.
+Wait—Perfect Long outperforms Perfect? That surprised me at first. But it makes sense: with perfect vol foresight on the short leg, you take larger positions in low-volatility stocks. The problem is that low-vol stocks tend to be stable, quality companies—exactly the stocks you *don't* want to short. Larger positions in stocks that don't fall means larger losses. The long leg is where better volatility forecasts actually help.
 
 The leg-by-leg breakdown:
 
