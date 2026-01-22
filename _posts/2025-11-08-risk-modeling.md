@@ -398,7 +398,7 @@ First attempt: fit a separate model for each stock. Each asset gets its own coef
 
 <p class="table-caption"><strong>Table 3:</strong> Baselines and per‑asset regression comparison.</p>
 
-This was humbling: per-asset regressions actually underperform the composite baseline. With only ~500 observations per stock in a 2-year window, coefficients are noisy and the model overfits idiosyncratic patterns. More sophisticated isn't always better.
+Surprisingly, per-asset regressions actually underperform the composite baseline. With only ~500 observations per stock in a 2-year window, coefficients are noisy and the model overfits idiosyncratic patterns. More sophisticated isn't always better.
 
 #### Step 3: Pooling Across Stocks
 
@@ -414,7 +414,7 @@ I test pooled models (per-sector and global) and then add sector dummies so the 
 
 <p class="table-caption"><strong>Table 4:</strong> Impact of pooling across stocks.</p>
 
-This is where things get interesting. Pooling is the first real lift: correlations rise to ~0.71–0.72 across per-sector and global models. The gains are modest but consistent, and the per-sector and global results are effectively the same. I expected sector dummies to help more, but they don't on this run—the global model already captures most of the level differences.
+Pooling is the first real lift: correlations rise to ~0.71–0.72 across per-sector and global models. The gains are modest but consistent, and the per-sector and global results are effectively the same. I expected sector dummies to help more, but they don't on this run—the global model already captures most of the level differences.
 
 Here's what the pooled linear model looks like compared to the baseline:
 
