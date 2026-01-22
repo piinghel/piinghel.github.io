@@ -547,7 +547,12 @@ I swept rolling windows from 6 months to 10 years. How sensitive are results to 
 
 <figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
 <iframe src="/assets/vol_forecasting/window_trends.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
-<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7: Model performance across different rolling window sizes (126 to 2520 days).</figcaption>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7a: Global model performance across different rolling window sizes (252 to 2520 days).</figcaption>
+</figure>
+
+<figure style="margin: 0.3em 0 1.5em 0; padding: 0; line-height: 1;">
+<iframe src="/assets/vol_forecasting/window_trends_sector.html" width="100%" height="420" frameborder="0" style="display: block; margin: 0; padding: 0; border: none; vertical-align: bottom;"></iframe>
+<figcaption style="margin: 0.1em 0 0 0; padding: 0; font-size: 0.9em; line-height: 1.3; color: #888;">Figure 7b: Per-sector model performance across different rolling window sizes (252 to 2520 days).</figcaption>
 </figure>
 
 Performance is stable between 1–3 years. Very short windows are noisier; very long windows lag regime changes. I use 504 days (2 years).
