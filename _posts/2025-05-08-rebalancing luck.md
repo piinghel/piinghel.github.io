@@ -147,10 +147,8 @@ I'll be using this setup going forward for any strategy that rebalances on a fix
 
 ## References
 
-- [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) - Newfound Research. A clear explanation of how rebalance timing affects performance.
-
-- [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) - Zarattini & Pagani, Concretum Group. Shows that spreading rebalances over time can reduce timing risk and even lower turnover in a GTAA context.
-
-- [The Tranching Dilemma: A Cost-Aware Approach to Mitigate Rebalance Timing Luck in Factor Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) - Zarattini & Pagani, Concretum Group (2025). A follow-up paper that develops a framework for optimal tranching under realistic transaction costs. Key finding: while tranching consistently reduces RTL, its net benefit depends on AUM. For large investors it's clearly worth it; for smaller investors the extra trading costs can outweigh the benefits. Worth reading if you're thinking about implementation.
+- [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) - Newfound Research
+- [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) - Zarattini & Pagani
+- [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) - Zarattini & Pagani
 
 
