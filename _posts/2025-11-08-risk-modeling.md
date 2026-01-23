@@ -409,7 +409,7 @@ Here's what the pooled linear model looks like compared to the baseline:
 ![Figure 5](/assets/vol_forecasting/residuals_best.png)  
 <p class="figure-caption"><strong>Figure 5:</strong> Predicted vs actual volatility for the global + dummies model.</p>
 
-Predictions are much tighter around the diagonal. The improvement is visible.
+Predictions cluster closer to the diagonal than the baseline, but there's a clear pattern: the model underpredicts when actual volatility is high. The residual distribution confirms this, skewing slightly negative. At extreme values, the model struggles to keep up.
 
 #### Step 4: Log-Space and Macro Factors
 
@@ -430,7 +430,7 @@ Log-space gives a small but consistent edge. The group risk factor (sector-level
 Stepping back, here's the full progression:
 
 ![Figure 6](/assets/vol_forecasting/metrics_comparison.png)  
-<p class="figure-caption"><strong>Figure 6:</strong> Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Comparison of all model variants (correlation and RMSE).</p>
 
 | Step | Model | Correlation | RMSE |
 |------|-------|-------------|------|
@@ -446,7 +446,7 @@ Stepping back, here's the full progression:
 | +Log-space | Global + log dummies | 0.720 | 0.178 |
 | +Risk factors | Global + log dummies + GRF | 0.722 | 0.178 |
 
-<p class="table-caption"><strong>Table 6:</strong> Model development progression summary.</p>
+<p class="table-caption"><strong>Table 6:</strong> Model development progression (correlation and RMSE).</p>
 
 The pattern is clear: fitting a model per asset doesn't work because the coefficients are too noisy. Pooling across assets is where the gains come from. Log-space adds a small edge on top, and macro factors contribute only marginally.
 
