@@ -166,7 +166,7 @@ I use historical point-in-time data for Russell 1000 constituents from 1995 to 2
 
 ### Data Exploration
 
-Before building models, I want to be clear about what we are predicting. Figure 3 shows the distribution of the target variable—21-day forward realized volatility—across sectors.
+Before building models, I want to be clear about what we are predicting. **Figure 3** shows the distribution of the target variable—21-day forward realized volatility—across sectors.
 
 ![Figure 3](/assets/vol_forecasting/sector_distribution.png)  
 <p class="figure-caption"><strong>Figure 3:</strong> Distribution of 21-day forward realized volatility by sector (box plots + density curves).</p>
