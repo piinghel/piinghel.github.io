@@ -33,9 +33,8 @@ Then, I compare this to a *tranching* setup, a common approach where the portfol
 Here's the cumulative return of the 15 full-rebalance variants:
 
 
-![Figure 1](/assets/tranching/all_perf_plots.png) 
-
-**Figure 1:** Cumulative returns for each rebalancing schedule (15 variants).
+![Figure 1](/assets/tranching/all_perf_plots.png)  
+<p class="figure-caption"><strong>Figure 1:</strong> Cumulative returns for each rebalancing schedule (15 variants).</p>
 
 
 And the table of results:
@@ -59,13 +58,13 @@ And the table of results:
 | offset=2, day=5   | 10.37%           | 6.45%      | 1.56         | 13.10%       | 593 days        |
 
 
-**Table 1:** Performance metrics for each full,rebalance variant.
+<p class="table-caption"><strong>Table 1:</strong> Performance metrics for each full-rebalance variant.</p>
 
 
 
 I was actually surprised by how much divergence there was. Even though all variants follow the same model, returns varied quite a bit, from around 10.1% to 12.5% annually. Sharpe ratios ranged from 1.50 to 1.75, and some variants spent hundreds of days longer in drawdown than others. These are meaningful differences for something as simple as shifting the rebalance day.
 
-None of this comes from the model or the signal—it's purely due to small shifts in rebalance timing that compound over time. Even when overall performance looks stable, this kind of noise makes it harder to tell whether a change is genuinely better or just lucky on timing.
+None of this comes from the model or the signal. It's purely due to small shifts in rebalance timing that compound over time. Even when overall performance looks stable, this kind of noise makes it harder to tell whether a change is genuinely better or just lucky on timing.
 
 
 
@@ -81,7 +80,7 @@ This staggered execution spreads risk more evenly across time without changing t
 To analyze the results, I group performance by weekday and average across the three offsets. This gives a cleaner comparison to the previous "all-at-once" setup.
 
 ![Figure 2](/assets/tranching/tranched_perf_plots.png)  
-**Figure 2:** Cumulative returns with tranching by weekday (averaged over offsets).
+<p class="figure-caption"><strong>Figure 2:</strong> Cumulative returns with tranching by weekday (averaged over offsets).</p>
 
 | Weekday | Geometric Return | Volatility | Sharpe Ratio | Max Drawdown | Time Underwater |
 |---------|------------------|------------|--------------|--------------|-----------------|
@@ -91,12 +90,12 @@ To analyze the results, I group performance by weekday and average across the th
 | 4 (Thu) | 11.63%           | 6.06%      | 1.85         | 11.01%       | 303 days        |
 | 5 (Fri) | 11.43%           | 6.11%      | 1.80         | 12.37%       | 364 days        |
 
-**Table 2:** Tranche,averaged performance by weekday.
+<p class="table-caption"><strong>Table 2:</strong> Tranche-averaged performance by weekday.</p>
 
 
-The improvements are actually quite solid. Sharpe ratios climb into the 1.78-1.85 range, with Friday and Thursday performing best. Volatility compresses to just above 6%, and drawdowns are generally smaller and recover more quickly. On the cumulative return chart, the dispersion tightens massively—the lines almost sit on top of each other, which wasn't the case before.
+The improvements are actually quite solid. Sharpe ratios climb into the 1.78-1.85 range, with Friday and Thursday performing best. Volatility compresses to just above 6%, and drawdowns are generally smaller and recover more quickly. On the cumulative return chart, the dispersion tightens massively: the lines almost sit on top of each other, which wasn't the case before.
 
-This isn't just about higher returns—most of the gains come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in exposure, which reduces noise and leads to more stable performance.
+This isn't just about higher returns. Most of the gains come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in exposure, which reduces noise and leads to more stable performance.
 
 From a research perspective, this makes a big difference. It cuts down the randomness introduced by timing luck and makes it easier to tell whether a model change is actually improving things, or just benefiting from better timing.
 
@@ -113,9 +112,9 @@ There's also a subtle benefit on the signal side. In the standard setup, you onl
 
 Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds a bit of overhead, especially when some trades are small and barely move the portfolio.
 
-But in practice, it's felt worth it. Not just in research—even in live runs, it makes the strategy feel more stable and less twitchy around timing noise.
+But in practice, it's felt worth it. Not just in research, but even in live runs, it makes the strategy feel more stable and less twitchy around timing noise.
 
-I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I'm not entirely sure why—maybe it avoids large shifts or cancels out trades across tranches. Still figuring that part out. If you've got ideas or experience with it, let me know—I'm curious.
+I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I'm not entirely sure why, maybe it avoids large shifts or cancels out trades across tranches. Still figuring that part out. If you've got ideas or experience with it, let me know.
 
 And a small bonus: by updating just a slice each week, you keep injecting fresh signal without going all-in. The portfolio stays a bit more responsive without overtrading.
 
