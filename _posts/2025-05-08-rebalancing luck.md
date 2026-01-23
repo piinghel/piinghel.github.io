@@ -148,7 +148,7 @@ I'll be using this setup going forward for any strategy that rebalances on a fix
 ## References
 
 - [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) - Newfound Research
-- [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) - C. Zarattini, A. Pagani
-- [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) - C. Zarattini, A. Pagani
+- [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) - C. Zarattini, A. Pagani (2025)
+- [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) - C. Zarattini, A. Pagani (2025)
 
 
