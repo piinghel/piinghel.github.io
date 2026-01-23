@@ -39,25 +39,38 @@ Here's the cumulative return of the 15 full-rebalance variants:
 
 And the table of results:
 
-| Tranche           | Geometric Return | Volatility | Sharpe Ratio | Max Drawdown | Time Underwater |
-|-------------------|------------------|------------|--------------|--------------|-----------------|
-| offset=0, day=1   | 10.38%           | 6.58%      | 1.53         | 12.41%       | 548 days        |
-| offset=0, day=2   | 10.10%           | 6.54%      | 1.50         | 14.77%       | 573 days        |
-| offset=0, day=3   | 10.61%           | 6.54%      | 1.57         | 13.79%       | 582 days        |
-| offset=0, day=4   | 12.10%           | 6.73%      | 1.73         | 13.19%       | 548 days        |
-| offset=0, day=5   | 12.17%           | 6.91%      | 1.70         | 13.59%       | 369 days        |
-| offset=1, day=1   | 12.53%           | 6.90%      | 1.75         | 12.35%       | 360 days        |
-| offset=1, day=2   | 12.21%           | 6.97%      | 1.69         | 12.13%       | 387 days        |
-| offset=1, day=3   | 12.30%           | 6.87%      | 1.72         | 10.70%       | 375 days        |
-| offset=1, day=4   | 11.64%           | 6.70%      | 1.68         | 12.72%       | 360 days        |
-| offset=1, day=5   | 11.62%           | 6.76%      | 1.66         | 14.76%       | 298 days        |
-| offset=2, day=1   | 10.90%           | 6.50%      | 1.67         | 11.38%       | 248 days        |
-| offset=2, day=2   | 11.27%           | 6.60%      | 1.56         | 12.56%       | 331 days        |
-| offset=2, day=3   | 10.61%           | 6.60%      | 1.63         | 11.01%       | 275 days        |
-| offset=2, day=4   | 10.99%           | 6.53%      | 1.63         | 13.10%       | 352 days        |
-| offset=2, day=5   | 10.37%           | 6.45%      | 1.56         | 13.10%       | 593 days        |
-| **Mean**          | **11.32%**       | **6.68%**  | **1.64**     | **12.77%**   | **413 days**    |
-
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; margin: 1em 0;">
+<thead>
+<tr>
+<th style="padding: 0.6em; text-align: left; border-bottom: 2px solid #333;">Tranche</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Geometric Return</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Volatility</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Sharpe Ratio</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Max Drawdown</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Time Underwater</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=0, day=1</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.38%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.58%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.53</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.41%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">548 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=0, day=2</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.10%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.54%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.50</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">14.77%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">573 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=0, day=3</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.61%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.54%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.57</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">13.79%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">582 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=0, day=4</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.10%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.73%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.73</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">13.19%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">548 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=0, day=5</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.17%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.91%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.70</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">13.59%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">369 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=1, day=1</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.53%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.90%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.75</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.35%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">360 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=1, day=2</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.21%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.97%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.69</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.13%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">387 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=1, day=3</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.30%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.87%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.72</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.70%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">375 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=1, day=4</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.64%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.70%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.68</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.72%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">360 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=1, day=5</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.62%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.76%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.66</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">14.76%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">298 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=2, day=1</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.90%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.50%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.67</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.38%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">248 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=2, day=2</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.27%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.60%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.56</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.56%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">331 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=2, day=3</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.61%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.60%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.63</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.01%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">275 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=2, day=4</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.99%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.53%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.63</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">13.10%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">352 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">offset=2, day=5</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">10.37%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.45%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.56</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">13.10%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">593 days</td></tr>
+<tr style="background: #f5f5f5; font-weight: bold;"><td style="padding: 0.6em;"><strong>Mean</strong></td><td style="padding: 0.6em; text-align: center;"><strong>11.32%</strong></td><td style="padding: 0.6em; text-align: center;"><strong>6.68%</strong></td><td style="padding: 0.6em; text-align: center;"><strong>1.64</strong></td><td style="padding: 0.6em; text-align: center;"><strong>12.77%</strong></td><td style="padding: 0.6em; text-align: center;"><strong>413 days</strong></td></tr>
+</tbody>
+</table>
+</div>
 <p class="table-caption"><strong>Table 1:</strong> Performance metrics for each full-rebalance variant.</p>
 
 
@@ -82,15 +95,28 @@ To analyze the results, I group performance by weekday and average across the th
 ![Figure 2](/assets/tranching/tranched_perf_plots.png)  
 <p class="figure-caption"><strong>Figure 2:</strong> Cumulative returns with tranching by weekday (averaged over offsets).</p>
 
-| Weekday | Geometric Return | Volatility | Sharpe Ratio | Max Drawdown | Time Underwater |
-|---------|------------------|------------|--------------|--------------|-----------------|
-| 1 (Mon) | 11.32%           | 6.08%      | 1.80         | 11.08%       | 370 days        |
-| 2 (Tue) | 11.23%           | 6.04%      | 1.79         | 11.63%       | 301 days        |
-| 3 (Wed) | 11.24%           | 6.08%      | 1.78         | 11.89%       | 299 days        |
-| 4 (Thu) | 11.63%           | 6.06%      | 1.85         | 11.01%       | 303 days        |
-| 5 (Fri) | 11.43%           | 6.11%      | 1.80         | 12.37%       | 364 days        |
-| **Mean**  | **11.37%**       | **6.07%**  | **1.80**     | **11.60%**   | **327 days**    |
-
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; margin: 1em 0;">
+<thead>
+<tr>
+<th style="padding: 0.6em; text-align: left; border-bottom: 2px solid #333;">Weekday</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Geometric Return</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Volatility</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Sharpe Ratio</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Max Drawdown</th>
+<th style="padding: 0.6em; text-align: center; border-bottom: 2px solid #333;">Time Underwater</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">1 (Mon)</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.32%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.08%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.80</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.08%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">370 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">2 (Tue)</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.23%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.04%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.79</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.63%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">301 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">3 (Wed)</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.24%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.08%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.78</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.89%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">299 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">4 (Thu)</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.63%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.06%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.85</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.01%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">303 days</td></tr>
+<tr><td style="padding: 0.6em; border-bottom: 1px solid #eee;">5 (Fri)</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">11.43%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">6.11%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">1.80</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">12.37%</td><td style="padding: 0.6em; text-align: center; border-bottom: 1px solid #eee;">364 days</td></tr>
+<tr style="background: #f5f5f5; font-weight: bold;"><td style="padding: 0.6em;"><strong>Mean</strong></td><td style="padding: 0.6em; text-align: center;"><strong>11.37%</strong></td><td style="padding: 0.6em; text-align: center;"><strong>6.07%</strong></td><td style="padding: 0.6em; text-align: center;"><strong>1.80</strong></td><td style="padding: 0.6em; text-align: center;"><strong>11.60%</strong></td><td style="padding: 0.6em; text-align: center;"><strong>327 days</strong></td></tr>
+</tbody>
+</table>
+</div>
 <p class="table-caption"><strong>Table 2:</strong> Tranche-averaged performance by weekday.</p>
 
 
