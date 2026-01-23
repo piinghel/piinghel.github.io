@@ -89,7 +89,7 @@ To analyze the results, I group performance by weekday and average across the th
 | 3 (Wed) | 11.24%           | 6.08%      | 1.78         | 11.89%       | 299 days        |
 | 4 (Thu) | 11.63%           | 6.06%      | 1.85         | 11.01%       | 303 days        |
 | 5 (Fri) | 11.43%           | 6.11%      | 1.80         | 12.37%       | 364 days        |
-| **Mean**| **11.37%**       | **6.07%**  | **1.80**     | **11.60%**   | **327 days**    |
+| **Mean**  | **11.37%**       | **6.07%**  | **1.80**     | **11.60%**   | **327 days**    |
 
 <p class="table-caption"><strong>Table 2:</strong> Tranche-averaged performance by weekday.</p>
 
