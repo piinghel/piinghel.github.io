@@ -107,7 +107,7 @@ There's also a subtle benefit on the signal side: with tranching, you fold in ne
 
 Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds overhead, especially when some trades are small.
 
-Whether it's worth it depends on your size. [Zarattini & Pagani (2025)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) show that tranching's benefits are AUM-dependent. For smaller portfolios, the increased number of trades can hurt since minimum commissions eat into those smaller positions. For larger portfolios, spreading trades over time reduces market impact, which matters more than the extra commission costs. Turnover itself stays roughly the same either way; what changes is how that turnover is distributed.
+Whether it's worth it depends on your size. [Zarattini & Pagani (2025)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) show that tranching's benefits are AUM-dependent. For smaller portfolios, the increased number of trades can hurt since minimum commissions eat into those smaller positions. For larger portfolios, spreading trades over time reduces market impact, which matters more than the extra commission costs. Turnover itself stays roughly the same either way; what changes is how that turnover is distributed. Their paper provides a framework for finding the optimal number of tranches given your AUM.
 
 
 
