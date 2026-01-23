@@ -528,3 +528,9 @@ The next step is to test these forecasts inside the position-sizing pipeline and
 
 After that, I want to explore event-timing features (especially days to earnings) and richer feature sets that might capture non-linearities the linear model misses.
 
+## References
+
+- [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157) - Shows that volatility dynamics are largely shared across assets and markets, supporting panel-style forecasting over per-asset models.
+
+- [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility) - AQR. Emphasizes shared structure in volatility and the benefits of pooling information across assets for risk forecasting.
+
