@@ -530,6 +530,6 @@ After that, I want to explore event-timing features (especially days to earnings
 
 ## References
 
-- [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157)
-- [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility) - AQR
+- [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157) - L. Tran, M. Milionis, C. Makridis
+- [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility) - R. Israelov et al.
 
