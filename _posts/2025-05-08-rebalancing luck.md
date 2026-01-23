@@ -107,9 +107,7 @@ There's also a subtle benefit on the signal side: with tranching, you fold in ne
 
 Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds overhead, especially when some trades are small.
 
-But in practice, it's felt worth it. Not just in research, but even in live runs, the strategy feels more stable and less twitchy around timing noise.
-
-I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I'm not entirely sure why, maybe it avoids large shifts or cancels out trades across tranches. If you've got ideas or experience with it, let me know.
+Whether it's worth it depends on your size. [Zarattini & Pagani (2025)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) show that tranching's benefits are AUM-dependent. For smaller portfolios, the increased number of trades can hurt since minimum commissions eat into those smaller positions. For larger portfolios, spreading trades over time reduces market impact, which matters more than the extra commission costs. Turnover itself stays roughly the same either way; what changes is how that turnover is distributed.
 
 
 
