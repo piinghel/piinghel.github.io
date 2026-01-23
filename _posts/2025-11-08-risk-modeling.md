@@ -9,9 +9,7 @@ categories: [Quants]
 
 I've been using simple rolling averages to forecast volatility for a while now. They work fine, but I always wondered if I was leaving money on the table.
 
-I scale positions by predicted volatility: smaller positions in volatile stocks, larger positions in stable ones. This keeps portfolio risk roughly constant.
-
-Simple heuristics like rolling averages are easy to implement, but they ignore volatility structure: mean reversion, clustering, sector effects, and the leverage effect all contain signal that simple averages miss.
+Here's the context: I scale positions by predicted volatility, putting smaller positions in volatile stocks and larger positions in stable ones. This keeps portfolio risk roughly constant. The problem is that simple rolling averages ignore a lot of structure in how volatility actually behaves: mean reversion, clustering, sector effects, and the leverage effect all contain signal that simple averages miss.
 
 This post tries to answer two questions I've been curious about: (1) can we actually improve volatility forecasts with more sophisticated methods? And (2) do better forecasts translate to better portfolio performance?
 
@@ -173,11 +171,11 @@ Before building models, I want to be clear about what we are predicting. **Figur
 
 **Sector differences are large.** Median volatility ranges from ~15% (Utilities) to ~30% (Energy), a 2x spread. Utilities and Consumer Staples cluster at low volatility; Energy and Technology show wider dispersion.
 
-**The distribution is right-skewed.** Most observations cluster at 10-25%, with a long tail to 100%+. This motivates sector dummies and log-space modeling.
+**The distribution is right-skewed.** Most observations cluster at 10-25%, with a long tail extending past 100%. This suggests two things: sector dummies could help capture level differences, and log-space modeling might handle the skew better.
+
+With this in mind, let me walk through the features I use.
 
 ## Feature Engineering
-
-Each feature is motivated by well-known patterns in volatility behavior.
 
 ### Rolling Volatility
 
@@ -195,7 +193,7 @@ with windows $w \in \{5, 21, 63, 126\}$ days:
 - **63-day:** Quarterly horizon, smooths out short-term noise
 - **126-day:** Semi-annual, provides mean-reversion anchor
 
-Mid-horizon measures (21-63d) are the strongest predictors; the 5-day window is weaker. Downside volatility is slightly more informative than upside.
+In my data, the mid-horizon measures (21-63d) turn out to be the strongest predictors. The 5-day window is notably weaker, and downside volatility is slightly more informative than upside.
 
 ### Asymmetric Features
 
@@ -217,25 +215,21 @@ Different sectors have different vol levels. Utilities are stable, Energy is vol
 
 ### Log Market Cap
 
-Small firms are more volatile than large firms.
-
-I include log market cap as a feature:
+Small firms tend to be more volatile than large firms, so I include log market cap as a feature:
 
 $$
 \text{LogMktCap}_{i,t} = \log(\text{MarketCap}_{i,t})
 $$
 
-Log transformation handles the skewed distribution and makes the relationship with volatility more linear.
+The log transformation handles the skewed distribution of market caps and makes the relationship with volatility more linear.
 
 ### Data Transformations
 
-**Clipping:** Features and target are clipped to [2.5%, 200%] to limit outlier impact. Raw target is saved for evaluation.
-
-**Log transformations:** We test both raw and log-space models. Log features are created for all volatility features, market cap, and target.
+A few preprocessing choices worth noting: I clip features and target to [2.5%, 200%] to limit outlier impact, though I save the raw target for evaluation. I also create log-transformed versions of all features to test whether log-space modeling helps.
 
 ## Methodology
 
-Here is the precise target and the modeling setup used to forecast it.
+Now let me describe the forecasting setup.
 
 The target is 21-day forward realized volatility, defined as:
 
@@ -352,25 +346,27 @@ The `.shift(25)` ensures predictions are out-of-sample. The `coefficients` colum
 └─────────────┴─────────────────────────────────────────┘
 ```
 
-Volatility data contains outliers. I clip to [2.5%, 200%] during training, but metrics are computed on raw, unclipped data.
+Volatility data contains outliers, so I clip to [2.5%, 200%] during training. All evaluation metrics use raw, unclipped data.
 
 ## Results
 
+Now for the part I was most curious about: do these methods actually improve forecasts?
+
 ### Forecast Quality
 
-The main question: should we fit a model per asset or pool across assets? I build up the answer step by step.
+The central question is whether to fit a model per asset or pool across assets. I'll build up the answer step by step.
 
 #### Step 1: Baselines
 
-I start with simple approaches:
+I start with the simple approaches I'd reach for if I wanted something fast and robust:
 
-- Simple vol-5: 5-day rolling volatility
-- Simple vol-21: 21-day rolling volatility (current production baseline for longs)
-- Simple vol-63: 63-day rolling volatility (current production baseline for shorts)
-- Composite average: equal-weighted average of 5, 21, and 63-day rolling vol
-- Weighted blend: 70% × 21-day vol + 30% × 252-day vol
+- **vol-5:** 5-day rolling volatility
+- **vol-21:** 21-day rolling volatility (my current production baseline for longs)
+- **vol-63:** 63-day rolling volatility (my current production baseline for shorts)
+- **Composite average:** equal-weighted average of 5, 21, and 63-day rolling vol
+- **Weighted blend:** 70% × 21-day vol + 30% × 252-day vol
 
-vol-21 and vol-63 reach correlations around 0.67-0.69, while vol-5 lags. The composite average edges out the weighted blend (0.697 vs 0.676):
+The 21-day and 63-day measures are what I currently use in production, so they're the main benchmarks I'm trying to beat. They reach correlations around 0.67-0.69, while vol-5 lags behind. The composite average edges out the weighted blend (0.697 vs 0.676):
 
 ![Figure 4](/assets/vol_forecasting/residuals_baseline.png)  
 <p class="figure-caption"><strong>Figure 4:</strong> Predicted vs actual volatility for the weighted blend baseline.</p>
@@ -429,6 +425,8 @@ Log-space gives a small but consistent edge. The group risk factor (sector-level
 
 #### Summary
 
+Stepping back, here's the full progression:
+
 ![Figure 6](/assets/vol_forecasting/metrics_comparison.png)  
 <p class="figure-caption"><strong>Figure 6:</strong> Comparison of all model variants across RMSE, MAE, correlation, and MAPE metrics.</p>
 
@@ -448,13 +446,15 @@ Log-space gives a small but consistent edge. The group risk factor (sector-level
 
 <p class="table-caption"><strong>Table 5:</strong> Model development progression summary.</p>
 
-The pattern is clear: per-asset regressions are too noisy, but pooling across assets gives consistent gains. Log-space adds a slight edge on top.
+The pattern is clear: fitting a model per asset doesn't work because the coefficients are too noisy. Pooling across assets is where the gains come from. Log-space adds a small edge on top, and macro factors contribute only marginally.
 
 #### Robustness & Validation
 
+Before settling on a final model, I wanted to check how sensitive these results are to my choices.
+
 ##### Window Sensitivity
 
-I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
+I swept rolling windows from 6 months to 10 years:
 
 ![Figure 7](/assets/vol_forecasting/window_trends.png)  
 <p class="figure-caption"><strong>Figure 7:</strong> Model performance across different rolling window sizes (252 to 2520 days).</p>
@@ -478,12 +478,12 @@ A few observations:
 
 ##### Coefficient Interpretability
 
+One nice thing about linear models is that you can actually see what they're doing. The heatmap below shows how the regression coefficients evolve over time:
+
 <iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
 <p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
 
-The heatmap shows which inputs consistently matter. Long-horizon vol (126d, 63d) carries most of the signal. Short-horizon vol (5d) often flips negative, which I read as mean-reversion. Market cap is negative as expected.
-
-Key takeaways:
+Long-horizon vol (126d, 63d) carries most of the signal. Short-horizon vol (5d) often flips negative, which I read as mean-reversion. Market cap is negative as expected. Here's what stands out:
 
 1. 126-day vol (~0.5): Strongest positive predictor. Long-term vol acts as the mean-reversion anchor.
 2. 63-day vol (~0.3): Second strongest. Bridges short-term noise and long-term structure.
@@ -501,7 +501,7 @@ Asymmetric features (downside/upside vol) both have small negative coefficients.
 
 ## Conclusion
 
-The final model: global Ridge regression in log space with sector dummies and a 2-year rolling window. It is a pragmatic choice: simple, stable, and close to the best forecasting performance in this study.
+So what did I end up with? A global Ridge regression in log space with sector dummies and a 2-year rolling window. It's a pragmatic choice: simple, stable, and close to the best forecasting performance I found.
 
 | Component | Choice |
 |-----------|--------|
