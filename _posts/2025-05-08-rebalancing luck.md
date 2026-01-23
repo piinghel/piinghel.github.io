@@ -56,7 +56,7 @@ And the table of results:
 | offset=2, day=3   | 10.61%           | 6.60%      | 1.63         | 11.01%       | 275 days        |
 | offset=2, day=4   | 10.99%           | 6.53%      | 1.63         | 13.10%       | 352 days        |
 | offset=2, day=5   | 10.37%           | 6.45%      | 1.56         | 13.10%       | 593 days        |
-
+| **Mean**          | **11.32%**       | **6.68%**  | **1.64**     | **12.77%**   | **413 days**    |
 
 <p class="table-caption"><strong>Table 1:</strong> Performance metrics for each full-rebalance variant.</p>
 
@@ -89,42 +89,33 @@ To analyze the results, I group performance by weekday and average across the th
 | 3 (Wed) | 11.24%           | 6.08%      | 1.78         | 11.89%       | 299 days        |
 | 4 (Thu) | 11.63%           | 6.06%      | 1.85         | 11.01%       | 303 days        |
 | 5 (Fri) | 11.43%           | 6.11%      | 1.80         | 12.37%       | 364 days        |
+| **Mean**| **11.37%**       | **6.07%**  | **1.80**     | **11.60%**   | **327 days**    |
 
 <p class="table-caption"><strong>Table 2:</strong> Tranche-averaged performance by weekday.</p>
 
 
-The improvements are actually quite solid. Sharpe ratios climb into the 1.78-1.85 range, with Friday and Thursday performing best. Volatility compresses to just above 6%, and drawdowns are generally smaller and recover more quickly. On the cumulative return chart, the dispersion tightens massively: the lines almost sit on top of each other, which wasn't the case before.
+Comparing the means tells the story clearly: average return is essentially unchanged (11.32% to 11.37%), but volatility drops from 6.68% to 6.07%, max drawdown improves from 12.77% to 11.60%, and Sharpe ratio rises from 1.64 to 1.80. Time underwater falls by nearly 90 days.
 
-This isn't just about higher returns. Most of the gains come from smoother execution. By spreading out rebalances, you avoid abrupt shifts in exposure, which reduces noise and leads to more stable performance.
+The key insight: tranching doesn't generate extra return. It delivers the same return with less risk. By spreading rebalances across time, you smooth out the noise from any single day's conditions. The cumulative return chart makes this visible: the lines almost sit on top of each other, which wasn't the case before.
 
-From a research perspective, this makes a big difference. It cuts down the randomness introduced by timing luck and makes it easier to tell whether a model change is actually improving things, or just benefiting from better timing.
+From a research perspective, this matters a lot. It cuts down the randomness from timing luck, making it easier to tell whether a model change is actually improving things or just benefiting from better timing.
 
 
-## Why It Works
+There's also a subtle benefit on the signal side: with tranching, you fold in new predictions each week instead of once every three weeks. That introduces a kind of temporal diversification and makes the strategy more responsive to new information.
 
-Tranching softens the impact of short-term shocks. A single full-book rebalance can pick up temporary price dislocations or liquidity gaps, injecting noise into an otherwise stable strategy. By spreading rebalancing over time, those effects average out.
+## Trade-Offs
 
-The logic and signal stay exactly the same. The full portfolio still turns over every three weeks, just more gradually. That reduces sensitivity to any one day's conditions, without changing overall turnover.
+Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds overhead, especially when some trades are small.
 
-There's also a subtle benefit on the signal side. In the standard setup, you only act on the model's predictions once every three weeks. With tranching, you fold in new predictions each week, even if it's only on a third of the capital. That introduces a kind of temporal diversification and makes the strategy more responsive to new information.
+But in practice, it's felt worth it. Not just in research, but even in live runs, the strategy feels more stable and less twitchy around timing noise.
 
-## A Few Trade-Offs and Extra Benefits
-
-Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds a bit of overhead, especially when some trades are small and barely move the portfolio.
-
-But in practice, it's felt worth it. Not just in research, but even in live runs, it makes the strategy feel more stable and less twitchy around timing noise.
-
-I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I'm not entirely sure why, maybe it avoids large shifts or cancels out trades across tranches. Still figuring that part out. If you've got ideas or experience with it, let me know.
-
-And a small bonus: by updating just a slice each week, you keep injecting fresh signal without going all-in. The portfolio stays a bit more responsive without overtrading.
+I also came across something interesting in the GTAA literature: tranching might reduce turnover and transaction costs. I'm not entirely sure why, maybe it avoids large shifts or cancels out trades across tranches. If you've got ideas or experience with it, let me know.
 
 
 
 ## Conclusion
 
-What started as a small curiosity around rebalancing schedules turned into a strong case for using tranching by default.
-
-The signal and logic don't change, but the results become cleaner and more stable. That's especially helpful when evaluating model tweaks, since it reduces noise from execution timing.
+What started as a small curiosity around rebalancing schedules turned into a strong case for using tranching by default. The results are cleaner and more stable, which is especially helpful when evaluating model tweaks.
 
 I'll be using this setup going forward for any strategy that rebalances on a fixed cycle. It's simple, effective, and makes the whole process easier to trust.
 
