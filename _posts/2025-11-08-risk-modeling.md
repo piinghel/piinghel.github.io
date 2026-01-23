@@ -175,8 +175,6 @@ Before building models, I want to be clear about what we are predicting. **Figur
 
 **The distribution is right-skewed.** Most observations cluster at 10-25%, with a long tail to 100%+. This motivates sector dummies and log-space modeling.
 
-Here are the features used.
-
 ## Feature Engineering
 
 Each feature is motivated by well-known patterns in volatility behavior.
@@ -360,11 +358,11 @@ Volatility data contains outliers. I clip to [2.5%, 200%] during training, but m
 
 ### Forecast Quality
 
-Should we fit a model per asset or pool across assets?
+The main question: should we fit a model per asset or pool across assets? I build up the answer step by step.
 
 #### Step 1: Baselines
 
-Simple baselines:
+I start with simple approaches:
 
 - Simple vol-5: 5-day rolling volatility
 - Simple vol-21: 21-day rolling volatility (current production baseline for longs)
@@ -372,18 +370,16 @@ Simple baselines:
 - Composite average: equal-weighted average of 5, 21, and 63-day rolling vol
 - Weighted blend: 70% × 21-day vol + 30% × 252-day vol
 
-The 21-day and 63-day simple vols are my current production volatility estimators, so they’re the main benchmarks I’m trying to beat.
-
-Simple vol-21 and vol-63 land around 0.67-0.69, while vol-5 lags. The composite average edges out the weighted blend (0.697 vs 0.676). Here's what the predictions look like:
+vol-21 and vol-63 reach correlations around 0.67-0.69, while vol-5 lags. The composite average edges out the weighted blend (0.697 vs 0.676):
 
 ![Figure 4](/assets/vol_forecasting/residuals_baseline.png)  
 <p class="figure-caption"><strong>Figure 4:</strong> Predicted vs actual volatility for the weighted blend baseline.</p>
 
-Predictions follow the diagonal but with significant scatter. Learning weights from data should help.
+Predictions follow the diagonal but with significant scatter. Can we do better by learning the weights from data?
 
 #### Step 2: Per-Asset Regression
 
-First attempt: fit a separate model for each stock. Each asset gets its own coefficients estimated on its own 2-year history.
+My first attempt: fit a separate model for each stock, estimating coefficients on its own 2-year history.
 
 | Model | Correlation | RMSE |
 |-------|-------------|------|
@@ -396,11 +392,11 @@ First attempt: fit a separate model for each stock. Each asset gets its own coef
 
 <p class="table-caption"><strong>Table 3:</strong> Baselines and per-asset regression comparison.</p>
 
-Per-asset regressions underperform the composite baseline. With only ~500 observations per stock, coefficients are noisy. More sophisticated isn't always better.
+Surprisingly, per-asset regressions underperform the composite baseline. With only ~500 observations per stock, the coefficients are too noisy. More sophisticated isn't always better.
 
 #### Step 3: Pooling Across Stocks
 
-What if volatility dynamics are shared across assets? I test pooled models:
+What if volatility dynamics are shared across assets? Mean reversion, clustering, and leverage effects should look similar for all stocks, even if their levels differ. I test pooled models:
 
 | Model | Correlation | RMSE |
 |-------|-------------|------|
@@ -410,18 +406,18 @@ What if volatility dynamics are shared across assets? I test pooled models:
 
 <p class="table-caption"><strong>Table 4:</strong> Impact of pooling across stocks.</p>
 
-Pooling helps: correlations rise to ~0.71-0.72. Per-sector and global results are the same. Sector dummies don't add much.
+This is the first real improvement: correlations rise to ~0.71-0.72. Per-sector and global results are essentially identical. I expected sector dummies to help more, but they don't add much here.
 
 Here's what the pooled linear model looks like compared to the baseline:
 
 ![Figure 5](/assets/vol_forecasting/residuals_best.png)  
 <p class="figure-caption"><strong>Figure 5:</strong> Predicted vs actual volatility for the global + dummies model.</p>
 
-Predictions are much tighter around the diagonal.
+Predictions are much tighter around the diagonal. The improvement is visible.
 
 #### Step 4: Log-Space and Macro Factors
 
-Does log-transforming or adding macro factors help?
+The target is right-skewed, so log-transforming might help. I also test whether market-level volatility factors add signal:
 
 | Model | Correlation | RMSE |
 |-------|-------------|------|
@@ -429,7 +425,7 @@ Does log-transforming or adding macro factors help?
 | + market vol factor | 0.716 | 0.179 |
 | + group risk factor | 0.722 | 0.178 |
 
-Log-space gives a small edge. The group risk factor adds a tiny improvement. For simplicity I stick with log-space + dummies.
+Log-space gives a small but consistent edge. The group risk factor (sector-level volatility relative to its long-run average) adds a tiny improvement. For simplicity, I stick with log-space + dummies.
 
 #### Summary
 
@@ -452,18 +448,18 @@ Log-space gives a small edge. The group risk factor adds a tiny improvement. For
 
 <p class="table-caption"><strong>Table 5:</strong> Model development progression summary.</p>
 
-Per-asset regressions are too noisy. Pooling helps. Log-space gives a slight edge.
+The pattern is clear: per-asset regressions are too noisy, but pooling across assets gives consistent gains. Log-space adds a slight edge on top.
 
 #### Robustness & Validation
 
 ##### Window Sensitivity
 
-How sensitive are results to window size?
+I swept rolling windows from 6 months to 10 years. How sensitive are results to this choice?
 
 ![Figure 7](/assets/vol_forecasting/window_trends.png)  
 <p class="figure-caption"><strong>Figure 7:</strong> Model performance across different rolling window sizes (252 to 2520 days).</p>
 
-Longer windows help slightly. Correlation rises from 0.712 (252 days) to 0.728 (2048 days). I use 504 days.
+Longer windows help slightly. Correlation rises from 0.712 (252 days) to 0.728 (2048 days). I use 504 days as a balance between stability and responsiveness.
 
 ##### Regime Robustness
 
@@ -485,9 +481,9 @@ A few observations:
 <iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
 <p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
 
-Long-horizon vol (126d, 63d) carries most signal. Short-horizon vol (5d) often flips negative (mean-reversion). Market cap is negative as expected.
+The heatmap shows which inputs consistently matter. Long-horizon vol (126d, 63d) carries most of the signal. Short-horizon vol (5d) often flips negative, which I read as mean-reversion. Market cap is negative as expected.
 
-Most important features:
+Key takeaways:
 
 1. 126-day vol (~0.5): Strongest positive predictor. Long-term vol acts as the mean-reversion anchor.
 2. 63-day vol (~0.3): Second strongest. Bridges short-term noise and long-term structure.
@@ -518,15 +514,15 @@ The final model: global Ridge regression in log space with sector dummies and a 
 
 <p class="table-caption"><strong>Table 6:</strong> Final model specification.</p>
 
-Key insight: volatility dynamics are shared across assets. Per-asset models waste data. Global and per-sector models perform identically.
+The key insight is that volatility dynamics are shared across assets. Per-asset models waste data chasing idiosyncratic noise. Global and per-sector models perform almost identically, which suggests the shared structure dominates.
 
-This lines up with the global evidence in [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157) and AQR’s [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility), both of which emphasize shared structure and the benefits of panel-style risk forecasting.
+This aligns with [How Global is Predictability?](https://ssrn.com/abstract=4620157) and AQR's [Risk Everywhere](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility), both emphasizing shared structure and panel-style forecasting.
 
-The best pooled models lift forecast correlation from ~0.70 to ~0.72. That's real signal. But in this strategy, it doesn't translate to better portfolio performance. We likely need more informative features to move the needle.
+The best pooled models lift forecast correlation from ~0.70 to ~0.72. That's real signal. But honestly, in this strategy it doesn't translate to better portfolio performance. I was hoping for more. We likely need richer features to move the needle.
 
 ## What's Next
 
-Next: test these forecasts inside the position-sizing pipeline. I also want to add event-timing features (days to earnings) and explore richer feature sets.
+The next step is to test these forecasts inside the position-sizing pipeline and measure the actual impact on portfolio performance. That's the experiment that really matters.
 
-Related reading: [How Global is Predictability?](https://ssrn.com/abstract=4620157); [Risk Everywhere](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility).
+After that, I want to explore event-timing features (especially days to earnings) and richer feature sets that might capture non-linearities the linear model misses.
 
