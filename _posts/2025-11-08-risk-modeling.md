@@ -7,7 +7,7 @@ categories: [Quants]
 
 ## Introduction
 
-I've been using simple rolling averages to forecast volatility for a while now. They work fine, but I always wondered if I was leaving money on the table.
+I've been using simple rolling averages to forecast volatility for a while now. They work fine, but I always wondered if there was room to do better.
 
 Here's the context: I scale positions by predicted volatility, putting smaller positions in volatile stocks and larger positions in stable ones. This keeps portfolio risk roughly constant. The problem is that simple rolling averages ignore a lot of structure in how volatility actually behaves: mean reversion, clustering, sector effects, and the leverage effect all contain signal that simple averages miss.
 
@@ -41,7 +41,7 @@ The volatility forecast $\hat{\sigma}_i$ is currently estimated with simple movi
 
 ### The Perfect Foresight Experiment
 
-To quantify the potential, I run a backtest with perfect foresight. A thought experiment, but it tells me how much is on the table.
+To quantify the potential, I run a backtest with perfect foresight. A thought experiment, but it shows how much improvement is possible.
 
 Three scenarios are tested:
 - **Current:** Rolling volatility estimates (baseline method)
@@ -421,6 +421,8 @@ The target is right-skewed, so log-transforming might help. I also test whether 
 | + market vol factor | 0.716 | 0.179 |
 | + group risk factor | 0.722 | 0.178 |
 
+<p class="table-caption"><strong>Table 5:</strong> Log-space and macro factor variants.</p>
+
 Log-space gives a small but consistent edge. The group risk factor (sector-level volatility relative to its long-run average) adds a tiny improvement. For simplicity, I stick with log-space + dummies.
 
 #### Summary
@@ -444,7 +446,7 @@ Stepping back, here's the full progression:
 | +Log-space | Global + log dummies | 0.720 | 0.178 |
 | +Risk factors | Global + log dummies + GRF | 0.722 | 0.178 |
 
-<p class="table-caption"><strong>Table 5:</strong> Model development progression summary.</p>
+<p class="table-caption"><strong>Table 6:</strong> Model development progression summary.</p>
 
 The pattern is clear: fitting a model per asset doesn't work because the coefficients are too noisy. Pooling across assets is where the gains come from. Log-space adds a small edge on top, and macro factors contribute only marginally.
 
@@ -512,7 +514,7 @@ So what did I end up with? A global Ridge regression in log space with sector du
 | Pooling | Global (all assets) |
 | Implementation | polars-ols for fast rolling regressions |
 
-<p class="table-caption"><strong>Table 6:</strong> Final model specification.</p>
+<p class="table-caption"><strong>Table 7:</strong> Final model specification.</p>
 
 The key insight is that volatility dynamics are shared across assets. Per-asset models waste data chasing idiosyncratic noise. Global and per-sector models perform almost identically, which suggests the shared structure dominates.
 
