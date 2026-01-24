@@ -7,8 +7,6 @@ categories: [Quants]
 
 ## Introduction
 
-
-
 I have been forecasting volatility with simple rolling averages, and honestly, they work surprisingly well. I was pretty convinced that anything more sophisticated wouldn't be worth the complexity.
 
 Then a colleague challenged me. He'd been working on volatility forecasting for futures and found real improvements over rolling averages. It got me thinking: could the same be true for equities?
@@ -155,11 +153,7 @@ The long leg is where the magic happens: about 3% more return, the Sharpe nearly
 
 So perfect foresight on the long leg would take the Sharpe from 1.77 to 2.41, a 36% improvement. Obviously we can't achieve perfect foresight, but this tells me the ceiling is high enough to justify spending time on better forecasting methods.
 
-The rest of this post explores whether I can get any closer to that ceiling. I'll compare:
-- **Baselines:** simple moving averages (what I currently use)
-- **Per-asset regressions:** fitting a separate model for each stock
-- **Global + sector dummies:** pooling across stocks, with sector-level adjustments
-- **LightGBM:** a tree-based model on the same features
+The rest of this post explores whether I can get any closer to that ceiling. I compare simple baselines, per-asset regressions, and global pooled models to see what works.
 
 ## Data & Exploration
 
@@ -184,17 +178,15 @@ With that context, let me walk through the features I use.
 
 ## Feature Engineering
 
-The features are straightforward. For each stock, I compute:
+For each stock, I compute:
 
-**Rolling volatility** at multiple horizons (5, 21, 63, 126 days):
+**Rolling volatility** at multiple horizons (5, 21, 63, 126 days) to capture volatility clustering:
 
 $$
 \hat{\sigma}_{i,t}^{(w)} = \sqrt{\frac{252}{w} \sum_{k=0}^{w-1} r_{i,t-k}^2}
 $$
 
-Volatility clusters, so recent vol is the strongest predictor of near-term vol. The mid-horizon measures (21-63d) turn out to be most informative; 5-day is notably weaker.
-
-**Upside and downside volatility** over 21 days, to capture the leverage effect (down moves increase vol more than equivalent up moves):
+**Upside and downside volatility** over 21 days to capture the leverage effect:
 
 $$
 \hat{\sigma}_{i,t}^{\text{down}} = \sqrt{\frac{252}{21} \sum_{k=0}^{20} r_{i,t-k}^2 \cdot \mathbf{1}_{r_{i,t-k} < 0}}
@@ -204,11 +196,9 @@ $$
 \hat{\sigma}_{i,t}^{\text{up}} = \sqrt{\frac{252}{21} \sum_{k=0}^{20} r_{i,t-k}^2 \cdot \mathbf{1}_{r_{i,t-k} \geq 0}}
 $$
 
-Could have computed this for multiple windows like the regular vol, but kept it simple for now.
+**Sector dummies** to capture sector-level differences in volatility.
 
-**Sector dummies** to capture level differences across sectors.
-
-**Log market cap** since smaller firms tend to be more volatile.
+**Log market cap** to capture the size effect.
 
 For preprocessing, I clip features and target to [2.5%, 200%] to limit outlier impact, and create log-transformed versions to test whether log-space modeling helps.
 
@@ -283,7 +273,19 @@ Now for the part I was most curious about: do these methods actually improve for
 
 ### Baselines
 
-I start with the simple approaches I'd reach for if I wanted something fast and robust: 5-day, 21-day, and 63-day rolling volatility, plus a composite average and a weighted blend. The 21-day and 63-day measures are what I currently use in production, so they're the benchmarks to beat. They reach correlations around 0.67-0.69.
+I start with the simple approaches I'd reach for if I wanted something fast and robust: rolling volatility at different horizons, plus some combinations.
+
+| Model | Correlation | RMSE |
+|-------|-------------|------|
+| Simple vol-5 | 0.591 | 0.235 |
+| Simple vol-21 | 0.672 | 0.199 |
+| Simple vol-63 | 0.689 | 0.190 |
+| Composite average | 0.697 | 0.189 |
+| Weighted blend | 0.676 | 0.184 |
+
+<p class="table-caption"><strong>Table 3:</strong> Baseline forecast performance.</p>
+
+The 21-day and 63-day measures are what I currently use in production, so they're the benchmarks to beat. Longer horizons tend to do better (63-day hits 0.69 vs 0.59 for 5-day), which makes sense since they smooth out noise. The composite average, which just equally weights 5, 21, and 63-day vol, edges out everything else.
 
 ![Figure 4](/assets/vol_forecasting/residuals_baseline.png)  
 <p class="figure-caption"><strong>Figure 4:</strong> Predicted vs actual volatility for the weighted blend baseline.</p>
@@ -292,22 +294,51 @@ Predictions follow the diagonal but with significant scatter. Can we do better b
 
 ### Per-Asset vs Pooled Models
 
-My first attempt was to fit a separate model for each stock, estimating coefficients on its own 2-year history. Surprisingly, this underperforms the simple composite baseline (0.661 vs 0.697 correlation).
+My first attempt was to fit a separate model for each stock, estimating coefficients on its own 2-year history.
 
-This is the bias-variance tradeoff at work. Per-asset models have low bias: they fit each stock's own history well. But with only ~500 observations per stock, they have higher variance: the coefficients are noisier, which can hurt out-of-sample performance.
+| Model | Correlation | RMSE |
+|-------|-------------|------|
+| Composite average (baseline) | 0.697 | 0.189 |
+| Per-asset regression | 0.661 | 0.191 |
 
-Pooling across assets flips this tradeoff. Global models have slightly higher bias (they assume all stocks share the same dynamics), but much lower variance (millions of observations to estimate a handful of coefficients). The variance reduction dominates. Correlations jump to ~0.715.
+<p class="table-caption"><strong>Table 4:</strong> Per-asset regression vs baseline.</p>
 
-Interestingly, per-sector and global pooling perform almost identically. Even sector-level dynamics aren't different enough to justify separate estimation. Volatility behavior is remarkably universal.
+The per-asset regression actually underperforms the simple composite baseline. This is the bias-variance tradeoff at work. Per-asset models have low bias: they fit each stock's own history well. But with only ~500 observations per stock, they have higher variance: the coefficients are noisier, which can hurt out-of-sample performance.
+
+Pooling across assets flips this tradeoff:
+
+| Model | Correlation | RMSE |
+|-------|-------------|------|
+| Per-asset regression | 0.661 | 0.191 |
+| Per-sector pooling | 0.715 | 0.178 |
+| Global pooling | 0.715 | 0.178 |
+| Global + sector dummies | 0.714 | 0.178 |
+
+<p class="table-caption"><strong>Table 5:</strong> Impact of pooling across stocks.</p>
+
+Global models have slightly higher bias (they assume all stocks share the same dynamics), but much lower variance (millions of observations to estimate a handful of coefficients). The variance reduction dominates. Correlations jump from 0.66 to 0.715.
+
+Interestingly, per-sector and global pooling perform almost identically. Even sector-level dynamics don't seem different enough to justify separate estimation. Volatility behavior appears largely universal.
 
 ![Figure 5](/assets/vol_forecasting/residuals_best.png)  
 <p class="figure-caption"><strong>Figure 5:</strong> Predicted vs actual volatility for the global pooled model.</p>
 
-Predictions cluster closer to the diagonal, but there's still a pattern: the model underpredicts when actual volatility is high. Linear models trained on mostly normal observations systematically undershoot extremes. This is exactly when accurate forecasts matter most for position sizing.
+Predictions cluster closer to the diagonal, but there's still a pattern: the model tends to underpredict when actual volatility is high. Linear models trained on mostly normal observations tend to undershoot extremes. This might be exactly when accurate forecasts matter most for position sizing, though that's worth testing explicitly.
 
 ### Log-Space and Macro Factors
 
-Since the target is right-skewed, I tested log-transforming both features and target. This gives a small but consistent edge (correlation up to 0.720). I also tried adding market-level volatility factors, but they contribute only marginally. For simplicity, I stick with log-space + sector dummies.
+Since the target is right-skewed, I tested log-transforming both features and target.
+
+| Model | Correlation | RMSE |
+|-------|-------------|------|
+| Global + sector dummies | 0.714 | 0.178 |
+| Global + log dummies | 0.720 | 0.178 |
+| + market vol factor | 0.716 | 0.179 |
+| + group risk factor | 0.722 | 0.178 |
+
+<p class="table-caption"><strong>Table 6:</strong> Log-space and macro factor variants.</p>
+
+Log-space gives a small but consistent edge (0.714 → 0.720). I also tried adding market-level volatility factors, but they contribute only marginally. The group risk factor (sector-level vol relative to its long-run average) adds a tiny improvement. For simplicity, I stick with log-space + sector dummies.
 
 ### Summary
 
@@ -316,13 +347,13 @@ Here's the full progression:
 ![Figure 6](/assets/vol_forecasting/metrics_comparison.png)  
 <p class="figure-caption"><strong>Figure 6:</strong> Comparison of all model variants (correlation and RMSE).</p>
 
-The pattern is clear: fitting a model per asset doesn't work because the coefficients are too noisy. Pooling across assets is where the gains come from (0.70 → 0.72). Log-space adds a small edge, macro factors barely move the needle.
+The pattern is clear: fitting a model per asset underperforms because the coefficients are noisier. Pooling across assets is where the gains come from (0.66 → 0.72). Log-space adds a small edge on top, macro factors barely move the needle.
 
 ### Robustness Checks
 
 Before settling on a final model, I wanted to sanity-check how sensitive these results are to my choices.
 
-On window size: I swept from 6 months to 10 years. Longer windows help slightly (correlation rises from 0.712 to 0.728), but I use 504 days as a balance between stability and responsiveness.
+On window size: I swept from 1 year to 10 years. Longer windows help slightly (correlation rises from 0.712 to 0.728), but I use 504 days as a balance between stability and responsiveness.
 
 ![Figure 7](/assets/vol_forecasting/window_trends.png)  
 <p class="figure-caption"><strong>Figure 7:</strong> Model performance across different rolling window sizes (252 to 2520 days).</p>
@@ -349,18 +380,7 @@ The asymmetric features (downside/upside vol) have small coefficients. The lever
 
 So what did I end up with? A global Ridge regression in log space with sector dummies and a 2-year rolling window. It's a pragmatic choice: simple, stable, and close to the best forecasting performance I found.
 
-| Component | Choice |
-|-----------|--------|
-| Target | log 21-day realized vol (converted back for evaluation) |
-| Features | Rolling vol (5/21/63/126d), downside/upside vol, log market cap, sector dummies (log-transformed) |
-| Model | Ridge regression (α=1) |
-| Estimation | 2-year rolling window |
-| Pooling | Global (all assets) |
-| Implementation | polars-ols for fast rolling regressions |
-
-<p class="table-caption"><strong>Table 7:</strong> Final model specification.</p>
-
-The key insight is about the bias-variance tradeoff. Per-asset models overfit: low bias, high variance. They fit their own history well but don't generalize. Global models flip this: slightly higher bias (assuming shared dynamics), but much lower variance. With volatility, the variance reduction dominates because the underlying dynamics really are universal across stocks.
+The key insight is about the bias-variance tradeoff. Per-asset models have low bias but high variance: they fit their own history well, but with limited data the coefficients are noisy. Global models flip this: slightly higher bias (assuming shared dynamics), but much lower variance. With volatility, the variance reduction dominates because the underlying dynamics appear largely shared across stocks.
 
 This aligns with [How Global is Predictability?](https://ssrn.com/abstract=4620157) and AQR's [Risk Everywhere](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility), both emphasizing shared structure and panel-style forecasting.
 
