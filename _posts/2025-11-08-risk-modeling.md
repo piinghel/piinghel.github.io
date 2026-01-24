@@ -370,11 +370,13 @@ One nice thing about linear models is you can actually see what they're doing. T
 <iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
 <p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
 
-Long-horizon vol (126d, 63d) carries most of the weight, which makes sense since it acts as the mean-reversion anchor. The 5-day vol coefficient is often negative, which surprised me at first, but it's mean-reversion in action: when short-term vol spikes above long-term, the model predicts it will come down. Log market cap is negative as expected (smaller firms are more volatile).
+The pattern across volatility horizons is interesting. Most features have positive coefficients (orange in the heatmap): 5-day, 63-day, 126-day vol, plus both downside and upside volatility. The only negative coefficients (blue) are the 21-day measures: regular 21-day vol and EWM 21-day vol.
 
-The sector dummies tell their own story. Energy shows a huge spike in 2020 (COVID oil crash, negative prices) and elevated coefficients during 2008 and 2014-2016. Financials spike in 2008-2009 during the GFC. Technology was elevated in the early 2000s (dot-com bust) but moderate since. Utilities stay consistently low: defensive stocks live up to their reputation.
+This suggests the model is learning a particular weighting: lean on the very short-term (5d) and longer-term (63d, 126d) vol, while the 21-day horizon gets a negative weight. The asymmetric features (downside and upside vol) both contribute positively.
 
-The asymmetric features (downside/upside vol) have small coefficients. The leverage effect is present but subtle. Most of the asymmetry seems already captured by the level dynamics.
+Log market cap is slightly negative, as expected: smaller firms tend to be more volatile.
+
+The sector dummies show clear time-varying patterns. Utilities stay consistently positive. Technology spiked around 2000 (dot-com). Real Estate shows elevated coefficients through much of the sample. Energy shows spikes during oil-related stress periods. Financials elevated during 2008-2009.
 
 ## Conclusion
 
