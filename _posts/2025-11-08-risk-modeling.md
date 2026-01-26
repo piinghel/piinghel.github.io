@@ -43,7 +43,7 @@ I also enforce a 5% max per stock. Currently, I estimate volatility with simple 
 Before diving into models, I wanted to know: how much could better volatility forecasts actually help? To find out, I run a backtest where I cheat, using the actual realized volatility that we'd only know in hindsight.
 
 I test three scenarios:
-- **Current:** Rolling volatility estimates (my baseline)
+- **Current:** 20-day rolling vol for longs, 60-day for shorts (my production baseline)
 - **Perfect Long:** Perfect foresight on the long leg only
 - **Perfect:** Perfect foresight on both legs
 
@@ -206,9 +206,9 @@ For preprocessing, I clip features and target to [2.5%, 200%] to limit outlier i
 
 With features in place, the next question is how to estimate the model. The target is 21-day realized volatility (annualized). I filter to Russell 1000 constituents, drop rows with >75% missing features, and impute the rest using sector means.
 
-The key design choice is strict walk-forward testing. For each date, I estimate coefficients using only the past 504 days (2 years), then predict on today's features. No lookahead. For global models, I refit every 25 days to keep computation time and memory manageable.
+I use a simple walk-forward setup. For each date, I fit on the past 504 days (2 years) and predict on today. For global models, I refit every 25 days to keep computation time and memory manageable.
 
-I use Ridge regression rather than OLS because the volatility features are highly correlated (~0.8+), which makes OLS coefficients unstable. Ridge adds an L2 penalty that keeps things well-behaved. I set \\(\alpha = 1\\); other values don't change the conclusions much.
+I use Ridge regression rather than OLS because the volatility features are highly correlated (~0.8+), which makes OLS coefficients unstable. Ridge adds an L2 penalty that keeps things well-behaved. I set \\(\alpha = 1\\) and tested other values; the conclusions don't really change.
 
 ### Implementation with polars-ols
 
@@ -269,7 +269,7 @@ The `.shift(25)` ensures predictions are out-of-sample.
 
 ## Results
 
-Now for the part I was most curious about: do these methods actually improve forecasts?
+This is the part I was most curious about: do any of these methods actually improve forecasts? I'll start with simple baselines and then move up the complexity ladder.
 
 ### Baselines
 
@@ -285,7 +285,7 @@ I start with the simple approaches I'd reach for if I wanted something fast and 
 
 <p class="table-caption"><strong>Table 3:</strong> Baseline forecast performance.</p>
 
-The 21-day and 63-day measures are what I currently use in production, so they're the benchmarks to beat. Longer horizons tend to do better (63-day hits 0.69 vs 0.59 for 5-day), which makes sense since they smooth out noise. The composite average, which just equally weights 5, 21, and 63-day vol, edges out everything else.
+The 21-day and 63-day measures are what I currently use in production (20-day for longs, 60-day for shorts, which are close to these horizons), so they're the benchmarks to beat. Longer horizons tend to do better (63-day hits 0.69 vs 0.59 for 5-day), which makes sense since they smooth out noise. The composite average, which equally weights 5, 21, and 63-day vol, achieves the highest correlation (0.697). The weighted blend has slightly lower RMSE (0.184 vs 0.189) but lower correlation (0.676), so I use correlation as the primary metric since it better captures directional accuracy for position sizing.
 
 ![Figure 4](/assets/vol_forecasting/residuals_baseline.png)  
 <p class="figure-caption"><strong>Figure 4:</strong> Predicted vs actual volatility for the weighted blend baseline.</p>
@@ -349,52 +349,57 @@ Here's the full progression:
 
 The pattern is clear: fitting a model per asset underperforms because the coefficients are noisier. Pooling across assets is where the gains come from (0.66 → 0.72). Log-space adds a small edge on top, macro factors barely move the needle.
 
+**Note:** The next step is to test whether these forecast improvements (correlation 0.66 → 0.72) actually translate to better portfolio performance in the backtest. That analysis is on my todo list and will show whether the gains carry through to Sharpe, returns, and drawdowns.
+
 ### Robustness Checks
 
 Before settling on a final model, I wanted to sanity-check how sensitive these results are to my choices.
 
-On window size: I swept from 1 year to 10 years. Longer windows help slightly (correlation rises from 0.712 to 0.728), but I use 504 days as a balance between stability and responsiveness.
+On window size: I swept from 1 year to 10 years. Longer windows help slightly (correlation rises from 0.712 to 0.728), but I stick with 504 days mainly to keep things simple and fast.
 
-![Figure 7](/assets/vol_forecasting/window_trends.png)  
+![Figure 7](/assets/vol_forecasting/window_sensitivity.png)  
 <p class="figure-caption"><strong>Figure 7:</strong> Model performance across different rolling window sizes (252 to 2520 days).</p>
 
-On regime robustness: do models hold up when volatility spikes? Interestingly, all models improve in high-vol regimes. When vol is elevated, it's more persistent and easier to predict. During calm periods, everything compresses and becomes harder to differentiate. The pooled model maintains its edge across all regimes.
+On update frequency: I tested how often to refit the global model, from daily to every 100 days. More frequent updates help slightly, but the gains are modest. Refitting every 25 days strikes a good balance between performance and computational cost.
 
-![Figure 8](/assets/vol_forecasting/regime_analysis.png)  
-<p class="figure-caption"><strong>Figure 8:</strong> Correlation by market volatility regime: low (&lt;20%), neutral (20-30%), high (&gt;30%).</p>
+![Figure 8](/assets/vol_forecasting/update_frequency_sensitivity.png)  
+<p class="figure-caption"><strong>Figure 8:</strong> Model performance across different refit frequencies (1 to 100 days).</p>
+
+On regime robustness: the pattern is clearer once you look at the chart. In low and neutral regimes, the pooled models (global + dummies / log variants) sit at the top. In high-vol regimes, the simple baselines actually lead, with the composite average and weighted blend at the top. So complexity helps most in calm markets, but the simple rules win when vol is already elevated.
+
+![Figure 9](/assets/vol_forecasting/regime_analysis.png)  
+<p class="figure-caption"><strong>Figure 9:</strong> Correlation by market volatility regime: low (&lt;20%), neutral (20-30%), high (&gt;30%).</p>
 
 ### What the Coefficients Tell Us
 
 One nice thing about linear models is you can actually see what they're doing. The heatmap below shows how the coefficients evolve over time:
 
-<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 9" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
-<p class="figure-caption"><strong>Figure 9:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
+<iframe src="/assets/vol_forecasting/coefficient_heatmap.html" title="Figure 10" style="width: 100%; max-width: 1100px; height: 520px; border: 0; display: block; margin: 2rem auto;"></iframe>
+<p class="figure-caption"><strong>Figure 10:</strong> Rolling regression coefficients over time. Red = predicts higher vol, blue = predicts lower vol.</p>
 
-The pattern across volatility horizons is interesting. Most features have positive coefficients (orange in the heatmap): 5-day, 63-day, 126-day vol, plus both downside and upside volatility. The only negative coefficients (blue) are the 21-day measures: regular 21-day vol and EWM 21-day vol.
+Here's what I see. These coefficients are in log space, so interpret them as elasticities rather than level effects.
 
-This suggests the model is learning a particular weighting: lean on the very short-term (5d) and longer-term (63d, 126d) vol, while the 21-day horizon gets a negative weight. The asymmetric features (downside and upside vol) both contribute positively.
+Most volatility features are positive: 5-day, 63-day, 126-day, and both upside and downside volatility are orange. The only consistently negative ones are the 21-day measures (regular 21-day vol and EWM 21-day vol), which show up as blue. My reading is that the model leans on very short-term and longer-term vol, while the 21-day horizon acts as a correction once those are included.
 
-Log market cap is slightly negative, as expected: smaller firms tend to be more volatile.
+Both downside and upside volatility are positive, with downside a bit stronger. That lines up with the intuition that negative moves carry more information about future risk, but upside still matters.
 
-The sector dummies show clear time-varying patterns. Utilities stay consistently positive. Technology spiked around 2000 (dot-com). Real Estate shows elevated coefficients through much of the sample. Energy shows spikes during oil-related stress periods. Financials elevated during 2008-2009.
+Market cap is close to white but slightly negative, which is a mild size effect rather than a dominant signal.
+
+Sector dummies are mostly blue (negative) with occasional positive spikes. Utilities are consistently negative, which fits the safe-haven intuition. Tech spikes around 2000 (dot-com). Energy turns light red from roughly 2015 through 2022. There's also a strong positive spike in the "unknown" category, which likely captures firms that later went bankrupt or were delisted. Most of the time sector effects are small, but they light up during specific regimes.
 
 ## Conclusion
 
-So what did I end up with? A global Ridge regression in log space with sector dummies and a 2-year rolling window. It's a pragmatic choice: simple, stable, and close to the best forecasting performance I found.
+If I had to sum it up: pooling beats per-asset models, log-space adds a small edge, and the simple baselines still hold up, especially when volatility is high. It’s a good reminder that more complexity doesn’t always help.
 
-The key insight is about the bias-variance tradeoff. Per-asset models have low bias but high variance: they fit their own history well, but with limited data the coefficients are noisy. Global models flip this: slightly higher bias (assuming shared dynamics), but much lower variance. With volatility, the variance reduction dominates because the underlying dynamics appear largely shared across stocks.
+For now, the model I’d actually use is a global Ridge regression in log space with sector dummies and a 2-year rolling window. It’s stable, fast, and close to the best forecasting performance I can get from these features.
 
-This aligns with [How Global is Predictability?](https://ssrn.com/abstract=4620157) and AQR's [Risk Everywhere](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility), both emphasizing shared structure and panel-style forecasting.
+The bigger takeaway is about structure. Volatility dynamics look remarkably shared across assets, which is why pooling helps so much. That lines up with [How Global is Predictability?](https://ssrn.com/abstract=4620157) and AQR’s [Risk Everywhere](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility).
 
-The best pooled models lift forecast correlation from ~0.70 to ~0.72. That's real signal, though the question remains whether it translates to better portfolio performance.
+## What’s Next
 
-With a simple linear model, we've likely squeezed out most of what we can from these features. To go further, we probably need more complexity: richer feature sets that capture non-linearities, event-driven dynamics, or regime shifts. The pooling insight tells us we have enough data to support more complex models without overfitting. The question is whether the additional signal is there to find.
+The next step is to plug these forecasts into the position-sizing pipeline and see what they do for actual portfolio performance. That’s the real test.
 
-## What's Next
-
-The next step is to test these forecasts inside the position-sizing pipeline and measure the actual impact on portfolio performance. That's the experiment that really matters.
-
-Beyond that, the bias-variance analysis points the way forward. We have enough data to support more complex models. The question is what features to add. Event-timing (days to earnings) seems promising since these are known volatility catalysts that simple rolling measures miss. Regime features might help the model adapt its predictions to different market environments. And non-linear models could capture the fat tails that linear regression systematically undershoots.
+If the improvements don’t carry through, then the path forward is probably richer features rather than just tweaking the same linear setup. There are lots of obvious directions: more windows, price and technical features, skewness and higher moments, or other market-state variables. I kept it intentionally simple this time. Event timing (like days to earnings) and regime indicators feel like the most promising additions. Non-linear models might help too, but only if the features actually contain the signal.
 
 ## References
 
