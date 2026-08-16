@@ -26,4 +26,160 @@
     box-shadow: none !important;
     background: transparent !important;
   }
-  
+
+/* Wide, responsive research figures used by the low-volatility article. */
+.post-content .low-vol-figure {
+  display: block;
+  width: min(1100px, calc(100vw - 3rem));
+  max-width: none;
+  margin: 2.5rem 50% 0.5rem;
+  transform: translateX(-50%);
+  text-decoration: none;
+}
+
+.post-content .low-vol-figure picture {
+  display: block;
+}
+
+.post-content .low-vol-figure img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  margin: 0;
+}
+
+/* Research tables wrap on desktop and become labelled cards on mobile. */
+.post-content table.research-table {
+  display: table;
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+  overflow: visible;
+}
+
+.post-content table.research-table th,
+.post-content table.research-table td {
+  padding: 0.7rem 0.6rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+
+.post-content table.specification-table th[scope="row"] {
+  width: 27%;
+}
+
+.post-content table.performance-table th:first-child {
+  width: 31%;
+}
+
+.post-content table.exposure-table th:first-child {
+  width: 39%;
+}
+
+.post-content table.comparison-table {
+  width: min(1100px, calc(100vw - 3rem));
+  max-width: none;
+  margin-right: 50%;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+/* MathJax keeps display equations inside the reading column. */
+.post-content mjx-container[display="true"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2rem 0;
+}
+
+@media (max-width: 768px) {
+  .post-content .low-vol-figure {
+    width: calc(100vw - 2rem);
+    margin-top: 2rem;
+  }
+
+  .post-content mjx-container[display="true"] {
+    font-size: 0.92em !important;
+  }
+
+  .post-content table.research-table,
+  .post-content table.research-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .post-content table.research-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .post-content table.comparison-table {
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+    transform: none;
+  }
+
+  .post-content table.research-table tr {
+    display: block;
+    margin: 0 0 1rem;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: #fff;
+  }
+
+  .post-content table.specification-table tr {
+    display: grid;
+    grid-template-columns: minmax(7rem, 34%) minmax(0, 1fr);
+  }
+
+  .post-content table.specification-table th[scope="row"],
+  .post-content table.specification-table td {
+    display: block;
+    width: auto;
+    border: 0;
+  }
+
+  .post-content table.specification-table th[scope="row"] {
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+
+  .post-content table.comparison-table tbody th[scope="row"] {
+    display: block;
+    width: auto;
+    padding: 0.8rem;
+    border: 0;
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+
+  .post-content table.comparison-table td {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    width: auto;
+    padding: 0.55rem 0.8rem;
+    border: 0;
+    border-top: 1px solid #eeeeee;
+    text-align: right;
+  }
+
+  .post-content table.comparison-table td::before {
+    content: attr(data-label);
+    color: #555;
+    font-weight: 500;
+    text-align: left;
+  }
+}
