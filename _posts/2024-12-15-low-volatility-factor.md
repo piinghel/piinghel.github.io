@@ -48,7 +48,7 @@ All three estimates use adjusted close-to-close price returns available through 
 
 I divide the ranked stocks into ten deterministic, approximately equal-sized groups. Decile 1 contains the lowest-volatility stocks and decile 10 the highest. The strategy trades only those extremes; the middle deciles show the broader cross-sectional shape.
 
-<div class="low-vol-figure">
+<div class="low-vol-figure decile-profile-figure">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png" alt="Geometric return, volatility, and Sharpe ratio across volatility deciles">
@@ -154,21 +154,28 @@ The equation has three components:
 2. $$0.20/\widehat{\sigma}_{i,t}^{(60)}$$ is the volatility multiplier. Before the cap, a stock with 10% estimated volatility receives twice its equal weight; a stock with 40% volatility receives half.
 3. The $$0.04$$ cap limits any stock to 4% of NAV.
 
-There is one more step. If the preliminary weights in a leg sum to more than 100%, I scale them down proportionally. If they sum to less than 100%, I leave them alone. Writing $$s_\ell=+1$$ for the long leg and $$s_\ell=-1$$ for the short leg, the final signed weight is
+There is one more step. If the preliminary weights in a leg sum to more than 100%, I scale them down proportionally. If they sum to less than 100%, I leave them alone. The leg-level cap multiplier is
 
 $$
-\begin{aligned}
 c_{\ell,t}
-&=\min\left(
+=\min\left(
 1,
 \left[\sum_{j\in\mathcal S_{\ell,t}}a_{j,\ell,t}\right]^{-1}
-\right), \\
-w_{i,t}
-&=s_\ell\,a_{i,\ell,t}\,c_{\ell,t}.
-\end{aligned}
+\right).
 $$
 
 Here $$c_{\ell,t}$$ is the leg-level gross-cap multiplier, and $$j$$ indexes the stocks in $$\mathcal S_{\ell,t}$$; the sum inside the inverse is that leg's preliminary gross weight.
+
+The final weight is positive for a stock in the long set and negative for one in the short set:
+
+$$
+w_{i,t}
+=
+\begin{cases}
++a_{i,L,t}\times c_{L,t}, & i\in\mathcal S_{L,t}, \\
+-a_{i,H,t}\times c_{H,t}, & i\in\mathcal S_{H,t}.
+\end{cases}
+$$
 
 The 100% leg limit acts only as a cap. If a basket contains very volatile stocks, the rule may assign 30% or 40% of NAV to that leg. Renormalizing it back to 100% would undo much of the intended reduction in high-volatility-leg notional.
 
