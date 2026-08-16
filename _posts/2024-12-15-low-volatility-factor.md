@@ -154,17 +154,18 @@ The equation has three components:
 2. $$0.20/\widehat{\sigma}_{i,t}^{(60)}$$ is the volatility multiplier. Before the cap, a stock with 10% estimated volatility receives twice its equal weight; a stock with 40% volatility receives half.
 3. The $$0.04$$ cap limits any stock to 4% of NAV.
 
-There is one more step. If the preliminary weights in a leg sum to more than 100%, I scale them down proportionally. If they sum to less than 100%, I leave them alone. The leg-level cap multiplier is
+There is one more step. If the preliminary weights in a leg sum to more than 100%, I scale them down proportionally. Otherwise, I leave them alone. Define the preliminary leg gross and cap multiplier as
 
 $$
+\begin{aligned}
+g_{\ell,t}^{\mathrm{pre}}
+&=\sum_{j\in\mathcal S_{\ell,t}}a_{j,\ell,t}, \\
 c_{\ell,t}
-=\min\left(
-1,
-\left[\sum_{j\in\mathcal S_{\ell,t}}a_{j,\ell,t}\right]^{-1}
-\right).
+&=\min\left(1,\frac{1}{g_{\ell,t}^{\mathrm{pre}}}\right).
+\end{aligned}
 $$
 
-Here $$c_{\ell,t}$$ is the leg-level gross-cap multiplier, and $$j$$ indexes the stocks in $$\mathcal S_{\ell,t}$$; the sum inside the inverse is that leg's preliminary gross weight.
+Here $$g_{\ell,t}^{\mathrm{pre}}$$ is the leg's preliminary gross weight and $$j$$ indexes its stocks. The multiplier $$c_{\ell,t}$$ equals one unless preliminary gross exceeds one.
 
 The final weight is positive for a stock in the long set and negative for one in the short set:
 
