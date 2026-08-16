@@ -30,7 +30,7 @@
 /* Wide, responsive research figures used by the low-volatility article. */
 .post-content .low-vol-figure {
   display: block;
-  width: min(1780px, calc(100vw - 2rem));
+  width: min(500px, calc(100vw - 2rem));
   max-width: none;
   margin: 2.5rem 50% 0.5rem;
   transform: translateX(-50%);
@@ -140,6 +140,11 @@
     width: 100%;
   }
 
+  .post-content table.comparison-table {
+    overflow: visible;
+    border: 0;
+  }
+
   .post-content table.research-table thead {
     position: absolute;
     width: 1px;
@@ -159,6 +164,10 @@
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     background: #fff;
+  }
+
+  .post-content table.research-table tr:last-child {
+    margin-bottom: 0;
   }
 
   .post-content table.specification-table tr {

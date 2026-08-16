@@ -142,11 +142,11 @@ I now replace equal stock weights with a simple inverse-volatility sizing rule. 
 
 For sizing, I use a separate 60-trading-day annualized volatility estimate, $$\widehat{\sigma}_{i,t}^{(60)}$$, floored at 5%. Keeping selection and sizing conceptually separate is useful: the 21/63/126-day average decides *which* stocks belong in the extreme portfolios, while the 60-day estimate decides *how much* of each selected stock to hold.
 
-For a leg $$\ell\in\{L,H\}$$, let $$\mathcal I_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal I_{\ell,t}\rvert$$. For stock $$i\in\mathcal I_{\ell,t}$$, the preliminary absolute weight is
+For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. For stock $$i\in\mathcal S_{\ell,t}$$, the preliminary absolute weight is
 
 $$
 \begin{aligned}
-a_{i,t}
+a_{i,\ell,t}
 &=\min\left(
 \frac{1}{N_{\ell,t}}
 \frac{20\%}{\widehat{\sigma}_{i,t}^{(60)}},
@@ -168,14 +168,14 @@ $$
 c_{\ell,t}
 &=\min\left(
 1,
-\frac{100\%}{\sum_{j\in\mathcal I_{\ell,t}}a_{j,t}}
+\frac{100\%}{\sum_{j\in\mathcal S_{\ell,t}}a_{j,\ell,t}}
 \right), \\
 w_{i,t}
-&=s_\ell a_{i,t}c_{\ell,t}.
+&=s_\ell a_{i,\ell,t}c_{\ell,t}.
 \end{aligned}
 $$
 
-Here $$c_{\ell,t}$$ is the leg-level gross-cap multiplier, and $$j$$ indexes the stocks in $$\mathcal I_{\ell,t}$$; the denominator is that leg's preliminary gross weight.
+Here $$c_{\ell,t}$$ is the leg-level gross-cap multiplier, and $$j$$ indexes the stocks in $$\mathcal S_{\ell,t}$$; the denominator is that leg's preliminary gross weight.
 
 The 100% leg limit acts only as a cap. If a basket contains very volatile stocks, the rule may assign 30% or 40% of NAV to that leg. Renormalizing it back to 100% would undo much of the intended reduction in high-volatility-leg notional.
 
@@ -200,10 +200,10 @@ Here $$\mathbf w_t$$ is the completed stock-weight vector, $$\widetilde{\mathbf 
 Allowing the short book to shrink creates positive net notional. This experiment prioritizes a reduction in standalone-risk asymmetry over a dollar-neutral mandate. A zero-net mandate would require a different constrained construction.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/target_exposures.png" aria-label="Open Figure 4 at full size">
+  <a href="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile.png" aria-label="Open Figure 4 at full size">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png" alt="Long gross, short gross, and net stock exposure through time" loading="lazy">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile_mobile.png">
+    <img src="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile.png" alt="Long gross, short gross, and net stock exposure through time" loading="lazy">
   </picture>
   </a>
 </div>
