@@ -142,15 +142,14 @@ I now replace equal stock weights with a simple inverse-volatility sizing rule. 
 
 For sizing, I use a separate 60-trading-day annualized volatility estimate, $$\widehat{\sigma}_{i,t}^{(60)}$$, floored at 5%. Keeping selection and sizing conceptually separate is useful: the 21/63/126-day average decides *which* stocks belong in the extreme portfolios, while the 60-day estimate decides *how much* of each selected stock to hold.
 
-For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. For stock $$i\in\mathcal S_{\ell,t}$$, the preliminary absolute weight is
+For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. Expressing volatility and weights as decimals, the preliminary absolute weight for stock $$i\in\mathcal S_{\ell,t}$$ is
 
 $$
 \begin{aligned}
 a_{i,\ell,t}
 &=\min\left(
-\frac{1}{N_{\ell,t}}
-\frac{20\%}{\widehat{\sigma}_{i,t}^{(60)}},
-\;4\%
+\frac{0.20}{N_{\ell,t}\widehat{\sigma}_{i,t}^{(60)}},
+\;0.04
 \right).
 \end{aligned}
 $$
@@ -158,8 +157,8 @@ $$
 The equation has three components:
 
 1. $$1/N_{\ell,t}$$ is the equal-weight starting point for a leg containing $$N_{\ell,t}$$ stocks.
-2. $$20\%/\widehat{\sigma}_{i,t}^{(60)}$$ is the volatility multiplier. Before the cap, a stock with 10% estimated volatility receives twice its equal weight; a stock with 40% volatility receives half.
-3. The 4% cap prevents an unusually low volatility estimate from creating a concentrated position.
+2. $$0.20/\widehat{\sigma}_{i,t}^{(60)}$$ is the volatility multiplier. Before the cap, a stock with 10% estimated volatility receives twice its equal weight; a stock with 40% volatility receives half.
+3. The $$0.04$$ cap limits any stock to 4% of NAV.
 
 There is one more step. If the preliminary weights in a leg sum to more than 100%, I scale them down proportionally. If they sum to less than 100%, I leave them alone. Writing $$s_\ell=+1$$ for the long leg and $$s_\ell=-1$$ for the short leg, the final signed weight is
 
@@ -168,14 +167,14 @@ $$
 c_{\ell,t}
 &=\min\left(
 1,
-\frac{100\%}{\sum_{j\in\mathcal S_{\ell,t}}a_{j,\ell,t}}
+\left[\sum_{j\in\mathcal S_{\ell,t}}a_{j,\ell,t}\right]^{-1}
 \right), \\
 w_{i,t}
-&=s_\ell a_{i,\ell,t}c_{\ell,t}.
+&=s_\ell\,a_{i,\ell,t}\,c_{\ell,t}.
 \end{aligned}
 $$
 
-Here $$c_{\ell,t}$$ is the leg-level gross-cap multiplier, and $$j$$ indexes the stocks in $$\mathcal S_{\ell,t}$$; the denominator is that leg's preliminary gross weight.
+Here $$c_{\ell,t}$$ is the leg-level gross-cap multiplier, and $$j$$ indexes the stocks in $$\mathcal S_{\ell,t}$$; the sum inside the inverse is that leg's preliminary gross weight.
 
 The 100% leg limit acts only as a cap. If a basket contains very volatile stocks, the rule may assign 30% or 40% of NAV to that leg. Renormalizing it back to 100% would undo much of the intended reduction in high-volatility-leg notional.
 
