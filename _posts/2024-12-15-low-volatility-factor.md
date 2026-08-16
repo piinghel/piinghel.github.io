@@ -2,23 +2,17 @@
 layout: post
 title: "The Low-Volatility Factor: Portfolio Construction Matters"
 date: 2024-12-15
-last_modified_at: 2026-08-16
+last_modified_at: 2026-08-17
 categories: [Quant]
 ---
 
-Low-risk equities have historically delivered stronger returns per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect across the US, Europe, and Japan. Related evidence finds a security market line that is too flat: total volatility and market beta are distinct but overlapping equity signals.
+Low-risk equities have historically delivered stronger returns per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect across the US, Europe, and Japan. One explanation is leverage constraints: investors seeking more market exposure per dollar may prefer high-beta securities to levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
 
-One explanation is leverage constraints. Investors who cannot lever a high-Sharpe, low-risk portfolio may instead buy high-beta securities for more market exposure per dollar. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
-
-This article asks a narrower implementation question: how does the same low-minus-high volatility signal change when equal stock weights are replaced by stock-level risk scaling? I compare a 100%-long, 100%-short dollar-neutral portfolio with a volatility-scaled version. Dollar neutrality is a valid constraint, but it does not imply beta neutrality or balanced standalone leg risk.
-
-The selection rule stays fixed. I change only position sizing, then compare notional, beta, turnover, drawdowns, and a small transaction-cost sensitivity. The aim is to separate the factor spread from the chosen risk budget.
+This article asks a narrower question: how should a simple low-minus-high volatility signal be translated into a portfolio? I hold stock selection fixed, show equal stock weights only as a reference, and use stock-level volatility scaling as the main implementation. The objective is a simple portfolio whose risks are deliberate and measurable.
 
 ## What exactly are we sorting?
 
-The sample starts in 1995 and ends in October 2024. At every weekly signal date, I take the most recent complete Russell 1000 constituent snapshot available in the dataset and map it to the trading calendar. This point-in-time universe step matters. Using today's members throughout the history would quietly remove many companies that disappeared and would give the backtest information it could not have known at the time.
-
-I remove stocks whose unadjusted price is below $5 and require a valid selection signal, sizing volatility, and beta estimate before ranking. After those common-data checks, the point-in-time eligible universe contains between 840 and 1,017 stocks, with a median cross-section of 971 names. Consequently, the two portfolio implementations and the exposure diagnostics all operate on the same cross-section.
+The backtest runs from July 1995 through October 2024 using historical Russell 1000 constituents. It applies a $5 minimum unadjusted-price filter, forms signals with information available at the signal close, and trades at the following close. After common-data checks, the eligible universe contains 840–1,017 stocks per week, with a median of 971; both portfolio implementations use the same cross-section.
 
 <div class="low-vol-figure">
   <picture>
@@ -29,7 +23,7 @@ I remove stocks whose unadjusted price is below $5 and require a valid selection
 
 <p class="figure-caption"><strong>Figure 1:</strong> Number of eligible point-in-time Russell 1000 constituents at each weekly signal date after the $5 price filter and data-availability checks. The observed range is 840–1,017 stocks and the median is 971.</p>
 
-For stock $$i$$ on signal date $$t$$, let $$\widehat{\sigma}_{i,t}^{(h)}$$ denote annualized realized volatility over the trailing $$h$$ trading days, where $$h\in\{21,63,126\}$$. The selection signal $$v_{i,t}$$ is their average:
+For stock $$i$$ on signal date $$t$$, let $$\widehat{\sigma}_{i,t}^{(h)}$$ denote annualized realized volatility over the trailing $$h\in\{21,63,126\}$$ trading days. The selection signal is their average:
 
 $$
 \begin{aligned}
@@ -42,9 +36,7 @@ v_{i,t}
 \end{aligned}
 $$
 
-The one-, three-, and six-month horizons balance recent changes in risk against signal stability.
-
-All three estimates use adjusted close-to-close price returns available through the signal close. After averaging the three horizons, I clip the resulting signal $$v_{i,t}$$ to 5%–200% before ranking. This keeps pathological observations from controlling the sort while leaving ordinary cross-sectional differences untouched.
+The one-, three-, and six-month horizons balance recent changes in risk against stability. I clip the average to 5%–200% before ranking so pathological observations cannot control the sort.
 
 I divide the ranked stocks into ten deterministic, approximately equal-sized groups. Decile 1 contains the lowest-volatility stocks and decile 10 the highest. The strategy trades only those extremes; the middle deciles show the broader cross-sectional shape.
 
@@ -57,17 +49,9 @@ I divide the ranked stocks into ten deterministic, approximately equal-sized gro
 
 <p class="figure-caption"><strong>Figure 2:</strong> Long-only geometric return, realized volatility, and arithmetic-return Sharpe ratio by volatility decile, before transaction costs. Decile 1 contains the lowest-volatility stocks.</p>
 
-Figure 2 gives a more nuanced result than “low volatility wins.” Realized portfolio volatility rises steadily across the sort—an almost mechanical consequence of ranking stocks on trailing volatility. Geometric returns vary across the middle deciles, while Sharpe ratios generally deteriorate as volatility rises. The weakest risk-adjusted performance sits in the highest-volatility group.
+Realized portfolio volatility rises steadily across the sort. Geometric returns vary across the middle deciles, while Sharpe ratios generally deteriorate as volatility rises; the weakest risk-adjusted performance sits in the highest-volatility group. That is the signal evidence. The next question is how to size the long and short extremes.
 
-That last group is exactly what the long/short strategy sells. It is also where the portfolio-construction problem begins.
-
-## Keeping the timing honest
-
-The signal is formed at the first market close of each week, the portfolio trades at the next market close, and P&L begins with the subsequent close-to-close return. A Monday signal therefore informs a Tuesday close trade whose first return runs from Tuesday to Wednesday.
-
-Stock P&L uses the vendor's total-return field. Off-calendar source rows are compounded before sampling onto the Russell 1000 market calendar. Between rebalances I hold fixed quantities, and turnover is measured from the resulting drifted holdings to the next targets.
-
-The complete specification is summarized below. The position-sizing and beta rows are developed in the following sections.
+Table 1 records the implementation details. Between weekly rebalances the backtest holds fixed quantities, and turnover is measured from drifted holdings to the next targets.
 
 <table class="research-table specification-table">
   <thead>
@@ -88,30 +72,15 @@ The complete specification is summarized below. The position-sizing and beta row
 
 <p class="figure-caption"><strong>Table 1:</strong> Backtest specification. All signal, sizing, and beta inputs are lagged consistently with the execution schedule.</p>
 
-## First implementation: dollar-neutral, but risk-asymmetric
+## A simple equal-weight reference
 
-The equal-notional implementation is intentionally conventional:
-
-* buy every stock in decile 1 with equal weight, for total long exposure of 100%;
-* short every stock in decile 10 with equal absolute weight, for total short exposure of 100%.
-
-Its target gross exposure is 200% and its target net exposure is zero. Let $$L$$ and $$H$$ denote the low- and high-volatility baskets. If $$r_{L,\tau}$$ and $$r_{H,\tau}$$ are their equal-weight returns during return period $$\tau$$, the equal-weight portfolio return is
+As a reference, I first assign equal stock weights within two fully invested legs: long decile 1 and short decile 10. With $$L$$ and $$H$$ denoting the two baskets, the portfolio return is
 
 $$
 r_{p,\tau}^{\mathrm{EW}}=r_{L,\tau}-r_{H,\tau}.
 $$
 
-The equation constrains notional only. Writing $$r_p^{\mathrm{EW}}$$, $$r_L$$, and $$r_H$$ for the corresponding return random variables, portfolio variance still depends on both leg variances and their covariance:
-
-$$
-\begin{aligned}
-\operatorname{Var}\!\left(r_p^{\mathrm{EW}}\right)
-&=\operatorname{Var}(r_L)+\operatorname{Var}(r_H) \\
-&\quad-2\operatorname{Cov}(r_L,r_H).
-\end{aligned}
-$$
-
-Dollar neutrality constrains the sum of the signed weights. Matching the standalone volatilities or betas of the two legs requires additional constraints. Dollar neutrality, beta neutrality, and matched standalone leg risk are distinct portfolio objectives.
+Because the baskets are deliberately drawn from opposite ends of the volatility distribution, this construction predictably places substantially more standalone risk in the high-volatility short leg.
 
 <div class="low-vol-figure">
   <picture>
@@ -122,19 +91,11 @@ Dollar neutrality constrains the sum of the signed weights. Matching the standal
 
 <p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average ex-ante beta of the equal-weight low- and high-volatility baskets, before transaction costs.</p>
 
-The low-volatility basket realizes 12.1% volatility; the high-volatility basket realizes 39.8%. Equal notional therefore assigns the short book more than three times as much standalone volatility. Dollar neutrality remains a valid mandate, while the risk budget requires a separate design choice.
+The low-volatility basket realizes 12.1% volatility versus 39.8% for the high-volatility basket. Its average ex-ante stock beta is also lower, 0.56 versus 1.63. These expected differences make clear that the implementation needs an explicit risk-allocation rule.
 
-The same mismatch appears in market exposure. Average ex-ante stock beta is approximately 0.56 in the low-volatility basket and 1.63 in the high-volatility basket. Once the latter is shorted, the dollar-neutral portfolio acquires a large negative market beta. Its full-sample realized beta is −1.18.
+## The main implementation: stock-level volatility scaling
 
-For an investor whose mandate is dollar neutrality, this may simply be an exposure profile to manage. For my narrower research question, however, the implementation mixes the low-volatility spread with a large short-market position: a modest-risk long book is paired with a high-risk, high-beta short book. Before costs, the strategy realizes 34.9% annualized volatility, a Sharpe ratio of 0.08, and an 85.0% maximum drawdown. Under the simple cost sensitivity below, its geometric return is −4.7% per year and the maximum drawdown reaches 89.5%.
-
-This result combines the signal with the equal-notional sizing rule. The second implementation changes the sizing rule while holding the cross-sectional selection fixed.
-
-## Reallocating the stock-level risk budget
-
-I now replace equal stock weights with a simple inverse-volatility sizing rule. This standalone-risk heuristic excludes correlations and leaves the selected names unchanged. Its sole input into position size is each stock's own trailing volatility.
-
-For sizing, I use a separate 60-trading-day annualized volatility estimate, $$\widehat{\sigma}_{i,t}^{(60)}$$, floored at 5%. Keeping selection and sizing conceptually separate is useful: the 21/63/126-day average decides *which* stocks belong in the extreme portfolios, while the 60-day estimate decides *how much* of each selected stock to hold.
+I replace equal stock weights with a simple inverse-volatility rule. The selected names do not change: the 21/63/126-day average decides *which* stocks enter, while a separate 60-day volatility estimate, floored at 5%, decides *how much* to hold. Correlations are deliberately outside this sizing rule.
 
 For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. Expressing volatility and weights as decimals, the preliminary absolute weight for stock $$i\in\mathcal S_{\ell,t}$$ is
 
@@ -148,13 +109,7 @@ a_{i,\ell,t}
 \end{aligned}
 $$
 
-The equation has three components:
-
-1. $$1/N_{\ell,t}$$ is the equal-weight starting point for a leg containing $$N_{\ell,t}$$ stocks.
-2. $$0.20/\widehat{\sigma}_{i,t}^{(60)}$$ is the volatility multiplier. Before the cap, a stock with 10% estimated volatility receives twice its equal weight; a stock with 40% volatility receives half.
-3. The $$0.04$$ cap limits any stock to 4% of NAV.
-
-There is one more step. If the preliminary weights in a leg sum to more than 100%, I scale them down proportionally. Otherwise, I leave them alone. Define the preliminary leg gross and cap multiplier as
+The 20% reference volatility gives lower-volatility stocks more notional and higher-volatility stocks less, while the 4% cap limits concentration. If preliminary weights in a leg exceed 100% gross, I scale them down proportionally:
 
 $$
 \begin{aligned}
@@ -164,8 +119,6 @@ c_{\ell,t}
 &=\min\left(1,\frac{1}{g_{\ell,t}^{\mathrm{pre}}}\right).
 \end{aligned}
 $$
-
-Here $$g_{\ell,t}^{\mathrm{pre}}$$ is the leg's preliminary gross weight and $$j$$ indexes its stocks. The multiplier $$c_{\ell,t}$$ equals one unless preliminary gross exceeds one.
 
 The final weight is positive for a stock in the long set and negative for one in the short set:
 
@@ -178,13 +131,11 @@ w_{i,t}
 \end{cases}
 $$
 
-The 100% leg limit acts only as a cap. If a basket contains very volatile stocks, the rule may assign 30% or 40% of NAV to that leg. Renormalizing it back to 100% would undo much of the intended reduction in high-volatility-leg notional.
-
-The procedure is **stock-level volatility scaling**: it scales standalone stock risk and caps both concentration and leg gross. Portfolio-level volatility targeting and covariance-based marginal risk contributions sit in a separate construction layer.
+The 100% leg limit is a cap, not a normalization target. A volatile short basket is allowed to shrink to 30% or 40% of NAV; forcing it back to 100% would undo the risk adjustment. This is stock-level standalone-risk scaling, not covariance optimization or portfolio-level volatility targeting.
 
 ### Where leverage enters
 
-The low-volatility anomaly is fundamentally a risk-adjusted return result, which makes leverage central to implementation. An investor comparing strategies at the same ex-ante volatility would normally apply a scalar to the completed weight vector:
+An investor comparing strategies at the same ex-ante volatility could apply a scalar to the completed weight vector:
 
 $$
 \begin{aligned}
@@ -194,11 +145,11 @@ $$
 \end{aligned}
 $$
 
-Here $$\mathbf w_t$$ is the completed stock-weight vector, $$\widetilde{\mathbf w}_t$$ is its volatility-targeted version, $$\sigma^*$$ is the portfolio volatility target, and $$\widehat{\sigma}_{p,t}$$ is the portfolio-volatility forecast. I keep this scalar at one to isolate the effect of stock-level sizing. A later portfolio layer could introduce a covariance forecast and manage total leverage explicitly.
+I keep that scalar at one to isolate stock-level sizing. Total-risk targeting and its covariance forecast belong in a later portfolio layer.
 
 ## The resulting exposure profile
 
-Allowing the short book to shrink creates positive net notional. This experiment prioritizes a reduction in standalone-risk asymmetry over a dollar-neutral mandate. A zero-net mandate would require a different constrained construction.
+The high-volatility short book naturally uses less notional because its constituents receive smaller inverse-volatility weights.
 
 <div class="low-vol-figure">
   <picture>
@@ -209,9 +160,9 @@ Allowing the short book to shrink creates positive net notional. This experiment
 
 <p class="figure-caption"><strong>Figure 4:</strong> Weekly target long gross, short gross, and net stock exposure after stock-level volatility scaling.</p>
 
-Across the sample, the low-volatility long averages 97.0% gross and the high-volatility short 34.2%. Total stock gross is 131.2% and net stock exposure is +62.8%. The short shrinks because its constituents consume more standalone risk per dollar.
+Across the sample, the low-volatility long averages 97.0% gross and the high-volatility short 34.2%. Total stock gross is 131.2% and net stock exposure is +62.8%. These are intended consequences of the sizing rule.
 
-At first glance, +63% net exposure may appear inconsistent with the portfolio's near-zero average beta. Dollar exposure and beta exposure answer different questions. Let $$E_t^{\mathrm{net}}$$ be signed stock notional as a fraction of NAV, and let $$\widehat{\beta}_{i,t}$$ be stock $$i$$'s estimated market beta. Summing over all held stocks gives
+Net stock exposure and market beta are different diagnostics. Let $$E_t^{\mathrm{net}}$$ be signed stock notional as a fraction of NAV, and let $$\widehat{\beta}_{i,t}$$ be stock $$i$$'s estimated market beta. Then
 
 $$
 \begin{aligned}
@@ -220,11 +171,11 @@ E_t^{\mathrm{net}} &= \sum_i w_{i,t}, \\
 \end{aligned}
 $$
 
-The first quantity is signed notional; $$\widehat{\beta}_{p,t}$$ is the ex-ante portfolio beta. A smaller short book can offset a larger long book when the short constituents carry sufficiently high betas—which is exactly what happens in this cross-sectional sort.
+Here, the smaller short offsets the larger long in beta terms because its constituents carry much higher market betas. Market neutrality therefore depends on measured portfolio beta, not matching the two notionals.
 
-## Does the portfolio require an always-on beta hedge?
+## Managing market beta separately
 
-I estimate each stock's beta from a rolling 252-trading-day covariance with the Russell 1000 price-index return, require at least 126 observations, and clip individual estimates to [−4, 4]. The ex-ante portfolio estimate is the weighted sum shown above. A rolling regression of strategy returns on market returns provides a separate realized-beta diagnostic.
+I estimate stock beta from a rolling 252-day covariance with the Russell 1000 price-index return, requiring 126 observations and clipping estimates to [−4, 4]. A rolling return regression provides a separate realized-beta diagnostic.
 
 <div class="low-vol-figure">
   <picture>
@@ -235,82 +186,84 @@ I estimate each stock's beta from a rolling 252-trading-day covariance with the 
 
 <p class="figure-caption"><strong>Figure 5:</strong> Aggregated ex-ante stock beta and rolling 252-day realized beta for the volatility-scaled portfolio. The shaded region marks beta between −0.1 and +0.1.</p>
 
-Average signed ex-ante beta and full-sample realized beta are both approximately −0.010. Weekly exposure still matters—the average absolute ex-ante estimate is 0.104—but its sign changes. I therefore omit an always-on hedge. A live process could instead use a predefined beta band for a conditional index overlay.
+Average signed ex-ante beta and full-sample realized beta are both approximately −0.010. The average absolute weekly estimate is larger at 0.104, but its sign changes, so an always-on hedge is unnecessary here. In a live process I would construct the stock portfolio first, then use an index future only when residual beta leaves a predefined band:
 
-## A small transaction-cost sensitivity
+$$
+N_{\mathrm{future},t}\approx-\widehat{\beta}_{p,t}\times NAV_t.
+$$
 
-I charge 5 basis points per dollar of absolute equity notional traded, including initial formation. Turnover is the annual sum of absolute weight changes from drifted pre-trade holdings to new targets: 31.4× for equal notional and 19.3× for volatility scaling. This is a small comparative sensitivity, not an estimate of achievable live performance.
+Stock selection and sizing set the equity portfolio; the overlay manages market beta as a separate decision.
 
-## Comparing the two implementations
+## Performance, costs, and drawdowns
 
-The two tables below separate performance from the exposures and trading that produce it. The 0 bp and 5 bp return columns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns under the 5 bp sensitivity.
+The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar of equity notional traded, including initial formation. This is a small comparative sensitivity, not a live-performance estimate. The return columns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after that cost.
 
 <table class="research-table comparison-table performance-table">
   <thead>
     <tr>
       <th>Performance metric</th>
-      <th>Equal-dollar</th>
+      <th>Reference</th>
       <th>Volatility-scaled</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th scope="row">Return, 0 bp</th>
-      <td data-label="Equal-dollar">2.9%</td>
+      <td data-label="Reference">2.9%</td>
       <td data-label="Volatility-scaled">7.9%</td>
     </tr>
     <tr>
       <th scope="row">Return, 5 bp</th>
-      <td data-label="Equal-dollar">1.4%</td>
+      <td data-label="Reference">1.4%</td>
       <td data-label="Volatility-scaled">7.0%</td>
     </tr>
     <tr>
       <th scope="row">Volatility, 5 bp</th>
-      <td data-label="Equal-dollar">34.9%</td>
+      <td data-label="Reference">34.9%</td>
       <td data-label="Volatility-scaled">9.6%</td>
     </tr>
     <tr>
       <th scope="row">Sharpe, 5 bp</th>
-      <td data-label="Equal-dollar">0.04</td>
+      <td data-label="Reference">0.04</td>
       <td data-label="Volatility-scaled">0.72</td>
     </tr>
     <tr>
       <th scope="row">Max drawdown, 5 bp</th>
-      <td data-label="Equal-dollar">−89.5%</td>
+      <td data-label="Reference">−89.5%</td>
       <td data-label="Volatility-scaled">−41.0%</td>
     </tr>
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 2:</strong> Performance from July 1995 through October 2024. Equal-dollar is the equal-weight dollar-neutral long/short portfolio; volatility-scaled uses stock-level sizing. Volatility uses 252 trading days and Sharpe assumes a zero risk-free rate.</p>
+<p class="figure-caption"><strong>Table 2:</strong> Performance from July 1995 through October 2024. Volatility uses 252 trading days and Sharpe assumes a zero risk-free rate.</p>
 
 <table class="research-table comparison-table exposure-table">
   <thead>
     <tr>
       <th>Exposure or trading metric</th>
-      <th>Equal-dollar</th>
+      <th>Reference</th>
       <th>Volatility-scaled</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th scope="row">Average stock gross</th>
-      <td data-label="Equal-dollar">2.01</td>
+      <td data-label="Reference">2.01</td>
       <td data-label="Volatility-scaled">1.31</td>
     </tr>
     <tr>
       <th scope="row">Average stock net</th>
-      <td data-label="Equal-dollar">0.00</td>
+      <td data-label="Reference">0.00</td>
       <td data-label="Volatility-scaled">0.63</td>
     </tr>
     <tr>
       <th scope="row">Realized beta</th>
-      <td data-label="Equal-dollar">−1.18</td>
+      <td data-label="Reference">−1.18</td>
       <td data-label="Volatility-scaled">−0.01</td>
     </tr>
     <tr>
       <th scope="row">Annualized turnover</th>
-      <td data-label="Equal-dollar">31.4× equity</td>
+      <td data-label="Reference">31.4× equity</td>
       <td data-label="Volatility-scaled">19.3× equity</td>
     </tr>
   </tbody>
@@ -318,9 +271,7 @@ The two tables below separate performance from the exposures and trading that pr
 
 <p class="figure-caption"><strong>Table 3:</strong> Daily-average stock exposures, full-sample regression beta of gross strategy returns on the Russell 1000 price-index return, and annualized turnover.</p>
 
-The change is economically large. Annualized volatility falls from 34.9% to 9.6%. Under the 5 bp sensitivity, Sharpe rises from 0.04 to 0.72, maximum drawdown improves from 89.5% to 41.0%, and annualized arithmetic return rises from 1.4% to 7.0%.
-
-Costs reduce annualized arithmetic return by roughly 1.6 percentage points for equal notional and 1.0 point for volatility scaling.
+The volatility-scaled implementation produces a 7.0% annualized arithmetic return after the 5 bp sensitivity, 9.6% volatility, and a 0.72 Sharpe. Its cost drag is roughly 1.0 percentage point a year. The equal-weight columns remain a sizing reference, not a competing strategy claim.
 
 <div class="low-vol-figure">
   <picture>
@@ -331,8 +282,6 @@ Costs reduce annualized arithmetic return by roughly 1.6 percentage points for e
 
 <p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth under the 5 bp transaction-cost sensitivity, shown on a logarithmic scale.</p>
 
-The log-scale curves show the equal-notional portfolio failing to compound through repeated large losses, while the scaled implementation progresses more steadily.
-
 <div class="low-vol-figure">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/drawdowns_mobile.png">
@@ -342,24 +291,26 @@ The log-scale curves show the equal-notional portfolio failing to compound throu
 
 <p class="figure-caption"><strong>Figure 7:</strong> Drawdowns under the 5 bp transaction-cost sensitivity for both portfolio implementations.</p>
 
-An 89.5% drawdown is strategy-ending for most investors. The scaled portfolio still loses 41.0% at its worst, so risk scaling improves the path without making it benign.
+## What broke during the 41% drawdown?
+
+The worst drawdown is not a generic equity sell-off. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000: a 41.0% loss over 357 trading days, during which the Russell 1000 gains 52.2%. It does not regain the earlier high until 15 August 2001.
+
+An exact peak-NAV attribution makes the mechanism clear. The low-volatility long contributes −12.0 percentage points, the high-volatility short −28.2 points, and trading costs −0.85 points. As a separate before-cost diagnostic, the fully invested equal-weight high-volatility basket gains 334.2% over the same dates while the low-volatility basket loses 16.3%. The dominant failure is therefore the short book's violent rally during the late-1990s internet-bubble regime, compounded by weakness in the long book.
+
+Market beta does not explain it. During the drawdown, average ex-ante beta is −0.074 and realized beta is −0.064; the average stock books are 95.6% long and 23.5% short. Near-zero beta insulated the portfolio from broad market direction, not from a sustained reversal in the characteristic spread. Stock-level risk scaling limits individual standalone risk, but it cannot prevent correlated losses across both books as a regime persists. The available artifacts do not contain point-in-time sector or style labels, so they cannot establish how much of the episode was specifically technology, growth, or momentum exposure.
 
 ## How much of this is really the factor?
 
-Figure 2 supports the signal claim: the low-volatility decile has better risk-adjusted performance than the high-volatility decile. The jump to a 0.72 long/short Sharpe is mostly a construction result. The selected stocks do not change; their risk allocation does, along with gross, net, beta, turnover, and the return path.
+Figure 2 supports the signal claim: low-volatility stocks exhibit better risk-adjusted performance than high-volatility stocks. The 0.72 long/short Sharpe is a portfolio result, not newly discovered alpha. Selection is unchanged; weights, exposure, beta, turnover, and concentration of risk all change.
 
-This distinction generalizes beyond low volatility. Whenever the long and short selections have structurally different risk, liquidity, or beta characteristics, equal dollars can embed a large unintended exposure. Portfolio construction determines which hypothesis the backtest is actually testing.
+That distinction generalizes. When long and short selections differ structurally in risk, liquidity, or beta, portfolio construction determines which hypothesis the backtest actually tests.
 
 ## Limitations
 
-The scope is a research illustration of sizing and exposure. The scaled strategy carries roughly +63% net stock exposure and therefore falls outside a dollar-neutral mandate. The cost sensitivity covers equity trading only; borrow fees, financing, and market impact sit outside it. Missing stock returns are set to zero on 0.19% of position-days, constituent snapshots are treated as effective without an announcement lag, and the portfolios carry unconstrained sector and liquidity exposures. The headline results should be read in that scope.
+The cost sensitivity excludes borrow fees, financing, and market impact. Missing stock returns are set to zero on 0.19% of position-days, constituent snapshots have no announcement lag, and sector, style, and liquidity exposures are unconstrained. These are research results, not a live implementation claim.
 
 ## Conclusion
 
-The equal-weight low-minus-high volatility trade satisfies dollar neutrality while carrying sharply mismatched standalone leg volatility and a large negative market beta. The combined portfolio consequently realizes 34.9% volatility and an 89.5% drawdown under the 5 bp sensitivity.
+The low-volatility signal is straightforward; the more interesting question is how to translate it into positions whose risks are intentional. Stock-level volatility scaling provides a simple implementation, while market beta can be managed separately with an index overlay when necessary. The 1998–2000 drawdown shows what risk scaling does not eliminate: sustained characteristic reversals can still produce severe losses.
 
-Scaling positions inversely to stock volatility reduces that asymmetry. It leaves the long book close to fully invested, allows the high-risk short book to shrink, and produces near-zero average signed market beta. The trade-off is positive net notional, and its acceptability depends on the investor's mandate.
-
-The broader lesson is the one I want to carry into later research:
-
-> Start with the signal, identify which risks the initial portfolio is really taking, allocate those risks deliberately, and only then judge the result.
+> Start with the signal, identify the risks the initial portfolio is taking, allocate them deliberately, and only then judge the result.
