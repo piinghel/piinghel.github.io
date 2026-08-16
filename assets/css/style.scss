@@ -30,7 +30,7 @@
 /* Wide, responsive research figures used by the low-volatility article. */
 .post-content .low-vol-figure {
   display: block;
-  width: min(720px, calc(100vw - 2rem));
+  width: min(828px, calc(100vw - 2rem));
   max-width: none;
   margin: 2.5rem 50% 0.5rem;
   transform: translateX(-50%);
@@ -97,9 +97,9 @@
 }
 
 .post-content table.comparison-table thead th:nth-child(3) {
-  border-top: 3px solid #1b998b;
+  border-top: 3px solid #2a9d8f;
   background: #edf8f6;
-  color: #176b87;
+  color: #1f6f67;
 }
 
 .post-content table.comparison-table tbody th {
@@ -112,7 +112,7 @@
 
 .post-content table.comparison-table tbody td:nth-child(3) {
   background: #f3faf9;
-  color: #176b87;
+  color: #1f6f67;
   font-weight: 600;
 }
 
@@ -192,7 +192,7 @@
     width: auto;
     padding: 0.8rem;
     border: 0;
-    border-left: 3px solid #1b998b;
+    border-left: 3px solid #2a9d8f;
     background: #f5f7f7;
     font-weight: 600;
   }
@@ -214,7 +214,7 @@
 
   .post-content table.comparison-table td:nth-of-type(2) {
     background: #f3faf9;
-    color: #176b87;
+    color: #1f6f67;
     font-weight: 600;
   }
 

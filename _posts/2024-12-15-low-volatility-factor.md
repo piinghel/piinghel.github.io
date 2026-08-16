@@ -21,15 +21,13 @@ The sample starts in 1995 and ends in October 2024. At every weekly signal date,
 I remove stocks whose unadjusted price is below $5 and require a valid selection signal, sizing volatility, and beta estimate before ranking. After those common-data checks, the point-in-time eligible universe contains between 840 and 1,017 stocks, with a median cross-section of 971 names. Consequently, the two portfolio implementations and the exposure diagnostics all operate on the same cross-section.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/eligible_universe.png" aria-label="Open Figure 1 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/eligible_universe.png" alt="Number of eligible point-in-time Russell 1000 constituents at each weekly signal date" loading="lazy">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Number of eligible point-in-time Russell 1000 constituents at each weekly signal date after the $5 price filter and data-availability checks. The observed range is 840–1,017 stocks and the median is 971. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Number of eligible point-in-time Russell 1000 constituents at each weekly signal date after the $5 price filter and data-availability checks. The observed range is 840–1,017 stocks and the median is 971.</p>
 
 For stock $$i$$ on signal date $$t$$, let $$\widehat{\sigma}_{i,t}^{(h)}$$ denote annualized realized volatility over the trailing $$h$$ trading days, where $$h\in\{21,63,126\}$$. The selection signal $$v_{i,t}$$ is their average:
 
@@ -51,15 +49,13 @@ All three estimates use adjusted close-to-close price returns available through 
 I divide the ranked stocks into ten deterministic, approximately equal-sized groups. Decile 1 contains the lowest-volatility stocks and decile 10 the highest. The strategy trades only those extremes; the middle deciles show the broader cross-sectional shape.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/decile_profile.png" aria-label="Open Figure 2 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png" alt="Geometric return, volatility, and Sharpe ratio across volatility deciles">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Long-only geometric return, realized volatility, and arithmetic-return Sharpe ratio by volatility decile, before transaction costs. Decile 1 contains the lowest-volatility stocks. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Long-only geometric return, realized volatility, and arithmetic-return Sharpe ratio by volatility decile, before transaction costs. Decile 1 contains the lowest-volatility stocks.</p>
 
 Figure 2 gives a more nuanced result than “low volatility wins.” Realized portfolio volatility rises steadily across the sort—an almost mechanical consequence of ranking stocks on trailing volatility. Geometric returns vary across the middle deciles, while Sharpe ratios generally deteriorate as volatility rises. The weakest risk-adjusted performance sits in the highest-volatility group.
 
@@ -118,15 +114,13 @@ $$
 Dollar neutrality constrains the sum of the signed weights. Matching the standalone volatilities or betas of the two legs requires additional constraints. Dollar neutrality, beta neutrality, and matched standalone leg risk are distinct portfolio objectives.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png" aria-label="Open Figure 3 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average ex-ante beta of the equal-weight low- and high-volatility baskets, before transaction costs. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average ex-ante beta of the equal-weight low- and high-volatility baskets, before transaction costs.</p>
 
 The low-volatility basket realizes 12.1% volatility; the high-volatility basket realizes 39.8%. Equal notional therefore assigns the short book more than three times as much standalone volatility. Dollar neutrality remains a valid mandate, while the risk budget requires a separate design choice.
 
@@ -199,15 +193,13 @@ Here $$\mathbf w_t$$ is the completed stock-weight vector, $$\widetilde{\mathbf 
 Allowing the short book to shrink creates positive net notional. This experiment prioritizes a reduction in standalone-risk asymmetry over a dollar-neutral mandate. A zero-net mandate would require a different constrained construction.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile.png" aria-label="Open Figure 4 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile.png" alt="Long gross, short gross, and net stock exposure through time" loading="lazy">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 4:</strong> Weekly target long gross, short gross, and net stock exposure after stock-level volatility scaling. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> Weekly target long gross, short gross, and net stock exposure after stock-level volatility scaling.</p>
 
 Across the sample, the low-volatility long averages 97.0% gross and the high-volatility short 34.2%. Total stock gross is 131.2% and net stock exposure is +62.8%. The short shrinks because its constituents consume more standalone risk per dollar.
 
@@ -227,15 +219,13 @@ The first quantity is signed notional; $$\widehat{\beta}_{p,t}$$ is the ex-ante 
 I estimate each stock's beta from a rolling 252-trading-day covariance with the Russell 1000 price-index return, require at least 126 observations, and clip individual estimates to [−4, 4]. The ex-ante portfolio estimate is the weighted sum shown above. A rolling regression of strategy returns on market returns provides a separate realized-beta diagnostic.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.png" aria-label="Open Figure 5 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.png" alt="Ex-ante and rolling realized beta of the volatility-scaled portfolio" loading="lazy">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 5:</strong> Aggregated ex-ante stock beta and rolling 252-day realized beta for the volatility-scaled portfolio. The shaded region marks beta between −0.1 and +0.1. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 5:</strong> Aggregated ex-ante stock beta and rolling 252-day realized beta for the volatility-scaled portfolio. The shaded region marks beta between −0.1 and +0.1.</p>
 
 Average signed ex-ante beta and full-sample realized beta are both approximately −0.010. Weekly exposure still matters—the average absolute ex-ante estimate is 0.104—but its sign changes. I therefore omit an always-on hedge. A live process could instead use a predefined beta band for a conditional index overlay.
 
@@ -325,28 +315,24 @@ The change is economically large. Annualized volatility falls from 34.9% to 9.6%
 Costs reduce annualized arithmetic return by roughly 1.6 percentage points for equal notional and 1.0 point for volatility scaling.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/cumulative_performance.png" aria-label="Open Figure 6 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/cumulative_performance_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/cumulative_performance.png" alt="Cumulative wealth of the equal-weight and volatility-scaled implementations" loading="lazy">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth under the 5 bp transaction-cost sensitivity, shown on a logarithmic scale. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth under the 5 bp transaction-cost sensitivity, shown on a logarithmic scale.</p>
 
 The log-scale curves show the equal-notional portfolio failing to compound through repeated large losses, while the scaled implementation progresses more steadily.
 
 <div class="low-vol-figure">
-  <a href="/assets/2024-12-15-low-volatility-factor/drawdowns.png" aria-label="Open Figure 7 at full size">
   <picture>
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/drawdowns_mobile.png">
     <img src="/assets/2024-12-15-low-volatility-factor/drawdowns.png" alt="Drawdowns of the equal-weight and volatility-scaled implementations" loading="lazy">
   </picture>
-  </a>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Drawdowns under the 5 bp transaction-cost sensitivity for both portfolio implementations. Click or tap the figure for the full-resolution version.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Drawdowns under the 5 bp transaction-cost sensitivity for both portfolio implementations.</p>
 
 An 89.5% drawdown is strategy-ending for most investors. The scaled portfolio still loses 41.0% at its worst, so risk scaling improves the path without making it benign.
 
