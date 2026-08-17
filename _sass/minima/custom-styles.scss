@@ -664,6 +664,9 @@ body {
   }
 
   .site-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
     color: var(--ink);
     font-size: 1.05rem;
     font-weight: 650;
@@ -672,6 +675,12 @@ body {
     &:hover {
       color: var(--accent);
     }
+  }
+
+  .site-mark {
+    display: block;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .page-link {
@@ -794,6 +803,27 @@ article.post .post-header {
   margin: 3.5rem auto 0;
   padding-bottom: 1.4rem;
   border-bottom: 1px solid var(--rule);
+
+  .article-mark {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+    color: var(--muted-ink);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .article-mark img {
+    display: block;
+    flex: 0 0 auto;
+    margin: 0 !important;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 
   .post-title {
     margin-bottom: 0.8rem;

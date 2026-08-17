@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" role="img" aria-labelledby="title desc">
+  <title id="title">Low-volatility mark</title>
+  <desc id="desc">A calm, low-amplitude signal line over a quiet baseline.</desc>
+  <rect x="1.5" y="1.5" width="37" height="37" rx="10" fill="#ffffff" stroke="#e2e7ea" stroke-width="1.5"/>
+  <path d="M7 26.5h26" stroke="#d5e5e5" stroke-width="1" stroke-dasharray="1.5 2.5"/>
+  <path d="M7 21.5c2.4-1.2 3.9-1.2 5.8 0 1.9 1.2 3.5 1.2 5.4 0 1.9-1.2 3.5-1.2 5.4 0 1.9 1.2 3.5 1.2 5.4 0" fill="none" stroke="#2f6f73" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"/>
+  <path d="M7 29.5h26" stroke="#586a82" stroke-linecap="round" stroke-width="1.5"/>
+</svg>

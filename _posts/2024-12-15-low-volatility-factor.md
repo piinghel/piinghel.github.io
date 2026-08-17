@@ -4,6 +4,8 @@ title: "The Low-Volatility Factor: Portfolio Construction Matters"
 date: 2024-12-15
 last_modified_at: 2026-08-17
 categories: [Quant]
+article_mark: /assets/brand/low-volatility-mark.svg
+article_label: Low-volatility · portfolio construction
 ---
 
 Low-volatility stocks are quiet by design. That is part of their appeal—and part of the implementation problem. The factor is easy to describe: rank stocks by volatility, buy the calmest, and short the most volatile. The harder question is what positions that ranking should produce.
@@ -18,7 +20,9 @@ I start with the Russell 1000 membership recorded at each date from July 1995 th
 
 <div class="low-vol-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/eligible_universe.png" alt="Number of eligible Russell 1000 stocks at each weekly signal date" loading="lazy">
   </picture>
 </div>
@@ -44,7 +48,9 @@ Each week I split the ranked stocks into ten fixed groups of roughly equal size.
 
 <div class="low-vol-figure decile-profile-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png" alt="Geometric return, volatility, and Sharpe ratio across volatility deciles">
   </picture>
 </div>
@@ -76,7 +82,9 @@ Before scaling positions, I use equal weighting as a control. The two baskets si
 
 <div class="low-vol-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy">
   </picture>
 </div>
@@ -133,8 +141,10 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/stock_exposure_profile.png" alt="Long gross, short gross, and net stock exposure through time" loading="lazy">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.svg">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures.svg">
+    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png" alt="Long gross, short gross, and net stock exposure through time" loading="lazy">
   </picture>
 </div>
 
@@ -159,7 +169,9 @@ Beta sits outside the stock allocation. Figure 5 shows the practical reason: the
 
 <div class="low-vol-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.png" alt="Estimated and rolling realized beta of the volatility-scaled portfolio" loading="lazy">
   </picture>
 </div>
@@ -249,7 +261,9 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 <div class="low-vol-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png" alt="Cumulative wealth and drawdowns of the equal-weight reference and volatility-scaled implementation" loading="lazy">
   </picture>
 </div>
@@ -264,7 +278,9 @@ This was the dot-com boom. The strategy was long the calmer stocks and short the
 
 <div class="low-vol-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.png" alt="Relative wealth of the volatility-scaled portfolio, Russell 1000 price index, and its two legs from October 1998 through December 2003" loading="lazy">
   </picture>
 </div>
