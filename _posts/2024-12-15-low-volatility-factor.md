@@ -249,12 +249,12 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png" alt="Cumulative wealth and drawdowns of the equal-weight reference and volatility-scaled implementation" loading="lazy">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/cumulative_performance_mobile.png">
+    <img src="/assets/2024-12-15-low-volatility-factor/cumulative_performance.png" alt="Cumulative wealth of the equal-weight reference and volatility-scaled implementation" loading="lazy">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Performance after the 5 bp transaction-cost sensitivity. The top panel shows cumulative wealth on a logarithmic scale; the shorter bottom panel shows drawdowns, with the shaded areas emphasizing time spent below the previous high.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth after the 5 bp transaction-cost sensitivity, shown on a logarithmic scale. The equal-weight reference and volatility-scaled implementation use the same stock selection.</p>
 
 ## What happened during the 41% drawdown?
 
