@@ -59,22 +59,17 @@ Each week I split the ranked stocks into ten fixed groups of roughly equal size.
 
 Figure 2 confirms the intended pattern: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. That is the easy part. Position sizing determines the portfolio, so the full method is below.
 
-<table class="research-table specification-table">
-  <thead>
-    <tr><th>Component</th><th>Method</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">Sample</th><td>Russell 1000, July 1995–October 2024</td></tr>
-    <tr><th scope="row">Universe</th><td>Point-in-time membership; unadjusted price ≥ $5</td></tr>
-    <tr><th scope="row">Signal</th><td>Average realized volatility over 21, 63, and 126 trading days</td></tr>
-    <tr><th scope="row">Sort</th><td>Ten equal-count deciles; long decile 1, short decile 10</td></tr>
-    <tr><th scope="row">Allocation</th><td>1/N base, inverse 60-day volatility, 20% target, 4% position cap</td></tr>
-    <tr><th scope="row">Execution</th><td>Weekly rebalance, next-day execution, 100% gross limit per leg</td></tr>
-    <tr><th scope="row">Costs</th><td>5 bps per dollar of absolute stock position traded</td></tr>
-  </tbody>
-</table>
+<div class="specification-grid" aria-label="Portfolio design at a glance">
+  <div class="specification-card"><span class="specification-label">Sample</span><span class="specification-value">Russell 1000, July 1995–October 2024</span></div>
+  <div class="specification-card"><span class="specification-label">Universe</span><span class="specification-value">Point-in-time membership; unadjusted price ≥ $5</span></div>
+  <div class="specification-card"><span class="specification-label">Signal</span><span class="specification-value">Average realized volatility over 21, 63, and 126 trading days</span></div>
+  <div class="specification-card"><span class="specification-label">Sort</span><span class="specification-value">Ten equal-count deciles; long decile 1, short decile 10</span></div>
+  <div class="specification-card"><span class="specification-label">Allocation</span><span class="specification-value">1/N base, inverse 60-day volatility, 20% target, 4% position cap</span></div>
+  <div class="specification-card"><span class="specification-label">Execution</span><span class="specification-value">Weekly rebalance, next-day execution, 100% gross limit per leg</span></div>
+  <div class="specification-card specification-card-wide"><span class="specification-label">Costs</span><span class="specification-value">5 bps per dollar of absolute stock position traded</span></div>
+</div>
 
-<p class="figure-caption"><strong>Table 1:</strong> Portfolio design at a glance.</p>
+<p class="figure-caption"><strong>Portfolio design:</strong> The choices used throughout the backtest.</p>
 
 ## A simple equal-weight reference
 

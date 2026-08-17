@@ -450,70 +450,49 @@ table {
   }
 }
 
-.post-content table.research-table.specification-table {
-  border-spacing: 0 0.35rem;
-  background: transparent;
-  box-shadow: none;
+.post-content .specification-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1.7rem 0 0.9rem;
+}
 
-  thead {
-    background: transparent;
+.post-content .specification-card {
+  min-height: 4.8rem;
+  padding: 0.75rem 0.2rem 0.15rem;
+  border-top: 1px solid var(--rule);
+}
 
-    th {
-      padding: 0.35rem 0.8rem 0.55rem;
-      border-bottom: 1px solid var(--rule);
-      color: var(--muted-ink);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+.post-content .specification-card-wide {
+  grid-column: 1 / -1;
+  min-height: auto;
+}
+
+.post-content .specification-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--muted-ink);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.post-content .specification-value {
+  display: block;
+  color: var(--ink);
+  font-size: 0.91rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  .post-content .specification-grid {
+    grid-template-columns: 1fr;
   }
 
-  tbody tr {
-    background: #f7fafb;
-    border: 0;
-
-    &:hover {
-      background: #f1f6f7;
-    }
-  }
-
-  tbody th,
-  tbody td {
-    padding: 0.7rem 0.8rem;
-    border-top: 1px solid #edf1f2;
-    border-bottom: 1px solid #edf1f2;
-    font-size: 0.9rem;
-    line-height: 1.45;
-    vertical-align: top;
-  }
-
-  tbody th {
-    width: 23%;
-    border-left: 1px solid #edf1f2;
-    color: var(--ink);
-    font-weight: 650;
-  }
-
-  tbody td {
-    border-right: 1px solid #edf1f2;
-    color: var(--muted-ink);
-    white-space: normal;
-  }
-
-  tbody tr:first-child th {
-    border-top-left-radius: 4px;
-  }
-
-  tbody tr:first-child td {
-    border-top-right-radius: 4px;
-  }
-
-  tbody tr:last-child th {
-    border-bottom-left-radius: 4px;
-  }
-
-  tbody tr:last-child td {
-    border-bottom-right-radius: 4px;
+  .post-content .specification-card-wide {
+    grid-column: auto;
   }
 }
 
@@ -748,6 +727,12 @@ body {
     display: block;
     width: 1.75rem;
     height: 1.75rem;
+    transition: transform 180ms ease;
+  }
+
+  &:hover .site-mark,
+  &:focus-visible .site-mark {
+    transform: rotate(-4deg) scale(1.06);
   }
 
   .page-link {
@@ -890,6 +875,12 @@ article.post .post-header {
     margin: 0 !important;
     width: 2.5rem;
     height: 2.5rem;
+    transition: transform 180ms ease;
+  }
+
+  .article-mark:hover img,
+  .article-mark:focus-within img {
+    transform: translateY(-1px) rotate(3deg) scale(1.04);
   }
 
   .post-title {
