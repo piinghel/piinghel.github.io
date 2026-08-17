@@ -12,7 +12,7 @@ The low-volatility factor is well documented. The implementation question is how
 
 Across the US, Europe, and Japan, low-risk equities have historically delivered more return per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect. One explanation is leverage constraints: investors who want more market exposure may buy high-beta securities instead of levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
 
-I keep stock selection fixed, use equal weights as a deliberately weak reference, and make stock-level volatility scaling the main implementation. The aim is a portfolio that is simple enough to understand and whose risks are visible in the results.
+I compare two allocations with the same stock selection: equal weighting as a deliberately weak reference, and stock-level volatility scaling as the main implementation. The aim is a portfolio that is simple enough to understand and whose risks are visible in the results.
 
 ## The tradable universe
 
@@ -74,11 +74,13 @@ Equal weighting is a useful control because it exposes the problem immediately. 
 
 <p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average estimated beta of the equal-weight low- and high-volatility baskets, before transaction costs.</p>
 
-Equal weights make the risk imbalance visible. I now keep the stock selection fixed and change only the sizing.
+That imbalance motivates the next step: keep the stock selection fixed and change only the sizing.
 
 ## The main implementation: stock-level volatility scaling
 
-The 21/63/126-day average determines which stocks enter. Each week I split the eligible Russell 1000 stocks into ten equal-sized groups, buy the roughly 100 calmest stocks, and short the roughly 100 most volatile. The signal trades the next day. A separate 60-day volatility estimate, floored at 5%, determines how much to hold. The allocation uses each stock's own volatility and keeps correlations outside the rule, which keeps it easy to inspect.
+The 21/63/126-day average determines which stocks enter. Each week I split the eligible Russell 1000 stocks into ten equal-sized groups, buy the roughly 100 calmest stocks, and short the roughly 100 most volatile. The signal trades the next day.
+
+To size those positions, I use a separate 60-day volatility estimate, floored at 5%. The allocation uses each stock's own volatility and keeps correlations outside the rule, which keeps it easy to inspect.
 
 Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility. The backtest charges 5 bps for every dollar of stock position traded.
 
@@ -144,11 +146,11 @@ E_t^{\mathrm{net}} &= \sum_i w_{i,t}, \\
 \end{aligned}
 $$
 
-Even with less capital, the short offsets much of the larger long in beta terms because its stocks carry much higher market betas. I therefore treat beta as a separate check and keep stock sizing focused on each stock's own volatility.
+The short book carries less capital, but its stocks have higher market betas, so it offsets much of the long book's beta. I treat beta as a separate check and keep stock sizing focused on each stock's own volatility.
 
 ## A quick beta check
 
-Figure 5 is a quick beta check. The estimate moves around, although its full-sample average is slightly negative. The 100% cap keeps the low-volatility long book close to fully invested while the volatile short book is smaller, so the short side does not fully offset the long side in beta terms. A small offsetting index-futures position would be a clean overlay if I wanted to tighten that exposure.
+Figure 5 shows why I keep beta separate. The estimate moves around, but its full-sample average is slightly negative. The 100% cap keeps the low-volatility long book close to fully invested while the volatile short book is smaller. A small offsetting index-futures position would be a clean overlay if I wanted to tighten that exposure.
 
 <div class="low-vol-figure">
   <picture>
@@ -255,7 +257,9 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 The most surprising part of the result is the 41.0% drawdown. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000, a 41.0% loss over 357 trading days while the Russell 1000 price index gains 52.2%. The portfolio recovers its earlier high on 15 August 2001.
 
-This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. Over the same window, the low-volatility basket fell 16.3% and the high-volatility basket gained 334.2%. The long book contributed −12.0 percentage points, the short book −28.2, and trading costs another −0.85. Figure 7 puts the two legs beside the combined portfolio: the upper panel shows the portfolio result after costs, while the lower panel compounds the scaled long and short legs separately before costs. The short leg falls because the basket it sold short was one of the strongest parts of the market.
+This was the dot-com boom. We were long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. Over the same window, the low-volatility basket fell 16.3% and the high-volatility basket gained 334.2%. The long book contributed −12.0 percentage points, the short book −28.2, and trading costs another −0.85.
+
+Figure 7 puts the two legs beside the combined portfolio. The upper panel shows the result after costs; the lower panel compounds the scaled long and short legs separately before costs. The short leg falls because the basket it sold short was one of the strongest parts of the market.
 
 <div class="low-vol-figure">
   <picture>
@@ -274,6 +278,6 @@ The numbers in parentheses are cumulative contributions to the corresponding sca
 
 ## Conclusion
 
-The ranking is only the starting point. Equal weighting is useful as a deliberately weak reference because it makes the risk imbalance visible: the high-volatility short book carries much more risk than the low-volatility long book. Inverse-volatility sizing changes that implementation directly. With the same stock selection, it produces lower realized volatility, lower turnover, and a smaller drawdown while keeping every position easy to inspect.
+The signal is the starting point; the portfolio is the result. Equal weighting is a deliberately weak reference because it makes the risk imbalance visible: the high-volatility short book carries much more risk than the low-volatility long book. Inverse-volatility sizing changes that implementation directly. With the same stock selection, it produces lower realized volatility, lower turnover, and a smaller drawdown while keeping every position easy to inspect.
 
 The 1998–2000 episode remains the important counterexample. The Russell 1000 rallied, high-volatility stocks rallied even more, and both scaled legs lost money over the peak-to-trough window. Beta moved around but averaged slightly below zero, so I would treat it as a small separate overlay and keep the stock weights focused on the signal. My takeaway is simple: the signal tells me where to look; sizing determines what I actually own; and regime risk remains after the sizing is done. The next step I would explore is a constrained optimizer that brings correlations and explicit risk budgets into the allocation. That is where the portfolio construction becomes more interesting—and probably a separate article.
