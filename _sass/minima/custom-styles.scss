@@ -1058,8 +1058,8 @@ hr {
 }
 
 ::selection {
-  color: #ffffff;
-  background: var(--accent);
+  color: var(--ink);
+  background: #e7ecef;
 }
 
 @media (max-width: 768px) {
