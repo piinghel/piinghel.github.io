@@ -57,9 +57,7 @@ Each week I split the ranked stocks into ten fixed groups of roughly equal size.
 
 <p class="figure-caption"><strong>Figure 2:</strong> Long-only compounded return, realized volatility, and Sharpe ratio by volatility decile, before transaction costs. Decile 1 contains the lowest-volatility stocks.</p>
 
-Figure 2 shows the intended pattern: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. The more important choice comes next: position sizing determines the portfolio, so here is the full rule.
-
-<p><strong>Portfolio design.</strong> Each week I rank the eligible Russell 1000 stocks by realized volatility and split them into ten equal-sized groups. I buy the roughly 100 calmest stocks and short the roughly 100 most volatile. Each leg starts with an explicit $1/N$ weight, then scales each stock by inverse 60-day volatility. The 20% figure is the annualized volatility target for each stock. A 4% stock cap and a 100% gross cap per leg control concentration and total size. Signals trade the next day, with a cost of 5 bps for every dollar of stock position traded.</p>
+Figure 2 shows the intended pattern: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. The next step is to see what that ranking produces with a deliberately simple allocation.
 
 ## A simple equal-weight reference
 
@@ -76,13 +74,13 @@ Before scaling positions, I use equal weighting as a control. The two baskets si
 
 <p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average estimated beta of the equal-weight low- and high-volatility baskets, before transaction costs.</p>
 
-Equal weights do exactly what we would expect: they leave the riskier basket carrying much more risk. The main implementation changes the position sizes and uses each stock's own volatility to decide how much to hold.
+Equal weights make the risk imbalance visible. I now keep the stock selection fixed and change only the sizing.
 
 ## The main implementation: stock-level volatility scaling
 
-At this point I change one thing: position sizing. Stock selection remains fixed. The 21/63/126-day average decides *which* stocks enter, while a separate 60-day volatility estimate, floored at 5%, decides *how much* to hold. The rule deliberately leaves correlations out, which keeps the allocation easy to inspect.
+The 21/63/126-day average determines which stocks enter. Each week I split the eligible Russell 1000 stocks into ten equal-sized groups, buy the roughly 100 calmest stocks, and short the roughly 100 most volatile. The signal trades the next day. A separate 60-day volatility estimate, floored at 5%, determines how much to hold. The allocation uses each stock's own volatility and keeps correlations outside the rule, which keeps it easy to inspect.
 
-Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility.
+Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility. The backtest charges 5 bps for every dollar of stock position traded.
 
 For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. Expressing volatility and weights as decimals, the uncapped and capped absolute weights for stock $$i\in\mathcal S_{\ell,t}$$ are
 
