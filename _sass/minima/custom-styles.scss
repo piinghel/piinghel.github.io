@@ -625,3 +625,265 @@ blockquote {
   }
 }
 
+// Research-note theme: quiet surfaces, generous whitespace, and one restrained
+// accent for links and interactive elements.
+:root {
+  --ink: #2e3a45;
+  --muted-ink: #66737e;
+  --rule: #e2e7ea;
+  --accent: #2f6f73;
+  --accent-dark: #24585b;
+  --soft-accent: #f3f8f8;
+  --code-surface: #f5f7f8;
+}
+
+body {
+  color: var(--ink);
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.72;
+}
+
+.site-header {
+  border-top: 0;
+  border-bottom: 1px solid var(--rule);
+  box-shadow: none;
+
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+  }
+
+  .site-title {
+    color: var(--ink);
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  .page-link {
+    color: var(--muted-ink);
+    font-size: 0.92rem;
+
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+.page-content {
+  padding-top: 0;
+}
+
+.wrapper {
+  max-width: 860px;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.home {
+  margin-top: 2.5rem;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+
+  .home-intro {
+    max-width: 680px;
+    margin-bottom: 3.5rem;
+    padding-bottom: 2.25rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .post-list {
+    margin-top: 0;
+
+    li {
+      margin-bottom: 1.8rem;
+      padding-bottom: 1.8rem;
+
+      &:hover {
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 2.35rem;
+  line-height: 1.15;
+}
+
+h2 {
+  margin-top: 3.2rem;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h3 {
+  margin-top: 2.2rem;
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+a {
+  color: var(--accent);
+
+  &:visited {
+    color: var(--accent);
+  }
+
+  &:hover {
+    color: var(--accent-dark);
+  }
+}
+
+.post-content {
+  max-width: 760px;
+  margin-top: 3.5rem;
+  margin-bottom: 3rem;
+  padding: 0;
+
+  p {
+    margin-bottom: 1.35rem;
+    line-height: 1.78;
+  }
+
+  strong {
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration-color: #a8c6c7;
+
+    &:hover {
+      text-decoration-color: var(--accent-dark);
+    }
+  }
+}
+
+article.post .post-header {
+  max-width: 760px;
+  margin: 3.5rem auto 0;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--rule);
+
+  .post-title {
+    margin-bottom: 0.8rem;
+    color: var(--ink);
+    font-size: 2.35rem;
+    font-weight: 650;
+    line-height: 1.15;
+  }
+}
+
+.post-meta,
+.reading-time {
+  color: var(--muted-ink);
+  font-size: 0.85rem;
+}
+
+.post-content .figure-caption,
+.post-content p:has(img) + p,
+.post-content img + p,
+.post-content table + p {
+  color: var(--muted-ink) !important;
+  font-size: 0.92rem !important;
+  font-weight: 400 !important;
+  line-height: 1.55 !important;
+}
+
+blockquote {
+  margin: 2rem 0;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid #8bb5b6;
+  border-radius: 0;
+  background: var(--soft-accent);
+  color: #4d5d66;
+}
+
+code,
+.highlight {
+  border-color: var(--rule);
+  background: var(--code-surface);
+}
+
+.highlight {
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.post-navigation {
+  max-width: 760px;
+  margin: 3rem auto;
+  border-top-color: var(--rule);
+
+  .post-nav-label {
+    color: var(--muted-ink);
+  }
+
+  a {
+    color: var(--accent);
+  }
+}
+
+.site-footer {
+  border-top-color: var(--rule);
+  color: var(--muted-ink);
+
+  a,
+  .footer-col-wrapper,
+  .social-links {
+    color: var(--muted-ink);
+  }
+}
+
+::selection {
+  color: #ffffff;
+  background: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .post-content,
+  article.post .post-header {
+    margin-top: 2.4rem;
+  }
+
+  h1,
+  article.post .post-header .post-title {
+    font-size: 2rem;
+  }
+}
