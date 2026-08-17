@@ -249,27 +249,18 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/cumulative_performance_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/cumulative_performance.png" alt="Cumulative wealth of the equal-weight reference and volatility-scaled implementations" loading="lazy">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png">
+    <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png" alt="Cumulative wealth and drawdowns of the equal-weight reference and volatility-scaled implementation" loading="lazy">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth of the equal-weight reference and volatility-scaled implementation after the 5 bp transaction-cost sensitivity, shown on a logarithmic scale.</p>
-
-<div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/drawdowns_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/drawdowns.png" alt="Drawdowns of the equal-weight reference and volatility-scaled implementations" loading="lazy">
-  </picture>
-</div>
-
-<p class="figure-caption"><strong>Figure 7:</strong> Drawdowns after the 5 bp transaction-cost sensitivity for the equal-weight reference and volatility-scaled implementation.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Performance after the 5 bp transaction-cost sensitivity. The top panel shows cumulative wealth on a logarithmic scale; the shorter bottom panel shows drawdowns, with the shaded areas emphasizing time spent below the previous high.</p>
 
 ## What happened during the 41% drawdown?
 
 The uncomfortable part of the result is the largest drawdown. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000: a 41.0% loss over 357 trading days, while the Russell 1000 price index gains 52.2%. The portfolio recovers its earlier high on 15 August 2001.
 
-This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks, but the latter rallied sharply. Over the peak-to-trough window, the Russell 1000 price index gained 52.2%, while the standalone scaled low-volatility long fell 15.5% and the standalone signed high-volatility short fell 29.6%, both before costs. Figure 8 makes the accounting explicit: the top line is the combined L/S portfolio built from the signed target weights. Its daily dollar P&L is the sum of the long-book and short-book P&L, normalized by portfolio NAV and compounded after costs. It is not the difference between the two lower cumulative lines. Those are standalone leg paths, compounded separately before costs, so the signed short leg falls when the high-volatility basket rallies.
+This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks, but the latter rallied sharply. Over the peak-to-trough window, the Russell 1000 price index gained 52.2%, while the standalone scaled low-volatility long fell 15.5% and the standalone signed high-volatility short fell 29.6%, both before costs. Figure 7 makes the accounting explicit: the top line is the combined L/S portfolio built from the signed target weights. Its daily dollar P&L is the sum of the long-book and short-book P&L, normalized by portfolio NAV and compounded after costs. It is not the difference between the two lower cumulative lines. Those are standalone leg paths, compounded separately before costs, so the signed short leg falls when the high-volatility basket rallies.
 
 <div class="low-vol-figure">
   <picture>
@@ -278,8 +269,10 @@ This was the dot-com boom. The strategy was long the calmer stocks and short the
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 8:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series rebased to 1. The top panel shows the combined volatility-scaled L/S portfolio after costs against the Russell 1000 price index. The bottom panel shows standalone signed long and short legs, compounded separately before costs.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series rebased to 1. The top panel shows the combined volatility-scaled L/S portfolio after costs against the Russell 1000 price index. The bottom panel shows standalone signed long and short legs, compounded separately before costs.</p>
 
 ## Conclusion
 
-The signal is simple; the portfolio is where the real work begins. In this test, stock-level volatility scaling turns the same stock selection into a much more usable portfolio than equal weighting, without hiding the allocation behind a complex optimizer. It still cannot protect against a regime change: the 1998–2000 drawdown shows that sensible sizing cannot make a sustained reversal in the volatility spread disappear.
+The signal is simple; the portfolio is where the real work begins. Equal weighting is useful as a deliberately weak reference because it exposes the basic problem: the high-volatility short book carries much more risk than the low-volatility long book. Stock-level volatility scaling addresses that asymmetry directly. With the same stock selection, it produces lower realized volatility, lower turnover, and a much smaller drawdown while keeping the allocation rule easy to inspect.
+
+That is the implementation I would take forward, but not as a claim that the factor is safe. The 1998–2000 episode is the important counterexample: the Russell 1000 rallied, high-volatility stocks rallied even more, and both standalone scaled legs lost money over the peak-to-trough window. Beta moved around but averaged close to zero, so I would treat it as a small separate overlay rather than redesigning the stock weights around it. My takeaway is that the signal tells me where to look; sizing determines what I actually own, and regime risk remains after the sizing is done.
