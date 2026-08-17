@@ -6,9 +6,11 @@ last_modified_at: 2026-08-17
 categories: [Quant]
 ---
 
-Low-volatility stocks are not supposed to be exciting. That is part of their appeal. Across the US, Europe, and Japan, low-risk equities have historically delivered more return per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect. One explanation is leverage constraints: investors who want more market exposure may buy high-beta securities instead of levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
+Low-volatility stocks are not supposed to be exciting. That is part of their appeal—and part of the implementation problem. The factor is easy to describe: rank stocks by volatility, buy the calmest, and short the most volatile. The harder question is what positions that ranking should produce.
 
-What interests me here is the implementation step. Once I have a low-minus-high volatility signal, what positions should I actually put on? I keep stock selection fixed, use equal weights only as a deliberately weak reference, and make stock-level volatility scaling the main implementation. The aim is modest: a portfolio that is simple enough to understand and whose risks are visible in the results.
+Across the US, Europe, and Japan, low-risk equities have historically delivered more return per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect. One explanation is leverage constraints: investors who want more market exposure may buy high-beta securities instead of levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
+
+Here I keep stock selection fixed, use equal weights only as a deliberately weak reference, and make stock-level volatility scaling the main implementation. The aim is modest: a portfolio that is simple enough to understand and whose risks are visible in the results.
 
 ## The tradable universe
 
@@ -49,9 +51,7 @@ Each week I split the ranked stocks into ten deterministic, approximately equal-
 
 <p class="figure-caption"><strong>Figure 2:</strong> Long-only geometric return, realized volatility, and arithmetic-return Sharpe ratio by volatility decile, before transaction costs. Decile 1 contains the lowest-volatility stocks.</p>
 
-Figure 2 is the basic signal check. Realized volatility rises steadily across the sort. Returns vary in the middle, but Sharpe ratios generally deteriorate as volatility rises, with the weakest risk-adjusted result in the highest-volatility group. The signal is straightforward. The more interesting question is what happens when I turn those rankings into positions.
-
-The full specification is below.
+Figure 2 confirms the intended cross-sectional pattern: realized volatility rises across the sort, while Sharpe ratios generally deteriorate. The signal is not the difficult part; the allocation is. The full specification is below.
 
 <table class="research-table specification-table">
   <thead>
@@ -72,7 +72,7 @@ The full specification is below.
 
 ## A simple equal-weight reference
 
-To see what the allocation is doing, I start with the simplest possible portfolio: equal stock weights. I do not expect this to be a good strategy. Its value is as a control, because the two baskets come from opposite ends of the volatility distribution. The low-volatility basket realizes 12.1% volatility versus 39.8% for the high-volatility basket, and its average ex-ante stock beta is lower, 0.56 versus 1.63. Keeping this weak reference lets the later comparison change sizing while holding stock selection fixed.
+Before scaling positions, I use equal weighting as a control—not as a candidate implementation. The two baskets sit at opposite ends of the volatility distribution, so equal notional leaves the high-volatility basket carrying much more risk: 39.8% realized volatility versus 12.1% for the low-volatility basket. Its average ex-ante stock beta is also higher, 1.63 versus 0.56. This gives us a clean comparison before changing only the sizing.
 
 <div class="low-vol-figure">
   <picture>
@@ -83,11 +83,11 @@ To see what the allocation is doing, I start with the simplest possible portfoli
 
 <p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average ex-ante beta of the equal-weight low- and high-volatility baskets, before transaction costs.</p>
 
-The result is predictable: equal weights give the riskier basket much more risk. The main implementation changes only the allocation and uses each name's standalone volatility to decide how much notional to hold.
+Equal weights do exactly what we would expect: they leave the riskier basket carrying much more risk. The main implementation changes only the allocation and uses each name's standalone volatility to decide how much notional to hold.
 
 ## The main implementation: stock-level volatility scaling
 
-Now I change one ingredient: position sizing. The selected names do not change. The 21/63/126-day average decides *which* stocks enter, while a separate 60-day volatility estimate, floored at 5%, decides *how much* to hold. I deliberately leave correlations out of this rule so that the construction stays transparent.
+The only change is position sizing. Stock selection remains fixed: the 21/63/126-day average decides *which* stocks enter, while a separate 60-day volatility estimate, floored at 5%, decides *how much* to hold. I leave correlations out of this rule so that the construction stays transparent.
 
 Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's notional by inverse estimated volatility.
 
