@@ -78,11 +78,11 @@ That imbalance motivates the next step: keep the stock selection fixed and chang
 
 ## The main implementation: stock-level volatility scaling
 
-The 21/63/126-day average determines which stocks enter. Each week I split the eligible Russell 1000 stocks into ten equal-sized groups, buy the roughly 100 calmest stocks, and short the roughly 100 most volatile. The signal trades the next day.
+That stock selection is fixed. The signal trades the next day.
 
 To size those positions, I use a separate 60-day volatility estimate, floored at 5%. The allocation uses each stock's own volatility and keeps correlations outside the rule, which keeps it easy to inspect.
 
-Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility. The backtest charges 5 bps for every dollar of stock position traded.
+Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility.
 
 For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. Expressing volatility and weights as decimals, the uncapped and capped absolute weights for stock $$i\in\mathcal S_{\ell,t}$$ are
 
