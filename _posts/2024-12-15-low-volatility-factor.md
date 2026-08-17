@@ -61,7 +61,7 @@ Figure 2 shows the intended pattern: realized volatility rises across the rankin
 
 ## A simple equal-weight reference
 
-Before scaling positions, I use equal weighting as a control. The two baskets sit at opposite ends of the volatility distribution, so giving every stock the same dollar position leaves the high-volatility basket carrying much more risk: 39.8% realized volatility versus 12.1% for the low-volatility basket. Its average estimated stock beta is also higher, 1.63 versus 0.56. This gives us a clean comparison before changing only the sizing.
+Equal weighting is a useful control because it exposes the problem immediately. We are long the calmest stocks and short the most volatile ones. Giving every stock the same dollar weight leaves the short leg carrying much more risk: 39.8% realized volatility versus 12.1% for the long leg. The high-volatility short leg also has the higher average estimated stock beta, 1.63 versus 0.56. In other words, equal weighting gives the two legs the same capital, but not the same risk. For the actual portfolio, I move to inverse-volatility sizing.
 
 <div class="low-vol-figure">
   <picture>
