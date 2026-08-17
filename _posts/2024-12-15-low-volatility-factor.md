@@ -278,7 +278,7 @@ This was the dot-com boom. The strategy was long the calmer stocks and short the
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 8:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series rebased to 1. The top panel compares the volatility-scaled portfolio with the Russell 1000 price index. The bottom panel shows the fully invested long-only legs before costs; the strategy is long the low-volatility leg and short the high-volatility basket.</p>
+<p class="figure-caption"><strong>Figure 8:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series rebased to 1. The top panel compares the volatility-scaled portfolio with the Russell 1000 price index. The bottom panel shows the actual signed volatility-scaled long and short legs before costs.</p>
 
 ## Conclusion
 
