@@ -269,7 +269,7 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 The uncomfortable part of the result is the largest drawdown. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000: a 41.0% loss over 357 trading days, while the Russell 1000 price index gains 52.2%. The portfolio recovers its earlier high on 15 August 2001.
 
-This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks, but the latter rallied sharply. The low-volatility leg could not keep up, and the short leg lost heavily. Figure 8 shows both the portfolio outcome and the two legs behind it through the subsequent recovery.
+This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks, but the latter rallied sharply. The low-volatility leg could not keep up, and the short leg lost heavily. Figure 8 makes the accounting explicit: the top line is the combined L/S portfolio built from the signed target weights. Its daily dollar P&L is the sum of the long-book and short-book P&L, normalized by portfolio NAV and compounded after costs. It is not the difference between the two lower cumulative lines. Those are standalone leg paths, compounded separately before costs, so the signed short leg falls when the high-volatility basket rallies.
 
 <div class="low-vol-figure">
   <picture>
@@ -278,10 +278,8 @@ This was the dot-com boom. The strategy was long the calmer stocks and short the
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 8:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series rebased to 1. The top panel compares the volatility-scaled portfolio with the Russell 1000 price index. The bottom panel shows the actual signed volatility-scaled long and short legs before costs.</p>
+<p class="figure-caption"><strong>Figure 8:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series rebased to 1. The top panel shows the combined volatility-scaled L/S portfolio after costs against the Russell 1000 price index. The bottom panel shows standalone signed long and short legs, compounded separately before costs.</p>
 
 ## Conclusion
 
-What I take away is simple. A low-volatility signal is only the starting point; the way I turn it into positions determines how much risk I actually carry. Stock-level volatility scaling is transparent and materially improves the portfolio in this test, while market beta can be monitored and hedged separately when needed. But the 1998–2000 drawdown is a useful warning: risk scaling does not protect against a long-lasting reversal in the volatility spread.
-
-> Start with the signal, identify the risks the initial portfolio is taking, allocate them deliberately, and only then judge the result.
+The signal is simple; the portfolio is where the real work begins. In this test, stock-level volatility scaling turns the same stock selection into a much more usable portfolio than equal weighting, without hiding the allocation behind a complex optimizer. It still cannot protect against a regime change: the 1998–2000 drawdown shows that sensible sizing cannot make a sustained reversal in the volatility spread disappear.
