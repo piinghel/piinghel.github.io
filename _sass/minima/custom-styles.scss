@@ -450,6 +450,73 @@ table {
   }
 }
 
+.post-content table.research-table.specification-table {
+  border-spacing: 0 0.35rem;
+  background: transparent;
+  box-shadow: none;
+
+  thead {
+    background: transparent;
+
+    th {
+      padding: 0.35rem 0.8rem 0.55rem;
+      border-bottom: 1px solid var(--rule);
+      color: var(--muted-ink);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+
+  tbody tr {
+    background: #f7fafb;
+    border: 0;
+
+    &:hover {
+      background: #f1f6f7;
+    }
+  }
+
+  tbody th,
+  tbody td {
+    padding: 0.7rem 0.8rem;
+    border-top: 1px solid #edf1f2;
+    border-bottom: 1px solid #edf1f2;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    vertical-align: top;
+  }
+
+  tbody th {
+    width: 23%;
+    border-left: 1px solid #edf1f2;
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  tbody td {
+    border-right: 1px solid #edf1f2;
+    color: var(--muted-ink);
+    white-space: normal;
+  }
+
+  tbody tr:first-child th {
+    border-top-left-radius: 4px;
+  }
+
+  tbody tr:first-child td {
+    border-top-right-radius: 4px;
+  }
+
+  tbody tr:last-child th {
+    border-bottom-left-radius: 4px;
+  }
+
+  tbody tr:last-child td {
+    border-bottom-right-radius: 4px;
+  }
+}
+
 // Links - subtle hover effects
 a {
   text-decoration: none;

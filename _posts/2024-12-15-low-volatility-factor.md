@@ -64,17 +64,17 @@ Figure 2 confirms the intended pattern: realized volatility rises across the ran
     <tr><th>Component</th><th>Method</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Sample</th><td>July 1995–October 2024</td></tr>
-    <tr><th scope="row">Universe</th><td>Russell 1000 membership recorded at each date; unadjusted price ≥ $5</td></tr>
-    <tr><th scope="row">Selection signal</th><td>Mean annualized realized volatility over 21, 63, and 126 trading days</td></tr>
-    <tr><th scope="row">Portfolio</th><td>Ten equal-count deciles; long decile 1, short decile 10</td></tr>
-    <tr><th scope="row">Stock sizing</th><td>60-day volatility floored at 5%; 20% per-stock volatility target; 4% position cap; 100% gross limit per leg</td></tr>
-    <tr><th scope="row">Beta check</th><td>252-day estimate; minimum 126 observations; clipped to [−4, 4]</td></tr>
-    <tr><th scope="row">Trading cost</th><td>5 bps per dollar of absolute stock position traded</td></tr>
+    <tr><th scope="row">Sample</th><td>Russell 1000, July 1995–October 2024</td></tr>
+    <tr><th scope="row">Universe</th><td>Point-in-time membership; unadjusted price ≥ $5</td></tr>
+    <tr><th scope="row">Signal</th><td>Average realized volatility over 21, 63, and 126 trading days</td></tr>
+    <tr><th scope="row">Sort</th><td>Ten equal-count deciles; long decile 1, short decile 10</td></tr>
+    <tr><th scope="row">Allocation</th><td>1/N base, inverse 60-day volatility, 20% target, 4% position cap</td></tr>
+    <tr><th scope="row">Execution</th><td>Weekly rebalance, next-day execution, 100% gross limit per leg</td></tr>
+    <tr><th scope="row">Costs</th><td>5 bps per dollar of absolute stock position traded</td></tr>
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 1:</strong> Backtest method.</p>
+<p class="figure-caption"><strong>Table 1:</strong> Portfolio design at a glance.</p>
 
 ## A simple equal-weight reference
 
@@ -274,7 +274,7 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 The uncomfortable part of the result is the 41.0% drawdown. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000, a 41.0% loss over 357 trading days while the Russell 1000 price index gains 52.2%. The portfolio recovers its earlier high on 15 August 2001.
 
-This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks. The volatile stocks rallied sharply. Over the peak-to-trough window, the Russell 1000 price index gained 52.2%, while the scaled low-volatility long fell 15.5% and the high-volatility short leg fell 29.6%, both before costs. Figure 7 makes the accounting explicit: the top line is the combined L/S portfolio built from the long and short positions. Its daily dollar P&L equals the sum of the long-book and short-book P&L, scaled by portfolio value and compounded after costs. The two lower lines show the legs on their own, compounded before costs, so the short leg falls when the high-volatility basket rallies.
+This was the dot-com boom. The strategy was long the calmer stocks and short the volatile stocks. The volatile stocks rallied sharply. Over the peak-to-trough window, the Russell 1000 price index gained 52.2%, while the scaled low-volatility long fell 15.5% and the high-volatility short leg fell 29.6%, both before costs. Figure 7 makes the accounting explicit: the top line is the combined L/S portfolio built from the long and short positions. Its daily dollar P&L equals the sum of the long-book and short-book P&L, scaled by portfolio value and compounded after costs. The two lower lines show those same scaled legs on their own, compounded before costs, so the short leg falls when the high-volatility basket rallies.
 
 <div class="low-vol-figure">
   <picture>
@@ -285,7 +285,9 @@ This was the dot-com boom. The strategy was long the calmer stocks and short the
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series starting at 1. The top panel shows the combined volatility-scaled L/S portfolio after costs against the Russell 1000 price index. The bottom panel shows the long and short legs on their own, compounded separately before costs.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series starting at 1. The top panel shows the combined volatility-scaled L/S portfolio after costs against the Russell 1000 price index. The bottom panel shows the same portfolio’s scaled long and short legs, compounded separately before costs.</p>
+
+As a quick stock-level check, the largest negative long-book contributions came from New Century Energies (−0.63 percentage points), Evergy Kansas Central (−0.62), and Consolidated Edison (−0.59). On the short side, i2 Technologies (−0.91), XO Communications (−0.70), and Ciena (−0.68) hurt most as their stocks rose 3,201%, 994%, and 1,691% while they were held. These are cumulative contributions from the scaled positions over the same peak-to-trough window, which is exactly the pattern Figure 7 suggests: a broad lag in the long book and a few explosive winners in the short book.
 
 ## Conclusion
 
