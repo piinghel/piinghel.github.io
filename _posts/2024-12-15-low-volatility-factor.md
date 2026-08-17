@@ -59,10 +59,7 @@ Each week I split the ranked stocks into ten fixed groups of roughly equal size.
 
 Figure 2 shows the intended pattern: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. The more important choice comes next: position sizing determines the portfolio, so here is the full rule.
 
-<aside class="method-note">
-  <span class="method-note-label">Portfolio design</span>
-  <span class="method-note-text">Each week I rank the eligible Russell 1000 stocks by realized volatility and split them into ten equal-sized groups. I buy the roughly 100 calmest stocks and short the roughly 100 most volatile. Each leg starts with an explicit 1/N weight, then scales each stock by inverse 60-day volatility. The 20% figure is the annualized volatility target for each stock. A 4% stock cap and a 100% gross cap per leg control concentration and total size. Signals trade the next day, with a cost of 5 bps for every dollar of stock position traded.</span>
-</aside>
+<p><strong>Portfolio design.</strong> Each week I rank the eligible Russell 1000 stocks by realized volatility and split them into ten equal-sized groups. I buy the roughly 100 calmest stocks and short the roughly 100 most volatile. Each leg starts with an explicit 1/N weight, then scales each stock by inverse 60-day volatility. The 20% figure is the annualized volatility target for each stock. A 4% stock cap and a 100% gross cap per leg control concentration and total size. Signals trade the next day, with a cost of 5 bps for every dollar of stock position traded.</p>
 
 ## A simple equal-weight reference
 
