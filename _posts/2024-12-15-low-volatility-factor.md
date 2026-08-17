@@ -8,7 +8,7 @@ article_mark: /assets/brand/low-volatility-mark.svg
 article_label: Low-volatility · portfolio construction
 ---
 
-A low-volatility portfolio starts with a simple ranking: buy the calmest stocks and short the most volatile. The real work starts after that ranking. The same stock list can produce very different results depending on how much capital each position receives. In this note I keep the selection rule fixed and focus on that translation from signal to portfolio.
+The low-volatility factor is well documented. The implementation question is how to turn its cross-sectional ranking into a sensible long/short portfolio. I keep the stock selection fixed and focus on the translation from signal to portfolio: the same stock list can produce very different results depending on how much capital each position receives.
 
 Across the US, Europe, and Japan, low-risk equities have historically delivered more return per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect. One explanation is leverage constraints: investors who want more market exposure may buy high-beta securities instead of levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
 
