@@ -265,33 +265,36 @@ This was the dot-com boom. We were long the calmer stocks and short the volatile
 
 Figure 7 puts the two legs beside the combined portfolio. The upper panel shows the combined gross result against the Russell 1000. In the lower panel, each line is that leg's cumulative contribution on the combined portfolio's capital base. The short leg falls because the basket it sold short was one of the strongest parts of the market.
 
-<div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.svg">
-    <img src="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.png" alt="Relative wealth of the volatility-scaled portfolio, Russell 1000 price index, and its two legs from October 1998 through December 2003" loading="lazy" decoding="async">
-  </picture>
-</div>
+The two episodes are easier to compare side by side. Figure 8 starts each window at a local peak in the scaled strategy and puts the Russell 1000 on the same base. In the dot-com window, the strategy lost 40.1% while the index gained 50.2%. From the April 2025 peak through 27 May 2026, it lost 13.2% while the index gained 31.6%. The recent episode is smaller, but the shape is familiar: a rising market, a falling low-volatility portfolio, and a large relative win for the volatile end of the universe.
 
-<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003. The top panel shows the combined gross volatility-scaled L/S portfolio against the Russell 1000 price index. The bottom panel shows the cumulative contributions of the scaled long and short legs on the same capital base, so the two contributions add to the combined gross portfolio path.</p>
+<div class="low-vol-figure-pair">
+  <div class="low-vol-figure-pair__item">
+    <div class="low-vol-figure">
+      <picture>
+        <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.svg">
+        <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.png">
+        <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.svg">
+        <img src="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.png" alt="Relative wealth of the volatility-scaled portfolio, Russell 1000 price index, and its two legs from October 1998 through December 2003" loading="lazy" decoding="async">
+      </picture>
+    </div>
+    <p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003. The top panel shows the combined gross volatility-scaled L/S portfolio against the Russell 1000 price index. The bottom panel shows the cumulative contributions of the scaled long and short legs on the same capital base, so the two contributions add to the combined gross portfolio path.</p>
+  </div>
+  <div class="low-vol-figure-pair__item">
+    <div class="low-vol-figure">
+      <picture>
+        <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.svg">
+        <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
+        <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison.svg">
+        <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="The volatility-scaled low-volatility portfolio and Russell 1000 during the dot-com and 2025 to 2026 windows" loading="lazy" decoding="async">
+      </picture>
+    </div>
+    <p class="figure-caption"><strong>Figure 8:</strong> Gross wealth from the scaled low-volatility L/S strategy's local peak through the end of each window. The left panel covers 8 October 1998 to 9 March 2000; the right covers 3 April 2025 to 27 May 2026. Both panels start at one, with the Russell 1000 shown for market context.</p>
+  </div>
+</div>
 
 To sanity-check the aggregate result, I traced the P&L back to individual stocks over the same window. The three largest long-book losses came from New Century Energies (−0.63 percentage points), Evergy Kansas Central (−0.62), and Consolidated Edison (−0.59). On the short side, i2 Technologies (−0.91), XO Communications (−0.70), and Ciena (−0.68) were the largest losses. Across the dates they appeared in the short book, those stocks rose roughly 3,201%, 994%, and 1,691%, respectively.
 
 The numbers in parentheses are cumulative contributions to the corresponding scaled leg, measured in percentage points across the weekly holding periods. They sit alongside the raw stock returns as a separate piece of information. In this backtest, i2 Technologies usually had a short weight of about 0.2%–0.3%, and that weight was reset each week. A 3,201% return means that the stock's total-return series grew to roughly 33 times its starting value across those dates. The strategy carried a sequence of small weekly positions, so its realized P&L was very different from carrying one fixed position through the whole compounding path. That is why the stock contributed −0.91 percentage points. The pattern is clear: the long book lagged, while a small group of extreme winners drove losses in the short book.
-
-The two episodes are easier to compare side by side. Figure 8 starts each window at a local peak in the scaled strategy and puts the Russell 1000 on the same base. In the dot-com window, the strategy lost 40.1% while the index gained 50.2%. From the April 2025 peak through 27 May 2026, it lost 13.2% while the index gained 31.6%. The recent episode is smaller, but the shape is familiar: a rising market, a falling low-volatility portfolio, and a large relative win for the volatile end of the universe.
-
-<div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison.svg">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="The volatility-scaled low-volatility portfolio and Russell 1000 during the dot-com and 2025 to 2026 windows" loading="lazy" decoding="async">
-  </picture>
-</div>
-
-<p class="figure-caption"><strong>Figure 8:</strong> Gross wealth from the scaled low-volatility L/S strategy's local peak through the end of each window. The left panel covers 8 October 1998 to 9 March 2000; the right covers 3 April 2025 to 27 May 2026. Both panels start at one, with the Russell 1000 shown for market context.</p>
 
 ## Conclusion
 
