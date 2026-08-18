@@ -2,7 +2,7 @@
 layout: post
 title: "The Low-Volatility Factor: Portfolio Construction Matters"
 date: 2024-12-15
-last_modified_at: 2026-08-17
+last_modified_at: 2026-08-18
 categories: [Quant]
 article_mark: /assets/brand/low-volatility-mark.svg
 article_label: Low-volatility · portfolio construction
@@ -16,7 +16,7 @@ I compare two allocations with the same stock selection: equal weighting as a de
 
 ## The tradable universe
 
-I start with the Russell 1000 membership recorded at each date from July 1995 through October 2024. I apply a $5 price filter based on unadjusted prices and keep stocks with enough data to estimate the signal. That leaves 840–1,017 eligible stocks per week, with a median of 971. Both portfolio implementations use the same weekly stock universe.
+I start with the Russell 1000 membership history and apply it point-in-time to daily prices from July 1995 through 27 May 2026. I apply a $5 price filter based on unadjusted prices and keep stocks with enough data to estimate the signal. That leaves 839–1,016 eligible stocks per week, with a median of 972. Both portfolio implementations use the same weekly stock universe.
 
 <div class="low-vol-figure">
   <picture>
@@ -27,7 +27,7 @@ I start with the Russell 1000 membership recorded at each date from July 1995 th
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Number of eligible Russell 1000 stocks at each weekly signal date after the $5 price filter and data-availability checks. The observed range is 840–1,017 stocks and the median is 971.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Number of eligible Russell 1000 stocks at each weekly signal date after the $5 price filter and data-availability checks. The observed range is 839–1,016 stocks and the median is 972.</p>
 
 For each stock $$i$$ on each signal date $$t$$, I estimate annualized realized volatility over the past $$h\in\{21,63,126\}$$ trading days and take the average:
 
@@ -135,7 +135,7 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
 
 <p class="figure-caption"><strong>Figure 4:</strong> Weekly target long gross, short gross, and net stock exposure after stock-level volatility scaling.</p>
 
-Across the sample, the low-volatility long averages 97.0% gross and the high-volatility short 34.2%. Total stock gross is 131.2%, leaving the portfolio with +62.8% net stock exposure. This net exposure comes directly from the sizing rule.
+Across the sample, the low-volatility long averages 97.2% gross and the high-volatility short 34.0%. Total stock gross is 131.2%, leaving the portfolio with +63.2% net stock exposure. This net exposure comes directly from the sizing rule.
 
 Net stock exposure and market beta measure different things. Let $$E_t^{\mathrm{net}}$$ be signed stock exposure as a fraction of portfolio value, and let $$\widehat{\beta}_{i,t}$$ be stock $$i$$'s estimated market beta. Then
 
@@ -178,23 +178,23 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   <tbody>
     <tr>
       <th scope="row">Return, 0 bp</th>
-      <td data-label="Reference">2.9%</td>
-      <td data-label="Volatility-scaled">7.9%</td>
+      <td data-label="Reference">0.7%</td>
+      <td data-label="Volatility-scaled">7.1%</td>
     </tr>
     <tr>
       <th scope="row">Return, 5 bp</th>
-      <td data-label="Reference">1.4%</td>
-      <td data-label="Volatility-scaled">7.0%</td>
+      <td data-label="Reference">−0.9%</td>
+      <td data-label="Volatility-scaled">6.1%</td>
     </tr>
     <tr>
       <th scope="row">Volatility, 5 bp</th>
-      <td data-label="Reference">34.9%</td>
-      <td data-label="Volatility-scaled">9.6%</td>
+      <td data-label="Reference">34.8%</td>
+      <td data-label="Volatility-scaled">9.8%</td>
     </tr>
     <tr>
       <th scope="row">Sharpe, 5 bp</th>
-      <td data-label="Reference">0.04</td>
-      <td data-label="Volatility-scaled">0.72</td>
+      <td data-label="Reference">−0.02</td>
+      <td data-label="Volatility-scaled">0.62</td>
     </tr>
     <tr>
       <th scope="row">Max drawdown, 5 bp</th>
@@ -204,7 +204,7 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 1:</strong> Performance from July 1995 through October 2024. Volatility uses 252 trading days and Sharpe assumes a zero risk-free rate.</p>
+<p class="figure-caption"><strong>Table 1:</strong> Performance from July 1995 through 27 May 2026. Volatility uses 252 trading days and Sharpe assumes a zero risk-free rate.</p>
 
 <table class="research-table comparison-table exposure-table">
   <thead>
@@ -228,19 +228,19 @@ The tables separate performance from the exposures that produce it. I charge 5 b
     <tr>
       <th scope="row">Realized beta</th>
       <td data-label="Reference">−1.18</td>
-      <td data-label="Volatility-scaled">−0.01</td>
+      <td data-label="Volatility-scaled">−0.02</td>
     </tr>
     <tr>
       <th scope="row">Annualized turnover</th>
-      <td data-label="Reference">31.4× equity</td>
-      <td data-label="Volatility-scaled">19.3× equity</td>
+      <td data-label="Reference">31.5× equity</td>
+      <td data-label="Volatility-scaled">19.4× equity</td>
     </tr>
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 2:</strong> Average daily stock exposures, full-sample beta from regressing strategy returns on the Russell 1000 price-index return, and annualized turnover.</p>
+<p class="figure-caption"><strong>Table 2:</strong> Average daily stock exposures from July 1995 through 27 May 2026, full-sample beta from regressing strategy returns on the Russell 1000 price-index return, and annualized turnover.</p>
 
-With the same stock selection as the reference, the volatility-scaled implementation produces a 7.0% annualized arithmetic return after costs, 9.6% volatility, and a 0.72 Sharpe. Its cost drag is roughly 1.0 percentage point a year. Most of the improvement comes from changing the weights; stock selection is held fixed.
+With the same stock selection as the reference, the volatility-scaled implementation produces a 6.1% annualized arithmetic return after costs, 9.8% volatility, and a 0.62 Sharpe. Its cost drag is roughly 1.0 percentage point a year. Most of the improvement comes from changing the weights; stock selection is held fixed.
 
 <div class="low-vol-figure">
   <picture>
@@ -251,7 +251,9 @@ With the same stock selection as the reference, the volatility-scaled implementa
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth and drawdowns after the 5 bp transaction-cost sensitivity. The panels share the same time axis; the top panel uses a logarithmic wealth scale, while the shaded lower panel shows the distance from each portfolio’s previous high.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth and drawdowns after the 5 bp transaction-cost sensitivity, through 27 May 2026. The panels share the same time axis; the top panel uses a logarithmic wealth scale, while the shaded lower panel shows the distance from each portfolio’s previous high.</p>
+
+The recent part of the sample is less flattering. From 2 January 2025 through 27 May 2026, the volatility-scaled portfolio lost 7.1% before costs and 8.4% after costs. The low-volatility long-only basket gained 5.6% after costs, while the high-volatility long-only basket gained 65.4%. That is the relative move that hurts this strategy: the stocks sold short ran far ahead of the stocks held long. The period overlaps with the AI-led rally, but the backtest itself makes the narrower point clearly—the high-volatility side of the universe won by a wide margin.
 
 ## What happened during the 41% drawdown?
 
