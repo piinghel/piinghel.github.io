@@ -266,7 +266,7 @@ article p:has(img) {
   border-radius: 4px;
 }
 
-// Figure and table captions - grayish color, thicker text, larger font
+// Figure and table captions - restrained, muted, and compact
 // "Figure X:" and "Table X:" are darker and bold, rest is grayish
 // Handle two cases:
 // 1. Image and caption in same paragraph: p:has(img):has(strong)
@@ -287,9 +287,9 @@ article.post table + p,
 .post-content .figure-caption,
 article .figure-caption,
 article.post .figure-caption {
-  font-size: 1.05rem !important;
-  font-weight: 500 !important;
-  color: #666 !important;
+  font-size: 0.84rem !important;
+  font-weight: 400 !important;
+  color: #7a8790 !important;
   line-height: 1.5 !important;
   margin-top: 0.5rem !important;
   margin-bottom: 1.5rem !important;
@@ -1001,8 +1001,8 @@ article.post .post-header {
 .post-content p:has(img) + p,
 .post-content img + p,
 .post-content table + p {
-  color: var(--muted-ink) !important;
-  font-size: 0.86rem !important;
+  color: #7a8790 !important;
+  font-size: 0.84rem !important;
   font-weight: 400 !important;
   line-height: 1.5 !important;
 }

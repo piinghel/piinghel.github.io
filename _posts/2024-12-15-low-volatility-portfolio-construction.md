@@ -29,7 +29,7 @@ I start with the Russell 1000 membership history and apply it point-in-time to d
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Number of eligible Russell 1000 stocks at each rebalance date after the $5 price filter and data-availability checks. The observed range is 857–1,015 stocks and the median is 973.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Eligible Russell 1000 stocks at each rebalance after the $5 price filter and availability checks. Range: 857–1,015; median: 973.</p>
 
 For each stock $$i$$ on each signal date $$t$$, I estimate annualized realized volatility over the past $$h\in\{21,63,126\}$$ trading days and take the average:
 
@@ -57,7 +57,7 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Long-only compounded return, realized volatility, and Sharpe ratio by volatility decile, before transaction costs. Decile 1 contains the lowest-volatility stocks.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Compounded return, realized volatility, and Sharpe ratio by volatility decile before costs. Decile 1 is the lowest-volatility group.</p>
 
 Figure 2 shows the intended pattern: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. The next step is to see what that ranking produces with a deliberately simple allocation.
 
@@ -74,7 +74,7 @@ Equal weighting is a useful control because it exposes the problem immediately. 
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Annualized realized volatility and average estimated beta of the equal-weight low- and high-volatility baskets, before transaction costs.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Realized volatility and average beta for equal-weight low- and high-volatility baskets before costs.</p>
 
 That imbalance motivates the next step: keep the stock selection fixed and change only the sizing.
 
@@ -135,7 +135,7 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 4:</strong> Realized long gross, short gross, and net stock exposure between three-week rebalances. The movements between rebalance dates are the natural drift of floating positions.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> Long gross, short gross, and net stock exposure between three-week rebalances. The variation is floating-position drift.</p>
 
 Across the sample, the low-volatility long averages 97.4% gross and the high-volatility short 34.1%. Total stock gross is 131.5%, leaving the portfolio with +63.4% net stock exposure. The daily path also shows why target exposure and realized exposure are different: prices move after each rebalance, so the weights move with them.
 
@@ -163,7 +163,7 @@ Figure 5 shows why I keep beta separate. It moves around quite a bit, and the re
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 5:</strong> Estimated stock beta and rolling 252-day realized beta for the volatility-scaled portfolio. The shaded region marks beta between −0.1 and +0.1.</p>
+<p class="figure-caption"><strong>Figure 5:</strong> Estimated stock beta and rolling 252-day realized beta for the scaled portfolio. Shading marks −0.1 to +0.1.</p>
 
 ## Performance, costs, and drawdowns
 
@@ -206,7 +206,7 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 1:</strong> Performance from July 1995 through 27 May 2026 using three-week rebalances. Volatility uses 252 trading days and Sharpe assumes a zero risk-free rate.</p>
+<p class="figure-caption"><strong>Table 1:</strong> Performance from July 1995 to 27 May 2026 with three-week rebalances. Volatility uses 252 trading days; Sharpe assumes zero cash return.</p>
 
 <table class="research-table comparison-table exposure-table">
   <thead>
@@ -240,7 +240,7 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 2:</strong> Average daily stock exposures from July 1995 through 27 May 2026, full-sample realized beta from regressing strategy returns on the Russell 1000 price-index return, and annualized turnover.</p>
+<p class="figure-caption"><strong>Table 2:</strong> Average daily exposures, full-sample beta versus the Russell 1000, and annualized turnover.</p>
 
 With the same stock selection as the reference, the volatility-scaled implementation produces a 7.1% annualized arithmetic return after costs, 9.8% volatility, and a 0.73 Sharpe. Its cost drag is about 0.5 percentage points a year. Most of the risk reduction comes from changing the weights; stock selection is held fixed.
 
@@ -253,7 +253,7 @@ With the same stock selection as the reference, the volatility-scaled implementa
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth and drawdowns after the 5 bp transaction-cost sensitivity, through 27 May 2026. The panels share the same time axis; the top panel uses a logarithmic wealth scale, while the shaded lower panel shows the distance from each portfolio’s previous high.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth and drawdown after 5 bp trading costs, through 27 May 2026. Wealth is above; drawdown is below.</p>
 
 The recent part of the sample is less flattering. From 3 April 2025 through 27 May 2026, the volatility-scaled portfolio lost 10.3% before costs and 10.8% after costs on a compounded basis, while the Russell 1000 gained 31.6%. The long contribution was +3.2 percentage points and the short contribution was −13.5 points. The period overlaps with the AI-led rally, and the mechanism is familiar: the high-volatility side of the universe ran far ahead of the calmer stocks.
 
@@ -278,7 +278,7 @@ The recent episode is smaller, but the shape is familiar: a rising market, a fal
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> The dot-com and AI-led episodes. Left: the combined gross strategy versus the Russell 1000. Right: the scaled long and short contributions on the same capital base.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Dot-com and AI-led episodes. Left: combined gross strategy versus the Russell 1000. Right: scaled long and short contributions.</p>
 
 As a quick stock-level check, I traced the P&L back to individual positions over the same window. The three largest long-book losses were New Century Energies (−0.67 percentage points), Evergy Kansas Central (−0.60), and WEC Energy Group (−0.56). On the short side, i2 Technologies (−0.95), Avantax (−0.73), and Ciena (−0.71) hurt most. These numbers are cumulative signed contributions to the strategy's initial capital base, measured in percentage points. For example, i2 Technologies compounded to about 39 times its starting value while it was held, but its largest floating short weight was only about 0.47%, resulting in a −0.95-point contribution.
 
