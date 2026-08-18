@@ -255,6 +255,8 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 The recent part of the sample is less flattering. From 2 January 2025 through 27 May 2026, the volatility-scaled portfolio lost 7.1% before costs and 8.4% after costs. The low-volatility long-only basket gained 5.6% after costs, while the high-volatility long-only basket gained 65.4%. That is the relative move that hurts this strategy: the stocks sold short ran far ahead of the stocks held long. The period overlaps with the AI-led rally, but the backtest itself makes the narrower point clearly—the high-volatility side of the universe won by a wide margin.
 
+In beta terms, the portfolio is short the market. Its average ex-ante stock beta was −0.11 from 3 April 2025 through 27 May 2026, while average net stock exposure remained +68.9%. The distinction matters: the book is long dollars, while the high-beta short leg makes it beta-short.
+
 ## What happened during the 41% drawdown?
 
 The most surprising part of the result is the 41.0% drawdown. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000, a 41.0% loss over 357 trading days while the Russell 1000 price index gains 52.2%. The portfolio recovers its earlier high on 15 August 2001.
@@ -276,7 +278,20 @@ Figure 7 puts the two legs beside the combined portfolio. The upper panel shows 
 
 To sanity-check the aggregate result, I traced the P&L back to individual stocks over the same window. The three largest long-book losses came from New Century Energies (−0.63 percentage points), Evergy Kansas Central (−0.62), and Consolidated Edison (−0.59). On the short side, i2 Technologies (−0.91), XO Communications (−0.70), and Ciena (−0.68) were the largest losses. Across the dates they appeared in the short book, those stocks rose roughly 3,201%, 994%, and 1,691%, respectively.
 
-The numbers in parentheses are cumulative contributions to the corresponding scaled leg, measured in percentage points across the weekly holding periods. They sit alongside the raw stock returns as a separate piece of information. In this backtest, i2 Technologies usually had a short weight of about 0.2%–0.3%, and that weight was reset each week. A 3,201% return means that the stock's total-return series grew to roughly 33 times its starting value across those dates; the strategy did not carry one fixed 0.2%–0.3% portfolio position through that entire compounding path. It realized a sequence of small weekly P&Ls instead, which is why the stock contributed −0.91 percentage points. The pattern is clear: the long book lagged, while a small group of extreme winners drove losses in the short book.
+The numbers in parentheses are cumulative contributions to the corresponding scaled leg, measured in percentage points across the weekly holding periods. They sit alongside the raw stock returns as a separate piece of information. In this backtest, i2 Technologies usually had a short weight of about 0.2%–0.3%, and that weight was reset each week. A 3,201% return means that the stock's total-return series grew to roughly 33 times its starting value across those dates. The strategy carried a sequence of small weekly positions, so its realized P&L was very different from carrying one fixed position through the whole compounding path. That is why the stock contributed −0.91 percentage points. The pattern is clear: the long book lagged, while a small group of extreme winners drove losses in the short book.
+
+The two episodes are easier to compare side by side. Figure 8 starts each window at a local peak in the scaled strategy and puts the Russell 1000 on the same base. In the dot-com window, the strategy lost 40.1% while the index gained 50.2%. From the April 2025 peak through 27 May 2026, it lost 13.2% while the index gained 31.6%. The recent episode is smaller, but the shape is familiar: a rising market, a falling low-volatility portfolio, and a large relative win for the volatile end of the universe.
+
+<div class="low-vol-figure">
+  <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.svg">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison.svg">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="The volatility-scaled low-volatility portfolio and Russell 1000 during the dot-com and 2025 to 2026 windows" loading="lazy" decoding="async">
+  </picture>
+</div>
+
+<p class="figure-caption"><strong>Figure 8:</strong> Gross wealth from the scaled low-volatility L/S strategy's local peak through the end of each window. The left panel covers 8 October 1998 to 9 March 2000; the right covers 3 April 2025 to 27 May 2026. Both panels start at one, with the Russell 1000 shown for market context.</p>
 
 ## Conclusion
 
