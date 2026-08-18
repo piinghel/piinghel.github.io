@@ -165,7 +165,7 @@ Figure 5 shows why I keep beta separate. The estimate moves around, but its full
 
 ## Performance, costs, and drawdowns
 
-The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. This simple cost sensitivity shows how trading costs affect the results. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after that cost.
+The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. The cost is turnover multiplied by 5 bps: 19.4× annualized turnover for the scaled portfolio implies 0.97% a year in stock-trading costs. A 7.5 bp assumption would imply roughly 1.5% at the same turnover. Borrow and financing are separate inputs. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after the stock-trading cost.
 
 <table class="research-table comparison-table performance-table">
   <thead>
