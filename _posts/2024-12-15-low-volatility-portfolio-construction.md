@@ -152,7 +152,7 @@ The short book carries less capital, but its stocks have higher market betas, so
 
 ## A quick beta check
 
-Figure 5 shows why I keep beta separate. It moves around quite a bit, and the recent average is more negative than the full-sample average. A small offsetting index-futures position could improve that exposure if I wanted to tighten it.
+Figure 5 is the quick check I use for market exposure. Beta moves around, but it is slightly negative on average and more negative in the recent window. That matters for the recent result: the Russell 1000 rose sharply while this portfolio was modestly short the market and short the high-volatility end of the universe. The beta mismatch is one source of drag alongside the characteristic loss. An offsetting index-futures position could remove some of that market exposure; I would test it separately because it leaves the characteristic risk unchanged.
 
 <div class="low-vol-figure">
   <picture>
