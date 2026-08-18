@@ -259,7 +259,7 @@ The most surprising part of the result is the 41.0% drawdown. The scaled portfol
 
 This was the dot-com boom. We were long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. Over the same window, the low-volatility basket fell 16.3% and the high-volatility basket gained 334.2%. The long book contributed −12.0 percentage points, the short book −28.2, and trading costs another −0.85.
 
-Figure 7 puts the two legs beside the combined portfolio. The upper panel shows the result after costs; the lower panel compounds the scaled long and short legs separately before costs. The short leg falls because the basket it sold short was one of the strongest parts of the market.
+Figure 7 puts the two legs beside the combined portfolio. The upper panel shows the combined gross result against the Russell 1000. In the lower panel, each line is that leg's cumulative contribution on the combined portfolio's capital base. The short leg falls because the basket it sold short was one of the strongest parts of the market.
 
 <div class="low-vol-figure">
   <picture>
@@ -270,7 +270,7 @@ Figure 7 puts the two legs beside the combined portfolio. The upper panel shows 
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003, with each series starting at 1. The top panel shows the combined volatility-scaled L/S portfolio after costs against the Russell 1000 price index. The bottom panel shows the same portfolio’s scaled long and short legs, compounded separately before costs.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003. The top panel shows the combined gross volatility-scaled L/S portfolio against the Russell 1000 price index. The bottom panel shows the cumulative contributions of the scaled long and short legs on the same capital base, so the two contributions add to the combined gross portfolio path.</p>
 
 To sanity-check the aggregate result, I traced the P&L back to individual stocks over the same window. The three largest long-book losses came from New Century Energies (−0.63 percentage points), Evergy Kansas Central (−0.62), and Consolidated Edison (−0.59). On the short side, i2 Technologies (−0.91), XO Communications (−0.70), and Ciena (−0.68) were the largest losses. Across the dates they appeared in the short book, those stocks rose roughly 3,201%, 994%, and 1,691%, respectively.
 
