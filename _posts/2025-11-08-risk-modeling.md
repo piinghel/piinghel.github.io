@@ -21,7 +21,7 @@ To get a sense of the upper bound, I run a perfect-foresight experiment. Using R
 
 ### How I Use Volatility Forecasts
 
-To give some context, this volatility forecast is part of a long-short equity strategy I run (see [previous post on the low-volatility factor]({% post_url 2024-12-15-low-volatility-factor %})).
+To give some context, this volatility forecast is part of a long-short equity strategy I run (see [previous post on the low-volatility factor]({% post_url 2024-12-15-low-volatility-portfolio-construction %})).
 
 The allocation works in two stages. First, I use ML scores to select positions, say the top 50 or 75 stocks for the long leg (the exact number is somewhat arbitrary). Higher-scoring stocks get higher weights, lower-scoring stocks go to the short leg with the logic reversed. These initial weights $\alpha_i$ are normalized to sum to 1 per leg, and I cap individual positions so no single stock dominates. You could also just use equal weights here; the ML weighting isn't the focus of this post.
 
@@ -405,4 +405,3 @@ If the improvements don’t carry through, then the path forward is probably ric
 
 - [How Global is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157) - O. Hellum, L.H. Pedersen, A. Rønn-Nielsen
 - [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility) - T. Bollerslev, B. Hood, J. Huss, L.H. Pedersen
-
