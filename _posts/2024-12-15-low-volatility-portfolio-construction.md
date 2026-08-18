@@ -18,7 +18,7 @@ I compare two allocations with the same stock selection: equal weighting as a de
 
 ## The tradable universe
 
-I start with the Russell 1000 membership history and apply it point-in-time to daily prices from July 1995 through 27 May 2026. I apply a $5 price filter based on unadjusted prices and keep stocks with enough data to estimate the signal. That leaves 857–1,015 eligible stocks at each rebalance, with a median of 973. Both portfolio implementations use the same rebalance universe.
+I start with the Russell 1000 membership history and apply it point-in-time to daily prices from July 1995 through 27 May 2026. I apply a $5 price filter based on unadjusted prices and keep stocks with enough data to estimate the signal. That leaves 857–1,015 eligible stocks at each rebalance, with a median of 973. Both implementations use that same universe.
 
 <div class="low-vol-figure">
   <picture>
@@ -80,9 +80,9 @@ That imbalance motivates the next step: keep the stock selection fixed and chang
 
 ## The main implementation: stock-level volatility scaling
 
-That stock selection is fixed. I rebalance every three weeks, with the signal trading on the next market day.
+I rebalance every three weeks, with the signal trading on the next market day.
 
-To size those positions, I use a separate 60-day volatility estimate, floored at 5%. The allocation uses each stock's own volatility and keeps correlations outside the rule, which keeps it easy to inspect.
+To size those positions, I use a separate 60-day volatility estimate, floored at 5%. The allocation uses each stock's own volatility and leaves correlations outside the rule, so the sizing stays easy to inspect.
 
 Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility.
 
@@ -98,7 +98,7 @@ a_{i,\ell,t}
 \end{aligned}
 $$
 
-The 0.20 is the annualized volatility target used in the per-stock scaling step. Lower-volatility stocks receive more size and higher-volatility stocks receive less. The portfolio's realized volatility then emerges from these positions and their correlations. The 4% cap limits concentration. If the initial weights in a leg add up to more than 100% gross, I scale the whole leg down in proportion:
+The 0.20 sets the annualized volatility target in this per-stock scaling step. Lower-volatility stocks receive more size and higher-volatility stocks receive less. The portfolio's realized volatility then emerges from these positions and their correlations. The 4% cap limits concentration. If the initial weights in a leg add up to more than 100% gross, I scale the whole leg down in proportion:
 
 $$
 \begin{aligned}
@@ -139,7 +139,7 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
 
 Across the sample, the low-volatility long averages 97.4% gross and the high-volatility short 34.1%. Total stock gross is 131.5%, leaving the portfolio with +63.4% net stock exposure. The daily path also shows why target exposure and realized exposure are different: prices move after each rebalance, so the weights move with them.
 
-Net stock exposure and market beta measure different things. Let $$E_t^{\mathrm{net}}$$ be signed stock exposure as a fraction of portfolio value, and let $$\widehat{\beta}_{i,t}$$ be stock $$i$$'s estimated market beta. Then
+Net stock exposure and market beta answer different questions. Let $$E_t^{\mathrm{net}}$$ be signed stock exposure as a fraction of portfolio value, and let $$\widehat{\beta}_{i,t}$$ be stock $$i$$'s estimated market beta. Then
 
 $$
 \begin{aligned}
