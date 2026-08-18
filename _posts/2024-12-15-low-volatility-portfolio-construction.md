@@ -59,11 +59,11 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
 
 <p class="figure-caption"><strong>Figure 2:</strong> Compounded return, realized volatility, and Sharpe ratio by volatility decile before costs. Decile 1 is the lowest-volatility group.</p>
 
-The pattern in Figure 2 is what I would expect: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. I now keep that ranking fixed and see what happens when I change only the allocation.
+Figure 2 shows the basic trade-off: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. I keep that ranking fixed and change only the allocation from here.
 
 ## A simple equal-weight reference
 
-Equal weighting is a useful control because it exposes the problem immediately. We are long the calmest stocks and short the most volatile ones. Giving every stock the same dollar weight leaves the high-volatility leg carrying much more risk: roughly 38% realized volatility versus 12% for the low-volatility leg. It also has the higher average estimated stock beta, 1.63 versus 0.55. Equal weighting gives the two legs the same capital, with very different risk. For the actual portfolio, I move to inverse-volatility sizing.
+I use equal weighting as a simple control. It exposes the problem immediately: we are long the calmest stocks and short the most volatile ones, yet every stock receives the same dollar weight. The high-volatility leg then carries roughly 38% realized volatility versus 12% for the low-volatility leg. Its average estimated stock beta is also higher, 1.63 versus 0.55. The two legs have the same capital and very different risk. That is why I use inverse-volatility sizing for the implementation.
 
 <div class="low-vol-figure">
   <picture>
@@ -84,7 +84,7 @@ I rebalance every three weeks, with the signal trading on the next market day.
 
 To size those positions, I use a separate 60-day volatility estimate, floored at 5%. I use each stock's own volatility and leave correlations out of the sizing rule. That keeps the calculation easy to inspect.
 
-Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility.
+Within each leg, I start with an explicit $1/N$ allocation and then adjust each stock's position size by its inverse estimated volatility. This makes the allocation rule easy to follow: the ranking chooses the stocks, and the volatility estimate determines their relative sizes.
 
 For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. Expressing volatility and weights as decimals, the uncapped and capped absolute weights for stock $$i\in\mathcal S_{\ell,t}$$ are
 
@@ -259,15 +259,15 @@ The recent part of the sample is less flattering. From 3 April 2025 through 27 M
 
 In beta terms, the portfolio is short the market. Its average ex-ante stock beta was −0.12 from 3 April 2025 through 27 May 2026, while average net stock exposure remained +68.6%. The distinction matters: the book is long dollars, while the high-beta short leg makes it beta-short. The small negative beta also reflects the 100% upper bound on each leg: the long book is close to fully invested, while the short leg often cannot provide enough leverage to offset all of the long book's market exposure.
 
-## A useful comparison: dot-com and AI-led episodes
+## Comparing the dot-com and AI-led episodes
 
 The largest drawdown came during the dot-com boom. The scaled portfolio peaked on 8 October 1998 and reached its trough on 9 March 2000, losing 38.0% after stock-trading costs over 357 trading days while the Russell 1000 gained 50.2%. It recovered its earlier high on 3 April 2001. This makes the episode a useful comparison for the recent AI-led rally, where the portfolio has so far struggled during another market advance led by high-volatility stocks.
 
 The important detail is the market exposure. The portfolio's average ex-ante beta was −0.07 and its realized beta was −0.06, even though average net stock exposure was +72.0%. We held more dollars long than short, but the high-beta short leg made the portfolio short the market. The calm long basket contributed −10.6 percentage points, the volatile short basket −26.6 points, and stock-trading costs another 0.70 points on the initial capital base. The short leg did most of the damage because the stocks we shorted were among the market's strongest winners.
 
-Figure 7 puts this episode beside the recent AI-led rally. The left column compares the gross vol-scaled L/S with the Russell 1000; the right column shows the long- and short-leg contributions. The top row includes the dot-com rally and unwind. In the bottom row, the Russell 1000 gains 31.6% from 3 April 2025 through 27 May 2026 while the L/S loses 10.8% after costs. Average ex-ante beta is −0.12 and realized beta −0.13, with +68.6% average net stock exposure. The comparable feature is the portfolio's positioning: the book is long dollars but carries negative market beta because the short leg contains higher-beta, higher-volatility stocks.
+Figure 7 puts this episode beside the recent AI-led rally. The left column compares the gross vol-scaled L/S with the Russell 1000; the right column shows the long- and short-leg contributions. The top row includes the dot-com rally and unwind. In the bottom row, the Russell 1000 gains 31.6% from 3 April 2025 through 27 May 2026 while the L/S loses 10.8% after costs. Average ex-ante beta is −0.12 and realized beta −0.13, with +68.6% average net stock exposure. The useful parallel is in the portfolio: it is long dollars but carries negative market beta because the short leg contains higher-beta, higher-volatility stocks.
 
-This comparison is useful because it isolates one risk, even though the episodes are far from identical. In both windows, market leadership sits in high-volatility stocks while the low-volatility L/S carries negative beta. The dot-com window contains a completed boom-and-bust cycle and a much larger loss; the AI-led window currently captures the rally and the relative underperformance, while its reversal remains outside the sample. That makes 2000 a useful stress case for interpreting the recent weakness. It flags a recurring vulnerability in the construction without offering a template for the next market move.
+That is why I put the two windows side by side. The comparison helps isolate a risk in the construction without suggesting that the markets are following the same script. In both windows, market leadership sits in high-volatility stocks while the low-volatility L/S carries negative beta. The dot-com window contains a completed boom-and-bust cycle and a much larger loss; the AI-led window currently captures the rally and the relative underperformance, while its reversal remains outside the sample. The 2000 episode is therefore a useful stress case for interpreting the recent weakness, while the eventual outcome of the AI episode remains open.
 
 <div class="low-vol-figure">
   <picture>
@@ -290,4 +290,4 @@ The same check is useful for the recent AI-led window. From 3 April 2025 through
 
 The signal is only the starting point. The way I fund the positions matters just as much. Equal weighting gives both legs the same capital even though their risks are very different. Inverse-volatility sizing changes that balance without changing the stock selection. In this sample, after-cost volatility falls from 33.4% to 9.8%, turnover is lower, and the drawdown is smaller.
 
-My takeaway is narrower than a verdict that the factor works or fails. In both the dot-com boom and the AI-led rally, the portfolio carried negative market beta while high-volatility stocks led the market. Recent losses therefore combine market exposure with characteristic exposure from the short leg. The current backtest cannot cleanly separate those effects. A small index-futures overlay would help isolate the beta contribution: an improvement would suggest that market exposure mattered, while persistent losses would point more toward the short leg's characteristic risk. A constrained optimizer could then test whether correlations, leg risk, and concentration add another layer. The sizing rule improves the risk profile, but the short leg can still overlap with the market's strongest winners.
+For me, this result answers an implementation question; the factor itself needs a separate verdict. In both the dot-com boom and the AI-led rally, the portfolio carried negative market beta while high-volatility stocks led the market. The recent losses therefore combine market exposure with losses from the short leg, and this backtest cannot cleanly separate the two. My first next test would be a small index-futures overlay to measure how much beta contributed. If the result still looked weak after that adjustment, I would focus on the short leg: its concentration, its correlations, and its exposure to the market's strongest winners. A constrained optimizer can come later. The sizing rule improves the risk profile, while leaving a clear area for further work.
