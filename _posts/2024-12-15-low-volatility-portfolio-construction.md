@@ -10,11 +10,11 @@ article_label: Low-volatility · portfolio construction
 permalink: /quant/2024/12/15/low-volatility-factor.html
 ---
 
-The low-volatility factor is well documented. The implementation question is how to turn its cross-sectional ranking into a sensible long/short portfolio. I keep the stock selection fixed and focus on the translation from signal to portfolio: the same stock list can produce very different results depending on how much capital each position receives.
+The low-volatility factor is well documented. The practical question is how to turn its cross-sectional ranking into a sensible long/short portfolio. I keep the stock selection fixed and focus on the step that comes after the ranking: the same stock list can produce very different results depending on how much capital each position receives.
 
 Across the US, Europe, and Japan, low-risk equities have historically delivered more return per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect. One explanation is leverage constraints: investors who want more market exposure may buy high-beta securities instead of levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
 
-I compare two allocations with the same stock selection: equal weighting as a deliberately weak reference, and stock-level volatility scaling as the main implementation. The aim is a portfolio that is simple enough to understand and whose risks are visible in the results.
+I compare two allocations with the same stock selection: equal weighting as a deliberately weak reference, and stock-level volatility scaling as the main implementation. I want the result to stay simple enough to understand, with the main risks visible in the performance.
 
 ## The tradable universe
 
@@ -59,7 +59,7 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
 
 <p class="figure-caption"><strong>Figure 2:</strong> Compounded return, realized volatility, and Sharpe ratio by volatility decile before costs. Decile 1 is the lowest-volatility group.</p>
 
-Figure 2 shows the intended pattern: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. The next step is to see what that ranking produces with a deliberately simple allocation.
+The pattern in Figure 2 is what I would expect: realized volatility rises across the ranking, while Sharpe ratios generally deteriorate. I now keep that ranking fixed and see what happens when I change only the allocation.
 
 ## A simple equal-weight reference
 
@@ -76,13 +76,13 @@ Equal weighting is a useful control because it exposes the problem immediately. 
 
 <p class="figure-caption"><strong>Figure 3:</strong> Realized volatility and average beta for equal-weight low- and high-volatility baskets before costs.</p>
 
-That imbalance motivates the next step: keep the stock selection fixed and change only the sizing.
+This is why the next experiment changes only the sizing and keeps the stock selection fixed.
 
 ## The main implementation: stock-level volatility scaling
 
 I rebalance every three weeks, with the signal trading on the next market day.
 
-To size those positions, I use a separate 60-day volatility estimate, floored at 5%. The allocation uses each stock's own volatility and leaves correlations outside the rule, so the sizing stays easy to inspect.
+To size those positions, I use a separate 60-day volatility estimate, floored at 5%. I use each stock's own volatility and leave correlations out of the sizing rule. That keeps the calculation easy to inspect.
 
 Within each leg, the allocation starts with an explicit $1/N$ base and then adjusts each stock's position size by its inverse estimated volatility.
 
@@ -98,7 +98,7 @@ a_{i,\ell,t}
 \end{aligned}
 $$
 
-The 0.20 sets the annualized volatility target in this per-stock scaling step. Lower-volatility stocks receive more size and higher-volatility stocks receive less. The portfolio's realized volatility then emerges from these positions and their correlations. The 4% cap limits concentration. If the initial weights in a leg add up to more than 100% gross, I scale the whole leg down in proportion:
+Here, 0.20 means a 20% annualized volatility target for an individual stock. Lower-volatility stocks receive more size and higher-volatility stocks receive less. Portfolio volatility is then determined by these positions and their correlations. The 4% cap limits concentration. If the initial weights in a leg add up to more than 100% gross, I scale the whole leg down in proportion:
 
 $$
 \begin{aligned}
@@ -167,7 +167,7 @@ Figure 5 is the quick check I use for market exposure. Beta moves around, but it
 
 ## Performance, costs, and drawdowns
 
-The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. The scaled portfolio turns over 10.4 times its equity base per year, which implies about 0.52% a year in stock-trading costs. Borrow and financing are separate inputs. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after stock-trading costs.
+I separate performance from the exposures that produce it in the tables below. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. The scaled portfolio turns over 10.4 times its equity base per year, which implies about 0.52% a year in stock-trading costs. Borrow and financing are separate inputs. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after stock-trading costs.
 
 <table class="research-table comparison-table performance-table">
   <thead>
@@ -267,7 +267,7 @@ The important detail is the market exposure. The portfolio's average ex-ante bet
 
 Figure 7 puts this episode beside the recent AI-led rally. The left column compares the gross vol-scaled L/S with the Russell 1000; the right column shows the long- and short-leg contributions. The top row includes the dot-com rally and unwind. In the bottom row, the Russell 1000 gains 31.6% from 3 April 2025 through 27 May 2026 while the L/S loses 10.8% after costs. Average ex-ante beta is −0.12 and realized beta −0.13, with +68.6% average net stock exposure. The comparable feature is the portfolio's positioning: the book is long dollars but carries negative market beta because the short leg contains higher-beta, higher-volatility stocks.
 
-The comparison is useful for a specific reason, while the episodes remain different. In both windows, market leadership sits in high-volatility stocks while the low-volatility L/S carries negative beta. The dot-com window contains a completed boom-and-bust cycle and a much larger loss; the AI-led window currently captures the rally and the relative underperformance, while its reversal remains outside the sample. That makes 2000 a useful stress case for interpreting the recent weakness. It also places a limit on the inference: the evidence identifies a recurring vulnerability in the construction, rather than a reliable template for the next market move.
+This comparison is useful because it isolates one risk, even though the episodes are far from identical. In both windows, market leadership sits in high-volatility stocks while the low-volatility L/S carries negative beta. The dot-com window contains a completed boom-and-bust cycle and a much larger loss; the AI-led window currently captures the rally and the relative underperformance, while its reversal remains outside the sample. That makes 2000 a useful stress case for interpreting the recent weakness. It flags a recurring vulnerability in the construction without offering a template for the next market move.
 
 <div class="low-vol-figure">
   <picture>
@@ -288,6 +288,6 @@ The same check is useful for the recent AI-led window. From 3 April 2025 through
 
 ## Conclusion
 
-The ranking is simple; the portfolio construction determines how it behaves. Holding the stock selection fixed, inverse-volatility sizing reduces realized volatility from 33.4% to 9.8% after costs and lowers turnover. It improves the implementation while keeping the signal's regime exposure visible.
+The signal is only the starting point. The way I fund the positions matters just as much. Equal weighting gives both legs the same capital even though their risks are very different. Inverse-volatility sizing changes that balance without changing the stock selection. In this sample, after-cost volatility falls from 33.4% to 9.8%, turnover is lower, and the drawdown is smaller.
 
-The evidence supports a fairly narrow conclusion. In both the dot-com boom and the AI-led rally, the portfolio carried negative market beta while high-volatility stocks led the market. Recent losses therefore reflect a combination of market exposure and characteristic exposure from the short leg. The current backtest does not separate those effects cleanly, which is why I would treat a small index-futures overlay as a diagnostic as much as a hedge. A constrained optimizer could then test whether correlations, leg risk, and concentration add another layer. The construction is better controlled than the equal-weight reference, but its behavior in this regime remains an open portfolio-design problem.
+My takeaway is narrower than a verdict that the factor works or fails. In both the dot-com boom and the AI-led rally, the portfolio carried negative market beta while high-volatility stocks led the market. Recent losses therefore combine market exposure with characteristic exposure from the short leg. The current backtest cannot cleanly separate those effects. A small index-futures overlay would help isolate the beta contribution: an improvement would suggest that market exposure mattered, while persistent losses would point more toward the short leg's characteristic risk. A constrained optimizer could then test whether correlations, leg risk, and concentration add another layer. The sizing rule improves the risk profile, but the short leg can still overlap with the market's strongest winners.
