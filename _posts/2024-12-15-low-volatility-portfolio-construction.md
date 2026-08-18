@@ -63,7 +63,7 @@ Figure 2 shows the intended pattern: realized volatility rises across the rankin
 
 ## A simple equal-weight reference
 
-Equal weighting is a useful control because it exposes the problem immediately. We are long the calmest stocks and short the most volatile ones. Giving every stock the same dollar weight leaves the high-volatility leg carrying much more risk: 53.8% realized volatility versus 4.9% for the low-volatility leg. It also has the higher average estimated stock beta, 1.63 versus 0.55. Equal weighting gives the two legs the same capital, with very different risk. For the actual portfolio, I move to inverse-volatility sizing.
+Equal weighting is a useful control because it exposes the problem immediately. We are long the calmest stocks and short the most volatile ones. Giving every stock the same dollar weight leaves the high-volatility leg carrying much more risk: roughly 38% realized volatility versus 12% for the low-volatility leg. It also has the higher average estimated stock beta, 1.63 versus 0.55. Equal weighting gives the two legs the same capital, with very different risk. For the actual portfolio, I move to inverse-volatility sizing.
 
 <div class="low-vol-figure">
   <picture>
@@ -173,34 +173,34 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   <thead>
     <tr>
       <th>Performance metric</th>
-      <th>Reference</th>
+      <th>Equal-weight reference</th>
       <th>Volatility-scaled</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th scope="row">Return, 0 bp</th>
-      <td data-label="Reference">3.2%</td>
+      <td data-label="Equal-weight reference">3.2%</td>
       <td data-label="Volatility-scaled">7.6%</td>
     </tr>
     <tr>
       <th scope="row">Return, 5 bp</th>
-      <td data-label="Reference">2.4%</td>
+      <td data-label="Equal-weight reference">2.4%</td>
       <td data-label="Volatility-scaled">7.1%</td>
     </tr>
     <tr>
       <th scope="row">Volatility, 5 bp</th>
-      <td data-label="Reference">33.4%</td>
+      <td data-label="Equal-weight reference">33.4%</td>
       <td data-label="Volatility-scaled">9.8%</td>
     </tr>
     <tr>
       <th scope="row">Sharpe, 5 bp</th>
-      <td data-label="Reference">0.07</td>
+      <td data-label="Equal-weight reference">0.07</td>
       <td data-label="Volatility-scaled">0.73</td>
     </tr>
     <tr>
       <th scope="row">Max drawdown, 5 bp</th>
-      <td data-label="Reference">−87.1%</td>
+      <td data-label="Equal-weight reference">−87.1%</td>
       <td data-label="Volatility-scaled">−38.0%</td>
     </tr>
   </tbody>
@@ -212,29 +212,29 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   <thead>
     <tr>
       <th>Exposure or trading metric</th>
-      <th>Reference</th>
+      <th>Equal-weight reference</th>
       <th>Volatility-scaled</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th scope="row">Average stock gross</th>
-      <td data-label="Reference">2.00</td>
+      <td data-label="Equal-weight reference">2.00</td>
       <td data-label="Volatility-scaled">1.31</td>
     </tr>
     <tr>
       <th scope="row">Average stock net</th>
-      <td data-label="Reference">0.00</td>
+      <td data-label="Equal-weight reference">0.00</td>
       <td data-label="Volatility-scaled">0.63</td>
     </tr>
     <tr>
       <th scope="row">Realized beta</th>
-      <td data-label="Reference">−1.12</td>
+      <td data-label="Equal-weight reference">−1.12</td>
       <td data-label="Volatility-scaled">−0.00</td>
     </tr>
     <tr>
       <th scope="row">Annualized turnover</th>
-      <td data-label="Reference">14.4× equity</td>
+      <td data-label="Equal-weight reference">14.4× equity</td>
       <td data-label="Volatility-scaled">10.4× equity</td>
     </tr>
   </tbody>
