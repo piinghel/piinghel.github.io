@@ -263,9 +263,9 @@ In beta terms, the portfolio is short the market. Its average ex-ante stock beta
 
 The most surprising part of the result is the drawdown during the dot-com boom. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000, a 38.0% loss after stock-trading costs over 357 trading days while the Russell 1000 price index gains 50.2%. It recovers its earlier high on 3 April 2001.
 
-This was the dot-com boom. We were long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. On the compounded combined-portfolio path, the scaled long leg contributed −10.6 percentage points, the short leg −26.6 points, and stock-trading costs were another 0.70 points on the initial capital base.
+This was the dot-com boom. We were long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. On the compounded strategy wealth path, the low-volatility long basket contributed −10.6 percentage points, the high-volatility short basket −26.6 points, and stock-trading costs were another 0.70 points on the initial capital base.
 
-Figure 7 puts both episodes into one view. The left column compares the combined gross portfolio with the Russell 1000; the right column shows the scaled long and short contributions. The top row includes both the late-1990s rally and the subsequent unwind. The bottom row ends on 27 May 2026: it shows the strategy lagging during the AI-led rally, before any comparable market sell-off. In both windows, the short leg loses ground because the basket it sold short contains some of the market's strongest winners.
+Figure 7 puts both episodes into one view. The left column compares the gross vol-scaled L/S with the Russell 1000; the right column shows the long- and short-leg contributions. The long leg holds the low-volatility basket, and the short leg holds the high-volatility basket. The top row includes both the late-1990s rally and the subsequent unwind. The bottom row ends on 27 May 2026: it shows the strategy lagging during the AI-led rally, before any comparable market sell-off. In both windows, the short leg loses ground because it contains some of the market's strongest winners.
 
 So far, the recent episode shows only one side of the comparison: a rising market, a falling low-volatility portfolio, and a large relative win for the volatile end of the universe. Whether the strategy would behave like it did during the 2000–2001 unwind remains an open question.
 
@@ -278,7 +278,7 @@ So far, the recent episode shows only one side of the comparison: a rising marke
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Dot-com and AI-led episodes. Left: combined gross strategy versus the Russell 1000. Right: scaled long and short contributions.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Dot-com and AI-led episodes. Left: vol-scaled L/S versus the Russell 1000. Right: long- and short-leg contributions.</p>
 
 As a quick stock-level check, I traced the P&L back to individual positions over the same window. The three largest long-book losses were New Century Energies (−0.67 percentage points), Evergy Kansas Central (−0.60), and WEC Energy Group (−0.56). On the short side, i2 Technologies (−0.95), Avantax (−0.73), and Ciena (−0.71) hurt most. These numbers are cumulative signed contributions to the strategy's initial capital base, measured in percentage points. For example, i2 Technologies compounded to about 39 times its starting value while it was held, but its largest floating short weight was only about 0.47%, resulting in a −0.95-point contribution.
 
