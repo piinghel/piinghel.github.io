@@ -3,6 +3,7 @@ layout: post
 title: "The Low-Volatility Factor: Portfolio Construction Matters"
 date: 2024-12-15
 last_modified_at: 2026-08-18
+show_date: false
 categories: [Quant]
 article_mark: /assets/brand/low-volatility-mark.svg
 article_label: Low-volatility · portfolio construction
@@ -130,13 +131,13 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
     <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png">
     <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures.svg">
-    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png" alt="Long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
+    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 4:</strong> Three-week target long gross, short gross, and net stock exposure after stock-level volatility scaling.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> Realized long gross, short gross, and net stock exposure between three-week rebalances. The movements between rebalance dates are the natural drift of floating positions.</p>
 
-Across the sample, the low-volatility long averages 96.7% gross and the high-volatility short 34.0%. Total stock gross is 130.7%, leaving the portfolio with +62.6% net stock exposure. This net exposure comes directly from the sizing rule.
+Across the sample, the low-volatility long averages 97.4% gross and the high-volatility short 34.1%. Total stock gross is 131.5%, leaving the portfolio with +63.4% net stock exposure. The daily path also shows why target exposure and realized exposure are different: prices move after each rebalance, so the weights move with them.
 
 Net stock exposure and market beta measure different things. Let $$E_t^{\mathrm{net}}$$ be signed stock exposure as a fraction of portfolio value, and let $$\widehat{\beta}_{i,t}$$ be stock $$i$$'s estimated market beta. Then
 
@@ -147,11 +148,11 @@ E_t^{\mathrm{net}} &= \sum_i w_{i,t}, \\
 \end{aligned}
 $$
 
-The short book carries less capital, but its stocks have higher market betas, so it offsets much of the long book's beta. The full-sample average ex-ante beta is −0.02 and realized beta is −0.01. I treat beta as a separate check and keep stock sizing focused on each stock's own volatility.
+The short book carries less capital, but its stocks have higher market betas, so it offsets much of the long book's beta. The full-sample average ex-ante beta is −0.014 and realized beta is −0.001. The small negative beta is a consequence of the 100% leg ceiling: the long book is close to fully invested, while the short book often cannot provide enough leverage to offset it. I keep beta as a separate diagnostic rather than adding it to the stock-sizing rule.
 
 ## A quick beta check
 
-Figure 5 shows why I keep beta separate. The estimate moves around, with a slightly negative full-sample average. The 100% cap keeps the low-volatility long book close to fully invested while the volatile short book is smaller. A small offsetting index-futures position would be a clean overlay if I wanted to tighten that exposure.
+Figure 5 shows why I keep beta separate. It moves around quite a bit, and the recent average is more negative than the full-sample average. A small offsetting index-futures position could improve that exposure if I wanted to tighten it.
 
 <div class="low-vol-figure">
   <picture>
@@ -166,7 +167,7 @@ Figure 5 shows why I keep beta separate. The estimate moves around, with a sligh
 
 ## Performance, costs, and drawdowns
 
-The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. The scaled portfolio turns over 12.2 times its equity base per year, which implies 0.61% a year in stock-trading costs. Borrow and financing are separate inputs. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after the stock-trading cost.
+The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. The scaled portfolio turns over 10.4 times its equity base per year, which implies about 0.52% a year in stock-trading costs. Borrow and financing are separate inputs. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after stock-trading costs.
 
 <table class="research-table comparison-table performance-table">
   <thead>
@@ -179,28 +180,28 @@ The tables separate performance from the exposures that produce it. I charge 5 b
   <tbody>
     <tr>
       <th scope="row">Return, 0 bp</th>
-      <td data-label="Reference">4.7%</td>
-      <td data-label="Volatility-scaled">4.0%</td>
+      <td data-label="Reference">3.2%</td>
+      <td data-label="Volatility-scaled">7.6%</td>
     </tr>
     <tr>
       <th scope="row">Return, 5 bp</th>
-      <td data-label="Reference">4.5%</td>
-      <td data-label="Volatility-scaled">3.8%</td>
+      <td data-label="Reference">2.4%</td>
+      <td data-label="Volatility-scaled">7.1%</td>
     </tr>
     <tr>
       <th scope="row">Volatility, 5 bp</th>
-      <td data-label="Reference">24.0%</td>
-      <td data-label="Volatility-scaled">4.8%</td>
+      <td data-label="Reference">33.4%</td>
+      <td data-label="Volatility-scaled">9.8%</td>
     </tr>
     <tr>
       <th scope="row">Sharpe, 5 bp</th>
-      <td data-label="Reference">0.19</td>
-      <td data-label="Volatility-scaled">0.79</td>
+      <td data-label="Reference">0.07</td>
+      <td data-label="Volatility-scaled">0.73</td>
     </tr>
     <tr>
       <th scope="row">Max drawdown, 5 bp</th>
-      <td data-label="Reference">−87.4%</td>
-      <td data-label="Volatility-scaled">−28.3%</td>
+      <td data-label="Reference">−87.1%</td>
+      <td data-label="Volatility-scaled">−38.0%</td>
     </tr>
   </tbody>
 </table>
@@ -223,25 +224,25 @@ The tables separate performance from the exposures that produce it. I charge 5 b
     </tr>
     <tr>
       <th scope="row">Average stock net</th>
-      <td data-label="Reference">−0.00</td>
+      <td data-label="Reference">0.00</td>
       <td data-label="Volatility-scaled">0.63</td>
     </tr>
     <tr>
       <th scope="row">Realized beta</th>
-      <td data-label="Reference">−0.60</td>
-      <td data-label="Volatility-scaled">−0.01</td>
+      <td data-label="Reference">−1.12</td>
+      <td data-label="Volatility-scaled">−0.00</td>
     </tr>
     <tr>
       <th scope="row">Annualized turnover</th>
-      <td data-label="Reference">18.6× equity</td>
-      <td data-label="Volatility-scaled">12.2× equity</td>
+      <td data-label="Reference">14.4× equity</td>
+      <td data-label="Volatility-scaled">10.4× equity</td>
     </tr>
   </tbody>
 </table>
 
 <p class="figure-caption"><strong>Table 2:</strong> Average daily stock exposures from July 1995 through 27 May 2026, full-sample realized beta from regressing strategy returns on the Russell 1000 price-index return, and annualized turnover.</p>
 
-With the same stock selection as the reference, the volatility-scaled implementation produces a 3.8% annualized arithmetic return after costs, 4.8% volatility, and a 0.79 Sharpe. Its cost drag is roughly 0.2 percentage points a year. Most of the risk reduction comes from changing the weights; stock selection is held fixed.
+With the same stock selection as the reference, the volatility-scaled implementation produces a 7.1% annualized arithmetic return after costs, 9.8% volatility, and a 0.73 Sharpe. Its cost drag is about 0.5 percentage points a year. Most of the risk reduction comes from changing the weights; stock selection is held fixed.
 
 <div class="low-vol-figure">
   <picture>
@@ -254,46 +255,32 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 <p class="figure-caption"><strong>Figure 6:</strong> Cumulative wealth and drawdowns after the 5 bp transaction-cost sensitivity, through 27 May 2026. The panels share the same time axis; the top panel uses a logarithmic wealth scale, while the shaded lower panel shows the distance from each portfolio’s previous high.</p>
 
-The recent part of the sample is less flattering. From 2 January 2025 through 27 May 2026, the volatility-scaled portfolio lost roughly 1.0% before costs and 1.3% after costs on a compounded basis. The low-volatility long-only basket gained 1.4% before costs, while the basket underlying the short leg gained 12.7%. That is the relative move that hurts this strategy: the stocks sold short ran far ahead of the stocks held long. The period overlaps with the AI-led rally, but the backtest itself makes the narrower point clearly—the high-volatility side of the universe won by a wide margin.
+The recent part of the sample is less flattering. From 3 April 2025 through 27 May 2026, the volatility-scaled portfolio lost 10.3% before costs and 10.8% after costs on a compounded basis, while the Russell 1000 gained 31.6%. The long contribution was +3.2 percentage points and the short contribution was −13.5 points. The period overlaps with the AI-led rally, and the mechanism is familiar: the high-volatility side of the universe ran far ahead of the calmer stocks.
 
-In beta terms, the portfolio is short the market. Its average ex-ante stock beta was −0.12 from 3 April 2025 through 27 May 2026, while average net stock exposure remained +67.7%. The distinction matters: the book is long dollars, while the high-beta short leg makes it beta-short. The small negative beta also reflects the 100% upper bound on each leg: the long book is close to fully invested, while the short leg often cannot provide enough leverage to offset all of the long book's market exposure.
+In beta terms, the portfolio is short the market. Its average ex-ante stock beta was −0.12 from 3 April 2025 through 27 May 2026, while average net stock exposure remained +68.6%. The distinction matters: the book is long dollars, while the high-beta short leg makes it beta-short. The small negative beta also reflects the 100% upper bound on each leg: the long book is close to fully invested, while the short leg often cannot provide enough leverage to offset all of the long book's market exposure.
 
 ## What happened during the largest drawdown?
 
-The most surprising part of the result is the drawdown during the dot-com boom. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000, a 27.4% gross loss over 357 trading days while the Russell 1000 price index gains 50.2%. After stock-trading costs, the loss is 28.1%. The portfolio recovers its earlier high on 9 March 2001.
+The most surprising part of the result is the drawdown during the dot-com boom. The scaled portfolio peaks on 8 October 1998 and reaches its trough on 9 March 2000, a 38.0% loss after stock-trading costs over 357 trading days while the Russell 1000 price index gains 50.2%. It recovers its earlier high on 3 April 2001.
 
-This was the dot-com boom. We were long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. Over the same window, the low-volatility basket fell 6.3% before costs and the high-volatility basket gained 102.1%. On the combined portfolio capital base, the scaled long leg contributed −8.3 percentage points, the short leg −19.0, and stock-trading costs another −0.47 percentage points.
+This was the dot-com boom. We were long the calmer stocks and short the volatile stocks, while the volatile stocks rallied sharply. On the compounded combined-portfolio path, the scaled long leg contributed −10.6 percentage points, the short leg −26.6 points, and stock-trading costs were another 0.70 points on the initial capital base.
 
-Figure 7 puts the two legs beside the combined portfolio. The upper panel shows the combined gross result against the Russell 1000. In the lower panel, each line is that leg's cumulative contribution on the combined portfolio's capital base. The short leg falls because the basket it sold short was one of the strongest parts of the market.
+Figure 7 puts both episodes into one view. The left column compares the combined gross portfolio with the Russell 1000; the right column shows the scaled long and short contributions. The top row covers the dot-com period and the bottom row covers the recent AI-led period. The short leg falls because the basket it sold short was one of the strongest parts of the market.
 
-Figure 8 repeats the same stacked view for the April 2025–May 2026 window. The gross strategy lost 2.9% while the Russell 1000 gained 31.6%. The recent episode is smaller, but the shape is familiar: a rising market, a falling low-volatility portfolio, and a large relative win for the volatile end of the universe.
+The recent episode is smaller, but the shape is familiar: a rising market, a falling low-volatility portfolio, and a large relative win for the volatile end of the universe.
 
-<div class="low-vol-figure-pair">
-  <div class="low-vol-figure-pair__item">
-    <div class="low-vol-figure">
-      <picture>
-        <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.svg">
-        <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison_mobile.png">
-        <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.svg">
-        <img src="/assets/2024-12-15-low-volatility-factor/dotcom_comparison.png" alt="Relative wealth of the volatility-scaled portfolio, Russell 1000 price index, and its two legs from October 1998 through December 2003" loading="lazy" decoding="async">
-      </picture>
-    </div>
-    <p class="figure-caption"><strong>Figure 7:</strong> Relative wealth from the 8 October 1998 peak through December 2003. The top panel shows the combined gross volatility-scaled L/S portfolio against the Russell 1000 price index. The bottom panel shows the cumulative contributions of the scaled long and short legs on the same capital base, so the two contributions add to the combined gross portfolio path.</p>
-  </div>
-  <div class="low-vol-figure-pair__item">
-    <div class="low-vol-figure">
-      <picture>
-        <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.svg">
-        <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
-        <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison.svg">
-        <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="Relative wealth and long and short contributions of the volatility-scaled portfolio from April 2025 through May 2026" loading="lazy" decoding="async">
-      </picture>
-    </div>
-    <p class="figure-caption"><strong>Figure 8:</strong> The same stacked view as Figure 7 for 3 April 2025 through 27 May 2026. The upper panel shows the gross scaled L/S portfolio against the Russell 1000; the lower panel shows the long and short contributions on the same rebased capital base.</p>
-  </div>
+<div class="low-vol-figure">
+  <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.svg">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
+    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison.svg">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="Relative wealth and long and short contributions of the volatility-scaled portfolio in the dot-com and AI-led periods" loading="lazy" decoding="async">
+  </picture>
 </div>
 
-As a quick stock-level check, I traced the P&L back to individual positions over the same window. The three largest long-book losses came from New Century Energies (−0.67 percentage points), Evergy Kansas Central (−0.60), and WEC Energy Group (−0.56). On the short side, i2 Technologies (−0.95), Avantax (−0.73), and Ciena (−0.71) were the largest losses. These figures are cumulative signed contributions to the strategy's capital base, rather than the stocks' standalone returns. For example, i2 Technologies compounded to about 39 times its starting value while it was held, but its largest floating short weight was only about 0.47%, resulting in a −0.95 percentage-point contribution.
+<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth and leg contributions in the two difficult episodes. The left column compares the combined gross volatility-scaled portfolio with the Russell 1000; the right column shows the cumulative contributions of the scaled long and short legs. The top row covers 8 October 1998–31 December 2003 and the bottom row covers 3 April 2025–27 May 2026. The leg contributions are carried on the compounded combined-portfolio path, so they add back to the combined gross result.</p>
+
+As a quick stock-level check, I traced the P&L back to individual positions over the same window. The three largest long-book losses were New Century Energies (−0.67 percentage points), Evergy Kansas Central (−0.60), and WEC Energy Group (−0.56). On the short side, i2 Technologies (−0.95), Avantax (−0.73), and Ciena (−0.71) hurt most. These numbers are cumulative signed contributions to the strategy's initial capital base, measured in percentage points. For example, i2 Technologies compounded to about 39 times its starting value while it was held, but its largest floating short weight was only about 0.47%, resulting in a −0.95-point contribution.
 
 The pattern is clear: the long book lagged, while a small group of explosive winners drove losses in the short book. The changing, floating weights matter here. A stock can rise several thousand percent during the dates it appears in the basket without producing the same loss as a fixed-size short held from the beginning; the actual contribution depends on the position held each day.
 
@@ -301,6 +288,6 @@ The same check is useful for the recent AI-led window. From 3 April 2025 through
 
 ## Conclusion
 
-The signal is the starting point; the portfolio is the result. Equal weighting is a deliberately weak reference because it makes the risk imbalance visible: the high-volatility short book carries much more risk than the low-volatility long book. Inverse-volatility sizing changes that implementation directly. With the same stock selection, it produces lower realized volatility, lower turnover, and a smaller drawdown while keeping every position easy to inspect.
+The ranking is simple. The portfolio is where the important choices enter. Equal weighting makes the risk imbalance visible, while inverse-volatility sizing changes the size of each position without changing the stock selection. In this sample, that produces 9.8% volatility after costs instead of 33.4%, with lower turnover and a less severe drawdown.
 
-The 1998–2000 episode remains the important counterexample. The Russell 1000 rallied, high-volatility stocks rallied even more, and both scaled legs lost money over the peak-to-trough window. Figure 8 shows the same connection in the recent AI-led rally: a rising market, a beta-short portfolio, and a volatile short leg that ran ahead of the calmer stocks. A small futures overlay could offset some of that market-beta exposure, but it would leave the characteristic risk in place. I would test that separately rather than fold it into this implementation. My takeaway is simple: the signal tells me where to look; sizing determines what I actually own; and regime risk remains after the sizing is done. The next step I would explore is a constrained optimizer that brings correlations and explicit risk budgets into the allocation. That is where the portfolio construction becomes more interesting—and probably a separate article.
+The 1998–2000 episode remains the important counterexample. The Russell 1000 rallied, high-volatility stocks rallied even more, and both scaled legs lost money. Figure 7 shows the same connection in the recent AI-led rally: a rising market, a beta-short portfolio, and a volatile short leg that ran ahead of the calmer stocks. A small futures overlay could offset some market-beta exposure, but it would leave the characteristic risk in place. I would test that separately. The next step I would explore is a constrained optimizer that brings correlations and explicit risk budgets into the allocation. That is a more interesting portfolio-construction problem, and probably a separate article.

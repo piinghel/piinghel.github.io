@@ -39,25 +39,6 @@
   width: min(662px, calc(100vw - 2rem));
 }
 
-.post-content .low-vol-figure-pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
-  width: min(1120px, calc(100vw - 2rem));
-  margin: 2.5rem 50% 0.5rem;
-  transform: translateX(-50%);
-}
-
-.post-content .low-vol-figure-pair .low-vol-figure {
-  width: 100%;
-  margin: 0;
-  transform: none;
-}
-
-.post-content .low-vol-figure-pair .figure-caption {
-  margin: 0.85rem 0 0;
-}
-
 /* MathJax keeps display equations inside the reading column. */
 .post-content mjx-container[display="true"] {
   max-width: 100%;
@@ -74,13 +55,6 @@
 
   .post-content .low-vol-figure.decile-profile-figure {
     width: calc(100vw - 2rem);
-  }
-
-  .post-content .low-vol-figure-pair {
-    grid-template-columns: 1fr;
-    width: calc(100vw - 2rem);
-    gap: 2rem;
-    margin-top: 2rem;
   }
 
   .post-content mjx-container[display="true"] {

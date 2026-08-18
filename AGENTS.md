@@ -12,12 +12,17 @@ This is a Jekyll site for concise, technically serious research notes. Keep pros
 - Do not add temporary plotting scripts, scratch files, generated caches, or speculative refactors to the repository.
 - Preserve existing article framing and quantitative claims unless the source evidence is checked first.
 - Do not reintroduce dollar-neutrality, market-neutrality, mandate, or neutrality framing into the low-volatility article.
+- Keep the low-volatility article's visible publication date hidden while
+  retaining its stable permalink and front-matter date for Jekyll ordering.
 
 ## Figures
 
 - Use captions for interpretation; do not embed figure titles in images.
 - Figure 4 may retain the three panel labels `Long gross`, `Short gross`, and `Net exposure`.
 - Figure 6 is one image with cumulative wealth above shaded drawdowns, a shared x-axis, and one legend.
+- Figure 7 is one 2-by-2 image: dot-com on the top row, the 2025–2026 period
+  on the bottom row, combined wealth on the left, and additive leg contributions
+  on the right. It has one caption and no separate Figure 8.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
 - Provide desktop and mobile variants from the same data and verify both visually.
 
