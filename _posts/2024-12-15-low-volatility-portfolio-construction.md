@@ -278,7 +278,7 @@ The recent episode is smaller, but the shape is familiar: a rising market, a fal
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Relative wealth and leg contributions in the two difficult episodes. The left column compares the combined gross volatility-scaled portfolio with the Russell 1000; the right column shows the cumulative contributions of the scaled long and short legs. The top row covers 8 October 1998–31 December 2003 and the bottom row covers 3 April 2025–27 May 2026. The leg contributions are carried on the compounded combined-portfolio path, so they add back to the combined gross result.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> The dot-com and AI-led episodes. Left: the combined gross strategy versus the Russell 1000. Right: the scaled long and short contributions on the same capital base.</p>
 
 As a quick stock-level check, I traced the P&L back to individual positions over the same window. The three largest long-book losses were New Century Energies (−0.67 percentage points), Evergy Kansas Central (−0.60), and WEC Energy Group (−0.56). On the short side, i2 Technologies (−0.95), Avantax (−0.73), and Ciena (−0.71) hurt most. These numbers are cumulative signed contributions to the strategy's initial capital base, measured in percentage points. For example, i2 Technologies compounded to about 39 times its starting value while it was held, but its largest floating short weight was only about 0.47%, resulting in a −0.95-point contribution.
 
