@@ -1,5 +1,6 @@
 @charset "utf-8";
 
-$color-scheme-auto: false;
-$color-scheme-dark: false;
-@import "minima/skins/auto";
+@forward "auto" with (
+  $color-scheme-auto: false,
+  $color-scheme-dark: false
+);
