@@ -2,30 +2,15 @@
 # Only the main Sass file needs front matter (the dashes are enough)
 ---
 
-@use "minima/skins/{{ site.minima.skin | default: 'classic' }}" as skin;
-@use "minima/settings" as * with (
-  $brand-color: skin.$brand-color,
-  $brand-color-light: skin.$brand-color-light,
-  $brand-color-dark: skin.$brand-color-dark,
-  $site-title-color: skin.$site-title-color,
-  $text-color: skin.$text-color,
-  $background-color: skin.$background-color,
-  $code-background-color: skin.$code-background-color,
-  $link-base-color: skin.$link-base-color,
-  $link-visited-color: skin.$link-visited-color,
-  $link-hover-color: skin.$link-hover-color,
-  $border-color-01: skin.$border-color-01,
-  $border-color-02: skin.$border-color-02,
-  $border-color-03: skin.$border-color-03,
-  $table-text-color: skin.$table-text-color,
-  $table-zebra-color: skin.$table-zebra-color,
-  $table-header-bg-color: skin.$table-header-bg-color,
-  $table-header-border: skin.$table-header-border,
-  $table-border-color: skin.$table-border-color
-);
-@use "minima/base";
-@use "minima/layout";
-@use "minima/custom-styles";
+// GitHub Pages still compiles Sass with LibSass, which does not support the
+// module-system `@use` syntax. Keep this entry point on classic imports so the
+// published stylesheet contains the theme and local research-note styles.
+@import
+  "minima/settings",
+  "minima/custom-variables",
+  "minima/base",
+  "minima/layout",
+  "minima/custom-styles";
 
   .container {
     width: 100%;

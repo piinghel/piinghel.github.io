@@ -17,7 +17,7 @@ That got me curious: how much does timing luck affect my own long-short strategy
 
 ## Setup
 
-The strategy is a long-short market-neutral model based on LightGBM predictions (see [this earlier post](https://piinghel.github.io/quants/2025/02/20/lgbm.html)). It rebalances every three weeks, with the entire portfolio updated on a fixed weekday at the closing price. Since there are three possible starting weeks (offsets) and five weekdays, that gives us 15 possible rebalancing schedules.
+The strategy is a long-short stock-ranking model based on LightGBM predictions. It rebalances every three weeks, with the entire portfolio updated on a fixed weekday at the closing price. Since there are three possible starting weeks (offsets) and five weekdays, that gives us 15 possible rebalancing schedules.
 
 I simulate all 15 combinations:
 - 3 offsets × 5 weekdays = 15 setups  
@@ -122,4 +122,3 @@ I'll be using this setup going forward for any strategy that rebalances on a fix
 - [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) - Newfound Research
 - [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) - C. Zarattini, A. Pagani (2025)
 - [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) - C. Zarattini, A. Pagani (2025)
-

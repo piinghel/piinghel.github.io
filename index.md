@@ -1,8 +1,7 @@
 ---
 layout: home
+title: Quantitative trading and data science
 ---
-
-## **Quantitative trading and data science**
 
 Notes on systematic strategies, machine learning, and portfolio construction.
 
