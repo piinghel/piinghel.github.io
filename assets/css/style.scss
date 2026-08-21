@@ -2,15 +2,9 @@
 # Only the main Sass file needs front matter (the dashes are enough)
 ---
 
-// GitHub Pages still compiles Sass with LibSass, which does not support the
-// module-system `@use` syntax. Keep this entry point on classic imports so the
-// published stylesheet contains the theme and local research-note styles.
-@import
-  "minima/settings",
-  "minima/custom-variables",
-  "minima/base",
-  "minima/layout",
-  "minima/custom-styles";
+@use "minima/base";
+@use "minima/layout";
+@use "minima/custom-styles";
 
   .container {
     width: 100%;
@@ -64,11 +58,11 @@
 }
 
 .post-content .research-figure.ic-figure {
-  width: min(900px, calc(100vw - 2rem));
+  width: min(760px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.performance-figure {
-  width: min(1000px, calc(100vw - 2rem));
+  width: min(720px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.coefficient-figure {

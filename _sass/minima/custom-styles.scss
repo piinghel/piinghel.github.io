@@ -497,6 +497,39 @@ table {
     width: 42%;
   }
 
+  &.performance-period-table {
+    @media (min-width: 768px) {
+      width: min(960px, calc(100vw - 3rem));
+      max-width: none;
+      margin-left: 50%;
+      transform: translateX(-50%);
+
+      th:first-child {
+        width: 20%;
+      }
+
+      th:nth-child(2) {
+        width: 18%;
+      }
+
+      th:nth-child(n + 3),
+      td:nth-child(n + 3) {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      tbody tr:nth-child(2),
+      tbody tr:nth-child(4) {
+        border-bottom: 1px solid #b7c0c7;
+      }
+    }
+
+    .model-ridge {
+      color: var(--accent);
+      font-weight: 600;
+    }
+  }
+
   &.comparison-table th:not(:first-child),
   &.comparison-table td {
     text-align: right;

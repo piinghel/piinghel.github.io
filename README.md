@@ -96,12 +96,10 @@ Refers to snippets of code within the `_includes` directory that can be inserted
 Refers to `.scss` files within the `_sass` directory that define the theme's styles.
 
   - `minima/skins/classic.scss` &mdash; The "classic" skin of the theme. *Used by default.*
-  - `minima/initialize.scss` &mdash; A component that defines the theme's *skin-agnostic* variable defaults and sass partials.
-    It imports the following components (in the following order):
-    - `minima/custom-variables.scss` &mdash; A hook that allows overriding variable defaults and mixins. (*Note: Cannot override styles*)
-    - `minima/_base.scss` &mdash; Sass partial for resets and defines base styles for various HTML elements.
-    - `minima/_layout.scss` &mdash; Sass partial that defines the visual style for various layouts.
-    - `minima/custom-styles.scss` &mdash; A hook that allows overriding styles defined above. (*Note: Cannot override variables*)
+  - `minima/_settings.scss` &mdash; Sass variables and mixins shared by the theme modules.
+  - `minima/_base.scss` &mdash; Sass module for resets and base element styles.
+  - `minima/_layout.scss` &mdash; Sass module for the site layouts.
+  - `minima/custom-styles.scss` &mdash; Site-specific editorial and research-note styles.
 
 Refer the [skins](#skins) section for more details.
 
@@ -155,9 +153,9 @@ Therefore, your `assets/css/style.scss` should contain the following at minimum:
 ---
 ---
 
-@import
-  "minima/skins/{{ site.minima.skin | default: 'classic' }}",
-  "minima/initialize";
+@use "minima/base";
+@use "minima/layout";
+@use "minima/custom-styles";
 ```
 
 #### Skins
