@@ -1,64 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 790" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 610" role="img" aria-labelledby="title desc">
   <title id="title">Expanding walk-forward estimation</title>
-  <desc id="desc">A mobile diagram shows a 20-session forward target, a 21-date gap, expanding training history, sequential test blocks, and one out-of-sample score history.</desc>
+  <desc id="desc">A mobile timeline shows a training window that grows at each fit, followed by a 21-date gap and a 600-date test block.</desc>
   <style>
     text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .panel { fill: #ffffff; stroke: #dce5e7; stroke-width: 1.3; }
-    .small { fill: #718089; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; }
-    .label { fill: #263a44; font-size: 12.5px; font-weight: 650; }
-    .note { fill: #67767e; font-size: 11.5px; }
-    .train { fill: #345b7e; fill-opacity: .14; stroke: #345b7e; stroke-width: 1.3; }
-    .gap { fill: #bd6a67; fill-opacity: .15; stroke: #bd6a67; stroke-width: 1.2; }
-    .test { fill: #3c8c83; fill-opacity: .18; stroke: #3c8c83; stroke-width: 1.3; }
+    .kicker { fill: #718089; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; }
+    .title { fill: #263a44; font-size: 20px; font-weight: 650; }
+    .label { fill: #334852; font-size: 13px; font-weight: 650; }
+    .note { fill: #6d7d84; font-size: 11.5px; }
+    .guide { stroke: #e2e9ea; stroke-width: 1; stroke-dasharray: 2 5; }
+    .train { fill: #345b7e; fill-opacity: .15; stroke: #345b7e; stroke-width: 1.35; }
+    .gap { fill: #bd6a67; fill-opacity: .18; stroke: #bd6a67; stroke-width: 1.2; }
+    .test { fill: #3c8c83; fill-opacity: .20; stroke: #3c8c83; stroke-width: 1.35; }
   </style>
-  <rect x="1" y="1" width="418" height="788" rx="16" fill="#fbfdfd" stroke="#e1e9ea" stroke-width="1.5"/>
-
-  <g transform="translate(18 18)">
-    <rect class="panel" width="384" height="142" rx="12"/>
-    <text class="small" x="16" y="24">TARGET ALIGNMENT</text>
-    <circle cx="46" cy="64" r="5" fill="#345b7e"/><text class="label" x="46" y="48" text-anchor="middle">t</text>
-    <line x1="51" y1="64" x2="347" y2="64" stroke="#cbd5d8" stroke-width="1.3"/>
-    <rect x="72" y="53" width="175" height="22" rx="11" fill="#3c8c83" fill-opacity=".18" stroke="#3c8c83" stroke-width="1.2"/>
-    <text class="note" x="159" y="68" text-anchor="middle">target t+1 … t+20</text>
-    <circle cx="273" cy="64" r="5" fill="#3c8c83"/><text class="label" x="273" y="43" text-anchor="middle">test starts</text>
-    <line x1="46" y1="93" x2="273" y2="93" stroke="#bd6a67" stroke-width="1.3"/>
-    <path d="M46 89v8M273 89v8" stroke="#bd6a67" stroke-width="1.3"/>
-    <text class="note" x="159" y="114" text-anchor="middle">21-date separation</text>
+  <rect x="1" y="1" width="418" height="608" rx="16" fill="#fbfdfd" stroke="#dfe8e9" stroke-width="1.5"/>
+  <text class="kicker" x="24" y="39">MODEL EVALUATION</text>
+  <text class="title" x="24" y="68">Expanding walk-forward</text>
+  <text class="title" x="24" y="93">estimation</text>
+  <text class="note" x="24" y="121">Each fit uses all earlier history.</text>
+  <g transform="translate(24 148)">
+    <rect class="train" x="0" y="0" width="12" height="12" rx="2"/><text class="note" x="18" y="10">train</text>
+    <rect class="gap" x="88" y="0" width="12" height="12" rx="2"/><text class="note" x="106" y="10">21-date gap</text>
+    <rect class="test" x="226" y="0" width="12" height="12" rx="2"/><text class="note" x="244" y="10">test</text>
   </g>
-
-  <text class="small" x="18" y="186">SEQUENTIAL FITS</text>
-  <g transform="translate(18 199)">
-    <rect class="panel" width="384" height="428" rx="12"/>
-    <g transform="translate(16 18)">
-      <text class="label" x="0" y="16">Fit 1</text>
-      <rect class="train" x="0" y="29" width="188" height="34" rx="5"/><text class="note" x="94" y="50" text-anchor="middle">900 training dates</text>
-      <rect class="gap" x="194" y="29" width="22" height="34" rx="4"/><rect class="test" x="222" y="29" width="128" height="34" rx="5"/><text class="note" x="286" y="50" text-anchor="middle">600 test</text>
-    </g>
-    <path d="M34 90h316" stroke="#dce5e7" stroke-width="1" stroke-dasharray="3 5"/>
-    <g transform="translate(16 107)">
-      <text class="label" x="0" y="16">Fit 2</text>
-      <rect class="train" x="0" y="29" width="230" height="34" rx="5"/><text class="note" x="115" y="50" text-anchor="middle">training expands</text>
-      <rect class="gap" x="236" y="29" width="22" height="34" rx="4"/><rect class="test" x="264" y="29" width="86" height="34" rx="5"/><text class="note" x="307" y="50" text-anchor="middle">test</text>
-    </g>
-    <text x="192" y="218" text-anchor="middle" fill="#9aa6ac" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22">⋮</text>
-    <path d="M34 236h316" stroke="#dce5e7" stroke-width="1" stroke-dasharray="3 5"/>
-    <g transform="translate(16 254)">
-      <text class="label" x="0" y="16">Fit 12</text>
-      <rect class="train" x="0" y="29" width="260" height="34" rx="5"/><text class="note" x="130" y="50" text-anchor="middle">all earlier history</text>
-      <rect class="gap" x="266" y="29" width="22" height="34" rx="4"/><rect class="test" x="294" y="29" width="56" height="34" rx="5"/>
-    </g>
-    <g transform="translate(16 348)">
-      <rect x="0" y="0" width="11" height="11" rx="2" class="train"/><text class="note" x="17" y="10">training</text>
-      <rect x="106" y="0" width="11" height="11" rx="2" class="gap"/><text class="note" x="123" y="10">gap</text>
-      <rect x="188" y="0" width="11" height="11" rx="2" class="test"/><text class="note" x="205" y="10">test</text>
-    </g>
-    <text class="note" x="16" y="405">1995</text><text class="note" x="368" y="405" text-anchor="end">2026</text>
+  <g transform="translate(24 195)">
+    <line class="guide" x1="80" y1="0" x2="80" y2="277"/><line class="guide" x1="190" y1="0" x2="190" y2="277"/><line class="guide" x1="300" y1="0" x2="300" y2="277"/>
+    <text class="label" x="0" y="20">Fit 1</text><rect class="train" x="80" y="2" width="116" height="36" rx="5"/><rect class="gap" x="202" y="2" width="16" height="36" rx="4"/><rect class="test" x="224" y="2" width="80" height="36" rx="5"/><text class="note" x="138" y="25" text-anchor="middle">900 dates</text>
+    <text class="label" x="0" y="93">Fit 2</text><rect class="train" x="80" y="75" width="180" height="36" rx="5"/><rect class="gap" x="266" y="75" width="16" height="36" rx="4"/><rect class="test" x="288" y="75" width="80" height="36" rx="5"/><text class="note" x="170" y="98" text-anchor="middle">history expands</text>
+    <text class="label" x="0" y="166">Fit 3</text><rect class="train" x="80" y="148" width="244" height="36" rx="5"/><rect class="gap" x="330" y="148" width="16" height="36" rx="4"/><rect class="test" x="352" y="148" width="44" height="36" rx="5"/>
+    <text x="38" y="222" text-anchor="middle" fill="#9aa6ac" font-size="22">⋮</text><path d="M80 222H396" stroke="#d8e1e3" stroke-width="1" stroke-dasharray="3 5"/>
+    <text class="label" x="0" y="273">Fit k</text><rect class="train" x="80" y="255" width="272" height="36" rx="5"/><rect class="gap" x="358" y="255" width="16" height="36" rx="4"/><rect class="test" x="380" y="255" width="16" height="36" rx="4"/>
   </g>
-
-  <g transform="translate(18 646)">
-    <rect x="0" y="0" width="384" height="124" rx="12" fill="#f0f6f5" stroke="#cfe0df" stroke-width="1.3"/>
-    <text class="small" x="16" y="25">OUT-OF-SAMPLE SCORE HISTORY</text>
-    <text class="note" x="16" y="50">Join the 12 test blocks in time order.</text>
-    <g transform="translate(17 70)"><rect class="test" x="0" y="0" width="34" height="28" rx="4"/><rect class="test" x="41" y="0" width="34" height="28" rx="4"/><rect class="test" x="82" y="0" width="34" height="28" rx="4"/><text x="132" y="20" fill="#809098" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17">…</text><rect class="test" x="166" y="0" width="34" height="28" rx="4"/><rect class="test" x="207" y="0" width="34" height="28" rx="4"/><path d="M252 14h98" stroke="#3c8c83" stroke-width="2" stroke-linecap="round"/><path d="m344 9 7 5-7 5" fill="none" stroke="#3c8c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
-  </g>
+  <text class="note" x="24" y="520">1995</text><text class="note" x="396" y="520" text-anchor="end">May 2026</text>
+  <path d="M24 558H298" stroke="#3c8c83" stroke-width="2" stroke-linecap="round"/><path d="m292 553 7 5-7 5" fill="none" stroke="#3c8c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text class="note" x="316" y="562">out-of-sample scores</text>
 </svg>
