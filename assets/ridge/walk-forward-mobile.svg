@@ -1,35 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 610" role="img" aria-labelledby="title desc">
-  <title id="title">Expanding walk-forward estimation</title>
-  <desc id="desc">A mobile timeline shows a training window that grows at each fit, followed by a 21-date gap and a 600-date test block.</desc>
-  <style>
-    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .kicker { fill: #718089; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; }
-    .title { fill: #263a44; font-size: 20px; font-weight: 650; }
-    .label { fill: #334852; font-size: 13px; font-weight: 650; }
-    .note { fill: #6d7d84; font-size: 11.5px; }
-    .guide { stroke: #e2e9ea; stroke-width: 1; stroke-dasharray: 2 5; }
-    .train { fill: #345b7e; fill-opacity: .15; stroke: #345b7e; stroke-width: 1.35; }
-    .gap { fill: #bd6a67; fill-opacity: .18; stroke: #bd6a67; stroke-width: 1.2; }
-    .test { fill: #3c8c83; fill-opacity: .20; stroke: #3c8c83; stroke-width: 1.35; }
-  </style>
-  <rect x="1" y="1" width="418" height="608" rx="16" fill="#fbfdfd" stroke="#dfe8e9" stroke-width="1.5"/>
-  <text class="kicker" x="24" y="39">MODEL EVALUATION</text>
-  <text class="title" x="24" y="68">Expanding walk-forward</text>
-  <text class="title" x="24" y="93">estimation</text>
-  <text class="note" x="24" y="121">Each fit uses all earlier history.</text>
-  <g transform="translate(24 148)">
-    <rect class="train" x="0" y="0" width="12" height="12" rx="2"/><text class="note" x="18" y="10">train</text>
-    <rect class="gap" x="88" y="0" width="12" height="12" rx="2"/><text class="note" x="106" y="10">21-date gap</text>
-    <rect class="test" x="226" y="0" width="12" height="12" rx="2"/><text class="note" x="244" y="10">test</text>
-  </g>
-  <g transform="translate(24 195)">
-    <line class="guide" x1="80" y1="0" x2="80" y2="277"/><line class="guide" x1="190" y1="0" x2="190" y2="277"/><line class="guide" x1="300" y1="0" x2="300" y2="277"/>
-    <text class="label" x="0" y="20">Fit 1</text><rect class="train" x="80" y="2" width="116" height="36" rx="5"/><rect class="gap" x="202" y="2" width="16" height="36" rx="4"/><rect class="test" x="224" y="2" width="80" height="36" rx="5"/><text class="note" x="138" y="25" text-anchor="middle">900 dates</text>
-    <text class="label" x="0" y="93">Fit 2</text><rect class="train" x="80" y="75" width="180" height="36" rx="5"/><rect class="gap" x="266" y="75" width="16" height="36" rx="4"/><rect class="test" x="288" y="75" width="80" height="36" rx="5"/><text class="note" x="170" y="98" text-anchor="middle">history expands</text>
-    <text class="label" x="0" y="166">Fit 3</text><rect class="train" x="80" y="148" width="244" height="36" rx="5"/><rect class="gap" x="330" y="148" width="16" height="36" rx="4"/><rect class="test" x="352" y="148" width="44" height="36" rx="5"/>
-    <text x="38" y="222" text-anchor="middle" fill="#9aa6ac" font-size="22">⋮</text><path d="M80 222H396" stroke="#d8e1e3" stroke-width="1" stroke-dasharray="3 5"/>
-    <text class="label" x="0" y="273">Fit k</text><rect class="train" x="80" y="255" width="272" height="36" rx="5"/><rect class="gap" x="358" y="255" width="16" height="36" rx="4"/><rect class="test" x="380" y="255" width="16" height="36" rx="4"/>
-  </g>
-  <text class="note" x="24" y="520">1995</text><text class="note" x="396" y="520" text-anchor="end">May 2026</text>
-  <path d="M24 558H298" stroke="#3c8c83" stroke-width="2" stroke-linecap="round"/><path d="m292 553 7 5-7 5" fill="none" stroke="#3c8c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text class="note" x="316" y="562">out-of-sample scores</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="430" viewBox="0 0 480 430" role="img" aria-labelledby="title desc">
+  <title id="title">Expanding walk-forward validation</title>
+  <desc id="desc">Each fit trains on all earlier data, waits a 21-date gap, and then scores the next 600-date test block.</desc>
+  <rect width="480" height="430" fill="#ffffff"/>
+  <style>.fit{font:600 14px Arial,sans-serif;fill:#24364d}.hint{font:12px Arial,sans-serif;fill:#5d6d7e}.note{font:11px Arial,sans-serif;fill:#5d6d7e}</style>
+  <text x="72" y="34" class="hint">time →</text><line x1="72" y1="43" x2="448" y2="43" stroke="#cfd8e2"/>
+  <text x="18" y="97" class="fit">Fit 1</text><rect x="72" y="73" width="132" height="34" fill="#386889"/><rect x="204" y="73" width="12" height="34" fill="#c86b68"/><rect x="216" y="73" width="88" height="34" fill="#3b968c"/><rect x="304" y="73" width="144" height="34" fill="#eef1f4"/>
+  <text x="18" y="184" class="fit">Fit 2</text><rect x="72" y="160" width="232" height="34" fill="#386889"/><rect x="304" y="160" width="12" height="34" fill="#c86b68"/><rect x="316" y="160" width="88" height="34" fill="#3b968c"/><rect x="404" y="160" width="44" height="34" fill="#eef1f4"/>
+  <text x="18" y="271" class="fit">Fit k</text><rect x="72" y="247" width="332" height="34" fill="#386889"/><rect x="404" y="247" width="12" height="34" fill="#c86b68"/><rect x="416" y="247" width="32" height="34" fill="#3b968c"/>
+  <g transform="translate(72 334)"><rect width="12" height="12" fill="#386889"/><text x="19" y="11" class="note">training history (starts at 900 dates)</text><rect y="29" width="12" height="12" fill="#c86b68"/><text x="19" y="40" class="note">21-date gap</text><rect y="58" width="12" height="12" fill="#3b968c"/><text x="19" y="69" class="note">next 600-date test block</text></g>
 </svg>

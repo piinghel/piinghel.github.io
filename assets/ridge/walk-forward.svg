@@ -1,35 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" role="img" aria-labelledby="title desc">
-  <title id="title">Expanding walk-forward estimation</title>
-  <desc id="desc">Four schematic timelines show a training window expanding from left to right. Each fit leaves a 21-date gap before scoring the following 600-date test block.</desc>
-  <style>
-    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .kicker { fill: #718089; font-size: 12px; font-weight: 700; letter-spacing: .11em; }
-    .title { fill: #263a44; font-size: 24px; font-weight: 650; }
-    .label { fill: #334852; font-size: 14px; font-weight: 650; }
-    .note { fill: #6d7d84; font-size: 12px; }
-    .axis { stroke: #cbd6d9; stroke-width: 1.2; }
-    .guide { stroke: #e2e9ea; stroke-width: 1; stroke-dasharray: 2 5; }
-    .train { fill: #345b7e; fill-opacity: .15; stroke: #345b7e; stroke-width: 1.4; }
-    .gap { fill: #bd6a67; fill-opacity: .18; stroke: #bd6a67; stroke-width: 1.25; }
-    .test { fill: #3c8c83; fill-opacity: .20; stroke: #3c8c83; stroke-width: 1.4; }
-  </style>
-  <rect x="1" y="1" width="958" height="468" rx="18" fill="#fbfdfd" stroke="#dfe8e9" stroke-width="1.5"/>
-  <text class="kicker" x="50" y="49">MODEL EVALUATION</text>
-  <text class="title" x="50" y="82">Expanding walk-forward estimation</text>
-  <text class="note" x="50" y="108">Train from the beginning of the sample, leave a short gap, score one block, then expand the history.</text>
-  <g transform="translate(50 142)">
-    <rect class="train" x="0" y="0" width="13" height="13" rx="2"/><text class="note" x="20" y="11">training history</text>
-    <rect class="gap" x="148" y="0" width="13" height="13" rx="2"/><text class="note" x="168" y="11">21-date gap</text>
-    <rect class="test" x="277" y="0" width="13" height="13" rx="2"/><text class="note" x="297" y="11">600-date test block</text>
-  </g>
-  <g transform="translate(50 190)">
-    <line class="guide" x1="126" y1="0" x2="126" y2="202"/><line class="guide" x1="356" y1="0" x2="356" y2="202"/><line class="guide" x1="586" y1="0" x2="586" y2="202"/><line class="guide" x1="816" y1="0" x2="816" y2="202"/>
-    <text class="label" x="0" y="29">Fit 1</text><rect class="train" x="126" y="10" width="229" height="38" rx="5"/><rect class="gap" x="361" y="10" width="18" height="38" rx="4"/><rect class="test" x="385" y="10" width="112" height="38" rx="5"/><text class="note" x="240" y="34" text-anchor="middle">900 dates</text><text class="note" x="441" y="34" text-anchor="middle">score</text>
-    <text class="label" x="0" y="81">Fit 2</text><rect class="train" x="126" y="62" width="371" height="38" rx="5"/><rect class="gap" x="503" y="62" width="18" height="38" rx="4"/><rect class="test" x="527" y="62" width="112" height="38" rx="5"/><text class="note" x="312" y="86" text-anchor="middle">history expands</text>
-    <text class="label" x="0" y="133">Fit 3</text><rect class="train" x="126" y="114" width="513" height="38" rx="5"/><rect class="gap" x="645" y="114" width="18" height="38" rx="4"/><rect class="test" x="669" y="114" width="112" height="38" rx="5"/>
-    <text x="63" y="180" text-anchor="middle" fill="#9aa6ac" font-size="22">⋮</text><path d="M126 178H910" stroke="#d8e1e3" stroke-width="1" stroke-dasharray="3 5"/>
-    <text class="label" x="0" y="225">Fit k</text><rect class="train" x="126" y="206" width="690" height="38" rx="5"/><rect class="gap" x="822" y="206" width="18" height="38" rx="4"/><rect class="test" x="846" y="206" width="64" height="38" rx="5"/>
-    <line class="axis" x1="126" y1="276" x2="910" y2="276"/><text class="note" x="126" y="299">1995</text><text class="note" x="910" y="299" text-anchor="end">May 2026</text>
-  </g>
-  <g transform="translate(50 421)"><path d="M0 0H758" stroke="#3c8c83" stroke-width="2" stroke-linecap="round"/><path d="m752 -5 7 5-7 5" fill="none" stroke="#3c8c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text class="note" x="780" y="4">out-of-sample scores</text></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="315" viewBox="0 0 960 315" role="img" aria-labelledby="title desc">
+  <title id="title">Expanding walk-forward validation</title>
+  <desc id="desc">Each fit trains on all earlier data, waits a 21-date gap, and then scores the next 600-date test block.</desc>
+  <rect width="960" height="315" fill="#ffffff"/>
+  <style>.fit{font:600 15px Arial,sans-serif;fill:#24364d}.hint{font:13px Arial,sans-serif;fill:#5d6d7e}.note{font:12px Arial,sans-serif;fill:#5d6d7e}</style>
+  <text x="130" y="31" class="hint">time →</text><line x1="130" y1="41" x2="900" y2="41" stroke="#cfd8e2"/>
+  <text x="38" y="90" class="fit">Fit 1</text><rect x="130" y="65" width="272" height="34" fill="#386889"/><rect x="402" y="65" width="16" height="34" fill="#c86b68"/><rect x="418" y="65" width="180" height="34" fill="#3b968c"/><rect x="598" y="65" width="302" height="34" fill="#eef1f4"/>
+  <text x="38" y="167" class="fit">Fit 2</text><rect x="130" y="142" width="468" height="34" fill="#386889"/><rect x="598" y="142" width="16" height="34" fill="#c86b68"/><rect x="614" y="142" width="180" height="34" fill="#3b968c"/><rect x="794" y="142" width="106" height="34" fill="#eef1f4"/>
+  <text x="38" y="244" class="fit">Fit k</text><rect x="130" y="219" width="664" height="34" fill="#386889"/><rect x="794" y="219" width="16" height="34" fill="#c86b68"/><rect x="810" y="219" width="90" height="34" fill="#3b968c"/>
+  <g transform="translate(130 286)"><rect width="12" height="12" fill="#386889"/><text x="19" y="11" class="note">training history (starts at 900 dates)</text><rect x="286" width="12" height="12" fill="#c86b68"/><text x="305" y="11" class="note">21-date gap</text><rect x="438" width="12" height="12" fill="#3b968c"/><text x="457" y="11" class="note">next 600-date test block</text></g>
 </svg>
