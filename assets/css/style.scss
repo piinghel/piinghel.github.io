@@ -79,6 +79,14 @@
   width: min(1050px, calc(100vw - 2rem));
 }
 
+.post-content .research-figure.turnover-figure {
+  width: min(790px, calc(100vw - 2rem));
+}
+
+.post-content .research-figure.sensitivity-figure {
+  width: min(860px, calc(100vw - 2rem));
+}
+
 /* MathJax keeps display equations inside the reading column. */
 .post-content mjx-container[display="true"] {
   max-width: 100%;
