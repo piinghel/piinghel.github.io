@@ -132,7 +132,7 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
         figsize=(4.6, 5.0) if mobile else (10.0, 3.3),
         facecolor=WHITE,
     )
-    ax.set_xlim(-0.14, 1.01)
+    ax.set_xlim(-0.16, 1.01)
     ax.set_ylim(0.45, 3.85)
     ax.axis("off")
 
@@ -155,13 +155,13 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
     )
     for label, y, training_end in rows:
         ax.text(
-            -0.03,
+            -0.15,
             y,
             label,
             color="#21334a",
             fontsize=11.0 if mobile else 10.5,
             fontweight=700,
-            ha="right",
+            ha="left",
             va="center",
         )
         ax.add_patch(Rectangle((0, y - height / 2), 1, height, color="#eef1f3"))
@@ -186,13 +186,13 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
         )
 
     ax.text(
-        -0.03,
+        -0.15,
         1.50,
         "Fit …",
-        color=MUTED,
+        color="#21334a",
         fontsize=11.0 if mobile else 10.5,
         fontweight=700,
-        ha="right",
+        ha="left",
         va="center",
     )
     handles = (

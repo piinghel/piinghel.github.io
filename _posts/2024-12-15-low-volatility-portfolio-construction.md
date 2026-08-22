@@ -21,9 +21,7 @@ I start with point-in-time Russell 1000 membership and daily prices from July 19
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/eligible_universe.png" alt="Number of eligible Russell 1000 stocks at each rebalance date" loading="lazy" decoding="async">
   </picture>
 </div>
@@ -51,9 +49,7 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
 
 <div class="low-vol-figure decile-profile-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png" alt="Geometric return, volatility, and Sharpe ratio across volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
@@ -68,9 +64,7 @@ Equal weighting makes a useful control because its flaw is visible. I am long th
 
 <div class="low-vol-figure naive-leg-risk-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
@@ -129,9 +123,7 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
   </picture>
 </div>
@@ -159,9 +151,7 @@ Figure 5 is my quick check on market exposure. Beta moves around because the siz
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.png" alt="Estimated and rolling realized beta of the volatility-scaled portfolio" loading="lazy" decoding="async">
   </picture>
 </div>
@@ -254,9 +244,7 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 <div class="low-vol-figure performance-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" loading="lazy" decoding="async">
   </picture>
 </div>
@@ -285,9 +273,7 @@ Figure 7 puts this episode beside the 2025–2026 rally. Every path starts at th
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
-    <source type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison.svg">
     <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="Portfolio and market wealth beside additive long and short contributions in the 1998 to 2001 and 2025 to 2026 rallies" loading="lazy" decoding="async">
   </picture>
 </div>

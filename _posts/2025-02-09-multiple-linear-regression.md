@@ -8,12 +8,11 @@ article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-Suppose I already have several stock signals. Some measure trend, others risk,
-size, liquidity, or positioning. The practical problem is no longer whether one
-factor works by itself. I need one ranking, and the signals use different units,
-overlap with one another, and may matter differently once they are considered
-together. Fixed weights make those choices by hand. The regression learns the
-feature weights from historical cross-sections.
+Stock signals rarely agree neatly. Trend, risk, size, liquidity, and positioning
+arrive on different scales, overlap, and can change meaning when considered
+together. My problem is practical: turn them into one ranking. Fixed weights
+settle that choice by hand; multiple linear regression estimates the combination
+from historical cross-sections.
 
 The model produces an ordinal stock score. For every stock and date, the
 training target is the sector-relative rank of its risk-adjusted return over the

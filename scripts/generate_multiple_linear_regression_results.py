@@ -197,14 +197,19 @@ def load_selected_portfolio_tilts(review_dir: Path) -> list[dict[str, str]]:
     return rows
 
 
-def style_axis(ax: plt.Axes) -> None:
-    ax.grid(axis="y", color=GRID, linewidth=0.8)
+def style_axis(
+    ax: plt.Axes,
+    *,
+    labelsize: float = TICK_LABEL_SIZE,
+    grid_linewidth: float = 0.8,
+) -> None:
+    ax.grid(axis="y", color=GRID, linewidth=grid_linewidth)
     ax.tick_params(
         axis="both",
         which="both",
         length=0,
         colors=MUTED,
-        labelsize=TICK_LABEL_SIZE,
+        labelsize=labelsize,
     )
     for spine in ax.spines.values():
         spine.set_visible(False)
@@ -269,13 +274,19 @@ def plot_ic(series: dict[str, Series], output_dir: Path, *, mobile: bool) -> Non
             (series[model].dates[-1], values[-1]),
             xytext=(7, offset),
             textcoords="offset points",
-            color=MODEL_COLOR[model],
+            color=MUTED if model == "fixed_factor_benchmark" else MODEL_COLOR[model],
             fontsize=LEGEND_SIZE,
             fontweight=600 if model == "selected_c0p01" else 400,
             va="center",
         )
     style_axis(ax)
-    add_split_marker(ax, label=True, label_fontsize=ANNOTATION_SIZE)
+    add_split_marker(
+        ax,
+        label=True,
+        label_fontsize=ANNOTATION_SIZE,
+        label_text="Model fixed before 2022",
+        label_at_top=True,
+    )
     ax.set_ylabel(
         "Cumulative daily rank IC",
         color=MUTED,
@@ -357,12 +368,14 @@ def plot_performance(
             fontweight=600 if model == "selected_c0p01" else 400,
             va="center",
         )
-    wealth_ax.axhline(1.0, color=MUTED, linewidth=0.7, linestyle=(0, (2, 3)))
     wealth_ax.set_yscale("log")
     wealth_ax.set_ylabel("Growth of $1", color=MUTED, fontsize=AXIS_LABEL_SIZE)
     wealth_ax.yaxis.set_major_locator(FixedLocator([1, 2, 3, 4, 6, 8]))
     wealth_ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
     wealth_ax.yaxis.set_minor_formatter(NullFormatter())
+    wealth_ax.grid(False, axis="y")
+    for value in (2, 3, 4, 6, 8):
+        wealth_ax.axhline(value, color=GRID, linewidth=0.8, zorder=0)
     drawdown_ax.axhline(0, color=MUTED, linewidth=0.7, linestyle=(0, (2, 3)))
     drawdown_ax.set_ylabel("Drawdown (%)", color=MUTED, fontsize=AXIS_LABEL_SIZE)
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
@@ -667,19 +680,24 @@ def plot_selected_portfolio_tilts(
         for row in predictor_rows
     ]
     first_date, last_date = min(all_dates), max(all_dates)
+    visual_scale = 0.9
     for index, (ax, predictor) in enumerate(zip(axes, ordered, strict=True)):
         values = sorted(grouped[predictor], key=lambda row: row["date"])
         dates = np.array([date.fromisoformat(row["date"]) for row in values])
         tilts = np.array([float(row["quarterly_mean_tilt"]) for row in values])
         mean = metadata[predictor]["mean"]
         color = RIDGE if mean >= 0 else OLS
-        ax.plot(dates, tilts, color=color, linewidth=1.35)
+        ax.plot(dates, tilts, color=color, linewidth=1.35 * visual_scale)
         ax.fill_between(dates, 0, tilts, color=color, alpha=0.10)
-        ax.axhline(0, color=GRID, linewidth=0.8)
+        ax.axhline(0, color=GRID, linewidth=0.8 * visual_scale)
         lower = min(0.0, np.floor(float(np.min(tilts)) * 10) / 10)
         upper = max(0.0, np.ceil(float(np.max(tilts)) * 10) / 10)
         ax.set_ylim(lower, upper)
-        ticks = list(dict.fromkeys((lower, 0.0, upper)))
+        ticks = [lower, upper]
+        span = upper - lower
+        if lower < 0 < upper and min(abs(lower), abs(upper)) / span >= 0.2:
+            ticks.insert(1, 0.0)
+        ticks = list(dict.fromkeys(ticks))
         ax.set_yticks(
             ticks,
             [
@@ -691,14 +709,18 @@ def plot_selected_portfolio_tilts(
         )
         ax.set_xlim(first_date, last_date)
         ax.margins(x=0)
-        style_axis(ax)
+        style_axis(
+            ax,
+            labelsize=TICK_LABEL_SIZE * visual_scale,
+            grid_linewidth=0.8 * visual_scale,
+        )
         ax.set_title(
             FEATURE_LABEL.get(predictor, predictor.removeprefix("X_feature_")),
             loc="left",
             color=INK,
-            fontsize=LEGEND_SIZE,
+            fontsize=LEGEND_SIZE * visual_scale,
             fontweight=500,
-            pad=4,
+            pad=4 * visual_scale,
         )
         ax.text(
             1.0,
@@ -708,7 +730,7 @@ def plot_selected_portfolio_tilts(
             ha="right",
             va="bottom",
             color=color,
-            fontsize=ANNOTATION_SIZE,
+            fontsize=ANNOTATION_SIZE * visual_scale,
             fontweight=600,
         )
         ax.xaxis.set_major_locator(mdates.YearLocator(7 if mobile else 8))
@@ -719,7 +741,7 @@ def plot_selected_portfolio_tilts(
     fig.supylabel(
         "Realized predictor-rank tilt",
         color=MUTED,
-        fontsize=AXIS_LABEL_SIZE,
+        fontsize=AXIS_LABEL_SIZE * visual_scale,
         x=0.025 if mobile else 0.035,
     )
     fig.subplots_adjust(
