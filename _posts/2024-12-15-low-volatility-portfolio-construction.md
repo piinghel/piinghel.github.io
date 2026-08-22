@@ -244,8 +244,8 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 <div class="low-vol-figure performance-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png?v=3">
+    <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png?v=3" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" loading="lazy" decoding="async">
   </picture>
 </div>
 

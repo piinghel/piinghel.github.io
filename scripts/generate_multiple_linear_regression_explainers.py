@@ -151,6 +151,7 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
     rows = (
         ("Fit 1", 3.02, 0.35),
         ("Fit 2", 2.18, 0.61),
+        ("Fit …", 1.50, None),
         ("Fit k", 0.82, 0.86),
     )
     for label, y, training_end in rows:
@@ -164,6 +165,8 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
             ha="left",
             va="center",
         )
+        if training_end is None:
+            continue
         ax.add_patch(Rectangle((0, y - height / 2), 1, height, color="#eef1f3"))
         ax.add_patch(
             Rectangle((0, y - height / 2), training_end, height, color=TRAINING)
@@ -185,16 +188,6 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
             )
         )
 
-    ax.text(
-        -0.15,
-        1.50,
-        "Fit …",
-        color="#21334a",
-        fontsize=11.0 if mobile else 10.5,
-        fontweight=700,
-        ha="left",
-        va="center",
-    )
     handles = (
         Patch(facecolor=TRAINING, edgecolor="none", label="training history (starts at 900 dates)"),
         Patch(facecolor=GAP, edgecolor="none", label="21-date gap"),

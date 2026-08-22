@@ -241,10 +241,8 @@ adjacent target windows.
 
 <div class="research-figure walk-forward-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg">
-    <img src="/assets/multiple-linear-regression/walk-forward.png" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=3">
+    <img src="/assets/multiple-linear-regression/walk-forward.png?v=3" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -542,10 +540,8 @@ is a prediction diagnostic, not a return series or a significance statistic.
 
 <div class="research-figure ic-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic.svg">
-    <img src="/assets/multiple-linear-regression/cumulative-ic.png" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.png?v=3">
+    <img src="/assets/multiple-linear-regression/cumulative-ic.png?v=3" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -624,10 +620,8 @@ statistic.
 
 <div class="research-figure performance-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns.svg">
-    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png" alt="Net growth and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png?v=3">
+    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png?v=3" alt="Net growth and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
   </picture>
 </div>
 
