@@ -346,7 +346,7 @@ def plot_alpha_sensitivity(
     ridge_models = ALPHA_MODELS[1:]
     labels = ("c = 0.001", "c = 0.01", "c = 0.1")
     x = np.arange(len(ridge_models))
-    size = (4.5, 6.2) if mobile else (9.6, 4.0)
+    size = (4.4, 5.3) if mobile else (8.8, 3.8)
     layout = (2, 1) if mobile else (1, 2)
     fig, axes = plt.subplots(*layout, figsize=size, facecolor=WHITE)
     axes = np.asarray(axes).reshape(-1)
@@ -358,7 +358,7 @@ def plot_alpha_sensitivity(
         float(diagnostics[model]["mean_names_changed_of_150_vs_ols"])
         for model in ridge_models
     ]
-    membership_bars = axes[0].bar(x, names_changed, width=0.58, color=RIDGE)
+    membership_bars = axes[0].bar(x, names_changed, width=0.72, color=RIDGE)
     axes[0].bar_label(
         membership_bars,
         labels=[f"{value:.1f}" for value in names_changed],
@@ -367,16 +367,15 @@ def plot_alpha_sensitivity(
         fontsize=8.2,
     )
     axes[0].set_title(
-        "A  Portfolio membership",
+        (
+            "A  Portfolio names changed\n    vs OLS (of 150)"
+            if mobile
+            else "A  Portfolio names changed vs OLS (of 150)"
+        ),
         loc="left",
         color=INK,
-        fontsize=10.5,
+        fontsize=10.2,
         fontweight=600,
-    )
-    axes[0].set_ylabel(
-        "Names changed vs OLS (out of 150)",
-        color=MUTED,
-        fontsize=9,
     )
     axes[0].set_ylim(0, 44)
 
@@ -397,7 +396,7 @@ def plot_alpha_sensitivity(
         )
         for model in ridge_models
     ]
-    width = 0.34
+    width = 0.40
     norm_bars = axes[1].bar(
         x - width / 2,
         l2_reduction,
@@ -425,22 +424,25 @@ def plot_alpha_sensitivity(
         )
     axes[1].set_ylim(0, 78)
     axes[1].set_title(
-        "B  Coefficient shrinkage",
+        (
+            "B  Coefficient shrinkage\n    vs OLS (%)"
+            if mobile
+            else "B  Coefficient shrinkage vs OLS (%)"
+        ),
         loc="left",
         color=INK,
-        fontsize=10.5,
+        fontsize=10.2,
         fontweight=600,
     )
-    axes[1].set_ylabel("Reduction relative to OLS (%)", color=MUTED, fontsize=9)
     axes[1].legend(frameon=False, fontsize=8.0, loc="upper left")
 
     fig.subplots_adjust(
-        left=0.22 if mobile else 0.10,
+        left=0.12 if mobile else 0.07,
         right=0.98,
-        top=0.96 if mobile else 0.90,
-        bottom=0.09 if mobile else 0.18,
-        hspace=0.52 if mobile else 0.0,
-        wspace=0.34 if not mobile else 0.0,
+        top=0.95 if mobile else 0.89,
+        bottom=0.10 if mobile else 0.19,
+        hspace=0.34 if mobile else 0.0,
+        wspace=0.25 if not mobile else 0.0,
     )
     save_figure(fig, output_dir, "alpha-sensitivity", mobile=mobile)
 

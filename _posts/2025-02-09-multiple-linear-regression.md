@@ -293,6 +293,15 @@ procedure, portfolio construction, and 5 bp cost assumption. The selection rule
 uses only evidence through 2021 and prefers consistency across development
 windows rather than the highest Sharpe in any single slice.
 
+I do not use after-cost performance to judge predictive quality by itself. Rank
+IC, prediction changes, and coefficient behavior evaluate the model before the
+cost layer. The portfolio table is net because the final decision is whether the
+complete implementation is useful. In this grid, annual cost drag ranges only
+from 1.43 to 1.46 percentage points, so the penalty choice is not being driven by
+one candidate receiving a materially easier cost deduction. A gross table would
+be the cleaner isolated portfolio diagnostic, but it would not replace the net
+implementation check.
+
 | Estimator | Return | Volatility | Sharpe |
 | --- | ---: | ---: | ---: |
 | OLS, $c=0$ | 7.03% | 7.15% | 0.983 |
@@ -328,7 +337,7 @@ have become more accurate.
     <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.png">
     <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity.svg">
-    <img src="/assets/multiple-linear-regression/alpha-sensitivity.png" alt="Mean stock-ranking changes and coefficient shrinkage across the OLS and Ridge penalty grid" loading="lazy" decoding="async">
+    <img src="/assets/multiple-linear-regression/alpha-sensitivity.png" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -570,7 +579,7 @@ means, not the apparent height of the independently scaled lines.
     <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.png">
     <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts.svg">
-    <img src="/assets/multiple-linear-regression/portfolio-feature-tilts.png" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on a common scale" loading="lazy" decoding="async">
+    <img src="/assets/multiple-linear-regression/portfolio-feature-tilts.png" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" loading="lazy" decoding="async">
   </picture>
 </div>
 

@@ -72,7 +72,7 @@
 }
 
 .post-content .research-figure.alpha-sensitivity-figure {
-  width: min(860px, calc(100vw - 2rem));
+  width: min(780px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.component-evidence-figure {
@@ -92,10 +92,10 @@
 }
 
 .post-content .table-caption {
-  margin: 0 0 2rem;
+  margin: 0.65rem 0 2rem !important;
   color: #7a8790;
-  font-size: 0.84rem;
-  line-height: 1.5;
+  font-size: 0.88rem !important;
+  line-height: 1.58 !important;
 }
 
 .post-content .table-caption strong {
