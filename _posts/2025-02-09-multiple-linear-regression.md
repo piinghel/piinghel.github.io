@@ -62,6 +62,20 @@ defensive theme groups two closely related measurements:
   losing days and gives no extra weight to a particularly large loss. A lower
   loss frequency is preferred.
 
+For large capitalization, let $$m_{i,t}$$ be the raw market capitalization of
+stock $$i$$ on date $$t$$, and let $$\mathcal U_t$$ be the eligible cross-section.
+The signed score is the cross-sectional rank
+
+$$
+s^{\mathrm{cap}}_{i,t}
+=2\frac{\operatorname{rank}_{\mathcal U_t}(m_{i,t})-1}
+{|\mathcal U_t|-1}-1,
+$$
+
+so the largest eligible company receives a score near $$+1$$ and the smallest
+receives a score near $$-1$$. The model uses this rank alongside the other
+ranked signals; it is not a time-series transformation.
+
 Each raw component is ranked across current Russell 1000 members on the same
 date, mapped to a score from −1 to +1, and signed so that a higher value is more
 attractive. For each stock and date, I first average the low-volatility and
