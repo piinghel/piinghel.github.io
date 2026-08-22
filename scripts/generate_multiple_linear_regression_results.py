@@ -148,6 +148,18 @@ def load_alpha_diagnostics(
     for model in ALPHA_MODELS:
         if model not in diagnostics:
             raise ValueError(f"missing development diagnostics for {model}")
+    rank_changes = {
+        row["model"]: row
+        for row in read_rows(
+            review_dir / "multiple_linear_rank_change_diagnostics.csv"
+        )
+        if row["model"] in ALPHA_MODELS
+        and row["period"] == "development_1995_2021"
+    }
+    for model in ALPHA_MODELS:
+        if model not in rank_changes:
+            raise ValueError(f"missing development rank-change diagnostics for {model}")
+        diagnostics[model].update(rank_changes[model])
     return diagnostics
 
 
@@ -331,97 +343,102 @@ def plot_alpha_sensitivity(
     *,
     mobile: bool,
 ) -> None:
-    x = np.arange(len(ALPHA_MODELS))
-    size = (4.6, 6.6) if mobile else (10.0, 4.2)
+    ridge_models = ALPHA_MODELS[1:]
+    labels = ("c = 0.001", "c = 0.01", "c = 0.1")
+    x = np.arange(len(ridge_models))
+    size = (4.5, 6.2) if mobile else (9.6, 4.0)
     layout = (2, 1) if mobile else (1, 2)
     fig, axes = plt.subplots(*layout, figsize=size, facecolor=WHITE)
     axes = np.asarray(axes).reshape(-1)
     for ax in axes:
         style_axis(ax)
-        ax.set_xticks(x, ALPHA_LABELS)
+        ax.set_xticks(x, labels)
 
-    rank_change = [
-        float(diagnostics[model]["mean_abs_percentile_rank_change_pct_points"])
-        for model in ALPHA_MODELS
+    names_changed = [
+        float(diagnostics[model]["mean_names_changed_of_150_vs_ols"])
+        for model in ridge_models
     ]
-    axes[0].plot(
-        x, rank_change, color=RIDGE, marker="o", linewidth=1.8, markersize=4.8
+    membership_bars = axes[0].bar(x, names_changed, width=0.58, color=RIDGE)
+    axes[0].bar_label(
+        membership_bars,
+        labels=[f"{value:.1f}" for value in names_changed],
+        padding=3,
+        color=MUTED,
+        fontsize=8.2,
     )
-    for position, value in zip(x, rank_change, strict=True):
-        axes[0].text(
-            position,
-            value + 0.28,
-            f"{value:.2f}",
-            color=MUTED,
-            fontsize=8.0,
-            ha="center",
-            va="bottom",
-        )
     axes[0].set_title(
-        "A  Stock-ranking change",
+        "A  Portfolio membership",
         loc="left",
         color=INK,
         fontsize=10.5,
         fontweight=600,
     )
     axes[0].set_ylabel(
-        (
-            "Mean absolute rank change (pp)"
-            if mobile
-            else "Mean absolute percentile-rank change vs OLS (pp)"
-        ),
+        "Names changed vs OLS (out of 150)",
         color=MUTED,
         fontsize=9,
     )
-    axes[0].set_ylim(0, 8.6)
+    axes[0].set_ylim(0, 44)
 
     ols_l2 = float(diagnostics[ALPHA_MODELS[0]]["coefficient_l2_mean"])
     ols_change = float(
         diagnostics[ALPHA_MODELS[0]]["adjacent_fold_mean_abs_change_mean"]
     )
-    l2 = [
-        100 * float(diagnostics[model]["coefficient_l2_mean"]) / ols_l2
-        for model in ALPHA_MODELS
+    l2_reduction = [
+        100 * (1 - float(diagnostics[model]["coefficient_l2_mean"]) / ols_l2)
+        for model in ridge_models
     ]
-    change = [
+    movement_reduction = [
         100
-        * float(diagnostics[model]["adjacent_fold_mean_abs_change_mean"])
-        / ols_change
-        for model in ALPHA_MODELS
+        * (
+            1
+            - float(diagnostics[model]["adjacent_fold_mean_abs_change_mean"])
+            / ols_change
+        )
+        for model in ridge_models
     ]
-    axes[1].plot(x, l2, color=OLS, marker="o", linewidth=1.7, markersize=4.5)
-    axes[1].plot(x, change, color=RIDGE, marker="s", linewidth=1.7, markersize=4.5)
-    axes[1].text(
-        x[-1] + 0.08,
-        l2[-1] + (4.0 if mobile else 2.0),
-        "Coefficient norm",
+    width = 0.34
+    norm_bars = axes[1].bar(
+        x - width / 2,
+        l2_reduction,
+        width,
         color=OLS,
-        fontsize=8,
-        va="center",
+        label="Coefficient norm",
     )
-    axes[1].text(
-        x[-1] + 0.08,
-        change[-1] - (4.0 if mobile else 2.0),
-        "Refit movement",
+    movement_bars = axes[1].bar(
+        x + width / 2,
+        movement_reduction,
+        width,
         color=RIDGE,
-        fontsize=8,
-        va="center",
+        label="Change between refits",
     )
-    axes[1].set_ylim(0, 108)
+    for bars, values in (
+        (norm_bars, l2_reduction),
+        (movement_bars, movement_reduction),
+    ):
+        axes[1].bar_label(
+            bars,
+            labels=[f"{value:.0f}%" for value in values],
+            padding=3,
+            color=MUTED,
+            fontsize=7.8,
+        )
+    axes[1].set_ylim(0, 78)
     axes[1].set_title(
-        "B  Coefficient size and movement",
+        "B  Coefficient shrinkage",
         loc="left",
         color=INK,
         fontsize=10.5,
         fontweight=600,
     )
-    axes[1].set_ylabel("Index (OLS = 100)", color=MUTED, fontsize=9)
+    axes[1].set_ylabel("Reduction relative to OLS (%)", color=MUTED, fontsize=9)
+    axes[1].legend(frameon=False, fontsize=8.0, loc="upper left")
 
     fig.subplots_adjust(
         left=0.22 if mobile else 0.10,
-        right=0.82 if mobile else 0.92,
+        right=0.98,
         top=0.96 if mobile else 0.90,
-        bottom=0.08 if mobile else 0.18,
+        bottom=0.09 if mobile else 0.18,
         hspace=0.52 if mobile else 0.0,
         wspace=0.34 if not mobile else 0.0,
     )
@@ -575,7 +592,7 @@ def plot_selected_portfolio_tilts(
     }
     if mobile:
         ordered = sorted(grouped, key=lambda predictor: metadata[predictor]["tilt_rank"])
-        fig, axes = plt.subplots(10, 1, figsize=(4.5, 14.8), facecolor=WHITE)
+        fig, axes = plt.subplots(10, 1, figsize=(4.5, 11.8), facecolor=WHITE)
     else:
         negative = sorted(
             (predictor for predictor in grouped if metadata[predictor]["side"] == "negative"),
@@ -586,19 +603,13 @@ def plot_selected_portfolio_tilts(
             key=lambda predictor: metadata[predictor]["side_rank"],
         )
         ordered = [item for pair in zip(negative, positive, strict=True) for item in pair]
-        fig, axes = plt.subplots(5, 2, figsize=(9.6, 8.7), facecolor=WHITE)
+        fig, axes = plt.subplots(5, 2, figsize=(9.6, 7.2), facecolor=WHITE)
     axes = np.asarray(axes).reshape(-1)
     all_dates = [
         date.fromisoformat(row["date"])
         for predictor_rows in grouped.values()
         for row in predictor_rows
     ]
-    all_tilts = [
-        float(row["quarterly_mean_tilt"])
-        for predictor_rows in grouped.values()
-        for row in predictor_rows
-    ]
-    tilt_limit = np.ceil(max(abs(min(all_tilts)), abs(max(all_tilts))) * 10) / 10
     first_date, last_date = min(all_dates), max(all_dates)
     for index, (ax, predictor) in enumerate(zip(axes, ordered, strict=True)):
         values = sorted(grouped[predictor], key=lambda row: row["date"])
@@ -609,10 +620,18 @@ def plot_selected_portfolio_tilts(
         ax.plot(dates, tilts, color=color, linewidth=1.35)
         ax.fill_between(dates, 0, tilts, color=color, alpha=0.10)
         ax.axhline(0, color=GRID, linewidth=0.8)
-        ax.set_ylim(-tilt_limit, tilt_limit)
+        lower = min(0.0, np.floor(float(np.min(tilts)) * 10) / 10)
+        upper = max(0.0, np.ceil(float(np.max(tilts)) * 10) / 10)
+        ax.set_ylim(lower, upper)
+        ticks = list(dict.fromkeys((lower, 0.0, upper)))
         ax.set_yticks(
-            (-tilt_limit, 0.0, tilt_limit),
-            (f"−{tilt_limit:.1f}", "0", f"+{tilt_limit:.1f}"),
+            ticks,
+            [
+                "0"
+                if value == 0
+                else f"{value:+.1f}".replace("-", "−")
+                for value in ticks
+            ],
         )
         ax.set_xlim(first_date, last_date)
         ax.margins(x=0)
@@ -642,7 +661,7 @@ def plot_selected_portfolio_tilts(
         if not show_x:
             ax.tick_params(axis="x", labelbottom=False)
     fig.supylabel(
-        "Portfolio-weighted predictor-rank tilt",
+        "Realized predictor-rank tilt",
         color=MUTED,
         fontsize=10,
         x=0.025 if mobile else 0.035,
@@ -652,7 +671,7 @@ def plot_selected_portfolio_tilts(
         right=0.98,
         top=0.985,
         bottom=0.045 if mobile else 0.06,
-        hspace=0.56 if mobile else 0.48,
+        hspace=0.68 if mobile else 0.56,
         wspace=0.25 if not mobile else 0.0,
     )
     save_figure(fig, output_dir, "portfolio-feature-tilts", mobile=mobile)

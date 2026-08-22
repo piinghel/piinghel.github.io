@@ -92,7 +92,7 @@
 }
 
 .post-content .table-caption {
-  margin: 2rem 0 0.55rem;
+  margin: 0 0 2rem;
   color: #7a8790;
   font-size: 0.84rem;
   line-height: 1.5;
@@ -103,8 +103,8 @@
   font-weight: 600;
 }
 
-.post-content .table-caption + table.research-table {
-  margin-top: 0;
+.post-content table.research-table {
+  margin-bottom: 0.55rem;
 }
 
 .post-content table.research-table.component-performance-table tbody td,
