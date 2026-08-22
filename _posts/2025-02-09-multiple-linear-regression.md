@@ -33,13 +33,12 @@ reliably improve the resulting portfolio in this test.
 
 ## A transparent fixed-weight reference
 
-The reference should be useful even if no regression is fitted. I therefore use
-a small set of familiar, economically motivated signals with fixed signs and
-equal theme weights. It is a practical prior: a researcher can inspect every
-choice, implement the score with uneven data histories, and know in advance how
-one strong theme can influence the result. It also sets a meaningful hurdle for
-the learned ranking. The trade-off is that the benchmark embeds judgment in its
-factor choices, lookbacks, and signs.
+I want the reference to be useful even if we never fit a regression. So I start
+with a small set of familiar, economically motivated signals with fixed signs
+and equal theme weights. Every choice is visible, the score still works with
+uneven data histories, and I know in advance how much influence one strong theme
+can have. That makes it a useful hurdle for the learned ranking. The trade-off is
+that the factor choices, lookbacks, and signs all embed judgment.
 
 The benchmark contains five economic themes. Six component signals enter
 because the defensive theme deliberately groups two related measurements:
@@ -66,13 +65,12 @@ tail-avoidance scores. I then give that defensive score and each of the other
 four themes an equal 20% weight. Measuring the defensive idea twice therefore
 does not give it twice the influence.
 
-This is **signal-level
-aggregation**: the result is one stock ranking, not an average of five portfolio
-returns. That ranking passes through the same long-short portfolio machinery as
-the regression. The arrangement is practical because benchmark and model share
-the downstream selection, weighting, execution, and cost rules. A stock must
-have the required component ranks; missing themes do not cause the available
-themes to be silently reweighted.
+The result is one stock ranking, not an average of five portfolio returns. This
+is **signal-level aggregation**. That ranking passes through the same long-short
+portfolio machinery as the regression, so benchmark and model share the
+selection, weighting, execution, and cost rules. A stock must have the required
+component ranks; missing themes do not cause the available themes to be silently
+reweighted.
 
 Before combining the factors, I ran each component separately on their common
 May 1997–May 2026 sample. Every portfolio holds 75 longs and 75 shorts, uses
@@ -293,14 +291,13 @@ procedure, portfolio construction, and 5 bp cost assumption. The selection rule
 uses only evidence through 2021 and prefers consistency across development
 windows rather than the highest Sharpe in any single slice.
 
-I do not use after-cost performance to judge predictive quality by itself. Rank
-IC, prediction changes, and coefficient behavior evaluate the model before the
-cost layer. The portfolio table is net because the final decision is whether the
-complete implementation is useful. In this grid, annual cost drag ranges only
-from 1.43 to 1.46 percentage points, so the penalty choice is not being driven by
-one candidate receiving a materially easier cost deduction. A gross table would
-be the cleaner isolated portfolio diagnostic, but it would not replace the net
-implementation check.
+To judge Ridge, I separate the model from the trading layer. Rank IC, prediction
+changes, and coefficient behavior ask what shrinkage changes before costs. The
+portfolio table stays net because the final choice still has to work as an
+implementation. Annual cost drag ranges only from 1.43 to 1.46 percentage points
+across the grid, so the penalty choice is not coming from one candidate receiving
+a meaningfully easier cost deduction. A gross table would isolate the portfolio
+effect more cleanly, but it would not replace the net implementation check.
 
 | Estimator | Return | Volatility | Sharpe |
 | --- | ---: | ---: | ---: |
@@ -532,12 +529,14 @@ untouched by prior research.
 
 ## What the portfolio is actually doing
 
-Aggregate returns cannot show whether a learned ranking is practical or what
-characteristics survive portfolio construction. Figure 7 makes the first issue
-explicit. Two-way turnover is the sum of absolute long- and short-side trading
-divided by equity on each rebalance; annual cost drag applies 5 bp to every
-dollar traded and compounds the resulting net returns. Borrow, financing,
-market impact, and taxes are not included.
+Returns alone do not tell me whether the ranking is practical or what the final
+portfolio actually owns. Figure 7 starts with the practical part. Two-way
+turnover is the sum of absolute long- and short-side trading divided by equity
+on each rebalance. I charge 5 bp per dollar traded as a simple cost
+approximation and compound the resulting net returns. It is definitely
+imperfect: borrow, financing, market impact, and taxes are not included. Still,
+applying the same rule to every portfolio gives a useful first comparison of how
+much turnover eats into returns.
 
 <div class="research-figure turnover-figure">
   <picture>
@@ -555,9 +554,9 @@ inherited from the learned monthly ranking: versus OLS, the selected penalty
 saves 0.02 percentage points of annual return in development and 0.03 in the
 later period. That difference is too small to motivate the penalty by itself.
 
-Realized predictor tilts answer the second issue. Let $x_{i,j,t}$ be stock $i$'s
-normalized rank on predictor $j$ and $w_{i,t}$ its signed held weight, positive
-for longs and negative for shorts. I calculate
+Figure 8 then asks what the Ridge portfolio actually owns. Let $x_{i,j,t}$ be
+stock $i$'s normalized rank on predictor $j$ and $w_{i,t}$ its signed held
+weight, positive for longs and negative for shorts. I calculate
 
 $$
 T_{j,t}=\frac{\sum_i w_{i,t}x_{i,j,t}}
@@ -574,6 +573,17 @@ axes therefore reveal changes through time without reserving space for values
 that never occur. Compare absolute magnitudes using the labeled full-sample
 means, not the apparent height of the independently scaled lines.
 
+The feature names need a little translation. ATR is average true range relative
+to price, so it captures both the daily high-low range and gaps from the previous
+close. Total, upside, and downside volatility are rolling standard deviations of
+all, positive, or negative daily returns; in the one-sided versions, returns on
+the other side are set to zero. A trend streak such as 200/126d is the share of
+the last 126 sessions that price spent above its 200-session moving average.
+Price/prior high compares price with its 252-session high while skipping the
+latest 21 sessions, and 252-day RSI compares average gains with average losses
+over the past year. As with the other inputs, the model sees cross-sectional
+ranks of these quantities rather than their raw values.
+
 <div class="research-figure exposure-figure">
   <picture>
     <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.svg">
@@ -585,29 +595,28 @@ means, not the apparent height of the independently scaled lines.
 
 <p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realized predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>
 
-The strongest persistent tilts are defensive: the long book ranks lower on ATR,
-volatility, and downside-volatility measures. Positive trend-streak, prior-high,
-and long-horizon RSI tilts form the other side. In that limited but useful sense,
-the final book behaves mainly like a defensive-plus-trend portfolio among its
-largest realized characteristics.
+The pattern is fairly simple. The long book owns quieter stocks: its ranks are
+lower on ATR and the volatility measures. It also owns stocks that have spent
+more time above their long-run moving average and remain closer to an earlier
+high. Among the largest realized characteristics, the portfolio therefore looks
+mostly like defensive plus trend.
 
-That does not mean the regression has reduced the full predictor set to two
-independent causes. The top-ten rule omits smaller tilts by design, related risk
-and trend measurements appear more than once, and stock-level volatility
-scaling can mechanically strengthen the defensive pattern after the ranking is
-formed. A second mechanism is genuine predictor substitution: several inputs
-may identify similar stocks, so their individual coefficients vary while the
-portfolio retains the shared theme.
+That is not the same as discovering two independent sources of alpha. The
+top-ten rule hides smaller tilts, several lines are close variations of the same
+idea, and stock-level volatility scaling can strengthen the defensive pattern
+after the ranking has already been formed. Correlated predictors can also swap
+coefficient weight while continuing to identify similar stocks. Both mechanisms
+can leave the final portfolio looking more stable and more concentrated by theme
+than the coefficient heatmap suggests.
 
-I keep the largest realized tilts because replacing them with a hand-picked
-diverse set would make the book look broader than it is. But Figure 8 describes
-holdings, not return attribution. A grouped theme summary would establish how
-much of the exposure is duplicated. Re-running the same rankings without
-stock-level volatility scaling would separate the model's defensive preference
-from the weighting rule. Finally, neutralizing defensive and trend themes would
-show whether performance survives once those realized tilts are removed. Those
-tests, rather than the visual prominence of a line, determine whether the book
-is fundamentally a low-volatility-and-trend strategy.
+I keep the largest realized tilts because a hand-picked diverse set would make
+the book look broader than it is. But Figure 8 is a holdings x-ray, not return
+attribution. A grouped theme summary would show how much exposure is duplicated.
+Running the same rankings without stock-level volatility scaling would separate
+the model's defensive preference from the weighting rule. Neutralizing the
+defensive and trend themes would then test whether performance survives without
+them. Those two experiments matter more than which line happens to look largest
+in the chart.
 
 ## What was learned—and what remains uncertain
 

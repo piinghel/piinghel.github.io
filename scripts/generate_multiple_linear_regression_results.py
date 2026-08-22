@@ -199,7 +199,12 @@ def style_axis(ax: plt.Axes) -> None:
     ax.set_axisbelow(True)
 
 
-def add_split_marker(ax: plt.Axes, *, label: bool = False) -> None:
+def add_split_marker(
+    ax: plt.Axes,
+    *,
+    label: bool = False,
+    label_fontsize: float = 8.0,
+) -> None:
     ax.axvline(SPLIT_DATE, color=MUTED, linewidth=0.9, linestyle=(0, (2, 3)))
     if label:
         ax.text(
@@ -208,7 +213,7 @@ def add_split_marker(ax: plt.Axes, *, label: bool = False) -> None:
             "Specification fixed\nbefore 2022",
             transform=ax.get_xaxis_transform(),
             color=MUTED,
-            fontsize=8,
+            fontsize=label_fontsize,
             va="bottom",
         )
 
@@ -250,13 +255,14 @@ def plot_ic(series: dict[str, Series], output_dir: Path, *, mobile: bool) -> Non
             xytext=(7, offset),
             textcoords="offset points",
             color=MODEL_COLOR[model],
-            fontsize=9,
+            fontsize=10.4,
             fontweight=600 if model == "selected_c0p01" else 400,
             va="center",
         )
     style_axis(ax)
-    add_split_marker(ax, label=True)
-    ax.set_ylabel("Cumulative daily rank IC", color=MUTED, fontsize=9.5)
+    ax.tick_params(axis="both", which="both", labelsize=9.8)
+    add_split_marker(ax, label=True, label_fontsize=9.2)
+    ax.set_ylabel("Cumulative daily rank IC", color=MUTED, fontsize=10.9)
     ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     right = series[MODEL_ORDER[0]].dates[-1] + timedelta(days=780 if mobile else 520)
@@ -288,7 +294,12 @@ def plot_performance(
     )
     for axis in (wealth_ax, drawdown_ax):
         style_axis(axis)
-        add_split_marker(axis, label=axis is drawdown_ax)
+        axis.tick_params(axis="both", which="both", labelsize=8.9)
+        add_split_marker(
+            axis,
+            label=axis is drawdown_ax,
+            label_fontsize=8.4,
+        )
     for model in MODEL_ORDER:
         width = 2.0 if model == "selected_c0p01" else 1.5
         wealth_ax.plot(
@@ -312,18 +323,18 @@ def plot_performance(
             xytext=(7, offset),
             textcoords="offset points",
             color=MODEL_COLOR[model],
-            fontsize=8.7,
+            fontsize=9.15,
             fontweight=600 if model == "selected_c0p01" else 400,
             va="center",
         )
     wealth_ax.axhline(1.0, color=MUTED, linewidth=0.7, linestyle=(0, (2, 3)))
     wealth_ax.set_yscale("log")
-    wealth_ax.set_ylabel("Growth of $1", color=MUTED, fontsize=9.5)
+    wealth_ax.set_ylabel("Growth of $1", color=MUTED, fontsize=10.0)
     wealth_ax.yaxis.set_major_locator(FixedLocator([1, 2, 3, 4, 6, 8]))
     wealth_ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
     wealth_ax.yaxis.set_minor_formatter(NullFormatter())
     drawdown_ax.axhline(0, color=MUTED, linewidth=0.7, linestyle=(0, (2, 3)))
-    drawdown_ax.set_ylabel("Drawdown (%)", color=MUTED, fontsize=9.5)
+    drawdown_ax.set_ylabel("Drawdown (%)", color=MUTED, fontsize=10.0)
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     right = wealth[MODEL_ORDER[0]].dates[-1] + timedelta(days=780 if mobile else 520)
@@ -466,6 +477,7 @@ def plot_turnover_costs(
         (axes[1], "annual_cost_drag_pct_points", "Costs at 5 bp", "Annual return drag (percentage points)"),
     ):
         style_axis(ax)
+        ax.tick_params(axis="both", which="both", labelsize=9.35)
         for period_index, period in enumerate(periods):
             offset = (period_index - 0.5) * width
             values = [float(lookup[(model, period)][column]) for model in model_keys]
@@ -474,8 +486,8 @@ def plot_turnover_costs(
                 for bar in bars:
                     bar.set_hatch("///")
                     bar.set_edgecolor(WHITE)
-        ax.set_title(title, loc="left", color=INK, fontsize=10.5, fontweight=600)
-        ax.set_ylabel(ylabel, color=MUTED, fontsize=9)
+        ax.set_title(title, loc="left", color=INK, fontsize=11.55, fontweight=600)
+        ax.set_ylabel(ylabel, color=MUTED, fontsize=9.9)
         ax.set_xticks(x, labels)
     legend_handles = (
         Patch(facecolor=MUTED, edgecolor="none", label="Development"),
@@ -490,13 +502,13 @@ def plot_turnover_costs(
     fig.legend(
         handles=legend_handles,
         frameon=False,
-        fontsize=8.2,
+        fontsize=9.0,
         ncol=2,
         loc="upper center",
         bbox_to_anchor=(0.54, 1.0),
     )
     fig.subplots_adjust(
-        left=0.20 if mobile else 0.09,
+        left=0.22 if mobile else 0.10,
         right=0.98,
         top=0.91 if mobile else 0.82,
         bottom=0.09 if mobile else 0.16,

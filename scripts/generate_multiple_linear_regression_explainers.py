@@ -61,14 +61,14 @@ def draw_heatmap(ax: plt.Axes, matrix: np.ndarray, title: str) -> None:
     ax.set_aspect("equal")
     ax.set_xticks(np.arange(len(KEYS)), LABELS, rotation=38, ha="right", rotation_mode="anchor")
     ax.set_yticks(np.arange(len(KEYS)), LABELS)
-    ax.tick_params(axis="both", which="both", length=0, labelcolor=MUTED, labelsize=7.5)
-    ax.set_title(title, loc="left", color=INK, fontsize=10.5, fontweight=600, pad=10)
+    ax.tick_params(axis="both", which="both", length=0, labelcolor=MUTED, labelsize=8.25)
+    ax.set_title(title, loc="left", color=INK, fontsize=11.0, fontweight=600, pad=10)
     for row in range(len(KEYS)):
         for column in range(len(KEYS)):
             value = matrix[row, column]
             label = "—" if row == column else f"{value:.2f}"
             color = WHITE if row != column and (value > 0.58 or value < -0.16) else INK
-            ax.text(column, row, label, ha="center", va="center", color=color, fontsize=7.2, fontweight=500)
+            ax.text(column, row, label, ha="center", va="center", color=color, fontsize=8.0, fontweight=500)
     for spine in ax.spines.values():
         spine.set_visible(False)
 
@@ -92,10 +92,10 @@ def main() -> None:
     for mobile in (False, True):
         if mobile:
             fig, axes = plt.subplots(2, 1, figsize=(4.6, 9.0), facecolor=WHITE)
-            fig.subplots_adjust(left=0.34, right=0.97, top=0.98, bottom=0.08, hspace=0.58)
+            fig.subplots_adjust(left=0.35, right=0.97, top=0.98, bottom=0.08, hspace=0.58)
         else:
             fig, axes = plt.subplots(1, 2, figsize=(10.6, 4.8), facecolor=WHITE)
-            fig.subplots_adjust(left=0.16, right=0.98, top=0.94, bottom=0.19, wspace=0.42)
+            fig.subplots_adjust(left=0.17, right=0.98, top=0.94, bottom=0.20, wspace=0.42)
         draw_heatmap(axes[0], signal, "Same-date signal ranks")
         draw_heatmap(axes[1], returns, "Subsequent portfolio returns")
         save(fig, mobile=mobile)
