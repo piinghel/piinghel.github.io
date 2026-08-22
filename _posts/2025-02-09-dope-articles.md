@@ -4,7 +4,6 @@ title: "Good Reads"
 date: 2025-04-20
 last_modified_at: 2026-08-22
 categories: [Quants]
-article_mark: /assets/brand/quant-notes-mark.svg
 article_label: Reading list · Quantitative research
 ---
 

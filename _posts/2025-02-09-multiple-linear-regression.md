@@ -4,32 +4,41 @@ title: "Multiple Linear Regression"
 date: 2025-02-09
 last_modified_at: 2026-08-22
 categories: [Quants]
-article_mark: /assets/brand/multiple-linear-regression-mark.svg
 article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-A stock-selection process rarely has one convincing predictor. It has several
-imperfect views of momentum, risk, size, liquidity, and positioning. The
-practical problem is turning those views into one ranking without letting a
-large or redundant group dominate.
+The portfolio decision in this article is not whether one factor works in
+isolation. It is how to produce one stock ranking when predictors are measured
+in different units, overlap economically, and may carry different information
+once the others are present. Fixed weights make those trade-offs explicit;
+multiple linear regression estimates them from historical cross-sections.
 
-The question here is simple: **Can we combine multiple predictors into a more
-useful stock ranking?**
+The quantity being predicted needs to be precise. For every stock and date, the
+training target is the sector-relative rank of its risk-adjusted return over the
+next 20 sessions. The fitted value estimates that normalized relative outcome
+from information available at prediction time. I use only its ordering: the
+highest scores become long candidates and the lowest become short candidates.
+A score of 0.4 is therefore not a forecast of a 40% return, or even a calibrated
+return forecast at all. It says where the stock sits in the model's expected
+cross-sectional ordering.
 
-I begin with a fixed-weight factor score, then let ordinary multiple linear
-regression learn the combination from earlier data. Ridge appears later as a
-penalized version of the same regression. That order matters: the main idea is
-the learned linear combination, while the penalty is a stability choice whose
-benefit has to be measured.
+The central question is: **Can we combine multiple predictors into a more
+useful stock ranking?** I start with a transparent fixed-weight score, then let
+ordinary multiple linear regression estimate how the predictors work together.
+Ridge enters later as the same regression with an L2 penalty. That order keeps
+the main idea—the learned linear combination—separate from the narrower choice
+of whether shrinking its coefficients improves stability or implementation.
 
-The result is useful but not a model-victory story. The learned rankings are
-stronger than the compact benchmark, although that comparison changes both the
-estimator and the information set. In the controlled comparison, a moderate
-Ridge penalty makes coefficients smaller and changes the ranking only modestly.
-It slightly improves development-period Sharpe, then trails OLS in the later
-period. Regularization changes how the model combines predictors; it does not
-reliably improve the resulting portfolio in this test.
+Two comparisons run through the article. Fixed weights versus OLS asks whether
+the broader learned ranking clears a practical benchmark, but it changes both
+the inputs and the way they are combined. OLS versus Ridge is the controlled
+estimator comparison. There, a moderate penalty cuts coefficient scale and
+refit movement by roughly one third while preserving a 0.991 prediction-rank
+correlation with OLS. The development Sharpe gain is only 0.020 and does not
+persist in the later period. Shrinkage makes the coefficient representation
+more regular; in this experiment, it does not produce a reliably better ranking
+or portfolio.
 
 ## A transparent fixed-weight reference
 
@@ -43,20 +52,27 @@ that the factor choices, lookbacks, and signs all embed judgment.
 The benchmark contains five economic themes. Six component signals enter
 because the defensive theme deliberately groups two related measurements:
 
-- **Defensive:** low volatility is the mean of 21-, 63-, and 126-session
-  annualized volatility; upper-tail avoidance is the third-largest daily return
-  over 21 sessions. Lower values are preferred. Their normalized signals are
-  averaged first, so together they receive one 20% theme weight—not two.
-- **Momentum:** the sum of compounded 63-, 126-, 189-, and 252-session returns,
-  each skipping the most recent 21 sessions. Higher is preferred and the theme
-  receives 20%.
-- **Low short interest:** publication-lagged shares short relative to 63-session
-  mean trading volume, expressed as a log ratio. Short interest is delayed by
-  21 sessions; lower is preferred and the theme receives 20%.
-- **Large capitalization:** log market capitalization. Higher is preferred and
-  the theme receives 20%.
-- **Fewer loss days:** the share of negative daily returns over 756 sessions.
-  Lower is preferred and the theme receives 20%.
+- **Defensive:** low volatility asks whether returns have been quiet over roughly
+  one, three, and six months. I average annualized volatility over 21, 63, and
+  126 sessions. Upper-tail avoidance asks whether the recent path depends on a
+  few unusually large gains; its proxy is the third-largest daily return over
+  21 sessions. Lower values are preferred. Their normalized scores are averaged
+  first, so together they receive one 20% theme weight—not two.
+- **Momentum:** the signal adds compounded returns over 63, 126, 189, and 252
+  sessions after skipping the most recent 21 sessions. It favors established
+  medium-term trends while avoiding the latest month's short-term reversal.
+  Higher values are preferred and the theme receives 20%.
+- **Low short interest:** the signal compares publication-lagged shares short
+  with average daily trading volume over 63 sessions, then takes the log ratio.
+  It is a days-to-cover-style measure of negative positioning and crowding;
+  short interest is delayed by 21 sessions to respect publication timing. Lower
+  values are preferred and the theme receives 20%.
+- **Large capitalization:** log market capitalization is a simple size and
+  investability tilt. Higher values are preferred and the theme receives 20%.
+- **Return consistency:** the signal is the fraction of negative daily returns
+  over 756 sessions, roughly three trading years. It measures how often a stock
+  lost money, not how severe those losses were. A lower loss frequency is
+  preferred and the theme receives 20%.
 
 Each raw component is ranked across current Russell 1000 members on the same
 date, mapped to a score from −1 to +1, and signed so that a higher value is more
@@ -84,12 +100,12 @@ pays 5 basis points per dollar traded.
 | Momentum | 4.27% | 10.37% | 0.41 |
 | Low short interest | 1.85% | 4.96% | 0.37 |
 | Large capitalization | 1.66% | 7.32% | 0.23 |
-| Fewer loss days | 5.48% | 8.90% | 0.62 |
+| Return consistency | 5.48% | 8.90% | 0.62 |
 {: .research-table .comparison-table .component-performance-table }
 
 <p class="table-caption"><strong>Table 1:</strong> Net annualized return, annualized volatility, and Sharpe for each standalone component on the common May 1997–May 2026 sample; every portfolio uses the common 75-by-75 construction and 5 bp trading cost.</p>
 
-The defensive measurements and fewer-loss-days signal have the strongest
+The defensive measurements and return-consistency signal have the strongest
 standalone Sharpes. That is consistent with a broad defensive effect, but it is
 not three independent confirmations of one. Low volatility and tail avoidance
 are close variants, and loss frequency also describes the return path. Grouping
@@ -141,7 +157,7 @@ The benchmark is intentionally modest. Its factors and horizons were chosen
 with historical knowledge; some themes are correlated; availability is unequal
 through time; and positive standalone performance need not survive after
 controlling for the remaining factors. The regression also receives a broader
-predictor deck, so benchmark versus OLS compares two complete ranking systems,
+predictor set, so benchmark versus OLS compares two complete ranking methods,
 not just fixed versus learned weights on identical inputs. It is a transparent
 reference, not a neutral definition of multifactor investing or a claim that
 these are the uniquely correct economic factors.
@@ -207,8 +223,13 @@ $$
 The fitted score $\widehat y_{i,t}=\widehat\beta_0+x_{i,t}^{\top}\widehat\beta$
 is the learned stock ranking. A positive coefficient raises the score when a
 stock ranks highly on that predictor; a negative coefficient reverses the
-preference. The experiment uses 144 separately normalized predictors; the
-substantive question is how their information is combined.
+preference. The predictor set contains 144 separately normalized inputs, but
+they are not 144 independent economic ideas. They are related measurements of return and
+trend, total and asymmetric risk, technical location and price path, size and
+market correlation, trading activity and price-volume interaction, and
+publication-lagged short positioning—often repeated over several horizons. That
+redundancy is precisely why a joint model can behave differently from a list of
+standalone factor results.
 
 Predictions are walk-forward. The research history begins in January 1995. The
 first 900 dates establish the initial training sample, so mechanical
@@ -234,13 +255,17 @@ is still the **research and development period**. I repeatedly inspected that
 history while revising predictors, normalization, targets, and portfolio rules.
 Walk-forward mechanics do not undo research reuse.
 
-Every score then enters the same portfolio construction. The top and bottom 75
-stocks form the long and short books. Each starts at $1/75$, is scaled by 20%
-divided by trailing 60-session volatility, and is capped at 4% of sleeve capital;
-volatility is floored at 5% and the multiplier at four. Each side is scaled down
-if gross exposure exceeds 100%, but a smaller side is not levered up. Three
-equal-capital sleeves rebalance on offset third Fridays, execute at the next
-close, and hold for three weeks. Reported returns charge 5 bp per dollar traded.
+Every score then enters the same portfolio construction, derived in more detail
+in the earlier [low-volatility allocation article](/quant/2024/12/15/low-volatility-factor.html).
+The top and bottom 75 stocks form the long and short books. Each starts at
+$1/75$, is scaled by 20% divided by trailing 60-session volatility, and is capped
+at 4% of sleeve capital; volatility is floored at 5% and the multiplier at four.
+Each side is scaled down if gross exposure exceeds 100%, but a smaller side is
+not levered up. The rule therefore reduces single-stock risk, but it does not use
+cross-stock correlations or target dollar neutrality, beta neutrality, or a
+fixed portfolio volatility. Three equal-capital sleeves rebalance on offset
+third Fridays, execute at the next close, and hold for three weeks. Reported
+returns charge 5 bp per dollar traded.
 
 ## Ridge as a stability extension
 
@@ -420,8 +445,11 @@ The development portfolio comparison is also informative, with two important
 caveats. Portfolio evidence begins with the first mechanical walk-forward
 predictions in 1998, although it belongs to the declared 1995–2021 research
 period. The fixed score also uses a smaller, hand-built signal set and has
-different availability; OLS and Ridge use the same larger deck. Only OLS versus
-Ridge is a controlled estimator comparison.
+different availability; OLS and Ridge use the same larger predictor set. Only
+OLS versus Ridge is a controlled estimator comparison. The exposure rows below
+average daily floating weights across the three equal-capital sleeves; short
+gross is reported as a positive magnitude and net stock exposure is long gross
+minus short gross.
 
 | Development metric | Fixed | OLS | Ridge $c=0.01$ |
 | --- | ---: | ---: | ---: |
@@ -430,18 +458,26 @@ Ridge is a controlled estimator comparison.
 | Sharpe ratio | 0.72 | 0.98 | 1.00 |
 | Maximum drawdown | −31.70% | −18.77% | −19.03% |
 | Market beta | 0.089 | 0.084 | 0.091 |
+| Average long gross | 88.63% | 84.12% | 84.81% |
+| Average short gross | 48.18% | 56.16% | 54.82% |
+| Average net stock exposure | +40.45% | +27.96% | +30.00% |
 | Turnover per rebalance | 79.56% | 167.67% | 165.72% |
 | Annual cost drag | 0.69 pp | 1.46 pp | 1.44 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
-<p class="table-caption"><strong>Table 3:</strong> Net development-period portfolio results; OLS and Ridge share the full predictor deck, while the fixed benchmark uses its smaller hand-built signal set.</p>
+<p class="table-caption"><strong>Table 3:</strong> Development-period portfolio results after 5 bp per dollar traded, with average realized long, short, and net stock exposures.</p>
 
 The learned portfolios improve Sharpe mainly by lowering volatility and
 drawdown relative to the benchmark, not by producing dramatically higher
-returns. Their cost is roughly twice the turnover and annual cost drag. Ridge
-reduces turnover by only 1.95 percentage points per rebalance versus OLS and
-saves about 0.02 percentage points a year. Coefficient shrinkage is meaningful;
-the trading-cost change is not.
+returns. Their cost is roughly twice the turnover and annual cost drag. The
+gross-weight rows also make the allocation asymmetry visible: inverse-volatility
+sizing leaves every portfolio net long in dollars, while market beta remains
+near 0.09 because the smaller short book contains higher-beta stocks. Net stock
+exposure and beta are therefore different diagnostics; neither is explicitly
+controlled by this allocation rule. Ridge reduces turnover by only 1.95
+percentage points per rebalance versus OLS and saves about 0.02 percentage
+points a year. Coefficient shrinkage is meaningful; the trading-cost change is
+not.
 {: .table-followup }
 
 ## The 2022–2026 later-period evaluation
@@ -460,11 +496,14 @@ specification demonstrably locked before anyone examined those outcomes.
 | Sharpe ratio | 0.61 | 0.87 | 0.82 |
 | Maximum drawdown | −10.78% | −7.59% | −8.05% |
 | Market beta | 0.032 | 0.075 | 0.078 |
+| Average long gross | 89.53% | 89.26% | 90.20% |
+| Average short gross | 40.87% | 44.48% | 43.34% |
+| Average net stock exposure | +48.67% | +44.78% | +46.86% |
 | Turnover per rebalance | 68.80% | 152.75% | 149.61% |
 | Annual cost drag | 0.60 pp | 1.34 pp | 1.31 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
-<p class="table-caption"><strong>Table 4:</strong> Net portfolio results from January 2022 through May 2026; this pseudo-holdout did not enter the Ridge-penalty selection rule.</p>
+<p class="table-caption"><strong>Table 4:</strong> Later-period portfolio results after 5 bp per dollar traded, with average realized long, short, and net stock exposures.</p>
 
 The main later-period observation is not dramatic but it is unfavorable to the
 selected penalty. Ridge return is 0.13 percentage points lower than OLS,
@@ -475,6 +514,13 @@ $c=0.001$ candidate happens to have the best later Sharpe at 0.89; promoting it
 after seeing this period would be post-hoc selection, so I do not.
 {: .table-followup }
 
+All three portfolios also become more net long in the later period because the
+short legs carry less gross weight. Ridge moves from +30.0% to +46.9% average
+net stock exposure, yet its market beta remains only 0.078. That again shows why
+dollar exposure is not a substitute for beta control. It also means the modest
+OLS–Ridge performance difference cannot be attributed to the penalty alone
+without holding the resulting exposures fixed.
+
 The information coefficient asks a different question from portfolio Sharpe. On
 each date it is the cross-sectional Spearman correlation between the predicted
 score and the subsequently realized, sector-ranked target on their common stock
@@ -483,6 +529,10 @@ sample:
 $$
 \mathrm{IC}_t=\rho_{\mathrm S}(\widehat y_{i,t},y_{i,t}).
 $$
+
+The IC history starts with the first walk-forward predictions in September 1998
+and ends on April 28, 2026, the last date for which the full 20-session outcome
+is available.
 
 Figure 5 accumulates those daily correlations. A rising path means the model has
 usually ordered future outcomes correctly; a flat path means no additional
@@ -500,10 +550,77 @@ is a prediction diagnostic, not a return series or a significance statistic.
 
 <p class="figure-caption"><strong>Figure 5:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 pseudo-holdout boundary.</p>
 
-OLS and moderate Ridge follow almost the same path. Both remain ahead of the
-fixed score, although the differing signal decks prevent a clean estimator
-claim from that comparison. More importantly for the penalty decision, Ridge
-does not separate from OLS after the 2022 boundary.
+<table class="research-table comparison-table ic-summary-table">
+  <thead>
+    <tr>
+      <th>Period and ranking</th>
+      <th>Mean daily IC</th>
+      <th>IC standard deviation</th>
+      <th>IC IR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Development · Fixed score</th>
+      <td data-label="Mean daily IC">0.0407</td>
+      <td data-label="IC standard deviation">0.1218</td>
+      <td data-label="IC IR">0.334</td>
+    </tr>
+    <tr>
+      <th scope="row">Development · OLS</th>
+      <td data-label="Mean daily IC">0.0461</td>
+      <td data-label="IC standard deviation">0.0864</td>
+      <td data-label="IC IR">0.534</td>
+    </tr>
+    <tr>
+      <th scope="row">Development · Ridge $c=0.01$</th>
+      <td data-label="Mean daily IC">0.0469</td>
+      <td data-label="IC standard deviation">0.0885</td>
+      <td data-label="IC IR">0.530</td>
+    </tr>
+    <tr class="period-break">
+      <th scope="row">2022–2026 · Fixed score</th>
+      <td data-label="Mean daily IC">0.0506</td>
+      <td data-label="IC standard deviation">0.1397</td>
+      <td data-label="IC IR">0.363</td>
+    </tr>
+    <tr>
+      <th scope="row">2022–2026 · OLS</th>
+      <td data-label="Mean daily IC">0.0417</td>
+      <td data-label="IC standard deviation">0.1068</td>
+      <td data-label="IC IR">0.390</td>
+    </tr>
+    <tr>
+      <th scope="row">2022–2026 · Ridge $c=0.01$</th>
+      <td data-label="Mean daily IC">0.0415</td>
+      <td data-label="IC standard deviation">0.1113</td>
+      <td data-label="IC IR">0.373</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="table-caption"><strong>Table 5:</strong> Mean and standard deviation of daily rank IC, with IC IR defined as mean divided by standard deviation, shown separately for development and later periods.</p>
+
+I leave IC IR unannualized. Adjacent observations reuse much of the same
+20-session forward return window, so multiplying this ratio by $\sqrt{252}$
+would suggest an independence that the data do not have. It is a compact measure
+of average rank association relative to its day-to-day variation, not a Sharpe
+ratio, a $t$-statistic, or proof of independent information.
+
+During development, Ridge raises mean IC over OLS by only 0.0008 and also raises
+its standard deviation, leaving IC IR fractionally lower at 0.530 versus 0.534.
+In the later period its mean IC is fractionally lower than OLS and its dispersion
+is higher. The cumulative paths therefore tell the same story as the table: OLS
+and moderate Ridge produce almost the same ordering, and shrinkage does not add
+a clear prediction-quality gain.
+
+The fixed score has the highest later-period mean IC but also the most variable
+daily IC, so its IC IR remains below OLS. That does not contradict the portfolio
+results. IC measures the ordering of the entire eligible cross-section against
+the normalized target; portfolio return depends only on names near the tails,
+then adds position sizing, stock-level volatility scaling, execution, and
+costs. The differing predictor sets also prevent fixed score versus OLS from
+being a controlled estimator comparison.
 
 Portfolio performance adds selection, volatility scaling, execution, and costs
 to that prediction evidence. Figure 6 shows the complete net path and the
@@ -611,35 +728,35 @@ than the coefficient heatmap suggests.
 
 I keep the largest realized tilts because a hand-picked diverse set would make
 the book look broader than it is. But Figure 8 is a holdings x-ray, not return
-attribution. A grouped theme summary would show how much exposure is duplicated.
-Running the same rankings without stock-level volatility scaling would separate
-the model's defensive preference from the weighting rule. Neutralizing the
-defensive and trend themes would then test whether performance survives without
-them. Those two experiments matter more than which line happens to look largest
-in the chart.
+attribution. The allocation rule can amplify the defensive pattern after the
+ranking is formed, and it leaves the book materially net long in dollars even
+when realized beta is fairly small. That points to the portfolio layer, not a
+different way of selecting ten lines for the chart.
 
 ## What was learned—and what remains uncertain
 
 Multiple linear regression is a practical way to turn many stock predictors
 into one ranking. In this study the learned OLS score improves development
 Sharpe from 0.72 for the compact fixed benchmark to 0.98, largely through lower
-volatility and drawdown. Because the signal decks and availability differ, that
-is evidence that the complete learned system is useful, not proof that learning
-weights beats fixed weights on identical inputs.
+volatility and drawdown. Because the predictor sets and availability differ,
+that is evidence that the complete learned specification is useful, not proof
+that learning weights beats fixed weights on identical inputs.
 
 The controlled lesson is narrower. Ridge $c=0.01$ cuts coefficient magnitude
 and refit movement by roughly one third while keeping a 0.991 rank correlation
-with OLS. Its development Sharpe is slightly more consistent, but the advantage
-is small and does not persist in 2022–2026. Turnover and cost savings are also
+with OLS. Its development Sharpe is slightly higher, but the advantage is small
+and does not persist in 2022–2026. Turnover and cost savings are also
 minor. The practical trade-off is therefore coefficient regularity versus an
 almost unchanged ranking—not a dependable performance gain.
 
-The next tests should target the remaining design risks rather than add another
-model family. I would first repeat the same grid with exactly equal aggregate
-weight per date, then vary the date thinning, blocked-window length, and target
-horizon to see whether overlapping outcomes drive the apparent stability.
-Leave-one-theme-out or residualized tests would address incremental value in the
-correlated predictor deck. Most importantly, the next genuine holdout must begin
-with the full specification locked in advance. Until then, the later result is
-evidence that the learned ranking remains useful, but also a warning against
-claiming that Ridge won.
+The clearest improvements now sit in portfolio construction rather than another
+model family. A turnover-aware optimizer could trade only when the expected
+improvement in the ranking is large enough to justify the cost. A
+covariance-aware allocation could account for correlations that stock-by-stock
+volatility scaling ignores. Explicit bounds on net stock exposure, market beta,
+and major realized factor tilts could keep the book closer to the intended
+market-neutral interpretation, with an index overlay tested separately from the
+stock-selection result. Those changes should be evaluated on frozen OLS and
+Ridge predictions so an allocation improvement is not confused with a model
+improvement. A genuinely new test period would still need the complete rule—
+prediction and allocation—locked before its outcomes are examined.

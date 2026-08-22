@@ -5,7 +5,6 @@ date: 2024-12-15
 last_modified_at: 2026-08-22
 show_date: false
 categories: [Quant]
-article_mark: /assets/brand/low-volatility-mark.svg
 article_label: Low-volatility · portfolio construction
 permalink: /quant/2024/12/15/low-volatility-factor.html
 ---

@@ -4,7 +4,6 @@ title: "Reducing Rebalancing Timing Risk with Tranching"
 date: 2025-05-10
 last_modified_at: 2026-08-22
 categories: [Quants]
-article_mark: /assets/brand/quant-notes-mark.svg
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
 ---
