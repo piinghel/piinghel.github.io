@@ -11,31 +11,25 @@ permalink: /quants/2025/02/09/multiple-linear-regression.html
 Stock signals rarely agree neatly. Trend, risk, size, liquidity, and positioning
 arrive on different scales, overlap, and can change meaning when considered
 together. My problem is practical: turn them into one ranking. Fixed weights
-settle that choice by hand; multiple linear regression estimates the combination
-from historical cross-sections of stocks.
+settle that choice by hand; multiple linear regression uses past data to learn
+the combination.
 
-The model produces an ordinal stock score. For every stock and date, the
-training target is the sector-relative rank of its risk-adjusted return over the
-next 20 sessions. The fitted values inherit that interpretation: the highest
-scores become long candidates and the lowest become short candidates. A score
-of 0.4 means “high in the model's expected cross-section”; it is an ordering,
-rather than a calibrated 40% return forecast.
+The model's job is simple: put the stocks in order. On each date, the
+highest-scoring stocks become long candidates and the lowest-scoring ones become
+short candidates. The score is not a return forecast; only the order matters.
 
-Can that learned combination produce a more useful stock ranking? I start with
-a transparent fixed-weight score, then use ordinary least squares (OLS) to
-estimate how the predictors work together. Ridge enters later as the same
-regression with a penalty on large coefficients. That order keeps
-the main idea—the learned linear combination—separate from the narrower choice
-of whether shrinking its coefficients changes the ranking or its implementation.
+Can a learned combination produce a more useful ranking? I proceed in three
+steps. First I build a transparent fixed-weight benchmark. Then I use a standard
+linear regression—ordinary least squares, or OLS—to learn how the predictors
+work together. Finally, I add Ridge, a version that discourages the model from
+relying on large coefficients.
 
-Two comparisons organize the article. Fixed weights versus OLS asks whether
-the broader learned ranking clears a practical benchmark, though both the
-inputs and the combination rule change. OLS versus Ridge is the controlled
-estimator comparison. There, a moderate penalty reduces coefficient scale and
-refit movement by roughly one third while preserving a 0.991 prediction-rank
-correlation with OLS. The development Sharpe gain is only 0.020, and it reverses
-later. Ridge makes the coefficients smaller and more regular; it scarcely
-changes the ranking or the portfolio.
+The comparisons answer different questions. Fixed weights versus OLS is a
+practical test, but both the inputs and the combination rule change. OLS versus
+Ridge is cleaner: the inputs stay fixed, and only the estimation method changes.
+In this sample, Ridge makes the coefficients smaller and more regular, but it
+barely changes the ranking or the portfolio. The sections below build toward
+that result one step at a time.
 
 ## Benchmark
 
