@@ -1315,6 +1315,34 @@ article.post .post-header {
   font-size: 0.85rem;
 }
 
+.article-repository-links {
+  margin: 0.45rem 0 0;
+  color: var(--muted-ink);
+  font-size: 0.82rem;
+  line-height: 1.5;
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--accent-dark);
+      text-decoration: underline;
+      text-underline-offset: 0.16em;
+    }
+  }
+}
+
+.post-content .article-summary {
+  margin: 0 0 2rem;
+  padding: 1rem 1.15rem;
+  border-left: 3px solid #8bb5b6;
+  background: var(--soft-accent);
+  color: #4d5d66;
+  line-height: 1.68;
+}
+
 .post-content .figure-caption,
 .post-content p:has(img) + p,
 .post-content img + p,
