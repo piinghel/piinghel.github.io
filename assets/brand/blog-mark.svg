@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title desc">
-  <title id="title">Quant Notes mark</title>
+  <title id="title">Blog mark</title>
   <desc id="desc">A small network of connected observations with a moving signal.</desc>
   <style>
     .edge { fill: none; stroke: #b7d2d3; stroke-width: 1; stroke-linecap: round; }
