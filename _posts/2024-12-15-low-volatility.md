@@ -11,7 +11,7 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary"><strong>Result in brief:</strong> A 1/N volatility-ranked long/short portfolio remains highly concentrated in risk, even after a 4% position cap. Holding stock selection fixed, adding inverse-volatility scaling raises net arithmetic return from 2.4% to 7.1%, cuts volatility from 33.4% to 9.8%, and reduces maximum drawdown from 87.1% to 38.0%. The improvement belongs to the complete sizing rule—which also changes gross exposure, net exposure, beta, and turnover—not to an isolated inverse-volatility effect.</p>
+<p class="article-summary"><strong>TL;DR:</strong> A 1/N volatility-ranked long/short portfolio remains highly concentrated in risk, even after a 4% position cap. Holding stock selection fixed, adding inverse-volatility scaling raises net arithmetic return from 2.4% to 7.1%, cuts volatility from 33.4% to 9.8%, and reduces maximum drawdown from 87.1% to 38.0%. The improvement belongs to the complete sizing rule—which also changes gross exposure, net exposure, beta, and turnover—not to an isolated inverse-volatility effect.</p>
 
 Ranking stocks by volatility does not tell me how much capital to give each one. Even within the low- and high-volatility baskets, the stocks have markedly different risk. Equal weighting is a transparent baseline, but it ignores those differences and lets volatile names dominate portfolio risk. The 4% cap limits concentration without changing the simple 1/N benchmark.
 
@@ -55,8 +55,8 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
 
 <div class="low-vol-figure decile-profile-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png" alt="Geometric return, volatility, and Sharpe ratio across volatility deciles" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=2">
+    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=2" alt="Geometric return, volatility, and Sharpe ratio across volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
 
