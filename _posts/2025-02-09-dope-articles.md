@@ -8,11 +8,6 @@ article_label: Reading list · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
 ---
 
-This is my working shelf, not a catalogue. I add to it when a person, paper, or
-tool changes how I think about a research problem, explains a difficult idea
-cleanly, or helps me turn an experiment into an implementation. The list will
-remain selective and unfinished.
-
 ## People and learning
 
 - [Chip Huyen](https://huyenchip.com/blog/)
