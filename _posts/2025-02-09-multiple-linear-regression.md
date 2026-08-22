@@ -109,17 +109,6 @@ the largest eligible company receives a capitalization score near $$+1$$ and
 the smallest receives a score near $$-1$$. The model uses these ranks rather
 than the raw units.
 
-Those six measures define the transparent benchmark, not the full regression
-input. OLS and Ridge receive a broader deck of 144 ranked predictors, including
-multiple horizons of return and trend, total and downside volatility, technical
-price location, market-cap and market-correlation measures, trading activity and
-price-volume interaction, and publication-lagged short positioning. Examples
-include price relative to a moving average, RSI, ATR, upside and downside
-volatility, share turnover, illiquidity, market-cap variability, and
-short-interest-to-volume. The extra horizons and related transformations are
-deliberate: the regression tests whether a learned combination improves on the
-small hand-built benchmark.
-
 Each raw component is ranked across current Russell 1000 members on the same
 date, mapped to a score from −1 to +1, and signed so that a higher value is more
 attractive. For each stock and date, I first average the low-volatility and
@@ -134,6 +123,17 @@ because it is practical: benchmark and regression can share the same selection,
 weighting, execution, and cost machinery. A stock must have every required
 component rank, so missing themes remove it from that date's benchmark universe
 instead of changing the weights on the remaining themes.
+
+Those six measures define the transparent benchmark, not the full regression
+input. OLS and Ridge receive a broader deck of 144 ranked predictors, including
+multiple horizons of return and trend, total and downside volatility, technical
+price location, market-cap and market-correlation measures, trading activity and
+price-volume interaction, and publication-lagged short positioning. Examples
+include price relative to a moving average, RSI, ATR, upside and downside
+volatility, share turnover, illiquidity, market-cap variability, and
+short-interest-to-volume. The extra horizons and related transformations are
+deliberate: the regression tests whether a learned combination improves on the
+small hand-built benchmark.
 
 ### Testing the ingredients
 
@@ -217,9 +217,9 @@ are identical.
 ## Putting unlike predictors on one scale
 
 A regression can combine billions of dollars with percentage points, but its
-raw coefficients then live on incomparable scales. On each date, I therefore
-replace every predictor with its relative ordering across the eligible Russell
-1000 universe, then map the ranks to $[-1,1]$:
+raw coefficients then live on incomparable scales. For the 144-predictor
+regression deck, I therefore replace every predictor with its relative ordering
+across the eligible Russell 1000 universe, then map the ranks to $[-1,1]$:
 
 $$
 x^{\mathrm{rank}}_{i,t}=2\frac{\operatorname{rank}(x_{i,t})-1}{N_t-1}-1.
