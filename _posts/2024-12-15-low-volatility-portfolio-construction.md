@@ -9,15 +9,15 @@ article_label: Low-volatility · portfolio construction
 permalink: /quant/2024/12/15/low-volatility-factor.html
 ---
 
-The low-volatility effect is well documented. This article asks a narrower implementation question: once stocks have been ranked by volatility, how should they be weighted in a long/short portfolio? I keep the stock selection fixed and compare equal dollar weights with weights scaled by each stock's own volatility.
+The low-volatility effect is easy to state: calm stocks have historically earned more return per unit of risk than volatile ones. Turning that observation into a long/short portfolio is less obvious. Once I have ranked the stocks, should I give every name the same dollars, or scale each position by the stock's own volatility? I keep the selection fixed and compare those two sizing rules.
 
 Across the US, Europe, and Japan, low-risk equities have historically delivered more return per unit of risk than high-risk peers. [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document the effect. One explanation is leverage constraints: investors who want more market exposure may buy high-beta securities instead of levering a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta.
 
-The comparison is intentionally simple. Equal weighting is a transparent but subjective reference, not the strongest possible alternative. Volatility scaling is the implementation I want to study. In this sample it cuts realized volatility and drawdown substantially, but it also changes gross exposure, net exposure, beta, and turnover. The result therefore compares two complete sizing rules; it does not isolate one mechanical effect while holding every portfolio property constant.
+The comparison is deliberately simple. Equal weighting is a transparent but subjective reference, not the strongest alternative I could design. Volatility scaling is the implementation I want to understand. It cuts realized volatility and drawdown substantially in this sample, but it also changes gross exposure, net exposure, beta, and turnover. I am comparing two complete sizing rules, not isolating one mechanical effect while everything else stays fixed.
 
 ## The tradable universe
 
-I start with the Russell 1000 membership history and apply it point-in-time to daily prices from July 1995 through 27 May 2026. I apply a $5 price filter based on unadjusted prices and require enough return history to estimate the selection signal, sizing volatility, and beta diagnostic. The beta value does not enter the ranking or sizing rule, but its availability is part of this data screen. That leaves 857–1,015 eligible stocks at each rebalance, with a median of 973. Both implementations use that same universe.
+I start with point-in-time Russell 1000 membership and daily prices from July 1995 through 27 May 2026. Stocks must trade above $5 on an unadjusted basis and have enough history for the selection signal, sizing volatility, and beta diagnostic. Beta itself does not enter the ranking or sizing rule; only its availability enters this screen. The result is 857–1,015 eligible stocks at each rebalance, with a median of 973. Both implementations see exactly the same universe.
 
 <div class="low-vol-figure">
   <picture>
@@ -60,11 +60,11 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
 
 <p class="figure-caption"><strong>Figure 2:</strong> Geometric return, volatility, and Sharpe by volatility decile before costs.</p>
 
-Figure 2 shows the basic trade-off. The plotted geometric return remains positive across all ten deciles, and the underlying arithmetic means are also positive. Realized volatility nevertheless rises sharply and Sharpe ratios deteriorate. For the highest-volatility decile, variance drag reduces a 7.6% arithmetic return to about 0.3% geometric return, with a 0.20 Sharpe. I keep that ranking fixed and change only the allocation from here.
+Figure 2 shows why the signal is interesting. Geometric return stays positive across the ten deciles, but volatility rises sharply and Sharpe deteriorates. In the highest-volatility decile, a 7.6% arithmetic return compounds to only about 0.3% a year; the rest is lost to variance drag. From here on I leave this ranking alone and change only the allocation.
 
 ## A simple equal-weight reference
 
-I use equal weighting as a simple control. It exposes the problem immediately: we are long the calmest stocks and short the most volatile ones, yet every stock receives the same dollar weight. The high-volatility leg then carries roughly 38% realized volatility versus 12% for the low-volatility leg. Its average estimated stock beta is also higher, 1.63 versus 0.55. The two legs have the same capital and very different risk. That is why I use inverse-volatility sizing for the implementation.
+Equal weighting makes a useful control because its flaw is visible. I am long the calmest stocks and short the most volatile ones, yet I give every stock the same dollar weight. The high-volatility leg then carries roughly 38% realized volatility versus 12% for the low-volatility leg; its average estimated beta is 1.63 versus 0.55. The two legs have equal capital and radically different risk. That is the imbalance inverse-volatility sizing is meant to address.
 
 <div class="low-vol-figure">
   <picture>
@@ -77,11 +77,11 @@ I use equal weighting as a simple control. It exposes the problem immediately: w
 
 <p class="figure-caption"><strong>Figure 3:</strong> Risk of the two equal-weight legs before costs.</p>
 
-Figure 3 is the core problem with equal dollars. The high-volatility basket carries more than three times the realized volatility and nearly three times the estimated beta of the low-volatility basket. Equal capital across the two legs therefore does not equalize their risk or market beta. This is why the next experiment changes only the sizing and keeps the stock selection fixed.
+Figure 3 puts numbers on that imbalance. Equal capital across the two legs does not come close to equal risk: the high-volatility basket carries more than three times the realized volatility and nearly three times the estimated beta. The next experiment changes the sizing and nothing about which stocks are selected.
 
 ## The main implementation: stock-level volatility scaling
 
-I rebalance every three weeks, with the signal trading on the next market day.
+I rebalance every three weeks and trade the signal at the next market close.
 
 To size those positions, I use a separate 60-day volatility estimate, floored at 5%. I use each stock's own volatility and leave correlations out of the sizing rule. That keeps the calculation easy to inspect.
 
@@ -138,7 +138,7 @@ Inverse-volatility sizing is uneven by design. The low-volatility long book rece
 
 <p class="figure-caption"><strong>Figure 4:</strong> Realized long gross, short gross, and net stock exposure between rebalances.</p>
 
-Across the sample, the low-volatility long averages 97.4% gross and the high-volatility short 34.1%. Total stock gross is 131.5%, leaving the portfolio with +63.4% net stock exposure. The daily path also shows why target exposure and realized exposure are different: prices move after each rebalance, so the weights move with them.
+Across the sample, the low-volatility long averages 97.4% gross and the high-volatility short only 34.1%. Total stock gross is 131.5%, leaving +63.4% net stock exposure. These are daily floating weights, not just rebalance targets. Prices move between trades, so the exposures drift with them.
 
 The resulting leg risks are much closer than under equal weighting. Realized volatility is 10.5% for the scaled long leg and 10.0% for the scaled short leg, compared with 11.9% and 37.9% under equal weights. This is an achieved outcome of the complete sizing rule, not a separately imposed portfolio-risk target.
 
@@ -155,7 +155,7 @@ The short book carries less capital, but its stocks have much higher market beta
 
 ## A quick beta check
 
-Figure 5 is the quick check I use for market exposure. Beta moves around even though the sizing rule itself does not target beta. This matters because being long in dollar terms does not guarantee positive market exposure. An offsetting index-futures position could remove that beta, but I would test it separately because it leaves the stock-selection risk unchanged.
+Figure 5 is my quick check on market exposure. Beta moves around even though the sizing rule never targets it. Being long in dollar terms does not guarantee positive market exposure. An offsetting index-futures position could remove that beta, but I would test it separately because it leaves the stock-selection risk unchanged.
 
 <div class="low-vol-figure">
   <picture>
@@ -170,7 +170,7 @@ Figure 5 is the quick check I use for market exposure. Beta moves around even th
 
 ## Performance, costs, and drawdowns
 
-I separate performance from the exposures that produce it in the tables below. I charge 5 basis points per dollar of stock position traded, including the first portfolio formation. The scaled portfolio turns over 10.4 times its equity base per year, which implies about 0.52% a year in stock-trading costs. Borrow fees, financing, market impact, and taxes are not included. Unused capacity earns zero in the simulation. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after stock-trading costs. Reported Sharpe is annualized return divided by volatility with a zero cash rate.
+The tables separate performance from the exposures that produce it. I use 5 basis points per dollar traded, including the first portfolio formation, as a rough stock-trading approximation. At 10.4 times annual turnover, that costs the scaled portfolio about 0.52% a year. Borrow, financing, market impact, and taxes are not included, and unused capacity earns zero. Returns are annualized arithmetic means; volatility, Sharpe, and drawdown use returns after the stated trading cost. Sharpe is annualized return divided by volatility with a zero cash rate.
 
 <table class="research-table comparison-table performance-table">
   <thead>
@@ -265,7 +265,7 @@ With the same stock selection as the reference, the volatility-scaled implementa
 
 Figure 6 shows the practical difference between the implementations. The equal-weight long/short portfolio has a positive 2.4% arithmetic return after costs, yet repeated large losses leave compounded wealth at only 0.38 times its starting value. That is variance drag, not a contradiction. The volatility-scaled long/short portfolio compounds at 6.9% a year and finishes at 7.78 times its starting value. It still suffers long flat periods and a 38% maximum drawdown, so the improvement is substantial rather than complete.
 
-There are limits to what this comparison establishes. Equal weighting is a subjective and deliberately simple reference. Volatility scaling changes gross exposure, net exposure, beta, and turnover at the same time, so the test does not attribute the result to a single channel. A stronger comparison would also match gross exposure, beta, or realized risk. The signal windows, 60-day sizing window, 20% reference volatility, 4% cap, three-week rebalance interval, and leg ceiling were held fixed rather than stress-tested.
+The comparison does not tell me which part of the sizing rule deserves the credit. Volatility scaling changes gross exposure, net exposure, beta, and turnover at the same time, and equal weighting is a deliberately simple reference. A stronger test would separately match gross exposure, beta, or realized risk. I have also held the signal windows, 60-day sizing window, 20% reference volatility, 4% cap, three-week rebalance interval, and leg ceiling fixed rather than tuning them.
 
 The 5 bp cost assumption is a rough approximation for stock trading. Borrow fees, financing, market impact, and taxes are excluded. Beta is observed rather than constrained in both portfolios. These choices make the experiment transparent, but they also define how narrowly its result should be read.
 
@@ -298,7 +298,7 @@ The comparison helps identify a recurring portfolio risk without suggesting that
 
 ## Conclusion
 
-What stands out in this test is how much the allocation changes the character of the signal. Equal weighting gives both legs the same capital even though their risks are very different. Inverse-volatility sizing addresses that imbalance without changing the stock selection. In this sample, after-cost geometric return changes from −3.1% to 6.9%, volatility from 33.4% to 9.8%, maximum drawdown from −87.1% to −38.0%, and turnover from 14.4× to 10.4× equity. Those differences make the scaled implementation the more practical of these two complete sizing rules. They do not isolate inverse-volatility weighting: gross exposure, net exposure, beta, and turnover all change at the same time.
+The main lesson is how much allocation changes the character of the same signal. Equal weighting gives both legs the same capital even though their risks are very different. Inverse-volatility sizing addresses that imbalance without changing stock selection. In this sample, after-cost geometric return changes from −3.1% to 6.9%, volatility from 33.4% to 9.8%, maximum drawdown from −87.1% to −38.0%, and turnover from 14.4× to 10.4× equity. That makes the scaled version the more practical of these two complete rules. It does not identify inverse-volatility weighting as the sole cause: gross exposure, net exposure, beta, and turnover all change with it.
 
 The result still has an important weakness. Figure 5 shows a portfolio that is usually long dollars but can be short the market in beta terms. The high-volatility stocks in the smaller short leg carry more beta per dollar than the low-volatility long book. That positioning hurt in both episodes discussed here: the dot-com boom and the 2025–2026 rally. The two windows are clearly different—the first includes a full boom-and-bust cycle, while the second currently shows a rally and the factor's underperformance—but the recurring portfolio risk is worth taking seriously.
 

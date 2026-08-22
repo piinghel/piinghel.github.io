@@ -8,18 +8,24 @@ article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
 ---
 
-Rebalancing every three weeks sounds precise, but it leaves one arbitrary
-choice: which week and which weekday? Two otherwise identical portfolios can
-compound to different outcomes simply because one trades a few days earlier
-than the other. That dispersion is usually called *rebalance timing luck*.
+"Rebalance every three weeks" sounds like a complete rule. It is not. I still
+have to choose which of the three weeks starts the cycle, and which weekday to
+trade. Two otherwise identical portfolios can then compound to different
+outcomes simply because one starts a few days earlier. That dispersion is
+usually called *rebalance timing luck*.
 
-[Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) has
-shown that the effect can be material in concentrated or faster-moving
-strategies. A common response is tranching: split the capital across overlapping
-portfolios and rebalance a smaller part more frequently. I use my own long/short
-stock-ranking strategy to ask a practical question: how much of the result
-depends on the chosen schedule, and how much of that dependence can three
-overlapping tranches remove?
+[Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) finds
+that the effect is largest when turnover is high, portfolios are concentrated,
+or holdings change quickly. [Concretum Research](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
+makes the same problem concrete in a monthly momentum strategy: average return
+hardly changes as more schedules are combined, but the gap between the luckiest
+and unluckiest schedule contracts sharply. That is the appeal of tranching. It
+does not promise a higher-return strategy; it tries to make one arbitrary
+calendar choice matter less.
+
+I use my own long/short stock-ranking strategy to ask a narrower question: if I
+split the portfolio across three overlapping sleeves, do I preserve the return
+while making the path less dependent on the starting week?
 
 ## Fifteen ways to run the same strategy
 
@@ -31,10 +37,9 @@ $$
 3\text{ offsets}\times 5\text{ weekdays}=15\text{ schedules}.
 $$
 
-The model, universe, ranking rule, and holding period are unchanged. What moves
-is the signal and execution date. That small shift changes the predictions
-available at the rebalance and the returns subsequently earned by the selected
-stocks.
+The model, universe, ranking rule, and holding period are unchanged. Only the
+signal and execution date move. That small shift changes which predictions are
+available at the rebalance and, sometimes, which stocks enter the book.
 
 The retained archive preserves the schedule grid and summary results, but not
 enough daily detail to recompute them, so I use the evidence descriptively. The
@@ -48,9 +53,10 @@ retained.
 <p class="figure-caption"><strong>Figure 1:</strong> Cumulative wealth for 15 full-rebalance schedules; highest and lowest terminal paths highlighted ex post; log scale, start = 1.</p>
 
 The paths separate gradually rather than around one isolated event. Small
-differences in signal dates and holdings accumulate into large differences in
-terminal wealth. The chart shows schedule sensitivity; it does not establish
-that any schedule has a persistent informational advantage.
+differences in signal dates and holdings accumulate into a large gap in terminal
+wealth. This is schedule sensitivity, not evidence that one weekday contains a
+persistent edge: the best and worst lines are labelled after seeing the whole
+sample.
 
 <table class="research-table comparison-table rebalancing-summary-table">
   <thead>
@@ -71,15 +77,12 @@ that any schedule has a persistent informational advantage.
 
 <p class="table-caption"><strong>Table 1:</strong> Dispersion across the 15 full-rebalance schedules.</p>
 
-Annualized geometric return differs by 2.43 percentage points between the best and worst
-schedules, while the Sharpe ratio ranges from 1.50 to 1.75. The widest gap is in
-time underwater: 248 days for one schedule and 593 for another. Reporting only
-one of these backtests would hide a 2.43-point annualized-return spread and a
-345-day underwater-duration gap around an arbitrary implementation choice.
-Those differences are large enough to matter operationally, but their net
-economic value is unknown because the cost treatment was not preserved. The
-result does not say which weekday or offset will be best next time; the realized
-ordering could itself be luck.
+Annualized geometric return differs by 2.43 percentage points between the best
+and worst schedules; the Sharpe ratio ranges from 1.50 to 1.75, and time
+underwater from 248 to 593 days. A single backtest would hide all of that behind
+one arbitrary calendar choice. The differences are large enough to matter, but
+the ranking of schedules is not a forecast. Nor can I assess their value after
+costs, because the original cost treatment was not preserved.
 
 ## Spreading the rebalance across three tranches
 
@@ -122,41 +125,45 @@ tranched portfolios, one for each weekday.
 
 <p class="table-caption"><strong>Table 2:</strong> Performance of the three-tranche portfolios by weekday.</p>
 
-Across the saved summaries, the five tranched portfolios have a mean annualized
-geometric return of 11.37%, versus 11.32% across the 15 full-rebalance
-schedules. Mean volatility is 6.07% versus 6.68%, mean maximum drawdown is
-11.60% versus 12.77%, and mean maximum underwater duration is 327 versus 413
-days. The descriptive mean Sharpe is 1.80 versus 1.64. These are descriptive
-differences, not isolated effects of timing diversification.
+The return barely moves: 11.37% for the five tranched portfolios, against 11.32%
+across the 15 full-rebalance schedules. The improvement is in the path. Mean
+volatility falls from 6.68% to 6.07%, or about 9%; mean maximum drawdown falls
+from 12.77% to 11.60%; and mean time underwater falls by 86 days. With nearly
+the same return and less volatility, the descriptive mean Sharpe rises from 1.64
+to 1.80.
 
-The observed dispersion also narrows. The geometric-return range contracts
-from 2.43 to 0.40 percentage points, the maximum-drawdown range from 4.07 to
-1.36 points, and the underwater-duration range from 345 to 71 days. These are
-descriptive ranges across 15 full schedules and five overlapping tranched
-portfolios, not independent or like-for-like statistical samples.
+The dispersion narrows as well. The geometric-return range contracts from 2.43
+to 0.40 percentage points, the maximum-drawdown range from 4.07 to 1.36 points,
+and the underwater-duration range from 345 to 71 days. Put differently, once
+the three starting-week offsets are combined, roughly five-sixths of the
+observed return range disappears. The five remaining weekday portfolios are
+close: their volatilities span only 6.04% to 6.11%, and their Sharpes 1.78 to
+1.85.
 
-Those differences are potentially meaningful in this sample, especially the
-roughly 9% reduction in volatility and 86-day reduction in maximum underwater
-duration. Their economic value after costs is unknown. The five tranched return
-estimates still span 11.23% to 11.63%, however, and maximum drawdown spans
-11.01% to 12.37%. Tranching removes the starting-week choice by combining the
-three offsets; it does not remove weekday sensitivity. No sampling-uncertainty
-estimate or independent-period replication survives, so neither the lower risk
-nor the narrower ranges are guaranteed to persist.
+That pattern points to the starting-week offset as the important calendar risk
+in this experiment. The exact weekday still matters a little, but much less
+after the offsets are averaged. This is not a clean variance decomposition: the
+15 full schedules and five tranched portfolios are overlapping, descriptive
+sets, and the implementation also changes signal freshness. I therefore read
+the result as strong evidence about where the visible dispersion sits, not as a
+precise estimate of how much variance each calendar choice causes.
 
-The interpretation is that overlapping sleeves diversify when the existing
-signal enters the portfolio, reducing the risk of committing all capital on
-one arbitrary date. It remains an interpretation because the implementation
-also changes how quickly new information reaches the book.
+The plausible mechanism is simple. Each sleeve admits the current signal at a
+different point in the three-week cycle, so one unusually good or bad rebalance
+cannot determine the whole portfolio. That can smooth the combined return path
+without raising its expected return. A second explanation is fresher
+predictions: the tranched book updates one-third of its capital every week. The
+saved experiment cannot tell those mechanisms apart.
 
 ## What the comparison does not isolate
 
-Three tranches reduce starting-week sensitivity, but weekday choice remains.
-Using more sleeves could spread execution across weekdays as well, at the cost
-of more frequent runs, smaller orders, and more operational state to manage.
-There is no reason to assume that adding sleeves keeps helping indefinitely.
+Three tranches solve the part of the problem that looks largest here: they
+average the three starting-week offsets. I would not add weekday sleeves on the
+strength of these results. The remaining weekday range is small, and more
+sleeves would mean smaller orders, more frequent runs, and more operational
+state for an uncertain incremental gain.
 
-There is a second distinction. The tranched portfolio incorporates a fresh set
+There is an identification problem. The tranched portfolio incorporates a fresh set
 of predictions each week, whereas the full-rebalance portfolio waits three
 weeks before replacing every position. Tranching therefore changes signal
 freshness as well as diversifying timing. The experiment shows that the complete
@@ -176,7 +183,7 @@ The results do not document whether costs were included or how they were
 defined. They should therefore be treated as evidence about timing dispersion
 with undocumented cost treatment, not as implementation-grade return estimates.
 
-Costs can change the preferred number of sleeves. Smaller orders may face
+Costs still decide whether the smoother gross path is worth implementing. Smaller orders may face
 minimum fees and fixed operational overhead, while spreading a large order can
 reduce market impact. Signal freshness can also improve as sleeves rebalance
 more often, but more frequent decisions create more opportunities to trade.
@@ -186,23 +193,24 @@ maintaining each sleeve—not on gross backtest smoothness alone.
 
 ## Conclusion
 
-The experiment changes how I would report and run a fixed-cycle strategy. A
-single rebalance schedule is one draw from a wider set of plausible outcomes,
-so it is not enough evidence on its own. Testing the full timing grid makes that
-uncertainty visible.
+The experiment changes how I would report a fixed-cycle strategy. One rebalance
+schedule is one draw from a wider set of plausible outcomes, not the backtest.
+The full timing grid makes that uncertainty visible.
 
-Three weekly tranches are a practical hypothesis. In the saved summaries, the
-tranched portfolios exhibit nearly unchanged mean return, 0.61 percentage
-points less mean volatility, 1.17 points less mean drawdown, and 86 fewer mean
-underwater days. The trade-off is a more frequent and operationally involved
-implementation. Fresher predictions and undocumented costs prevent attributing
-those differences to timing diversification alone, while the missing daily
-archive prevents a realistic cost replay.
+Three weekly tranches leave mean return almost unchanged, but reduce mean
+volatility by 0.61 percentage points and lift the descriptive Sharpe from 1.64
+to 1.80. They also remove most of the dispersion that was visible across the 15
+full-rebalance schedules; what remains across weekdays is comparatively small.
+That is enough for me to prefer the three-sleeve implementation as a working
+design, not because it earns more, but because it relies less on getting one
+starting week right.
 
-I would use three sleeves as the working hypothesis, not a universal optimum.
-The most useful next test is a matched signal-vintage experiment across several
-sleeve counts, evaluated net of turnover, spreads, market impact, borrow, and
-operational constraints.
+The reservation is practical. Fresher predictions may share credit for the
+improvement, and the missing daily archive prevents a realistic cost replay. I
+would freeze the three-sleeve design, rebuild the daily evidence, and compare it
+with a full-rebalance version using the same prediction vintages. Only then can
+turnover, spreads, impact, borrow, and operational overhead decide whether the
+gross risk reduction survives implementation.
 
 ## References
 

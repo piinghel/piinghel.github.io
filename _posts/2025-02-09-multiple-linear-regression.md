@@ -8,20 +8,19 @@ article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-The portfolio decision in this article is not whether one factor works in
-isolation. It is how to produce one stock ranking when predictors are measured
-in different units, overlap economically, and may carry different information
-once the others are present. Fixed weights make those trade-offs explicit;
-multiple linear regression estimates them from historical cross-sections.
+Suppose I already have several stock signals. Some measure trend, others risk,
+size, liquidity, or positioning. The practical problem is no longer whether one
+factor works by itself. I need one ranking, and the signals use different units,
+overlap with one another, and may matter differently once they are considered
+together. Fixed weights make those choices by hand. Multiple linear regression
+learns them from historical cross-sections.
 
-The quantity being predicted needs to be precise. For every stock and date, the
-training target is the sector-relative rank of its risk-adjusted return over the
-next 20 sessions. The fitted value estimates that normalized relative outcome
-from information available at prediction time. I use only its ordering: the
-highest scores become long candidates and the lowest become short candidates.
-A score of 0.4 is therefore not a forecast of a 40% return, or even a calibrated
-return forecast at all. It says where the stock sits in the model's expected
-cross-sectional ordering.
+The model is not trying to forecast a stock's return in percentage points. For
+every stock and date, the training target is the sector-relative rank of its
+risk-adjusted return over the next 20 sessions. I use the fitted values only for
+their ordering: the highest scores become long candidates and the lowest become
+short candidates. A score of 0.4 therefore means “high in the model's expected
+cross-section,” not a 40% return forecast—or even a calibrated return forecast.
 
 The central question is: **Can we combine multiple predictors into a more
 useful stock ranking?** I start with a transparent fixed-weight score, then let
@@ -30,7 +29,7 @@ Ridge enters later as the same regression with an L2 penalty. That order keeps
 the main idea—the learned linear combination—separate from the narrower choice
 of whether shrinking its coefficients improves stability or implementation.
 
-Two comparisons run through the article. Fixed weights versus OLS asks whether
+There are really two experiments here. Fixed weights versus OLS asks whether
 the broader learned ranking clears a practical benchmark, but it changes both
 the inputs and the way they are combined. OLS versus Ridge is the controlled
 estimator comparison. There, a moderate penalty cuts coefficient scale and
@@ -40,39 +39,39 @@ persist in the later period. Shrinkage makes the coefficient representation
 more regular; in this experiment, it does not produce a reliably better ranking
 or portfolio.
 
-## A transparent fixed-weight reference
+## Benchmark
 
-I want the reference to be useful even if we never fit a regression. So I start
+I want the benchmark to remain useful even if the regression adds nothing. I start
 with a small set of familiar, economically motivated signals with fixed signs
 and equal theme weights. Every choice is visible, the score still works with
 uneven data histories, and I know in advance how much influence one strong theme
 can have. That makes it a useful hurdle for the learned ranking. The trade-off is
 that the factor choices, lookbacks, and signs all embed judgment.
 
-The benchmark contains five economic themes. Six component signals enter
-because the defensive theme deliberately groups two related measurements:
+The benchmark has five economic themes. Six raw signals enter because the
+defensive theme groups two closely related measurements:
 
 - **Defensive:** low volatility asks whether returns have been quiet over roughly
   one, three, and six months. I average annualized volatility over 21, 63, and
   126 sessions. Upper-tail avoidance asks whether the recent path depends on a
   few unusually large gains; its proxy is the third-largest daily return over
-  21 sessions. Lower values are preferred. Their normalized scores are averaged
-  first, so together they receive one 20% theme weight—not two.
+  21 sessions. Lower values are preferred. I average these two normalized scores
+  before combining defensive with the other themes.
 - **Momentum:** the signal adds compounded returns over 63, 126, 189, and 252
   sessions after skipping the most recent 21 sessions. It favors established
   medium-term trends while avoiding the latest month's short-term reversal.
-  Higher values are preferred and the theme receives 20%.
+  Higher values are preferred.
 - **Low short interest:** the signal compares publication-lagged shares short
   with average daily trading volume over 63 sessions, then takes the log ratio.
   It is a days-to-cover-style measure of negative positioning and crowding;
   short interest is delayed by 21 sessions to respect publication timing. Lower
-  values are preferred and the theme receives 20%.
+  values are preferred.
 - **Large capitalization:** log market capitalization is a simple size and
-  investability tilt. Higher values are preferred and the theme receives 20%.
+  investability tilt. Higher values are preferred.
 - **Return consistency:** the signal is the fraction of negative daily returns
   over 756 sessions, roughly three trading years. It measures how often a stock
   lost money, not how severe those losses were. A lower loss frequency is
-  preferred and the theme receives 20%.
+  preferred.
 
 Each raw component is ranked across current Russell 1000 members on the same
 date, mapped to a score from −1 to +1, and signed so that a higher value is more
@@ -145,7 +144,7 @@ Neither proves incremental value after combination.
 
 <p class="figure-caption"><strong>Figure 1:</strong> Same-date rank correlations between component signals (left) and subsequent daily-return correlations between their standalone portfolios (right), on the common sample.</p>
 
-The numbers reinforce the distinction. Low volatility and tail avoidance have
+The two heatmaps do not tell the same story. Low volatility and tail avoidance have
 a 0.75 signal correlation, while every other signal pair has absolute
 correlation no greater than 0.32. Their portfolio-return correlation is higher
 still at 0.85; the median return correlation across all pairs is 0.30. Shared
@@ -164,10 +163,10 @@ these are the uniquely correct economic factors.
 
 ## Putting unlike predictors on one scale
 
-Regression coefficients are not comparable when one input is measured in
-billions of dollars and another in percentage points. On each date I therefore
-replace every raw predictor with its relative ordering across the eligible
-Russell 1000 universe, then map the ranks to $[-1,1]$:
+A regression will happily compare billions of dollars with percentage points;
+the resulting coefficients will not mean much. On each date I therefore replace
+every raw predictor with its relative ordering across the eligible Russell 1000
+universe, then map the ranks to $[-1,1]$:
 
 $$
 x^{\mathrm{rank}}_{i,t}=2\frac{\operatorname{rank}(x_{i,t})-1}{N_t-1}-1.
@@ -286,28 +285,36 @@ The intercept is not penalized. Setting $c=0$ gives the exact OLS
 baseline. Positive values shrink coefficients and can make correlated inputs
 share weight more evenly. Shrinkage is guaranteed; stronger predictions are not.
 
-Here $c$ is the penalty relative to **mean** squared error. The estimator API
-uses summed squared error, so the implementation passes the equivalent raw
-value $\alpha_t=c\,n_t$ in each fold. Dividing that complete objective by $n_t$
-recovers the equation above. The conversion keeps the reported penalty fixed as
-the expanding window grows; it does not treat the row count as a measure of
-independent information.
+Here $c$ is the penalty next to **mean** squared error. The implementation uses
+[`sklearn.linear_model.Ridge`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html),
+whose documented objective is a residual sum of squares plus
+$\alpha\lVert\beta\rVert_2^2$. The equivalent parameter in training fold $t$ is
+therefore $\alpha_t=n_t c$. Divide scikit-learn's objective by $n_t$ and the
+equation above follows exactly. This scaling keeps the relative penalty from
+shrinking merely because an expanding fold contains more rows. It does **not**
+claim that those rows are independent. At $c=0$ the objective is OLS;
+scikit-learn recommends `LinearRegression` rather than `Ridge(alpha=0)` for
+numerical reasons.
 
-They are not independent. Stocks on one date share market and sector effects;
-predictors move gradually; 20-session forward targets overlap; and expanding
-windows reuse related observations. I therefore compare
-$c\in\{0,0.001,0.01,0.1\}$ on the same 600-date walk-forward blocks, with a
-21-session purge and three complementary every-third-date fits. This is
-date-blocked evaluation, not random row-level cross-validation. Full-period,
-final-ten-year, and final-five-year development results test whether the choice
-depends on one span of history; no precise effective sample size is invented.
+The dependence is substantial. Stocks on the same date share market, sector,
+and cross-sectional shocks; predictors move slowly; adjacent 20-session targets
+overlap; and expanding fits reuse most of the same history. The design mitigates
+two parts of that problem. A 21-session purge keeps a training target from
+crossing into the next prediction block, and 600-date walk-forward blocks avoid
+random row-level validation. The three every-third-date fits reduce the density
+of adjacent targets inside any one fit, but three sessions are far shorter than
+the 20-session target. They thin the dependence; they do not remove it.
 
-Rows within a training date have equal weight. The eligible cross-section is
-quite stable—955 stocks at the fifth percentile, 984 at the median, and 1,022
-at the 95th percentile—so dates receive comparable but not identical aggregate
-influence. Exact equal-date weighting remains a useful robustness test. I do not
-introduce it after seeing the results because that would change the matched
-experiment rather than clarify its existing penalty convention.
+I compare $c\in\{0,0.001,0.01,0.1\}$ on those same blocks and require the choice
+to look reasonable over the full development period, its final ten years, and
+its final five years. That is time-blocked sensitivity evidence, not an estimate
+based on two million independent observations. Rows currently receive equal
+weight, so a date's total influence is proportional to its available cross-section.
+Breadth is fairly stable—955 stocks at the fifth percentile, 984 at the median,
+and 1,022 at the 95th percentile—but the remaining cross-sectional dependence is
+not handled explicitly. Date-equal sample weights and coarser, non-overlapping
+date-thinning are the important robustness checks still missing. I do not invent
+an effective sample size from the raw row count.
 
 ## Choosing the penalty
 
@@ -334,9 +341,9 @@ effect more cleanly, but it would not replace the net implementation check.
 
 <p class="table-caption"><strong>Table 2:</strong> Development-period annualized return, annualized volatility, and Sharpe across the matched OLS–Ridge penalty grid, net of 5 bp per dollar traded.</p>
 
-The moderate $c=0.01$ specification is the most balanced choice. Relative to
-OLS, annualized return rises by 0.35 percentage points and volatility by 0.21,
-leaving a 0.020 Sharpe improvement. The final-ten-year Sharpe is nearly
+I choose the moderate $c=0.01$ specification, but not because it “wins” the
+table. Relative to OLS, annualized return rises by 0.35 percentage points and
+volatility by 0.21, leaving a 0.020 Sharpe improvement. The final-ten-year Sharpe is nearly
 unchanged, while the final-five-year gain is only 0.008 and slightly trails the
 $c=0.001$ result. These are small differences, not an economically decisive
 victory. The stronger $c=0.1$ model earns more return and takes more risk; its
@@ -403,7 +410,7 @@ measured across the whole stock universe. The broader evidence therefore points
 more strongly to substitution among correlated predictors than to a cutoff
 artifact alone.
 
-This distinction changes how I read the diagnostics. The 0.991 prediction-rank
+This is the distinction I care about. The 0.991 prediction-rank
 correlation says the stock ordering is robust to moderate shrinkage; the less
 stable coefficient cells say attribution to individual, correlated inputs is
 fragile. Economic interpretation should therefore emphasize persistent groups
@@ -505,8 +512,8 @@ specification demonstrably locked before anyone examined those outcomes.
 
 <p class="table-caption"><strong>Table 4:</strong> Later-period portfolio results after 5 bp per dollar traded, with average realized long, short, and net stock exposures.</p>
 
-The main later-period observation is not dramatic but it is unfavorable to the
-selected penalty. Ridge return is 0.13 percentage points lower than OLS,
+The later period does not support the selected penalty. Ridge return is 0.13
+percentage points lower than OLS,
 volatility is 0.30 points higher, and Sharpe falls from 0.87 to 0.82. Its maximum
 drawdown and beta are also slightly worse. Turnover and costs fall modestly,
 but not enough to offset the risk-adjusted performance gap. The tiny
@@ -646,8 +653,8 @@ untouched by prior research.
 
 ## What the portfolio is actually doing
 
-Returns alone do not tell me whether the ranking is practical or what the final
-portfolio actually owns. Figure 7 starts with the practical part. Two-way
+Returns alone do not tell me whether I would want to trade the ranking, or what
+the finished portfolio actually owns. Figure 7 starts with trading cost. Two-way
 turnover is the sum of absolute long- and short-side trading divided by equity
 on each rebalance. I charge 5 bp per dollar traded as a simple cost
 approximation and compound the resulting net returns. It is definitely
@@ -712,7 +719,7 @@ ranks of these quantities rather than their raw values.
 
 <p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realized predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>
 
-The pattern is fairly simple. The long book owns quieter stocks: its ranks are
+The answer is fairly simple. The long book owns quieter stocks: its ranks are
 lower on ATR and the volatility measures. It also owns stocks that have spent
 more time above their long-run moving average and remain closer to an earlier
 high. Among the largest realized characteristics, the portfolio therefore looks
@@ -733,7 +740,7 @@ ranking is formed, and it leaves the book materially net long in dollars even
 when realized beta is fairly small. That points to the portfolio layer, not a
 different way of selecting ten lines for the chart.
 
-## What was learned—and what remains uncertain
+## Takeaways and further directions
 
 Multiple linear regression is a practical way to turn many stock predictors
 into one ranking. In this study the learned OLS score improves development
