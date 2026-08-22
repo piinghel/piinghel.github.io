@@ -49,6 +49,10 @@
   width: min(720px, calc(100vw - 2rem));
 }
 
+.post-content .low-vol-figure.performance-figure {
+  width: min(930px, calc(100vw - 2rem));
+}
+
 /* Wide research diagrams shared by the factor-combination article. */
 .post-content .research-figure {
   display: block;

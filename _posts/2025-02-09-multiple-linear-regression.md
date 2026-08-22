@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Multiple Linear Regression"
+title: "Combining Stock Signals with Multiple Linear Regression"
 date: 2025-02-09
 last_modified_at: 2026-08-22
 categories: [Quants]
@@ -209,7 +209,7 @@ sector-level movement in the label. Portfolio selection remains global, so the
 final holdings can still carry sector exposures; an allocation risk model would
 have to constrain them explicitly.
 
-## Learning the combination with multiple linear regression
+## Learning the signal weights
 
 With normalized predictors in $x_{i,t}$ and the normalized forward target in
 $y_{i,t}$, ordinary multiple linear regression estimates

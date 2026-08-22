@@ -37,15 +37,19 @@ layout: base
       {%- endif -%}</p>
   </header>
 
-  {%- unless page.toc == false -%}
-    <nav class="article-toc" data-article-toc aria-label="Table of contents" hidden>
-      <p class="article-toc-title">Table of contents</p>
-      <ol data-article-toc-list></ol>
-    </nav>
-  {%- endunless -%}
+  <div class="article-body-shell">
+    {%- unless page.toc == false -%}
+      <details class="article-toc" data-article-toc hidden>
+        <summary class="article-toc-title">Contents</summary>
+        <nav aria-label="Table of contents">
+          <ol data-article-toc-list></ol>
+        </nav>
+      </details>
+    {%- endunless -%}
 
-  <div class="post-content e-content" itemprop="articleBody">
-    {{ content }}
+    <div class="post-content e-content" itemprop="articleBody">
+      {{ content }}
+    </div>
   </div>
 
   <nav class="post-navigation">

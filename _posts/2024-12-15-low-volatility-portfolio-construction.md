@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Low-Volatility Factor: Portfolio Construction Matters"
+title: "The Low-Volatility Factor: From Stock Sorts to Portfolio Risk"
 date: 2024-12-15
 last_modified_at: 2026-08-22
 show_date: false
@@ -252,7 +252,7 @@ The tables separate performance from the exposures that produce it. I use 5 basi
 
 With the same stock selection as the reference, the volatility-scaled implementation produces a 7.1% annualized arithmetic return after costs, 9.8% volatility, and a 0.73 Sharpe. Its cost drag is about 0.5 percentage points a year. Total portfolio volatility falls by 23.6 percentage points, from 33.4% to 9.8%. That improvement belongs to the complete allocation rule: inverse-volatility weights, lower gross exposure, positive net exposure, and a different beta all move together.
 
-<div class="low-vol-figure">
+<div class="low-vol-figure performance-figure">
   <picture>
     <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png">
@@ -292,7 +292,7 @@ Figure 7 puts this episode beside the 2025–2026 rally. Every path starts at th
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Gross performance and leg contributions in two difficult regimes.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Gross performance in two difficult regimes. Combined wealth starts at 1×; additive long and short contributions start at 0× and sum to the strategy's gross wealth change.</p>
 
 The comparison identifies a recurring portfolio risk across two different markets. The dot-com window contains a completed boom-and-bust cycle and a much larger loss. The recent window captures a rally and the factor's relative underperformance through May 2026. In both cases, high-volatility stocks led the market while this implementation carried negative beta. The shared exposure is informative; the surrounding market narratives remain different.
 

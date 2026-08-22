@@ -25,10 +25,16 @@ OLS = "#526777"
 RIDGE = "#3f8f88"
 INK = "#33404b"
 MUTED = "#6a7883"
-GRID = "#dfe5e8"
+GRID = "#dbe1e3"
 WHITE = "#ffffff"
 CORAL = "#d99a8b"
 BLUE = "#6f9dbb"
+
+TICK_LABEL_SIZE = 9.2
+AXIS_LABEL_SIZE = 10.5
+LEGEND_SIZE = 9.5
+PANEL_TITLE_SIZE = 10.5
+ANNOTATION_SIZE = 9.2
 
 MODEL_ORDER = ("fixed_factor_benchmark", "ols_c0", "selected_c0p01")
 MODEL_LABEL = {
@@ -192,10 +198,16 @@ def load_selected_portfolio_tilts(review_dir: Path) -> list[dict[str, str]]:
 
 
 def style_axis(ax: plt.Axes) -> None:
-    ax.grid(axis="y", color=GRID, linewidth=0.75, linestyle=(0, (1.5, 3)))
-    ax.tick_params(axis="both", which="both", length=0, colors=MUTED, labelsize=8.5)
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.spines[["left", "bottom"]].set_color(GRID)
+    ax.grid(axis="y", color=GRID, linewidth=0.8)
+    ax.tick_params(
+        axis="both",
+        which="both",
+        length=0,
+        colors=MUTED,
+        labelsize=TICK_LABEL_SIZE,
+    )
+    for spine in ax.spines.values():
+        spine.set_visible(False)
     ax.set_axisbelow(True)
 
 
@@ -204,17 +216,20 @@ def add_split_marker(
     *,
     label: bool = False,
     label_fontsize: float = 8.0,
+    label_text: str = "Specification fixed\nbefore 2022",
+    label_at_top: bool = False,
 ) -> None:
     ax.axvline(SPLIT_DATE, color=MUTED, linewidth=0.9, linestyle=(0, (2, 3)))
     if label:
         ax.text(
-            SPLIT_DATE + timedelta(days=100),
-            0.05,
-            "Specification fixed\nbefore 2022",
+            SPLIT_DATE + timedelta(days=-100 if label_at_top else 100),
+            0.95 if label_at_top else 0.05,
+            label_text,
             transform=ax.get_xaxis_transform(),
             color=MUTED,
             fontsize=label_fontsize,
-            va="bottom",
+            ha="right" if label_at_top else "left",
+            va="top" if label_at_top else "bottom",
         )
 
 
@@ -255,14 +270,17 @@ def plot_ic(series: dict[str, Series], output_dir: Path, *, mobile: bool) -> Non
             xytext=(7, offset),
             textcoords="offset points",
             color=MODEL_COLOR[model],
-            fontsize=10.4,
+            fontsize=LEGEND_SIZE,
             fontweight=600 if model == "selected_c0p01" else 400,
             va="center",
         )
     style_axis(ax)
-    ax.tick_params(axis="both", which="both", labelsize=9.8)
-    add_split_marker(ax, label=True, label_fontsize=9.2)
-    ax.set_ylabel("Cumulative daily rank IC", color=MUTED, fontsize=10.9)
+    add_split_marker(ax, label=True, label_fontsize=ANNOTATION_SIZE)
+    ax.set_ylabel(
+        "Cumulative daily rank IC",
+        color=MUTED,
+        fontsize=AXIS_LABEL_SIZE * 1.2,
+    )
     ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     right = series[MODEL_ORDER[0]].dates[-1] + timedelta(days=780 if mobile else 520)
@@ -294,11 +312,12 @@ def plot_performance(
     )
     for axis in (wealth_ax, drawdown_ax):
         style_axis(axis)
-        axis.tick_params(axis="both", which="both", labelsize=8.9)
         add_split_marker(
             axis,
-            label=axis is drawdown_ax,
-            label_fontsize=8.4,
+            label=axis is wealth_ax,
+            label_fontsize=ANNOTATION_SIZE,
+            label_text="Model fixed before 2022",
+            label_at_top=True,
         )
     for model in MODEL_ORDER:
         width = 2.0 if model == "selected_c0p01" else 1.5
@@ -334,18 +353,18 @@ def plot_performance(
             xytext=(7, offset),
             textcoords="offset points",
             color=MODEL_COLOR[model],
-            fontsize=9.15,
+            fontsize=LEGEND_SIZE,
             fontweight=600 if model == "selected_c0p01" else 400,
             va="center",
         )
     wealth_ax.axhline(1.0, color=MUTED, linewidth=0.7, linestyle=(0, (2, 3)))
     wealth_ax.set_yscale("log")
-    wealth_ax.set_ylabel("Growth of $1", color=MUTED, fontsize=10.0)
+    wealth_ax.set_ylabel("Growth of $1", color=MUTED, fontsize=AXIS_LABEL_SIZE)
     wealth_ax.yaxis.set_major_locator(FixedLocator([1, 2, 3, 4, 6, 8]))
     wealth_ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
     wealth_ax.yaxis.set_minor_formatter(NullFormatter())
     drawdown_ax.axhline(0, color=MUTED, linewidth=0.7, linestyle=(0, (2, 3)))
-    drawdown_ax.set_ylabel("Drawdown (%)", color=MUTED, fontsize=10.0)
+    drawdown_ax.set_ylabel("Drawdown (%)", color=MUTED, fontsize=AXIS_LABEL_SIZE)
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     right = wealth[MODEL_ORDER[0]].dates[-1] + timedelta(days=780 if mobile else 520)
@@ -386,7 +405,7 @@ def plot_alpha_sensitivity(
         labels=[f"{value:.1f}" for value in names_changed],
         padding=3,
         color=MUTED,
-        fontsize=8.2,
+        fontsize=ANNOTATION_SIZE,
     )
     axes[0].set_title(
         (
@@ -396,7 +415,7 @@ def plot_alpha_sensitivity(
         ),
         loc="left",
         color=INK,
-        fontsize=10.2,
+        fontsize=PANEL_TITLE_SIZE,
         fontweight=600,
     )
     axes[0].set_ylim(0, 44)
@@ -442,7 +461,7 @@ def plot_alpha_sensitivity(
             labels=[f"{value:.0f}%" for value in values],
             padding=3,
             color=MUTED,
-            fontsize=7.8,
+            fontsize=8.8 if mobile else ANNOTATION_SIZE,
         )
     axes[1].set_ylim(0, 78)
     axes[1].set_title(
@@ -453,10 +472,10 @@ def plot_alpha_sensitivity(
         ),
         loc="left",
         color=INK,
-        fontsize=10.2,
+        fontsize=PANEL_TITLE_SIZE,
         fontweight=600,
     )
-    axes[1].legend(frameon=False, fontsize=8.0, loc="upper left")
+    axes[1].legend(frameon=False, fontsize=LEGEND_SIZE, loc="upper left")
 
     fig.subplots_adjust(
         left=0.12 if mobile else 0.07,
@@ -483,12 +502,15 @@ def plot_turnover_costs(
     axes = np.asarray(axes).reshape(-1)
     x = np.arange(len(model_keys))
     width = 0.34
-    for ax, column, title, ylabel in (
-        (axes[0], "turnover_per_rebalance_pct", "Turnover", "Two-way turnover per rebalance (%)"),
-        (axes[1], "annual_cost_drag_pct_points", "Costs at 5 bp", "Annual return drag (percentage points)"),
+    for ax, column, title in (
+        (axes[0], "turnover_per_rebalance_pct", "Turnover per rebalance (%)"),
+        (
+            axes[1],
+            "annual_cost_drag_pct_points",
+            "Annual cost drag at 5 bp (pp)",
+        ),
     ):
         style_axis(ax)
-        ax.tick_params(axis="both", which="both", labelsize=9.35)
         for period_index, period in enumerate(periods):
             offset = (period_index - 0.5) * width
             values = [float(lookup[(model, period)][column]) for model in model_keys]
@@ -497,8 +519,13 @@ def plot_turnover_costs(
                 for bar in bars:
                     bar.set_hatch("///")
                     bar.set_edgecolor(WHITE)
-        ax.set_title(title, loc="left", color=INK, fontsize=11.55, fontweight=600)
-        ax.set_ylabel(ylabel, color=MUTED, fontsize=9.9)
+        ax.set_title(
+            title,
+            loc="left",
+            color=INK,
+            fontsize=PANEL_TITLE_SIZE,
+            fontweight=500,
+        )
         ax.set_xticks(x, labels)
     legend_handles = (
         Patch(facecolor=MUTED, edgecolor="none", label="Development"),
@@ -513,7 +540,7 @@ def plot_turnover_costs(
     fig.legend(
         handles=legend_handles,
         frameon=False,
-        fontsize=9.0,
+        fontsize=LEGEND_SIZE,
         ncol=2,
         loc="upper center",
         bbox_to_anchor=(0.54, 1.0),
@@ -565,15 +592,19 @@ def plot_selected_coefficients(
     ax.set_xticks(
         np.arange(len(folds)),
         [str(date_lookup[fold]) for fold in folds],
-        rotation=45,
-        ha="right",
+        rotation=0,
+        ha="center",
     )
     ax.set_yticks(
         np.arange(len(features)),
         [FEATURE_LABEL.get(feature, feature.removeprefix("X_feature_")) for feature in features],
     )
-    ax.tick_params(axis="x", which="both", length=0, colors=MUTED, labelsize=8.2)
-    ax.tick_params(axis="y", which="both", length=0, colors=INK, labelsize=8.7)
+    ax.tick_params(
+        axis="x", which="both", length=0, colors=MUTED, labelsize=8.3
+    )
+    ax.tick_params(
+        axis="y", which="both", length=0, colors=INK, labelsize=8.5
+    )
     for row_index in range(values.shape[0]):
         for column_index in range(values.shape[1]):
             value = values[row_index, column_index]
@@ -584,7 +615,7 @@ def plot_selected_coefficients(
                 ha="center",
                 va="center",
                 color=WHITE if abs(value) > 0.57 * limit else INK,
-                fontsize=7.3 if mobile else 7.8,
+                fontsize=7.4 if mobile else 7.8,
             )
     ax.set_xticks(np.arange(-0.5, len(folds), 1), minor=True)
     ax.set_yticks(np.arange(-0.5, len(features), 1), minor=True)
@@ -665,7 +696,7 @@ def plot_selected_portfolio_tilts(
             FEATURE_LABEL.get(predictor, predictor.removeprefix("X_feature_")),
             loc="left",
             color=INK,
-            fontsize=9.3,
+            fontsize=LEGEND_SIZE,
             fontweight=500,
             pad=4,
         )
@@ -677,7 +708,7 @@ def plot_selected_portfolio_tilts(
             ha="right",
             va="bottom",
             color=color,
-            fontsize=8.4,
+            fontsize=ANNOTATION_SIZE,
             fontweight=600,
         )
         ax.xaxis.set_major_locator(mdates.YearLocator(7 if mobile else 8))
@@ -688,7 +719,7 @@ def plot_selected_portfolio_tilts(
     fig.supylabel(
         "Realized predictor-rank tilt",
         color=MUTED,
-        fontsize=10,
+        fontsize=AXIS_LABEL_SIZE,
         x=0.025 if mobile else 0.035,
     )
     fig.subplots_adjust(
