@@ -8,6 +8,11 @@ article_label: Reading list · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
 ---
 
+This is my working shelf, not a catalogue. I add to it when a person, paper, or
+tool changes how I think about a research problem, explains a difficult idea
+cleanly, or helps me turn an experiment into an implementation. The list will
+remain selective and unfinished.
+
 ## People and learning
 
 - [Chip Huyen](https://huyenchip.com/blog/)
@@ -20,7 +25,7 @@ permalink: /quants/2025/04/20/reading-and-tools.html
 ## Open-source tools
 
 - [Polars](https://pola.rs/) — DataFrames with a strong expression API and lazy execution.
-- [DuckLake](https://ducklake.select/) — An open lakehouse format with its catalogue in SQL.
+- [DuckLake](https://ducklake.select/) — An open lakehouse format that keeps its catalogue in SQL.
 - [Streamlit](https://streamlit.io/) — A quick route from Python analysis to a useful internal app.
 
 ## Portfolio construction and risk modelling
@@ -51,5 +56,5 @@ stricter implementation choices.
 *Grinsztajn et al. (2025).*
 
 **[Bottom-Up Capacity Constraints and the Limits of Anomaly Profitability](https://ssrn.com/abstract=5797502).**
-*Cartea et al. (2025).* Builds capacity from the assets and trades underneath a
-strategy rather than applying one top-down haircut.
+*Cartea et al. (2025).* Estimates capacity from the underlying assets and trades,
+rather than imposing a single top-down haircut on the strategy.

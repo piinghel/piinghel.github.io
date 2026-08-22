@@ -8,11 +8,11 @@ article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
 ---
 
-"Rebalance every three weeks" still leaves two calendar choices: which of the
-three weeks starts the cycle, and which weekday to trade. Two otherwise
-identical portfolios can then compound to different
-outcomes simply because one starts a few days earlier. That dispersion is
-usually called *rebalance timing luck*.
+"Rebalance every three weeks" sounds precise, but it leaves two calendar choices:
+where the three-week cycle begins, and which weekday the portfolio trades. Two
+otherwise identical implementations can then compound to different outcomes merely
+because one starts a few days earlier. That dispersion is usually called
+*rebalance timing luck*.
 
 [Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) finds
 that the effect is largest when turnover is high, portfolios are concentrated,
@@ -20,12 +20,11 @@ or holdings change quickly. [Concretum Research](https://concretumgroup.com/wp-c
 makes the same problem concrete in a monthly momentum strategy: average return
 hardly changes as more schedules are combined, but the gap between the luckiest
 and unluckiest schedule contracts sharply. That is the appeal of tranching: it
-spreads the portfolio across several execution schedules so that one arbitrary
-calendar choice matters less. Expected return stays roughly the same while
-timing risk can fall.
+spreads the portfolio across several execution schedules, making any one
+arbitrary calendar choice matter less.
 
-I use my own long/short stock-ranking strategy to ask a narrower question: if I
-split the portfolio across three overlapping sleeves, do I preserve the return
+I use my own long/short stock-ranking strategy to ask a narrower question. If I
+split the portfolio across three overlapping sleeves, can I preserve the return
 while making the path less dependent on the starting week?
 
 ## Fifteen ways to run the same strategy
@@ -42,10 +41,9 @@ The model, universe, ranking rule, and holding period are unchanged. Only the
 signal and execution date move. That small shift changes which predictions are
 available at the rebalance and, sometimes, which stocks enter the book.
 
-The retained archive preserves the schedule grid and summary results, but not
-enough daily detail to recompute them, so I use the evidence descriptively. The
-chart axes indicate a sample of roughly 1999–2025; the exact endpoints were not
-retained.
+The archive retains the schedule grid and summary results, but not enough daily
+detail to reproduce them. I therefore use the evidence descriptively. The axes
+suggest a sample of roughly 1999–2025; the exact endpoints were not retained.
 
 <div class="research-figure rebalancing-figure">
   <img src="/assets/tranching/all_perf_plots.png" alt="Cumulative wealth on a logarithmic scale for fifteen full-rebalance schedules, with two terminal extremes highlighted after the backtest" width="1800" height="1200" loading="lazy" decoding="async">
@@ -53,10 +51,10 @@ retained.
 
 <p class="figure-caption"><strong>Figure 1:</strong> Cumulative wealth for 15 full-rebalance schedules; highest and lowest terminal paths highlighted ex post; log scale, start = 1.</p>
 
-The paths separate gradually. Small differences in signal dates and holdings
-accumulate into a large gap in terminal wealth. The figure shows schedule
-sensitivity. The best and worst lines were labelled after seeing the whole
-sample, so their ordering offers no evidence of a persistent weekday edge.
+The paths part gradually, as small differences in signal dates and holdings
+compound into a large gap in terminal wealth. This is evidence of schedule
+sensitivity. Because the best and worst lines were labelled after the full
+sample was known, their order says nothing about a persistent weekday edge.
 
 <table class="research-table comparison-table rebalancing-summary-table">
   <thead>
@@ -126,9 +124,10 @@ portfolios, one for each weekday.
 
 <p class="table-caption"><strong>Table 2:</strong> Performance of the three-tranche portfolios by weekday.</p>
 
-The return barely moves: 11.37% for the five tranched portfolios, against 11.32%
-across the 15 full-rebalance schedules. The improvement is in the path. Mean
-volatility falls from 6.68% to 6.07%, or about 9%; mean maximum drawdown falls
+Mean annualized geometric return barely moves: 11.37% across the five tranched
+portfolios, against 11.32% across the 15 full-rebalance schedules. The
+improvement is in the path. Mean volatility falls from 6.68% to 6.07%, or about
+9%; mean maximum drawdown falls
 from 12.77% to 11.60%; and mean time underwater falls by 86 days. With nearly
 the same return and less volatility, the descriptive mean Sharpe rises from 1.64
 to 1.80.
@@ -141,38 +140,22 @@ observed return range disappears. The five remaining weekday portfolios are
 close: their volatilities span only 6.04% to 6.11%, and their Sharpes 1.78 to
 1.85.
 
-That pattern points to the starting-week offset as the important calendar risk
-in this experiment. The exact weekday still matters a little, but much less
-after the offsets are averaged. The design is descriptive rather than a clean
-variance decomposition: the 15 full schedules and five tranched portfolios are
-overlapping sets, and the implementation also changes signal freshness. The
-result shows where the visible dispersion sits; it cannot assign a precise share
-of variance to each calendar choice.
-
-The plausible mechanism is simple. Each sleeve admits the current signal at a
-different point in the three-week cycle, so one unusually good or bad rebalance
-cannot determine the whole portfolio. That can smooth the combined return path
-without raising its expected return. A second explanation is fresher
-predictions: the tranched book updates one-third of its capital every week. The
-saved experiment cannot tell those mechanisms apart.
+The visible calendar dispersion is much larger across starting-week offsets
+than across weekdays. Two mechanisms could produce the smoother tranched path:
+averaging those offsets, and refreshing one-third of the predictions each week.
+The saved experiment cannot tell them apart.
 
 ## What the comparison identifies—and what remains open
 
-Three tranches solve the part of the problem that looks largest here: they
-average the three starting-week offsets. I would not add weekday sleeves on the
-strength of these results. The remaining weekday range is small, and more
-sleeves would mean smaller orders, more frequent runs, and more operational
-state for an uncertain incremental gain.
+Three tranches directly average the three starting-week offsets. I would not add
+weekday sleeves on the strength of these results. The remaining weekday range is
+small, and more sleeves would mean smaller orders, more frequent runs, and more
+operational state for an uncertain incremental gain.
 
-There is an identification problem. The tranched portfolio incorporates a fresh set
-of predictions each week, whereas the full-rebalance portfolio waits three
-weeks before replacing every position. Tranching therefore changes signal
-freshness as well as diversifying timing. The experiment shows that the complete
-tranched implementation has less dispersion and lower realized risk in this
-sample; it does not attribute the improvement solely to timing diversification.
-A cleaner identification test would hold the prediction vintage fixed while
-changing only the execution schedule, then separately test the value of fresher
-weekly predictions.
+My preference is therefore for the complete three-tranche implementation, not a
+claim that timing diversification alone caused the improvement. A cleaner test
+would hold the prediction vintage fixed while changing only the execution
+schedule, and then test fresher weekly predictions separately.
 
 The retained research archive contains the two return-path charts and the
 summary metrics reported here, but not the daily schedule returns or the
@@ -184,13 +167,13 @@ The results do not document whether costs were included or how they were
 defined. They should therefore be treated as evidence about timing dispersion
 with undocumented cost treatment, not as implementation-grade return estimates.
 
-Costs still decide whether the smoother gross path is worth implementing. Smaller orders may face
-minimum fees and fixed operational overhead, while spreading a large order can
-reduce market impact. Signal freshness can also improve as sleeves rebalance
-more often, but more frequent decisions create more opportunities to trade.
-The practical choice should be based on net results using current holdings,
-turnover, spread and impact estimates, borrow costs, and the operational cost of
-maintaining each sleeve—not on gross backtest smoothness alone.
+Costs decide whether the smoother observed path is worth implementing. Smaller
+orders may incur minimum fees and fixed operational overhead; spreading a large
+order, however, may reduce market impact. More frequent rebalancing creates both
+fresher signals and more opportunities to trade. The practical choice should
+rest on net results using current holdings, turnover, spread and impact
+estimates, borrow costs, and operational overhead—not on reported backtest
+smoothness alone.
 
 ## Conclusion
 
@@ -198,13 +181,13 @@ The experiment changes how I would report a fixed-cycle strategy. One rebalance
 schedule is one draw from a wider set of plausible outcomes, not the backtest.
 The full timing grid makes that uncertainty visible.
 
-Three weekly tranches leave mean return almost unchanged, but reduce mean
-volatility by 0.61 percentage points and lift the descriptive Sharpe from 1.64
-to 1.80. They also remove most of the dispersion that was visible across the 15
-full-rebalance schedules; what remains across weekdays is comparatively small.
-That is enough for me to prefer the three-sleeve implementation as a working
-design, not because it earns more, but because it relies less on getting one
-starting week right.
+The complete three-tranche implementation leaves mean annualized geometric
+return almost unchanged, reduces mean volatility by 0.61 percentage points, and lifts the descriptive
+Sharpe from 1.64 to 1.80. It also shows much less dispersion than the 15
+full-rebalance schedules; the remaining variation across weekdays is
+comparatively small. That is enough for me to prefer the three-sleeve
+implementation as a working design, not because it earns more, but because it
+relies less on getting one starting week right.
 
 The reservation is practical. Fresher predictions may share credit for the
 improvement, and the missing daily archive prevents a realistic cost replay. I
