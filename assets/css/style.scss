@@ -87,6 +87,67 @@
   width: min(860px, calc(100vw - 2rem));
 }
 
+.post-content .research-figure.rebalancing-figure {
+  width: min(800px, calc(100vw - 2rem));
+}
+
+.post-content table.rebalancing-summary-table,
+.post-content table.rebalancing-results-table {
+  th:not(:first-child),
+  td {
+    color: #58656f;
+  }
+
+  tbody td {
+    font-weight: 400;
+  }
+
+  .summary-row th,
+  .summary-row td {
+    border-top: 1px solid #b7c0c7;
+    color: #2d7476;
+    font-weight: 600;
+  }
+}
+
+.post-content table.rebalancing-summary-table.comparison-table,
+.post-content table.rebalancing-results-table.comparison-table {
+  thead th:nth-child(n + 2),
+  tbody td:nth-child(n + 2) {
+    color: #58656f;
+    font-weight: 400;
+  }
+
+  tbody .summary-row th,
+  tbody .summary-row td {
+    color: #2d7476;
+    font-weight: 600;
+  }
+}
+
+.post-content table.rebalancing-summary-table th:first-child {
+  width: 38%;
+}
+
+.post-content table.rebalancing-results-table {
+  @media (min-width: 768px) {
+    width: min(850px, calc(100vw - 3rem));
+    max-width: none;
+    margin-left: 50%;
+    transform: translateX(-50%);
+
+    th:first-child {
+      width: 19%;
+    }
+
+    th:nth-child(2),
+    th:nth-child(3),
+    th:nth-child(4) {
+      width: 13%;
+    }
+  }
+}
+
 /* MathJax keeps display equations inside the reading column. */
 .post-content mjx-container[display="true"] {
   max-width: 100%;

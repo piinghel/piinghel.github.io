@@ -2,123 +2,168 @@
 layout: post
 title: "Reducing Rebalancing Timing Risk with Tranching"
 date: 2025-05-10
+last_modified_at: 2026-08-22
 categories: [Quants]
+article_mark: /assets/brand/quant-notes-mark.svg
+article_label: Portfolio construction · Rebalancing
+permalink: /quants/2025/05/10/rebalancing-luck.html
 ---
 
-## Introduction
+Rebalancing every three weeks sounds precise, but it leaves one arbitrary
+choice: which week and which weekday? Two otherwise identical portfolios can
+compound to different outcomes simply because one trades a few days earlier
+than the other. That dispersion is usually called *rebalance timing luck*.
 
-Rebalance timing plays a big role in medium- to long-term strategies that don't trade often. Shifting the execution day by just a few days can meaningfully impact performance, changing the exact positions held, and affecting returns, volatility, and drawdowns.
+[Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) has
+shown that the effect can be material in concentrated or faster-moving
+strategies. A common response is tranching: split the capital across overlapping
+portfolios and rebalance a smaller part more frequently. I use my own long/short
+stock-ranking strategy to ask a practical question: how much of the result
+depends on the chosen schedule, and how much of that dependence can three
+overlapping tranches remove?
 
-This issue is often referred to as *rebalance timing luck*: the variation in performance that comes purely from the day you happen to rebalance, even when the strategy and signals stay the same.
+## Fifteen ways to run the same strategy
 
-Others have explored this too. [Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) wrote a great piece highlighting how impactful this effect can be. And the [Concretum Group](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) analyzed it in a GTAA context, showing that spreading rebalances out over time, instead of doing it all at once, can reduce timing risk and even lower turnover.
+The strategy uses LightGBM predictions and holds each portfolio for three
+weeks. A full-rebalance implementation has three possible starting-week offsets
+and five possible weekdays, giving 15 schedules:
 
-That got me curious: how much does timing luck affect my own long-short strategy? And could a more gradual rebalancing approach make it more stable, without changing the core logic?
+$$
+3\text{ offsets}\times 5\text{ weekdays}=15\text{ schedules}.
+$$
 
-## Setup
+The model, universe, ranking rule, and holding period are unchanged. What moves
+is the signal and execution date. That small shift changes the predictions
+available at the rebalance and the returns subsequently earned by the selected
+stocks.
 
-The strategy is a long-short stock-ranking model based on LightGBM predictions. It rebalances every three weeks, with the entire portfolio updated on a fixed weekday at the closing price. Since there are three possible starting weeks (offsets) and five weekdays, that gives us 15 possible rebalancing schedules.
+<div class="research-figure rebalancing-figure">
+  <img src="/assets/tranching/all_perf_plots.png" alt="Cumulative return paths for fifteen full-rebalance schedules, highlighting the best and worst outcomes" loading="lazy" decoding="async">
+</div>
 
-I simulate all 15 combinations:
-- 3 offsets × 5 weekdays = 15 setups  
-- Each uses the same trained model and applies predictions available on that specific day  
-- Signals, logic, and universe stay exactly the same  
+<p class="figure-caption"><strong>Figure 1:</strong> Fifteen full-rebalance schedules, with the best and worst paths highlighted.</p>
 
-Then, I compare this to a *tranching* setup, a common approach where the portfolio is divided into parts and rebalanced gradually. Here, the portfolio is split into three equal tranches. One-third is rebalanced each week, rotating through the offsets. Over three weeks, the full portfolio is still updated, just in smaller, smoother steps. This helps reduce sensitivity to any single day's noise.
+The paths separate gradually rather than around one isolated event. That is the
+important feature of timing luck: small differences in holdings accumulate into
+large differences in terminal wealth even when no schedule has a persistent
+informational advantage.
 
+<table class="research-table comparison-table rebalancing-summary-table">
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Range across schedules</th>
+      <th>Mean</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">Geometric return</th><td data-label="Range">10.10%–12.53%</td><td data-label="Mean">11.32%</td></tr>
+    <tr><th scope="row">Volatility</th><td data-label="Range">6.45%–6.97%</td><td data-label="Mean">6.68%</td></tr>
+    <tr><th scope="row">Sharpe ratio</th><td data-label="Range">1.50–1.75</td><td data-label="Mean">1.64</td></tr>
+    <tr><th scope="row">Maximum drawdown</th><td data-label="Range">10.70%–14.77%</td><td data-label="Mean">12.77%</td></tr>
+    <tr><th scope="row">Time underwater</th><td data-label="Range">248–593 days</td><td data-label="Mean">413 days</td></tr>
+  </tbody>
+</table>
 
+<p class="figure-caption"><strong>Table 1:</strong> Dispersion across the 15 full-rebalance schedules.</p>
 
-## Rebalancing Day Does Matter
+Annualized return differs by 2.43 percentage points between the best and worst
+schedules, while the Sharpe ratio ranges from 1.50 to 1.75. The widest gap is in
+time underwater: 248 days for one schedule and 593 for another. Reporting only
+one of these backtests would hide how sensitive the result is to a choice that
+has no economic meaning.
 
-Here's the cumulative return of the 15 full-rebalance variants:
+## Spreading the rebalance across three tranches
 
+The tranched implementation splits the portfolio into three equal-capital
+sleeves. One sleeve rebalances each week on the chosen weekday, and each remains
+on the same three-week holding cycle. After three weeks the whole portfolio has
+been refreshed, but no single day replaces every position at once.
 
-![Figure 1](/assets/tranching/all_perf_plots.png)  
-<p class="figure-caption"><strong>Figure 1:</strong> Cumulative returns for each rebalancing schedule (15 variants).</p>
+This construction averages across the three starting-week offsets. It does not
+average across weekdays: a Monday version still trades every sleeve on Monday,
+and the same is true for Tuesday through Friday. Figure 2 therefore shows five
+tranched portfolios, one for each weekday.
 
+<div class="research-figure rebalancing-figure">
+  <img src="/assets/tranching/tranched_perf_plots.png" alt="Cumulative return paths for five three-tranche portfolios, one for each rebalance weekday" loading="lazy" decoding="async">
+</div>
 
-And the table of results:
+<p class="figure-caption"><strong>Figure 2:</strong> Three-tranche portfolios by rebalance weekday.</p>
 
-| Tranche           | Geometric Return | Volatility | Sharpe Ratio | Max Drawdown | Time Underwater |
-|-------------------|------------------|------------|--------------|--------------|-----------------|
-| offset=0, day=1   | 10.38%           | 6.58%      | 1.53         | 12.41%       | 548 days        |
-| offset=0, day=2   | 10.10%           | 6.54%      | 1.50         | 14.77%       | 573 days        |
-| offset=0, day=3   | 10.61%           | 6.54%      | 1.57         | 13.79%       | 582 days        |
-| offset=0, day=4   | 12.10%           | 6.73%      | 1.73         | 13.19%       | 548 days        |
-| offset=0, day=5   | 12.17%           | 6.91%      | 1.70         | 13.59%       | 369 days        |
-| offset=1, day=1   | 12.53%           | 6.90%      | 1.75         | 12.35%       | 360 days        |
-| offset=1, day=2   | 12.21%           | 6.97%      | 1.69         | 12.13%       | 387 days        |
-| offset=1, day=3   | 12.30%           | 6.87%      | 1.72         | 10.70%       | 375 days        |
-| offset=1, day=4   | 11.64%           | 6.70%      | 1.68         | 12.72%       | 360 days        |
-| offset=1, day=5   | 11.62%           | 6.76%      | 1.66         | 14.76%       | 298 days        |
-| offset=2, day=1   | 10.90%           | 6.50%      | 1.67         | 11.38%       | 248 days        |
-| offset=2, day=2   | 11.27%           | 6.60%      | 1.56         | 12.56%       | 331 days        |
-| offset=2, day=3   | 10.61%           | 6.60%      | 1.63         | 11.01%       | 275 days        |
-| offset=2, day=4   | 10.99%           | 6.53%      | 1.63         | 13.10%       | 352 days        |
-| offset=2, day=5   | 10.37%           | 6.45%      | 1.56         | 13.10%       | 593 days        |
-| **Mean**          | **11.32%**       | **6.68%**  | **1.64**     | **12.77%**   | **413 days**    |
+<table class="research-table comparison-table rebalancing-results-table">
+  <thead>
+    <tr>
+      <th>Weekday</th>
+      <th>Return</th>
+      <th>Volatility</th>
+      <th>Sharpe</th>
+      <th>Max drawdown</th>
+      <th>Underwater</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">Monday</th><td data-label="Return">11.32%</td><td data-label="Volatility">6.08%</td><td data-label="Sharpe">1.80</td><td data-label="Max drawdown">11.08%</td><td data-label="Underwater">370 days</td></tr>
+    <tr><th scope="row">Tuesday</th><td data-label="Return">11.23%</td><td data-label="Volatility">6.04%</td><td data-label="Sharpe">1.79</td><td data-label="Max drawdown">11.63%</td><td data-label="Underwater">301 days</td></tr>
+    <tr><th scope="row">Wednesday</th><td data-label="Return">11.24%</td><td data-label="Volatility">6.08%</td><td data-label="Sharpe">1.78</td><td data-label="Max drawdown">11.89%</td><td data-label="Underwater">299 days</td></tr>
+    <tr><th scope="row">Thursday</th><td data-label="Return">11.63%</td><td data-label="Volatility">6.06%</td><td data-label="Sharpe">1.85</td><td data-label="Max drawdown">11.01%</td><td data-label="Underwater">303 days</td></tr>
+    <tr><th scope="row">Friday</th><td data-label="Return">11.43%</td><td data-label="Volatility">6.11%</td><td data-label="Sharpe">1.80</td><td data-label="Max drawdown">12.37%</td><td data-label="Underwater">364 days</td></tr>
+    <tr class="summary-row"><th scope="row">Mean</th><td data-label="Return">11.37%</td><td data-label="Volatility">6.07%</td><td data-label="Sharpe">1.80</td><td data-label="Max drawdown">11.60%</td><td data-label="Underwater">327 days</td></tr>
+  </tbody>
+</table>
 
-<p class="table-caption"><strong>Table 1:</strong> Performance metrics for each full-rebalance variant.</p>
+<p class="figure-caption"><strong>Table 2:</strong> Performance of the three-tranche portfolios by weekday.</p>
 
+The mean geometric return is almost unchanged: 11.32% for the full-rebalance
+schedules and 11.37% after tranching. The difference is in dispersion and risk.
+Average volatility falls from 6.68% to 6.07%, maximum drawdown from 12.77% to
+11.60%, and time underwater from 413 to 327 days. The five lines in Figure 2
+also sit much closer together than the 15 paths in Figure 1.
 
+This is the useful role of tranching. It does not create a new stock-selection
+signal; it diversifies when the existing signal enters the portfolio. Combining
+partially independent timing outcomes can preserve the average return while
+reducing the risk of committing all capital on one arbitrary date.
 
-I was actually surprised by how much divergence there was. Even though all variants follow the same model, returns varied quite a bit, from around 10.1% to 12.5% annually. Sharpe ratios ranged from 1.50 to 1.75, and some variants spent hundreds of days longer in drawdown than others. These are meaningful differences for something as simple as shifting the rebalance day.
+## What the comparison does not isolate
 
-None of this comes from the model or the signal. It's purely due to small shifts in rebalance timing that compound over time. Even when overall performance looks stable, this kind of noise makes it harder to tell whether a change is genuinely better or just lucky on timing.
+Three tranches reduce starting-week sensitivity, but weekday choice remains.
+Eliminating all 15 schedule choices would require many more overlapping sleeves,
+which adds operational complexity and smaller orders. The saved result summary
+also does not separate gross from net performance or document a transaction-cost
+sensitivity, so the return levels should not be treated as implementation-grade
+estimates.
 
+There is a second distinction. The tranched portfolio incorporates a fresh set
+of predictions each week, whereas the full-rebalance portfolio waits three
+weeks before replacing every position. Tranching therefore changes signal
+freshness as well as diversifying timing. The experiment shows that the complete
+tranched implementation is more stable; it does not attribute every part of the
+improvement to one mechanism.
 
-
-
-## Tranching: A Simple, Effective Fix
-
-Instead of picking a single rebalancing day, we can average across them.
-
-In the tranching setup, I split the portfolio into three equal parts. Each week, I rebalance one-third of the portfolio, always on the same weekday (say, every Wednesday), but each tranche follows a different offset within the three-week cycle. So over three weeks, the full portfolio is refreshed, just not all at once.
-
-This staggered execution spreads risk more evenly across time without changing the model or signals.
-
-To analyze the results, I group performance by weekday and average across the three offsets. This gives a cleaner comparison to the previous "all-at-once" setup.
-
-![Figure 2](/assets/tranching/tranched_perf_plots.png)  
-<p class="figure-caption"><strong>Figure 2:</strong> Cumulative returns with tranching by weekday (averaged over offsets).</p>
-
-| Weekday | Geometric Return | Volatility | Sharpe Ratio | Max Drawdown | Time Underwater |
-|---------|------------------|------------|--------------|--------------|-----------------|
-| 1 (Mon) | 11.32%           | 6.08%      | 1.80         | 11.08%       | 370 days        |
-| 2 (Tue) | 11.23%           | 6.04%      | 1.79         | 11.63%       | 301 days        |
-| 3 (Wed) | 11.24%           | 6.08%      | 1.78         | 11.89%       | 299 days        |
-| 4 (Thu) | 11.63%           | 6.06%      | 1.85         | 11.01%       | 303 days        |
-| 5 (Fri) | 11.43%           | 6.11%      | 1.80         | 12.37%       | 364 days        |
-| **Mean**  | **11.37%**       | **6.07%**  | **1.80**     | **11.60%**   | **327 days**    |
-
-<p class="table-caption"><strong>Table 2:</strong> Tranche-averaged performance by weekday.</p>
-
-
-Comparing the means tells the story clearly: average return is essentially unchanged (11.32% to 11.37%), but volatility drops from 6.68% to 6.07%, max drawdown improves from 12.77% to 11.60%, and Sharpe ratio rises from 1.64 to 1.80. Time underwater falls by nearly 90 days.
-
-The key insight: tranching doesn't generate extra return. It delivers the same return with less risk. By spreading rebalances across time, you smooth out the noise from any single day's conditions. The cumulative return chart makes this visible: the lines almost sit on top of each other, which wasn't the case before.
-
-From a research perspective, this matters a lot. It cuts down the randomness from timing luck, making it easier to tell whether a model change is actually improving things or just benefiting from better timing.
-
-
-There's also a subtle benefit on the signal side: with tranching, you fold in new predictions each week instead of once every three weeks. That introduces a kind of temporal diversification and makes the strategy more responsive to new information.
-
-## Trade-Offs
-
-Tranching isn't free. Weekly rebalancing means running the pipeline more often, sending more orders, and keeping an eye on execution regularly. That adds overhead, especially when some trades are small.
-
-Whether it's worth it depends on your size. [Zarattini & Pagani (2025)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) show that tranching's benefits are AUM-dependent. For smaller portfolios, the increased number of trades can hurt since minimum commissions eat into those smaller positions. For larger portfolios, spreading trades over time reduces market impact, which matters more than the extra commission costs. Turnover itself stays roughly the same either way; what changes is how that turnover is distributed. Their paper provides a framework for finding the optimal number of tranches given your AUM.
-
-
+Costs can also change the preferred number of sleeves. [Zarattini and
+Pagani](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) find that
+tranching consistently reduces timing dispersion, but its net benefit depends
+on assets under management and trading costs. Smaller investors may lose more
+to minimum commissions and small orders, while larger portfolios can benefit
+from spreading market impact over time. That trade-off should be measured with
+the actual execution model rather than assumed from turnover alone.
 
 ## Conclusion
 
-What started as a small curiosity around rebalancing schedules turned into a strong case for using tranching by default. The results are cleaner and more stable, which is especially helpful when evaluating model tweaks.
+The experiment changes how I would report and run a fixed-cycle strategy. A
+single rebalance schedule is one draw from a wider set of plausible outcomes,
+so it is not enough evidence on its own. Testing the full timing grid makes that
+uncertainty visible.
 
-I'll be using this setup going forward for any strategy that rebalances on a fixed cycle. It's simple, effective, and makes the whole process easier to trust.
+Three weekly tranches are a practical compromise. In this sample they leave
+average return almost unchanged while reducing volatility, drawdown, time
+underwater, and the spread between schedules. I would use the tranched version
+as the working implementation, while keeping the remaining weekday sensitivity
+and trading-cost assumptions visible.
 
 ## References
 
-- [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) - Newfound Research
-- [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) - C. Zarattini, A. Pagani (2025)
-- [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) - C. Zarattini, A. Pagani (2025)
+- [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) — Newfound Research
+- [Rebalance Timing Luck and GTAA Portfolios](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) — Carlo Zarattini and Alberto Pagani
+- [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) — Carlo Zarattini and Alberto Pagani
