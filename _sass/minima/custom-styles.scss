@@ -590,6 +590,10 @@ table {
     font-variant-numeric: tabular-nums;
   }
 
+  &.comparison-table tbody td:first-child {
+    text-align: left;
+  }
+
   &.comparison-table thead th:nth-child(2),
   &.comparison-table tbody td:nth-child(2) {
     color: #58656f;
@@ -601,6 +605,35 @@ table {
   }
 
   &.comparison-table tbody td:nth-child(3) {
+    font-weight: 600;
+  }
+
+  &.comparison-table.period-metrics-table thead th:nth-child(3),
+  &.comparison-table.period-metrics-table tbody td:nth-child(3) {
+    color: #526777;
+    font-weight: 400;
+  }
+
+  &.comparison-table.period-metrics-table thead th:nth-child(4),
+  &.comparison-table.period-metrics-table tbody td:nth-child(4) {
+    color: var(--accent);
+  }
+
+  &.comparison-table.period-metrics-table tbody td:nth-child(4) {
+    font-weight: 600;
+  }
+
+  &.comparison-table.component-performance-table thead th,
+  &.comparison-table.component-performance-table tbody td,
+  &.comparison-table.alpha-selection-table thead th,
+  &.comparison-table.alpha-selection-table tbody td {
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  &.comparison-table.alpha-selection-table tbody tr:nth-child(3) th,
+  &.comparison-table.alpha-selection-table tbody tr:nth-child(3) td {
+    color: var(--accent);
     font-weight: 600;
   }
 
@@ -743,6 +776,66 @@ table {
       font-size: 0.74rem;
       font-weight: 500;
       text-align: left;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .post-content table.research-table.component-performance-table,
+  .post-content table.research-table.alpha-selection-table,
+  .post-content table.research-table.period-metrics-table {
+    display: table;
+    width: 100%;
+    border-top: 1px solid #b7c0c7;
+    border-bottom: 1px solid #b7c0c7;
+    font-size: 0.73rem;
+
+    thead {
+      position: static;
+      display: table-header-group;
+      width: auto;
+      height: auto;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+      white-space: normal;
+    }
+
+    tbody {
+      display: table-row-group;
+    }
+
+    tr,
+    tr:last-child {
+      display: table-row;
+      margin: 0;
+      border: 0;
+    }
+
+    th,
+    tbody th[scope="row"],
+    tbody td {
+      display: table-cell;
+      width: auto;
+      padding: 0.43rem 0.32rem;
+      border-top: 0;
+      border-bottom: 1px solid var(--rule);
+      background: #ffffff;
+      font-size: 0.73rem;
+      line-height: 1.25;
+      text-align: right;
+    }
+
+    th:first-child,
+    tbody th[scope="row"],
+    tbody td:first-child {
+      width: 37%;
+      text-align: left;
+    }
+
+    tbody td::before {
+      content: none;
     }
   }
 }
@@ -1157,6 +1250,15 @@ article.post .post-header {
   font-size: 0.84rem !important;
   font-weight: 400 !important;
   line-height: 1.5 !important;
+}
+
+.post-content table + p.table-followup {
+  color: var(--ink) !important;
+  font-size: inherit !important;
+  font-weight: 400 !important;
+  line-height: 1.75 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
 }
 
 blockquote {

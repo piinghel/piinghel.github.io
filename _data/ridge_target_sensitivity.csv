@@ -1,7 +1,0 @@
-label,ic_mean_percent,ic_ir,net_return_percent,volatility_percent,net_sharpe,max_drawdown_percent,source_run
-Sharpe · sector rank,4.5565,0.5354,7.10,7.40,0.9600,18.77,ridge_144_pv
-Sharpe · date rank,5.0749,0.3942,7.13,7.96,0.8967,19.87,ablation_sharpe_date
-Sharpe · raw,4.9412,0.3853,6.55,8.06,0.8100,20.46,ablation_sharpe_raw
-Return · sector rank,2.3768,0.3217,5.01,6.66,0.7500,19.60,ablation_return_sector
-Return · date rank,2.0613,0.1728,4.54,7.04,0.6433,22.12,ablation_return_date
-Return · raw,1.3410,0.1266,1.03,6.08,0.1667,24.79,ablation_return_raw
