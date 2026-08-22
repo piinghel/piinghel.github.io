@@ -72,7 +72,7 @@
 }
 
 .post-content .research-figure.alpha-sensitivity-figure {
-  width: min(940px, calc(100vw - 2rem));
+  width: min(860px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.component-evidence-figure {
@@ -80,15 +80,37 @@
 }
 
 .post-content .research-figure.coefficient-figure {
-  width: min(1080px, calc(100vw - 2rem));
+  width: min(930px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.exposure-figure {
-  width: min(1050px, calc(100vw - 2rem));
+  width: min(920px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.turnover-figure {
   width: min(790px, calc(100vw - 2rem));
+}
+
+.post-content .table-caption {
+  margin: 2rem 0 0.55rem;
+  color: #7a8790;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.post-content .table-caption strong {
+  color: #4d5962;
+  font-weight: 600;
+}
+
+.post-content .table-caption + table.research-table {
+  margin-top: 0;
+}
+
+.post-content table.research-table.component-performance-table tbody td,
+.post-content table.research-table.alpha-selection-table tbody td,
+.post-content table.research-table.period-metrics-table tbody td {
+  border-bottom: 0;
 }
 
 .post-content .research-figure.sensitivity-figure {
