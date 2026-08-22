@@ -10,23 +10,25 @@ layout: base
     <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
     <p class="post-meta">
       {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+      {%- assign updated_date = page.last_modified_at | default: page.modified_date -%}
       {%- unless page.show_date == false -%}
+        <span>Published </span>
         <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
           {{ page.date | date: date_format }}
         </time>
       {%- endunless -%}
+      {%- if updated_date -%}
+        {%- unless page.show_date == false -%}<span> · </span>{%- endunless -%}
+        <span>Updated </span>
+        <time class="dt-modified" datetime="{{ updated_date | date_to_xmlschema }}" itemprop="dateModified">
+          {{ updated_date | date: "%B %Y" }}
+        </time>
+      {%- endif -%}
       {%- assign words = content | number_of_words -%}
       {%- if words < 360 -%}
-        <span class="reading-time"> • 1 min read</span>
+        <span class="reading-time"> · 1 min read</span>
       {%- else -%}
-        <span class="reading-time"> • {{ words | divided_by: 180 }} min read</span>
-      {%- endif -%}
-      {%- if page.modified_date -%}
-        ~ 
-        {%- assign mdate = page.modified_date | date_to_xmlschema -%}
-        <time class="dt-modified" datetime="{{ mdate }}" itemprop="dateModified">
-          {{ mdate | date: date_format }}
-        </time>
+        <span class="reading-time"> · {{ words | divided_by: 180 }} min read</span>
       {%- endif -%}
       {%- if page.author -%}
         • {% for author in page.author %}
@@ -35,6 +37,14 @@ layout: base
             {%- if forloop.last == false %}, {% endif -%}
         {% endfor %}
       {%- endif -%}</p>
+    {%- if page.github_repositories -%}
+      <p class="article-repository-links" aria-label="Related GitHub repositories">
+        {%- for repository in page.github_repositories -%}
+          <a href="{{ repository.url }}">{{ repository.label | escape }}</a>
+          {%- unless forloop.last -%}<span aria-hidden="true"> · </span>{%- endunless -%}
+        {%- endfor -%}
+      </p>
+    {%- endif -%}
   </header>
 
   <div class="article-body-shell">

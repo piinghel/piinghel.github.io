@@ -194,7 +194,7 @@ improvement, and the missing daily archive prevents a realistic cost replay. I
 would freeze the three-sleeve design, rebuild the daily evidence, and compare it
 with a full-rebalance version using the same prediction vintages. Only then can
 turnover, spreads, impact, borrow, and operational overhead decide whether the
-gross risk reduction survives implementation.
+observed risk reduction survives implementation.
 
 ## References
 

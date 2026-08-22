@@ -2,11 +2,13 @@
 layout: post
 title: "Combining Stock Signals with Multiple Linear Regression"
 date: 2025-02-09
-last_modified_at: 2026-08-22
+last_modified_at: 2026-08-23
 categories: [Quants]
 article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
+
+<p class="article-summary"><strong>Result in brief:</strong> During development, OLS raises the fixed benchmark's net Sharpe from 0.72 to 0.98 while keeping annualized net return near 7% and reducing volatility from 9.69% to 7.15%. Ridge makes the fitted coefficients smaller and more stable, but leaves the stock ranking and portfolio almost unchanged. From 2022 through May 2026, its small development-period advantage disappears: net Sharpe is 0.82 for Ridge and 0.87 for OLS.</p>
 
 Stock signals rarely agree neatly. Trend, risk, size, liquidity, and positioning
 arrive on different scales, overlap, and can change meaning when considered
@@ -18,20 +20,15 @@ The model's job is simple: put the stocks in order. On each date, the
 highest-scoring stocks become long candidates and the lowest-scoring ones become
 short candidates. The score is not a return forecast; only the order matters.
 
-Can a learned combination produce a more useful ranking? I proceed in three
-steps. First I build a transparent fixed-weight benchmark. Then I use a standard
-linear regression—ordinary least squares, or OLS—to learn how the predictors
-work together. Finally, I add Ridge, a version that discourages the model from
-relying on large coefficients.
-
-The comparisons answer different questions. Fixed weights versus OLS is a
-practical test, but both the inputs and the combination rule change. OLS versus
-Ridge is cleaner: the inputs stay fixed, and only the estimation method changes.
-In this sample, Ridge makes the coefficients smaller and more regular, but it
-barely changes the ranking or the portfolio. The sections below build toward
-that result one step at a time.
+I compare three ways to form that order: a transparent fixed-weight score,
+ordinary least squares (OLS), and Ridge, which discourages large coefficients.
+Fixed weights versus OLS is a practical comparison, but both the inputs and the
+combination rule change. OLS versus Ridge is controlled: the predictors, target,
+and portfolio remain fixed, and only the estimation method changes.
 
 ## Benchmark
+
+### Building the fixed score
 
 I do not want the regression to win merely because it is more complicated. The
 benchmark therefore uses a small set of familiar, economically motivated signals with fixed signs
@@ -58,7 +55,7 @@ defensive theme groups two closely related measurements:
   It is a days-to-cover-style measure of negative positioning and crowding;
   short interest is delayed by 21 sessions to respect publication timing. Lower
   values are preferred.
-- **Large capitalization:** log market capitalization is a simple size and
+- **Large capitalization:** market capitalization is a simple size and
   investability tilt. Higher values are preferred.
 - **Return consistency:** the signal is the fraction of negative daily returns
   over 756 sessions, roughly three trading years. It measures the frequency of
@@ -80,6 +77,8 @@ weighting, execution, and cost machinery. A stock must have every required
 component rank, so missing themes remove it from that date's benchmark universe
 instead of changing the weights on the remaining themes.
 
+### Testing the ingredients
+
 Before combining the factors, I ran the six components separately over their
 common May 1997–May 2026 sample. Each component ranks the universe, buys the top 75,
 and shorts the bottom 75. Positions start equally within each leg and are then
@@ -87,17 +86,17 @@ scaled by inverse 60-session stock volatility, subject to the common 4% cap and
 100% gross ceiling per leg described below. The reported portfolio averages
 three offset execution calendars and pays 5 basis points per dollar traded.
 
-| Component | Return | Volatility | Sharpe |
-| --- | ---: | ---: | ---: |
-| Low volatility | 6.38% | 10.42% | 0.61 |
-| Upper-tail avoidance | 5.03% | 8.81% | 0.57 |
-| Momentum | 4.27% | 10.37% | 0.41 |
-| Low short interest | 1.85% | 4.96% | 0.37 |
-| Large capitalization | 1.66% | 7.32% | 0.23 |
-| Return consistency | 5.48% | 8.90% | 0.62 |
+| Component | Gross return | Net return | Net volatility | Net Sharpe |
+| --- | ---: | ---: | ---: | ---: |
+| Low volatility | 7.04% | 6.38% | 10.42% | 0.61 |
+| Upper-tail avoidance | 6.54% | 5.03% | 8.81% | 0.57 |
+| Momentum | 4.90% | 4.27% | 10.37% | 0.41 |
+| Low short interest | 2.53% | 1.85% | 4.96% | 0.37 |
+| Large capitalization | 1.94% | 1.66% | 7.32% | 0.23 |
+| Return consistency | 5.90% | 5.48% | 8.90% | 0.62 |
 {: .research-table .comparison-table .component-performance-table }
 
-<p class="table-caption"><strong>Table 1:</strong> Net performance of each standalone 75-long/75-short component portfolio using the common volatility-scaled allocation, May 1997–May 2026.</p>
+<p class="table-caption"><strong>Table 1:</strong> Gross and after-cost performance of each standalone 75-long/75-short component portfolio using the common volatility-scaled allocation, May 1997–May 2026. Returns are annualized arithmetic means; net statistics deduct 5 bp per dollar traded.</p>
 
 The defensive measurements and return-consistency signal have the strongest
 standalone Sharpes. Together they provide three overlapping views of defensive
@@ -109,7 +108,7 @@ and return consistency.
 The weaker components still clarify the hurdle. Low short interest has a modest
 return but also low volatility; large capitalization has a positive return and
 the lowest Sharpe. Upper-tail avoidance loses 1.51 percentage points a year to
-the stated cost assumption. These histories make each theme a plausible
+the stated cost assumption, the largest gross-to-net gap in the table. These histories make each theme a plausible
 benchmark ingredient. Their incremental value remains an empirical question
 because standalone success can disappear when signals overlap or when a model
 assigns conditional weights.
@@ -260,7 +259,7 @@ to emerge from the holdings. Three equal-capital sleeves rebalance on offset
 third Fridays, execute at the next close, and hold for three weeks. Reported
 returns charge 5 bp per dollar traded.
 
-## Ridge as a stability extension
+## Adding coefficient shrinkage
 
 Correlated predictors can divide weight erratically. Ridge changes the same
 linear regression by adding an L2 penalty:
@@ -315,6 +314,8 @@ The raw row count provides no defensible estimate of effective sample size.
 
 ## Choosing the penalty
 
+### Selecting the penalty
+
 All four models use the same predictors, target, universe, dates, walk-forward
 procedure, portfolio construction, and 5 bp cost assumption. The selection rule
 uses only evidence through 2021 and prefers consistency across development
@@ -322,22 +323,22 @@ windows rather than the highest Sharpe in any single slice.
 
 To judge Ridge, I separate the model from the trading layer. Rank information
 coefficient (IC), prediction changes, and coefficient behavior ask what
-shrinkage changes before costs. The
-portfolio table stays net because the final choice still has to work as an
-implementation. Annual cost drag ranges only from 1.43 to 1.46 percentage points
-across the grid. Similar deductions keep cost differences from driving the
-penalty choice. Gross results isolate the portfolio effect; the net table checks
-the implementation that would actually be traded.
+shrinkage changes before costs. The portfolio table reports both gross and net
+return because the final choice still has to work as an implementation. Annual
+cost drag ranges only from 1.43 to 1.46 percentage points across the grid.
+Similar deductions keep cost differences from driving the penalty choice: gross
+return isolates the portfolio result before the stated trading cost, while net
+return shows what remains after it.
 
-| Estimator | Return | Volatility | Sharpe |
-| --- | ---: | ---: | ---: |
-| OLS, $c=0$ | 7.03% | 7.15% | 0.983 |
-| Ridge, $c=0.001$ | 7.05% | 7.19% | 0.981 |
-| **Ridge, $c=0.01$** | **7.38%** | **7.36%** | **1.003** |
-| Ridge, $c=0.1$ | 7.83% | 7.92% | 0.989 |
+| Estimator | Gross return | Net return | Net volatility | Net Sharpe |
+| --- | ---: | ---: | ---: | ---: |
+| OLS, $c=0$ | 8.49% | 7.03% | 7.15% | 0.983 |
+| Ridge, $c=0.001$ | 8.51% | 7.05% | 7.19% | 0.981 |
+| **Ridge, $c=0.01$** | **8.82%** | **7.38%** | **7.36%** | **1.003** |
+| Ridge, $c=0.1$ | 9.26% | 7.83% | 7.92% | 0.989 |
 {: .research-table .comparison-table .alpha-selection-table }
 
-<p class="table-caption"><strong>Table 2:</strong> Development-period annualized return, annualized volatility, and Sharpe across the matched OLS–Ridge penalty grid, net of 5 bp per dollar traded.</p>
+<p class="table-caption"><strong>Table 2:</strong> Development-period annualized arithmetic return across the matched OLS–Ridge penalty grid before and after 5 bp per dollar traded; volatility and Sharpe use net returns.</p>
 
 I choose the moderate $c=0.01$ specification as a development-period
 compromise. Relative to OLS, annualized return rises by 0.35 percentage points
@@ -350,6 +351,8 @@ or mean IC alone. Across the final ten and five development years, respectively,
 Sharpe is 1.118/0.975 for OLS, 1.119/0.987 for $c=0.001$, 1.120/0.983 for the
 selected $c=0.01$, and 1.060/0.941 for $c=0.1$.
 {: .table-followup }
+
+### What shrinkage changes
 
 Figure 3 shows two practical changes relative to OLS.
 Portfolio membership counts how many of the 75 longs and 75 shorts differ from
@@ -450,6 +453,8 @@ summary statistics above, this suggests Ridge mainly reduces coefficient scale
 and concentration; it does not eliminate time variation in which correlated
 predictor receives the weight.
 
+### Development-period portfolio results
+
 The development portfolio comparison needs two caveats. Its return history
 begins with the first mechanical walk-forward predictions in 1998, within the
 declared 1995–2021 research period. The fixed score also uses a smaller,
@@ -459,7 +464,8 @@ comparison.
 
 | Development metric | Fixed | OLS | Ridge $c=0.01$ |
 | --- | ---: | ---: | ---: |
-| Annualized return | 6.96% | 7.03% | 7.38% |
+| Annualized return, gross | 7.66% | 8.49% | 8.82% |
+| Annualized return, net | 6.96% | 7.03% | 7.38% |
 | Annualized volatility | 9.69% | 7.15% | 7.36% |
 | Sharpe ratio | 0.72 | 0.98 | 1.00 |
 | Maximum drawdown | −31.70% | −18.77% | −19.03% |
@@ -468,7 +474,7 @@ comparison.
 | Annual cost drag | 0.69 pp | 1.46 pp | 1.44 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
-<p class="table-caption"><strong>Table 3:</strong> Development-period portfolio results after 5 bp per dollar traded.</p>
+<p class="table-caption"><strong>Table 3:</strong> Development-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
 The learned portfolios have higher Sharpes than the benchmark, with similar
 annualized returns, lower volatility, and shallower drawdowns. The price is
@@ -480,6 +486,8 @@ trading-cost change is negligible.
 
 ## The 2022–2026 later-period evaluation
 
+### Later-period portfolio results
+
 The reported $c=0.01$ choice follows the development-only rule above; no
 2022–2026 result enters that rule. The later history had nevertheless already
 influenced earlier feature, target, portfolio, and presentation work. Calling it
@@ -489,7 +497,8 @@ specification demonstrably locked before anyone examined those outcomes.
 
 | Later-period metric | Fixed | OLS | Ridge $c=0.01$ |
 | --- | ---: | ---: | ---: |
-| Annualized return | 6.92% | 7.50% | 7.37% |
+| Annualized return, gross | 7.52% | 8.84% | 8.68% |
+| Annualized return, net | 6.92% | 7.50% | 7.37% |
 | Annualized volatility | 11.35% | 8.64% | 8.95% |
 | Sharpe ratio | 0.61 | 0.87 | 0.82 |
 | Maximum drawdown | −10.78% | −7.59% | −8.05% |
@@ -498,7 +507,7 @@ specification demonstrably locked before anyone examined those outcomes.
 | Annual cost drag | 0.60 pp | 1.34 pp | 1.31 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
-<p class="table-caption"><strong>Table 4:</strong> Later-period portfolio results after 5 bp per dollar traded.</p>
+<p class="table-caption"><strong>Table 4:</strong> Later-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
 The later period reverses the small development-period advantage. Ridge return is 0.13
 percentage points lower than OLS,
@@ -515,6 +524,8 @@ from +30.0% to +46.9%, while market beta remains only 0.078. Dollar exposure and
 market beta are measuring different risks. The exposure path appears later in
 the portfolio diagnostics, where the daily series is more informative than
 another set of table averages.
+
+### Does the ranking improve?
 
 The information coefficient asks a different question from portfolio Sharpe. On
 each date it is the cross-sectional Spearman correlation between the predicted
@@ -609,6 +620,8 @@ then adds position sizing, stock-level volatility scaling, execution, and
 costs. The differing predictor sets also prevent fixed score versus OLS from
 being a controlled estimator comparison.
 
+### Performance through time
+
 Portfolio performance adds selection, volatility scaling, execution, and costs
 to that prediction evidence. Figure 6 shows the complete net path and the
 drawdowns behind the period summaries rather than adding another performance
@@ -630,6 +643,8 @@ specification boundary; earlier research reuse still makes the later period a
 pseudo-holdout.
 
 ## What the portfolio is actually doing
+
+### Turnover and cost
 
 A useful ranking is not necessarily a portfolio I would trade. The next
 diagnostics ask what the finished portfolio owns and what it costs to maintain.
@@ -653,6 +668,8 @@ The fixed score is clearly cheaper. Ridge barely changes the higher turnover
 inherited from the learned monthly ranking: versus OLS, the selected penalty
 saves 0.02 percentage points of annual return in development and 0.03 in the
 later period. That difference is too small to motivate the penalty by itself.
+
+### Capital and market exposure
 
 Figure 8 shows how the selected Ridge portfolio uses capital through time. Long
 gross is the value of the long book divided by portfolio equity; short gross is
@@ -679,6 +696,8 @@ Average net exposure rises from +30.0% in development to +46.9% after 2021.
 Market beta remains much smaller because the short stocks carry more beta per
 dollar. A portfolio risk model would control both quantities directly instead
 of relying on this offset to emerge from stock-level scaling.
+
+### Realized predictor tilts
 
 Figure 9 asks which predictor characteristics the Ridge portfolio actually
 owns. Let $x_{i,j,t}$ be stock $i$'s normalized rank on predictor $j$, and let
