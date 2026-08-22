@@ -8,9 +8,6 @@ article_label: Reading list · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
 ---
 
-This is my working shelf: people I read, tools I enjoy using, and papers I want
-to find again. I add a note only when the link needs one.
-
 ## People and learning
 
 - [Chip Huyen](https://huyenchip.com/blog/)
@@ -26,13 +23,16 @@ to find again. I add a note only when the link needs one.
 - [DuckLake](https://ducklake.select/) — An open lakehouse format with its catalogue in SQL.
 - [Streamlit](https://streamlit.io/) — A quick route from Python analysis to a useful internal app.
 
-## Portfolio construction
+## Portfolio construction and risk modelling
 
 **[Enhanced Portfolio Optimization](https://www.aqr.com/Insights/Research/White-Papers/Enhanced-Portfolio-Optimization).**
 *Pedersen, Babu, and Levine (2021).* A useful common framework for regularized
 and Bayesian portfolio methods.
 
-## Asset pricing and return prediction
+**[Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility).**
+*Bollerslev et al.* A broad comparison of volatility models across asset classes.
+
+## Asset pricing, return prediction, and implementation
 
 **[Artificial Intelligence Asset Pricing Models](https://ssrn.com/abstract=5103546).**
 *Kelly et al. (2025).*
@@ -49,11 +49,6 @@ stricter implementation choices.
 
 **[TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models](https://arxiv.org/abs/2511.08667).**
 *Grinsztajn et al. (2025).*
-
-## Risk, costs, and capacity
-
-**[Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility).**
-*Bollerslev et al.* A broad comparison of volatility models across asset classes.
 
 **[Bottom-Up Capacity Constraints and the Limits of Anomaly Profitability](https://ssrn.com/abstract=5797502).**
 *Cartea et al. (2025).* Builds capacity from the assets and trades underneath a

@@ -45,6 +45,10 @@
   width: min(662px, calc(100vw - 2rem));
 }
 
+.post-content .low-vol-figure.naive-leg-risk-figure {
+  width: min(720px, calc(100vw - 2rem));
+}
+
 /* Wide research diagrams shared by the factor-combination article. */
 .post-content .research-figure {
   display: block;
@@ -89,6 +93,10 @@
 
 .post-content .research-figure.turnover-figure {
   width: min(790px, calc(100vw - 2rem));
+}
+
+.post-content .research-figure.portfolio-exposure-figure {
+  width: min(800px, calc(100vw - 2rem));
 }
 
 .post-content .table-caption {

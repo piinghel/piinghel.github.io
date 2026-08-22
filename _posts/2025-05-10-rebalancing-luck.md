@@ -8,9 +8,9 @@ article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
 ---
 
-"Rebalance every three weeks" sounds like a complete rule. It is not. I still
-have to choose which of the three weeks starts the cycle, and which weekday to
-trade. Two otherwise identical portfolios can then compound to different
+"Rebalance every three weeks" still leaves two calendar choices: which of the
+three weeks starts the cycle, and which weekday to trade. Two otherwise
+identical portfolios can then compound to different
 outcomes simply because one starts a few days earlier. That dispersion is
 usually called *rebalance timing luck*.
 
@@ -19,9 +19,10 @@ that the effect is largest when turnover is high, portfolios are concentrated,
 or holdings change quickly. [Concretum Research](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
 makes the same problem concrete in a monthly momentum strategy: average return
 hardly changes as more schedules are combined, but the gap between the luckiest
-and unluckiest schedule contracts sharply. That is the appeal of tranching. It
-does not promise a higher-return strategy; it tries to make one arbitrary
-calendar choice matter less.
+and unluckiest schedule contracts sharply. That is the appeal of tranching: it
+spreads the portfolio across several execution schedules so that one arbitrary
+calendar choice matters less. Expected return stays roughly the same while
+timing risk can fall.
 
 I use my own long/short stock-ranking strategy to ask a narrower question: if I
 split the portfolio across three overlapping sleeves, do I preserve the return
@@ -52,11 +53,10 @@ retained.
 
 <p class="figure-caption"><strong>Figure 1:</strong> Cumulative wealth for 15 full-rebalance schedules; highest and lowest terminal paths highlighted ex post; log scale, start = 1.</p>
 
-The paths separate gradually rather than around one isolated event. Small
-differences in signal dates and holdings accumulate into a large gap in terminal
-wealth. This is schedule sensitivity, not evidence that one weekday contains a
-persistent edge: the best and worst lines are labelled after seeing the whole
-sample.
+The paths separate gradually. Small differences in signal dates and holdings
+accumulate into a large gap in terminal wealth. The figure shows schedule
+sensitivity. The best and worst lines were labelled after seeing the whole
+sample, so their ordering offers no evidence of a persistent weekday edge.
 
 <table class="research-table comparison-table rebalancing-summary-table">
   <thead>
@@ -80,9 +80,10 @@ sample.
 Annualized geometric return differs by 2.43 percentage points between the best
 and worst schedules; the Sharpe ratio ranges from 1.50 to 1.75, and time
 underwater from 248 to 593 days. A single backtest would hide all of that behind
-one arbitrary calendar choice. The differences are large enough to matter, but
-the ranking of schedules is not a forecast. Nor can I assess their value after
-costs, because the original cost treatment was not preserved.
+one arbitrary calendar choice. The differences are large enough to matter.
+Their ex-post ranking has no forecasting value, and the missing cost record
+limits the comparison to timing dispersion before documented implementation
+costs.
 
 ## Spreading the rebalance across three tranches
 
@@ -91,10 +92,10 @@ sleeves. One sleeve rebalances each week on the chosen weekday, and each remains
 on the same three-week holding cycle. After three weeks the whole portfolio has
 been refreshed, but no single day replaces every position at once.
 
-This construction averages across the three starting-week offsets. It does not
-average across weekdays: a Monday version still trades every sleeve on Monday,
-and the same is true for Tuesday through Friday. Figure 2 therefore shows five
-tranched portfolios, one for each weekday.
+This construction averages across the three starting-week offsets while keeping
+the weekday fixed. A Monday version trades every sleeve on Monday, and the same
+is true for Tuesday through Friday. Figure 2 therefore shows five tranched
+portfolios, one for each weekday.
 
 <div class="research-figure rebalancing-figure">
   <img src="/assets/tranching/tranched_perf_plots.png" alt="Cumulative wealth on a logarithmic scale for five three-tranche portfolios, one for each rebalance weekday" width="1800" height="1200" loading="lazy" decoding="async">
@@ -142,11 +143,11 @@ close: their volatilities span only 6.04% to 6.11%, and their Sharpes 1.78 to
 
 That pattern points to the starting-week offset as the important calendar risk
 in this experiment. The exact weekday still matters a little, but much less
-after the offsets are averaged. This is not a clean variance decomposition: the
-15 full schedules and five tranched portfolios are overlapping, descriptive
-sets, and the implementation also changes signal freshness. I therefore read
-the result as strong evidence about where the visible dispersion sits, not as a
-precise estimate of how much variance each calendar choice causes.
+after the offsets are averaged. The design is descriptive rather than a clean
+variance decomposition: the 15 full schedules and five tranched portfolios are
+overlapping sets, and the implementation also changes signal freshness. The
+result shows where the visible dispersion sits; it cannot assign a precise share
+of variance to each calendar choice.
 
 The plausible mechanism is simple. Each sleeve admits the current signal at a
 different point in the three-week cycle, so one unusually good or bad rebalance
@@ -155,7 +156,7 @@ without raising its expected return. A second explanation is fresher
 predictions: the tranched book updates one-third of its capital every week. The
 saved experiment cannot tell those mechanisms apart.
 
-## What the comparison does not isolate
+## What the comparison identifies—and what remains open
 
 Three tranches solve the part of the problem that looks largest here: they
 average the three starting-week offsets. I would not add weekday sleeves on the
