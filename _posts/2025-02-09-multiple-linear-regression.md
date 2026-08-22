@@ -62,19 +62,52 @@ defensive theme groups two closely related measurements:
   losing days and gives no extra weight to a particularly large loss. A lower
   loss frequency is preferred.
 
-For large capitalization, let $$m_{i,t}$$ be the raw market capitalization of
-stock $$i$$ on date $$t$$, and let $$\mathcal U_t$$ be the eligible cross-section.
-The signed score is the cross-sectional rank
+For stock $$i$$ on date $$t$$, let $$r_{i,t}$$ be its daily total return,
+$$v_{i,t}$$ its daily trading volume, $$h_{i,t}$$ its publication-lagged shares
+short, $$m_{i,t}$$ its raw market capitalization, and $$\mathcal U_t$$ the
+eligible cross-section. The six raw measures are
 
 $$
-s^{\mathrm{cap}}_{i,t}
-=2\frac{\operatorname{rank}_{\mathcal U_t}(m_{i,t})-1}
-{|\mathcal U_t|-1}-1,
+\begin{aligned}
+\sigma^{\mathrm{low}}_{i,t}
+  &= \frac{1}{3}\sum_{k\in\{21,63,126\}}
+     \sqrt{252}\,\operatorname{sd}(r_{i,t-k+1:t}), \\
+\tau_{i,t}
+  &= \operatorname{3rd\ largest}\{r_{i,t-j}:j=0,\ldots,20\}, \\
+\mu_{i,t}
+  &= \frac{1}{4}\sum_{k\in\{63,126,189,252\}}
+     \left(\prod_{j=21}^{k+20}(1+r_{i,t-j})-1\right), \\
+q_{i,t}
+  &= \log\left(\frac{h_{i,t-21}}
+     {\frac{1}{63}\sum_{j=21}^{83}v_{i,t-j}}\right), \\
+c_{i,t}
+  &= m_{i,t}, \\
+\rho_{i,t}
+  &= \frac{1}{756}\sum_{j=0}^{755}\mathbf 1\{r_{i,t-j}<0\}.
+\end{aligned}
 $$
 
-so the largest eligible company receives a score near $$+1$$ and the smallest
-receives a score near $$-1$$. The model uses this rank alongside the other
-ranked signals; it is not a time-series transformation.
+Here $$\sigma^{\mathrm{low}}$$ is average annualized volatility, $$\tau$$ is
+the third-largest daily return over 21 sessions, $$\mu$$ is average momentum
+over four horizons after skipping the most recent 21 sessions, $$q$$ is the
+publication-lagged short-interest-to-volume ratio, $$c$$ is raw market
+capitalization, and $$\rho$$ is the fraction of negative-return days. The
+preferred directions are low $$\sigma^{\mathrm{low}}$$, low $$\tau$$, high
+$$\mu$$, low $$q$$, high $$c$$, and low $$\rho$$.
+
+Each raw measure is converted into a signed cross-sectional rank. For a measure
+whose preferred direction is high, the score is
+
+$$
+s_{i,t}(x)
+=2\frac{\operatorname{rank}_{\mathcal U_t}(x_{i,t})-1}
+{|\mathcal U_t|-1}-1;
+$$
+
+for a measure whose preferred direction is low, I use $$-s_{i,t}(x)$$. Thus
+the largest eligible company receives a capitalization score near $$+1$$ and
+the smallest receives a score near $$-1$$. The model uses these ranks rather
+than the raw units.
 
 Each raw component is ranked across current Russell 1000 members on the same
 date, mapped to a score from −1 to +1, and signed so that a higher value is more
