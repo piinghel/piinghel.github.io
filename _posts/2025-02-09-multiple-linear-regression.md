@@ -603,12 +603,6 @@ is a prediction diagnostic, not a return series or a significance statistic.
 
 <p class="table-caption"><strong>Table 5:</strong> Mean and standard deviation of daily rank IC, with IC IR defined as mean divided by standard deviation, shown separately for development and later periods.</p>
 
-I leave IC IR unannualized. Adjacent observations reuse much of the same
-20-session forward return window, so multiplying this ratio by $\sqrt{252}$
-would suggest an independence that the data do not have. It is a compact measure
-of average rank association relative to its day-to-day variation, not a Sharpe
-ratio, a $t$-statistic, or proof of independent information.
-
 During development, Ridge raises mean IC over OLS by only 0.0008 and also raises
 its standard deviation, leaving IC IR fractionally lower at 0.530 versus 0.534.
 In the later period its mean IC is fractionally lower than OLS and its dispersion
@@ -660,9 +654,7 @@ comparison of how much turnover eats into returns.
 
 <div class="research-figure turnover-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg">
     <img src="/assets/multiple-linear-regression/turnover-and-costs.png" alt="Turnover per rebalance and annual cost drag for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
   </picture>
 </div>
