@@ -109,6 +109,17 @@ the largest eligible company receives a capitalization score near $$+1$$ and
 the smallest receives a score near $$-1$$. The model uses these ranks rather
 than the raw units.
 
+Those six measures define the transparent benchmark, not the full regression
+input. OLS and Ridge receive a broader deck of 144 ranked predictors, including
+multiple horizons of return and trend, total and downside volatility, technical
+price location, market-cap and market-correlation measures, trading activity and
+price-volume interaction, and publication-lagged short positioning. Examples
+include price relative to a moving average, RSI, ATR, upside and downside
+volatility, share turnover, illiquidity, market-cap variability, and
+short-interest-to-volume. The extra horizons and related transformations are
+deliberate: the regression tests whether a learned combination improves on the
+small hand-built benchmark.
+
 Each raw component is ranked across current Russell 1000 members on the same
 date, mapped to a score from −1 to +1, and signed so that a higher value is more
 attractive. For each stock and date, I first average the low-volatility and
