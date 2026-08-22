@@ -214,7 +214,7 @@ I separate performance from the exposures that produce it in the tables below. I
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 1:</strong> Full-sample performance with three-week rebalancing.</p>
+<p class="table-caption"><strong>Table 1:</strong> Full-sample performance with three-week rebalancing.</p>
 
 <table class="research-table comparison-table exposure-table">
   <thead>
@@ -248,7 +248,7 @@ I separate performance from the exposures that produce it in the tables below. I
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 2:</strong> Full-sample exposure and trading diagnostics.</p>
+<p class="table-caption"><strong>Table 2:</strong> Full-sample exposure and trading diagnostics.</p>
 
 With the same stock selection as the reference, the volatility-scaled implementation produces a 7.1% annualized arithmetic return after costs, 9.8% volatility, and a 0.73 Sharpe. Its cost drag is about 0.5 percentage points a year. Total portfolio volatility falls by 23.6 percentage points, from 33.4% to 9.8%, but this experiment cannot separate within-leg inverse-volatility weighting from the simultaneous reduction in gross exposure and changes in net exposure and beta.
 
@@ -267,7 +267,7 @@ Figure 6 shows the practical difference between the implementations. The equal-w
 
 There are limits to what this comparison establishes. Equal weighting is a subjective and deliberately simple reference. Volatility scaling changes gross exposure, net exposure, beta, and turnover at the same time, so the test does not attribute the result to a single channel. A stronger comparison would also match gross exposure, beta, or realized risk. The signal windows, 60-day sizing window, 20% reference volatility, 4% cap, three-week rebalance interval, and leg ceiling were held fixed rather than stress-tested.
 
-The 5 bp cost assumption covers stock trading only; borrow fees, financing, and market impact are excluded. Beta is observed rather than constrained in both portfolios. These choices make the experiment transparent, but they also define how narrowly its result should be read.
+The 5 bp cost assumption is a rough approximation for stock trading. Borrow fees, financing, market impact, and taxes are excluded. Beta is observed rather than constrained in both portfolios. These choices make the experiment transparent, but they also define how narrowly its result should be read.
 
 Missing prices are carried forward, and a security that leaves the covered data closes at its last observed value rather than receiving an explicit delisting return. No adverse stale-price or delisting sensitivity is included. Persisting trailing coverage and rerunning the test with a conservative delisting convention is therefore an important data-quality check.
 

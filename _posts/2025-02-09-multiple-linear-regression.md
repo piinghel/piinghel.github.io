@@ -555,7 +555,7 @@ is a prediction diagnostic, not a return series or a significance statistic.
     <tr>
       <th>Period and ranking</th>
       <th>Mean daily IC</th>
-      <th>IC standard deviation</th>
+      <th>IC SD</th>
       <th>IC IR</th>
     </tr>
   </thead>

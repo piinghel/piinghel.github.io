@@ -290,7 +290,7 @@ def plot_performance(
         figsize=size,
         facecolor=WHITE,
         sharex=True,
-        gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.08},
+        gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.04},
     )
     for axis in (wealth_ax, drawdown_ax):
         style_axis(axis)
@@ -313,6 +313,17 @@ def plot_performance(
             drawdowns[model].values,
             color=MODEL_COLOR[model],
             linewidth=width - 0.2,
+            zorder=2,
+        )
+        drawdown_ax.fill_between(
+            drawdowns[model].dates,
+            drawdowns[model].values,
+            0,
+            color=MODEL_COLOR[model],
+            alpha=0.035,
+            linewidth=0,
+            rasterized=True,
+            zorder=1,
         )
         offset = {"fixed_factor_benchmark": -10, "ols_c0": 0, "selected_c0p01": 10}[
             model

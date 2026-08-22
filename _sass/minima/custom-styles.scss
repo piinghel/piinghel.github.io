@@ -287,12 +287,12 @@ article.post table + p,
 .post-content .figure-caption,
 article .figure-caption,
 article.post .figure-caption {
-  font-size: 0.84rem !important;
+  font-size: 0.88rem !important;
   font-weight: 400 !important;
   color: #7a8790 !important;
-  line-height: 1.5 !important;
+  line-height: 1.58 !important;
   margin-top: 0.5rem !important;
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 2rem !important;
   
   // Make "Figure X:" and "Table X:" darker and bold (they're in strong tags)
   strong {
@@ -795,7 +795,8 @@ table {
 @media (max-width: 767px) {
   .post-content table.research-table.component-performance-table,
   .post-content table.research-table.alpha-selection-table,
-  .post-content table.research-table.period-metrics-table {
+  .post-content table.research-table.period-metrics-table,
+  .post-content table.research-table.ic-summary-table {
     display: table;
     width: 100%;
     border-top: 1px solid #b7c0c7;
@@ -1299,9 +1300,10 @@ article.post .post-header {
 .post-content img + p,
 .post-content table + p {
   color: #7a8790 !important;
-  font-size: 0.84rem !important;
+  font-size: 0.88rem !important;
   font-weight: 400 !important;
-  line-height: 1.5 !important;
+  line-height: 1.58 !important;
+  margin-bottom: 2rem !important;
 }
 
 .post-content table + p.table-followup {

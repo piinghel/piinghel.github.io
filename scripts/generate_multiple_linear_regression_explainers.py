@@ -22,7 +22,14 @@ KEYS = (
     "large_cap",
     "loss_frequency_756",
 )
-LABELS = ("Low vol", "Tail avoidance", "Momentum", "Short interest", "Large cap", "Fewer loss days")
+LABELS = (
+    "Low vol",
+    "Tail avoidance",
+    "Momentum",
+    "Short interest",
+    "Large cap",
+    "Return consistency",
+)
 INK = "#33404b"
 MUTED = "#66737e"
 PANEL = "#f6f8f8"

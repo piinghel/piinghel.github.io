@@ -69,7 +69,7 @@ that any schedule has a persistent informational advantage.
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 1:</strong> Dispersion across the 15 full-rebalance schedules.</p>
+<p class="table-caption"><strong>Table 1:</strong> Dispersion across the 15 full-rebalance schedules.</p>
 
 Annualized geometric return differs by 2.43 percentage points between the best and worst
 schedules, while the Sharpe ratio ranges from 1.50 to 1.75. The widest gap is in
@@ -120,7 +120,7 @@ tranched portfolios, one for each weekday.
   </tbody>
 </table>
 
-<p class="figure-caption"><strong>Table 2:</strong> Performance of the three-tranche portfolios by weekday.</p>
+<p class="table-caption"><strong>Table 2:</strong> Performance of the three-tranche portfolios by weekday.</p>
 
 Across the saved summaries, the five tranched portfolios have a mean annualized
 geometric return of 11.37%, versus 11.32% across the 15 full-rebalance
@@ -198,6 +198,7 @@ underwater days. The trade-off is a more frequent and operationally involved
 implementation. Fresher predictions and undocumented costs prevent attributing
 those differences to timing diversification alone, while the missing daily
 archive prevents a realistic cost replay.
+
 I would use three sleeves as the working hypothesis, not a universal optimum.
 The most useful next test is a matched signal-vintage experiment across several
 sleeve counts, evaluated net of turnover, spreads, market impact, borrow, and
