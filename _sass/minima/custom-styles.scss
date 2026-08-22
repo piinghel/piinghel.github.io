@@ -504,6 +504,56 @@ table {
   }
 }
 
+.post-content table.benchmark-component-table {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border: 0;
+  border-top: 1px solid #b7c0c7;
+  border-bottom: 1px solid #b7c0c7;
+  border-radius: 0;
+  box-shadow: none;
+
+  th,
+  td {
+    padding: 0.62rem 0.65rem;
+    white-space: normal;
+    vertical-align: top;
+  }
+
+  th:first-child,
+  td:first-child {
+    width: 20%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 50%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 17%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 13%;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 0.76rem;
+
+    th,
+    td {
+      padding: 0.45rem 0.4rem;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
 .post-content table.research-table {
   display: table;
   width: 100%;
@@ -551,39 +601,6 @@ table {
     width: 42%;
   }
 
-  &.performance-period-table {
-    @media (min-width: 768px) {
-      width: min(880px, calc(100vw - 3rem));
-      max-width: none;
-      margin-left: 50%;
-      transform: translateX(-50%);
-
-      th:first-child {
-        width: 17%;
-      }
-
-      th:nth-child(2) {
-        width: 15%;
-      }
-
-      th:nth-child(n + 3),
-      td:nth-child(n + 3) {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-      }
-
-      tbody:not(:last-of-type) tr:last-child th,
-      tbody:not(:last-of-type) tr:last-child td {
-        border-bottom: 1px solid #b7c0c7;
-      }
-    }
-
-    .model-ridge {
-      color: var(--accent);
-      font-weight: 600;
-    }
-  }
-
   &.comparison-table th:not(:first-child),
   &.comparison-table td {
     text-align: right;
@@ -597,11 +614,40 @@ table {
 
   &.comparison-table thead th:nth-child(3),
   &.comparison-table tbody td:nth-child(3) {
+    color: #526777;
+  }
+
+  &.comparison-table thead th:nth-child(4),
+  &.comparison-table tbody td:nth-child(4) {
     color: var(--accent);
   }
 
-  &.comparison-table tbody td:nth-child(3) {
+  &.comparison-table tbody td:nth-child(4) {
     font-weight: 600;
+  }
+
+  &.comparison-table.alpha-grid-table thead th:nth-child(4),
+  &.comparison-table.alpha-grid-table tbody td:nth-child(4) {
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  &.comparison-table.alpha-grid-table thead th:nth-child(6),
+  &.comparison-table.alpha-grid-table tbody td:nth-child(6) {
+    color: var(--accent);
+  }
+
+  &.comparison-table.alpha-grid-table tbody td:nth-child(6) {
+    font-weight: 600;
+  }
+
+  &.comparison-table.alpha-grid-table {
+    @media (min-width: 768px) {
+      width: min(980px, calc(100vw - 3rem));
+      max-width: none;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
   }
 
   tbody {
@@ -676,71 +722,6 @@ table {
     tbody td::before {
       content: attr(data-label);
       color: #555555;
-      font-weight: 500;
-      text-align: left;
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  .post-content table.research-table.performance-period-table {
-    tbody {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      width: 100%;
-      margin: 0 0 1.1rem;
-      overflow: hidden;
-      border-top: 1px solid #b7c0c7;
-      border-bottom: 1px solid #b7c0c7;
-    }
-
-    tbody::before {
-      content: attr(data-period);
-      grid-column: 1 / -1;
-      padding: 0.65rem 0.7rem;
-      border-bottom: 1px solid var(--rule);
-      background: #f6f8f8;
-      color: var(--ink);
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    tbody tr,
-    tbody tr:last-child {
-      display: block;
-      margin: 0;
-      border: 0;
-    }
-
-    tbody tr + tr {
-      border-left: 1px solid var(--rule);
-    }
-
-    tbody th[scope="row"] {
-      display: none;
-    }
-
-    tbody td {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.35rem;
-      width: auto;
-      padding: 0.45rem 0.55rem;
-      border-top: 1px solid #eeeeee;
-      font-size: 0.76rem;
-      line-height: 1.25;
-      text-align: right;
-    }
-
-    tbody td:first-of-type {
-      border-top: 0;
-      background: #fafbfb;
-      font-weight: 600;
-    }
-
-    tbody td::before {
-      color: #66737e;
-      font-size: 0.74rem;
       font-weight: 500;
       text-align: left;
     }
