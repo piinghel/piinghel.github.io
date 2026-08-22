@@ -71,15 +71,19 @@
   width: min(930px, calc(100vw - 2rem));
 }
 
-.post-content .research-figure.alpha-sensitivity-figure {
-  width: min(940px, calc(100vw - 2rem));
+.post-content .research-figure.coefficient-figure {
+  width: min(1080px, calc(100vw - 2rem));
 }
 
-.post-content .research-figure.component-evidence-figure {
-  width: min(900px, calc(100vw - 2rem));
+.post-content .research-figure.exposure-figure {
+  width: min(1050px, calc(100vw - 2rem));
 }
 
-.post-content .research-figure.normalization-figure {
+.post-content .research-figure.turnover-figure {
+  width: min(790px, calc(100vw - 2rem));
+}
+
+.post-content .research-figure.sensitivity-figure {
   width: min(860px, calc(100vw - 2rem));
 }
 

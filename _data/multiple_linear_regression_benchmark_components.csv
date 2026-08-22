@@ -1,7 +1,0 @@
-key,label,short_label,net_return_pct,net_sharpe
-low_vol,Low volatility,Low vol,6.3767,0.6133
-upper_tail_avoidance,Upper-tail avoidance,Tail avoidance,5.0333,0.5733
-momentum_3_6_9_12,Momentum,Momentum,4.2667,0.4100
-short_interest,Low short interest,Short interest,1.8533,0.3733
-large_cap,Large capitalization,Large cap,1.6567,0.2300
-loss_frequency_756,Fewer loss days,Fewer loss days,5.4833,0.6167
