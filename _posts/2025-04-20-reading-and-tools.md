@@ -12,6 +12,8 @@ permalink: /quants/2025/04/20/reading-and-tools.html
 
 - [Chip Huyen](https://huyenchip.com/blog/)
 - [Max Halford](https://maxhalford.github.io/)
+- [Bryan Kelly](https://www.bryankellyacademic.org/)
+- [Gappy](https://linktr.ee/paleologo)
 - [Gauthier Marti](https://gmarti.gitlab.io/)
 - [Rob Carver · This Blog is Systematic](https://qoppac.blogspot.com/)
 - [Open Source Quant](https://osquant.com/)
