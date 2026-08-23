@@ -333,11 +333,11 @@ def plot_portfolio_exposures(
     )
     ax.text(
         spec.split_date + timedelta(days=120),
-        1.02,
+        1.14,
         "2022 boundary",
         transform=ax.get_xaxis_transform(),
         ha="left",
-        va="bottom",
+        va="center",
         color=style.ink,
         fontsize=style.annotation_size,
         fontweight=600,
