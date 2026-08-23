@@ -38,8 +38,8 @@ median of 973.
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/eligible_universe.png" alt="Number of eligible Russell 1000 stocks at each rebalance date" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.png?v=2">
+    <img src="/assets/2024-12-15-low-volatility-factor/eligible_universe.png?v=2" alt="Number of eligible Russell 1000 stocks at each rebalance date" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -72,8 +72,8 @@ change across the ranking.
 
 <div class="low-vol-figure decile-profile-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=2">
-    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=2" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=3">
+    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=3" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -95,8 +95,8 @@ and a beta of 1.63; the long leg has about 12% volatility and a beta of 0.55.
 
 <div class="low-vol-figure naive-leg-risk-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png?v=2">
+    <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png?v=2" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -160,8 +160,8 @@ Inverse-volatility sizing shifts capital towards the low-volatility long book an
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png?v=2">
+    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png?v=2" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -337,24 +337,20 @@ stock exposure was +68.6%, yet ex-ante beta was −0.12. The smaller short book
 held stocks with much higher betas. Those stocks led the rally and drove the
 loss.
 
-The larger historical example is the dot-com boom. From 8 October 1998 to 9 March 2000, the scaled portfolio lost 38.0% after costs as the Russell 1000 gained 52.2%. Average net exposure was +72.0%, while ex-ante beta was −0.07 and realised beta −0.06. Before costs, the long book contributed −10.4 percentage points and the short book −27.1. Trading costs added 0.4 points. The portfolio recovered its earlier high on 3 April 2001.
-
-Each path starts at the first close shown. The left column compares gross
-portfolio and market wealth. The right column shows long- and short-book
-contributions.
+The larger historical example is the dot-com boom. From 8 October 1998 to 9 March 2000, the scaled portfolio lost 38.0% after costs as the Russell 1000 gained 52.2%. Average net exposure was +72.0%, while ex-ante beta was −0.07 and realised beta −0.06. Before costs, the long book contributed −10.4 percentage points and the short book −27.1. Trading costs added 0.4 points.
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=2">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=2" alt="Portfolio and market wealth beside additive long and short contributions in the 1998 to 2001 and 2025 to 2026 rallies" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=3">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=3" alt="Grouped bars compare long- and short-book contributions during the dot-com and recent high-volatility rallies" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Gross performance when high-volatility stocks led. Combined wealth starts at 1×; additive long and short contributions start at 0× and sum to the strategy's gross wealth change.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Gross long- and short-book contributions during two high-volatility rallies. Values are percentage points on the strategy capital base.</p>
 
-High-volatility stocks led in both periods while the portfolio carried negative
-beta. The dot-com window includes a completed boom and bust and the larger loss;
-the recent window ends during the rally in May 2026.
+Both episodes show the same mechanism: the short book accounts for most of the
+loss. The dot-com episode is larger; the recent episode ends with the sample in
+May 2026.
 
 ## Conclusion
 
