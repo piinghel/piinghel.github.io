@@ -302,7 +302,7 @@ To judge Ridge, I separate the model from the trading layer. Rank information
 coefficient (IC), prediction changes, and coefficient behavior ask what
 shrinkage changes before costs. The portfolio table reports both gross and net
 return because the final choice still has to work as an implementation. Annual
-annual trading cost ranges only from 1.43 to 1.46 percentage points across the grid.
+trading cost ranges only from 1.43 to 1.46 percentage points across the grid.
 Similar deductions keep cost differences from driving the penalty choice: gross
 return isolates the portfolio result before the stated trading cost, while net
 return shows what remains after it.
@@ -332,12 +332,7 @@ Coefficient shrinkage reports the reduction in the coefficients' Euclidean size
 accuracy is evaluated separately with rank IC and portfolio results.
 
 <div class="research-figure alpha-sensitivity-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.svg?v=2">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.png?v=2">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity.svg?v=2">
-    <img src="/assets/multiple-linear-regression/alpha-sensitivity.png?v=2" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/alpha-sensitivity" mobile_suffix="-mobile" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
@@ -379,12 +374,7 @@ tests. The 2022 and 2024 columns are later-period diagnostics, while the
 selection statistics use development data only.
 
 <div class="research-figure coefficient-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/top-coefficients-mobile.svg?v=2">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/top-coefficients-mobile.png?v=2">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/top-coefficients.svg?v=2">
-    <img src="/assets/multiple-linear-regression/top-coefficients.png?v=2" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification over time; desktop shows twelve refits and mobile shows six labelled refits including 2022 and 2024" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" mobile_suffix="-mobile" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification over time; desktop shows twelve refits and mobile shows six labelled refits including 2022 and 2024" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the phone layout samples six labelled dates, and both layouts retain the 2022 and 2024 later-period diagnostics.</p>
@@ -481,12 +471,7 @@ is a prediction diagnostic, distinct from a return series and a significance
 statistic.
 
 <div class="research-figure ic-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.svg?v=5">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.png?v=5">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic.svg?v=5">
-    <img src="/assets/multiple-linear-regression/cumulative-ic.png?v=5" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" mobile_suffix="-mobile" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 boundary.</p>
@@ -564,12 +549,7 @@ to the prediction evidence. The complete net path shows the drawdowns behind the
 period summaries.
 
 <div class="research-figure performance-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.svg?v=6">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png?v=6">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns.svg?v=6">
-    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png?v=6" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile_suffix="-mobile" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
@@ -591,12 +571,7 @@ implementation estimate would add borrow, financing, market impact, and taxes. A
 every portfolio shows how much turnover reduces returns.
 
 <div class="research-figure turnover-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg?v=3">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png?v=3">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg?v=3">
-    <img src="/assets/multiple-linear-regression/turnover-and-costs.png?v=3" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/turnover-and-costs" mobile_suffix="-mobile" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual trading cost under the 5 bp assumption, shown separately for development and the later period.</p>
@@ -616,12 +591,7 @@ the three execution sleeves. A net exposure of zero is dollar neutral, while a
 positive value means the portfolio has more dollars long than short.
 
 <div class="research-figure portfolio-exposure-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-exposures-mobile.svg?v=2">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-exposures-mobile.png?v=2">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-exposures.svg?v=2">
-    <img src="/assets/multiple-linear-regression/portfolio-exposures.png?v=2" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" mobile_suffix="-mobile" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio; the rule marks the 2022 boundary.</p>
@@ -667,12 +637,7 @@ over the past year. As with the other inputs, the model sees cross-sectional
 ranks of these quantities.
 
 <div class="research-figure exposure-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.svg?v=2">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.png?v=2">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts.svg?v=2">
-    <img src="/assets/multiple-linear-regression/portfolio-feature-tilts.png?v=2" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-feature-tilts" mobile_suffix="-mobile" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realized predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>

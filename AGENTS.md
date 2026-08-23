@@ -20,11 +20,12 @@ This is a Jekyll site for concise, technically serious research notes. Keep pros
 - Use captions for interpretation; do not embed figure titles in images.
 - Figure 4 may retain the three panel labels `Long gross`, `Short gross`, and `Net exposure`.
 - Figure 6 is one image with cumulative wealth above shaded drawdowns, a shared x-axis, and one legend.
-- Figure 7 is one 2-by-2 image: dot-com on the top row, the 2025–2026 period
-  on the bottom row, combined wealth on the left, and additive leg contributions
-  on the right. It has one caption and no separate Figure 8.
+- Figure 7 is one 2-by-2 desktop image: dot-com on the left, the 2025–2026 AI
+  rally on the right, wealth above additive leg contributions. The phone layout
+  stacks the four panels. It has one caption and no separate Figure 8.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
-- Provide desktop and mobile variants from the same data and verify both visually.
+- Publish reproducible figures as light/dark SVGs only. Provide desktop and
+  mobile variants from the same data and verify both visually.
 
 ## Verification and delivery
 

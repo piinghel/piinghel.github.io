@@ -1,0 +1,9 @@
+{%- assign mobile_suffix = include.mobile_suffix | default: "_mobile" -%}
+<picture class="theme-svg-figure theme-svg-figure--light">
+  <source media="(max-width: 768px)" srcset="{{ include.base }}{{ mobile_suffix }}.svg?v={{ include.version }}" type="image/svg+xml">
+  <img src="{{ include.base }}.svg?v={{ include.version }}" alt="{{ include.alt | escape }}" loading="lazy" decoding="async">
+</picture>
+<picture class="theme-svg-figure theme-svg-figure--dark" aria-hidden="true">
+  <source media="(max-width: 768px)" srcset="{{ include.base }}{{ mobile_suffix }}_dark.svg?v={{ include.version }}" type="image/svg+xml">
+  <img src="{{ include.base }}_dark.svg?v={{ include.version }}" alt="" loading="lazy" decoding="async">
+</picture>

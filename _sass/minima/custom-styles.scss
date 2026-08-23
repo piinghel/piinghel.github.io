@@ -579,7 +579,7 @@ table {
     }
 
     .model-ridge {
-      color: var(--accent);
+      color: var(--ink);
       font-weight: 600;
     }
   }
@@ -601,7 +601,7 @@ table {
 
   &.comparison-table thead th:nth-child(3),
   &.comparison-table tbody td:nth-child(3) {
-    color: var(--accent);
+    color: var(--ink);
   }
 
   &.comparison-table tbody td:nth-child(3) {
@@ -616,7 +616,7 @@ table {
 
   &.comparison-table.period-metrics-table thead th:nth-child(4),
   &.comparison-table.period-metrics-table tbody td:nth-child(4) {
-    color: var(--accent);
+    color: var(--ink);
   }
 
   &.comparison-table.period-metrics-table tbody td:nth-child(4) {
@@ -645,8 +645,9 @@ table {
 
   &.comparison-table.alpha-selection-table tbody tr:nth-child(3) th,
   &.comparison-table.alpha-selection-table tbody tr:nth-child(3) td {
-    color: var(--accent);
+    color: var(--ink);
     font-weight: 600;
+    background: #f1f3f4;
   }
 
   tbody {
@@ -724,6 +725,48 @@ table {
       font-weight: 500;
       text-align: left;
     }
+  }
+}
+
+.theme-svg-figure {
+  display: block;
+}
+
+.theme-svg-figure--dark {
+  display: none;
+}
+
+html[data-theme="dark"] {
+  .theme-svg-figure--light {
+    display: none;
+  }
+
+  .theme-svg-figure--dark {
+    display: block;
+  }
+}
+
+// Keep the themed SVG switch stronger than legacy article picture rules.
+.theme-svg-figure--dark {
+  display: none !important;
+}
+
+html[data-theme="dark"] {
+  .theme-svg-figure--light {
+    display: none !important;
+  }
+
+  .theme-svg-figure--dark {
+    display: block !important;
+  }
+}
+
+@media (min-width: 1160px) {
+  .post-content .regime-comparison-figure {
+    width: min(900px, calc(100vw - 3rem)) !important;
+    max-width: none;
+    margin-left: 50%;
+    transform: translateX(-50%);
   }
 }
 

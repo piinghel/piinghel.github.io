@@ -1654,7 +1654,7 @@ z
     </g>
     <g id="text_35">
      <!-- Coefficient norm -->
-     <g transform="translate(373.557 32.626875) scale(0.095 -0.095)">
+     <g style="fill: #33404b" transform="translate(373.557 32.626875) scale(0.095 -0.095)">
       <defs>
        <path id="DejaVuSans-43" d="M 4122 4306
 L 4122 3641
@@ -1873,7 +1873,7 @@ z
     </g>
     <g id="text_36">
      <!-- Change between refits -->
-     <g transform="translate(373.557 46.571094) scale(0.095 -0.095)">
+     <g style="fill: #33404b" transform="translate(373.557 46.571094) scale(0.095 -0.095)">
       <defs>
        <path id="DejaVuSans-68" d="M 3513 2113
 L 3513 0

@@ -37,10 +37,7 @@ volatility alone. This leaves 857–1,015 eligible stocks at each rebalance, wit
 median of 973.
 
 <div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/eligible_universe_mobile.png?v=2">
-    <img src="/assets/2024-12-15-low-volatility-factor/eligible_universe.png?v=2" alt="Number of eligible Russell 1000 stocks at each rebalance date" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/eligible_universe" alt="Number of eligible Russell 1000 stocks at each rebalance date" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Eligible stocks after the price and data-availability filters.</p>
@@ -71,10 +68,7 @@ long leg and decile 10 is the short leg; the middle deciles show how the results
 change across the ranking.
 
 <div class="low-vol-figure decile-profile-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=5">
-    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=5" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Sharpe ratio, geometric return, and volatility by volatility decile before costs. Decile 1 is the low-volatility group; decile 10 is the high-volatility group.</p>
@@ -94,10 +88,7 @@ leg and decile 10 the short leg. The short leg has about 38% realised volatility
 and a beta of 1.63; the long leg has about 12% volatility and a beta of 0.55.
 
 <div class="low-vol-figure naive-leg-risk-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png?v=3">
-    <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png?v=3" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" alt="Realized volatility and average beta of the low- and high-volatility deciles" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Risk of the two equal-weight legs before costs.</p>
@@ -159,10 +150,7 @@ correlations and size the positions jointly.
 Inverse-volatility sizing shifts capital towards the low-volatility long book and leaves a smaller high-volatility short book.
 
 <div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png?v=3">
-    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png?v=3" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/target_exposures" alt="Realized long gross, short gross, and net stock exposure through time" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Realized long gross, short gross, and net stock exposure between rebalances.</p>
@@ -198,10 +186,7 @@ overlay could target beta while leaving the stock ranking intact; that would be 
 separate allocation decision.
 
 <div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/beta_diagnostic_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/beta_diagnostic.png" alt="Estimated and rolling realized beta of the volatility-scaled portfolio" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realized beta of the volatility-scaled portfolio" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5:</strong> Ex-ante and rolling realized beta of the scaled portfolio.</p>
@@ -300,10 +285,7 @@ points, from 33.4% to 9.8%. The comparison includes the lower gross exposure,
 positive net exposure, and different beta produced by inverse-volatility sizing.
 
 <div class="low-vol-figure performance-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile.png?v=5">
-    <img src="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns.png?v=5" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" loading="lazy" decoding="async">
-  </picture>
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> After-cost growth of $1 on a log scale, with drawdowns below.</p>
@@ -339,11 +321,8 @@ loss.
 
 The larger historical example is the dot-com boom. From 8 October 1998 to 9 March 2000, the scaled portfolio lost 38.0% after costs as the Russell 1000 gained 52.2%. Average net exposure was +72.0%, while ex-ante beta was −0.07 and realised beta −0.06. Before costs, the long book contributed −10.4 percentage points and the short book −27.1. Trading costs added 0.4 points.
 
-<div class="low-vol-figure">
-  <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=8">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=8" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" loading="lazy" decoding="async">
-  </picture>
+<div class="low-vol-figure regime-comparison-figure">
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 7:</strong> The dot-com and AI rallies. The dot-com panel runs from 8 October 1998 through 3 April 2001; its dotted vertical line marks the portfolio trough on 9 March 2000 and the recovery that followed. The AI-rally panel runs from 3 April 2025 through 27 May 2026. Upper panels compare gross portfolio and market wealth; lower panels show additive long- and short-book contributions. Each episode uses its own y-range, and every contribution panel includes zero.</p>
