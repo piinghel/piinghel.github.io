@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Reading and Tools"
+title: "Library"
 date: 2025-04-20
 last_modified_at: 2026-08-23
 categories: [Quants]
-article_label: Reading list · Research and software
+article_label: Library · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
 ---
 

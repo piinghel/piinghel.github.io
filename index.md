@@ -1,8 +1,10 @@
 ---
 layout: home
-title: Quantitative trading and data science
+title: Research notes on markets and models
 ---
 
-Notes on systematic strategies, machine learning, and portfolio construction.
+I use this site to work through systematic strategies, machine learning, and
+portfolio construction—especially the details that change a backtest once it
+meets a real portfolio.
 
-[Reading and tools →](/quants/2025/04/20/reading-and-tools.html)
+[Library →](/quants/2025/04/20/reading-and-tools.html)

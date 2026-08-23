@@ -1,10 +1,6 @@
-title: Blog
-author:
-  name: anon
-
-
+title: Quant Notes
 description: >
-  Systematic trading and data science things.
+  Research notes on systematic strategies, machine learning, and portfolio construction.
 
 theme: minima
 
@@ -22,6 +18,10 @@ plugins:
 
 header_pages:
   - about.md
+
+header_links:
+  - label: Library
+    url: /quants/2025/04/20/reading-and-tools.html
 
 minima:
   skin: classic

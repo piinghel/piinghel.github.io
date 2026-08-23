@@ -1226,6 +1226,424 @@ html[data-theme="dark"] {
   }
 }
 
+// Editorial typography and home-page rhythm. The structure stays minimal;
+// personality comes from the research-note voice, monogram, and teal details.
+:root {
+  --font-sans: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: "Source Code Pro", "SFMono-Regular", Consolas, monospace;
+  --page-surface: #ffffff;
+  --table-surface: #ffffff;
+  --table-header-surface: #f5f8f8;
+  --table-rule: #dce4e6;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  text-rendering: optimizeLegibility;
+}
+
+.site-header .wrapper {
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+  max-width: 900px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.site-header .site-title {
+  gap: 0.65rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.site-monogram {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  color: var(--accent);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.site-title:hover .site-monogram,
+.site-title:focus-visible .site-monogram {
+  border-color: var(--accent);
+  transform: rotate(-5deg);
+}
+
+.site-nav {
+  margin-left: auto;
+}
+
+.site-header .page-link,
+.theme-toggle {
+  font-family: var(--font-sans);
+  font-weight: 550;
+}
+
+.theme-toggle {
+  float: none;
+  flex: 0 0 auto;
+  margin: 0 0 0 1rem;
+  padding: 0.42rem 0.65rem;
+}
+
+.wrapper {
+  max-width: 900px;
+}
+
+.home {
+  max-width: 720px;
+  margin: 3.15rem auto 3.5rem;
+}
+
+.home-kicker,
+.article-kicker {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.home .page-heading {
+  max-width: 650px;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(2.15rem, 5vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+.home .home-intro {
+  max-width: 650px;
+  margin: 1.15rem 0 2.4rem;
+  padding: 0 0 2.15rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.home .home-intro p {
+  max-width: 620px;
+  margin-bottom: 1rem;
+  color: var(--muted-ink);
+  font-family: var(--font-serif);
+  font-size: 1.16rem;
+  line-height: 1.6;
+}
+
+.home .home-intro a {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  color: var(--accent);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.home .home-intro a:hover,
+.home .home-intro a:focus-visible {
+  border: 0;
+  color: var(--accent-dark);
+  background: transparent;
+  transform: none;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.archive-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.archive-heading h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.archive-heading span {
+  color: var(--muted-ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.home .post-list {
+  margin: 0;
+}
+
+.home .post-list li {
+  margin: 0;
+  padding: 0.82rem 0 0.96rem;
+  border-bottom: 0;
+}
+
+.home .post-list li:first-child {
+  border-top: 1px solid var(--rule);
+  padding-top: 1rem;
+}
+
+.home .post-list h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.18rem;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+  line-height: 1.3;
+}
+
+.home .post-list .post-link {
+  color: var(--ink);
+}
+
+.home .post-list .post-link:hover,
+.home .post-list .post-link:focus-visible {
+  color: var(--accent);
+}
+
+.home .post-list .post-link::after {
+  content: none;
+}
+
+.post-list-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.75rem;
+  margin-top: 0.38rem;
+  color: var(--muted-ink);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.post-topic {
+  padding: 0.08rem 0.42rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+}
+
+article.post .post-header,
+.article-body-shell,
+.article-toc,
+.post-navigation {
+  max-width: 720px;
+}
+
+article.post .post-header {
+  margin-top: 4rem;
+}
+
+article.post .post-header .post-title {
+  max-width: 700px;
+  font-family: var(--font-sans);
+  font-size: clamp(2.15rem, 5vw, 2.85rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.07;
+}
+
+.post-meta,
+.reading-time,
+.article-repository-links,
+.article-toc {
+  font-family: var(--font-sans);
+}
+
+.post-content {
+  max-width: 720px;
+  font-family: var(--font-serif);
+  font-size: 1.16rem;
+  line-height: 1.66;
+}
+
+.post-content p,
+.post-content li,
+.post-content table + p.table-followup {
+  line-height: 1.66 !important;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  font-family: var(--font-sans);
+}
+
+.post-content h2 {
+  margin-top: 3rem;
+  font-size: 1.45rem;
+  letter-spacing: -0.018em;
+}
+
+.post-content h3 {
+  margin-top: 2.25rem;
+  font-size: 1.16rem;
+  letter-spacing: -0.01em;
+}
+
+.post-content strong {
+  font-weight: 600;
+}
+
+.post-content em {
+  color: inherit;
+  font-style: italic;
+  font-weight: 400;
+}
+
+code,
+pre,
+.highlight,
+.post-content table,
+.post-content .figure-caption,
+.post-content .table-caption {
+  font-family: var(--font-sans);
+}
+
+code,
+pre,
+.highlight {
+  font-family: var(--font-mono);
+}
+
+.post-content .figure-caption,
+.post-content .table-caption {
+  font-size: 0.82rem !important;
+  line-height: 1.52 !important;
+}
+
+.site-footer .wrapper {
+  max-width: 720px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+}
+
+.site-footer .footer-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.7rem;
+  margin: 0;
+}
+
+.site-footer .footer-home {
+  color: var(--ink);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.site-footer .footer-note span,
+.site-footer .footer-feed {
+  color: var(--muted-ink);
+}
+
+.site-footer .footer-feed {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  text-decoration: none;
+}
+
+.site-footer .footer-home:hover,
+.site-footer .footer-feed:hover {
+  color: var(--accent);
+}
+
+@media (min-width: 1160px) {
+  .article-body-shell {
+    grid-template-columns: minmax(0, 720px) 190px;
+    column-gap: 96px;
+    width: min(1006px, calc(100vw - 3rem));
+  }
+}
+
+@media (max-width: 600px) {
+  .site-header .wrapper {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .site-title > span:last-child {
+    display: none;
+  }
+
+  .site-nav {
+    margin-left: auto;
+  }
+
+  .theme-toggle {
+    margin-left: 0.65rem;
+  }
+
+  .home {
+    margin-top: 2.8rem;
+  }
+
+  .home .page-heading {
+    font-size: 2.2rem;
+    line-height: 1.08;
+  }
+
+  .home .home-intro p,
+  .post-content {
+    font-size: 1.06rem;
+  }
+
+  article.post .post-header {
+    margin-top: 2.8rem;
+  }
+
+  article.post .post-header .post-title {
+    font-size: 2.08rem;
+  }
+}
+
+html[data-theme="dark"] {
+  --ink: #dbe4e7;
+  --muted-ink: #94a5ab;
+  --rule: #2d3b41;
+  --accent: #78c2bd;
+  --accent-dark: #9ad8d3;
+  --soft-accent: #192d31;
+  --code-surface: #151e22;
+  --page-surface: #10171a;
+  --table-surface: #141d21;
+  --table-header-surface: #1a272c;
+  --table-rule: #34434a;
+}
+
 // Research-note theme: quiet surfaces, generous whitespace, and one restrained
 // accent for links and interactive elements.
 :root {
@@ -1713,21 +2131,172 @@ hr {
   }
 }
 
+// Final editorial cascade. These placement and type rules intentionally come
+// last because the legacy Minima layer above contains older overrides.
+body {
+  font-family: var(--font-sans);
+}
+
+.wrapper,
+.site-header .wrapper {
+  max-width: 900px;
+}
+
+.site-header .wrapper {
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.site-header .site-title {
+  gap: 0.65rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.site-nav {
+  margin-left: auto;
+}
+
+.theme-toggle {
+  float: none;
+  flex: 0 0 auto;
+  margin: 0 0 0 1rem;
+}
+
+.home {
+  max-width: 720px;
+  margin: 4.25rem auto 3.5rem;
+}
+
+.home .home-intro {
+  max-width: 650px;
+  margin: 1.3rem 0 3.1rem;
+  padding: 0 0 2.6rem;
+}
+
+.home .post-list {
+  margin: 0;
+}
+
+.home .post-list li {
+  margin: 0;
+  padding: 1.05rem 0 1.15rem;
+}
+
+article.post .post-header,
+.article-body-shell,
+.article-toc,
+.post-navigation {
+  max-width: 720px;
+}
+
+article.post .post-header {
+  margin-top: 4rem;
+}
+
+article.post .post-header .post-title {
+  max-width: 700px;
+  font-family: var(--font-sans);
+  font-size: clamp(2.15rem, 5vw, 2.85rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.07;
+}
+
+.post-content {
+  max-width: 720px;
+  font-family: var(--font-serif);
+  font-size: 1.16rem;
+  line-height: 1.62;
+}
+
+.post-content p,
+.post-content li,
+.post-content table + p.table-followup {
+  line-height: 1.62 !important;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  font-family: var(--font-sans);
+}
+
+.post-content h2 {
+  margin-top: 3rem;
+  font-size: 1.45rem;
+}
+
+.post-content h3 {
+  margin-top: 2.25rem;
+  font-size: 1.16rem;
+}
+
+.post-content em {
+  color: inherit;
+  font-style: italic;
+  font-weight: 400;
+}
+
+@media (min-width: 1160px) {
+  .article-body-shell {
+    grid-template-columns: minmax(0, 720px) 190px;
+    column-gap: 96px;
+    width: min(1006px, calc(100vw - 3rem));
+  }
+}
+
+@media (max-width: 600px) {
+  .site-title > span:last-child {
+    display: none;
+  }
+
+  .theme-toggle {
+    margin-left: auto;
+    margin-right: 3rem;
+  }
+
+  .home {
+    margin-top: 2.8rem;
+  }
+
+  .home .home-intro p,
+  .post-content {
+    font-size: 1.06rem;
+  }
+
+  article.post .post-header {
+    margin-top: 2.8rem;
+  }
+
+  article.post .post-header .post-title {
+    font-size: 2.08rem;
+  }
+}
+
 // Apply the dark palette after the site's light-theme overrides so all
 // existing article components inherit the selected theme.
 html[data-theme="dark"] {
   color-scheme: dark;
-  --ink: #e6edf0;
-  --muted-ink: #a8b7bd;
-  --rule: #34434a;
-  --accent: #82c9c7;
-  --accent-dark: #a3e0dd;
-  --soft-accent: #1c3034;
-  --code-surface: #172126;
-  --page-surface: #11181c;
-  --table-surface: #172126;
-  --table-header-surface: #203037;
-  --table-rule: #3b4b52;
+  --ink: #dbe4e7;
+  --muted-ink: #94a5ab;
+  --rule: #2d3b41;
+  --accent: #78c2bd;
+  --accent-dark: #9ad8d3;
+  --soft-accent: #192d31;
+  --code-surface: #151e22;
+  --page-surface: #10171a;
+  --table-surface: #141d21;
+  --table-header-surface: #1a272c;
+  --table-rule: #34434a;
 
   body,
   .wrapper,
@@ -1825,6 +2394,21 @@ html[data-theme="dark"] {
     border-color: var(--rule);
     background-color: transparent;
     color: var(--muted-ink);
+  }
+
+  .site-nav label[for="nav-trigger"],
+  .site-nav .trigger {
+    border-color: var(--rule);
+    background-color: var(--page-surface);
+  }
+
+  .site-nav {
+    border-color: var(--rule);
+    background-color: var(--page-surface);
+  }
+
+  .site-nav .menu-icon > svg path {
+    fill: var(--muted-ink);
   }
 
   ::selection {

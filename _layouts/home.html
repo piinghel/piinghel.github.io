@@ -3,6 +3,7 @@ layout: base
 ---
 
 <div class="home">
+  <p class="home-kicker">Independent research notebook</p>
   {%- if page.title -%}
     <h1 class="page-heading">{{ page.title }}</h1>
   {%- endif -%}
@@ -19,15 +20,24 @@ layout: base
 
   {%- if posts.size > 0 -%}
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+    <div class="archive-heading">
+      <h2>Research notes</h2>
+      <span>{{ posts.size }} essays</span>
+    </div>
     <ul class="post-list">
       {%- for post in posts -%}
       <li>
-        <span class="post-meta">{{ post.date | date: date_format }}</span>
         <h3>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}
           </a>
         </h3>
+        <div class="post-list-details">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+          {%- for category in post.categories limit: 2 -%}
+            <span class="post-topic">{{ category }}</span>
+          {%- endfor -%}
+        </div>
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}
         {%- endif -%}
