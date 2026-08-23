@@ -3,7 +3,7 @@ layout: post
 title: "The Low-Volatility Factor: From Stock Sorts to Portfolio Risk"
 date: 2024-12-15
 last_modified_at: 2026-08-23
-categories: [Quant]
+categories: ["Low volatility"]
 article_label: Low-volatility · portfolio construction
 permalink: /quant/2024/12/15/low-volatility-factor.html
 github_repositories:

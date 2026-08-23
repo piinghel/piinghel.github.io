@@ -1083,9 +1083,9 @@ html[data-theme="dark"] {
   --ink: #e6edf0;
   --muted-ink: #a8b7bd;
   --rule: #34434a;
-  --accent: #82c9c7;
-  --accent-dark: #a3e0dd;
-  --soft-accent: #1c3034;
+  --accent: #82aef0;
+  --accent-dark: #a7c7f6;
+  --soft-accent: #182433;
   --code-surface: #172126;
   --page-surface: #11181c;
   --table-surface: #172126;
@@ -1156,7 +1156,7 @@ html[data-theme="dark"] {
   }
 
   blockquote {
-    border-left-color: #5f999b;
+    border-left-color: #6f8fb8;
     background: var(--soft-accent);
     color: #c0d0d4;
   }
@@ -1222,7 +1222,7 @@ html[data-theme="dark"] {
 
   ::selection {
     color: var(--page-surface);
-    background: #8fcac8;
+    background: #b8d2f5;
   }
 }
 
@@ -1543,7 +1543,7 @@ pre,
 }
 
 .site-footer .wrapper {
-  max-width: 720px;
+  max-width: 780px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -1634,9 +1634,9 @@ html[data-theme="dark"] {
   --ink: #dbe4e7;
   --muted-ink: #94a5ab;
   --rule: #2d3b41;
-  --accent: #78c2bd;
-  --accent-dark: #9ad8d3;
-  --soft-accent: #192d31;
+  --accent: #82aef0;
+  --accent-dark: #a7c7f6;
+  --soft-accent: #182433;
   --code-surface: #151e22;
   --page-surface: #10171a;
   --table-surface: #141d21;
@@ -1650,9 +1650,9 @@ html[data-theme="dark"] {
   --ink: #2e3a45;
   --muted-ink: #66737e;
   --rule: #e2e7ea;
-  --accent: #2f6f73;
-  --accent-dark: #24585b;
-  --soft-accent: #f3f8f8;
+  --accent: #315f9b;
+  --accent-dark: #234a7c;
+  --soft-accent: #f3f6fa;
   --code-surface: #f5f7f8;
 }
 
@@ -1953,7 +1953,7 @@ article.post .post-header {
 .post-content .article-summary {
   margin: 0 0 2rem;
   padding: 1rem 1.15rem;
-  border-left: 3px solid #8bb5b6;
+  border-left: 3px solid #7896bc;
   background: var(--soft-accent);
   color: #4d5d66;
   line-height: 1.68;
@@ -1982,7 +1982,7 @@ article.post .post-header {
 blockquote {
   margin: 2rem 0;
   padding: 1rem 1.25rem;
-  border-left: 3px solid #8bb5b6;
+  border-left: 3px solid #7896bc;
   border-radius: 0;
   background: var(--soft-accent);
   color: #4d5d66;
@@ -2139,7 +2139,7 @@ body {
 
 .wrapper,
 .site-header .wrapper {
-  max-width: 900px;
+  max-width: 980px;
 }
 
 .site-header .wrapper {
@@ -2169,12 +2169,16 @@ body {
 }
 
 .home {
-  max-width: 720px;
+  max-width: 780px;
   margin: 4.25rem auto 3.5rem;
 }
 
+.home .page-heading {
+  max-width: 720px;
+}
+
 .home .home-intro {
-  max-width: 650px;
+  max-width: 720px;
   margin: 1.3rem 0 3.1rem;
   padding: 0 0 2.6rem;
 }
@@ -2192,7 +2196,7 @@ article.post .post-header,
 .article-body-shell,
 .article-toc,
 .post-navigation {
-  max-width: 720px;
+  max-width: 780px;
 }
 
 article.post .post-header {
@@ -2200,7 +2204,7 @@ article.post .post-header {
 }
 
 article.post .post-header .post-title {
-  max-width: 700px;
+  max-width: 760px;
   font-family: var(--font-sans);
   font-size: clamp(2.15rem, 5vw, 2.85rem);
   font-weight: 700;
@@ -2209,7 +2213,7 @@ article.post .post-header .post-title {
 }
 
 .post-content {
-  max-width: 720px;
+  max-width: 780px;
   font-family: var(--font-serif);
   font-size: 1.16rem;
   line-height: 1.62;
@@ -2248,9 +2252,10 @@ article.post .post-header .post-title {
 
 @media (min-width: 1160px) {
   .article-body-shell {
-    grid-template-columns: minmax(0, 720px) 190px;
-    column-gap: 96px;
-    width: min(1006px, calc(100vw - 3rem));
+    grid-template-columns: minmax(0, 780px) 190px;
+    column-gap: 80px;
+    width: min(1050px, calc(100vw - 3rem));
+    max-width: 1050px;
   }
 }
 
@@ -2289,9 +2294,9 @@ html[data-theme="dark"] {
   --ink: #dbe4e7;
   --muted-ink: #94a5ab;
   --rule: #2d3b41;
-  --accent: #78c2bd;
-  --accent-dark: #9ad8d3;
-  --soft-accent: #192d31;
+  --accent: #82aef0;
+  --accent-dark: #a7c7f6;
+  --soft-accent: #182433;
   --code-surface: #151e22;
   --page-surface: #10171a;
   --table-surface: #141d21;
@@ -2357,8 +2362,17 @@ html[data-theme="dark"] {
     color: var(--accent-dark) !important;
   }
 
+  .home .post-list .post-link {
+    color: var(--ink) !important;
+  }
+
+  .home .post-list .post-link:hover,
+  .home .post-list .post-link:focus-visible {
+    color: var(--accent) !important;
+  }
+
   blockquote {
-    border-left-color: #5f999b !important;
+    border-left-color: #6f8fb8 !important;
     background-color: var(--soft-accent) !important;
     color: #c0d0d4 !important;
   }
@@ -2413,6 +2427,6 @@ html[data-theme="dark"] {
 
   ::selection {
     color: var(--page-surface);
-    background: #8fcac8;
+    background: #b8d2f5;
   }
 }

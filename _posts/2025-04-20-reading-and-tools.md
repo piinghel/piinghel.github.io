@@ -3,7 +3,7 @@ layout: post
 title: "Library"
 date: 2025-04-20
 last_modified_at: 2026-08-23
-categories: [Quants]
+categories: ["Resources"]
 article_label: Library · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
 ---

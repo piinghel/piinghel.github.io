@@ -3,7 +3,7 @@ layout: post
 title: "Combining Stock Signals with Multiple Linear Regression"
 date: 2025-02-09
 last_modified_at: 2026-08-23
-categories: [Quants]
+categories: ["Regression"]
 article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---

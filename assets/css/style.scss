@@ -53,6 +53,15 @@
   width: min(930px, calc(100vw - 2rem));
 }
 
+// Keep article figures inside the reading column when the sticky contents rail
+// is visible. Wider figures otherwise sit underneath the rail.
+@media (min-width: 1160px) {
+  .post-content .low-vol-figure,
+  .post-content .low-vol-figure.performance-figure {
+    width: min(780px, calc(100vw - 2rem));
+  }
+}
+
 /* Wide research diagrams shared by the factor-combination article. */
 .post-content .research-figure {
   display: block;
