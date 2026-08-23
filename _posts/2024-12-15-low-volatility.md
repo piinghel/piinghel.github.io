@@ -13,7 +13,7 @@ github_repositories:
 
 <p class="article-summary"><strong>TL;DR:</strong> A volatility ranking tells me which stocks to select, but not how much to hold. Equal-dollar positions therefore let the riskiest names drive the portfolio: volatility reaches 33.4% and maximum drawdown 87.1%. I keep the same calm and volatile stocks, but scale positions down as volatility rises. After costs, arithmetic return increases from 2.4% to 7.1%, volatility falls to 9.8%, and maximum drawdown falls to 38.0%. This is a comparison of two complete allocation rules, so exposure, beta, and turnover change as well.</p>
 
-Ranking stocks by volatility does not tell me how much capital to give each one. Even within the low- and high-volatility baskets, the stocks have markedly different risk. Equal weighting is a transparent baseline, but it ignores those differences and lets volatile names dominate portfolio risk. The 4% cap limits concentration without changing the simple 1/N benchmark.
+Ranking stocks by volatility gives me the order; the allocation rule decides how much capital each position receives. Even within the low- and high-volatility baskets, the stocks have markedly different risk. Equal weighting assigns identical capital to those different risks, allowing volatile names to dominate portfolio risk. The 4% cap limits concentration while preserving the simple 1/N benchmark.
 
 I therefore test another rule: start from the same 1/N weights and scale each stock by the inverse of its own volatility. Holding stock selection fixed keeps the comparison focused on the sizing rule. The question is how volatility-based sizing changes the resulting portfolio—its return, risk, drawdown, gross and net exposure, beta, and turnover.
 
