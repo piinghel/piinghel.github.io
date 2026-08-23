@@ -228,20 +228,15 @@ I refit the model as the historical sample expands and score only the next
 block—a walk-forward design. The research history begins in January 1995. The
 first 900 dates establish the initial training sample, so mechanical
 out-of-sample predictions begin in September 1998. Each of 12 fits leaves a
-21-session gap around the overlapping 20-session target, then scores the next
+21-day buffer around the overlapping 20-session target, then scores the next
 600-date block. At each refit, I average three models trained on complementary
 every-third-date samples to reduce dependence among adjacent target windows.
 
 <div class="research-figure walk-forward-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg?v=6">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=6">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg?v=6">
-    <img src="/assets/multiple-linear-regression/walk-forward.png?v=6" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
-  </picture>
+  {%- include walk-forward-figure.html -%}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Expanding walk-forward estimation, with each training history separated from its next 600-date prediction block by a 21-session purge.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Expanding walk-forward estimation, with a 21-day buffer before each 600-date prediction block.</p>
 
 Each refit predicts a mechanically out-of-sample block. The wider 1995–2021
 history is still the **research and development period** because I repeatedly
@@ -291,7 +286,7 @@ $n_f$ rows, $\alpha_f=n_fc$. This keeps $c$ comparable as the sample expands.
 The $c=0$ case uses `LinearRegression`.
 
 The rows share market and sector shocks, predictors move slowly, and adjacent
-20-session targets overlap. A 21-session purge keeps a
+20-session targets overlap. A 21-day buffer keeps a
 training target out of the next prediction block, while 600-date walk-forward
 blocks avoid random row-level validation. Some overlap remains. The penalty
 choice is a sensitivity check. The effective sample contains far fewer
@@ -732,7 +727,7 @@ more than the trading signal.
 
 The main limits come from the research design and the allocation. Overlapping
 targets, common shocks within each date, and repeated use of the development
-history reduce the independent information in the sample. The 21-session purge
+history reduce the independent information in the sample. The 21-day buffer
 and date-blocked walk-forward design address leakage across test boundaries;
 equal-date weighting and genuinely non-overlapping training dates remain
 robustness tests. A fuller implementation estimate would add borrow, financing,
