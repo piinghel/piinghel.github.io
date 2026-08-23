@@ -123,7 +123,7 @@ $$
 
 The 100% leg limit is a ceiling. A volatile short basket can therefore shrink to 30% or 40% of portfolio value, preserving the risk adjustment. The final portfolio risk emerges from these stock-level weights and their realized correlations.
 
-## The resulting exposure profile and market beta
+## Resulting exposures
 
 Inverse-volatility sizing is uneven by design. The low-volatility long book receives more capital, while the high-volatility short book naturally becomes smaller.
 
@@ -265,7 +265,7 @@ The 5 bp cost assumption approximates routine stock trading. Borrow fees, financ
 
 Missing prices are carried forward, and a security that leaves the covered data closes at its last observed value. This convention can make losses look too mild when the final stale price precedes an adverse delisting. Persisting trailing coverage and rerunning the test with a conservative delisting return would show how much that data choice matters.
 
-## Comparing two difficult rallies
+## When the short book rallies
 
 The recent part of the sample is less flattering. From the close on 3 April 2025 through 27 May 2026, the volatility-scaled portfolio lost 12.1% before costs and 12.6% after costs on a compounded basis, while the Russell 1000 gained 38.5%. The gross path consists of a +4.2 percentage-point long contribution and a −16.3-point short contribution; stock-trading costs account for roughly another 0.5 points of loss. The evidence shows that the high-volatility side of the universe ran far ahead of the calmer stocks. Explaining that rally by theme—artificial intelligence, speculative growth, or something else—would require holdings and characteristic data beyond this test.
 
