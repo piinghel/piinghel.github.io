@@ -11,9 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "assets" / "multiple-linear-regression"
 MUTED = "#66737e"
 WHITE = "#ffffff"
-TRAINING = "#417795"
-GAP = "#ca7069"
-TEST = "#409b93"
+TRAINING = "#4F7396"
+GAP = "#756A8E"
+TEST = "#7C8995"
 
 
 def draw_walk_forward(*, mobile: bool) -> plt.Figure:

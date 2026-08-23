@@ -9,7 +9,6 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
-
 from mlr_figure_support import (
     FigureSpec,
     FigureStyle,
@@ -156,7 +155,7 @@ def plot_performance(
         )
     wealth_ax.set_yscale("log")
     wealth_ax.set_ylabel(
-        "Growth of $1",
+        "Growth of $1 (log scale)",
         color=style.muted,
         fontsize=style.axis_label_size,
     )

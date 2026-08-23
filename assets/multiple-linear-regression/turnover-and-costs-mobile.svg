@@ -759,7 +759,7 @@ L 234.721272 216.192452
 L 234.721272 54.84744
 L 205.753825 54.84744
 z
-" clip-path="url(#p0bccb7c356)" style="fill: #3f8f88"/>
+" clip-path="url(#p0bccb7c356)" style="fill: #756a8e"/>
    </g>
    <g id="patch_6">
     <path d="M 64.324528 216.192452
@@ -783,7 +783,7 @@ L 263.688718 216.192452
 L 263.688718 70.532673
 L 234.721272 70.532673
 z
-" clip-path="url(#p0bccb7c356)" style="fill: url(#h05e412d772); opacity: 0.48; stroke: #ffffff; stroke-linejoin: miter"/>
+" clip-path="url(#p0bccb7c356)" style="fill: url(#h86f1dc93cd); opacity: 0.48; stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
    <g id="text_13">
     <!-- Turnover per rebalance (%) -->
@@ -1301,7 +1301,7 @@ L 234.721272 469.874
 L 234.721272 308.529054
 L 205.753825 308.529054
 z
-" clip-path="url(#p9d600df420)" style="fill: #3f8f88"/>
+" clip-path="url(#p9d600df420)" style="fill: #756a8e"/>
    </g>
    <g id="patch_13">
     <path d="M 64.324528 469.874
@@ -1325,7 +1325,7 @@ L 263.688718 469.874
 L 263.688718 323.509886
 L 234.721272 323.509886
 z
-" clip-path="url(#p9d600df420)" style="fill: url(#h05e412d772); opacity: 0.48; stroke: #ffffff; stroke-linejoin: miter"/>
+" clip-path="url(#p9d600df420)" style="fill: url(#h86f1dc93cd); opacity: 0.48; stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
    <g id="text_25">
     <!-- Annual cost drag at 5 bp (pp) -->
@@ -1601,8 +1601,8 @@ M 36 108
 L 108 36
 " style="fill: #ffffff; stroke: #ffffff; stroke-width: 1.0; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 0.48"/>
   </pattern>
-  <pattern id="h05e412d772" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
-   <rect x="0" y="0" width="73" height="73" fill="#3f8f88"/>
+  <pattern id="h86f1dc93cd" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
+   <rect x="0" y="0" width="73" height="73" fill="#756a8e"/>
    <path d="M -36 36
 L 36 -36
 M -32 40

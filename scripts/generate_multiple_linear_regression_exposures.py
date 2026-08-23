@@ -20,9 +20,9 @@ INK = "#33404b"
 MUTED = "#66737e"
 GRID = "#dbe1e3"
 WHITE = "#ffffff"
-TEAL = "#477c80"
-CORAL = "#a96760"
-GOLD = "#a78243"
+LONG_COLOR = "#4F7396"
+SHORT_COLOR = "#756A8E"
+NET_COLOR = "#56636D"
 
 
 def prepare_source(raw_output: Path) -> None:
@@ -73,13 +73,18 @@ def prepare_source(raw_output: Path) -> None:
         rows = [row for row in combined if start <= row[0] <= end]
         observed_long = sum(row[1] for row in rows) / len(rows)
         observed_short = sum(row[2] for row in rows) / len(rows)
-        if abs(observed_long - expected_long) > 5e-7 or abs(observed_short - expected_short) > 5e-7:
+        if (
+            abs(observed_long - expected_long) > 5e-7
+            or abs(observed_short - expected_short) > 5e-7
+        ):
             raise ValueError(
                 f"{label} exposure mismatch: "
                 f"long={observed_long:.10f}, short={observed_short:.10f}"
             )
 
-    monthly: dict[tuple[int, int], list[tuple[date, float, float, float]]] = defaultdict(list)
+    monthly: dict[tuple[int, int], list[tuple[date, float, float, float]]] = (
+        defaultdict(list)
+    )
     for row in combined:
         monthly[(row[0].year, row[0].month)].append(row)
 
@@ -116,18 +121,18 @@ def load_source() -> tuple[list[date], list[float], list[float], list[float]]:
 
 def draw(*, mobile: bool) -> None:
     dates, long_gross, short_gross, net = load_source()
-    figsize = (5.2, 4.2) if mobile else (9.0, 4.4)
+    figsize = (4.8, 4.8) if mobile else (9.0, 4.4)
     fig, ax = plt.subplots(figsize=figsize, facecolor=WHITE)
     fig.subplots_adjust(
         left=0.16 if mobile else 0.105,
         right=0.98,
-        top=0.82,
+        top=0.75 if mobile else 0.82,
         bottom=0.18,
     )
 
-    ax.plot(dates, long_gross, color=TEAL, linewidth=1.8, label="Long gross")
-    ax.plot(dates, short_gross, color=CORAL, linewidth=1.8, label="Short gross")
-    ax.plot(dates, net, color=GOLD, linewidth=1.8, label="Net stock exposure")
+    ax.plot(dates, long_gross, color=LONG_COLOR, linewidth=1.8, label="Long gross")
+    ax.plot(dates, short_gross, color=SHORT_COLOR, linewidth=1.8, label="Short gross")
+    ax.plot(dates, net, color=NET_COLOR, linewidth=1.8, label="Net stock exposure")
     boundary = date(2022, 1, 1)
     ax.axvline(boundary, color=MUTED, linewidth=1.0, linestyle=(0, (3, 3)))
     ax.text(
@@ -175,8 +180,7 @@ def draw(*, mobile: bool) -> None:
     fig.savefig(svg_path, format="svg", facecolor=WHITE)
     svg_path.write_text(
         "\n".join(
-            line.rstrip()
-            for line in svg_path.read_text(encoding="utf-8").splitlines()
+            line.rstrip() for line in svg_path.read_text(encoding="utf-8").splitlines()
         )
         + "\n",
         encoding="utf-8",

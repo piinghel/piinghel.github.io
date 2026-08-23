@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from matplotlib.patches import Patch
-
 from mlr_figure_support import (
     FigureSpec,
     FigureStyle,
     save_figure,
     style_axis,
 )
+
 
 def plot_alpha_sensitivity(
     diagnostics: dict[str, dict[str, str]],
@@ -138,7 +138,11 @@ def plot_turnover_costs(
     *,
     mobile: bool,
 ) -> None:
-    model_keys = ("fixed_factor_benchmark", "alpha_0_ols", "alpha_scaled_c0p01_selected")
+    model_keys = (
+        "fixed_factor_benchmark",
+        "alpha_0_ols",
+        "alpha_scaled_c0p01_selected",
+    )
     labels = ("Fixed weights", "OLS", "Ridge c = 0.01")
     colors = (style.benchmark, style.ols, style.ridge)
     periods = ("development_1995_2021", "later_2022_2026")
@@ -161,7 +165,13 @@ def plot_turnover_costs(
         for period_index, period in enumerate(periods):
             offset = (period_index - 0.5) * width
             values = [float(lookup[(model, period)][column]) for model in model_keys]
-            bars = ax.bar(x + offset, values, width, color=colors, alpha=1.0 if period_index == 0 else 0.48)
+            bars = ax.bar(
+                x + offset,
+                values,
+                width,
+                color=colors,
+                alpha=1.0 if period_index == 0 else 0.48,
+            )
             if period_index == 1:
                 for bar in bars:
                     bar.set_hatch("///")
@@ -218,10 +228,9 @@ def plot_selected_coefficients(
     features = list(dict.fromkeys(features))
     folds = sorted({int(row["fold_id"]) for row in rows})
     if mobile:
-        folds = [0, 2, 4, 7, 9, 11]
+        folds = [0, 2, 4, 6, 10, 11]
     lookup = {
-        (row["feature"], int(row["fold_id"])): float(row["coefficient"])
-        for row in rows
+        (row["feature"], int(row["fold_id"])): float(row["coefficient"]) for row in rows
     }
     date_lookup = {
         int(row["fold_id"]): date.fromisoformat(row["test_date"]).year for row in rows
@@ -231,7 +240,7 @@ def plot_selected_coefficients(
     )
     limit = float(np.max(np.abs(values)))
     color_map = LinearSegmentedColormap.from_list(
-        "coefficient", (style.coral, "#f7f7f5", style.blue)
+        "coefficient", (style.negative, "#f7f7f5", style.positive)
     )
     size = (4.5, 6.2) if mobile else (9.6, 4.8)
     fig, ax = plt.subplots(figsize=size, facecolor=style.white)
@@ -254,12 +263,8 @@ def plot_selected_coefficients(
             for feature in features
         ],
     )
-    ax.tick_params(
-        axis="x", which="both", length=0, colors=style.muted, labelsize=8.3
-    )
-    ax.tick_params(
-        axis="y", which="both", length=0, colors=style.ink, labelsize=8.5
-    )
+    ax.tick_params(axis="x", which="both", length=0, colors=style.muted, labelsize=8.3)
+    ax.tick_params(axis="y", which="both", length=0, colors=style.ink, labelsize=8.5)
     for row_index in range(values.shape[0]):
         for column_index in range(values.shape[1]):
             value = values[row_index, column_index]
@@ -281,7 +286,7 @@ def plot_selected_coefficients(
         left=0.43 if mobile else 0.29,
         right=0.99,
         top=0.98,
-        bottom=0.10 if mobile else 0.14,
+        bottom=0.14,
     )
     save_figure(fig, output_dir, "top-coefficients", style, mobile=mobile)
 
@@ -307,18 +312,30 @@ def plot_selected_portfolio_tilts(
         for predictor, values in grouped.items()
     }
     if mobile:
-        ordered = sorted(grouped, key=lambda predictor: metadata[predictor]["tilt_rank"])
+        ordered = sorted(
+            grouped, key=lambda predictor: metadata[predictor]["tilt_rank"]
+        )
         fig, axes = plt.subplots(10, 1, figsize=(4.5, 11.8), facecolor=style.white)
     else:
         negative = sorted(
-            (predictor for predictor in grouped if metadata[predictor]["side"] == "negative"),
+            (
+                predictor
+                for predictor in grouped
+                if metadata[predictor]["side"] == "negative"
+            ),
             key=lambda predictor: metadata[predictor]["side_rank"],
         )
         positive = sorted(
-            (predictor for predictor in grouped if metadata[predictor]["side"] == "positive"),
+            (
+                predictor
+                for predictor in grouped
+                if metadata[predictor]["side"] == "positive"
+            ),
             key=lambda predictor: metadata[predictor]["side_rank"],
         )
-        ordered = [item for pair in zip(negative, positive, strict=True) for item in pair]
+        ordered = [
+            item for pair in zip(negative, positive, strict=True) for item in pair
+        ]
         fig, axes = plt.subplots(5, 2, figsize=(9.6, 7.2), facecolor=style.white)
     axes = np.asarray(axes).reshape(-1)
     all_dates = [
@@ -348,9 +365,7 @@ def plot_selected_portfolio_tilts(
         ax.set_yticks(
             ticks,
             [
-                "0"
-                if value == 0
-                else f"{value:+.1f}".replace("-", "−")
+                "0" if value == 0 else f"{value:+.1f}".replace("-", "−")
                 for value in ticks
             ],
         )

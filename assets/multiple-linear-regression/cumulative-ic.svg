@@ -5202,7 +5202,7 @@ L 576.65661 18.537628
 L 577.02975 18.218241
 L 577.349584 18.211188
 L 577.349584 18.211188
-" clip-path="url(#p11ac246720)" style="fill: none; stroke: #3f8f88; stroke-width: 2; stroke-linecap: square"/>
+" clip-path="url(#p11ac246720)" style="fill: none; stroke: #756a8e; stroke-width: 2; stroke-linecap: square"/>
    </g>
    <g id="line2d_25">
     <path d="M 493.23322 339.48
@@ -5430,7 +5430,7 @@ z
    </g>
    <g id="text_18">
     <!-- Ridge c = 0.01 -->
-    <g style="fill: #3f8f88" transform="translate(584.349584 10.795485) scale(0.095 -0.095)">
+    <g style="fill: #756a8e" transform="translate(584.349584 10.795485) scale(0.095 -0.095)">
      <defs>
       <path id="DejaVuSans-Bold-52" d="M 2297 2597
 Q 2675 2597 2839 2737

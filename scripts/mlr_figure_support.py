@@ -5,10 +5,10 @@ from __future__ import annotations
 import csv
 import gzip
 from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Mapping
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,13 +18,13 @@ import numpy as np
 class FigureStyle:
     benchmark: str = "#a7b1b8"
     ols: str = "#526777"
-    ridge: str = "#3f8f88"
+    ridge: str = "#756A8E"
     ink: str = "#33404b"
     muted: str = "#6a7883"
     grid: str = "#dbe1e3"
     white: str = "#ffffff"
-    coral: str = "#d99a8b"
-    blue: str = "#6f9dbb"
+    negative: str = "#756A8E"
+    positive: str = "#6F91AD"
     tick_label_size: float = 9.2
     axis_label_size: float = 10.5
     legend_size: float = 9.5
@@ -92,9 +92,7 @@ def default_figure_spec(style: FigureStyle) -> FigureSpec:
             "X_feature_price_trend_streak200_252": "Trend streak · 200 / 252d",
             "X_feature_price_trend_streak200_504": "Trend streak · 200 / 504d",
             "X_feature_price_upside_vol252": "Upside volatility · 252d",
-            "X_feature_price_final_to_high252_exclude21": (
-                "Price / prior high · 252d"
-            ),
+            "X_feature_price_final_to_high252_exclude21": ("Price / prior high · 252d"),
             "X_feature_price_macd_21_252": "MACD · 21 / 252d",
         },
     )
@@ -151,11 +149,8 @@ def load_alpha_diagnostics(
             raise ValueError(f"missing development diagnostics for {model}")
     rank_changes = {
         row["model"]: row
-        for row in read_rows(
-            review_dir / "multiple_linear_rank_change_diagnostics.csv"
-        )
-        if row["model"] in alpha_models
-        and row["period"] == "development_1995_2021"
+        for row in read_rows(review_dir / "multiple_linear_rank_change_diagnostics.csv")
+        if row["model"] in alpha_models and row["period"] == "development_1995_2021"
     }
     for model in alpha_models:
         if model not in rank_changes:
@@ -177,8 +172,7 @@ def load_selected_coefficients(review_dir: Path) -> list[dict[str, str]]:
     if len(selected) != 120:
         raise ValueError("expected ten selected predictors across twelve folds")
     if any(
-        float(row["c"]) != 0.01 or row["selected"].lower() != "true"
-        for row in selected
+        float(row["c"]) != 0.01 or row["selected"].lower() != "true" for row in selected
     ):
         raise ValueError("coefficient heatmap must use the selected c=0.01 model")
     return selected

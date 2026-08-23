@@ -234,10 +234,10 @@ every-third-date samples to reduce dependence among adjacent target windows.
 
 <div class="research-figure walk-forward-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg?v=4">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=4">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg?v=4">
-    <img src="/assets/multiple-linear-regression/walk-forward.png?v=4" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg?v=5">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=5">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg?v=5">
+    <img src="/assets/multiple-linear-regression/walk-forward.png?v=5" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -338,10 +338,10 @@ accuracy is evaluated separately with rank IC and portfolio results.
 
 <div class="research-figure alpha-sensitivity-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity.svg">
-    <img src="/assets/multiple-linear-regression/alpha-sensitivity.png" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.svg?v=2">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/alpha-sensitivity-mobile.png?v=2">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/alpha-sensitivity.svg?v=2">
+    <img src="/assets/multiple-linear-regression/alpha-sensitivity.png?v=2" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -372,8 +372,10 @@ stock ordering, while attribution belongs at the predictor-group level.
 
 The coefficient heatmap shows where those smaller weights go. It keeps the
 ten predictors with the largest mean absolute coefficient in the selected Ridge
-model and shows their signed value at each refit, averaged across the three
-date-thinned ensemble members. Because every input is mapped to the same
+model and shows their signed value over the refits, averaged across the three
+date-thinned ensemble members. The desktop view shows all 12 refits; the phone
+layout samples six labelled dates, including the 2022 and 2024 diagnostics, so
+the cell values remain legible. Because every input is mapped to the same
 $[-1,1]$ rank scale, values are comparable within the model. Positive cells
 raise the score when a stock ranks highly on that predictor; negative cells
 reverse the preference. These weights describe conditional relationships among
@@ -383,14 +385,14 @@ selection statistics use development data only.
 
 <div class="research-figure coefficient-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/top-coefficients-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/top-coefficients-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/top-coefficients.svg">
-    <img src="/assets/multiple-linear-regression/top-coefficients.png" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification across twelve walk-forward refits" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/top-coefficients-mobile.svg?v=2">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/top-coefficients-mobile.png?v=2">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/top-coefficients.svg?v=2">
+    <img src="/assets/multiple-linear-regression/top-coefficients.png?v=2" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification over time; desktop shows twelve refits and mobile shows six labelled refits including 2022 and 2024" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the 2022 and 2024 columns are later-period diagnostics.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the phone layout samples six labelled dates, and both layouts retain the 2022 and 2024 later-period diagnostics.</p>
 
 The clearest directions persist: price relative to its 126-session moving
 average stays positive, while short-horizon moving-average convergence/divergence
@@ -485,10 +487,10 @@ statistic.
 
 <div class="research-figure ic-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.svg?v=4">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.png?v=4">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic.svg?v=4">
-    <img src="/assets/multiple-linear-regression/cumulative-ic.png?v=4" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.svg?v=5">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.png?v=5">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic.svg?v=5">
+    <img src="/assets/multiple-linear-regression/cumulative-ic.png?v=5" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -568,14 +570,14 @@ period summaries.
 
 <div class="research-figure performance-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.svg?v=5">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png?v=5">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns.svg?v=5">
-    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png?v=5" alt="Net growth and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.svg?v=6">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png?v=6">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns.svg?v=6">
+    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png?v=6" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded; the rule separates development from the later period.</p>
+<p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
 
 The learned portfolios have lower development-period volatility and shallower
 drawdowns. Ridge stays close to OLS throughout the sample. From January 2022
@@ -595,10 +597,10 @@ every portfolio shows how much turnover reduces returns.
 
 <div class="research-figure turnover-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg">
-    <img src="/assets/multiple-linear-regression/turnover-and-costs.png" alt="Turnover per rebalance and annual cost drag for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg?v=2">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png?v=2">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg?v=2">
+    <img src="/assets/multiple-linear-regression/turnover-and-costs.png?v=2" alt="Turnover per rebalance and annual cost drag for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -620,10 +622,10 @@ positive value means the portfolio has more dollars long than short.
 
 <div class="research-figure portfolio-exposure-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-exposures-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-exposures-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-exposures.svg">
-    <img src="/assets/multiple-linear-regression/portfolio-exposures.png" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-exposures-mobile.svg?v=2">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-exposures-mobile.png?v=2">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-exposures.svg?v=2">
+    <img src="/assets/multiple-linear-regression/portfolio-exposures.png?v=2" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -671,10 +673,10 @@ ranks of these quantities.
 
 <div class="research-figure exposure-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.svg">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.png">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts.svg">
-    <img src="/assets/multiple-linear-regression/portfolio-feature-tilts.png" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.svg?v=2">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts-mobile.png?v=2">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/portfolio-feature-tilts.svg?v=2">
+    <img src="/assets/multiple-linear-regression/portfolio-feature-tilts.png?v=2" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" loading="lazy" decoding="async">
   </picture>
 </div>
 
