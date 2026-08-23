@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 
 import matplotlib.dates as mdates
@@ -17,7 +17,6 @@ from .support import (
     FigureSpec,
     FigureStyle,
     Series,
-    add_split_marker,
     save_figure,
     style_axis,
 )
@@ -309,7 +308,6 @@ def plot_portfolio_exposures(
     exposures: dict[str, Series],
     output_dir: Path,
     style: FigureStyle,
-    spec: FigureSpec,
     *,
     mobile: bool,
 ) -> None:
@@ -325,24 +323,6 @@ def plot_portfolio_exposures(
         series = exposures[column]
         ax.plot(series.dates, series.values, color=color, linewidth=1.8, label=label)
 
-    add_split_marker(
-        ax,
-        style,
-        spec.split_date,
-        label=False,
-    )
-    ax.text(
-        spec.split_date + timedelta(days=120),
-        1.14,
-        "2022 boundary",
-        transform=ax.get_xaxis_transform(),
-        ha="left",
-        va="center",
-        color=style.ink,
-        fontsize=style.annotation_size,
-        fontweight=600,
-        clip_on=False,
-    )
     dates = exposures["long_gross"].dates
     long_values = exposures["long_gross"].values
     net_values = exposures["net_stock_exposure"].values

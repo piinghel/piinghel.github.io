@@ -591,10 +591,10 @@ the three execution sleeves. A net exposure of zero is dollar neutral, while a
 positive value means the portfolio has more dollars long than short.
 
 <div class="research-figure portfolio-exposure-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" mobile_suffix="-mobile" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="11" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" mobile_suffix="-mobile" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="12" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio; the rule marks the 2022 boundary.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio.</p>
 
 The long book stays near its 100% ceiling for much of the sample. Most of the
 movement in net exposure comes from the short book, which contracts when the

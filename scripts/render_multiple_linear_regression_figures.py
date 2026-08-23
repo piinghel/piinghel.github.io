@@ -124,7 +124,6 @@ def render_figures(
                 selected_exposures,
                 output_dir,
                 style,
-                spec,
                 mobile=mobile,
             )
             plot_selected_portfolio_tilts(
