@@ -10,11 +10,12 @@ permalink: /quants/2025/02/09/multiple-linear-regression.html
 
 <p class="article-summary"><strong>TL;DR:</strong> Stock signals often disagree, so the practical problem is how to combine them into one ranking. I compare a transparent fixed score with weights learned by OLS and Ridge. During development, OLS raises net Sharpe from 0.72 to 0.98 while keeping annualised net return near 7% and cutting volatility from 9.69% to 7.15%. That advantage does not survive the 2022–2026 period: net Sharpe is 0.82 for Ridge and 0.87 for OLS. Learning the combination can improve the historical fit, but it does not guarantee a better later-period ranking.</p>
 
-Stock signals rarely agree neatly. Trend, risk, size, liquidity, and positioning
-arrive on different scales, overlap, and can change meaning when considered
-together. My problem is practical: turn them into one ranking. Fixed weights
-settle that choice by hand; multiple linear regression uses past data to learn
-the combination.
+The problem is not a lack of signals; it is disagreement. A stock can have strong
+momentum but high risk, or attractive size but crowded positioning. The measures
+also use different units and lookback periods, so averaging their raw values
+would be meaningless. I need one score that turns those imperfect, overlapping
+clues into a ranking. Fixed weights make that choice by hand; multiple linear
+regression uses past data to learn the combination.
 
 The model's job is simple: put the stocks in order. On each date, the
 highest-scoring stocks become long candidates and the lowest-scoring ones become
@@ -62,40 +63,64 @@ are preferred.
 
 ### Exact construction
 
-The paragraphs above explain the economic intent. The construction below fixes
-the exact windows and transformations used by the benchmark. For stock $$i$$ on
+The paragraphs above explain the economic intent. The equations below are the
+implementation record: they fix the exact windows and transformations used by
+the benchmark. The reader need not memorise the notation. For stock $$i$$ on
 date $$t$$, let $$r_{i,t}$$ be its daily total return, $$v_{i,t}$$ its daily
 trading volume, $$h_{i,t}$$ its reported shares short, $$m_{i,t}$$ its raw market
-capitalisation, and $$\mathcal U_t$$ the eligible cross-section. The six raw
-measures are
+capitalisation, and $$\mathcal U_t$$ the eligible cross-section.
+
+**Low volatility.** Average annualised standard deviation over three trailing
+windows:
 
 $$
-\begin{aligned}
 \sigma^{\mathrm{low}}_{i,t}
-  &= \frac{1}{3}\sum_{k\in\{21,63,126\}}
-     \sqrt{252}\,\operatorname{sd}(r_{i,t-k+1:t}), \\
-\tau_{i,t}
-  &= \operatorname{3rd\ largest}\{r_{i,t-j}:j=0,\ldots,20\}, \\
-\mu_{i,t}
-  &= \frac{1}{4}\sum_{k\in\{63,126,189,252\}}
-     \left(\prod_{j=21}^{k+20}(1+r_{i,t-j})-1\right), \\
-q_{i,t}
-  &= \log\left(\frac{h_{i,t-21}}
-     {\frac{1}{63}\sum_{j=21}^{83}v_{i,t-j}}\right), \\
-c_{i,t}
-  &= m_{i,t}, \\
-\rho_{i,t}
-  &= \frac{1}{756}\sum_{j=0}^{755}\mathbf 1\{r_{i,t-j}<0\}.
-\end{aligned}
+= \frac{1}{3}\sum_{k\in\{21,63,126\}}
+  \sqrt{252}\,\operatorname{sd}(r_{i,t-k+1:t}).
 $$
 
-Here $$\sigma^{\mathrm{low}}$$ is average annualised volatility, $$\tau$$ is
-the third-largest daily return over 21 sessions, $$\mu$$ is average momentum
-over four horizons after skipping the most recent 21 sessions, $$q$$ is the
-log short-interest-to-volume ratio using shares short reported 21 sessions
-earlier, $$c$$ is raw market capitalisation, and $$\rho$$ is the fraction of
-negative-return days. The preferred directions are low $$\sigma^{\mathrm{low}}$$,
-low $$\tau$$, high $$\mu$$, low $$q$$, high $$c$$, and low $$\rho$$.
+**Upper-tail avoidance.** The third-largest daily return in the most recent
+21 sessions:
+
+$$
+\tau_{i,t}=\operatorname{3rd\ largest}\{r_{i,t-j}:j=0,\ldots,20\}.
+$$
+
+**Momentum.** Average compounded return over four horizons, always starting
+after the most recent 21 sessions:
+
+$$
+\mu_{i,t}=\frac{1}{4}\sum_{k\in\{63,126,189,252\}}
+\left(\prod_{j=21}^{k+20}(1+r_{i,t-j})-1\right).
+$$
+
+**Short positioning.** Reported shares short, lagged by 21 sessions, divided by
+the preceding 63-session average trading volume. The logarithm keeps a ratio
+from being dominated by its raw scale:
+
+$$
+\kappa_{i,t}=\log\left(\frac{h_{i,t-21}}
+  {\frac{1}{63}\sum_{j=21}^{83}v_{i,t-j}}\right).
+$$
+
+**Capitalisation.** Raw market capitalisation:
+
+$$
+c_{i,t}=m_{i,t}.
+$$
+
+**Return consistency.** Fraction of negative daily returns over the preceding
+756 sessions:
+
+$$
+\rho_{i,t}=\frac{1}{756}\sum_{j=0}^{755}
+\mathbf 1\{r_{i,t-j}<0\}.
+$$
+
+Lower $$\sigma^{\mathrm{low}}$$, $$\tau$$, $$\kappa$$, and $$\rho$$ are
+preferred; higher $$\mu$$ and $$c$$ are preferred. The notation is deliberately
+explicit: it records the information cutoff, the lookback, and the direction
+of every benchmark ingredient.
 
 Each raw measure is converted into a signed cross-sectional rank. For a measure
 whose preferred direction is high, the score is
@@ -107,7 +132,7 @@ s_{i,t}(x)
 $$
 
 for a measure whose preferred direction is low, I use $$-s_{i,t}(x)$$. Thus
-the largest eligible company receives a capitalization score near $$+1$$ and
+the largest eligible company receives a capitalisation score near $$+1$$ and
 the smallest receives a score near $$-1$$. The model uses these ranks rather
 than the raw units.
 
@@ -351,35 +376,21 @@ problem. At $c=0$ the objective is OLS;
 scikit-learn recommends `LinearRegression` rather than `Ridge(alpha=0)` for
 numerical reasons.
 
-The dependence is substantial. Stocks on the same date share market, sector,
-and cross-sectional shocks; predictors move slowly; adjacent 20-session targets
-overlap; and expanding fits reuse most of the same history. The design mitigates
-two parts of that problem. A 21-session purge keeps a training target from
-crossing into the next prediction block, and 600-date walk-forward blocks avoid
-random row-level validation. The three every-third-date fits reduce the density
-of adjacent targets inside any one fit. Because three sessions are far shorter
-than the 20-session target, substantial overlap remains.
+The rows are not independent: stocks share market and sector shocks, predictors
+move slowly, and adjacent 20-session targets overlap. A 21-session purge keeps a
+training target out of the next prediction block, while 600-date walk-forward
+blocks avoid random row-level validation. Some overlap remains, so the penalty
+choice is a sensitivity check rather than a claim of millions of independent
+observations.
 
-I compare $c\in\{0,0.001,0.01,0.1\}$ on those same blocks and require the choice
-to look reasonable over the full development period, its final ten years, and
-its final five years. That is time-blocked sensitivity evidence, not an estimate
-based on two million independent observations. Rows currently receive equal
-weight, so a date's total influence is proportional to its available cross-section.
-Breadth is fairly stable—955 stocks at the fifth percentile, 984 at the median,
-and 1,022 at the 95th percentile. The present design therefore gives similar,
-though not identical, aggregate weight to most dates. It still leaves
-cross-sectional dependence inside each date. Date-equal sample weights and
-coarser, non-overlapping date thinning are the two missing robustness checks.
-The raw row count provides no defensible estimate of effective sample size.
+## Choosing the Ridge penalty
 
-## Choosing the penalty
-
-### Selecting the penalty
-
-All four models use the same predictors, target, universe, dates, walk-forward
-procedure, portfolio construction, and 5 bp cost assumption. The selection rule
-uses only evidence through 2021 and prefers consistency across development
-windows rather than the highest Sharpe in any single slice.
+All four candidates use the same predictors, target, universe, dates,
+walk-forward procedure, portfolio construction, and 5 bp cost assumption. The
+penalty is not estimated by the regression. I compare the small grid
+$$c\in\{0,0.001,0.01,0.1\}$$ using only data through 2021, and prefer a value
+that behaves consistently across the full development period, its final ten
+years, and its final five years rather than one that wins a single slice.
 
 To judge Ridge, I separate the model from the trading layer. Rank information
 coefficient (IC), prediction changes, and coefficient behavior ask what
@@ -544,9 +555,7 @@ about 0.02 percentage points a year. Coefficient shrinkage is meaningful; the
 trading-cost change is negligible.
 {: .table-followup }
 
-## The 2022–2026 later-period evaluation
-
-### Later-period portfolio results
+## The 2022–2026 evaluation
 
 The reported $c=0.01$ choice follows the development-only rule above; no
 2022–2026 result enters that rule. The later history had nevertheless already
