@@ -341,8 +341,8 @@ The larger historical example is the dot-com boom. From 8 October 1998 to 9 Marc
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=3">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=3" alt="Grouped bars compare long- and short-book contributions during the dot-com and recent high-volatility rallies" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=4">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=4" alt="Grouped bars compare long- and short-book contributions during the dot-com and recent high-volatility rallies" loading="lazy" decoding="async">
   </picture>
 </div>
 
