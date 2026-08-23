@@ -341,12 +341,12 @@ The larger historical example is the dot-com boom. From 8 October 1998 to 9 Marc
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=6">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=6" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and reversal" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=7">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=7" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and reversal and the still-open 2025 to 2026 rally" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> The dot-com episode from 8 October 1998 through 3 April 2001. The upper panel compares gross portfolio and market wealth; the lower panel shows additive long- and short-book contributions. The vertical line marks the portfolio trough on 9 March 2000.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Two strong market rallies on common scales. The dot-com panel runs from 8 October 1998 through 3 April 2001; its vertical line marks the portfolio trough on 9 March 2000 and the recovery that followed. The recent panel runs from 3 April 2025 through 27 May 2026, with no comparable reversal observed by the sample end. Upper panels compare gross portfolio and market wealth; lower panels show additive long- and short-book contributions.</p>
 
 During the rally, both books lose money and the short book does most of the
 damage. After the trough, both legs recover as high-volatility leadership
