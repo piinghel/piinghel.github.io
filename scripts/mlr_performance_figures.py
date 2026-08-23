@@ -74,9 +74,7 @@ def plot_ic(
     )
     ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    right = series[spec.model_order[0]].dates[-1] + timedelta(
-        days=780 if mobile else 520
-    )
+    right = series[spec.model_order[0]].dates[-1] + timedelta(days=520)
     ax.set_xlim(series[spec.model_order[0]].dates[0], right)
     fig.subplots_adjust(
         left=0.16 if mobile else 0.10,
@@ -175,9 +173,7 @@ def plot_performance(
     )
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    right = wealth[spec.model_order[0]].dates[-1] + timedelta(
-        days=780 if mobile else 520
-    )
+    right = wealth[spec.model_order[0]].dates[-1] + timedelta(days=520)
     drawdown_ax.set_xlim(wealth[spec.model_order[0]].dates[0], right)
     fig.subplots_adjust(
         left=0.17 if mobile else 0.10,

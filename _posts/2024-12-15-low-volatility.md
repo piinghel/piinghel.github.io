@@ -11,13 +11,13 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> Volatility ranking selects the calmest and most volatile names; position sizing determines how much each contributes. Equal-dollar positions assign identical capital to different risks, so volatile names drive the portfolio: volatility reaches 33.4% and maximum drawdown 87.1%. I keep the same two baskets, then scale positions down as volatility rises. After costs, arithmetic return increases from 2.4% to 7.1%, volatility falls to 9.8%, and maximum drawdown falls to 38.0%. This compares two complete allocation rules, so exposure, beta, and turnover change as well.</p>
+<p class="article-summary"><strong>TL;DR:</strong> I buy the calmest volatility decile and short the most volatile. Equal weights produce a 2.4% after-cost arithmetic return, 33.4% volatility, and an 87.1% maximum drawdown. With the same stocks, inverse-volatility weights produce 7.1%, 9.8%, and 38.0%, respectively. Exposure, beta, and turnover also change.</p>
 
 Selection and allocation are separate decisions. The volatility rank chooses the low- and high-volatility baskets; the sizing rule sets each position's capital. Even within those baskets, the stocks have markedly different risk. Equal weighting assigns identical dollars across those different risks, allowing volatile names to dominate portfolio risk. The 4% cap limits concentration while preserving the simple 1/N benchmark.
 
 I therefore test another rule: start from the same 1/N weights and scale each stock by the inverse of its own volatility. Holding stock selection fixed keeps the comparison focused on the sizing rule. The question is how volatility-based sizing changes the resulting portfolio—its return, risk, drawdown, gross and net exposure, beta, and turnover.
 
-The signal itself has a long history. Low-volatility stocks have earned more return per unit of risk than their more volatile peers across the U.S., Europe, and Japan, as [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document. The finding runs against the basic intuition that higher risk should bring higher expected return. One explanation is leverage constraints: investors seeking more market exposure may buy high-beta stocks instead of applying leverage to a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta. My concern here is narrower. I take the ranking as given and examine how its stocks should be sized.
+The signal has a long history. Low-volatility stocks have earned more return per unit of risk than their more volatile peers across the U.S., Europe, and Japan, as [Blitz and van Vliet](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865) document. The finding runs against the intuition that higher risk should bring higher expected return. Leverage constraints offer one explanation. Investors seeking more market exposure may use high-beta stocks as a substitute for leverage on a higher-Sharpe, low-risk portfolio. [Frazzini and Pedersen](https://www.nber.org/papers/w16601) formalize that mechanism in betting against beta. Here, I take the ranking as given and examine how its stocks should be sized.
 
 ## The tradable universe
 
@@ -60,11 +60,11 @@ At each rebalance I split the ranked stocks into ten fixed groups of roughly equ
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Geometric return, volatility, and Sharpe by volatility decile before costs.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Sharpe ratio, geometric return, and volatility by volatility decile before costs.</p>
 
-Figure 2 shows why the signal is interesting. Geometric return stays positive across the ten deciles, but volatility rises sharply and Sharpe deteriorates. In the highest-volatility decile, a 7.6% arithmetic return compounds to only about 0.3% a year. The gap is the cost of compounding volatile returns—variance drag. From here on I leave this ranking alone and change only the allocation.
+Figure 2 shows why the signal is interesting. Geometric return stays positive across the ten deciles. Volatility rises sharply, and Sharpe deteriorates. In the highest-volatility decile, a 7.6% arithmetic return compounds to only about 0.3% a year. The gap is the cost of compounding volatile returns—variance drag. From here on I leave this ranking alone and change only the allocation.
 
-## A deliberately naïve equal-weight benchmark
+## Equal-weight benchmark
 
 Equal weighting makes a useful control precisely because its flaw is visible. The screened Russell 1000 names are liquid enough for a simple 1/N allocation, and equal weights keep the benchmark from quietly becoming a large-cap portfolio. I am long the calmest stocks and short the most volatile ones, while giving every stock the same dollar weight. The high-volatility leg then carries roughly 38% realized volatility versus 12% for the low-volatility leg; its average estimated beta is 1.63 versus 0.55. The capital is equal; the risk differs sharply. That is the imbalance inverse-volatility sizing is meant to address.
 
@@ -149,9 +149,9 @@ E_t^{\mathrm{net}} &= \sum_i w_{i,t}, \\
 \end{aligned}
 $$
 
-The short book carries less capital, but its stocks have much higher market betas, so it offsets most of the long book's beta. The full-sample average ex-ante beta is −0.014 and realized beta is −0.001. Beta emerges from the chosen weights and the beta gap between the legs. The 100% leg ceiling constrains how far either side can scale; the stocks inside the legs determine the sign. I therefore track beta as a separate portfolio diagnostic.
+The short book carries less capital. Its stocks have much higher market betas, which offset most of the long book's beta. The full-sample average ex-ante beta is −0.014 and realized beta is −0.001. Beta emerges from the chosen weights and the beta gap between the legs. The 100% leg ceiling constrains how far either side can scale. The stocks inside the legs determine the sign. I therefore track beta as a separate portfolio diagnostic.
 
-Figure 5 is my quick check on market exposure. Beta moves around because the sizing rule controls individual volatility rather than portfolio beta. Dollar exposure and market exposure can therefore point in different directions. An index-futures overlay could target beta directly while leaving the stock ranking intact; I would evaluate that as a separate allocation decision.
+Figure 5 is my quick check on market exposure. The sizing rule controls individual volatility. Portfolio beta remains free. Dollar exposure and market exposure can therefore point in different directions. An index-futures overlay could target beta directly while leaving the stock ranking intact. I would evaluate that as a separate allocation decision.
 
 <div class="low-vol-figure">
   <picture>
@@ -166,7 +166,7 @@ Figure 5 is my quick check on market exposure. Beta moves around because the siz
 
 The tables separate performance from the exposures that produce it. I charge 5 basis points per dollar traded, including the first portfolio formation, as a rough approximation of stock-trading costs. At 10.4 times annual turnover, that reduces the scaled portfolio's return by about 0.52 percentage points a year.
 
-The estimate excludes borrow, financing, market impact, and taxes, and unused capacity earns zero. Returns are annualized arithmetic means. Volatility, Sharpe, and drawdown use returns after the stated trading cost; Sharpe is annualized return divided by volatility, with a zero cash rate.
+The estimate covers stock-trading costs. A fuller implementation estimate would add borrow, financing, market impact, and taxes. Unused capacity earns zero. Returns are annualized arithmetic means. Volatility, Sharpe, and drawdown use returns after the stated trading cost. Sharpe is annualized return divided by volatility, with a zero cash rate.
 
 <table class="research-table comparison-table performance-table">
   <thead>
@@ -257,7 +257,7 @@ Against the equal-dollar diagnostic, the volatility-scaled implementation produc
 
 <p class="figure-caption"><strong>Figure 6:</strong> After-cost growth of $1 on a log scale, with drawdowns below.</p>
 
-Figure 6 shows the practical difference between the implementations. The equal-weight long/short portfolio has a positive 2.4% arithmetic return after costs, yet repeated large losses leave compounded wealth at only 0.38 times its starting value. That gap is variance drag. The volatility-scaled long/short portfolio compounds at 6.9% a year and finishes at 7.78 times its starting value. Long flat periods and a 38% maximum drawdown remain, so the improvement is substantial while still incomplete.
+Figure 6 shows the practical difference between the implementations. The equal-weight long/short portfolio has a positive 2.4% arithmetic return after costs. Repeated large losses leave compounded wealth at only 0.38 times its starting value. That gap is variance drag. The volatility-scaled long/short portfolio compounds at 6.9% a year and finishes at 7.78 times its starting value. Long flat periods and a 38% maximum drawdown remain. The improvement is substantial and incomplete.
 
 The benchmark makes the first point plainly: large differences in stock-level volatility produce an incoherent risk allocation when every name receives the same dollars. The scaled portfolio's improvement reflects several linked mechanisms. Volatility scaling changes gross exposure, net exposure, beta, and turnover at the same time. Matched tests at equal gross exposure, beta, and realized risk would separate those mechanisms. I held the signal windows, 60-day sizing window, 20% reference volatility, 4% cap, three-week rebalance interval, and leg ceiling fixed throughout.
 
@@ -267,20 +267,16 @@ Missing prices are carried forward, and a security that leaves the covered data 
 
 ## When the short book rallies
 
-The recent part of the sample is less flattering. From the close on 3 April 2025 through 27 May 2026, the volatility-scaled portfolio lost 12.1% before costs and 12.6% after costs on a compounded basis, while the Russell 1000 gained 38.5%. The gross path consists of a +4.2 percentage-point long contribution and a −16.3-point short contribution; stock-trading costs account for roughly another 0.5 points of loss. The evidence shows that the high-volatility side of the universe ran far ahead of the calmer stocks. Explaining that rally by theme—artificial intelligence, speculative growth, or something else—would require holdings and characteristic data beyond this test.
+From 3 April 2025 through 27 May 2026, the scaled portfolio lost 12.1% before costs and 12.6% after costs. The Russell 1000 gained 38.5%. The long book contributed +4.2 percentage points, and the short book −16.3 points. Trading costs added roughly 0.5 points of loss. Average net stock exposure was +68.6%, while ex-ante beta was −0.12. The smaller short book held stocks with much higher betas. Those stocks led the rally and drove the loss.
 
-In beta terms, the portfolio is short the market. Its average ex-ante stock beta was −0.12 from 3 April 2025 through 27 May 2026, while average net stock exposure remained +68.6%. The distinction matters: the book is long dollars, but the smaller short leg contains stocks with sufficiently high betas to make the overall portfolio beta-negative. The sizing rule allows that exposure to float.
+The largest drawdown came during the dot-com boom. From 8 October 1998 to 9 March 2000, the scaled portfolio lost 38.0% after costs. The Russell 1000 gained 52.2%. Average net exposure was +72.0%. Ex-ante beta was −0.07, and realized beta −0.06. The long book contributed −10.4 points and the short book −27.1 points before costs. Trading costs added 0.4 points. The portfolio recovered its earlier high on 3 April 2001.
 
-The largest drawdown came during the dot-com boom. From its 8 October 1998 peak close to its 9 March 2000 trough close, the scaled portfolio lost 38.0% after stock-trading costs over 357 trading days while the Russell 1000 gained 52.2%. It recovered its earlier high on 3 April 2001. This makes the episode a useful comparison for the 2025–2026 rally, when the portfolio again struggled during a market advance led by high-volatility stocks.
-
-The important detail is the market exposure. The portfolio's average ex-ante beta was −0.07 and its realized beta was −0.06, even though average net stock exposure was +72.0%. The portfolio held more dollars long than short, but the high-beta short leg made it short the market. From the peak close, the calm long basket contributed −10.4 percentage points and the volatile short basket −27.1 points before costs. Stock-trading costs account for another 0.4 points of the peak-to-trough loss. The short leg did most of the damage because the stocks we shorted were among the market's strongest winners.
-
-Figure 7 puts this episode beside the 2025–2026 rally. Every path starts at the close of the first date shown. The left column compares gross portfolio and market wealth; the right column shows additive long- and short-leg contributions to initial capital. In the bottom row, the Russell 1000 gains 38.5% from the 3 April 2025 close through 27 May 2026 while the gross long/short portfolio loses 12.1%.
+Figure 7 places the two periods side by side. Each path starts at the first close shown. The left column compares gross portfolio and market wealth. The right column shows long- and short-book contributions.
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png" alt="Portfolio and market wealth beside additive long and short contributions in the 1998 to 2001 and 2025 to 2026 rallies" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=2">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=2" alt="Portfolio and market wealth beside additive long and short contributions in the 1998 to 2001 and 2025 to 2026 rallies" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -292,7 +288,7 @@ The comparison identifies a recurring portfolio risk across two different market
 
 The main lesson is that stock-level risk deserves an explicit allocation rule after ranking. Equal dollars allow volatile names to dominate the portfolio; inverse-volatility sizing addresses that imbalance while holding stock selection constant. In this sample, after-cost geometric return moves from −3.1% to 6.9%, volatility from 33.4% to 9.8%, maximum drawdown from −87.1% to −38.0%, and turnover from 14.4× to 10.4× equity. The intentionally naïve benchmark shows how badly equal dollars can misrepresent a volatility signal. These figures describe the complete scaled implementation and its combined exposure changes.
 
-The allocation leaves an important risk unmanaged. Figure 5 shows a portfolio that is usually long dollars but can be short the market in beta terms. The high-volatility stocks in the smaller short leg carry more beta per dollar than the low-volatility long book. That positioning hurt in both episodes discussed here: the dot-com boom and the 2025–2026 rally. The two windows are clearly different—the first includes a full boom-and-bust cycle, while the second currently shows a rally and the factor's underperformance—but the recurring portfolio risk is worth taking seriously.
+The chief remaining risk is clear. The portfolio can be long dollars and short the market in beta terms. That exposure hurt during the dot-com boom and the 2025–2026 rally.
 
 The next step is a better risk model. A covariance estimate would model how positions move together and size the portfolio as a whole. Explicit constraints could control beta, net exposure, gross exposure, and concentration. A turnover penalty could start from current holdings and trade only when the expected risk improvement justifies the cost. I would test that model against matched versions of the present rule at equal gross exposure, beta, and realized risk, then repeat the comparison with conservative stale-price and delisting assumptions.
 

@@ -242,8 +242,8 @@ def main() -> None:
     returns = load_matrix(RETURN_PATH)
     for mobile in (False, True):
         if mobile:
-            fig, axes = plt.subplots(2, 1, figsize=(4.6, 9.0), facecolor=WHITE)
-            fig.subplots_adjust(left=0.35, right=0.97, top=0.98, bottom=0.08, hspace=0.58)
+            fig, axes = plt.subplots(2, 1, figsize=(4.6, 7.8), facecolor=WHITE)
+            fig.subplots_adjust(left=0.35, right=0.97, top=0.98, bottom=0.08, hspace=0.26)
         else:
             fig, axes = plt.subplots(1, 2, figsize=(10.6, 4.8), facecolor=WHITE)
             fig.subplots_adjust(left=0.17, right=0.98, top=0.94, bottom=0.20, wspace=0.42)
