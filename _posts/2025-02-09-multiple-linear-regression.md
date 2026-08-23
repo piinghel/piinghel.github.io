@@ -8,7 +8,7 @@ article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-<p class="article-summary"><strong>Result in brief:</strong> During development, OLS raises the fixed benchmark's net Sharpe from 0.72 to 0.98 while keeping annualized net return near 7% and reducing volatility from 9.69% to 7.15%. Ridge makes the fitted coefficients smaller and more stable, but leaves the stock ranking and portfolio almost unchanged. From 2022 through May 2026, its small development-period advantage disappears: net Sharpe is 0.82 for Ridge and 0.87 for OLS.</p>
+<p class="article-summary"><strong>TL;DR:</strong> Stock signals often disagree, so the practical problem is how to combine them into one ranking. I compare a transparent fixed score with weights learned by OLS and Ridge. During development, OLS raises net Sharpe from 0.72 to 0.98 while keeping annualised net return near 7% and cutting volatility from 9.69% to 7.15%. That advantage does not survive the 2022–2026 period: net Sharpe is 0.82 for Ridge and 0.87 for OLS. Learning the combination can improve the historical fit, but it does not guarantee a better later-period ranking.</p>
 
 Stock signals rarely agree neatly. Trend, risk, size, liquidity, and positioning
 arrive on different scales, overlap, and can change meaning when considered
@@ -26,9 +26,7 @@ Fixed weights versus OLS is a practical comparison, but both the inputs and the
 combination rule change. OLS versus Ridge is controlled: the predictors, target,
 and portfolio remain fixed, and only the estimation method changes.
 
-## Benchmark
-
-### Building the fixed score
+## The fixed benchmark
 
 I do not want the regression to win merely because it is more complicated. The
 benchmark therefore uses a small set of familiar, economically motivated signals with fixed signs
@@ -38,34 +36,38 @@ can have. That makes it a useful hurdle for the learned ranking. The trade-off i
 that the factor choices, lookbacks, and signs all embed judgment.
 
 The benchmark has five economic themes. Six raw signals enter because the
-defensive theme groups two closely related measurements:
+defensive theme combines two related questions:
 
-- **Defensive:** low volatility asks whether returns have been quiet over roughly
-  one, three, and six months. I average annualized volatility over 21, 63, and
-  126 sessions. Upper-tail avoidance asks whether the recent path depends on a
-  few unusually large gains; its proxy is the third-largest daily return over
-  21 sessions. Lower values are preferred. I average these two normalized scores
-  before combining defensive with the other themes.
-- **Momentum:** the signal adds compounded returns over 63, 126, 189, and 252
-  sessions after skipping the most recent 21 sessions. It favors established
-  medium-term trends while avoiding the latest month's short-term reversal.
-  Higher values are preferred.
-- **Low short interest:** the signal compares publication-lagged shares short
-  with average daily trading volume over 63 sessions, then takes the log ratio.
-  It is a days-to-cover-style measure of negative positioning and crowding;
-  short interest is delayed by 21 sessions to respect publication timing. Lower
-  values are preferred.
-- **Large capitalization:** market capitalization is a simple size and
-  investability tilt. Higher values are preferred.
-- **Return consistency:** the signal is the fraction of negative daily returns
-  over 756 sessions, roughly three trading years. It measures the frequency of
-  losing days and gives no extra weight to a particularly large loss. A lower
-  loss frequency is preferred.
+**Is risk contained?** Low volatility rewards stocks whose returns have been
+quiet over one, three, and six months. Upper-tail avoidance penalises a recent
+path that depends on a few unusually large gains. Together they form one
+defensive theme, with lower values preferred for both ingredients.
 
-For stock $$i$$ on date $$t$$, let $$r_{i,t}$$ be its daily total return,
-$$v_{i,t}$$ its daily trading volume, $$h_{i,t}$$ its publication-lagged shares
-short, $$m_{i,t}$$ its raw market capitalization, and $$\mathcal U_t$$ the
-eligible cross-section. The six raw measures are
+**Is there a persistent trend?** Momentum looks for a return pattern that has
+survived several months, while skipping the latest month so that a short-term
+reversal does not masquerade as a trend. Higher values are preferred.
+
+**Is the trade crowded?** Low short interest favours stocks with less reported
+short positioning relative to their trading activity. The measure is deliberately
+lagged, so the score uses information that could have been known at the signal
+date. Lower values are preferred.
+
+**Is the company large and investable?** Capitalisation supplies a plain size
+and investability tilt. Higher values are preferred.
+
+**Is the return path dependable?** Return consistency counts how often a stock
+has lost money on a daily basis over roughly three years. It treats the
+frequency of losing days separately from the size of any one loss. Lower values
+are preferred.
+
+### Exact construction
+
+The paragraphs above explain the economic intent. The construction below fixes
+the exact windows and transformations used by the benchmark. For stock $$i$$ on
+date $$t$$, let $$r_{i,t}$$ be its daily total return, $$v_{i,t}$$ its daily
+trading volume, $$h_{i,t}$$ its reported shares short, $$m_{i,t}$$ its raw market
+capitalisation, and $$\mathcal U_t$$ the eligible cross-section. The six raw
+measures are
 
 $$
 \begin{aligned}
@@ -87,13 +89,13 @@ c_{i,t}
 \end{aligned}
 $$
 
-Here $$\sigma^{\mathrm{low}}$$ is average annualized volatility, $$\tau$$ is
+Here $$\sigma^{\mathrm{low}}$$ is average annualised volatility, $$\tau$$ is
 the third-largest daily return over 21 sessions, $$\mu$$ is average momentum
 over four horizons after skipping the most recent 21 sessions, $$q$$ is the
-publication-lagged short-interest-to-volume ratio, $$c$$ is raw market
-capitalization, and $$\rho$$ is the fraction of negative-return days. The
-preferred directions are low $$\sigma^{\mathrm{low}}$$, low $$\tau$$, high
-$$\mu$$, low $$q$$, high $$c$$, and low $$\rho$$.
+log short-interest-to-volume ratio using shares short reported 21 sessions
+earlier, $$c$$ is raw market capitalisation, and $$\rho$$ is the fraction of
+negative-return days. The preferred directions are low $$\sigma^{\mathrm{low}}$$,
+low $$\tau$$, high $$\mu$$, low $$q$$, high $$c$$, and low $$\rho$$.
 
 Each raw measure is converted into a signed cross-sectional rank. For a measure
 whose preferred direction is high, the score is
@@ -214,7 +216,7 @@ set, so benchmark versus OLS compares two complete ranking methods. The
 controlled estimator comparison begins with OLS versus Ridge, where the inputs
 are identical.
 
-## Putting unlike predictors on one scale
+## A common score scale
 
 A regression can combine billions of dollars with percentage points, but its
 raw coefficients then live on incomparable scales. For the 144-predictor
