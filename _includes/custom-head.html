@@ -12,3 +12,44 @@
     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
 {%- endif -%}
+<!-- Theme preference -->
+<script>
+  (function () {
+    var storageKey = 'quant-notes-theme';
+
+    function applyTheme(theme) {
+      var root = document.documentElement;
+      var button = document.querySelector('.theme-toggle');
+      var isDark = theme === 'dark';
+      root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      if (button) {
+        button.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        button.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        button.querySelector('.theme-toggle-label').textContent = isDark ? 'Light' : 'Dark';
+        button.querySelector('.theme-toggle-icon').textContent = isDark ? '☼' : '◐';
+      }
+    }
+
+    function initThemeToggle() {
+      var button = document.querySelector('.theme-toggle');
+      if (!button) return;
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current);
+      button.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try {
+          window.localStorage.setItem(storageKey, next);
+        } catch (error) {
+          // The toggle still works for the current page when storage is unavailable.
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initThemeToggle);
+    } else {
+      initThemeToggle();
+    }
+  }());
+</script>
