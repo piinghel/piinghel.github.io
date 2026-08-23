@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import Patch, Rectangle
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Rectangle
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "assets" / "multiple-linear-regression"
@@ -22,25 +22,34 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
         facecolor=WHITE,
     )
     ax.set_xlim(-0.16, 1.01)
-    ax.set_ylim(0.45, 3.85)
+    ax.set_ylim(0.20 if mobile else 0.45, 3.85)
     ax.axis("off")
 
+    time_arrow = FancyArrowPatch(
+        (0, 3.62),
+        (1, 3.62),
+        arrowstyle="->",
+        color=MUTED,
+        linewidth=1.25,
+        mutation_scale=11,
+    )
+    time_arrow.set_sketch_params(scale=1.0, length=90.0, randomness=2.0)
+    ax.add_patch(time_arrow)
     ax.text(
         0,
-        3.75,
-        "time →",
+        3.73,
+        "time",
         color=MUTED,
-        fontsize=12.0 if mobile else 11.0,
+        fontsize=11.5 if mobile else 10.5,
         fontweight=600,
         va="bottom",
     )
-    ax.plot([0, 1], [3.62, 3.62], color="#dbe1e3", linewidth=1.0)
 
     height = 0.34
     rows = (
         ("Fit 1", 3.02, 0.35),
         ("Fit 2", 2.18, 0.61),
-        ("Fit …", 1.50, None),
+        ("⋮", 1.50, None),
         ("Fit k", 0.82, 0.86),
     )
     for label, y, training_end in rows:
@@ -49,71 +58,114 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
             y,
             label,
             color="#21334a",
-            fontsize=11.0 if mobile else 10.5,
+            fontsize=12.0 if label == "⋮" else 11.0 if mobile else 10.5,
             fontweight=700,
             ha="left",
             va="center",
         )
         if training_end is None:
             continue
-        ax.add_patch(Rectangle((0, y - height / 2), 1, height, color="#eef1f3"))
-        ax.add_patch(
-            Rectangle((0, y - height / 2), training_end, height, color=TRAINING)
+        track = FancyBboxPatch(
+            (0, y - height / 2),
+            1,
+            height,
+            boxstyle="round,pad=0.015,rounding_size=0.045",
+            facecolor="#f3f5f6",
+            edgecolor="#d4dadd",
+            linewidth=1.0,
         )
-        ax.add_patch(
-            Rectangle(
-                (training_end, y - height / 2),
-                0.02,
-                height,
-                color=GAP,
-            )
-        )
-        ax.add_patch(
-            Rectangle(
-                (training_end + 0.02, y - height / 2),
-                min(0.23, 0.98 - training_end),
-                height,
-                color=TEST,
-            )
-        )
-
-    handles = (
-        Patch(
+        track.set_sketch_params(scale=1.0, length=95.0, randomness=2.0)
+        ax.add_patch(track)
+        training = FancyBboxPatch(
+            (0, y - height / 2),
+            training_end,
+            height,
+            boxstyle="round,pad=0.01,rounding_size=0.04",
             facecolor=TRAINING,
-            edgecolor="none",
-            label="training history (starts at 900 dates)",
-        ),
-        Patch(facecolor=GAP, edgecolor="none", label="21-date gap"),
-        Patch(facecolor=TEST, edgecolor="none", label="next 600-date test block"),
+            edgecolor="#355b80",
+            linewidth=1.1,
+        )
+        training.set_sketch_params(scale=1.0, length=80.0, randomness=2.2)
+        ax.add_patch(training)
+        gap = Rectangle(
+            (training_end, y - height / 2 - 0.015),
+            0.02,
+            height + 0.03,
+            facecolor=GAP,
+            edgecolor="#625777",
+            linewidth=1.0,
+        )
+        gap.set_sketch_params(scale=0.8, length=55.0, randomness=2.0)
+        ax.add_patch(gap)
+        test_width = min(0.23, 0.98 - training_end)
+        test = FancyBboxPatch(
+            (training_end + 0.02, y - height / 2),
+            test_width,
+            height,
+            boxstyle="round,pad=0.01,rounding_size=0.04",
+            facecolor=TEST,
+            edgecolor="#63717d",
+            linewidth=1.1,
+        )
+        test.set_sketch_params(scale=1.0, length=75.0, randomness=2.2)
+        ax.add_patch(test)
+
+    first_y = rows[0][1]
+    first_training_end = rows[0][2]
+    assert first_training_end is not None
+    label_size = 8.8 if mobile else 9.2
+    ax.text(
+        first_training_end / 2,
+        first_y,
+        "Training history",
+        color=WHITE,
+        fontsize=label_size,
+        fontweight=700,
+        ha="center",
+        va="center",
+    )
+    ax.text(
+        first_training_end + 0.02 + 0.115,
+        first_y,
+        "Test block",
+        color=WHITE,
+        fontsize=label_size,
+        fontweight=700,
+        ha="center",
+        va="center",
+    )
+    ax.annotate(
+        "21-session gap",
+        xy=(first_training_end + 0.01, first_y + height / 2),
+        xytext=(first_training_end + 0.06, first_y + 0.48),
+        color=GAP,
+        fontsize=9.0 if mobile else 9.2,
+        fontweight=600,
+        ha="left",
+        arrowprops={
+            "arrowstyle": "->",
+            "color": GAP,
+            "linewidth": 1.0,
+            "connectionstyle": "arc3,rad=0.18",
+        },
+    )
+    note = (
+        "Training history expands;\nonly the next block is scored."
+        if mobile
+        else "The training history expands; only the next block is scored."
+    )
+    ax.text(
+        0,
+        0.24 if mobile else 0.47,
+        note,
+        color=MUTED,
+        fontsize=8.8 if mobile else 9.1,
+        va="bottom",
     )
     if mobile:
-        fig.legend(
-            handles=handles,
-            frameon=False,
-            fontsize=9.6,
-            ncol=1,
-            loc="lower left",
-            bbox_to_anchor=(0.19, 0.01),
-            labelcolor=MUTED,
-            handlelength=1.0,
-            handleheight=1.0,
-            borderaxespad=0,
-        )
-        fig.subplots_adjust(left=0.18, right=0.98, top=0.98, bottom=0.34)
+        fig.subplots_adjust(left=0.18, right=0.98, top=0.98, bottom=0.08)
     else:
-        fig.legend(
-            handles=handles,
-            frameon=False,
-            fontsize=9.4,
-            ncol=3,
-            loc="lower center",
-            bbox_to_anchor=(0.56, 0.02),
-            labelcolor=MUTED,
-            handlelength=0.9,
-            columnspacing=2.2,
-            borderaxespad=0,
-        )
-        fig.subplots_adjust(left=0.11, right=0.99, top=0.98, bottom=0.21)
+        fig.subplots_adjust(left=0.11, right=0.99, top=0.98, bottom=0.08)
     return fig
 
 

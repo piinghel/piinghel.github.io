@@ -158,7 +158,7 @@ def plot_turnover_costs(
         (
             axes[1],
             "annual_cost_drag_pct_points",
-            "Annual cost drag at 5 bp (pp)",
+            "Annual trading cost at 5 bp (pp)",
         ),
     ):
         style_axis(ax, style)

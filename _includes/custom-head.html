@@ -12,10 +12,46 @@
     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
 {%- endif -%}
-<!-- Theme preference -->
+<!-- Time-aware theme preference -->
 <script>
   (function () {
-    var storageKey = 'quant-notes-theme';
+    var overrideKey = 'quant-notes-theme-override';
+    var boundaryTimer;
+
+    function scheduledTheme(date) {
+      var hour = date.getHours();
+      return hour >= 21 || hour < 7 ? 'dark' : 'light';
+    }
+
+    function nextBoundary(date) {
+      var boundary = new Date(date);
+      if (date.getHours() < 7) {
+        boundary.setHours(7, 0, 0, 0);
+      } else if (date.getHours() < 21) {
+        boundary.setHours(21, 0, 0, 0);
+      } else {
+        boundary.setDate(boundary.getDate() + 1);
+        boundary.setHours(7, 0, 0, 0);
+      }
+      return boundary;
+    }
+
+    function activeTheme(date) {
+      try {
+        var savedOverride = JSON.parse(window.localStorage.getItem(overrideKey));
+        if (
+          savedOverride &&
+          (savedOverride.theme === 'dark' || savedOverride.theme === 'light') &&
+          Number(savedOverride.expires) > date.getTime()
+        ) {
+          return savedOverride.theme;
+        }
+        window.localStorage.removeItem(overrideKey);
+      } catch (error) {
+        // The automatic schedule works even when storage is unavailable.
+      }
+      return scheduledTheme(date);
+    }
 
     function applyTheme(theme) {
       var root = document.documentElement;
@@ -26,24 +62,49 @@
         button.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
         button.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
         button.querySelector('.theme-toggle-label').textContent = isDark ? 'Light' : 'Dark';
-        button.querySelector('.theme-toggle-icon').textContent = isDark ? '☼' : '◐';
+        button.querySelector('.theme-toggle-icon').textContent = isDark ? '☀' : '☾';
       }
+    }
+
+    function refreshTheme() {
+      applyTheme(activeTheme(new Date()));
+    }
+
+    function scheduleBoundaryRefresh() {
+      window.clearTimeout(boundaryTimer);
+      var now = new Date();
+      boundaryTimer = window.setTimeout(function () {
+        try {
+          window.localStorage.removeItem(overrideKey);
+        } catch (error) {
+          // Continue with the time-based theme when storage is unavailable.
+        }
+        refreshTheme();
+        scheduleBoundaryRefresh();
+      }, nextBoundary(now).getTime() - now.getTime() + 100);
     }
 
     function initThemeToggle() {
       var button = document.querySelector('.theme-toggle');
       if (!button) return;
-      var current = document.documentElement.getAttribute('data-theme') || 'light';
-      applyTheme(current);
+      refreshTheme();
+      scheduleBoundaryRefresh();
       button.addEventListener('click', function () {
         var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         applyTheme(next);
         try {
-          window.localStorage.setItem(storageKey, next);
+          window.localStorage.setItem(overrideKey, JSON.stringify({
+            theme: next,
+            expires: nextBoundary(new Date()).getTime()
+          }));
         } catch (error) {
           // The toggle still works for the current page when storage is unavailable.
         }
       });
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) refreshTheme();
+      });
+      window.addEventListener('focus', refreshTheme);
     }
 
     if (document.readyState === 'loading') {

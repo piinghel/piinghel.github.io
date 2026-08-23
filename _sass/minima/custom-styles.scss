@@ -2258,21 +2258,150 @@ article.post .post-header .post-title {
   }
 }
 
+// Final compact identity and neutral light palette.
+:root {
+  --ink: #1f2328;
+  --muted-ink: #656d76;
+  --rule: #d0d7de;
+  --accent: #0969da;
+  --accent-dark: #0550ae;
+  --soft-accent: #f6f8fa;
+  --code-surface: #f6f8fa;
+  --page-surface: #ffffff;
+  --table-surface: #ffffff;
+  --table-header-surface: #f6f8fa;
+  --table-rule: #d0d7de;
+}
+
+body,
+.site-header,
+.site-header .wrapper,
+.home,
+article.post .post-header {
+  color: var(--ink);
+  background-color: var(--page-surface);
+}
+
+.site-header {
+  min-height: 0;
+  border-bottom: 0;
+}
+
+.site-header .wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  max-width: 780px;
+  min-height: 0;
+  padding-top: 1.45rem;
+  padding-bottom: 1.15rem;
+}
+
+.site-identity {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.site-header .site-title {
+  display: inline-block;
+  float: none;
+  font-family: "Permanent Marker", cursive;
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.site-header .site-nav {
+  position: static;
+  display: flex;
+  float: none;
+  width: auto;
+  margin: 0.35rem 0 0;
+  border: 0;
+  background: transparent;
+  line-height: 1.35;
+}
+
+.site-header .site-nav .page-link {
+  display: inline-block;
+  margin: 0 0.85rem 0 0;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.site-header .theme-toggle {
+  width: 2rem;
+  height: 2rem;
+  margin: 0.05rem 0 0 1rem;
+  padding: 0;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted-ink);
+}
+
+.theme-toggle-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.theme-toggle-icon {
+  font-size: 1.15rem;
+}
+
+@media (max-width: 600px) {
+  .site-header .wrapper {
+    padding-top: 1rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .site-header .site-title {
+    padding-right: 2.5rem;
+    font-size: 1.55rem;
+  }
+
+  .site-header .site-nav {
+    flex-wrap: wrap;
+    padding-right: 1rem;
+  }
+
+  .site-header .site-nav .page-link {
+    margin-right: 0.72rem;
+    font-size: 0.95rem;
+  }
+
+  .site-header .theme-toggle {
+    position: absolute;
+    top: 0.95rem;
+    right: 0.85rem;
+    margin: 0;
+  }
+}
+
 // Apply the dark palette after the site's light-theme overrides so all
 // existing article components inherit the selected theme.
 html[data-theme="dark"] {
   color-scheme: dark;
-  --ink: #dbe4e7;
-  --muted-ink: #94a5ab;
-  --rule: #2d3b41;
-  --accent: #82aef0;
-  --accent-dark: #a7c7f6;
-  --soft-accent: #182433;
-  --code-surface: #151e22;
-  --page-surface: #10171a;
-  --table-surface: #141d21;
-  --table-header-surface: #1a272c;
-  --table-rule: #34434a;
+  --ink: #c9d1d9;
+  --muted-ink: #8b949e;
+  --rule: #30363d;
+  --accent: #58a6ff;
+  --accent-dark: #79c0ff;
+  --soft-accent: #161b22;
+  --code-surface: #161b22;
+  --page-surface: #0d1117;
+  --table-surface: #161b22;
+  --table-header-surface: #21262d;
+  --table-rule: #30363d;
 
   body,
   .wrapper,

@@ -72,8 +72,8 @@ change across the ranking.
 
 <div class="low-vol-figure decile-profile-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=4">
-    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=4" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=5">
+    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=5" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -294,7 +294,7 @@ The estimate covers stock-trading costs. A fuller implementation estimate would 
 <p class="table-caption"><strong>Table 2:</strong> Full-sample exposure and trading diagnostics.</p>
 
 The volatility-scaled implementation produces a 7.1% annualised arithmetic
-return after costs, 9.8% volatility, and a 0.73 Sharpe. Its cost drag is about 0.5
+return after costs, 9.8% volatility, and a 0.73 Sharpe. Its annual trading cost is about 0.5
 percentage points a year. Total portfolio volatility falls by 23.6 percentage
 points, from 33.4% to 9.8%. The comparison includes the lower gross exposure,
 positive net exposure, and different beta produced by inverse-volatility sizing.
@@ -341,12 +341,12 @@ The larger historical example is the dot-com boom. From 8 October 1998 to 9 Marc
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=7">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=7" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and reversal and the still-open 2025 to 2026 rally" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=8">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=8" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Two strong market rallies on common scales. The dot-com panel runs from 8 October 1998 through 3 April 2001; its vertical line marks the portfolio trough on 9 March 2000 and the recovery that followed. The recent panel runs from 3 April 2025 through 27 May 2026, with no comparable reversal observed by the sample end. Upper panels compare gross portfolio and market wealth; lower panels show additive long- and short-book contributions.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> The dot-com and AI rallies. The dot-com panel runs from 8 October 1998 through 3 April 2001; its dotted vertical line marks the portfolio trough on 9 March 2000 and the recovery that followed. The AI-rally panel runs from 3 April 2025 through 27 May 2026. Upper panels compare gross portfolio and market wealth; lower panels show additive long- and short-book contributions. Each episode uses its own y-range, and every contribution panel includes zero.</p>
 
 During the rally, both books lose money and the short book does most of the
 damage. After the trough, both legs recover as high-volatility leadership

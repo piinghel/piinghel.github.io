@@ -234,10 +234,10 @@ every-third-date samples to reduce dependence among adjacent target windows.
 
 <div class="research-figure walk-forward-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg?v=5">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=5">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg?v=5">
-    <img src="/assets/multiple-linear-regression/walk-forward.png?v=5" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg?v=6">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=6">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg?v=6">
+    <img src="/assets/multiple-linear-regression/walk-forward.png?v=6" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -307,7 +307,7 @@ To judge Ridge, I separate the model from the trading layer. Rank information
 coefficient (IC), prediction changes, and coefficient behavior ask what
 shrinkage changes before costs. The portfolio table reports both gross and net
 return because the final choice still has to work as an implementation. Annual
-cost drag ranges only from 1.43 to 1.46 percentage points across the grid.
+annual trading cost ranges only from 1.43 to 1.46 percentage points across the grid.
 Similar deductions keep cost differences from driving the penalty choice: gross
 return isolates the portfolio result before the stated trading cost, while net
 return shows what remains after it.
@@ -418,14 +418,14 @@ share the same 144 predictors.
 | Maximum drawdown | −31.55% | −18.77% | −19.03% |
 | Market beta | 0.093 | 0.084 | 0.091 |
 | Turnover per rebalance | 78.78% | 167.67% | 165.72% |
-| Annual cost drag | 0.69 pp | 1.46 pp | 1.44 pp |
+| Annual trading cost | 0.69 pp | 1.46 pp | 1.44 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
 <p class="table-caption"><strong>Table 2:</strong> Development-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
 The learned portfolios have higher Sharpes than the benchmark, with similar
 annualized returns, lower volatility, and shallower drawdowns. The price is
-roughly double the benchmark's turnover and annual cost drag. Ridge reduces
+roughly double the benchmark's turnover and annual trading cost. Ridge reduces
 turnover by only 1.95 percentage points per rebalance relative to OLS and saves
 about 0.02 percentage points a year. Coefficient shrinkage is meaningful; the
 trading-cost change is negligible.
@@ -447,7 +447,7 @@ full market cycle.
 | Maximum drawdown | −10.98% | −7.59% | −8.05% |
 | Market beta | 0.036 | 0.075 | 0.078 |
 | Turnover per rebalance | 69.70% | 152.75% | 149.61% |
-| Annual cost drag | 0.61 pp | 1.34 pp | 1.31 pp |
+| Annual trading cost | 0.61 pp | 1.34 pp | 1.31 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
 <p class="table-caption"><strong>Table 3:</strong> Later-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
@@ -597,16 +597,16 @@ every portfolio shows how much turnover reduces returns.
 
 <div class="research-figure turnover-figure">
   <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg?v=2">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png?v=2">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg?v=2">
-    <img src="/assets/multiple-linear-regression/turnover-and-costs.png?v=2" alt="Turnover per rebalance and annual cost drag for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg?v=3">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png?v=3">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg?v=3">
+    <img src="/assets/multiple-linear-regression/turnover-and-costs.png?v=3" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual return drag from the 5 bp trading-cost assumption, shown separately for development and the later period.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual trading cost under the 5 bp assumption, shown separately for development and the later period.</p>
 
-The fixed score has about half the turnover and cost drag of the learned
+The fixed score has about half the turnover and trading cost of the learned
 rankings. Ridge barely changes the higher turnover: versus OLS, the selected
 penalty saves 0.02 percentage points of annual return in development and 0.03 in
 the later period. The cost difference provides little reason to prefer Ridge.
