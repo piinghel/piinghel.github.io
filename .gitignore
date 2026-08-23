@@ -1,6 +1,9 @@
 _site/
 .DS_Store
 __pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 *.py[cod]
 *.csv
 *.parquet

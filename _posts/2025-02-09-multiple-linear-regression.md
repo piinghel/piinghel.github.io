@@ -73,7 +73,7 @@ Q^{\mathrm{higher}}_{i,t}\!\left(\frac{21-k}{21}\right).
 \end{aligned}
 $$
 
-The first line averages annualised volatility over 21, 63, and 126 sessions,
+The first line averages annualised volatility over 21, 63, and 126 trading days,
 with a 5% floor and a 200% cap. In the second line,
 $$Q^{\mathrm{higher}}_{i,t}(p)$$ is the higher-interpolated empirical quantile of
 the latest 21 capped returns. The three quantiles recover the three largest
@@ -228,7 +228,7 @@ I refit the model as the historical sample expands and score only the next
 block—a walk-forward design. The research history begins in January 1995. The
 first 900 dates establish the initial training sample, so mechanical
 out-of-sample predictions begin in September 1998. Each of 12 fits leaves a
-21-day buffer around the overlapping 20-session target, then scores the next
+21-day buffer around the overlapping 20-trading-day target, then scores the next
 600-date block. At each refit, I average three models trained on complementary
 every-third-date samples to reduce dependence among adjacent target windows.
 
@@ -247,7 +247,7 @@ data; repeated research reuse makes the period development evidence.
 Every score then enters the same portfolio construction, derived in more detail
 in the earlier [low-volatility allocation article](/quant/2024/12/15/low-volatility-factor.html).
 The top and bottom 75 stocks form the long and short books. Each starts at
-$1/75$, is scaled by 20% divided by trailing 60-session volatility, and is capped
+$1/75$, is scaled by 20% divided by trailing 60-trading-day volatility, and is capped
 at 4% of sleeve capital; volatility is floored at 5% and the multiplier at four.
 Each side is scaled down if gross exposure exceeds 100%; a smaller side keeps
 its lower exposure. The rule therefore reduces single-stock risk while allowing
@@ -286,7 +286,7 @@ $n_f$ rows, $\alpha_f=n_fc$. This keeps $c$ comparable as the sample expands.
 The $c=0$ case uses `LinearRegression`.
 
 The rows share market and sector shocks, predictors move slowly, and adjacent
-20-session targets overlap. A 21-day buffer keeps a
+20-trading-day targets overlap. A 21-day buffer keeps a
 training target out of the next prediction block, while 600-date walk-forward
 blocks avoid random row-level validation. Some overlap remains. The penalty
 choice is a sensitivity check. The effective sample contains far fewer
@@ -379,7 +379,7 @@ selection statistics use development data only.
 
 <p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the phone layout samples six labelled dates, and both layouts retain the 2022 and 2024 later-period diagnostics.</p>
 
-The clearest directions persist: price relative to its 126-session moving
+The clearest directions persist: price relative to its 126-day moving
 average stays positive, while short-horizon moving-average convergence/divergence
 (MACD) and illiquidity stay negative.
 Other weights weaken or change sign as the sample expands. Combined with the
@@ -461,7 +461,7 @@ $$
 $$
 
 The IC history starts with the first walk-forward predictions in September 1998
-and ends on April 28, 2026, the last date for which the full 20-session outcome
+and ends on April 28, 2026, the last date for which the full 20-trading-day outcome
 is available.
 
 The cumulative path adds those daily correlations. A rising path means the model has
@@ -630,9 +630,9 @@ high-low range and gaps from the previous
 close. Total, upside, and downside volatility are rolling standard deviations of
 all, positive, or negative daily returns; in the one-sided versions, returns on
 the other side are set to zero. A trend streak such as 200/126d is the share of
-the last 126 sessions that price spent above its 200-session moving average.
-Price/prior high compares price with its 252-session high while skipping the
-latest 21 sessions, and 252-day RSI compares average gains with average losses
+the last 126 trading days that price spent above its 200-day moving average.
+Price/prior high compares price with its 252-day high while skipping the
+latest 21 trading days, and 252-day RSI compares average gains with average losses
 over the past year. As with the other inputs, the model sees cross-sectional
 ranks of these quantities.
 
