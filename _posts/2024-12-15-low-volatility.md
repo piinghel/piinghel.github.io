@@ -72,12 +72,12 @@ change across the ranking.
 
 <div class="low-vol-figure decile-profile-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=3">
-    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=3" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile.png?v=4">
+    <img src="/assets/2024-12-15-low-volatility-factor/decile_profile.png?v=4" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Sharpe ratio, geometric return, and volatility by volatility decile before costs.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Sharpe ratio, geometric return, and volatility by volatility decile before costs. Decile 1 is the low-volatility group; decile 10 is the high-volatility group.</p>
 
 Geometric return stays positive across all ten deciles, while volatility rises
 sharply and Sharpe deteriorates. In the highest-volatility decile, a 7.6%
@@ -95,8 +95,8 @@ and a beta of 1.63; the long leg has about 12% volatility and a beta of 0.55.
 
 <div class="low-vol-figure naive-leg-risk-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png?v=2">
-    <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png?v=2" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile.png?v=3">
+    <img src="/assets/2024-12-15-low-volatility-factor/naive_leg_risk.png?v=3" alt="Realized volatility and average beta of the low- and high-volatility deciles" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -160,8 +160,8 @@ Inverse-volatility sizing shifts capital towards the low-volatility long book an
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png?v=2">
-    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png?v=2" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/target_exposures_mobile.png?v=3">
+    <img src="/assets/2024-12-15-low-volatility-factor/target_exposures.png?v=3" alt="Realized long gross, short gross, and net stock exposure through time" loading="lazy" decoding="async">
   </picture>
 </div>
 
@@ -341,16 +341,19 @@ The larger historical example is the dot-com boom. From 8 October 1998 to 9 Marc
 
 <div class="low-vol-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=4">
-    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=4" alt="Grouped bars compare long- and short-book contributions during the dot-com and recent high-volatility rallies" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" srcset="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile.png?v=6">
+    <img src="/assets/2024-12-15-low-volatility-factor/regime_comparison.png?v=6" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and reversal" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Gross long- and short-book contributions during two high-volatility rallies. Values are percentage points on the strategy capital base.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> The dot-com episode from 8 October 1998 through 3 April 2001. The upper panel compares gross portfolio and market wealth; the lower panel shows additive long- and short-book contributions. The vertical line marks the portfolio trough on 9 March 2000.</p>
 
-Both episodes show the same mechanism: the short book accounts for most of the
-loss. The dot-com episode is larger; the recent episode ends with the sample in
-May 2026.
+During the rally, both books lose money and the short book does most of the
+damage. After the trough, both legs recover as high-volatility leadership
+unwinds, and the gross portfolio returns to roughly its starting level by 3
+April 2001. The recent episode has only reached the first phase in this sample:
+the market rallied through 27 May 2026, but no comparable factor recovery is
+observed or assumed.
 
 ## Conclusion
 
