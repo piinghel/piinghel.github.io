@@ -11,7 +11,7 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> A 1/N volatility-ranked long/short portfolio remains highly concentrated in risk, even after a 4% position cap. Holding stock selection fixed, adding inverse-volatility scaling raises net arithmetic return from 2.4% to 7.1%, cuts volatility from 33.4% to 9.8%, and reduces maximum drawdown from 87.1% to 38.0%. The improvement belongs to the complete sizing rule—which also changes gross exposure, net exposure, beta, and turnover—not to an isolated inverse-volatility effect.</p>
+<p class="article-summary"><strong>TL;DR:</strong> Sorting stocks by volatility is not enough: equal dollar weights let the riskiest names dominate. I buy the calmest decile and short the most volatile. With equal weights, volatility is 33.4% and maximum drawdown is 87.1%. Keeping the same stocks but giving lower-volatility names larger positions raises after-cost arithmetic return from 2.4% to 7.1%, cuts volatility to 9.8%, and reduces maximum drawdown to 38.0%. Those gains come from the complete sizing rule, which also changes exposure, beta, and turnover.</p>
 
 Ranking stocks by volatility does not tell me how much capital to give each one. Even within the low- and high-volatility baskets, the stocks have markedly different risk. Equal weighting is a transparent baseline, but it ignores those differences and lets volatile names dominate portfolio risk. The 4% cap limits concentration without changing the simple 1/N benchmark.
 
@@ -36,7 +36,7 @@ The available cross-section is broad and fairly stable. That matters because lar
 
 ## Measuring and ranking volatility
 
-For each stock $$i$$ on each signal date $$t$$, I estimate annualized realized volatility over the past $$h\in\{21,63,126\}$$ trading days and take the average:
+The ranking is simple: for each stock $$i$$ on signal date $$t$$, I average its annualised realised volatility over the past 21, 63, and 126 trading days. I call that average the stock's volatility score:
 
 $$
 \begin{aligned}
@@ -49,7 +49,7 @@ v_{i,t}
 \end{aligned}
 $$
 
-The one-, three-, and six-month windows balance responsiveness and stability. Before ranking, I bound the average at 5%–200%; observations outside those limits tie at the boundary.
+In the equation, $$\widehat{\sigma}_{i,t}^{(h)}$$ is the annualised volatility estimated over the last $$h$$ trading days. The one-, three-, and six-month windows balance responsiveness and stability. Before ranking, I bound the score at 5%–200%; observations outside those limits tie at the boundary.
 
 At each rebalance I split the ranked stocks into ten fixed groups of roughly equal size. Deciles 1 and 10 each contain roughly 100 stocks, making them meaningful slices of the tradable universe. Decile 1 is the long leg and decile 10 is the short leg; the middle deciles show how the results change across the ranking.
 
@@ -87,7 +87,7 @@ I rebalance every three weeks and trade the signal at the next market close.
 
 Within each leg, I start with an explicit $1/N$ allocation and then adjust each stock's position size by its inverse estimated volatility. This makes the allocation rule easy to follow: the ranking chooses the stocks, and the volatility estimate determines their relative sizes.
 
-For a leg $$\ell\in\{L,H\}$$, let $$\mathcal S_{\ell,t}$$ be its selected-stock set at signal date $$t$$, and let $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$. Expressing volatility and weights as decimals, the uncapped and capped absolute weights for stock $$i\in\mathcal S_{\ell,t}$$ are
+The sizing rule follows the same logic. Each leg starts with equal dollar weights. I then multiply each stock's weight by 20% divided by its own 60-day volatility: a stock estimated at 10% volatility receives twice the preliminary weight of one estimated at 20%. No position may exceed 4%, and a leg that would exceed 100% gross exposure is scaled down proportionally. In notation, for leg $$\ell\in\{L,H\}$$, selected-stock set $$\mathcal S_{\ell,t}$$, and stock count $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$:
 
 $$
 \begin{aligned}
