@@ -1,5 +1,3 @@
-@use "settings" as *;
-
 html {
   font-size: $base-font-size;
 }
@@ -126,8 +124,7 @@ a {
     text-decoration: underline;
   }
 
-  .social-media-list &:hover,
-  .pagination &:hover {
+  .social-media-list &:hover {
     text-decoration: none;
 
     .username {
