@@ -1261,27 +1261,6 @@ body {
   letter-spacing: 0;
 }
 
-.site-monogram {
-  display: inline-grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid var(--rule);
-  border-radius: 50%;
-  color: var(--accent);
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1;
-  transition: border-color 180ms ease, transform 180ms ease;
-}
-
-.site-title:hover .site-monogram,
-.site-title:focus-visible .site-monogram {
-  border-color: var(--accent);
-  transform: rotate(-5deg);
-}
-
 .site-nav {
   margin-left: auto;
 }
@@ -1593,10 +1572,6 @@ pre,
   .site-header .wrapper {
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
-  }
-
-  .site-title > span:last-child {
-    display: none;
   }
 
   .site-nav {
@@ -2260,10 +2235,6 @@ article.post .post-header .post-title {
 }
 
 @media (max-width: 600px) {
-  .site-title > span:last-child {
-    display: none;
-  }
-
   .theme-toggle {
     margin-left: auto;
     margin-right: 3rem;

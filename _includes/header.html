@@ -5,7 +5,6 @@
     {%- assign page_paths = site.header_pages | default: default_paths -%}
     {%- assign titles_size = site.pages | map: 'title' | join: '' | size -%}
     <a class="site-title" rel="author" href="{{ "/" | relative_url }}">
-      <span class="site-monogram" aria-hidden="true">P.</span>
       <span>{{ site.title | escape }}</span>
     </a>
 
