@@ -23,13 +23,13 @@ permalink: /quants/2025/04/20/reading-and-tools.html
 
 - [Polars](https://pola.rs/) — DataFrames with a strong expression API and lazy execution.
 - [DuckLake](https://ducklake.select/) — An open lakehouse format that keeps its catalogue in SQL.
-- [Streamlit](https://streamlit.io/) — A quick route from Python analysis to a useful internal app.
+- [Streamlit](https://streamlit.io/) — Turns Python analyses into interactive internal apps.
 
 ## Portfolio construction and risk modelling
 
 **[Enhanced Portfolio Optimization](https://www.aqr.com/Insights/Research/White-Papers/Enhanced-Portfolio-Optimization).**
-*Pedersen, Babu, and Levine (2021).* A useful common framework for regularized
-and Bayesian portfolio methods.
+*Pedersen, Babu, and Levine (2021).* A common framework for regularized and
+Bayesian portfolio methods.
 
 **[Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility).**
 *Bollerslev et al.* A broad comparison of volatility models across asset classes.
@@ -46,8 +46,8 @@ and Bayesian portfolio methods.
 *Hellum et al. (2023).*
 
 **[Replicating Anomalies](https://ssrn.com/abstract=2961979).**
-*Hou et al. (2017).* A useful check on how much published predictability survives
-stricter implementation choices.
+*Hou et al. (2017).* Tests how much published predictability survives stricter
+implementation choices.
 
 **[TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models](https://arxiv.org/abs/2511.08667).**
 *Grinsztajn et al. (2025).*

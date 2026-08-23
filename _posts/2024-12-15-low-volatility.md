@@ -108,7 +108,12 @@ Inverse-volatility sizing keeps these stocks and changes their position sizes.
 
 ## Volatility scaling
 
-I use a separate 60-day volatility estimate for sizing, with a 5% floor. Within each leg, every stock starts at $1/N$. I then multiply that weight by 20% divided by the stock's estimated volatility. A stock at 10% volatility receives twice the preliminary weight of one at 20%. The position cap is 4%, and a leg above 100% gross exposure is scaled down proportionally. I rebalance every three weeks and trade at the next market close.
+Position sizing uses a separate 60-day volatility estimate with a 5% floor.
+Within each leg, every stock starts at $1/N$. Its weight is then multiplied by
+20% divided by estimated volatility. A stock at 10% volatility receives twice
+the preliminary weight of one at 20%. The position cap is 4%, and a leg above
+100% gross exposure is scaled down proportionally. The portfolio rebalances
+every three weeks and trades at the next market close.
 
 For leg $$\ell\in\{L,H\}$$, selected-stock set $$\mathcal S_{\ell,t}$$, and stock count $$N_{\ell,t}=\lvert\mathcal S_{\ell,t}\rvert$$:
 

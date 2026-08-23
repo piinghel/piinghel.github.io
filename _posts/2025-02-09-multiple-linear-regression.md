@@ -18,16 +18,16 @@ Each method produces an ordered list of stocks. The highest scores become long
 candidates and the lowest scores become short candidates. Position sizing,
 execution, and trading costs then turn that ranking into a portfolio.
 
-I use three versions: a fixed-weight score, ordinary least squares (OLS), and
-Ridge. Fixed weights versus OLS compares two complete specifications. OLS
+The comparison has three versions: a fixed-weight score, ordinary least squares
+(OLS), and Ridge. Fixed weights versus OLS compares two complete specifications. OLS
 versus Ridge keeps the predictors, target, and portfolio fixed, so it isolates
 the estimator.
 
 ## Benchmark
 
-I keep the benchmark simple. It uses familiar signals with fixed signs and
-equal theme weights. Every choice is visible, and each theme receives the same
-influence. The factor choices, lookbacks, and signs still reflect my judgment.
+The benchmark uses familiar signals with fixed signs and equal theme weights.
+Every choice is visible, and each theme receives the same influence. The factor
+choices, lookbacks, and signs still reflect my judgment.
 
 The benchmark has five economic themes. Six raw signals enter because the
 defensive theme combines two related questions:
@@ -330,13 +330,11 @@ The $c=0.1$ model earns more return and takes more risk, while recording weaker
 Sharpes in both shorter windows.
 {: .table-followup }
 
-The next diagnostic measures two practical changes relative to OLS. Portfolio membership
-counts how many of the 75 longs and 75
-shorts differ from the OLS portfolio on an average rebalance. Coefficient shrinkage reports the
-percentage reduction in the coefficients' Euclidean size (L2 norm) and in their
-mean absolute change between adjacent refits. Higher values in either panel mean
-that Ridge has moved further away from OLS. Prediction accuracy is evaluated
-separately with rank IC and portfolio results.
+Two diagnostics measure how Ridge differs from OLS. Portfolio membership counts
+how many of the 75 longs and 75 shorts change on an average rebalance.
+Coefficient shrinkage reports the reduction in the coefficients' Euclidean size
+(L2 norm) and their mean absolute change between adjacent refits. Prediction
+accuracy is evaluated separately with rank IC and portfolio results.
 
 <div class="research-figure alpha-sensitivity-figure">
   <picture>
@@ -606,10 +604,10 @@ every portfolio shows how much turnover reduces returns.
 
 <p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual return drag from the 5 bp trading-cost assumption, shown separately for development and the later period.</p>
 
-The fixed score is clearly cheaper. Ridge barely changes the higher turnover
-inherited from the learned monthly ranking: versus OLS, the selected penalty
-saves 0.02 percentage points of annual return in development and 0.03 in the
-later period. That difference is too small to motivate the penalty by itself.
+The fixed score has about half the turnover and cost drag of the learned
+rankings. Ridge barely changes the higher turnover: versus OLS, the selected
+penalty saves 0.02 percentage points of annual return in development and 0.03 in
+the later period. The cost difference provides little reason to prefer Ridge.
 
 ### Capital and market exposure
 
@@ -707,7 +705,7 @@ effects. At $c=0.1$, about 39 of 150 selected names change relative to OLS on a
 typical rebalance. Development Sharpe remains close at 0.99, and the largest
 realized tilts are still defensive and trend-led.
 
-That is evidence of limited diversification in the finished signal; the changed
+The finished signal has limited feature diversification, though the changed
 portfolios can still own different sources of alpha. Cross-sectional ranking
 removes magnitude, broad 75-stock tails preserve substantial overlap, and
 inverse-volatility sizing can pull different rankings toward similar defensive
@@ -734,7 +732,7 @@ The main limits come from the research design and the allocation. Overlapping
 targets, common shocks within each date, and repeated use of the development
 history reduce the independent information in the sample. The 21-session purge
 and date-blocked walk-forward design address leakage across test boundaries;
-equal-date weighting and genuinely non-overlapping training dates remain useful
+equal-date weighting and genuinely non-overlapping training dates remain
 robustness tests. A fuller implementation estimate would add borrow, financing,
 market impact, and taxes. The
 predictor deck also remains concentrated in related price-based measures, so a

@@ -19,13 +19,13 @@ that the effect is largest when turnover is high, portfolios are concentrated,
 or holdings change quickly. [Concretum Research](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
 makes the same problem concrete in a monthly momentum strategy: average return
 hardly changes as more schedules are combined, but the gap between the luckiest
-and unluckiest schedule contracts sharply. That is the appeal of tranching: it
-spreads the portfolio across several execution schedules, making any one
-arbitrary calendar choice matter less.
+and unluckiest schedule contracts sharply. Tranching spreads the portfolio
+across several execution schedules, so any one arbitrary calendar choice matters
+less.
 
-I use my own long/short stock-ranking strategy to ask a narrower question. If I
-split the portfolio across three overlapping sleeves, can I preserve the return
-while making the path less dependent on the starting week?
+My long/short stock-ranking strategy provides a narrower test: can three
+overlapping sleeves preserve return while reducing dependence on the starting
+week?
 
 ## Fifteen ways to run the same strategy
 
@@ -134,23 +134,22 @@ to 1.80.
 
 The dispersion narrows as well. The geometric-return range contracts from 2.43
 to 0.40 percentage points, the maximum-drawdown range from 4.07 to 1.36 points,
-and the underwater-duration range from 345 to 71 days. Put differently, once
-the three starting-week offsets are combined, roughly five-sixths of the
-observed return range disappears. The five remaining weekday portfolios are
-close: their volatilities span only 6.04% to 6.11%, and their Sharpes 1.78 to
-1.85.
+and the underwater-duration range from 345 to 71 days. Combining the three
+starting-week offsets removes roughly five-sixths of the observed return range.
+The five remaining weekday portfolios are close: their volatilities span only
+6.04% to 6.11%, and their Sharpes 1.78 to 1.85.
 
 The visible calendar dispersion is much larger across starting-week offsets
 than across weekdays. Two mechanisms could produce the smoother tranched path:
 averaging those offsets, and refreshing one-third of the predictions each week.
 The saved experiment cannot tell them apart.
 
-## What the comparison identifies—and what remains open
+## Limits of the comparison
 
-Three tranches directly average the three starting-week offsets. I would not add
-weekday sleeves on the strength of these results. The remaining weekday range is
-small, and more sleeves would mean smaller orders, more frequent runs, and more
-operational state for an uncertain incremental gain.
+Three tranches directly average the three starting-week offsets. The remaining
+weekday range is small, while more sleeves would mean smaller orders, more
+frequent runs, and more operational state for an uncertain incremental gain.
+Three sleeves are therefore my preferred limit for this test.
 
 My preference is therefore for the complete three-tranche implementation, not a
 claim that timing diversification alone caused the improvement. A cleaner test
@@ -185,16 +184,15 @@ The complete three-tranche implementation leaves mean annualized geometric
 return almost unchanged, reduces mean volatility by 0.61 percentage points, and lifts the descriptive
 Sharpe from 1.64 to 1.80. It also shows much less dispersion than the 15
 full-rebalance schedules; the remaining variation across weekdays is
-comparatively small. That is enough for me to prefer the three-sleeve
-implementation as a working design, not because it earns more, but because it
-relies less on getting one starting week right.
+comparatively small. I prefer the three-sleeve implementation as a working
+design because it relies less on getting one starting week right.
 
-The reservation is practical. Fresher predictions may share credit for the
-improvement, and the missing daily archive prevents a realistic cost replay. I
-would freeze the three-sleeve design, rebuild the daily evidence, and compare it
-with a full-rebalance version using the same prediction vintages. Only then can
-turnover, spreads, impact, borrow, and operational overhead decide whether the
-observed risk reduction survives implementation.
+Fresher predictions may share credit for the improvement, and the missing daily
+archive prevents a realistic cost replay. I would freeze the three-sleeve
+design, rebuild the daily evidence, and compare it with a full-rebalance version
+using the same prediction vintages. Turnover, spreads, impact, borrow, and
+operational overhead would then determine whether the observed risk reduction
+survives implementation.
 
 ## References
 
