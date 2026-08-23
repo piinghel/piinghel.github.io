@@ -1657,16 +1657,8 @@ L 523.638148 35.894379
 " clip-path="url(#pa03120c238)" style="fill: none; stroke-dasharray: 1.8,2.7; stroke-dashoffset: 0; stroke: #6a7883; stroke-width: 0.9"/>
    </g>
    <g id="text_15">
-    <g id="patch_3">
-     <path d="M 529.362114 53.992209
-L 609.525739 53.992209
-L 609.525739 42.992459
-L 529.362114 42.992459
-z
-" style="fill: #ffffff; opacity: 0.88"/>
-    </g>
     <!-- 2022 boundary -->
-    <g style="fill: #33404b" transform="translate(530.374114 50.995021) scale(0.092 -0.092)">
+    <g style="fill: #33404b" transform="translate(530.374114 29.854151) scale(0.092 -0.092)">
      <defs>
       <path id="DejaVuSans-Bold-32" d="M 1844 884
 L 3897 884

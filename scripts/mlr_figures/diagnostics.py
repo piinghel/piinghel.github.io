@@ -333,20 +333,15 @@ def plot_portfolio_exposures(
     )
     ax.text(
         spec.split_date + timedelta(days=120),
-        0.96,
+        1.02,
         "2022 boundary",
         transform=ax.get_xaxis_transform(),
         ha="left",
-        va="top",
+        va="bottom",
         color=style.ink,
         fontsize=style.annotation_size,
         fontweight=600,
-        bbox={
-            "facecolor": style.white,
-            "edgecolor": "none",
-            "pad": 1.0,
-            "alpha": 0.88,
-        },
+        clip_on=False,
     )
     dates = exposures["long_gross"].dates
     long_values = exposures["long_gross"].values
