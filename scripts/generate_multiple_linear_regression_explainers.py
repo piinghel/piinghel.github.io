@@ -78,7 +78,11 @@ def draw_walk_forward(*, mobile: bool) -> plt.Figure:
         )
 
     handles = (
-        Patch(facecolor=TRAINING, edgecolor="none", label="training history (starts at 900 dates)"),
+        Patch(
+            facecolor=TRAINING,
+            edgecolor="none",
+            label="training history (starts at 900 dates)",
+        ),
         Patch(facecolor=GAP, edgecolor="none", label="21-date gap"),
         Patch(facecolor=TEST, edgecolor="none", label="next 600-date test block"),
     )
@@ -119,7 +123,10 @@ def save(fig: plt.Figure, stem: str, *, mobile: bool) -> None:
     svg_path = OUTPUT_DIR / f"{stem}{suffix}.svg"
     fig.savefig(svg_path, format="svg", facecolor=WHITE)
     svg_path.write_text(
-        "\n".join(line.rstrip() for line in svg_path.read_text(encoding="utf-8").splitlines()) + "\n",
+        "\n".join(
+            line.rstrip() for line in svg_path.read_text(encoding="utf-8").splitlines()
+        )
+        + "\n",
         encoding="utf-8",
     )
     fig.savefig(OUTPUT_DIR / f"{stem}{suffix}.png", dpi=240, facecolor=WHITE)
@@ -132,5 +139,12 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    plt.rcParams.update({"font.family": "DejaVu Sans", "axes.facecolor": WHITE, "savefig.bbox": "tight", "savefig.pad_inches": 0.04})
+    plt.rcParams.update(
+        {
+            "font.family": "DejaVu Sans",
+            "axes.facecolor": WHITE,
+            "savefig.bbox": "tight",
+            "savefig.pad_inches": 0.04,
+        }
+    )
     main()
