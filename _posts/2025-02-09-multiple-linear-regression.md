@@ -8,107 +8,121 @@ article_label: Factor combination · Multiple linear regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> I combine multiple stock predictors into one ranking. The simple benchmark averages five signal themes, giving each a 20% weight. Multiple linear regression learns the weights from the data. I compare OLS with Ridge. During the 1998–2021 development period, the benchmark records a net Sharpe of 0.72 and OLS records 0.98. From January 2022 through May 2026, OLS records 0.87 and Ridge 0.82. This short window offers limited evidence about long-run performance.</p>
+<p class="article-summary"><strong>TL;DR:</strong> This article compares a fixed five-theme benchmark with two learned combinations, OLS and Ridge. During development, OLS records a net Sharpe of 0.98, compared with 0.71 for the benchmark. Ridge reduces coefficient size and refit movement by roughly one third while keeping a 0.991 rank correlation with OLS. From January 2022 through May 2026, OLS records 0.87 and Ridge 0.82. This four-year pseudo-holdout offers limited evidence about long-run performance.</p>
 
-I combine multiple stock predictors into one ranking. The benchmark averages
-five signal themes, giving each a 20% weight. Multiple linear regression learns
-the weights from the data. OLS fits the model directly. Ridge adds shrinkage.
+A stock model can combine several predictors in one ranking. The central choice
+is how much influence each predictor receives. I compare a hand-built benchmark
+with weights learned from history.
 
-The model's job is simple: put the stocks in order. On each date, the
-highest-scoring stocks become long candidates and the lowest-scoring ones become
-short candidates. The score's job is ranking. Portfolio selection uses that
-order.
+Each method produces an ordered list of stocks. The highest scores become long
+candidates and the lowest scores become short candidates. Position sizing,
+execution, and trading costs then turn that ranking into a portfolio.
 
-I compare three ways to form that order: a transparent fixed-weight score,
-ordinary least squares (OLS), and Ridge, which discourages large coefficients.
-Fixed weights versus OLS is a practical comparison. Both the inputs and the
-combination rule change. OLS versus Ridge is controlled: the predictors, target,
-and portfolio remain fixed, and only the estimation method changes.
+I use three versions: a fixed-weight score, ordinary least squares (OLS), and
+Ridge. Fixed weights versus OLS compares two complete specifications. OLS
+versus Ridge keeps the predictors, target, and portfolio fixed, so it isolates
+the estimator.
 
 ## Benchmark
 
-The regression needs a transparent hurdle beside it. The benchmark therefore
-uses a small set of familiar, economically motivated signals with fixed signs
-and equal theme weights. Every choice is visible, the score still works with
-uneven data histories, and I know in advance how much influence one strong theme
-can have. That makes it a useful hurdle for the learned ranking. The trade-off is
-that the factor choices, lookbacks, and signs all embed judgment.
+I keep the benchmark simple. It uses familiar signals with fixed signs and
+equal theme weights. Every choice is visible, and each theme receives the same
+influence. The factor choices, lookbacks, and signs still reflect my judgment.
 
 The benchmark has five economic themes. Six raw signals enter because the
 defensive theme combines two related questions:
 
-**Is risk contained?** Low volatility rewards stocks whose returns have been
+**Defensive.** Low volatility rewards stocks whose returns have been
 quiet over one, three, and six months. Upper-tail avoidance penalises a recent
 path that depends on a few unusually large gains. Together they form one
 defensive theme, with lower values preferred for both ingredients.
 
-**Is there a persistent trend?** Momentum looks for a return pattern that has
+**Momentum.** The signal looks for a return pattern that has
 survived several months, while skipping the latest month to keep short-term
 reversal separate from the trend. Higher values are preferred.
 
-**Is the trade crowded?** Low short interest favours stocks with less reported
-short positioning relative to their trading activity. The measure is deliberately
-lagged, so the score uses information that could have been known at the signal
-date. Lower values are preferred.
+**Low short interest.** The signal favours stocks with less reported short
+positioning relative to their trading activity. Publication lagging keeps the
+measure aligned with the signal date. Lower values are preferred.
 
-**Is the company large and investable?** Capitalisation supplies a plain size
-and investability tilt. Higher values are preferred.
+**Large capitalisation.** Market capitalisation supplies a size and
+investability tilt. Higher values are preferred.
 
-**Is the return path dependable?** Return consistency counts how often a stock
-has lost money on a daily basis over roughly three years. It treats the
-frequency of losing days separately from the size of any one loss. Lower values
-are preferred.
+**Return consistency.** The signal counts losing days over roughly three years,
+separating their frequency from the size of any one loss. Lower values are
+preferred.
 
 The benchmark turns those ideas into six measures. For stock $$i$$ on date
-$$t$$, let $$r$$ denote daily total return, $$v$$ daily volume, $$h^{\mathrm{lag}}$$
-the publication-lagged shares short available on that date, and $$m$$ market
-capitalisation. Daily returns entering tail avoidance, momentum, and loss
-frequency are capped at +100%; write them as $$\widetilde r$$. The raw measures
-are
+$$t$$, let $$r_{i,t}$$ be its daily total return, $$v_{i,t}$$ its daily volume,
+$$h^{\mathrm{lag}}_{i,t}$$ the publication-lagged shares short available on that
+date, and $$m_{i,t}$$ its market capitalisation. I cap positive daily returns at
+100%, so $$\widetilde r_{i,t}=\min(r_{i,t},1)$$. Each rolling measure requires at
+least 80% of its stated window.
+
+The two defensive measures are
 
 $$
 \begin{aligned}
 x^{\mathrm{vol}}_{i,t}
-&=\min\left\{2,\frac{1}{3}\sum_{k\in\{21,63,126\}}
-\max\left[0.05,\sqrt{252}\,\operatorname{sd}(r_{i,t-k+1:t})\right]\right\}, \\
+&=\min\left\{2,\frac{1}{3}\sum_{h\in\{21,63,126\}}
+\max\left[0.05,\sqrt{252}\,\operatorname{sd}
+\{r_{i,t-j}\}_{j=0}^{h-1}\right]\right\}, \\
 x^{\mathrm{tail}}_{i,t}
-&=\operatorname{3rd\ largest}\{\widetilde r_{i,t-j}:0\le j\le20\}, \\
+&=\frac{1}{3}\sum_{k=1}^{3}
+Q^{\mathrm{higher}}_{i,t}\!\left(\frac{21-k}{21}\right).
+\end{aligned}
+$$
+
+The first line averages annualised volatility over 21, 63, and 126 sessions,
+with a 5% floor and a 200% cap. In the second line,
+$$Q^{\mathrm{higher}}_{i,t}(p)$$ is the higher-interpolated empirical quantile of
+the latest 21 capped returns. The three quantiles recover the three largest
+returns in a full window, and their mean measures reliance on a small upper
+tail. Partial windows use the same fast rolling-quantile approximation after at
+least 16 observations. The remaining measures are
+
+$$
+\begin{aligned}
 x^{\mathrm{mom}}_{i,t}
-&=\sum_{k\in\{63,126,189,252\}}
-\left[\prod_{j=21}^{k+20}(1+\widetilde r_{i,t-j})-1\right], \\
+&=\sum_{h\in\{63,126,189,252\}}
+\left[\prod_{j=21}^{h+20}(1+\widetilde r_{i,t-j})-1\right], \\
+\overline v^{(63)}_{i,t}
+&=\frac{1}{63}\sum_{j=0}^{62}v_{i,t-j}, \\
 x^{\mathrm{short}}_{i,t}
 &=\log\left(\frac{h^{\mathrm{lag}}_{i,t}}
-{\frac{1}{63}\sum_{j=0}^{62}v_{i,t-j}}\right), \\
+{\overline v^{(63)}_{i,t}}\right), \\
 x^{\mathrm{size}}_{i,t}&=m_{i,t}, \\
 x^{\mathrm{cons}}_{i,t}
 &=\frac{1}{756}\sum_{j=0}^{755}\mathbf 1\{\widetilde r_{i,t-j}<0\}.
 \end{aligned}
 $$
 
-Low values are preferred for volatility, upper-tail returns, short positioning,
-and loss frequency. High values are preferred for momentum and capitalisation.
-I orient each measure and rank it across the available Russell 1000 observations
-on that date. Average ranks handle ties:
+Let $$k$$ index the six measures. I set $$d_k=+1$$ for momentum and
+capitalisation, and $$d_k=-1$$ for the other four. The signed percentile rank is
 
 $$
-z_{i,t}(x)=
-\frac{\operatorname{rank}^{\mathrm{avg}}_t(d_xx_{i,t})}{N_t(x)},
+z^{(k)}_{i,t}
+=\frac{\operatorname{rank}^{\mathrm{avg}}_t
+\!\left(d_kx^{(k)}_{i,t}\right)}{N^{(k)}_t},
 $$
 
-where $$N_t(x)$$ is the available count for measure $$x$$. The direction
-$$d_x=+1$$ applies to momentum and capitalisation. The other four measures use
-$$d_x=-1$$. The final benchmark score is
+where $$N^{(k)}_t$$ is the available stock count for measure $$k$$. A higher
+rank is always more attractive. I first form the defensive theme, then average
+the five themes:
 
 $$
-b_{i,t}=\frac{1}{5}\left[
-\frac{z^{\mathrm{vol}}_{i,t}+z^{\mathrm{tail}}_{i,t}}{2}
-+z^{\mathrm{mom}}_{i,t}+z^{\mathrm{short}}_{i,t}
-+z^{\mathrm{size}}_{i,t}+z^{\mathrm{cons}}_{i,t}
-\right].
+\begin{aligned}
+z^{\mathrm{def}}_{i,t}
+&=\frac{z^{\mathrm{vol}}_{i,t}+z^{\mathrm{tail}}_{i,t}}{2}, \\
+b_{i,t}
+&=\frac{z^{\mathrm{def}}_{i,t}+z^{\mathrm{mom}}_{i,t}
++z^{\mathrm{short}}_{i,t}+z^{\mathrm{size}}_{i,t}
++z^{\mathrm{cons}}_{i,t}}{5}.
+\end{aligned}
 $$
 
 Low volatility and tail avoidance share the defensive weight. Each remaining
-theme receives 20 per cent. A stock enters the benchmark when all six measures
+theme receives 20%. A stock enters the benchmark when all six measures
 are available. This produces one ranking and one portfolio. Benchmark and
 regression then share the same selection, weighting, execution, and cost rules.
 
@@ -123,100 +137,28 @@ short-interest-to-volume. The extra horizons and related transformations are
 deliberate: the regression tests whether a learned combination improves on the
 small hand-built benchmark.
 
-### Testing the ingredients
-
-Before combining the factors, I ran the six components separately over their
-common May 1997–May 2026 sample. Each component ranks the universe, buys the top 75,
-and shorts the bottom 75. Positions start equally within each leg and are then
-scaled by inverse 60-session stock volatility, subject to the common 4% cap and
-100% gross ceiling per leg described below. The reported portfolio averages
-three offset execution calendars and pays 5 basis points per dollar traded.
-
-| Component | Gross return | Net return | Net volatility | Net Sharpe |
-| --- | ---: | ---: | ---: | ---: |
-| Low volatility | 7.04% | 6.38% | 10.42% | 0.61 |
-| Upper-tail avoidance | 6.54% | 5.03% | 8.81% | 0.57 |
-| Momentum | 4.90% | 4.27% | 10.37% | 0.41 |
-| Low short interest | 2.53% | 1.85% | 4.96% | 0.37 |
-| Large capitalization | 1.94% | 1.66% | 7.32% | 0.23 |
-| Return consistency | 5.90% | 5.48% | 8.90% | 0.62 |
-{: .research-table .comparison-table .component-performance-table }
-
-<p class="table-caption"><strong>Table 1:</strong> Gross and after-cost performance of each standalone 75-long/75-short component portfolio using the common volatility-scaled allocation, May 1997–May 2026. Returns are annualized arithmetic means; net statistics deduct 5 bp per dollar traded.</p>
-
-The defensive measurements and return-consistency signal have the strongest
-standalone Sharpes. Together they provide three overlapping views of defensive
-behaviour: low volatility and tail avoidance are close variants, while loss
-frequency describes another part of the return path. Grouping the first two
-keeps the defensive theme at the same weight as momentum, positioning, size,
-and return consistency.
-
-The weaker components still clarify the hurdle. Low short interest has a modest
-return and low volatility. Large capitalization has a positive return and
-the lowest Sharpe. Upper-tail avoidance loses 1.51 percentage points a year to
-the stated cost assumption, the largest gross-to-net gap in the table. These histories make each theme a plausible
-benchmark ingredient. Their incremental value remains an empirical question
-because standalone success can disappear when signals overlap or when a model
-assigns conditional weights.
-{: .table-followup }
-
-The table also shows that equal signal weights produce unequal risk
-contributions. The defensive components produce much higher standalone
-volatility than low short interest, and their realized portfolios overlap more.
-The fixed score is equal-weighted before stock selection; the portfolio process
-can still concentrate the resulting risk in a smaller set of related themes.
-
-Figure 1 separates two kinds of dependence. **Signal correlation** asks whether
-two factors rank the same stocks similarly on the same date. **Return
-correlation** asks whether portfolios formed from those signals subsequently
-earn similar daily returns. Low signal correlation indicates differentiated
-rankings; low return correlation indicates diversification in realized paths.
-Together they describe dependence at two different stages. Incremental value
-after combination requires the controlled model and portfolio evidence that
-follows.
-
-<div class="research-figure component-evidence-figure">
-  <picture>
-    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/benchmark-dependence-mobile.svg?v=2">
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/benchmark-dependence-mobile.png?v=2">
-    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/benchmark-dependence.svg?v=2">
-    <img src="/assets/multiple-linear-regression/benchmark-dependence.png?v=2" alt="Heatmaps comparing same-date component rank correlations with subsequent component-portfolio return correlations" loading="lazy" decoding="async">
-  </picture>
-</div>
-
-<p class="figure-caption"><strong>Figure 1:</strong> Same-date rank correlations between component signals (left) and subsequent daily-return correlations between their standalone portfolios (right), on the common sample.</p>
-
-The two heatmaps show different forms of dependence. Low volatility and tail avoidance have
-a 0.75 signal correlation, while every other signal pair has absolute
-correlation at most 0.32. Their portfolio-return correlation is higher
-still at 0.85; the median return correlation across all pairs is 0.30. Shared
-holdings and common risk exposures can make realized returns converge even when
-the original rankings differ. The heatmaps are diversification diagnostics; the
-later joint models test conditional forecasting value.
-
-The benchmark is intentionally modest. I chose its factors and horizons with
-historical results in mind; several themes are correlated; and data availability
-changes through time. Positive standalone performance may also disappear once the
-other factors enter the model. The regression receives a broader predictor
-set, so benchmark versus OLS compares two complete ranking methods. The
-controlled estimator comparison begins with OLS versus Ridge, where the inputs
-are identical.
+The benchmark reflects research judgment in its factors, horizons, and signs.
+Several themes overlap, and their data histories differ. Benchmark versus OLS
+therefore compares two complete methods. OLS versus Ridge isolates the estimator
+because those models use identical inputs.
 
 ## A common score scale
 
-A regression can combine billions of dollars with percentage points. The raw
-coefficients then live on incomparable scales. For the 144-predictor
-regression deck, I therefore replace every predictor with its relative ordering
-across the eligible Russell 1000 universe, then map the ranks to $[-1,1]$:
+Predictors measured in dollars, returns, and ratios need a common scale. I rank
+every predictor across the eligible Russell 1000 universe before fitting the
+model.
+Let $$R^{\mathrm{dense}}_{i,j,t}$$ be
+stock $$i$$'s dense rank on predictor $$j$$, and let $$K_{j,t}$$ be the number of
+distinct ranks on that date. The normalized predictor is
 
 $$
-x^{\mathrm{rank}}_{i,t}=2\frac{\operatorname{rank}(x_{i,t})-1}{N_t-1}-1.
+x^{\mathrm{rank}}_{i,j,t}
+=2\frac{R^{\mathrm{dense}}_{i,j,t}}{K_{j,t}}-1.
 $$
 
-Ranking replaces raw magnitudes with bounded ranks. Predictors in different
-units become comparable, and raw magnitude receives equal treatment. The
-cost is real: adjacent ranks carry the same spacing whether the underlying
-observations were almost tied or far apart.
+This mapping places every predictor inside $[-1,1]$; a flat cross-section
+receives zero. Predictors in different units become comparable, and adjacent
+ranks receive the same spacing.
 
 Missing inputs are first carried forward within the same stock when an earlier
 observation exists, then filled with that date-and-sector mean. The completed
@@ -224,13 +166,19 @@ predictor is ranked across all current index members on the date. The traded
 universe later removes stocks below $5, announced merger
 targets, and duplicate share classes.
 
-The target uses a different grouping rule. I calculate each stock's annualized
-Sharpe-like outcome over the next 20 sessions,
+The target uses the next 20 daily returns. I calculate their mean, cap annualised
+volatility at 1,000% for numerical stability, and form a Sharpe-like outcome:
 
 $$
-q_{i,t}^{(20)}=\sqrt{252}\,
-\frac{\overline r_{i,t+1:t+20}}
-{\sigma(r_{i,t+1:t+20})}.
+\begin{aligned}
+\overline r^{(20)}_{i,t}
+&=\frac{1}{20}\sum_{h=1}^{20}r_{i,t+h}, \\
+s^{(20)}_{i,t}
+&=\min\left\{\operatorname{sd}\{r_{i,t+h}\}_{h=1}^{20},
+\frac{10}{\sqrt{252}}\right\}, \\
+q^{(20)}_{i,t}
+&=\sqrt{252}\,\frac{\overline r^{(20)}_{i,t}}{s^{(20)}_{i,t}}.
+\end{aligned}
 $$
 
 I use this forward Sharpe-like outcome to prefer a return distributed through
@@ -248,19 +196,26 @@ have to constrain them explicitly.
 
 ## Learning the signal weights
 
-With normalized predictors in $x_{i,t}$ and the normalized forward target in
-$y_{i,t}$, ordinary multiple linear regression estimates
+Regression learns the combination that best orders the forward outcomes in the
+training data. Let
+$$\mathbf x_{i,t}\in[-1,1]^{144}$$ contain the normalized predictors and let
+$$y_{i,t}$$ be the sector-ranked forward target. In walk-forward fold $$f$$,
+ordinary least squares estimates
 
 $$
-(\widehat\beta_0,\widehat\beta)
-=\arg\min_{\beta_0,\beta}
-\sum_{(i,t)\in\mathcal T}
-\left(y_{i,t}-\beta_0-x_{i,t}^{\top}\beta\right)^2.
+(\widehat\beta^{\mathrm{OLS}}_{0,f},
+\widehat{\boldsymbol\beta}^{\mathrm{OLS}}_f)
+=\arg\min_{\beta_0,\boldsymbol\beta}
+\frac{1}{n_f}\sum_{(i,t)\in\mathcal T_f}
+\left(y_{i,t}-\beta_0-\mathbf x_{i,t}^{\top}
+\boldsymbol\beta\right)^2.
 $$
 
-The fitted score $\widehat y_{i,t}=\widehat\beta_0+x_{i,t}^{\top}\widehat\beta$
-becomes the learned stock ranking. A positive coefficient rewards a high rank
-on that predictor; a negative coefficient reverses the preference.
+Here $$\mathcal T_f$$ is the training sample and $$n_f=|\mathcal T_f|$$. The
+fitted score $$\widehat y_{i,t}=\widehat\beta_{0,f}
++\mathbf x_{i,t}^{\top}\widehat{\boldsymbol\beta}_f$$ becomes the learned stock
+ranking. A positive coefficient rewards a high predictor rank; a negative
+coefficient reverses the preference.
 
 The model contains 144 normalized inputs drawn from far fewer economic ideas.
 They cover return and trend, total and asymmetric risk, technical location and
@@ -279,12 +234,14 @@ every-third-date samples to reduce dependence among adjacent target windows.
 
 <div class="research-figure walk-forward-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward-mobile.svg?v=4">
     <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/walk-forward-mobile.png?v=4">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/walk-forward.svg?v=4">
     <img src="/assets/multiple-linear-regression/walk-forward.png?v=4" alt="Expanding walk-forward training windows separated from each next test block by a 21-session gap" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Expanding walk-forward estimation, with each training history separated from its next 600-date prediction block by a 21-session purge.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Expanding walk-forward estimation, with each training history separated from its next 600-date prediction block by a 21-session purge.</p>
 
 Each refit predicts a mechanically out-of-sample block. The wider 1995–2021
 history is still the **research and development period** because I repeatedly
@@ -304,18 +261,21 @@ to emerge from the holdings. Three equal-capital sleeves rebalance on offset
 third Fridays, execute at the next close, and hold for three weeks. Reported
 returns charge 5 bp per dollar traded.
 
-## Ridge regression
+## Ridge and the penalty choice
 
-Correlated predictors can divide weight erratically. Ridge changes the same
-linear regression by adding an L2 penalty:
+OLS creates a practical problem. Several predictors describe almost the same
+idea, so their individual coefficients can move sharply while the final ranking
+barely moves. Ridge asks the model to prefer smaller coefficients by adding an
+L2 penalty:
 
 $$
-(\widehat\beta_0,\widehat\beta)
-=\arg\min_{\beta_0,\beta}
+(\widehat\beta^{(c)}_{0,f},\widehat{\boldsymbol\beta}^{(c)}_f)
+=\arg\min_{\beta_0,\boldsymbol\beta}
 \left\{
-\frac{1}{n_t}\sum_{(i,s)\in\mathcal T_t}
-\left(y_{i,s}-\beta_0-x_{i,s}^{\top}\beta\right)^2
-+c\lVert\beta\rVert_2^2
+\frac{1}{n_f}\sum_{(i,t)\in\mathcal T_f}
+\left(y_{i,t}-\beta_0-\mathbf x_{i,t}^{\top}
+\boldsymbol\beta\right)^2
++c\lVert\boldsymbol\beta\rVert_2^2
 \right\}.
 $$
 
@@ -324,16 +284,11 @@ gives the exact OLS baseline. Positive values shrink coefficients and can make
 correlated inputs share weight more evenly. Shrinkage follows directly from the
 objective; any predictive improvement has to appear in the data.
 
-Here $c$ is the penalty next to **mean** squared error. The implementation uses
+The implementation uses
 [`sklearn.linear_model.Ridge`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html),
-whose documented objective is a residual sum of squares plus
-$\alpha\lVert\beta\rVert_2^2$. The equivalent parameter in training fold $t$ is
-therefore $\alpha_t=n_t c$. Divide scikit-learn's objective by $n_t$ and the
-equation above follows exactly. This scaling keeps the relative penalty fixed as
-an expanding fold contains more rows. It is an algebraic conversion between sum
-and mean loss, while the dependence between rows remains a separate statistical
-problem. At $c=0$ the objective is OLS. The implementation uses
-`LinearRegression` for numerical stability.
+whose objective uses a residual sum rather than the mean above. For a fold with
+$n_f$ rows, $\alpha_f=n_fc$. This keeps $c$ comparable as the sample expands.
+The $c=0$ case uses `LinearRegression`.
 
 The rows share market and sector shocks, predictors move slowly, and adjacent
 20-session targets overlap. A 21-session purge keeps a
@@ -343,8 +298,7 @@ choice is a sensitivity check. The effective sample contains far fewer
 independent observations than the raw row count suggests.
 
 All four candidates use the same predictors, target, universe, dates,
-walk-forward procedure, portfolio construction, and 5 bp cost assumption. The
-regression estimates coefficients. I select the penalty separately. The grid
+walk-forward procedure, portfolio construction, and 5 bp cost assumption. The grid
 $$c\in\{0,0.001,0.01,0.1\}$$ uses data through 2021. I prefer a value that
 behaves consistently across the full development period, its final ten years,
 and its final five years. Consistency takes priority over winning a single slice.
@@ -366,25 +320,19 @@ return shows what remains after it.
 | Ridge, $c=0.1$ | 9.26% | 7.83% | 7.92% | 0.989 |
 {: .research-table .comparison-table .alpha-selection-table }
 
-<p class="table-caption"><strong>Table 2:</strong> Development-period annualized arithmetic return across the matched OLS–Ridge penalty grid before and after 5 bp per dollar traded; volatility and Sharpe use net returns.</p>
+<p class="table-caption"><strong>Table 1:</strong> Development-period annualized arithmetic return across the matched OLS–Ridge penalty grid before and after 5 bp per dollar traded; volatility and Sharpe use net returns.</p>
 
 I choose the moderate $c=0.01$ specification as a development-period
 compromise. Relative to OLS, annualized return rises by 0.35 percentage points
-and volatility by 0.21, producing a Sharpe improvement of only 0.020. Over the
-final ten years, the Sharpe is nearly unchanged; over the final five, the gain
-is 0.008, and $c=0.001$ does slightly better. These differences are economically
-small. The $c=0.1$ model earns more return and takes more risk. Its weaker
-shorter-window Sharpes support the moderate penalty. Across the final ten and
-five development years, respectively,
-Sharpe is 1.118/0.975 for OLS, 1.119/0.987 for $c=0.001$, 1.120/0.983 for the
-selected $c=0.01$, and 1.060/0.941 for $c=0.1$.
+and volatility by 0.21, lifting Sharpe by 0.020. OLS and the two moderate Ridge
+penalties remain tightly grouped over the final ten and five development years.
+The $c=0.1$ model earns more return and takes more risk, while recording weaker
+Sharpes in both shorter windows.
 {: .table-followup }
 
-### What shrinkage changes
-
-Figure 3 shows two practical changes relative to OLS.
-Portfolio membership counts how many of the 75 longs and 75 shorts differ from
-the OLS portfolio on an average rebalance. Coefficient shrinkage reports the
+The next diagnostic measures two practical changes relative to OLS. Portfolio membership
+counts how many of the 75 longs and 75
+shorts differ from the OLS portfolio on an average rebalance. Coefficient shrinkage reports the
 percentage reduction in the coefficients' Euclidean size (L2 norm) and in their
 mean absolute change between adjacent refits. Higher values in either panel mean
 that Ridge has moved further away from OLS. Prediction accuracy is evaluated
@@ -399,59 +347,33 @@ separately with rank IC and portfolio results.
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
 
 At $c=0.01$, about 14 of the 150 selected names change on a typical rebalance.
 Across the full cross-section, the average stock moves 2.71 percentile-rank
 points and prediction ranks retain a 0.991 correlation with OLS. At the same
 time, the coefficient norm and refit movement fall by roughly one third. The
 stronger $c=0.1$ penalty changes about 39 names, moves the average stock 7.79
-rank points, and cuts both coefficient measures by about 70%. Shrinkage is
-therefore material before the portfolio becomes radically different. Figure 3
-measures distance from OLS; the later IC evidence measures whether the changed
-ranking is more accurate.
+rank points, and cuts both coefficient measures by about 70%. Coefficients move
+far more than the resulting stock list. The later IC evidence measures whether
+the changed ranking is more accurate.
 
-Other development-only coefficient diagnostics change less. Adjacent
-coefficient-vector correlation is 0.932 for $c=0.01$ versus 0.934 for OLS, sign
-agreement rises from 89.4% to 90.0%, and the top 20 coefficients' share of total
-absolute weight falls from 41.4% to 38.6%. Ridge makes the weights smaller and a
-little less concentrated. Adjacent-refit correlation remains essentially
-unchanged, so overall coefficient stability is still limited.
-
-How can coefficients move this much while the final rankings remain so similar?
-The prediction is $X\beta$. It combines the coefficients with the feature
-matrix. If two predictors
-move together, adding weight to one and removing offsetting weight from the
-other can leave their combined score almost unchanged. More generally,
+Correlated predictors can exchange coefficient weight while keeping their
+combined score close. More generally,
 
 $$
-\Delta\widehat y=X\,\Delta\beta
+\Delta\widehat{\mathbf y}
+=\mathbf X\,\Delta\boldsymbol\beta.
 $$
 
-can be small even when $\Delta\beta$ is large if the coefficient change lies in
-a direction where the correlated feature matrix has little variation. OLS then
-has weakly identified individual weights. The prediction is better identified.
-Ridge chooses a smaller-norm point among many nearly equivalent coefficient
-combinations. That numerical regularity is useful. Economic attribution remains
-weak because the data identify combinations of correlated predictors more
-clearly than the coefficient on any single horizon.
+The feature matrix can absorb a large $\Delta\boldsymbol\beta$ when related
+predictors substitute for one another. OLS identifies the combined prediction
+more clearly than the individual weights, and Ridge chooses a smaller-norm point
+among many similar combinations. The 0.991 rank correlation supports a stable
+stock ordering, while attribution belongs at the predictor-group level.
 
-A narrower alternative links rank stability to the 75-stock selection cutoff:
-scores may move while few names cross the boundary. That explains some portfolio
-overlap, while the 0.991 rank correlation across the whole stock universe points
-more strongly to substitution among correlated predictors.
-
-This is the distinction I care about. The 0.991 prediction-rank
-correlation says the stock ordering is robust to moderate shrinkage; the less
-stable coefficient cells say attribution to individual, correlated inputs is
-fragile. Economic interpretation should therefore emphasize persistent groups
-of related predictors and realized portfolio tilts. If individual coefficients
-were the research target, the next experiment would need grouped or
-orthogonalized inputs and explicit tests of group-level stability. The current
-heatmap supports the group-level interpretation above.
-
-The heatmap provides a less aggregated coefficient check. It keeps the ten
-predictors with the largest mean absolute coefficient in the selected Ridge
+The coefficient heatmap shows where those smaller weights go. It keeps the
+ten predictors with the largest mean absolute coefficient in the selected Ridge
 model and shows their signed value at each refit, averaged across the three
 date-thinned ensemble members. Because every input is mapped to the same
 $[-1,1]$ rank scale, values are comparable within the model. Positive cells
@@ -470,7 +392,7 @@ selection statistics use development data only.
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 4:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the 2022 and 2024 columns are later-period diagnostics.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the 2022 and 2024 columns are later-period diagnostics.</p>
 
 The clearest directions persist: price relative to its 126-session moving
 average stays positive, while short-horizon moving-average convergence/divergence
@@ -482,26 +404,24 @@ receives the weight.
 
 ## Development-period results
 
-The development portfolio comparison needs two caveats. Its return history
-begins with the first mechanical walk-forward predictions in 1998, within the
-declared 1995–2021 research period. The fixed score also uses a smaller,
-hand-built signal set and has different data availability; OLS and Ridge use
-the same larger predictor set. Only OLS versus Ridge is a controlled estimator
-comparison.
+The portfolio comparison begins with the first mechanical walk-forward
+predictions in 1998, inside the 1995–2021 development period. The benchmark uses
+a smaller hand-built signal set and different data histories. OLS and Ridge
+share the same 144 predictors.
 
 | Development metric | Fixed | OLS | Ridge $c=0.01$ |
 | --- | ---: | ---: | ---: |
-| Annualized return, gross | 7.66% | 8.49% | 8.82% |
-| Annualized return, net | 6.96% | 7.03% | 7.38% |
-| Annualized volatility | 9.69% | 7.15% | 7.36% |
-| Sharpe ratio | 0.72 | 0.98 | 1.00 |
-| Maximum drawdown | −31.70% | −18.77% | −19.03% |
-| Market beta | 0.089 | 0.084 | 0.091 |
-| Turnover per rebalance | 79.56% | 167.67% | 165.72% |
+| Annualized return, gross | 7.61% | 8.49% | 8.82% |
+| Annualized return, net | 6.92% | 7.03% | 7.38% |
+| Annualized volatility | 9.73% | 7.15% | 7.36% |
+| Sharpe ratio | 0.71 | 0.98 | 1.00 |
+| Maximum drawdown | −31.55% | −18.77% | −19.03% |
+| Market beta | 0.093 | 0.084 | 0.091 |
+| Turnover per rebalance | 78.78% | 167.67% | 165.72% |
 | Annual cost drag | 0.69 pp | 1.46 pp | 1.44 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
-<p class="table-caption"><strong>Table 3:</strong> Development-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
+<p class="table-caption"><strong>Table 2:</strong> Development-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
 The learned portfolios have higher Sharpes than the benchmark, with similar
 annualized returns, lower volatility, and shallower drawdowns. The price is
@@ -513,25 +433,24 @@ trading-cost change is negligible.
 
 ## January 2022 to May 2026
 
-The reported $c=0.01$ choice follows the development-only rule above; the
-selection uses data through 2021. The later history had already influenced
-earlier feature, target, portfolio, and presentation work, so 2022–May 2026 is a
-**pseudo-holdout robustness test**. A genuinely untouched test would require a
-specification demonstrably locked before anyone examined those outcomes.
+I selected $c=0.01$ using data through 2021. Later history had already influenced
+earlier feature, target, portfolio, and presentation work, so January 2022–May
+2026 is a **pseudo-holdout**. Its four years provide a diagnostic rather than a
+full market cycle.
 
 | Later-period metric | Fixed | OLS | Ridge $c=0.01$ |
 | --- | ---: | ---: | ---: |
-| Annualized return, gross | 7.52% | 8.84% | 8.68% |
-| Annualized return, net | 6.92% | 7.50% | 7.37% |
-| Annualized volatility | 11.35% | 8.64% | 8.95% |
-| Sharpe ratio | 0.61 | 0.87 | 0.82 |
-| Maximum drawdown | −10.78% | −7.59% | −8.05% |
-| Market beta | 0.032 | 0.075 | 0.078 |
-| Turnover per rebalance | 68.80% | 152.75% | 149.61% |
-| Annual cost drag | 0.60 pp | 1.34 pp | 1.31 pp |
+| Annualized return, gross | 7.85% | 8.84% | 8.68% |
+| Annualized return, net | 7.24% | 7.50% | 7.37% |
+| Annualized volatility | 11.33% | 8.64% | 8.95% |
+| Sharpe ratio | 0.64 | 0.87 | 0.82 |
+| Maximum drawdown | −10.98% | −7.59% | −8.05% |
+| Market beta | 0.036 | 0.075 | 0.078 |
+| Turnover per rebalance | 69.70% | 152.75% | 149.61% |
+| Annual cost drag | 0.61 pp | 1.34 pp | 1.31 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
-<p class="table-caption"><strong>Table 4:</strong> Later-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
+<p class="table-caption"><strong>Table 3:</strong> Later-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
 From January 2022 through May 2026, Ridge return is 0.13 percentage points below
 OLS, volatility is 0.30 points higher, and Sharpe is 0.82 versus 0.87. Turnover
@@ -541,14 +460,7 @@ highest Sharpe in this window at 0.89. The development-period rule keeps
 $c=0.01$ as the selected model.
 {: .table-followup }
 
-The selected Ridge portfolio becomes more net long in the later period because
-its short leg carries less gross weight. Its average net stock exposure rises
-from +30.0% to +46.9%, while market beta remains only 0.078. Dollar exposure and
-market beta are measuring different risks. The exposure path appears later in
-the portfolio diagnostics, where the daily series is more informative than
-another set of table averages.
-
-### Ranking accuracy
+## Ranking accuracy
 
 The information coefficient asks a different question from portfolio Sharpe. On
 each date it is the cross-sectional Spearman correlation between the predicted
@@ -556,14 +468,18 @@ score and the subsequently realized, sector-ranked target on their common stock
 sample:
 
 $$
-\mathrm{IC}_t=\rho_{\mathrm S}(\widehat y_{i,t},y_{i,t}).
+\mathrm{IC}_t
+=\rho_{\mathrm S}\!\left(
+\{\widehat y_{i,t}\}_{i\in\mathcal U_t},
+\{y_{i,t}\}_{i\in\mathcal U_t}
+\right).
 $$
 
 The IC history starts with the first walk-forward predictions in September 1998
 and ends on April 28, 2026, the last date for which the full 20-session outcome
 is available.
 
-Figure 5 accumulates those daily correlations. A rising path means the model has
+The cumulative path adds those daily correlations. A rising path means the model has
 usually ordered future outcomes correctly; a flat path means zero additional
 cumulative rank association, and a decline means a run of negative IC. The sum
 is a prediction diagnostic, distinct from a return series and a significance
@@ -571,12 +487,14 @@ statistic.
 
 <div class="research-figure ic-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.svg?v=4">
     <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/cumulative-ic-mobile.png?v=4">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/cumulative-ic.svg?v=4">
     <img src="/assets/multiple-linear-regression/cumulative-ic.png?v=4" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 5:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 pseudo-holdout boundary.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 boundary.</p>
 
 <table class="research-table comparison-table ic-summary-table">
   <thead>
@@ -590,9 +508,9 @@ statistic.
   <tbody>
     <tr>
       <th scope="row">Development · Fixed score</th>
-      <td data-label="Mean daily IC">0.0407</td>
-      <td data-label="IC standard deviation">0.1218</td>
-      <td data-label="IC IR">0.334</td>
+      <td data-label="Mean daily IC">0.0399</td>
+      <td data-label="IC standard deviation">0.1217</td>
+      <td data-label="IC IR">0.328</td>
     </tr>
     <tr>
       <th scope="row">Development · OLS</th>
@@ -608,9 +526,9 @@ statistic.
     </tr>
     <tr class="period-break">
       <th scope="row">2022–2026 · Fixed score</th>
-      <td data-label="Mean daily IC">0.0506</td>
-      <td data-label="IC standard deviation">0.1397</td>
-      <td data-label="IC IR">0.363</td>
+      <td data-label="Mean daily IC">0.0502</td>
+      <td data-label="IC standard deviation">0.1392</td>
+      <td data-label="IC IR">0.361</td>
     </tr>
     <tr>
       <th scope="row">2022–2026 · OLS</th>
@@ -627,7 +545,7 @@ statistic.
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 5:</strong> Mean and standard deviation of daily rank IC, with IC IR defined as mean divided by standard deviation, shown separately for development and later periods.</p>
+<p class="table-caption"><strong>Table 4:</strong> Mean and standard deviation of daily rank IC, with IC IR defined as mean divided by standard deviation, shown separately for development and later periods.</p>
 
 During development, Ridge raises mean IC over OLS by only 0.0008 and also raises
 its standard deviation, leaving IC IR fractionally lower at 0.530 versus 0.534.
@@ -644,48 +562,49 @@ then adds position sizing, stock-level volatility scaling, execution, and
 costs. The differing predictor sets also prevent fixed score versus OLS from
 being a controlled estimator comparison.
 
-### Performance through time
+## Performance through time
 
 Portfolio performance adds selection, volatility scaling, execution, and costs
-to that prediction evidence. Figure 6 shows the complete net path and the
-drawdowns behind the period summaries.
+to the prediction evidence. The complete net path shows the drawdowns behind the
+period summaries.
 
 <div class="research-figure performance-figure">
   <picture>
-    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png?v=4">
-    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png?v=4" alt="Net growth and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.svg?v=5">
+    <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/performance-and-drawdowns-mobile.png?v=5">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/performance-and-drawdowns.svg?v=5">
+    <img src="/assets/multiple-linear-regression/performance-and-drawdowns.png?v=5" alt="Net growth and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded; the rule separates development from the later period.</p>
+<p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded; the rule separates development from the later period.</p>
 
-Figure 6 shows the learned portfolios' lower development-period volatility and
-shallower drawdowns. Ridge stays close to OLS throughout the sample. From
-January 2022 through May 2026, OLS records the higher Sharpe. The vertical rule
-marks the specification boundary. Earlier research reuse makes the later period
-a pseudo-holdout.
+The learned portfolios have lower development-period volatility and shallower
+drawdowns. Ridge stays close to OLS throughout the sample. From January 2022
+through May 2026, OLS records the higher Sharpe. The vertical rule marks the
+specification boundary.
 
 ## What the portfolio is actually doing
 
 ### Turnover and cost
 
-A useful ranking can still require a careful trading check. The next diagnostics
-ask what the finished portfolio owns and what it costs to maintain.
-Figure 7 begins with turnover: the absolute long- and short-side trading at each
+Portfolio evaluation includes turnover and implementation costs. Turnover is
+the absolute long- and short-side trading at each
 rebalance, divided by equity. I charge 5 basis points per dollar traded and
 compound the resulting net returns. The estimate covers stock trading. A fuller
 implementation estimate would add borrow, financing, market impact, and taxes. Applying the same rule to
-every portfolio gives a useful first comparison of how much turnover eats into
-returns.
+every portfolio shows how much turnover reduces returns.
 
 <div class="research-figure turnover-figure">
   <picture>
+    <source media="(max-width: 768px)" type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.svg">
     <source media="(max-width: 768px)" srcset="/assets/multiple-linear-regression/turnover-and-costs-mobile.png">
+    <source type="image/svg+xml" srcset="/assets/multiple-linear-regression/turnover-and-costs.svg">
     <img src="/assets/multiple-linear-regression/turnover-and-costs.png" alt="Turnover per rebalance and annual cost drag for fixed weights, OLS, and selected Ridge in development and later periods" loading="lazy" decoding="async">
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Average two-way turnover per rebalance and annual return drag from the 5 bp trading-cost assumption, shown separately for development and the later period.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual return drag from the 5 bp trading-cost assumption, shown separately for development and the later period.</p>
 
 The fixed score is clearly cheaper. Ridge barely changes the higher turnover
 inherited from the learned monthly ranking: versus OLS, the selected penalty
@@ -694,7 +613,7 @@ later period. That difference is too small to motivate the penalty by itself.
 
 ### Capital and market exposure
 
-Figure 8 shows how the selected Ridge portfolio uses capital through time. Long
+The selected Ridge portfolio's capital use changes through time. Long
 gross is the value of the long book divided by portfolio equity; short gross is
 the absolute value of the short book; net stock exposure is long gross minus
 short gross. The lines are monthly averages of daily floating weights across
@@ -710,7 +629,7 @@ positive value means the portfolio has more dollars long than short.
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 8:</strong> Monthly average floating exposures for the selected Ridge portfolio; the rule marks the 2022 pseudo-holdout boundary.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio; the rule marks the 2022 boundary.</p>
 
 The long book stays near its 100% ceiling for much of the sample. Most of the
 movement in net exposure comes from the short book, which contracts when the
@@ -722,13 +641,15 @@ would make the offset an explicit allocation choice.
 
 ### Realized predictor tilts
 
-Figure 9 asks which predictor characteristics the Ridge portfolio actually
-owns. Let $x_{i,j,t}$ be stock $i$'s normalized rank on predictor $j$, and let
-$w_{i,t}$ be its signed portfolio weight. I calculate
+The realised tilts show which predictor characteristics the Ridge portfolio
+owns. Let $$\mathcal H_t$$ be the held stocks on date $$t$$,
+$$x_{i,j,t}$$ stock $$i$$'s normalized rank on predictor $$j$$, and $$w_{i,t}$$
+its signed portfolio weight. I calculate
 
 $$
-T_{j,t}=\frac{\sum_i w_{i,t}x_{i,j,t}}
-{\sum_i\lvert w_{i,t}\rvert}.
+T_{j,t}
+=\frac{\sum_{i\in\mathcal H_t}w_{i,t}x_{i,j,t}}
+{\sum_{i\in\mathcal H_t}\lvert w_{i,t}\rvert}.
 $$
 
 The denominator uses the gross weight with a non-missing value for that
@@ -739,8 +660,8 @@ average them by quarter. Each panel includes zero and uses its own range, rounde
 outward. The panels therefore show changes through time. Use the labelled
 full-sample means for cross-panel magnitudes because each panel has its own scale.
 
-The feature names need a little translation. ATR is average true range relative
-to price, so it captures both the daily high-low range and gaps from the previous
+ATR is average true range relative to price, so it captures both the daily
+high-low range and gaps from the previous
 close. Total, upside, and downside volatility are rolling standard deviations of
 all, positive, or negative daily returns; in the one-sided versions, returns on
 the other side are set to zero. A trend streak such as 200/126d is the share of
@@ -759,7 +680,7 @@ ranks of these quantities.
   </picture>
 </div>
 
-<p class="figure-caption"><strong>Figure 9:</strong> Quarterly paths of the ten largest average absolute realized predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>
+<p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realized predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>
 
 Among its ten largest realized tilts, the portfolio is mostly defensive and
 trend-following. The long book owns quieter stocks: its ranks are lower on ATR
@@ -767,20 +688,14 @@ and the volatility measures. It also owns stocks that have spent
 more time above their long-run moving average and remain closer to an earlier
 high.
 
-These paths describe the holdings. Independent alpha attribution requires a
-separate experiment. The top-ten rule hides smaller tilts, several lines are close
-variations of the same idea, and stock-level volatility scaling can strengthen the defensive pattern
-after the ranking has already been formed. Correlated predictors can also swap
-coefficient weight while continuing to identify similar stocks. Both mechanisms
-can leave the final portfolio looking more stable and more concentrated by theme
+The chart keeps the largest realised tilts rather than a hand-picked diverse
+set. It describes the finished portfolio rather than independent alpha
+attribution. The top-ten rule hides smaller tilts, several lines are close
+variations of one idea, and stock-level volatility scaling can strengthen the
+defensive pattern after ranking. Correlated predictors can also exchange
+coefficient weight while continuing to identify similar stocks. These two
+mechanisms make the portfolio look steadier, and more concentrated by theme,
 than the coefficient heatmap suggests.
-
-I keep the largest realized tilts because a hand-picked diverse set would make
-the book look broader than its measured breadth. Figure 9 is a holdings x-ray.
-Return attribution requires a separate analysis. The allocation rule can amplify the defensive pattern after the
-ranking is formed, and it leaves the book materially net long in dollars even
-when realized beta is fairly small. That points to the portfolio layer rather
-than a different way of selecting ten lines for the chart.
 
 The broader limitation is feature diversification. Of the 144 inputs, 92 are
 direct transformations of returns, price paths, volatility, technical state,
@@ -800,29 +715,28 @@ exposures and returns. A grouped leave-one-family-out test, run both before and
 after the allocation rule, would distinguish genuinely incremental information
 from convergence introduced by normalization, selection, and sizing.
 
-## Takeaways and further directions
+## Conclusion
 
-Multiple linear regression is a practical way to turn many stock predictors
-into one ranking. In this study, the learned OLS score raises development Sharpe
-from 0.72 for the compact benchmark to 0.98. Annualized return stays close to the
-benchmark's, while volatility and maximum drawdown fall. The comparison supports
-the complete learned specification. A stricter test of learned versus fixed
-weights would give both methods the same predictors and data availability.
+Multiple linear regression turns many stock predictors into one ranking. The OLS
+portfolio records a development Sharpe of 0.98, compared with 0.71 for the benchmark.
+Annualized return stays close, while volatility and maximum drawdown fall. This
+comparison covers two complete specifications. A stricter weights-only test
+would give both methods the same predictors and data history.
 
-Ridge $c=0.01$ cuts coefficient magnitude and refit movement by roughly one
-third while keeping a 0.991 rank correlation with OLS. Its development Sharpe
-is 1.00 versus 0.98 for OLS. From January 2022 through May 2026, the figures are
-0.82 and 0.87. This short window supports a diagnostic comparison. Ridge gives a
-more regular coefficient representation and produces almost the same ranking
-and portfolio as OLS.
+Ridge produces a tidier coefficient vector and nearly the same portfolio. At
+$c=0.01$, coefficient magnitude and refit movement fall by roughly
+one third, while the rank correlation with OLS remains 0.991. Development
+Sharpe is 1.00 for Ridge and 0.98 for OLS. From January 2022 through May 2026,
+the figures are 0.82 and 0.87. The regularisation changes coefficient scale far
+more than the trading signal.
 
 The main limits come from the research design and the allocation. Overlapping
 targets, common shocks within each date, and repeated use of the development
 history reduce the independent information in the sample. The 21-session purge
 and date-blocked walk-forward design address leakage across test boundaries;
 equal-date weighting and genuinely non-overlapping training dates remain useful
-robustness tests. The 2022–2026 period is a pseudo-holdout. A fuller
-implementation estimate would add borrow, financing, market impact, and taxes. The
+robustness tests. A fuller implementation estimate would add borrow, financing,
+market impact, and taxes. The
 predictor deck also remains concentrated in related price-based measures, so a
 stable final ranking sits alongside limited feature diversification.
 
