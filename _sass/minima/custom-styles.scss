@@ -728,6 +728,23 @@ table {
   }
 }
 
+@media (min-width: 768px) {
+  .post-content table.research-table.portfolio-card-table th:first-child {
+    width: 19%;
+  }
+}
+
+@media (max-width: 767px) {
+  .post-content table.research-table.research-design-table tbody td {
+    display: block;
+    text-align: left;
+  }
+
+  .post-content table.research-table.research-design-table tbody td::before {
+    content: none;
+  }
+}
+
 .theme-svg-figure {
   display: block;
 }
@@ -2618,7 +2635,8 @@ html[data-theme="dark"] {
     color: var(--accent) !important;
   }
 
-  blockquote {
+  blockquote,
+  .post-content .article-summary {
     border-left-color: #6f8fb8 !important;
     background-color: var(--soft-accent) !important;
     color: #c0d0d4 !important;
