@@ -46,7 +46,7 @@ has persisted beyond the latest short-term move. The remaining themes favour
 lower short positioning, larger companies, and steadier day-to-day returns.
 
 The benchmark can be written compactly. Let
-$$q_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ be stock $$i$$'s
+$$p_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ be stock $$i$$'s
 cross-sectional rank on date $$t$$, with every component signed so a higher rank
 is more attractive and $$N_t$$ denoting the stocks available for that component.
 Using daily return $$r$$, reported short interest $$SI$$, 63-day average volume
@@ -56,17 +56,17 @@ are
 $$
 \begin{aligned}
 D_{i,t}
-&=\tfrac12 q_t\!\left(-\tfrac13\sum_{h\in\{21,63,126\}}\sigma_{i,t}^{(h)}\right)\\
-&\quad+\tfrac12 q_t\!\left(-\operatorname{Top3Mean}_{21}(r_{i,t})\right),\\
+&=\tfrac12 p_t\!\left(-\tfrac13\sum_{h\in\{21,63,126\}}\sigma_{i,t}^{(h)}\right)\\
+&\quad+\tfrac12 p_t\!\left(-\operatorname{Top3Mean}_{21}(r_{i,t})\right),\\
 M_{i,t}
-&=q_t\!\left(\sum_{h\in\{63,126,189,252\}}
+&=p_t\!\left(\sum_{h\in\{63,126,189,252\}}
 R_{i,t}^{(h,\,\mathrm{skip}\ 21)}\right),\\
 S_{i,t}
-&=q_t\!\left(-\log\frac{SI_{i,t-21}}{ADV_{i,t}^{(63)}}\right),\\
+&=p_t\!\left(-\log\frac{SI_{i,t-21}}{ADV_{i,t}^{(63)}}\right),\\
 L_{i,t}
-&=q_t\!\left(\log MC_{i,t}\right),\\
+&=p_t\!\left(\log MC_{i,t}\right),\\
 C_{i,t}
-&=q_t\!\left(-\frac1{756}\sum_{u=0}^{755}
+&=p_t\!\left(-\frac1{756}\sum_{u=0}^{755}
 \mathbf 1\{r_{i,t-u}<0\}\right),\\
 B_{i,t}
 &=0.2\left(D_{i,t}+M_{i,t}+S_{i,t}+L_{i,t}+C_{i,t}\right).
@@ -95,13 +95,13 @@ overlap also makes individual coefficients hard to pin down.
 ## Ranks put 144 unlike predictors on one scale
 
 The 144-predictor deck has the same units problem as the benchmark, but here the
-regression must learn both direction and weight. Let
-$$R^{\mathrm{dense}}_{i,j,t}$$ be stock $$i$$'s dense rank on predictor $$j$$ and
+regression must learn both direction and weight. Let $$z_{i,j,t}$$ be stock
+$$i$$'s raw value for predictor $$j$$, let $$R_{i,j,t}$$ be its dense rank, and
 let $$K_{j,t}$$ be the largest rank on date $$t$$. I normalise each predictor as
 
 $$
-x^{\mathrm{rank}}_{i,j,t}
-=2\frac{R^{\mathrm{dense}}_{i,j,t}}{K_{j,t}}-1.
+x_{i,j,t}
+=2\frac{R_{i,j,t}}{K_{j,t}}-1.
 $$
 
 This maps every predictor to the same $[-1,1]$ interval. Tied observations share
@@ -263,7 +263,7 @@ two panels distinguish a different-looking model from a meaningfully different
 stock selection.
 
 <div class="research-figure alpha-sensitivity-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/alpha-sensitivity" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" version="10" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/alpha-sensitivity" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
@@ -289,7 +289,7 @@ one column to the next. The 2022 and 2024 columns extend the diagnostic beyond
 the development period; they do not enter the penalty selection.
 
 <div id="coefficient-heatmap" class="research-figure coefficient-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification across walk-forward refits" version="10" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification across walk-forward refits" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; 2022 and 2024 are later-period diagnostics.</p>
@@ -377,7 +377,7 @@ the first walk-forward predictions in September 1998 to the last complete
 return series or a significance statistic.
 
 <div class="research-figure ic-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="10" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 boundary.</p>
@@ -458,7 +458,7 @@ drawdowns hidden by the period averages. The vertical rule separates the
 development period from the later diagnostic period.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="10" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
@@ -479,7 +479,7 @@ resulting annual drag under the same 5 bp cost rule. This estimate covers stock
 trading, not borrow, financing, market impact, or taxes.
 
 <div class="research-figure turnover-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/turnover-and-costs" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" version="10" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/turnover-and-costs" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual trading cost under the 5 bp assumption, shown separately for development and the later period.</p>
@@ -497,7 +497,7 @@ gross, and their difference, the net stock exposure. A positive net line means
 more capital is invested long than short.
 
 <div class="research-figure portfolio-exposure-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="13" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="14" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio.</p>
@@ -527,7 +527,7 @@ relative ranks, so the chart should be read as a directional preference rather
 than a comparison of raw units.
 
 <div class="research-figure exposure-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-feature-tilts" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" version="10" mobile=true mobile_suffix="-mobile" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-feature-tilts" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realised predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>

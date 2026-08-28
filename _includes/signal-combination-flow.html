@@ -1,103 +1,52 @@
-<div class="signal-flow-drawing" role="img" aria-label="Raw stock measures are ranked onto a common scale. The fixed benchmark combines five themes with chosen signs and weights, while OLS and Ridge learn signs and weights across 144 predictors. Both produce one stock ranking that enters the same portfolio rules.">
-  <svg class="signal-flow-svg signal-flow-desktop" viewBox="0 0 1120 350" aria-hidden="true">
+<div class="signal-flow-drawing" role="img" aria-label="Raw stock measures are ranked onto a common scale. The fixed benchmark combines five themes with chosen signs and weights, while OLS and Ridge learn coefficients across 144 predictors. Both produce one stock ranking that enters the same portfolio rules.">
+  <svg class="signal-flow-svg" viewBox="0 0 1120 420" aria-hidden="true">
     <defs>
-      <pattern id="signal-flow-hatch-desktop" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-        <line x1="0" y1="0" x2="0" y2="10" class="signal-flow-hatch-line" />
-      </pattern>
-      <marker id="signal-flow-arrow-desktop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <marker id="signal-flow-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 10 5 L 0 10 z" class="signal-flow-arrow-head" />
       </marker>
     </defs>
 
-    <text class="signal-flow-hand signal-flow-kicker" x="28" y="32">from measures to positions</text>
-    <path class="signal-flow-rule" d="M28 46 C250 43, 470 49, 690 45 S970 48, 1090 45" />
+    <text class="signal-flow-hand signal-flow-kicker" x="24" y="34">from measures to positions</text>
+    <path class="signal-flow-rule" d="M24 51 C260 47, 500 54, 740 49 S1000 53, 1096 49" />
 
-    <path class="signal-flow-box" d="M20 125 C70 121, 132 126, 188 123 L188 229 C132 233, 74 227, 20 231 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="104" y="159" text-anchor="middle">Raw measures</text>
-    <text class="signal-flow-label" x="104" y="184" text-anchor="middle">price · risk · size</text>
-    <text class="signal-flow-label" x="104" y="205" text-anchor="middle">activity · short interest</text>
+    <path class="signal-flow-box" d="M16 151 C68 147, 126 154, 188 150 L188 273 C128 277, 70 270, 16 275 Z" />
+    <text class="signal-flow-hand signal-flow-title" x="102" y="190" text-anchor="middle">Raw measures</text>
+    <text class="signal-flow-label" x="102" y="222" text-anchor="middle">price · risk · size</text>
+    <text class="signal-flow-label" x="102" y="248" text-anchor="middle">activity · short interest</text>
 
-    <path class="signal-flow-arrow" marker-end="url(#signal-flow-arrow-desktop)" d="M194 177 C211 174, 226 180, 242 177" />
+    <path class="signal-flow-arrow" marker-end="url(#signal-flow-arrow)" d="M197 212 C211 208, 225 216, 240 212" />
 
-    <path class="signal-flow-rank-box" d="M250 125 C300 121, 365 127, 424 123 L424 229 C365 233, 305 227, 250 231 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="337" y="159" text-anchor="middle">Within-date ranks</text>
-    <text class="signal-flow-label" x="337" y="184" text-anchor="middle">common, unit-free scale</text>
-    <text class="signal-flow-label" x="337" y="205" text-anchor="middle">ties share a rank</text>
+    <path class="signal-flow-rank-box" d="M250 151 C309 147, 376 154, 440 150 L440 273 C378 277, 310 270, 250 275 Z" />
+    <text class="signal-flow-hand signal-flow-title" x="345" y="190" text-anchor="middle">Within-date ranks</text>
+    <text class="signal-flow-label" x="345" y="222" text-anchor="middle">one common scale</text>
+    <text class="signal-flow-label" x="345" y="248" text-anchor="middle">units and outliers contained</text>
 
-    <path class="signal-flow-arrow" d="M430 177 C450 174, 455 115, 475 112" marker-end="url(#signal-flow-arrow-desktop)" />
-    <path class="signal-flow-arrow" d="M430 177 C450 180, 455 238, 475 241" marker-end="url(#signal-flow-arrow-desktop)" />
+    <path class="signal-flow-arrow" d="M449 208 C468 202, 470 137, 491 132" marker-end="url(#signal-flow-arrow)" />
+    <path class="signal-flow-arrow" d="M449 216 C468 222, 470 286, 491 291" marker-end="url(#signal-flow-arrow)" />
 
-    <path class="signal-flow-fixed-box" d="M486 70 C548 67, 624 72, 694 69 L694 150 C627 153, 550 148, 486 152 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="590" y="101" text-anchor="middle">Fixed benchmark</text>
-    <text class="signal-flow-label" x="590" y="125" text-anchor="middle">5 themes · signs and weights chosen</text>
+    <path class="signal-flow-fixed-box" d="M502 78 C566 74, 634 81, 710 77 L710 181 C636 185, 566 178, 502 183 Z" />
+    <text class="signal-flow-hand signal-flow-title" x="606" y="116" text-anchor="middle">Fixed benchmark</text>
+    <text class="signal-flow-label" x="606" y="147" text-anchor="middle">5 themes</text>
+    <text class="signal-flow-label" x="606" y="171" text-anchor="middle">chosen directions + weights</text>
 
-    <path class="signal-flow-learned-box" d="M486 205 C548 202, 624 207, 694 204 L694 285 C627 288, 550 283, 486 287 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="590" y="236" text-anchor="middle">OLS / Ridge</text>
-    <text class="signal-flow-label" x="590" y="260" text-anchor="middle">144 predictors · coefficients learned</text>
+    <path class="signal-flow-learned-box" d="M502 238 C566 234, 634 241, 710 237 L710 341 C636 345, 566 338, 502 343 Z" />
+    <text class="signal-flow-hand signal-flow-title" x="606" y="276" text-anchor="middle">OLS / Ridge</text>
+    <text class="signal-flow-label" x="606" y="307" text-anchor="middle">144 predictors</text>
+    <text class="signal-flow-label" x="606" y="331" text-anchor="middle">coefficients learned</text>
 
-    <path class="signal-flow-arrow" d="M700 110 C724 112, 728 170, 749 174" marker-end="url(#signal-flow-arrow-desktop)" />
-    <path class="signal-flow-arrow" d="M700 244 C724 241, 728 184, 749 180" marker-end="url(#signal-flow-arrow-desktop)" />
+    <path class="signal-flow-arrow" d="M719 130 C741 136, 744 201, 765 207" marker-end="url(#signal-flow-arrow)" />
+    <path class="signal-flow-arrow" d="M719 290 C741 284, 744 220, 765 214" marker-end="url(#signal-flow-arrow)" />
 
-    <path class="signal-flow-box" d="M760 125 C805 122, 860 127, 910 124 L910 229 C860 232, 805 228, 760 231 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="835" y="159" text-anchor="middle">Stock ranking</text>
-    <text class="signal-flow-label" x="835" y="184" text-anchor="middle">one score per stock</text>
-    <text class="signal-flow-label" x="835" y="205" text-anchor="middle">top / bottom 75</text>
+    <path class="signal-flow-box" d="M776 151 C821 147, 871 154, 922 150 L922 273 C872 277, 821 270, 776 275 Z" />
+    <text class="signal-flow-hand signal-flow-title" x="849" y="190" text-anchor="middle">Stock ranking</text>
+    <text class="signal-flow-label" x="849" y="222" text-anchor="middle">one score per stock</text>
+    <text class="signal-flow-label" x="849" y="248" text-anchor="middle">top / bottom 75</text>
 
-    <path class="signal-flow-arrow" marker-end="url(#signal-flow-arrow-desktop)" d="M916 177 C931 174, 944 180, 959 177" />
+    <path class="signal-flow-arrow" marker-end="url(#signal-flow-arrow)" d="M931 212 C944 208, 956 216, 969 212" />
 
-    <path class="signal-flow-box" d="M968 125 C1008 122, 1052 127, 1098 124 L1098 229 C1052 232, 1008 228, 968 231 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="1033" y="159" text-anchor="middle">Portfolio rules</text>
-    <text class="signal-flow-label" x="1033" y="184" text-anchor="middle">sizing · sleeves</text>
-    <text class="signal-flow-label" x="1033" y="205" text-anchor="middle">execution · costs</text>
-  </svg>
-
-  <svg class="signal-flow-svg signal-flow-mobile" viewBox="0 0 430 720" aria-hidden="true">
-    <defs>
-      <pattern id="signal-flow-hatch-mobile" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-        <line x1="0" y1="0" x2="0" y2="10" class="signal-flow-hatch-line" />
-      </pattern>
-      <marker id="signal-flow-arrow-mobile" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" class="signal-flow-arrow-head" />
-      </marker>
-    </defs>
-
-    <text class="signal-flow-hand signal-flow-kicker" x="28" y="30">from measures to positions</text>
-    <path class="signal-flow-rule" d="M28 44 C130 41, 270 47, 402 43" />
-
-    <path class="signal-flow-box" d="M65 72 C150 68, 272 75, 365 71 L365 154 C272 158, 150 151, 65 156 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="215" y="105" text-anchor="middle">Raw measures</text>
-    <text class="signal-flow-label" x="215" y="130" text-anchor="middle">price · risk · size · activity · short interest</text>
-
-    <path class="signal-flow-arrow" marker-end="url(#signal-flow-arrow-mobile)" d="M215 162 C211 177, 219 186, 215 201" />
-
-    <path class="signal-flow-rank-box" d="M65 210 C150 206, 272 213, 365 209 L365 292 C272 296, 150 289, 65 294 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="215" y="243" text-anchor="middle">Within-date ranks</text>
-    <text class="signal-flow-label" x="215" y="268" text-anchor="middle">common scale · unit-free · ties share a rank</text>
-
-    <path class="signal-flow-arrow" d="M215 300 C210 316, 140 320, 130 337" marker-end="url(#signal-flow-arrow-mobile)" />
-    <path class="signal-flow-arrow" d="M215 300 C220 316, 290 320, 300 337" marker-end="url(#signal-flow-arrow-mobile)" />
-
-    <path class="signal-flow-fixed-box" d="M20 345 C73 342, 132 348, 192 344 L192 448 C132 451, 73 446, 20 450 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="106" y="378" text-anchor="middle">Fixed benchmark</text>
-    <text class="signal-flow-label" x="106" y="404" text-anchor="middle">5 themes</text>
-    <text class="signal-flow-label" x="106" y="426" text-anchor="middle">signs + weights chosen</text>
-
-    <path class="signal-flow-learned-box" d="M238 345 C290 342, 350 348, 410 344 L410 448 C350 451, 290 446, 238 450 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="324" y="378" text-anchor="middle">OLS / Ridge</text>
-    <text class="signal-flow-label" x="324" y="404" text-anchor="middle">144 predictors</text>
-    <text class="signal-flow-label" x="324" y="426" text-anchor="middle">coefficients learned</text>
-
-    <path class="signal-flow-arrow" d="M106 457 C110 478, 199 480, 210 497" marker-end="url(#signal-flow-arrow-mobile)" />
-    <path class="signal-flow-arrow" d="M324 457 C320 478, 231 480, 220 497" marker-end="url(#signal-flow-arrow-mobile)" />
-
-    <path class="signal-flow-box" d="M65 507 C150 503, 272 510, 365 506 L365 579 C272 583, 150 576, 65 581 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="215" y="537" text-anchor="middle">One stock ranking</text>
-    <text class="signal-flow-label" x="215" y="560" text-anchor="middle">top / bottom 75</text>
-
-    <path class="signal-flow-arrow" marker-end="url(#signal-flow-arrow-mobile)" d="M215 588 C211 603, 219 612, 215 627" />
-
-    <path class="signal-flow-box" d="M65 636 C150 632, 272 639, 365 635 L365 706 C272 710, 150 703, 65 708 Z" />
-    <text class="signal-flow-hand signal-flow-title" x="215" y="666" text-anchor="middle">Same portfolio rules</text>
-    <text class="signal-flow-label" x="215" y="689" text-anchor="middle">sizing · sleeves · execution · costs</text>
+    <path class="signal-flow-box" d="M980 151 C1019 147, 1058 154, 1104 150 L1104 273 C1060 277, 1019 270, 980 275 Z" />
+    <text class="signal-flow-hand signal-flow-title" x="1042" y="190" text-anchor="middle">Portfolio</text>
+    <text class="signal-flow-label" x="1042" y="222" text-anchor="middle">sizing · sleeves</text>
+    <text class="signal-flow-label" x="1042" y="248" text-anchor="middle">execution · costs</text>
   </svg>
 </div>

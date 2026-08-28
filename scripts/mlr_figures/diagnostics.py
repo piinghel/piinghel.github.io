@@ -27,15 +27,11 @@ def plot_alpha_sensitivity(
     output_dir: Path,
     style: FigureStyle,
     spec: FigureSpec,
-    *,
-    mobile: bool,
 ) -> None:
     ridge_models = spec.alpha_models[1:]
     labels = ("c = 0.001", "c = 0.01", "c = 0.1")
     x = np.arange(len(ridge_models))
-    size = (4.4, 5.3) if mobile else (8.8, 3.8)
-    layout = (2, 1) if mobile else (1, 2)
-    fig, axes = plt.subplots(*layout, figsize=size, facecolor=style.white)
+    fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.8), facecolor=style.white)
     axes = np.asarray(axes).reshape(-1)
     for ax in axes:
         style_axis(ax, style)
@@ -54,11 +50,7 @@ def plot_alpha_sensitivity(
         fontsize=style.annotation_size,
     )
     axes[0].set_title(
-        (
-            "A  Portfolio names changed\n    vs OLS (of 150)"
-            if mobile
-            else "A  Portfolio names changed vs OLS (of 150)"
-        ),
+        "A  Portfolio names changed vs OLS (of 150)",
         loc="left",
         color=style.ink,
         fontsize=style.panel_title_size,
@@ -107,15 +99,11 @@ def plot_alpha_sensitivity(
             labels=[f"{value:.0f}%" for value in values],
             padding=3,
             color=style.muted,
-            fontsize=8.8 if mobile else style.annotation_size,
+            fontsize=style.annotation_size,
         )
     axes[1].set_ylim(0, 78)
     axes[1].set_title(
-        (
-            "B  Coefficient shrinkage\n    vs OLS (%)"
-            if mobile
-            else "B  Coefficient shrinkage vs OLS (%)"
-        ),
+        "B  Coefficient shrinkage vs OLS (%)",
         loc="left",
         color=style.ink,
         fontsize=style.panel_title_size,
@@ -129,22 +117,20 @@ def plot_alpha_sensitivity(
     )
 
     fig.subplots_adjust(
-        left=0.12 if mobile else 0.07,
+        left=0.07,
         right=0.98,
-        top=0.95 if mobile else 0.89,
-        bottom=0.10 if mobile else 0.19,
-        hspace=0.34 if mobile else 0.0,
-        wspace=0.25 if not mobile else 0.0,
+        top=0.89,
+        bottom=0.19,
+        hspace=0.0,
+        wspace=0.25,
     )
-    save_figure(fig, output_dir, "alpha-sensitivity", style, mobile=mobile)
+    save_figure(fig, output_dir, "alpha-sensitivity", style)
 
 
 def plot_turnover_costs(
     rows: list[dict[str, str]],
     output_dir: Path,
     style: FigureStyle,
-    *,
-    mobile: bool,
 ) -> None:
     model_keys = (
         "fixed_factor_benchmark",
@@ -155,9 +141,7 @@ def plot_turnover_costs(
     colors = (style.benchmark, style.ols, style.ridge)
     periods = ("development_1995_2021", "later_2022_2026")
     lookup = {(row["model"], row["period"]): row for row in rows}
-    size = (4.6, 7.2) if mobile else (10.2, 4.5)
-    layout = (2, 1) if mobile else (1, 2)
-    fig, axes = plt.subplots(*layout, figsize=size, facecolor=style.white)
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.5), facecolor=style.white)
     axes = np.asarray(axes).reshape(-1)
     x = np.arange(len(model_keys))
     width = 0.34
@@ -212,14 +196,14 @@ def plot_turnover_costs(
         bbox_to_anchor=(0.54, 1.0),
     )
     fig.subplots_adjust(
-        left=0.22 if mobile else 0.10,
+        left=0.10,
         right=0.98,
-        top=0.91 if mobile else 0.82,
-        bottom=0.09 if mobile else 0.16,
-        hspace=0.48 if mobile else 0.0,
-        wspace=0.30 if not mobile else 0.0,
+        top=0.82,
+        bottom=0.16,
+        hspace=0.0,
+        wspace=0.30,
     )
-    save_figure(fig, output_dir, "turnover-and-costs", style, mobile=mobile)
+    save_figure(fig, output_dir, "turnover-and-costs", style)
 
 
 def plot_selected_coefficients(
@@ -227,8 +211,6 @@ def plot_selected_coefficients(
     output_dir: Path,
     style: FigureStyle,
     spec: FigureSpec,
-    *,
-    mobile: bool,
 ) -> None:
     features = [
         row["feature"]
@@ -236,8 +218,6 @@ def plot_selected_coefficients(
     ]
     features = list(dict.fromkeys(features))
     folds = sorted({int(row["fold_id"]) for row in rows})
-    if mobile:
-        folds = [0, 2, 4, 6, 10, 11]
     lookup = {
         (row["feature"], int(row["fold_id"])): float(row["coefficient"]) for row in rows
     }
@@ -251,8 +231,7 @@ def plot_selected_coefficients(
     color_map = LinearSegmentedColormap.from_list(
         "coefficient", (style.negative, style.white, style.positive)
     )
-    size = (4.5, 6.2) if mobile else (9.6, 4.8)
-    fig, ax = plt.subplots(figsize=size, facecolor=style.white)
+    fig, ax = plt.subplots(figsize=(9.6, 4.8), facecolor=style.white)
     ax.pcolormesh(
         np.arange(values.shape[1] + 1) - 0.5,
         np.arange(values.shape[0] + 1) - 0.5,
@@ -288,7 +267,7 @@ def plot_selected_coefficients(
                 ha="center",
                 va="center",
                 color=style.white if abs(value) > 0.57 * limit else style.ink,
-                fontsize=7.4 if mobile else 7.8,
+                fontsize=7.8,
             )
     ax.set_xticks(np.arange(-0.5, len(folds), 1), minor=True)
     ax.set_yticks(np.arange(-0.5, len(features), 1), minor=True)
@@ -296,25 +275,22 @@ def plot_selected_coefficients(
     for spine in ax.spines.values():
         spine.set_visible(False)
     fig.subplots_adjust(
-        left=0.43 if mobile else 0.29,
+        left=0.29,
         right=0.99,
         top=0.98,
         bottom=0.14,
     )
-    save_figure(fig, output_dir, "top-coefficients", style, mobile=mobile)
+    save_figure(fig, output_dir, "top-coefficients", style)
 
 
 def plot_portfolio_exposures(
     exposures: dict[str, Series],
     output_dir: Path,
     style: FigureStyle,
-    *,
-    mobile: bool,
 ) -> None:
     """Plot monthly floating capital exposures for the selected portfolio."""
 
-    size = (4.8, 4.8) if mobile else (9.0, 4.4)
-    fig, ax = plt.subplots(figsize=size, facecolor=style.white)
+    fig, ax = plt.subplots(figsize=(9.0, 4.4), facecolor=style.white)
     for column, label, color in (
         ("long_gross", "Long gross", style.long_leg),
         ("short_gross", "Short gross", style.short_leg),
@@ -333,14 +309,14 @@ def plot_portfolio_exposures(
     ax.set_xlim(dates[0], dates[-1])
     ax.margins(x=0)
     ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
-    ax.xaxis.set_major_locator(mdates.YearLocator(5 if mobile else 4))
+    ax.xaxis.set_major_locator(mdates.YearLocator(4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.set_ylabel("Portfolio weight", color=style.ink, fontsize=style.axis_label_size)
     style_axis(ax, style)
     ax.legend(
         loc="lower left",
         bbox_to_anchor=(0.0, 1.08),
-        ncol=1 if mobile else 3,
+        ncol=3,
         frameon=False,
         borderaxespad=0,
         handlelength=2.4,
@@ -349,12 +325,12 @@ def plot_portfolio_exposures(
         fontsize=style.legend_size,
     )
     fig.subplots_adjust(
-        left=0.16 if mobile else 0.105,
+        left=0.105,
         right=0.98,
-        top=0.75 if mobile else 0.82,
+        top=0.82,
         bottom=0.18,
     )
-    save_figure(fig, output_dir, "portfolio-exposures", style, mobile=mobile)
+    save_figure(fig, output_dir, "portfolio-exposures", style)
 
 
 def plot_selected_portfolio_tilts(
@@ -362,8 +338,6 @@ def plot_selected_portfolio_tilts(
     output_dir: Path,
     style: FigureStyle,
     spec: FigureSpec,
-    *,
-    mobile: bool,
 ) -> None:
     grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
     for row in rows:
@@ -377,32 +351,24 @@ def plot_selected_portfolio_tilts(
         }
         for predictor, values in grouped.items()
     }
-    if mobile:
-        ordered = sorted(
-            grouped, key=lambda predictor: metadata[predictor]["tilt_rank"]
-        )
-        fig, axes = plt.subplots(10, 1, figsize=(4.5, 11.8), facecolor=style.white)
-    else:
-        negative = sorted(
-            (
-                predictor
-                for predictor in grouped
-                if metadata[predictor]["side"] == "negative"
-            ),
-            key=lambda predictor: metadata[predictor]["side_rank"],
-        )
-        positive = sorted(
-            (
-                predictor
-                for predictor in grouped
-                if metadata[predictor]["side"] == "positive"
-            ),
-            key=lambda predictor: metadata[predictor]["side_rank"],
-        )
-        ordered = [
-            item for pair in zip(negative, positive, strict=True) for item in pair
-        ]
-        fig, axes = plt.subplots(5, 2, figsize=(9.6, 7.2), facecolor=style.white)
+    negative = sorted(
+        (
+            predictor
+            for predictor in grouped
+            if metadata[predictor]["side"] == "negative"
+        ),
+        key=lambda predictor: metadata[predictor]["side_rank"],
+    )
+    positive = sorted(
+        (
+            predictor
+            for predictor in grouped
+            if metadata[predictor]["side"] == "positive"
+        ),
+        key=lambda predictor: metadata[predictor]["side_rank"],
+    )
+    ordered = [item for pair in zip(negative, positive, strict=True) for item in pair]
+    fig, axes = plt.subplots(5, 2, figsize=(9.6, 7.2), facecolor=style.white)
     axes = np.asarray(axes).reshape(-1)
     all_dates = [
         date.fromisoformat(row["date"])
@@ -465,23 +431,23 @@ def plot_selected_portfolio_tilts(
             fontsize=style.annotation_size * visual_scale,
             fontweight=600,
         )
-        ax.xaxis.set_major_locator(mdates.YearLocator(7 if mobile else 8))
+        ax.xaxis.set_major_locator(mdates.YearLocator(8))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-        show_x = index == len(ordered) - 1 if mobile else index >= len(ordered) - 2
+        show_x = index >= len(ordered) - 2
         if not show_x:
             ax.tick_params(axis="x", labelbottom=False)
     fig.supylabel(
         "Realized predictor-rank tilt",
         color=style.muted,
         fontsize=style.axis_label_size * visual_scale,
-        x=0.025 if mobile else 0.035,
+        x=0.035,
     )
     fig.subplots_adjust(
-        left=0.18 if mobile else 0.10,
+        left=0.10,
         right=0.98,
         top=0.985,
-        bottom=0.045 if mobile else 0.06,
-        hspace=0.68 if mobile else 0.56,
-        wspace=0.25 if not mobile else 0.0,
+        bottom=0.06,
+        hspace=0.56,
+        wspace=0.25,
     )
-    save_figure(fig, output_dir, "portfolio-feature-tilts", style, mobile=mobile)
+    save_figure(fig, output_dir, "portfolio-feature-tilts", style)

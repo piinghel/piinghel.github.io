@@ -23,9 +23,8 @@ This is a Jekyll site for concise, technically serious research notes. Keep pros
 - Figure 6 is one 2-by-2 image: dot-com on the left, the 2025–2026 AI rally on
   the right, wealth above additive leg contributions. It has one caption.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
-- Publish reproducible light and dark SVG variants. Add a dedicated mobile
-  layout only when the desktop SVG becomes unreadable at the published phone
-  width; keep the same table structure at every viewport width.
+- Publish reproducible light and dark SVG variants from one shared figure
+  composition, and keep the same table structure at every viewport width.
 
 ## Verification and delivery
 

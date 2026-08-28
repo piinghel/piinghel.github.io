@@ -1138,10 +1138,6 @@ html[data-theme="dark"] {
   overflow: visible;
 }
 
-.signal-flow-mobile {
-  display: none;
-}
-
 .signal-flow-hand {
   fill: currentColor;
   font-family: "Permanent Marker", cursive;
@@ -1169,8 +1165,7 @@ html[data-theme="dark"] {
 .signal-flow-box,
 .signal-flow-rank-box,
 .signal-flow-fixed-box,
-.signal-flow-learned-box,
-.signal-flow-hatch-line {
+.signal-flow-learned-box {
   vector-effect: non-scaling-stroke;
 }
 
@@ -1203,60 +1198,25 @@ html[data-theme="dark"] {
 }
 
 .signal-flow-box {
-  fill: currentColor;
-  fill-opacity: 0.035;
+  fill: none;
 }
 
 .signal-flow-rank-box {
-  fill: currentColor;
-  fill-opacity: 0.075;
+  fill: none;
 }
 
 .signal-flow-fixed-box {
-  fill: currentColor;
-  fill-opacity: 0.13;
+  fill: none;
 }
 
 .signal-flow-learned-box {
-  fill: url(#signal-flow-hatch-desktop);
-}
-
-.signal-flow-hatch-line {
-  stroke: var(--muted-ink);
-  stroke-width: 1.8;
+  fill: none;
 }
 
 .post-content .research-figure.signal-flow-figure {
   width: min(940px, calc(100vw - 2rem));
   margin-top: 1.8rem;
   margin-bottom: 2.2rem;
-}
-
-@media (max-width: 600px) {
-  .signal-flow-desktop {
-    display: none;
-  }
-
-  .signal-flow-mobile {
-    display: block;
-  }
-
-  .signal-flow-learned-box {
-    fill: url(#signal-flow-hatch-mobile);
-  }
-
-  .signal-flow-title {
-    font-size: 18px;
-  }
-
-  .signal-flow-label {
-    font-size: 14px;
-  }
-
-  .post-content .research-figure.signal-flow-figure {
-    margin-top: 1.4rem;
-    margin-bottom: 1.8rem;
-  }
 }
 
 // Editorial typography and home-page rhythm. The structure stays minimal;
