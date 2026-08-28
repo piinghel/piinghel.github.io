@@ -15,6 +15,8 @@ import polars as pl
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
+plt.rcParams["svg.hashsalt"] = "portfolio-optimization"
+
 
 @dataclass(frozen=True)
 class FigureStyle:
@@ -194,7 +196,12 @@ def style_axis(axis: plt.Axes, style: FigureStyle) -> None:
 def save_svg(fig: plt.Figure, target: Path, style: FigureStyle) -> None:
     """Save deterministic, whitespace-normalized article SVG."""
 
-    fig.savefig(target, format="svg", facecolor=style.background)
+    fig.savefig(
+        target,
+        format="svg",
+        facecolor=style.background,
+        metadata={"Date": None},
+    )
     svg = target.read_text(encoding="utf-8")
     target.write_text(
         "\n".join(line.rstrip() for line in svg.splitlines()) + "\n",
@@ -381,8 +388,8 @@ def plot_risk_forecasts(
     )
     for axis in axes:
         style_axis(axis, style)
-        axis.set_ylim(0, 50)
-        axis.yaxis.set_major_locator(FixedLocator([0, 10, 20, 30, 40, 50]))
+        axis.set_ylim(0, 20)
+        axis.yaxis.set_major_locator(FixedLocator([0, 5, 10, 15, 20]))
 
     short_labels = {
         "b1_ranked_volscale": "Volatility-scaled portfolio",
@@ -413,6 +420,18 @@ def plot_risk_forecasts(
                 linewidth=0.9,
                 alpha=0.52,
                 zorder=3,
+            )
+            overflow = frame.filter(pl.col("realised_volatility_pct") > 20)
+            axis.scatter(
+                overflow.get_column("execution_date").to_numpy(),
+                np.full(overflow.height, 19.55),
+                color=realised_color,
+                marker="^",
+                s=18 if mobile else 20,
+                linewidths=0,
+                alpha=0.86,
+                clip_on=True,
+                zorder=4,
             )
         axis.set_title(
             short_labels[allocator],
@@ -446,12 +465,21 @@ def plot_risk_forecasts(
             linewidth=1.5,
             label="Realised over next holding period",
         ),
+        Line2D(
+            [0],
+            [0],
+            color=realised_color,
+            marker="^",
+            markersize=5.5,
+            linewidth=0,
+            label="Realised above 20%",
+        ),
     ]
     fig.legend(
         handles=legend_handles,
         loc="upper center",
         bbox_to_anchor=(0.53, 0.995),
-        ncol=1 if mobile else 2,
+        ncol=1 if mobile else 3,
         frameon=False,
         labelcolor=style.ink,
         fontsize=9.4 if mobile else 10.0,
@@ -565,7 +593,9 @@ def write_risk_figure_metadata(*, config: ArticleFigureConfig) -> None:
         "Predicted and subsequently realised annualised volatility at every "
         "rebalance. Each panel contains the three staggered schedules. Forecasts "
         "are measured at execution; realised volatility covers the subsequent "
-        "execution-to-next-execution holding period. B1 is evaluated with B2's "
+        "execution-to-next-execution holding period. The common 0–20% scale marks "
+        "higher observations with triangles; the counts are 10, 12, and 11 and "
+        "the maxima are 48.9%, 34.7%, and 34.3%. B1 is evaluated with B2's "
         "covariance model as a common-model diagnostic."
     )
     beta_caption = (
@@ -606,7 +636,9 @@ def write_risk_figure_metadata(*, config: ArticleFigureConfig) -> None:
         "visual_choices": {
             "risk_forecast": (
                 "three allocator panels on a shared zero-based scale; all 1,444 "
-                "rebalance observations per allocator retained; one line per schedule"
+                "rebalance observations per allocator retained; one line per schedule; "
+                "values above the 20% display range marked at the boundary and "
+                "reported exactly in the caption"
             ),
             "beta": (
                 "252-day realised beta, mean across offsets, sampled monthly for display"

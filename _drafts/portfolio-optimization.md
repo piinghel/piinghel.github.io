@@ -322,10 +322,10 @@ shock. Across all rebalances, their root-mean-square realized volatility is
 8.6%, compared with a 7.0% forecast.
 
 <div class="research-figure risk-forecast-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-forecast-through-time" mobile_suffix="-mobile" alt="Predicted and subsequently realized annualized volatility at every rebalance for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="1" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-forecast-through-time" mobile_suffix="-mobile" alt="Predicted and subsequently realized annualized volatility at every rebalance for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Predicted and subsequently realized annualized volatility at every rebalance. Each panel contains all three staggered schedules; realized volatility covers the following execution-to-execution holding period. The panels share the same vertical scale.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Predicted and subsequently realized annualized volatility at every rebalance. Each panel contains all three staggered schedules; realized volatility covers the following execution-to-execution holding period. The shared vertical scale focuses on 0–20%. Triangles mark the 10, 12, and 11 observations above 20% for volatility scaling, the standard optimizer, and the state-aware optimizer; their maxima are 48.9%, 34.7%, and 34.3%.</p>
 
 Fourth, target beta control does not guarantee realized beta control. Target
 beta is constrained to ±0.05 at each optimization, yet realized beta reached
