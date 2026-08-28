@@ -4,6 +4,10 @@ description: >
 
 theme: minima
 
+# Publish the two explicitly permalinked portfolio-optimization review drafts.
+# Their URLs remain labelled as previews until the evidence gate is complete.
+show_drafts: true
+
 sass:
   style: compressed
   load_paths:
