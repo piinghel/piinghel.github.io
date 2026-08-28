@@ -45,43 +45,51 @@ rather than one propped up by a few sharp jumps. Momentum looks for a trend that
 has persisted beyond the latest short-term move. The remaining themes favour
 lower short positioning, larger companies, and steadier day-to-day returns.
 
-The benchmark can be written compactly. Let
-$$p_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ be stock $$i$$'s
-cross-sectional rank on date $$t$$, with every component signed so a higher rank
-is more attractive and $$N_t$$ denoting the stocks available for that component.
-Using daily return $$r$$, reported short interest $$SI$$, 63-day average volume
-$$ADV_{63}$$, and market capitalisation $$MC$$, the five themes and final score
-are
+Let $$P_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ denote stock $$i$$'s
+within-date percentile rank, where $$N_t$$ is the number of available stocks for
+that measure. Higher values are always more attractive. I write the average of
+the three largest daily returns in the past 21 sessions as
+$$\bar r^{(3)}_{i,t;21}$$. The five theme scores are
 
 $$
 \begin{aligned}
-D_{i,t}
-&=\tfrac12 p_t\!\left(-\tfrac13\sum_{h\in\{21,63,126\}}\sigma_{i,t}^{(h)}\right)\\
-&\quad+\tfrac12 p_t\!\left(-\operatorname{Top3Mean}_{21}(r_{i,t})\right),\\
-M_{i,t}
-&=p_t\!\left(\sum_{h\in\{63,126,189,252\}}
-R_{i,t}^{(h,\,\mathrm{skip}\ 21)}\right),\\
-S_{i,t}
-&=p_t\!\left(-\log\frac{SI_{i,t-21}}{ADV_{i,t}^{(63)}}\right),\\
-L_{i,t}
-&=p_t\!\left(\log MC_{i,t}\right),\\
-C_{i,t}
-&=p_t\!\left(-\frac1{756}\sum_{u=0}^{755}
-\mathbf 1\{r_{i,t-u}<0\}\right),\\
-B_{i,t}
-&=0.2\left(D_{i,t}+M_{i,t}+S_{i,t}+L_{i,t}+C_{i,t}\right).
+X_{\mathrm{def},i,t}
+&=\tfrac12 P_t\!\left(-\tfrac13\sum_{h\in\{21,63,126\}}\sigma_{i,t}^{(h)}\right)\\
+&\quad+\tfrac12 P_t\!\left(-\bar r^{(3)}_{i,t;21}\right),\\[0.9em]
+X_{\mathrm{mom},i,t}
+&=P_t\!\left(\sum_{h\in\{63,126,189,252\}}
+R_{i,t}^{(h,\,\mathrm{skip}\ 21)}\right),\\[0.9em]
+X_{\mathrm{short},i,t}
+&=P_t\!\left(-\log\frac{SI_{i,t-21}}{ADV_{i,t}^{(63)}}\right),\\[0.9em]
+X_{\mathrm{size},i,t}
+&=P_t\!\left(\log MC_{i,t}\right),\\[0.9em]
+X_{\mathrm{cons},i,t}
+&=P_t\!\left(-\frac1{756}\sum_{u=0}^{755}
+\mathbf 1\{r_{i,t-u}<0\}\right).
 \end{aligned}
 $$
 
-Here $$D$$ combines low volatility with avoidance of unusually large up days,
-$$M$$ is momentum measured across four horizons after skipping the latest month,
-$$S$$ favours low short interest relative to normal trading volume, $$L$$ favours
-larger companies, and $$C$$ favours stocks with fewer down days over three years.
-The two defensive components contribute 10% each; the other themes contribute
-20% each. Ranking before aggregation prevents market capitalisation in dollars
-or volatility in percentage points from dominating the score through its units.
-Short-positioning data are lagged to when they were available, and a stock needs
-enough history for every theme before it can enter the benchmark.
+The benchmark gives each theme 20%:
+
+$$
+X_{\mathrm{score},i,t}
+=\frac15\left(
+X_{\mathrm{def},i,t}
++X_{\mathrm{mom},i,t}
++X_{\mathrm{short},i,t}
++X_{\mathrm{size},i,t}
++X_{\mathrm{cons},i,t}
+\right).
+$$
+
+The defensive score combines low volatility with avoidance of unusually large
+up days; its two components therefore contribute 10% each to the final score.
+Momentum spans four horizons after skipping the latest month. The remaining
+scores favour low short interest relative to trading volume, larger companies,
+and fewer down days over three years. Ranking before aggregation prevents market
+capitalisation in dollars or volatility in percentage points from dominating
+through its units. Short-positioning data are lagged to when they were available,
+and a stock needs enough history for every theme before it can enter the benchmark.
 
 Multiple linear regression and Ridge receive 144 ranked predictors, but these
 are not 144 unrelated ideas. Price-based measures ask whether a stock has risen,
@@ -95,13 +103,14 @@ overlap also makes individual coefficients hard to pin down.
 ## Ranks put 144 unlike predictors on one scale
 
 The 144-predictor deck has the same units problem as the benchmark, but here the
-regression must learn both direction and weight. Let $$z_{i,j,t}$$ be stock
-$$i$$'s raw value for predictor $$j$$, let $$R_{i,j,t}$$ be its dense rank, and
-let $$K_{j,t}$$ be the largest rank on date $$t$$. I normalise each predictor as
+regression must learn both direction and weight. Let $$\widetilde X_{i,j,t}$$ be
+stock $$i$$'s raw value for predictor $$j$$, let
+$$R_t(\widetilde X_{i,j,t})$$ be its dense rank, and let $$K_{j,t}$$ be the
+largest rank on date $$t$$. The normalised input is
 
 $$
-x_{i,j,t}
-=2\frac{R_{i,j,t}}{K_{j,t}}-1.
+X_{i,j,t}
+=2\frac{R_t(\widetilde X_{i,j,t})}{K_{j,t}}-1.
 $$
 
 This maps every predictor to the same $[-1,1]$ interval. Tied observations share
@@ -117,13 +126,15 @@ therefore learning relative order, not a calibrated relationship between the raw
 signal value and future return. That trade-off fits this application because the
 portfolio ultimately acts on the ranking tails.
 
-The full pipeline keeps those stages separate: raw measures become comparable
-ranks, the benchmark or regression combines them, and only then does the common
-portfolio rule turn a stock ranking into positions.
+Figure 1 keeps those stages separate: raw measures become comparable ranks, the
+benchmark or regression combines them, and only then does the common portfolio
+rule turn a stock ranking into positions.
 
 <div class="research-figure signal-flow-figure">
   {%- include signal-combination-flow.html -%}
 </div>
+
+<p class="figure-caption"><strong>Figure 1:</strong> Signal-combination pipeline. Fixed and learned combinations feed the same stock-selection and portfolio rules.</p>
 
 When a predictor is unavailable, I use the latest known value or the stock's
 sector average for that date. The traded universe then excludes stocks below
@@ -147,27 +158,35 @@ exposures; an allocation risk model would have to constrain them explicitly.
 
 With predictors and outcomes on comparable scales, multiple linear regression
 can learn how the signals work together. I fit it with OLS. Let
-$$\mathbf x_{i,t}\in[-1,1]^{144}$$ contain the normalized predictors and let
-$$y_{i,t}$$ be the sector-ranked forward target. In walk-forward fold $$f$$,
-ordinary least squares estimates
+$$\mathbf X_{i,t}\in[-1,1]^{144}$$ contain the normalised predictors and let
+$$y_{i,t}$$ be the sector-ranked forward target. For walk-forward fold $$f$$,
+the mean squared training loss is
+
+$$
+\mathcal L_f(\beta_0,\boldsymbol\beta)
+=
+\frac{1}{n_f}\sum_{(i,t)\in\mathcal T_f}
+\left(y_{i,t}-\beta_0-\mathbf X_{i,t}^{\top}
+\boldsymbol\beta\right)^2.
+$$
+
+Ordinary least squares chooses the coefficients that minimise this loss:
 
 $$
 (\widehat\beta^{\mathrm{OLS}}_{0,f},
 \widehat{\boldsymbol\beta}^{\mathrm{OLS}}_f)
 =\arg\min_{\beta_0,\boldsymbol\beta}
-\frac{1}{n_f}\sum_{(i,t)\in\mathcal T_f}
-\left(y_{i,t}-\beta_0-\mathbf x_{i,t}^{\top}
-\boldsymbol\beta\right)^2.
+\mathcal L_f(\beta_0,\boldsymbol\beta).
 $$
 
 Here $$\mathcal T_f$$ is the training sample and $$n_f=|\mathcal T_f|$$. The
 fitted score $$\widehat y_{i,t}=\widehat\beta_{0,f}
-+\mathbf x_{i,t}^{\top}\widehat{\boldsymbol\beta}_f$$ becomes the learned stock
++\mathbf X_{i,t}^{\top}\widehat{\boldsymbol\beta}_f$$ becomes the learned stock
 ranking. A positive coefficient rewards a high predictor rank; a negative
 coefficient reverses the preference.
 
 I refit the model as the historical sample expands and score only the next
-block—a walk-forward design. Figure 1 shows the sequence. The first 900 dates
+block—a walk-forward design. Figure 2 shows the sequence. The first 900 dates
 form the initial training sample, a 21-day gap separates training outcomes from
 the next prediction block, and the fitted model then scores 600 new dates. I
 repeat that process 12 times and average three date-thinned fits at each step to
@@ -177,9 +196,9 @@ reduce the dependence created by overlapping monthly outcomes.
   {%- include walk-forward-figure.html -%}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Expanding walk-forward estimation, with a 21-day buffer before each 600-date prediction block.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Expanding walk-forward estimation, with a 21-day buffer before each 600-date prediction block.</p>
 
-The expanding windows in Figure 1 protect each prediction block from future
+The expanding windows in Figure 2 protect each prediction block from future
 training data. They do not turn the full history into an untouched test. I
 repeatedly inspected the 1995–2021 results while revising predictors, the target,
 and the portfolio, so that entire span remains the **research and development
@@ -201,14 +220,10 @@ stocks remain in almost the same order. Ridge regression favours a more stable
 division of weight by penalising large coefficients:
 
 $$
-\begin{aligned}
-&(\widehat\beta^{(c)}_{0,f},\widehat{\boldsymbol\beta}^{(c)}_f)\\
-&\quad=\arg\min_{\beta_0,\boldsymbol\beta}\Bigg\{
-\frac{1}{n_f}\sum_{(i,t)\in\mathcal T_f}
-\left(y_{i,t}-\beta_0-\mathbf x_{i,t}^{\top}
-\boldsymbol\beta\right)^2\\
-&\hspace{8.5em}+c\lVert\boldsymbol\beta\rVert_2^2\Bigg\}.
-\end{aligned}
+(\widehat\beta^{(c)}_{0,f},\widehat{\boldsymbol\beta}^{(c)}_f)
+=\arg\min_{\beta_0,\boldsymbol\beta}
+\left\{\mathcal L_f(\beta_0,\boldsymbol\beta)
++c\lVert\boldsymbol\beta\rVert_2^2\right\}.
 $$
 
 The penalty applies to the slopes and leaves the intercept free. Setting $c=0$
@@ -221,7 +236,7 @@ better predictions are not.
 Random row-level validation would treat strongly related observations as if they
 were independent. Stocks on the same date share market and sector shocks,
 predictors move slowly, and adjacent 20-day outcomes overlap. The blocked design
-and 21-day gap in Figure 1 prevent the most direct leakage across prediction
+and 21-day gap in Figure 2 prevent the most direct leakage across prediction
 boundaries, but the effective sample is still much smaller than the raw row
 count. I therefore treat the penalty grid as a sensitivity check rather than a
 precise estimate of an optimal value.
@@ -256,7 +271,7 @@ forward as a deliberately gentle compromise, not a clear winner or an estimate
 of a uniquely optimal penalty.
 {: .table-followup }
 
-Figure 2 asks what that moderate penalty actually changes. Panel A measures how
+Figure 3 asks what that moderate penalty actually changes. Panel A measures how
 many names enter or leave the 150-stock portfolio relative to OLS. Panel B
 compares the size of the coefficient vector and its movement between refits. The
 two panels distinguish a different-looking model from a meaningfully different
@@ -266,9 +281,9 @@ stock selection.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/alpha-sensitivity" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
 
-Figure 2 shows that coefficients change much more than the portfolio. At
+Figure 3 shows that coefficients change much more than the portfolio. At
 $c=0.01$, their size and movement between refits fall by roughly one third, yet
 only about 14 of 150 selected names change on a typical rebalance. The average
 stock moves 2.71 percentile-rank points and the full ranking retains a 0.991
@@ -282,7 +297,7 @@ contribution assigned to each individual input. The 0.991 rank correlation
 supports that distinction, while attribution is more credible at the broader
 predictor-family level.
 
-Figure 3 follows the ten largest Ridge coefficients across refits. Positive
+Figure 4 follows the ten largest Ridge coefficients across refits. Positive
 cells reward a high predictor rank and negative cells favour a low rank. A
 stable explanation would keep the same signs and similar relative weights from
 one column to the next. The 2022 and 2024 columns extend the diagnostic beyond
@@ -292,9 +307,9 @@ the development period; they do not enter the penalty selection.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification across walk-forward refits" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; 2022 and 2024 are later-period diagnostics.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; 2022 and 2024 are later-period diagnostics.</p>
 
-Figure 3 preserves a few broad directions: price relative to its moving average
+Figure 4 preserves a few broad directions: price relative to its moving average
 stays positive, while short-horizon MACD and illiquidity stay negative. Several
 other coefficients weaken or change sign as the sample expands. Ridge therefore
 reduces coefficient size and concentration without producing a fixed,
@@ -369,7 +384,7 @@ Information coefficient (IC) isolates the ranking by measuring the daily
 Spearman correlation between the predicted order and the subsequently realised,
 sector-ranked outcome.
 
-Figure 4 adds those daily correlations through time. A rising path means the
+Figure 5 adds those daily correlations through time. A rising path means the
 model has ordered future outcomes correctly on balance; a flat path means no new
 rank association, and a decline marks a run of negative IC. The series runs from
 the first walk-forward predictions in September 1998 to the last complete
@@ -380,9 +395,9 @@ return series or a significance statistic.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 4:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 boundary.</p>
+<p class="figure-caption"><strong>Figure 5:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 boundary.</p>
 
-The OLS and Ridge paths in Figure 4 are almost indistinguishable. Table 4
+The OLS and Ridge paths in Figure 5 are almost indistinguishable. Table 4
 quantifies that overlap by separating the mean and variability of daily IC in
 the development and later periods.
 
@@ -452,7 +467,7 @@ use different predictor sets.
 
 ## The return paths confirm the small Ridge–OLS gap
 
-Figure 5 puts the portfolio evidence back in chronological order. The upper
+Figure 6 puts the portfolio evidence back in chronological order. The upper
 panel tracks net wealth on a logarithmic scale; the lower panel shows the
 drawdowns hidden by the period averages. The vertical rule separates the
 development period from the later diagnostic period.
@@ -461,9 +476,9 @@ development period from the later diagnostic period.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
 
-Figure 5 shows that the broader learned specifications' development-period
+Figure 6 shows that the broader learned specifications' development-period
 Sharpe advantage comes mainly from a smoother path and shallower drawdowns, not
 a dramatic return gap. Ridge tracks OLS closely throughout the sample and does
 not create a visibly different return path. After 2021, OLS retains the higher
@@ -474,7 +489,7 @@ Sharpe reported in Table 3.
 ### Learned rankings roughly double turnover
 
 The learned rankings change more from one rebalance to the next, so their
-advantage may be expensive to trade. Figure 6 compares two-way turnover and the
+advantage may be expensive to trade. Figure 7 compares two-way turnover and the
 resulting annual drag under the same 5 bp cost rule. This estimate covers stock
 trading, not borrow, financing, market impact, or taxes.
 
@@ -482,9 +497,9 @@ trading, not borrow, financing, market impact, or taxes.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/turnover-and-costs" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual trading cost under the 5 bp assumption, shown separately for development and the later period.</p>
+<p class="figure-caption"><strong>Figure 7:</strong> Average two-way turnover per rebalance and annual trading cost under the 5 bp assumption, shown separately for development and the later period.</p>
 
-Figure 6 shows that the fixed score trades about half as much as either learned
+Figure 7 shows that the fixed score trades about half as much as either learned
 ranking. Ridge barely changes that burden: relative to OLS, it saves 0.02
 percentage points of annual trading cost in development and 0.03 later. Smaller
 coefficients do not translate into a materially more stable portfolio.
@@ -492,7 +507,7 @@ coefficients do not translate into a materially more stable portfolio.
 ### Inverse-volatility sizing leaves exposure uncontrolled
 
 Stock-level volatility sizing also changes the balance between the two sides of
-the portfolio. Figure 7 tracks the selected Ridge portfolio's long gross, short
+the portfolio. Figure 8 tracks the selected Ridge portfolio's long gross, short
 gross, and their difference, the net stock exposure. A positive net line means
 more capital is invested long than short.
 
@@ -500,9 +515,9 @@ more capital is invested long than short.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="14" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio.</p>
+<p class="figure-caption"><strong>Figure 8:</strong> Monthly average floating exposures for the selected Ridge portfolio.</p>
 
-Figure 7 shows the long book staying near its ceiling while the short book does
+Figure 8 shows the long book staying near its ceiling while the short book does
 most of the moving. High-volatility short candidates receive smaller positions,
 so average net exposure rises from +30.0% in development to +46.9% after 2021.
 Market beta remains much smaller than net exposure, which is consistent with the
@@ -515,11 +530,11 @@ The realised tilts translate a long list of model inputs into a simpler
 question: what kind of stocks does the finished Ridge portfolio actually own?
 Each tilt is the portfolio-weighted average of a predictor's signed ranks.
 Positive values mean the long book owns higher ranks than the short book;
-negative values mean the reverse. Figure 8 averages these tilts by quarter.
+negative values mean the reverse. Figure 9 averages these tilts by quarter.
 Each panel includes zero but uses its own vertical range, so the labelled
 full-sample means are the right comparison across panels.
 
-Figure 8 collects the ten largest realised tilts. Its labels mostly belong to
+Figure 9 collects the ten largest realised tilts. Its labels mostly belong to
 two broad families. ATR and the volatility measures describe how turbulent the
 price path has been. Trend streak, distance from a prior high, and RSI describe
 whether a trend has persisted and where the stock sits within it. The model sees
@@ -530,9 +545,9 @@ than a comparison of raw units.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-feature-tilts" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realised predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>
+<p class="figure-caption"><strong>Figure 9:</strong> Quarterly paths of the ten largest average absolute realised predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>
 
-Figure 8 shows a portfolio that is mainly defensive and trend-following. The
+Figure 9 shows a portfolio that is mainly defensive and trend-following. The
 long book owns quieter stocks, spends more time above its long-run moving
 average, and remains closer to an earlier high. Several panels are variations on
 those same two themes rather than independent sources of exposure.
@@ -540,9 +555,9 @@ those same two themes rather than independent sources of exposure.
 The chart describes the finished portfolio, not independent alpha attribution.
 Stock-level volatility sizing can strengthen the defensive pattern after the
 ranking is formed, while correlated predictors can exchange coefficient weight
-and still identify similar stocks. Both mechanisms can make Figure 8 look
+and still identify similar stocks. Both mechanisms can make Figure 9 look
 steadier, and more concentrated by theme, than the coefficient paths in Figure
-3, but the chart cannot separate their contributions.
+4, but the chart cannot separate their contributions.
 
 The predictor deck itself offers limited diversification: about two thirds of
 the 144 inputs come from price history or price–volume interactions. Ranking,

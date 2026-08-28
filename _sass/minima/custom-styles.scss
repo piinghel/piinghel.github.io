@@ -756,6 +756,12 @@ a {
   padding: 0.5em 0;
 }
 
+// MathJax 3 display equations need vertical room between the surrounding prose.
+.post-content mjx-container[display="true"] {
+  margin: 2.35rem 0 !important;
+  padding: 0.2rem 0;
+}
+
 // Article/post page improvements
 article.post {
   .post-header {
@@ -1126,7 +1132,7 @@ html[data-theme="dark"] {
   stroke-width: 2.2;
 }
 
-// Signal-combination schematic uses the same hand-drawn grammar as Figure 1.
+// Signal-combination schematic uses the article's hand-drawn visual grammar.
 .signal-flow-drawing {
   color: var(--ink);
 }
@@ -1144,23 +1150,17 @@ html[data-theme="dark"] {
   font-weight: 400;
 }
 
-.signal-flow-kicker {
-  fill: var(--muted-ink);
-  font-size: 22px;
-}
-
 .signal-flow-title {
-  font-size: 20px;
+  font-size: 21px;
 }
 
 .signal-flow-label {
   fill: var(--muted-ink);
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
 }
 
-.signal-flow-rule,
 .signal-flow-arrow,
 .signal-flow-box,
 .signal-flow-rank-box,
@@ -1169,16 +1169,10 @@ html[data-theme="dark"] {
   vector-effect: non-scaling-stroke;
 }
 
-.signal-flow-rule,
 .signal-flow-arrow {
   fill: none;
   stroke: var(--muted-ink);
   stroke-linecap: round;
-}
-
-.signal-flow-rule {
-  stroke: var(--rule);
-  stroke-width: 1.4;
 }
 
 .signal-flow-arrow {
@@ -1214,9 +1208,14 @@ html[data-theme="dark"] {
 }
 
 .post-content .research-figure.signal-flow-figure {
-  width: min(940px, calc(100vw - 2rem));
-  margin-top: 1.8rem;
-  margin-bottom: 2.2rem;
+  position: relative;
+  left: calc(50% - 3.1rem);
+  width: min(940px, calc(100vw - 4rem));
+  margin-top: 2.2rem;
+  margin-right: 0;
+  margin-bottom: 0.8rem;
+  margin-left: 0;
+  transform: translateX(-50%);
 }
 
 // Editorial typography and home-page rhythm. The structure stays minimal;
