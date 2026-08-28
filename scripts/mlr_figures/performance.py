@@ -25,8 +25,11 @@ def plot_ic(
     output_dir: Path,
     style: FigureStyle,
     spec: FigureSpec,
+    *,
+    mobile: bool,
 ) -> None:
-    fig, ax = plt.subplots(figsize=(10.2, 5.5), facecolor=style.white)
+    size = (4.6, 5.1) if mobile else (10.2, 5.5)
+    fig, ax = plt.subplots(figsize=size, facecolor=style.white)
     for model in spec.model_order:
         values = np.cumsum(series[model].values)
         ax.plot(
@@ -69,17 +72,17 @@ def plot_ic(
         color=style.muted,
         fontsize=style.axis_label_size * 1.2,
     )
-    ax.xaxis.set_major_locator(mdates.YearLocator(4))
+    ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     right = series[spec.model_order[0]].dates[-1] + timedelta(days=520)
     ax.set_xlim(series[spec.model_order[0]].dates[0], right)
     fig.subplots_adjust(
-        left=0.10,
-        right=0.87,
+        left=0.16 if mobile else 0.10,
+        right=0.82 if mobile else 0.87,
         top=0.97,
         bottom=0.12,
     )
-    save_figure(fig, output_dir, "cumulative-ic", style)
+    save_figure(fig, output_dir, "cumulative-ic", style, mobile=mobile)
 
 
 def plot_performance(
@@ -88,11 +91,14 @@ def plot_performance(
     output_dir: Path,
     style: FigureStyle,
     spec: FigureSpec,
+    *,
+    mobile: bool,
 ) -> None:
+    size = (4.6, 7.2) if mobile else (10.8, 6.7)
     fig, (wealth_ax, drawdown_ax) = plt.subplots(
         2,
         1,
-        figsize=(10.8, 6.7),
+        figsize=size,
         facecolor=style.white,
         sharex=True,
         gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.04},
@@ -164,14 +170,20 @@ def plot_performance(
         color=style.muted,
         fontsize=style.axis_label_size,
     )
-    drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(4))
+    drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     right = wealth[spec.model_order[0]].dates[-1] + timedelta(days=520)
     drawdown_ax.set_xlim(wealth[spec.model_order[0]].dates[0], right)
     fig.subplots_adjust(
-        left=0.10,
-        right=0.87,
+        left=0.17 if mobile else 0.10,
+        right=0.82 if mobile else 0.87,
         top=0.98,
         bottom=0.08,
     )
-    save_figure(fig, output_dir, "performance-and-drawdowns", style)
+    save_figure(
+        fig,
+        output_dir,
+        "performance-and-drawdowns",
+        style,
+        mobile=mobile,
+    )

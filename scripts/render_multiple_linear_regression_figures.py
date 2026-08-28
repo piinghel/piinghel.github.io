@@ -96,42 +96,49 @@ def render_figures(
             "svg.hashsalt": "multiple-linear-regression",
         }
     ):
-        plot_ic(ic, output_dir, style, spec)
-        plot_performance(
-            wealth,
-            drawdowns,
-            output_dir,
-            style,
-            spec,
-        )
-        plot_alpha_sensitivity(
-            diagnostics,
-            output_dir,
-            style,
-            spec,
-        )
-        plot_selected_coefficients(
-            selected_coefficients,
-            output_dir,
-            style,
-            spec,
-        )
-        plot_portfolio_exposures(
-            selected_exposures,
-            output_dir,
-            style,
-        )
-        plot_selected_portfolio_tilts(
-            selected_portfolio_tilts,
-            output_dir,
-            style,
-            spec,
-        )
-        plot_turnover_costs(
-            period_metrics,
-            output_dir,
-            style,
-        )
+        for mobile in (False, True):
+            plot_ic(ic, output_dir, style, spec, mobile=mobile)
+            plot_performance(
+                wealth,
+                drawdowns,
+                output_dir,
+                style,
+                spec,
+                mobile=mobile,
+            )
+            plot_alpha_sensitivity(
+                diagnostics,
+                output_dir,
+                style,
+                spec,
+                mobile=mobile,
+            )
+            plot_selected_coefficients(
+                selected_coefficients,
+                output_dir,
+                style,
+                spec,
+                mobile=mobile,
+            )
+            plot_portfolio_exposures(
+                selected_exposures,
+                output_dir,
+                style,
+                mobile=mobile,
+            )
+            plot_selected_portfolio_tilts(
+                selected_portfolio_tilts,
+                output_dir,
+                style,
+                spec,
+                mobile=mobile,
+            )
+            plot_turnover_costs(
+                period_metrics,
+                output_dir,
+                style,
+                mobile=mobile,
+            )
 
 
 def main() -> None:
