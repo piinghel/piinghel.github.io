@@ -186,7 +186,7 @@ def style_axis(axis: plt.Axes, style: FigureStyle) -> None:
     axis.set_facecolor(style.background)
     axis.spines[["top", "right", "left"]].set_visible(False)
     axis.spines["bottom"].set_color(style.grid)
-    axis.tick_params(axis="both", colors=style.muted, length=0, labelsize=9.2)
+    axis.tick_params(axis="both", colors=style.muted, length=0, labelsize=10.0)
     axis.grid(axis="y", color=style.grid, linewidth=0.8, alpha=0.75)
     axis.grid(False, axis="x")
 
@@ -280,6 +280,12 @@ def plot_performance(
     suffix = "-mobile" if mobile else ""
     target = config.output_dir / f"performance-and-drawdowns{suffix}{style.suffix}.svg"
     save_svg(fig, target, style)
+    config.qa_dir.mkdir(parents=True, exist_ok=True)
+    fig.savefig(
+        config.qa_dir / f"performance-and-drawdowns{suffix}{style.suffix}.png",
+        dpi=180,
+        facecolor=style.background,
+    )
     plt.close(fig)
 
 
@@ -371,7 +377,7 @@ def plot_risk_forecasts(
         facecolor=style.background,
         sharex=True,
         sharey=True,
-        gridspec_kw={"hspace": 0.10},
+        gridspec_kw={"hspace": 0.20},
     )
     for axis in axes:
         style_axis(axis, style)
@@ -396,7 +402,7 @@ def plot_risk_forecasts(
                 frame.get_column("predicted_volatility_pct").to_numpy(),
                 color=style.muted,
                 linewidth=0.9,
-                alpha=0.72,
+                alpha=0.80,
                 linestyle=(0, (3, 2)),
                 zorder=2,
             )
@@ -404,26 +410,16 @@ def plot_risk_forecasts(
                 dates,
                 frame.get_column("realised_volatility_pct").to_numpy(),
                 color=realised_color,
-                linewidth=0.85,
-                alpha=0.42,
+                linewidth=0.9,
+                alpha=0.52,
                 zorder=3,
             )
-        axis.text(
-            0.012,
-            0.88,
+        axis.set_title(
             short_labels[allocator],
-            transform=axis.transAxes,
+            loc="left",
             color=style.ink,
-            fontsize=9.8 if mobile else 10.5,
-            ha="left",
-            va="top",
-            bbox={
-                "boxstyle": "square,pad=0.14",
-                "facecolor": style.background,
-                "edgecolor": "none",
-                "alpha": 0.92,
-            },
-            zorder=5,
+            fontsize=10.2 if mobile else 10.8,
+            pad=5,
         )
 
     date_min = risk.get_column("execution_date").min()
@@ -465,7 +461,7 @@ def plot_risk_forecasts(
     fig.subplots_adjust(
         left=0.19 if mobile else 0.10,
         right=0.98,
-        top=0.91 if mobile else 0.92,
+        top=0.89 if mobile else 0.90,
         bottom=0.07 if mobile else 0.08,
     )
     suffix = "-mobile" if mobile else ""
