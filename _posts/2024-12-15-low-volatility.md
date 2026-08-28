@@ -209,7 +209,7 @@ figures below include the 5 basis-point trading cost.
 Tables 1 and 2 put the performance difference beside the exposure and turnover
 that come with each sizing rule.
 
-<table class="research-table comparison-table performance-table">
+<table class="research-table comparison-table performance-table desktop-layout-table">
   <thead>
     <tr>
       <th>Performance metric</th>
@@ -253,7 +253,7 @@ that come with each sizing rule.
 
 <p class="table-caption"><strong>Table 1:</strong> Full-sample performance with three-week rebalancing.</p>
 
-<table class="research-table comparison-table exposure-table">
+<table class="research-table comparison-table exposure-table desktop-layout-table">
   <thead>
     <tr>
       <th>Exposure or trading metric</th>
