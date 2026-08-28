@@ -593,7 +593,12 @@ table {
   }
 
   &.comparison-table.ic-summary-table tbody th {
+    width: 34%;
     font-weight: 500;
+  }
+
+  &.comparison-table.ic-summary-table thead th:first-child {
+    width: 34%;
   }
 
   &.comparison-table.ic-summary-table .period-break th,

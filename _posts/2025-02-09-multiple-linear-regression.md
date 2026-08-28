@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Combining Stock Signals with Multiple Linear and Ridge Regression"
+title: "How to Combine Stock Signals with Multiple Linear and Ridge Regression"
 date: 2025-02-09
 last_modified_at: 2026-08-28
 categories: ["Regression"]
@@ -8,31 +8,30 @@ article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> I compare a fixed five-theme score with multiple linear regression and Ridge regression. Learning the weights improves development-period Sharpe from 0.71 to 0.98. Ridge then makes the regression coefficients smaller and more stable, but barely changes the stock ranking: its rank correlation with the ordinary least-squares model is 0.991. From January 2022 through May 2026, ordinary least squares records a Sharpe of 0.87 and Ridge 0.82. That four-year pseudo-holdout is too short to settle long-run performance.</p>
+<p class="article-summary"><strong>TL;DR:</strong> I compare a transparent five-theme score with two ways of learning how to combine a much larger predictor set: multiple linear regression and Ridge regression. Learning the combination improves development-period Sharpe from 0.71 to 0.98. Ridge makes the learned coefficients smaller and more stable, but barely changes the stock ranking: its rank correlation with ordinary least squares is 0.991. From January 2022 through May 2026, ordinary least squares records a Sharpe of 0.87 and Ridge 0.82. That four-year pseudo-holdout is too short to settle long-run performance.</p>
 
-Stock signals often disagree. Momentum may favour a company whose volatility
-looks unattractive, while a defensive signal may prefer a quieter stock with no
-trend at all. A portfolio cannot act on that disagreement until the signals are
-combined into one ranking.
+Once a stock model contains more than a handful of signals, finding another one
+is no longer the main problem. The harder decision is how much influence each
+signal should have when they are combined into a single stock ranking. A fixed
+score chooses those weights in advance. Multiple linear regression can learn
+them from subsequent stock outcomes, while Ridge regression can restrain that
+learning when many predictors contain similar information.
 
-A fixed score resolves the conflict by choosing the weights in advance.
-Multiple linear regression takes a different route: it learns how the signals
-fit together from subsequent stock outcomes. That flexibility creates its own
-problem. Many of the 144 predictors are variations on the same underlying idea,
-so ordinary least squares can move weight sharply between related predictors
-without changing the final ranking very much. Ridge regression addresses that
-instability by shrinking the coefficients. The practical question is whether
-smaller, steadier coefficients improve the signal or merely make the same
-ranking easier to interpret.
+I start with a transparent score built from five themes, then give multiple
+linear regression a broader set of 144 predictors. Ordinary least squares (OLS)
+is free to assign each predictor its own coefficient. Ridge uses the same model
+but shrinks those coefficients, which should make the learned combination more
+stable. The practical question is whether that stability improves the ranking
+or merely produces a neater version of the same signal.
 
-I separate those questions with two comparisons. The fixed benchmark versus
-multiple linear regression tests a simple hand-built score against a broader
-learned model. Multiple linear regression versus Ridge regression holds the
-predictors, target, universe, and portfolio rules fixed, which isolates the
-effect of regularisation. All three rankings then pass through the same position
-sizing, execution, and cost rules.
+Two comparisons keep the conclusions separate. The fixed benchmark versus
+multiple linear regression compares a small hand-built score with a broader
+learned model. Multiple linear regression versus Ridge holds the predictors,
+target, universe, and portfolio rules fixed, isolating the effect of
+regularisation. All three rankings then pass through the same position sizing,
+execution, and cost rules.
 
-## Fixed weights make the benchmark transparent
+## A fixed score is the simplest way to combine signals
 
 Fixed weights provide a useful baseline because every preference is visible. I
 group familiar signals into five themes, give each theme the same influence, and
@@ -52,13 +51,14 @@ their original units no longer determine their influence. Short-positioning
 data are lagged to when they were available, and a stock needs enough history
 for every theme before it can enter the benchmark.
 
-Multiple linear regression and Ridge receive a much broader deck of 144 ranked
-predictors. Most are variations on a smaller set of ideas: trend, volatility,
-price location, size, market sensitivity, trading activity, and short
-positioning. Several ideas appear at multiple horizons or through closely
-related transformations. That redundancy gives the regression more ways to
-express the same theme and creates the coefficient-instability problem that
-Ridge is meant to address.
+Multiple linear regression and Ridge receive 144 ranked predictors, but these
+are not 144 unrelated ideas. Price-based measures ask whether a stock has risen,
+where it sits relative to a moving average or an earlier high, and how turbulent
+its path has been. Other predictors describe company size, market sensitivity,
+trading activity, liquidity, and lagged short positioning. Many of these ideas
+appear at several horizons or through closely related definitions. That breadth
+lets the model choose among short- and long-run versions of a theme, but the
+overlap also makes individual coefficients hard to pin down.
 
 The benchmark and regression models share the same portfolio rules after
 producing their rankings. Their predictor sets and data histories differ, so the
@@ -67,30 +67,18 @@ small transparent model with a broader learned one. The multiple linear
 regression and Ridge models do use identical inputs, making that the controlled
 estimator comparison.
 
-## Ranks put unlike predictors on one scale
+## Ranks put 144 unlike predictors on one scale
 
-The broader predictor deck mixes quantities that cannot be compared directly: a
-market value in dollars, a return, and a volatility estimate do not share a
-natural scale. Before fitting the model, I replace each raw value with its rank
-in the eligible Russell 1000 universe.
-Let $$R^{\mathrm{dense}}_{i,j,t}$$ be
-stock $$i$$'s dense rank on predictor $$j$$, and let $$K_{j,t}$$ be the number of
-distinct ranks on that date. The normalized predictor is
+The predictor deck mixes quantities that cannot be compared directly: market
+value in dollars, returns, and volatility estimates have no common scale. I
+therefore rank each measure within the eligible Russell 1000 universe and map
+the ranks to $[-1,1]$. Tied observations share a rank, and a predictor with no
+cross-sectional variation receives zero. This gives every input the same range
+without pretending that its raw units are comparable.
 
-$$
-x^{\mathrm{rank}}_{i,j,t}
-=2\frac{R^{\mathrm{dense}}_{i,j,t}}{K_{j,t}}-1.
-$$
-
-This mapping places every predictor inside $[-1,1]$; a flat cross-section
-receives zero. Predictors in different units become comparable, and adjacent
-ranks receive the same spacing.
-
-Not every predictor is available for every stock on every date. I use the
-stock's latest known value when possible and otherwise fall back to its sector
-average for that date. The ranking then covers current index members, while the
-traded universe excludes stocks below $5, announced merger targets, and
-duplicate share classes.
+When a predictor is unavailable, I use the latest known value or the stock's
+sector average for that date. The traded universe then excludes stocks below
+$5, announced merger targets, and duplicate share classes.
 
 The model also needs a definition of a good future outcome. I want to reward a
 gain that persists through the month rather than one produced by a single
@@ -109,8 +97,7 @@ exposures; an allocation risk model would have to constrain them explicitly.
 ## Multiple linear regression learns the ranking
 
 With predictors and outcomes on comparable scales, multiple linear regression
-can learn how the signals work together. I fit it with ordinary least squares
-(OLS). Let
+can learn how the signals work together. I fit it with OLS. Let
 $$\mathbf x_{i,t}\in[-1,1]^{144}$$ contain the normalized predictors and let
 $$y_{i,t}$$ be the sector-ranked forward target. In walk-forward fold $$f$$,
 ordinary least squares estimates
@@ -241,18 +228,10 @@ while changing only about 39 portfolio names. Ridge is stabilising the
 representation of the signal more than the signal itself.
 
 Correlated predictors can exchange coefficient weight while keeping their
-combined score close. More generally,
-
-$$
-\Delta\widehat{\mathbf y}
-=\mathbf X\,\Delta\boldsymbol\beta.
-$$
-
-The feature matrix can absorb a large $\Delta\boldsymbol\beta$ when related
-predictors substitute for one another. OLS identifies the combined prediction
-more clearly than the individual weights, and Ridge chooses a smaller-norm point
-among many similar combinations. The 0.991 rank correlation supports a stable
-stock ordering, while attribution belongs at the predictor-group level.
+combined score close. OLS therefore identifies the stock ordering more clearly
+than the contribution of each individual input. The 0.991 rank correlation
+supports a stable ordering, while attribution is more credible at the broader
+predictor-family level.
 
 Figure 3 follows the ten largest Ridge coefficients across refits. Positive
 cells reward a high predictor rank and negative cells favour a low rank. A
@@ -336,26 +315,16 @@ $c=0.01$ and treat the difference as diagnostic.
 ## Ridge and OLS rank stocks almost identically
 
 The portfolio tables mix ranking quality with selection and position sizing.
-Information coefficient (IC) isolates the ranking. On each date it is the
-cross-sectional Spearman correlation between the predicted score and the
-subsequently realised, sector-ranked outcome:
-
-$$
-\mathrm{IC}_t
-=\rho_{\mathrm S}\!\left(
-\{\widehat y_{i,t}\}_{i\in\mathcal U_t},
-\{y_{i,t}\}_{i\in\mathcal U_t}
-\right).
-$$
-
-The IC history starts with the first walk-forward predictions in September 1998
-and ends on April 28, 2026, the last date for which the full 20-trading-day outcome
-is available.
+Information coefficient (IC) isolates the ranking by measuring the daily
+Spearman correlation between the predicted order and the subsequently realised,
+sector-ranked outcome.
 
 Figure 4 adds those daily correlations through time. A rising path means the
 model has usually ordered future outcomes correctly; a flat path means no new
-rank association, and a decline marks a run of negative IC. This is a prediction
-diagnostic, not a return series or a significance statistic.
+rank association, and a decline marks a run of negative IC. The series runs from
+the first walk-forward predictions in September 1998 to the last complete
+20-trading-day outcome on April 28, 2026. It is a prediction diagnostic, not a
+return series or a significance statistic.
 
 <div class="research-figure ic-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="10" mobile=true mobile_suffix="-mobile" %}
@@ -449,7 +418,7 @@ from a smoother path and shallower drawdowns, not a dramatic return gap. Ridge
 tracks OLS closely throughout the sample and does not create a visibly different
 return path. After 2021, OLS retains the higher Sharpe reported in Table 3.
 
-## Allocation changes what the signal becomes
+## Portfolio construction reshapes the learned ranking
 
 ### Learned rankings roughly double turnover
 
@@ -492,11 +461,11 @@ dollar. The current allocator controls neither quantity directly.
 
 The realised tilts translate a long list of model inputs into a simpler
 question: what kind of stocks does the finished Ridge portfolio actually own?
-For each predictor, I take the portfolio-weighted average of its signed ranks.
+Each tilt is the portfolio-weighted average of a predictor's signed ranks.
 Positive values mean the long book owns higher ranks than the short book;
-negative values mean the reverse. I average the daily tilts by quarter. Each
-panel includes zero but uses its own vertical range, so the labelled full-sample
-means are the right comparison across panels.
+negative values mean the reverse. Figure 8 averages these tilts by quarter.
+Each panel includes zero but uses its own vertical range, so the labelled
+full-sample means are the right comparison across panels.
 
 Figure 8 collects the ten largest realised tilts. Its labels mostly belong to
 two broad families. ATR and the volatility measures describe how turbulent the
@@ -523,18 +492,16 @@ and still identify similar stocks. Those mechanisms explain why Figure 8 looks
 steadier, and more concentrated by theme, than the coefficient paths in Figure
 3.
 
-The predictor deck itself offers limited diversification. Of the 144 inputs, 92
-come directly from returns, price paths, volatility, technical state, or market
-correlation, and four more combine price with volume. Other data add some
-breadth, but price history still dominates. Cross-sectional ranking, broad
-75-stock tails, and inverse-volatility sizing can then pull different coefficient
-sets toward similar portfolios. A grouped leave-one-family-out test, run before
-and after allocation, would show whether each family adds information or whether
-the portfolio construction is creating the convergence.
+The predictor deck itself offers limited diversification: about two thirds of
+the 144 inputs come from price history or price–volume interactions. Ranking,
+broad 75-stock tails, and inverse-volatility sizing can then pull different
+coefficient sets toward similar portfolios. A grouped leave-one-family-out test,
+run before and after allocation, would show whether each family adds information
+or whether portfolio construction is creating the convergence.
 
-## Ridge cleans up coefficients, not the signal
+## Learning the combination matters more than regularising it
 
-Learning the weights changes the portfolio more than regularising them. During
+Learning the combination changes the portfolio more than regularising it. During
 development, OLS records a Sharpe of 0.98 against 0.71 for the fixed benchmark,
 with similar return but lower volatility and a shallower maximum drawdown. That
 comparison covers two complete specifications rather than weights alone: OLS
@@ -554,9 +521,10 @@ non-overlapping training dates remain useful robustness tests. The predictor
 deck is also dominated by related price-based measures, so a stable ranking does
 not imply broad feature diversification.
 
-The next experiment should leave the OLS and Ridge predictions frozen and test
-the allocation layer. A covariance model could size positions jointly, penalise
-turnover from current holdings, and constrain gross exposure, net exposure,
-market beta, sectors, and the largest realised factor tilts. Only after fixing
-that complete prediction-and-allocation rule would a new period provide a
-cleaner test.
+The model comparison and the allocation problem now need different tests. A
+genuinely new period is the cleanest way to learn whether Ridge improves the
+ranking. Before that evidence arrives, I would keep the OLS and Ridge predictions
+frozen and test the allocation layer: size positions jointly, penalise turnover
+from current holdings, and constrain gross exposure, net exposure, market beta,
+sectors, and the largest realised tilts. Freezing that complete rule would make
+the next period more informative.
