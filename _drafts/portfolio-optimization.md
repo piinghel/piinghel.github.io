@@ -7,7 +7,7 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/portfolio-optimization-preview.html
 ---
 
-<p class="article-summary">I compare three ways of turning the same Ridge forecasts into a long–short portfolio: a volatility-scaled portfolio, a standard optimizer that adds correlations and exposure constraints, and a state-aware optimizer that starts from existing holdings and discourages unnecessary turnover. Across the full history, the state-aware and standard optimizers produce almost the same gross return (13.17% versus 13.13%), but the state-aware optimizer cuts annualized turnover from 42.1 to 27.6. Its net return and Sharpe therefore rise to 11.62% and 1.33, from 10.77% and 1.24. This is a clear improvement, although rebalance timing and realized beta control remain important risks.</p>
+<p class="article-summary">I compare three ways of turning the same Ridge forecasts into a long–short portfolio: a volatility-scaled portfolio, a standard optimizer that adds correlations and exposure constraints, and a state-aware optimizer that starts from existing holdings and discourages unnecessary turnover. Across the full history, the state-aware and standard optimizers produce almost the same gross return (13.17% versus 13.13%), but the state-aware optimizer cuts annualized turnover from 42.1 to 27.6. Its net return and Sharpe therefore rise to 11.62% and 1.33, from 10.77% and 1.24. This is a clear improvement, although rebalance timing, risk calibration, and realized beta control remain important risks.</p>
 
 ## Why volatility scaling is not enough
 
@@ -210,7 +210,7 @@ average beta control, even though the recent drift discussed below remains a
 risk.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile_suffix="-mobile" alt="Net growth of one dollar on a logarithmic scale and drawdowns for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer, with the later period beginning in 2022" version="3" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile_suffix="-mobile" alt="Net growth of one dollar on a logarithmic scale and drawdowns for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer, with the later period beginning in 2022" version="4" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Net cumulative wealth and drawdown for an equal-weight blend of the three rebalance schedules after charging 5 basis points per dollar traded, 22 September 1998–27 May 2026. The vertical rule marks January 2022, the start of the later pseudo-holdout.</p>
@@ -302,7 +302,7 @@ state-aware optimizer's modeled turnover, so they are included in the reported
 
 ## Remaining risks
 
-The state-aware optimizer is the best historical implementation, but three
+The state-aware optimizer is the best historical implementation, but four
 problems still matter before live use.
 
 First, the later-period result is sensitive to rebalance timing. The three
@@ -314,11 +314,32 @@ Second, the period after 2022 is a pseudo-holdout, not a completely untouched
 test. It was separate from the original development period, but later research
 decisions were made with some knowledge of these results.
 
-Third, target beta control does not guarantee realized beta control. Target
+Third, predicted risk does not stay close to the risk realized over the next
+holding period. Figure 2 shows every rebalance forecast and subsequent outcome.
+The standard and state-aware forecasts remain near 7% annualized volatility,
+while realized volatility moves much more and reaches about 35% during the 2020
+shock. Across all rebalances, their root-mean-square realized volatility is
+8.6%, compared with a 7.0% forecast.
+
+<div class="research-figure risk-forecast-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-forecast-through-time" mobile_suffix="-mobile" alt="Predicted and subsequently realized annualized volatility at every rebalance for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 2:</strong> Predicted and subsequently realized annualized volatility at every rebalance. Each panel contains all three staggered schedules; realized volatility covers the following execution-to-execution holding period. The panels share the same vertical scale.</p>
+
+Fourth, target beta control does not guarantee realized beta control. Target
 beta is constrained to ±0.05 at each optimization, yet realized beta reached
 about +0.22 during the final five months. Execution delay and subsequent price
-movement separate the target portfolio from the holdings that generate returns.
-The next version should measure and control that drift directly.
+movement separate the target portfolio from the holdings that generate returns
+(Figure 3).
+
+<div class="research-figure realised-beta-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/realised-beta" mobile_suffix="-mobile" alt="Rolling 252-day realized beta for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 3:</strong> Rolling 252-day realized beta, sampled monthly and averaged across the three staggered schedules. The gray band marks the ±0.05 optimization target for the standard and state-aware portfolios.</p>
+
+The next version should measure and control risk and beta drift directly.
 
 These limitations affect readiness for live implementation. They do not
 overturn the historical comparison between the two optimizers.

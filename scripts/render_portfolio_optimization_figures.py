@@ -12,6 +12,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
+from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
 
@@ -285,33 +286,58 @@ def plot_performance(
 def build_risk_figure_data(
     *, config: ArticleFigureConfig
 ) -> tuple[pl.DataFrame, pl.DataFrame]:
-    """Load and validate the compact evidence produced by Work package 1."""
+    """Load per-rebalance risk forecasts and the rolling-beta diagnostic."""
 
-    calibration = pl.read_csv(
-        config.review_dir / "risk_calibration_points.csv", infer_schema_length=None
+    risk_scan = pl.scan_csv(
+        config.review_dir / "risk_calibration_by_rebalance.csv",
+        try_parse_dates=True,
+        infer_schema_length=None,
     )
-    rolling = pl.read_csv(
+    expected_risk_columns = {
+        "allocator",
+        "offset",
+        "execution_date",
+        "execution_predicted_annual_volatility",
+        "realised_annual_volatility",
+        "failure_status",
+    }
+    if not expected_risk_columns.issubset(risk_scan.collect_schema().names()):
+        raise ValueError("per-rebalance risk evidence has an unexpected schema")
+    risk = (
+        risk_scan.filter(pl.col("failure_status") == "ok")
+        .select(
+            "allocator",
+            "offset",
+            "execution_date",
+            (pl.col("execution_predicted_annual_volatility") * 100).alias(
+                "predicted_volatility_pct"
+            ),
+            (pl.col("realised_annual_volatility") * 100).alias(
+                "realised_volatility_pct"
+            ),
+        )
+        .sort("allocator", "offset", "execution_date")
+        .collect()
+    )
+    risk_counts = risk.lazy().group_by("allocator").len().collect()
+    if set(risk_counts.get_column("allocator")) != set(config.allocators):
+        raise ValueError("per-rebalance risk evidence is missing an allocator")
+    if set(risk_counts.get_column("len")) != {1_444}:
+        raise ValueError("expected 1,444 risk observations per allocator")
+    if risk.get_column("offset").n_unique() != 3:
+        raise ValueError("risk evidence must contain all three rebalance schedules")
+
+    rolling_scan = pl.scan_csv(
         config.review_dir / "rolling_realised_beta_252d.csv",
         try_parse_dates=True,
         infer_schema_length=None,
     )
-    expected_calibration = {
-        "allocator",
-        "root_mean_predicted_annual_variance",
-        "root_mean_realised_annual_variance",
-    }
-    if not expected_calibration.issubset(calibration.columns):
-        raise ValueError("risk calibration evidence has an unexpected schema")
-    if calibration.height != 3:
-        raise ValueError(
-            f"expected one calibration point per allocator, found {calibration.height}"
-        )
-    if set(calibration.get_column("allocator").unique()) != set(config.allocators):
-        raise ValueError("risk calibration evidence is missing an allocator")
-    if rolling.get_column("offset").n_unique() != 3:
-        raise ValueError("rolling-beta evidence must contain all three offsets")
+    if "offset" not in rolling_scan.collect_schema().names():
+        raise ValueError("rolling-beta evidence has an unexpected schema")
     rolling_mean = (
-        rolling.group_by("allocator", "allocator_label", "date", maintain_order=True)
+        rolling_scan.group_by(
+            "allocator", "allocator_label", "date", maintain_order=True
+        )
         .agg(pl.col("realised_beta_252d").mean())
         .sort("allocator", "date")
         .with_columns(pl.col("date").dt.truncate("1mo").alias("_month"))
@@ -322,129 +348,156 @@ def build_risk_figure_data(
         )
         .drop("_month")
         .sort("allocator", "date")
+        .collect()
     )
-    return calibration, rolling_mean
+    if set(rolling_mean.get_column("allocator")) != set(config.allocators):
+        raise ValueError("rolling-beta evidence is missing an allocator")
+    return risk, rolling_mean
 
 
-def plot_risk_calibration_and_beta(
-    calibration: pl.DataFrame,
+def plot_risk_forecasts(
+    risk: pl.DataFrame,
+    style: FigureStyle,
+    *,
+    config: ArticleFigureConfig,
+    mobile: bool,
+) -> None:
+    """Plot forecast and subsequent realised volatility at every rebalance."""
+
+    fig, axes = plt.subplots(
+        3,
+        1,
+        figsize=(4.6, 8.8) if mobile else (10.8, 7.6),
+        facecolor=style.background,
+        sharex=True,
+        sharey=True,
+        gridspec_kw={"hspace": 0.10},
+    )
+    for axis in axes:
+        style_axis(axis, style)
+        axis.set_ylim(0, 50)
+        axis.yaxis.set_major_locator(FixedLocator([0, 10, 20, 30, 40, 50]))
+
+    short_labels = {
+        "b1_ranked_volscale": "Volatility-scaled portfolio",
+        "b2_memoryless_mvo": "Standard optimizer",
+        "b3_state_aware_mvo": "State-aware optimizer",
+    }
+    realised_color = style.colors["b3_state_aware_mvo"]
+    for axis, allocator in zip(axes, config.allocators, strict=True):
+        allocator_frame = risk.filter(pl.col("allocator") == allocator)
+        for offset in ("o0", "o1", "o2"):
+            frame = allocator_frame.filter(pl.col("offset") == offset).sort(
+                "execution_date"
+            )
+            dates = frame.get_column("execution_date").to_numpy()
+            axis.plot(
+                dates,
+                frame.get_column("predicted_volatility_pct").to_numpy(),
+                color=style.muted,
+                linewidth=0.9,
+                alpha=0.72,
+                linestyle=(0, (3, 2)),
+                zorder=2,
+            )
+            axis.plot(
+                dates,
+                frame.get_column("realised_volatility_pct").to_numpy(),
+                color=realised_color,
+                linewidth=0.85,
+                alpha=0.42,
+                zorder=3,
+            )
+        axis.text(
+            0.012,
+            0.88,
+            short_labels[allocator],
+            transform=axis.transAxes,
+            color=style.ink,
+            fontsize=9.8 if mobile else 10.5,
+            ha="left",
+            va="top",
+            bbox={
+                "boxstyle": "square,pad=0.14",
+                "facecolor": style.background,
+                "edgecolor": "none",
+                "alpha": 0.92,
+            },
+            zorder=5,
+        )
+
+    date_min = risk.get_column("execution_date").min()
+    date_max = risk.get_column("execution_date").max()
+    axes[-1].set_xlim(date_min, date_max)
+    axes[-1].xaxis.set_major_locator(mdates.YearLocator(7 if mobile else 5))
+    axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    axes[1].set_ylabel(
+        "Annualised volatility (%)", color=style.muted, fontsize=10.5
+    )
+    legend_handles = [
+        Line2D(
+            [0],
+            [0],
+            color=style.muted,
+            linewidth=1.4,
+            linestyle=(0, (3, 2)),
+            label="Predicted at rebalance",
+        ),
+        Line2D(
+            [0],
+            [0],
+            color=realised_color,
+            linewidth=1.5,
+            label="Realised over next holding period",
+        ),
+    ]
+    fig.legend(
+        handles=legend_handles,
+        loc="upper center",
+        bbox_to_anchor=(0.53, 0.995),
+        ncol=1 if mobile else 2,
+        frameon=False,
+        labelcolor=style.ink,
+        fontsize=9.4 if mobile else 10.0,
+        handlelength=2.6,
+        columnspacing=1.8,
+    )
+    fig.subplots_adjust(
+        left=0.19 if mobile else 0.10,
+        right=0.98,
+        top=0.91 if mobile else 0.92,
+        bottom=0.07 if mobile else 0.08,
+    )
+    suffix = "-mobile" if mobile else ""
+    target = config.output_dir / f"risk-forecast-through-time{suffix}{style.suffix}.svg"
+    save_svg(fig, target, style)
+    config.qa_dir.mkdir(parents=True, exist_ok=True)
+    fig.savefig(
+        config.qa_dir / f"risk-forecast-through-time{suffix}{style.suffix}.png",
+        dpi=180,
+        facecolor=style.background,
+    )
+    plt.close(fig)
+
+
+def plot_realised_beta(
     rolling_beta: pl.DataFrame,
     style: FigureStyle,
     *,
     config: ArticleFigureConfig,
     mobile: bool,
 ) -> None:
-    """One compact figure: calibration on the left, realised beta on the right."""
+    """Plot rolling realised beta without endpoint labels or future whitespace."""
 
-    if mobile:
-        fig, axes = plt.subplots(
-            2,
-            1,
-            figsize=(4.6, 7.8),
-            facecolor=style.background,
-            gridspec_kw={"height_ratios": [1.0, 1.12], "hspace": 0.20},
-        )
-    else:
-        fig, axes = plt.subplots(
-            1,
-            2,
-            figsize=(10.8, 4.8),
-            facecolor=style.background,
-            gridspec_kw={"width_ratios": [0.92, 1.28], "wspace": 0.25},
-        )
-    calibration_axis, beta_axis = axes
-    for axis in axes:
-        style_axis(axis, style)
-
-    lower, upper = 0.04, 0.10
-    calibration_axis.plot(
-        [lower, upper],
-        [lower, upper],
-        color=style.muted,
-        linewidth=1.0,
-        linestyle=(0, (3, 3)),
-        zorder=1,
+    fig, axis = plt.subplots(
+        1,
+        1,
+        figsize=(4.6, 5.6) if mobile else (10.8, 4.8),
+        facecolor=style.background,
     )
-    calibration_axis.text(
-        0.096,
-        0.044,
-        "45° = match",
-        color=style.muted,
-        fontsize=8.0,
-        rotation=0,
-        ha="right",
-        va="center",
-    )
-    calibration_label_offsets = {
-        "b1_ranked_volscale": (0.045, 0.079),
-        "b2_memoryless_mvo": (0.078, 0.092),
-        "b3_state_aware_mvo": (0.078, 0.080),
-    }
-    short_labels = {
-        "b1_ranked_volscale": "Vol-scaled",
-        "b2_memoryless_mvo": "Standard",
-        "b3_state_aware_mvo": "State-aware",
-    }
-    for allocator in config.allocators:
-        frame = calibration.filter(pl.col("allocator") == allocator)
-        x = frame.get_column("root_mean_predicted_annual_variance").to_numpy()
-        y = frame.get_column("root_mean_realised_annual_variance").to_numpy()
-        marker = "s" if allocator == "b2_memoryless_mvo" else "o"
-        size = 72 if allocator == "b2_memoryless_mvo" else 42
-        facecolor = (
-            "none" if allocator == "b2_memoryless_mvo" else style.colors[allocator]
-        )
-        calibration_axis.scatter(
-            x,
-            y,
-            edgecolors=style.colors[allocator],
-            facecolors=facecolor,
-            marker=marker,
-            s=size,
-            linewidths=1.5,
-            zorder=2,
-        )
-        label_anchor = (float(x[0]), float(y[0]))
-        calibration_axis.annotate(
-            short_labels[allocator],
-            xy=label_anchor,
-            xytext=calibration_label_offsets[allocator],
-            textcoords="data",
-            color=style.colors[allocator],
-            fontsize=8.3 if mobile else 8.8,
-            ha="left",
-            va="center",
-            arrowprops={
-                "arrowstyle": "-",
-                "color": style.colors[allocator],
-                "linewidth": 0.8,
-                "shrinkA": 3,
-                "shrinkB": 3,
-            },
-        )
-    calibration_axis.set_xlim(lower, upper)
-    calibration_axis.set_ylim(lower, upper)
-    calibration_axis.set_aspect("equal", adjustable="box")
-    calibration_axis.xaxis.set_major_formatter(
-        FuncFormatter(lambda value, _: f"{value:.0%}")
-    )
-    calibration_axis.yaxis.set_major_formatter(
-        FuncFormatter(lambda value, _: f"{value:.0%}")
-    )
-    calibration_axis.set_xlabel(
-        "Predicted annualised volatility", color=style.muted, fontsize=9.5
-    )
-    calibration_axis.set_ylabel(
-        "Realised annualised volatility", color=style.muted, fontsize=9.5
-    )
-
-    beta_axis.axhspan(-0.05, 0.05, color=style.muted, alpha=0.16, linewidth=0)
-    beta_axis.axhline(0.0, color=style.muted, linewidth=0.8, alpha=0.75)
-    beta_label_positions = {
-        "b1_ranked_volscale": (date(2026, 10, 1), 0.055),
-        "b2_memoryless_mvo": (date(2026, 10, 1), 0.090),
-        "b3_state_aware_mvo": (date(2026, 10, 1), 0.020),
-    }
+    style_axis(axis, style)
+    axis.axhspan(-0.05, 0.05, color=style.muted, alpha=0.14, linewidth=0)
+    axis.axhline(0.0, color=style.muted, linewidth=0.8, alpha=0.75)
     line_styles = {
         "b1_ranked_volscale": (0, (1.5, 2.0)),
         "b2_memoryless_mvo": (0, (4.0, 2.0)),
@@ -455,55 +508,54 @@ def plot_risk_calibration_and_beta(
         dates = frame.get_column("date").to_numpy()
         values = frame.get_column("realised_beta_252d").to_numpy()
         width = 2.0 if allocator == "b3_state_aware_mvo" else 1.35
-        beta_axis.plot(
+        axis.plot(
             dates,
             values,
             color=style.colors[allocator],
             linewidth=width,
             linestyle=line_styles[allocator],
+            label=config.labels[allocator],
             zorder=2,
         )
-        beta_axis.annotate(
-            short_labels[allocator],
-            xy=(dates[-1], values[-1]),
-            xytext=beta_label_positions[allocator],
-            textcoords="data",
-            color=style.colors[allocator],
-            fontsize=8.3 if mobile else 8.8,
-            ha="left",
-            va="center",
-            clip_on=False,
-            arrowprops={
-                "arrowstyle": "-",
-                "color": style.colors[allocator],
-                "linewidth": 0.8,
-                "shrinkA": 3,
-                "shrinkB": 2,
-            },
-        )
-    beta_axis.set_ylim(-0.20, 0.42)
-    beta_axis.set_xlim(date(1999, 1, 1), date(2028, 6, 1))
-    beta_axis.set_ylabel("252-day realised beta", color=style.muted, fontsize=9.5)
+    axis.set_ylim(-0.20, 0.42)
+    axis.yaxis.set_major_locator(FixedLocator([-0.2, -0.1, 0, 0.1, 0.2, 0.3, 0.4]))
+    axis.set_xlim(
+        rolling_beta.get_column("date").min(),
+        rolling_beta.get_column("date").max(),
+    )
+    axis.set_ylabel("252-day realised beta", color=style.muted, fontsize=10.5)
     tick_years = (
         (2000, 2006, 2012, 2018, 2024)
         if mobile
         else (2000, 2005, 2010, 2015, 2020, 2025)
     )
-    beta_axis.xaxis.set_major_locator(
+    axis.xaxis.set_major_locator(
         FixedLocator([mdates.date2num(date(year, 1, 1)) for year in tick_years])
     )
-    beta_axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-
-    if mobile:
-        fig.subplots_adjust(left=0.19, right=0.82, top=0.98, bottom=0.07)
-    else:
-        fig.subplots_adjust(left=0.08, right=0.90, top=0.97, bottom=0.14)
+    axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    axis.legend(
+        loc="lower left",
+        bbox_to_anchor=(0.0, 1.02),
+        ncol=1 if mobile else 3,
+        frameon=False,
+        labelcolor=style.ink,
+        fontsize=9.3 if mobile else 10.0,
+        borderaxespad=0,
+        handlelength=2.5,
+        columnspacing=1.6,
+    )
+    fig.subplots_adjust(
+        left=0.19 if mobile else 0.09,
+        right=0.98,
+        top=0.78 if mobile else 0.88,
+        bottom=0.10 if mobile else 0.14,
+    )
     suffix = "-mobile" if mobile else ""
-    target = config.output_dir / f"risk-calibration-and-beta{suffix}{style.suffix}.svg"
+    target = config.output_dir / f"realised-beta{suffix}{style.suffix}.svg"
     save_svg(fig, target, style)
     config.qa_dir.mkdir(parents=True, exist_ok=True)
     fig.savefig(
-        config.qa_dir / f"risk-calibration-and-beta{suffix}{style.suffix}.png",
+        config.qa_dir / f"realised-beta{suffix}{style.suffix}.png",
         dpi=180,
         facecolor=style.background,
     )
@@ -513,46 +565,52 @@ def plot_risk_calibration_and_beta(
 def write_risk_figure_metadata(*, config: ArticleFigureConfig) -> None:
     """Persist the caption and source-to-asset manifest beside the evidence."""
 
-    caption = (
-        "Predicted versus realised risk (left) and 252-day realised market beta "
-        "(right). Each calibration point pools all 1,444 offset-rebalance forecasts "
-        "for one allocator and plots the square root of mean forecast/realised "
-        "variance on "
-        "both axes. Realised variance uses gross returns over the actual "
-        "execution-to-next-execution holding window. All three books are evaluated "
-        "with B2's covariance model; for B1 this is a common-model diagnostic, not "
-        "a native constraint. B2 and B3 forecasts cluster near 7%, but realised "
-        "risk remains higher. The grey beta band is the ±0.05 target range for "
-        "B2/B3 target portfolios, not a guarantee for realised beta; each line is "
-        "the mean of the three offset-specific rolling betas."
+    risk_caption = (
+        "Predicted and subsequently realised annualised volatility at every "
+        "rebalance. Each panel contains the three staggered schedules. Forecasts "
+        "are measured at execution; realised volatility covers the subsequent "
+        "execution-to-next-execution holding period. B1 is evaluated with B2's "
+        "covariance model as a common-model diagnostic."
+    )
+    beta_caption = (
+        "252-day realised market beta, sampled monthly and averaged across the "
+        "three staggered schedules. The grey ±0.05 band is the target range for "
+        "the standard and state-aware portfolios, not a guarantee for realised beta."
     )
     (config.review_dir / "risk_calibration_figure_caption.md").write_text(
-        caption + "\n", encoding="utf-8"
+        risk_caption + "\n\n" + beta_caption + "\n", encoding="utf-8"
     )
     manifest = {
-        "display": "risk_calibration_and_realised_beta",
-        "question": [
-            "Does predicted risk match realised risk?",
+        "displays": [
+            "risk_forecast_through_time",
+            "realised_beta_through_time",
+        ],
+        "questions": [
+            "At each rebalance, does predicted risk track risk over the next holding period?",
             "Does realised market exposure stay controlled through time?",
         ],
         "evidence": [
             "outputs/review/risk_calibration_by_rebalance.csv",
-            "outputs/review/risk_calibration_summary.csv",
-            "outputs/review/risk_calibration_bins.csv",
-            "outputs/review/risk_calibration_points.csv",
             "outputs/review/rolling_realised_beta_252d.csv",
         ],
         "article_assets": [
-            "assets/portfolio-optimization/risk-calibration-and-beta.svg",
-            "assets/portfolio-optimization/risk-calibration-and-beta_dark.svg",
-            "assets/portfolio-optimization/risk-calibration-and-beta-mobile.svg",
-            "assets/portfolio-optimization/risk-calibration-and-beta-mobile_dark.svg",
+            "assets/portfolio-optimization/risk-forecast-through-time.svg",
+            "assets/portfolio-optimization/risk-forecast-through-time_dark.svg",
+            "assets/portfolio-optimization/risk-forecast-through-time-mobile.svg",
+            "assets/portfolio-optimization/risk-forecast-through-time-mobile_dark.svg",
+            "assets/portfolio-optimization/realised-beta.svg",
+            "assets/portfolio-optimization/realised-beta_dark.svg",
+            "assets/portfolio-optimization/realised-beta-mobile.svg",
+            "assets/portfolio-optimization/realised-beta-mobile_dark.svg",
         ],
-        "caption": caption,
+        "captions": {
+            "risk_forecast_through_time": risk_caption,
+            "realised_beta_through_time": beta_caption,
+        },
         "visual_choices": {
-            "calibration": (
-                "one aggregate point per allocator; square root of mean variance "
-                "on both axes with a 45-degree reference; bins remain audit-only"
+            "risk_forecast": (
+                "three allocator panels on a shared zero-based scale; all 1,444 "
+                "rebalance observations per allocator retained; one line per schedule"
             ),
             "beta": (
                 "252-day realised beta, mean across offsets, sampled monthly for display"
@@ -575,22 +633,19 @@ def main() -> None:
     config = default_figure_config()
     config.output_dir.mkdir(parents=True, exist_ok=True)
     data = build_performance_data(config=config)
-    calibration, rolling_beta = build_risk_figure_data(config=config)
+    risk, rolling_beta = build_risk_figure_data(config=config)
     for style in config.styles:
         for mobile in (False, True):
             plot_performance(data, style, config=config, mobile=mobile)
-            plot_risk_calibration_and_beta(
-                calibration,
-                rolling_beta,
-                style,
-                config=config,
-                mobile=mobile,
+            plot_risk_forecasts(risk, style, config=config, mobile=mobile)
+            plot_realised_beta(
+                rolling_beta, style, config=config, mobile=mobile
             )
     write_risk_figure_metadata(config=config)
     print(
-        "Rendered eight SVGs from "
+        "Rendered twelve SVGs from "
         f"{data.height:,} common-date observations ({data['date'].min()} to "
-        f"{data['date'].max()}) and {calibration.height} calibration points."
+        f"{data['date'].max()}) and {risk.height:,} per-rebalance risk observations."
     )
 
 
