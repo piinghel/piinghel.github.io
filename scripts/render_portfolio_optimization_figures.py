@@ -226,26 +226,6 @@ def plot_performance(
             linestyle=(0, (2, 3)),
         )
 
-    event_x = mdates.date2num(config.later_period_start)
-    wealth_axis.annotate(
-        "Later period\nstarts in 2022",
-        xy=(event_x, 0.97),
-        xycoords=wealth_axis.get_xaxis_transform(),
-        xytext=(-8, 0),
-        textcoords="offset points",
-        color=style.muted,
-        fontsize=8.2 if mobile else 8.8,
-        ha="right",
-        va="top",
-        bbox={
-            "boxstyle": "square,pad=0.12",
-            "facecolor": style.background,
-            "edgecolor": "none",
-            "alpha": 0.96,
-        },
-        zorder=5,
-    )
-
     dates = data["date"].to_numpy()
     for allocator in config.allocators:
         width = 2.2 if allocator == "b3_state_aware_mvo" else 1.55
@@ -268,7 +248,7 @@ def plot_performance(
         )
 
     wealth_axis.set_yscale("log")
-    wealth_axis.set_ylabel("Growth of $1 (log scale)", color=style.muted, fontsize=10.5)
+    wealth_axis.set_ylabel("Growth of $1 (log scale)", color=style.muted, fontsize=11.0)
     wealth_axis.yaxis.set_major_locator(FixedLocator([1, 2, 4, 8, 16]))
     wealth_axis.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
     wealth_axis.yaxis.set_minor_formatter(NullFormatter())
@@ -277,13 +257,13 @@ def plot_performance(
         ncol=1 if mobile else 3,
         frameon=False,
         labelcolor=style.ink,
-        fontsize=9.3,
+        fontsize=10.0,
         borderaxespad=0,
         handlelength=2.3,
         columnspacing=1.6,
     )
 
-    drawdown_axis.set_ylabel("Drawdown (%)", color=style.muted, fontsize=10.5)
+    drawdown_axis.set_ylabel("Drawdown (%)", color=style.muted, fontsize=11.0)
     drawdown_axis.set_ylim(-21, 1)
     drawdown_axis.yaxis.set_major_locator(FixedLocator([-20, -10, 0]))
     drawdown_axis.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 4))
