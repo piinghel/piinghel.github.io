@@ -332,7 +332,7 @@ Coefficient shrinkage reports the reduction in the coefficients' Euclidean size
 accuracy is evaluated separately with rank IC and portfolio results.
 
 <div class="research-figure alpha-sensitivity-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/alpha-sensitivity" mobile_suffix="-mobile" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" version="9" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/alpha-sensitivity" alt="Average portfolio-membership changes and coefficient shrinkage relative to OLS across the Ridge penalty grid" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Average portfolio-membership changes and coefficient shrinkage relative to matched OLS during the development period.</p>
@@ -374,7 +374,7 @@ tests. The 2022 and 2024 columns are later-period diagnostics, while the
 selection statistics use development data only.
 
 <div class="research-figure coefficient-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" mobile_suffix="-mobile" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification over time; desktop shows twelve refits and mobile shows six labelled refits including 2022 and 2024" version="9" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Heatmap of the ten largest average absolute coefficients for the selected Ridge specification over twelve refits" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Signed coefficients for the selected Ridge model's ten largest mean absolute weights across walk-forward refits; the phone layout samples six labelled dates, and both layouts retain the 2022 and 2024 later-period diagnostics.</p>
@@ -471,7 +471,7 @@ is a prediction diagnostic, distinct from a return series and a significance
 statistic.
 
 <div class="research-figure ic-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" mobile_suffix="-mobile" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="9" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/cumulative-ic" alt="Cumulative daily cross-sectional rank information coefficient for fixed weights, OLS, and selected Ridge with the 2022 boundary marked" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Cumulative daily cross-sectional Spearman information coefficient for the fixed score, OLS, and selected Ridge predictions; the rule marks the 2022 boundary.</p>
@@ -549,7 +549,7 @@ to the prediction evidence. The complete net path shows the drawdowns behind the
 period summaries.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile_suffix="-mobile" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="9" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
@@ -571,7 +571,7 @@ implementation estimate would add borrow, financing, market impact, and taxes. A
 every portfolio shows how much turnover reduces returns.
 
 <div class="research-figure turnover-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/turnover-and-costs" mobile_suffix="-mobile" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" version="9" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/turnover-and-costs" alt="Turnover per rebalance and annual trading cost for fixed weights, OLS, and selected Ridge in development and later periods" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> Average two-way turnover per rebalance and annual trading cost under the 5 bp assumption, shown separately for development and the later period.</p>
@@ -591,7 +591,7 @@ the three execution sleeves. A net exposure of zero is dollar neutral, while a
 positive value means the portfolio has more dollars long than short.
 
 <div class="research-figure portfolio-exposure-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" mobile_suffix="-mobile" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="12" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="12" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 7:</strong> Monthly average floating exposures for the selected Ridge portfolio.</p>
@@ -637,7 +637,7 @@ over the past year. As with the other inputs, the model sees cross-sectional
 ranks of these quantities.
 
 <div class="research-figure exposure-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-feature-tilts" mobile_suffix="-mobile" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" version="9" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-feature-tilts" alt="Quarterly portfolio-weighted predictor-rank tilts for the selected Ridge portfolio on independent zero-inclusive panel scales" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 8:</strong> Quarterly paths of the ten largest average absolute realized predictor tilts; panels use their own zero-inclusive scales and label the full-sample mean.</p>

@@ -77,7 +77,7 @@ than return. Volatility rises steadily from the lowest- to the
 highest-volatility stocks, while Sharpe falls.
 
 <div class="low-vol-figure decile-profile-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" version="10" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Risk and return by volatility decile, before costs. Decile 1 contains the least volatile stocks; decile 10 the most volatile.</p>
@@ -103,7 +103,7 @@ The imbalance is large (Figure 2). Equal capital gives the short book more than
 three times the volatility and nearly three times the beta of the long book.
 
 <div class="low-vol-figure naive-leg-risk-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="10" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Realised volatility and beta of the equal-weight long and short books.</p>
@@ -151,7 +151,7 @@ positive because the portfolio has more capital in long positions than in short
 positions.
 
 <div class="low-vol-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/target_exposures" alt="Realised long gross, short gross, and net stock exposure through time" version="10" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/target_exposures" alt="Realised long gross, short gross, and net stock exposure through time" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Daily long, short, and net stock exposure after volatility scaling.</p>
@@ -187,7 +187,7 @@ Estimated and realised beta both move over time (Figure 4), but their full-sampl
 averages remain close to zero.
 
 <div class="low-vol-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realised beta of the volatility-scaled portfolio" version="10" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realised beta of the volatility-scaled portfolio" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Estimated and rolling realised beta of the volatility-scaled portfolio.</p>
@@ -209,7 +209,7 @@ figures below include the 5 basis-point trading cost.
 Tables 1 and 2 put the performance difference beside the exposure and turnover
 that come with each sizing rule.
 
-<table class="research-table comparison-table performance-table desktop-layout-table">
+<table class="research-table comparison-table performance-table">
   <thead>
     <tr>
       <th>Performance metric</th>
@@ -253,7 +253,7 @@ that come with each sizing rule.
 
 <p class="table-caption"><strong>Table 1:</strong> Full-sample performance with three-week rebalancing.</p>
 
-<table class="research-table comparison-table exposure-table desktop-layout-table">
+<table class="research-table comparison-table exposure-table">
   <thead>
     <tr>
       <th>Exposure or trading metric</th>
@@ -297,7 +297,7 @@ upper panel tracks the growth of one dollar; the lower panel shows each
 portfolio's decline from its previous peak.
 
 <div class="low-vol-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="10" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5:</strong> After-cost growth of \$1 and drawdowns. Wealth is shown on a log scale.</p>
@@ -345,7 +345,7 @@ percentage points and the short book lost 16.3; trading costs removed another
 0.5 points.
 
 <div class="low-vol-figure regime-comparison-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="10" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> Dot-com rally and reversal (left) and the 2025–2026 AI rally (right). Top: portfolio wealth before trading costs and Russell 1000 wealth. Bottom: long- and short-book contributions. Each episode has its own vertical scale.</p>

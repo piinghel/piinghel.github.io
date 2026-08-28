@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Technical Note: Portfolio Optimization Implementation"
-last_modified_at: 2026-08-26
+last_modified_at: 2026-08-28
 categories: ["Portfolio construction"]
 article_label: Technical note · Ridge allocation
 permalink: /quants/portfolio-optimization-technical-note.html
@@ -105,6 +105,36 @@ uses 50% identity shrinkage, and sets $\kappa=1.18$ to calibrate the observed
 gap between forecast and realized risk. Correlations use at most 756 dates and
 are estimated once 252 dates are available. A pair can have as few as two
 overlapping finite returns.
+
+## Market-beta estimation and evaluation windows
+
+The optimizer estimates each stock's market beta as a long-window correlation
+multiplied by a short-window volatility ratio:
+
+$$
+\widehat\beta_{i,t}
+=\widehat{\operatorname{Corr}}_{756}
+  (r_{i},r_m)
+\frac{\widehat\sigma_{i,t}^{(21)}}
+{\widehat\sigma_{m,t}^{(21)}}.
+$$
+
+The correlation requires at least 252 finite paired observations; both
+volatility estimates require 21. The portfolio constraint applies
+$\widehat{\boldsymbol\beta}_t^\top\boldsymbol w_t$ to target weights on the
+signal date.
+
+The realized-beta diagnostics answer different questions. The
+execution-to-execution diagnostic uses the next 10–14 trading days, a separate
+forward diagnostic uses the next 21 trading days, and the main article's time
+series uses the trailing 252 trading days. The 252-day series is therefore a
+slow outcome measure rather than a direct validation of the point-in-time
+constraint.
+
+The predeclared next study compares the current hybrid estimate with a coherent
+252-day estimator and a fixed 252/756-day blend. The specification will be
+selected on pre-2022 mean absolute beta error and tail error, then evaluated on
+the later period; portfolio Sharpe will not select the beta window.
 
 ## Complete constraint set
 

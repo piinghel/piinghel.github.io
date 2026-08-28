@@ -36,14 +36,6 @@ L 69.984 41.472
 z
 " style="fill: #0d1117"/>
    </g>
-   <g id="patch_3">
-    <path d="M 69.984 235.342452
-L 69.984 194.093419
-L 762.048 194.093419
-L 762.048 235.342452
-z
-" clip-path="url(#p67b4fac9e0)" style="fill: #8b949e; opacity: 0.14"/>
-   </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1"/>
@@ -1610,7 +1602,7 @@ L 762.048 195.968349
 L 762.048 195.968349
 " clip-path="url(#p67b4fac9e0)" style="fill: none; stroke: #55a6a8; stroke-width: 2; stroke-linecap: square"/>
    </g>
-   <g id="patch_4">
+   <g id="patch_3">
     <path d="M 69.984 297.216
 L 762.048 297.216
 " style="fill: none; stroke: #30363d; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>

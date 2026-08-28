@@ -276,12 +276,9 @@ def save_figure(
     output_dir: Path,
     stem: str,
     style: FigureStyle,
-    *,
-    mobile: bool = False,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
-    suffix = "-mobile" if mobile else ""
-    svg_path = output_dir / f"{stem}{suffix}{style.output_suffix}.svg"
+    svg_path = output_dir / f"{stem}{style.output_suffix}.svg"
     fig.savefig(
         svg_path,
         format="svg",

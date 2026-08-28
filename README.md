@@ -11,8 +11,9 @@ bundle install
 bundle exec jekyll serve
 ```
 
-Research figures are published as responsive light/dark SVGs. Their generating
-code lives in `scripts/` or the corresponding project under `projects/`.
+Research figures use one shared layout at every viewport width, with light and
+dark SVG variants. Their generating code lives in `scripts/` or the
+corresponding project under `projects/`.
 
 The regression article figures are refreshed with:
 
