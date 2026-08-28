@@ -8,7 +8,7 @@ article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> I compare a transparent five-theme score with two ways of learning how to combine a much larger predictor set: multiple linear regression and Ridge regression. Learning the combination improves development-period Sharpe from 0.71 to 0.98. Ridge makes the learned coefficients smaller and more stable, but barely changes the stock ranking: its rank correlation with ordinary least squares is 0.991. From January 2022 through May 2026, ordinary least squares records a Sharpe of 0.87 and Ridge 0.82. That four-year pseudo-holdout is too short to settle long-run performance.</p>
+<p class="article-summary"><strong>TL;DR:</strong> I compare a five-theme score whose weights are chosen in advance with multiple linear regression and Ridge regression fitted to a broader predictor set. The OLS specification records a development-period Sharpe of 0.98 against 0.71 for the benchmark, but that comparison also changes the predictors and their data histories. Ridge makes the learned coefficients smaller and more stable while leaving the stock ranking almost unchanged: its rank correlation with OLS is 0.991. From January 2022 through May 2026, the selected Ridge model records a Sharpe of 0.82 against 0.87 for OLS. That four-year pseudo-holdout is too short to settle long-run performance.</p>
 
 Once a stock model contains more than a handful of signals, finding another one
 is no longer the main problem. The harder decision is how much influence each
@@ -17,12 +17,12 @@ score chooses those weights in advance. Multiple linear regression can learn
 them from subsequent stock outcomes, while Ridge regression can restrain that
 learning when many predictors contain similar information.
 
-I start with a transparent score built from five themes, then give multiple
-linear regression a broader set of 144 predictors. Ordinary least squares (OLS)
-is free to assign each predictor its own coefficient. Ridge uses the same model
-but shrinks those coefficients, which should make the learned combination more
-stable. The practical question is whether that stability improves the ranking
-or merely produces a neater version of the same signal.
+I start with a score built from five themes whose directions and weights are
+chosen in advance, then give multiple linear regression a broader set of 144
+predictors. Ordinary least squares (OLS) is free to assign each predictor its
+own coefficient. Ridge uses the same model but shrinks those coefficients. The
+practical question is whether that constraint improves the ranking or merely
+produces a steadier coefficient vector for the same signal.
 
 Two comparisons keep the conclusions separate. The fixed benchmark versus
 multiple linear regression compares a small hand-built score with a broader
@@ -35,8 +35,8 @@ execution, and cost rules.
 
 Fixed weights provide a useful baseline because every preference is visible. I
 group familiar signals into five themes, give each theme the same influence, and
-set the direction of each signal in advance. The rule is transparent, though
-the themes, horizons, and signs still reflect my judgment.
+set the direction of each signal in advance. Those choices are easy to inspect,
+though the themes, horizons, and signs still reflect my judgment.
 
 The five themes describe the kind of company the benchmark prefers. The
 defensive theme pairs recent volatility with the average of the three largest
@@ -45,11 +45,43 @@ rather than one propped up by a few sharp jumps. Momentum looks for a trend that
 has persisted beyond the latest short-term move. The remaining themes favour
 lower short positioning, larger companies, and steadier day-to-day returns.
 
-The defensive measures share one theme weight; each of the other themes receives
-20%. I turn every signal into an attractiveness rank before averaging them, so
-their original units no longer determine their influence. Short-positioning
-data are lagged to when they were available, and a stock needs enough history
-for every theme before it can enter the benchmark.
+The benchmark can be written compactly. Let
+$$q_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ be stock $$i$$'s
+cross-sectional rank on date $$t$$, with every component signed so a higher rank
+is more attractive and $$N_t$$ denoting the stocks available for that component.
+Using daily return $$r$$, reported short interest $$SI$$, 63-day average volume
+$$ADV_{63}$$, and market capitalisation $$MC$$, the five themes and final score
+are
+
+$$
+\begin{aligned}
+D_{i,t}
+&=\tfrac12 q_t\!\left(-\tfrac13\sum_{h\in\{21,63,126\}}\sigma_{i,t}^{(h)}\right)\\
+&\quad+\tfrac12 q_t\!\left(-\operatorname{Top3Mean}_{21}(r_{i,t})\right),\\
+M_{i,t}
+&=q_t\!\left(\sum_{h\in\{63,126,189,252\}}
+R_{i,t}^{(h,\,\mathrm{skip}\ 21)}\right),\\
+S_{i,t}
+&=q_t\!\left(-\log\frac{SI_{i,t-21}}{ADV_{i,t}^{(63)}}\right),\\
+L_{i,t}
+&=q_t\!\left(\log MC_{i,t}\right),\\
+C_{i,t}
+&=q_t\!\left(-\frac1{756}\sum_{u=0}^{755}
+\mathbf 1\{r_{i,t-u}<0\}\right),\\
+B_{i,t}
+&=0.2\left(D_{i,t}+M_{i,t}+S_{i,t}+L_{i,t}+C_{i,t}\right).
+\end{aligned}
+$$
+
+Here $$D$$ combines low volatility with avoidance of unusually large up days,
+$$M$$ is momentum measured across four horizons after skipping the latest month,
+$$S$$ favours low short interest relative to normal trading volume, $$L$$ favours
+larger companies, and $$C$$ favours stocks with fewer down days over three years.
+The two defensive components contribute 10% each; the other themes contribute
+20% each. Ranking before aggregation prevents market capitalisation in dollars
+or volatility in percentage points from dominating the score through its units.
+Short-positioning data are lagged to when they were available, and a stock needs
+enough history for every theme before it can enter the benchmark.
 
 Multiple linear regression and Ridge receive 144 ranked predictors, but these
 are not 144 unrelated ideas. Price-based measures ask whether a stock has risen,
@@ -60,21 +92,38 @@ appear at several horizons or through closely related definitions. That breadth
 lets the model choose among short- and long-run versions of a theme, but the
 overlap also makes individual coefficients hard to pin down.
 
-The benchmark and regression models share the same portfolio rules after
-producing their rankings. Their predictor sets and data histories differ, so the
-benchmark comparison does not isolate weight learning alone; it compares a
-small transparent model with a broader learned one. The multiple linear
-regression and Ridge models do use identical inputs, making that the controlled
-estimator comparison.
-
 ## Ranks put 144 unlike predictors on one scale
 
-The predictor deck mixes quantities that cannot be compared directly: market
-value in dollars, returns, and volatility estimates have no common scale. I
-therefore rank each measure within the eligible Russell 1000 universe and map
-the ranks to $[-1,1]$. Tied observations share a rank, and a predictor with no
-cross-sectional variation receives zero. This gives every input the same range
-without pretending that its raw units are comparable.
+The 144-predictor deck has the same units problem as the benchmark, but here the
+regression must learn both direction and weight. Let
+$$R^{\mathrm{dense}}_{i,j,t}$$ be stock $$i$$'s dense rank on predictor $$j$$ and
+let $$K_{j,t}$$ be the largest rank on date $$t$$. I normalise each predictor as
+
+$$
+x^{\mathrm{rank}}_{i,j,t}
+=2\frac{R^{\mathrm{dense}}_{i,j,t}}{K_{j,t}}-1.
+$$
+
+This maps every predictor to the same $[-1,1]$ interval. Tied observations share
+a rank, and a predictor with no cross-sectional variation receives zero. The
+common scale stops a variable measured in dollars from receiving more influence
+than one measured in percentage points merely because its numbers are larger.
+It also limits the influence of extreme raw observations and makes coefficient
+magnitudes more comparable across predictors.
+
+Ranking deliberately discards distance. A stock just above another receives the
+same one-rank step as a stock separated by a much larger raw gap. The model is
+therefore learning relative order, not a calibrated relationship between the raw
+signal value and future return. That trade-off fits this application because the
+portfolio ultimately acts on the ranking tails.
+
+The full pipeline keeps those stages separate: raw measures become comparable
+ranks, the benchmark or regression combines them, and only then does the common
+portfolio rule turn a stock ranking into positions.
+
+<div class="research-figure signal-flow-figure">
+  {%- include signal-combination-flow.html -%}
+</div>
 
 When a predictor is unavailable, I use the latest known value or the stock's
 sector average for that date. The traded universe then excludes stocks below
@@ -152,14 +201,14 @@ stocks remain in almost the same order. Ridge regression favours a more stable
 division of weight by penalising large coefficients:
 
 $$
-(\widehat\beta^{(c)}_{0,f},\widehat{\boldsymbol\beta}^{(c)}_f)
-=\arg\min_{\beta_0,\boldsymbol\beta}
-\left\{
+\begin{aligned}
+&(\widehat\beta^{(c)}_{0,f},\widehat{\boldsymbol\beta}^{(c)}_f)\\
+&\quad=\arg\min_{\beta_0,\boldsymbol\beta}\Bigg\{
 \frac{1}{n_f}\sum_{(i,t)\in\mathcal T_f}
 \left(y_{i,t}-\beta_0-\mathbf x_{i,t}^{\top}
-\boldsymbol\beta\right)^2
-+c\lVert\boldsymbol\beta\rVert_2^2
-\right\}.
+\boldsymbol\beta\right)^2\\
+&\hspace{8.5em}+c\lVert\boldsymbol\beta\rVert_2^2\Bigg\}.
+\end{aligned}
 $$
 
 The penalty applies to the slopes and leaves the intercept free. Setting $c=0$
@@ -179,9 +228,9 @@ precise estimate of an optimal value.
 
 All four candidates use the same predictors, target, universe, dates,
 walk-forward procedure, portfolio construction, and 5 bp cost assumption. The grid
-$$c\in\{0,0.001,0.01,0.1\}$$ uses data through 2021. I prefer a value that
-behaves consistently across the full development period, its final ten years,
-and its final five years. Consistency takes priority over winning a single slice.
+$$c\in\{0,0.001,0.01,0.1\}$$ uses data through 2021. I prefer a gentle penalty
+that improves coefficient stability without depending on a large change in the
+portfolio results.
 
 Table 1 gives the first test of the penalty choice. It compares portfolio return
 and risk across the matched OLS–Ridge grid, before and after the same trading-cost
@@ -202,9 +251,9 @@ than different cost deductions.
 Table 1 does not show a decisive Ridge improvement. The moderate $c=0.01$
 penalty raises annualised return by 0.35 percentage points and volatility by
 0.21, moving Sharpe from 0.983 to 1.003. The stronger $c=0.1$ penalty earns more
-return but also adds enough risk to lower Sharpe to 0.989, with weaker results in
-the final ten- and five-year development windows. I therefore carry $c=0.01$
-forward as a compromise rather than a clear winner.
+return but adds enough risk to leave Sharpe at 0.989. I therefore carry $c=0.01$
+forward as a deliberately gentle compromise, not a clear winner or an estimate
+of a uniquely optimal penalty.
 {: .table-followup }
 
 Figure 2 asks what that moderate penalty actually changes. Panel A measures how
@@ -228,9 +277,9 @@ while changing only about 39 portfolio names. Ridge is stabilising the
 representation of the signal more than the signal itself.
 
 Correlated predictors can exchange coefficient weight while keeping their
-combined score close. OLS therefore identifies the stock ordering more clearly
-than the contribution of each individual input. The 0.991 rank correlation
-supports a stable ordering, while attribution is more credible at the broader
+combined score close. The stock ordering is therefore much more stable than the
+contribution assigned to each individual input. The 0.991 rank correlation
+supports that distinction, while attribution is more credible at the broader
 predictor-family level.
 
 Figure 3 follows the ten largest Ridge coefficients across refits. Positive
@@ -253,7 +302,7 @@ predictor-by-predictor explanation. These are conditional weights among
 correlated inputs, not standalone factor returns, so the more defensible
 interpretation remains at the predictor-family level.
 
-## Learned weights reduce risk during development
+## The broader learned specification has lower development-period risk
 
 Table 2 moves from coefficient behaviour to portfolio consequences. It compares
 the first mechanical walk-forward predictions in 1998 through the end of the
@@ -274,15 +323,17 @@ set, while OLS and Ridge share the same 144 predictors.
 
 <p class="table-caption"><strong>Table 2:</strong> Development-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
-Table 2 shows where learning the weights matters. OLS raises development Sharpe
-from 0.71 to 0.98 without much more return because volatility falls from 9.73%
-to 7.15% and the maximum drawdown becomes shallower. That improvement comes with
-roughly twice the benchmark's turnover and trading cost. Ridge remains close to
+Table 2 shows where the broader OLS specification differs from the benchmark.
+Gross return rises by 0.88 percentage points, but the extra trading cost consumes
+0.77 points of that gap, leaving only 0.11 points after costs. Its higher Sharpe
+therefore comes mainly from volatility falling from 9.73% to 7.15%, alongside a
+shallower maximum drawdown. This is a comparison of two complete specifications,
+not proof that estimated weights caused the lower risk. Ridge remains close to
 OLS: its coefficients are more stable, but turnover falls by only 1.95
 percentage points per rebalance and annual cost by 0.02 points.
 {: .table-followup }
 
-## Ridge does not beat OLS after 2021
+## The selected Ridge model does not beat OLS after 2021
 
 I selected $c=0.01$ using data through 2021. Table 3 repeats the portfolio
 comparison from January 2022 through May 2026. Later history had already
@@ -305,11 +356,10 @@ market regimes to settle long-run performance.
 <p class="table-caption"><strong>Table 3:</strong> Later-period portfolio results. Gross return is before the stated trading cost; all risk statistics use returns after 5 bp per dollar traded.</p>
 
 Table 3 gives no later-period reason to prefer the selected Ridge model. Its
-return is 0.13 percentage points below OLS, volatility is 0.30 points higher,
+return is 0.13 percentage points below OLS, volatility is 0.31 points higher,
 and Sharpe is 0.82 rather than 0.87. Turnover and costs are only slightly lower.
-The weaker $c=0.001$ penalty reaches 0.89 in this window, but changing the choice
-after seeing these results would abandon the development-period rule. I keep
-$c=0.01$ and treat the difference as diagnostic.
+Changing the penalty after seeing these results would abandon the
+development-period rule. I keep $c=0.01$ and treat the difference as diagnostic.
 {: .table-followup }
 
 ## Ridge and OLS rank stocks almost identically
@@ -320,7 +370,7 @@ Spearman correlation between the predicted order and the subsequently realised,
 sector-ranked outcome.
 
 Figure 4 adds those daily correlations through time. A rising path means the
-model has usually ordered future outcomes correctly; a flat path means no new
+model has ordered future outcomes correctly on balance; a flat path means no new
 rank association, and a decline marks a run of negative IC. The series runs from
 the first walk-forward predictions in September 1998 to the last complete
 20-trading-day outcome on April 28, 2026. It is a prediction diagnostic, not a
@@ -413,10 +463,11 @@ development period from the later diagnostic period.
 
 <p class="figure-caption"><strong>Figure 5:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
 
-Figure 5 shows that the learned portfolios' development advantage comes mainly
-from a smoother path and shallower drawdowns, not a dramatic return gap. Ridge
-tracks OLS closely throughout the sample and does not create a visibly different
-return path. After 2021, OLS retains the higher Sharpe reported in Table 3.
+Figure 5 shows that the broader learned specifications' development-period
+Sharpe advantage comes mainly from a smoother path and shallower drawdowns, not
+a dramatic return gap. Ridge tracks OLS closely throughout the sample and does
+not create a visibly different return path. After 2021, OLS retains the higher
+Sharpe reported in Table 3.
 
 ## Portfolio construction reshapes the learned ranking
 
@@ -435,7 +486,7 @@ trading, not borrow, financing, market impact, or taxes.
 
 Figure 6 shows that the fixed score trades about half as much as either learned
 ranking. Ridge barely changes that burden: relative to OLS, it saves 0.02
-percentage points of annual return in development and 0.03 later. Smaller
+percentage points of annual trading cost in development and 0.03 later. Smaller
 coefficients do not translate into a materially more stable portfolio.
 
 ### Inverse-volatility sizing leaves exposure uncontrolled
@@ -454,8 +505,9 @@ more capital is invested long than short.
 Figure 7 shows the long book staying near its ceiling while the short book does
 most of the moving. High-volatility short candidates receive smaller positions,
 so average net exposure rises from +30.0% in development to +46.9% after 2021.
-Market beta remains much smaller because the short stocks carry more beta per
-dollar. The current allocator controls neither quantity directly.
+Market beta remains much smaller than net exposure, which is consistent with the
+short book carrying more beta per dollar. The current allocator controls neither
+quantity directly.
 
 ### The portfolio remains defensive and trend-led
 
@@ -488,9 +540,9 @@ those same two themes rather than independent sources of exposure.
 The chart describes the finished portfolio, not independent alpha attribution.
 Stock-level volatility sizing can strengthen the defensive pattern after the
 ranking is formed, while correlated predictors can exchange coefficient weight
-and still identify similar stocks. Those mechanisms explain why Figure 8 looks
+and still identify similar stocks. Both mechanisms can make Figure 8 look
 steadier, and more concentrated by theme, than the coefficient paths in Figure
-3.
+3, but the chart cannot separate their contributions.
 
 The predictor deck itself offers limited diversification: about two thirds of
 the 144 inputs come from price history or price–volume interactions. Ranking,
@@ -499,20 +551,20 @@ coefficient sets toward similar portfolios. A grouped leave-one-family-out test,
 run before and after allocation, would show whether each family adds information
 or whether portfolio construction is creating the convergence.
 
-## Learning the combination matters more than regularising it
+## The broader learned specification differs; Ridge adds little
 
-Learning the combination changes the portfolio more than regularising it. During
-development, OLS records a Sharpe of 0.98 against 0.71 for the fixed benchmark,
-with similar return but lower volatility and a shallower maximum drawdown. That
-comparison covers two complete specifications rather than weights alone: OLS
-also receives a broader predictor set and different data histories.
+The broader learned specification differs more from the fixed benchmark than
+Ridge differs from OLS. During development, OLS records a Sharpe of 0.98 against
+0.71 for the benchmark, with similar net return but lower volatility and a
+shallower maximum drawdown. That gap belongs to two complete specifications:
+OLS also receives a broader predictor set and different data histories.
 
 The controlled OLS–Ridge comparison gives a narrower result. At $c=0.01$,
 Ridge cuts coefficient magnitude and refit movement by roughly one third, yet
 its ranking retains a 0.991 correlation with OLS. Development Sharpe rises only
 from 0.98 to 1.00. From January 2022 through May 2026, Ridge trails OLS, 0.82 to
-0.87. Regularisation cleans up the coefficient vector; it does not materially
-improve this trading signal.
+0.87. The selected penalty cleans up the coefficient vector; it does not
+materially improve this trading signal.
 
 That conclusion remains bounded by the research design. Overlapping targets,
 common shocks within each date, and repeated use of the development history all
@@ -521,10 +573,10 @@ non-overlapping training dates remain useful robustness tests. The predictor
 deck is also dominated by related price-based measures, so a stable ranking does
 not imply broad feature diversification.
 
-The model comparison and the allocation problem now need different tests. A
+The model comparison and the implementation problem now need different tests. A
 genuinely new period is the cleanest way to learn whether Ridge improves the
 ranking. Before that evidence arrives, I would keep the OLS and Ridge predictions
-frozen and test the allocation layer: size positions jointly, penalise turnover
-from current holdings, and constrain gross exposure, net exposure, market beta,
-sectors, and the largest realised tilts. Freezing that complete rule would make
-the next period more informative.
+frozen, stress the 5 bp cost assumption, and test the allocation layer: size
+positions jointly, penalise turnover from current holdings, and constrain gross
+exposure, net exposure, market beta, sectors, and the largest realised tilts.
+Freezing that complete rule would make the next period more informative.
