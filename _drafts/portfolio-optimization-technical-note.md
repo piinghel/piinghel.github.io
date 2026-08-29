@@ -193,6 +193,15 @@ cost, gross exposure, beta error, persistent episodes, return, and Sharpe must
 all be reported; the result will remain exploratory because the later period
 has already informed its design.
 
+Before the experiment runs, its implementation contract is frozen: beta is
+measured on executed stock weights; the hedge uses the same benchmark return
+series as the beta audit; signal formation and execution occur on the existing
+rebalance schedule; the hedge is held until the next scheduled rebalance;
+financing, dividends, margin, and one-way transaction costs are included;
+absolute hedge notional counts toward gross exposure; and hedge returns enter
+both holding-window and trailing 252-day realised beta. A directly tradeable
+proxy is required—the return index cannot be treated as a costless instrument.
+
 ## Complete constraint set
 
 Let $\boldsymbol 1$ be a vector of ones, $\boldsymbol\beta_t$ the estimated
