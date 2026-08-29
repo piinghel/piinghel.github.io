@@ -311,11 +311,17 @@ def plot_portfolio_exposures(
     ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
     ax.xaxis.set_major_locator(mdates.YearLocator(4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    ax.set_ylabel("Portfolio weight", color=style.ink, fontsize=style.axis_label_size)
+    ax.set_title(
+        "Floating portfolio exposure (%)",
+        loc="left",
+        pad=8,
+        color=style.ink,
+        fontsize=style.axis_label_size,
+    )
     style_axis(ax, style)
     ax.legend(
         loc="lower left",
-        bbox_to_anchor=(0.0, 1.08),
+        bbox_to_anchor=(0.0, 1.20),
         ncol=3,
         frameon=False,
         borderaxespad=0,
@@ -327,7 +333,7 @@ def plot_portfolio_exposures(
     fig.subplots_adjust(
         left=0.105,
         right=0.98,
-        top=0.82,
+        top=0.76,
         bottom=0.18,
     )
     save_figure(fig, output_dir, "portfolio-exposures", style)
@@ -436,16 +442,10 @@ def plot_selected_portfolio_tilts(
         show_x = index >= len(ordered) - 2
         if not show_x:
             ax.tick_params(axis="x", labelbottom=False)
-    fig.supylabel(
-        "Realized predictor-rank tilt",
-        color=style.muted,
-        fontsize=style.axis_label_size * visual_scale,
-        x=0.035,
-    )
     fig.subplots_adjust(
         left=0.10,
         right=0.98,
-        top=0.985,
+        top=0.97,
         bottom=0.06,
         hspace=0.56,
         wspace=0.25,

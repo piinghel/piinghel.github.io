@@ -64,8 +64,10 @@ def plot_ic(
         label_text="Model fixed before 2022",
         label_at_top=True,
     )
-    ax.set_ylabel(
+    ax.set_title(
         "Cumulative daily rank IC",
+        loc="left",
+        pad=9,
         color=style.muted,
         fontsize=style.axis_label_size * 1.2,
     )
@@ -148,9 +150,12 @@ def plot_performance(
             va="center",
         )
     wealth_ax.set_yscale("log")
-    wealth_ax.set_ylabel(
+    panel_title_color = "#000000" if not style.output_suffix else style.ink
+    wealth_ax.set_title(
         "Growth of $1 (log scale)",
-        color=style.muted,
+        loc="left",
+        pad=9,
+        color=panel_title_color,
         fontsize=style.axis_label_size,
     )
     wealth_ax.yaxis.set_major_locator(FixedLocator([1, 2, 3, 4, 6, 8]))
@@ -159,9 +164,11 @@ def plot_performance(
     wealth_ax.grid(False, axis="y")
     for value in (1, 2, 3, 4, 6, 8):
         wealth_ax.axhline(value, color=style.grid, linewidth=0.8, zorder=0)
-    drawdown_ax.set_ylabel(
+    drawdown_ax.set_title(
         "Drawdown (%)",
-        color=style.muted,
+        loc="left",
+        pad=9,
+        color=panel_title_color,
         fontsize=style.axis_label_size,
     )
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(4))

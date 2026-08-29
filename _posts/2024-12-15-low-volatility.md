@@ -77,7 +77,7 @@ than return. Volatility rises steadily from the lowest- to the
 highest-volatility stocks, while Sharpe falls.
 
 <div class="low-vol-figure decile-profile-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" version="10" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, geometric return, and volatility across volatility deciles" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Risk and return by volatility decile, before costs. Decile 1 contains the least volatile stocks; decile 10 the most volatile.</p>
@@ -151,7 +151,7 @@ positive because the portfolio has more capital in long positions than in short
 positions.
 
 <div class="low-vol-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/target_exposures" alt="Realised long gross, short gross, and net stock exposure through time" version="10" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/target_exposures" alt="Realised long gross, short gross, and net stock exposure through time" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Daily long, short, and net stock exposure after volatility scaling.</p>
@@ -187,7 +187,7 @@ Estimated and realised beta both move over time (Figure 4), but their full-sampl
 averages remain close to zero.
 
 <div class="low-vol-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realised beta of the volatility-scaled portfolio" version="10" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realised beta of the volatility-scaled portfolio" version="12" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Estimated and rolling realised beta of the volatility-scaled portfolio.</p>
@@ -297,7 +297,7 @@ upper panel tracks the growth of one dollar; the lower panel shows each
 portfolio's decline from its previous peak.
 
 <div class="low-vol-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="10" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="12" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5:</strong> After-cost growth of \$1 and drawdowns. Wealth is shown on a log scale.</p>
@@ -345,7 +345,7 @@ percentage points and the short book lost 16.3; trading costs removed another
 0.5 points.
 
 <div class="low-vol-figure regime-comparison-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="10" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> Dot-com rally and reversal (left) and the 2025–2026 AI rally (right). Top: portfolio wealth before trading costs and Russell 1000 wealth. Bottom: long- and short-book contributions. Each episode has its own vertical scale.</p>

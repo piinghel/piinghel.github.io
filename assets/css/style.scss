@@ -46,6 +46,12 @@
   width: min(930px, calc(100vw - 2rem));
 }
 
+// The archived rebalancing charts are raster-only. In dark mode, invert their
+// neutral canvas while preserving the green/blue series through hue rotation.
+html[data-theme="dark"] .post-content .rebalancing-figure img {
+  filter: invert(0.92) hue-rotate(180deg);
+}
+
 // Keep article figures inside the reading column when the sticky contents rail
 // is visible. Wider figures otherwise sit underneath the rail.
 @media (min-width: 1160px) {
@@ -214,8 +220,96 @@
     margin-top: 2rem;
   }
 
+  // Dense research SVGs keep their desktop composition on phones. A minimum
+  // canvas preserves label size; the figure itself becomes horizontally
+  // scrollable instead of shrinking annotations below a readable size.
+  .post-content .low-vol-figure,
+  .post-content .research-figure {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .post-content .low-vol-figure picture,
+  .post-content .research-figure picture {
+    min-width: 760px;
+  }
+
+  .post-content .rebalancing-figure img {
+    width: 760px;
+    min-width: 760px;
+    max-width: none;
+  }
+
   .post-content mjx-container[display="true"] {
     font-size: 0.92em !important;
+  }
+
+  .post-content table.research-table.portfolio-card-table,
+  .post-content table.research-table.rebalancing-results-table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    border: 0;
+    background: transparent;
+    transform: none;
+  }
+
+  .post-content table.research-table.portfolio-card-table thead,
+  .post-content table.research-table.rebalancing-results-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .post-content table.research-table.portfolio-card-table tbody,
+  .post-content table.research-table.portfolio-card-table tr,
+  .post-content table.research-table.portfolio-card-table tbody th,
+  .post-content table.research-table.portfolio-card-table tbody td,
+  .post-content table.research-table.rebalancing-results-table tbody,
+  .post-content table.research-table.rebalancing-results-table tr,
+  .post-content table.research-table.rebalancing-results-table tbody th,
+  .post-content table.research-table.rebalancing-results-table tbody td {
+    display: block;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .post-content table.research-table.portfolio-card-table tbody tr,
+  .post-content table.research-table.rebalancing-results-table tbody tr {
+    margin: 0 0 0.8rem;
+    border: 1px solid var(--table-rule);
+    border-radius: 0.4rem;
+    background: var(--table-surface);
+  }
+
+  .post-content table.research-table.portfolio-card-table tbody th,
+  .post-content table.research-table.rebalancing-results-table tbody th {
+    padding: 0.72rem 0.78rem 0.48rem;
+    border-bottom: 1px solid var(--table-rule);
+    background: var(--table-header-surface);
+  }
+
+  .post-content table.research-table.portfolio-card-table tbody td,
+  .post-content table.research-table.rebalancing-results-table tbody td {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 0.8fr) minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.48rem 0.78rem;
+    text-align: right;
+  }
+
+  .post-content table.research-table.portfolio-card-table tbody td::before,
+  .post-content table.research-table.rebalancing-results-table tbody td::before {
+    content: attr(data-label);
+    color: var(--muted-ink);
+    font-weight: 600;
+    text-align: left;
   }
 
 }

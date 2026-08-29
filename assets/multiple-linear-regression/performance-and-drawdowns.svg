@@ -349,7 +349,7 @@ z
     </g>
     <g id="text_7">
      <!-- Growth of $1 (log scale) -->
-     <g style="fill: #6a7883" transform="translate(16.711859 215.029879) rotate(-90) scale(0.105 -0.105)">
+     <g style="fill: #000000" transform="translate(47 20) scale(0.105 -0.105)">
       <defs>
        <path id="DejaVuSans-47" d="M 3809 666
 L 3809 1919
@@ -14529,7 +14529,7 @@ L 638.710344 312.862463
     </g>
     <g id="text_26">
      <!-- Drawdown (%) -->
-     <g style="fill: #6a7883" transform="translate(10.858359 411.954669) rotate(-90) scale(0.105 -0.105)">
+     <g style="fill: #000000" transform="translate(47 304.5) scale(0.105 -0.105)">
       <defs>
        <path id="DejaVuSans-44" d="M 1259 4147
 L 1259 519
