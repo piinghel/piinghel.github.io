@@ -142,7 +142,7 @@ state-aware optimizer remains ahead, with a 7.99% net return and 0.87 net
 Sharpe, but the margin is modest.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Net growth of one dollar on a logarithmic scale and drawdowns for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer, with the later period beginning in 2022" version="4" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Net growth of one dollar on a logarithmic scale and drawdowns for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer, with the later period beginning in 2022" version="4" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Net cumulative wealth and drawdown for an equal-weight blend of the three rebalance schedules after charging 5 basis points per dollar traded, 22 September 1998–27 May 2026. The vertical rule marks January 2022, the start of the later pseudo-holdout.</p>
@@ -182,7 +182,7 @@ their 7% budget while realized risk varies much more. Across all rebalances,
 their root-mean-square realized volatility is 8.6%.
 
 <div class="research-figure risk-forecast-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-forecast-through-time" alt="Scatter plots of predicted and subsequently realized annualized volatility at every rebalance for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="3" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-forecast-through-time" alt="Scatter plots of predicted and subsequently realized annualized volatility at every rebalance for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="3" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Predicted versus subsequently realized annualized volatility at every rebalance across all three schedules. The diagonal marks perfect calibration. The shared axes focus on the regular range; triangles mark the 10, 12, and 11 realized observations above 20%, whose maxima are 48.9%, 34.7%, and 34.3%.</p>
@@ -222,7 +222,7 @@ of May 2026, the mean across schedules is about +0.071 for the standard
 optimizer and +0.045 for the state-aware optimizer.
 
 <div class="research-figure realised-beta-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/realised-beta" alt="Rolling 252-day realized beta for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="2" mobile=false %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/realised-beta" alt="Rolling 252-day realized beta for the volatility-scaled portfolio, standard optimizer, and state-aware optimizer" version="2" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Trailing 252-day realized beta, sampled monthly and averaged across the three staggered schedules. This is a slow outcome measure, not the beta estimate constrained at each rebalance.</p>
