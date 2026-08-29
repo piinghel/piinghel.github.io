@@ -7,7 +7,7 @@ article_label: Technical note · Ridge allocation
 permalink: /quants/portfolio-optimization-technical-note.html
 ---
 
-<p class="article-summary">This note records the implementation details behind <a href="/quants/portfolio-optimization-preview.html">From Volatility Scaling to State-Aware Portfolio Optimization</a>. It covers the baseline weighting rule, covariance construction, portfolio constraints, state-aware eligibility, and reporting conventions.</p>
+<p class="article-summary">This note records the implementation and supporting evidence behind <a href="/quants/portfolio-optimization-preview.html">From Volatility Scaling to State-Aware Portfolio Optimization</a>. It covers the baseline weighting rule, covariance and beta estimates, risk diagnostics, portfolio constraints, state-aware eligibility, robustness tests, and reporting conventions.</p>
 
 ## Volatility-scaled baseline
 
@@ -101,10 +101,41 @@ $$
 $$
 
 The implementation clips returns at ±30%, fills missing correlations with 0.50,
-uses 50% identity shrinkage, and sets $\kappa=1.18$ to calibrate the observed
-gap between forecast and realized risk. Correlations use at most 756 dates and
-are estimated once 252 dates are available. A pair can have as few as two
-overlapping finite returns.
+uses 50% identity shrinkage, and applies the existing scale adjustment
+$\kappa=1.18$. That adjustment does not close the forecast gap in the audit
+below. Correlations use at most 756 dates and are estimated once 252 dates are
+available. A pair can have as few as two overlapping finite returns.
+
+## Risk-calibration audit
+
+Forecast risk is evaluated over each execution-to-execution holding window,
+which averages 13.46 trading days. Predicted and realised variances are compared
+with QLIKE,
+
+$$
+\operatorname{QLIKE}_t
+=\frac{v_t}{\widehat v_t}
+-\log\left(\frac{v_t}{\widehat v_t}\right)-1.
+$$
+
+Lower is better and zero denotes a perfect variance forecast. Non-positive or
+non-finite variances fail the audit rather than being silently floored.
+
+The 7% limit applies only to predicted volatility of the target portfolio. The
+audit therefore distinguishes four events: a target violation when target-
+weight predicted volatility exceeds the limit; an execution overshoot after
+rounding and execution; a drift overshoot immediately before the next
+rebalance; and a realised overshoot when subsequent volatility exceeds 7%.
+Only the first is a solver or constraint failure. The others measure
+implementation and calibration.
+
+Across 1,444 rebalance events, mean predicted volatility is 7.00% for B2 and
+6.99% for B3, while mean subsequently realised volatility is 8.06% and 8.04%.
+Root-mean-square realised volatility is roughly 8.6%, about 20% above the
+budget-scale forecasts. Neither optimizer has a target violation. Realised
+overshoots occur at roughly 60% of events, which is evidence of underprediction,
+not evidence that the optimizer disobeyed its ex-ante constraint. Mean QLIKE is
+0.339 for B2 and 0.344 for B3; their calibration is economically similar.
 
 ## Market-beta estimation and evaluation windows
 
@@ -268,3 +299,60 @@ Geometric return, Sharpe, and drawdown are calculated for each schedule before
 the three values are averaged. The cumulative-wealth figure in the main article
 uses an equal-weight blend of the three return series from their common start;
 it is a path reference rather than the headline estimate.
+
+## Robustness tests
+
+The robustness work separates three questions that are easy to conflate:
+whether the covariance-shrinkage setting lies in a stable region, whether the
+result survives different deterministic rank cutoffs, and whether it survives
+different stock identities at a fixed breadth.
+
+### Covariance shrinkage
+
+The predeclared ladder rebuilds B2 and B3 at 11 values of $\rho$ from zero to
+one. The Ridge forecasts, selected names, constraints, execution, transaction
+costs, and three rebalance schedules remain fixed. The purpose is to locate a
+stable region, not to choose the best historical Sharpe cell.
+
+Risk calibration, QLIKE, and holding-window beta error are U-shaped, with a
+marginal minimum at $\rho=0.4$. The existing $\rho=0.5$ setting is nearly
+identical. For B2, the realised-to-predicted volatility ratio is 1.221 at 0.4
+and 1.227 at 0.5; beta mean absolute error is 0.178 and 0.179. For B3, the
+corresponding values are 1.191 versus 1.198 and 0.177 versus 0.178. Net Sharpe
+is also stable from 0.3 through 0.6. Both endpoints materially degrade the risk
+model, so the analysis retains 0.5 instead of retuning to the small in-sample
+minimum.
+
+### Deterministic breadth
+
+The breadth test uses the top and bottom 50, 75, 100, or 150 Ridge ranks. This
+changes both book size and the score cutoff; it does not randomize stock
+identity. B2's 50/50 cell is infeasible under the frozen sector constraints,
+whereas B3 completes, so that cell is recorded but excluded from paired
+differences.
+
+Across the matched 75/75, 100/100, and 150/150 cells, B3's mean net-Sharpe
+advantage is 0.05–0.08 through 2021 and 0.16–0.29 from 2022 onward. Mean
+executed turnover is 33.7%–34.0% lower in development and 38.4%–42.9% lower
+later. The risk evidence is mixed: later holding-window beta mean absolute
+error is 0.010–0.015 worse for B3 at every matched breadth, while volatility
+calibration and QLIKE improve. The supported claim is therefore that the
+implementation advantage is robust to deterministic breadth, not that every
+risk metric improves.
+
+### Random composition
+
+The stock-identity test first forms the top and bottom 200 Ridge candidates.
+For each of 20 fixed seeds, a persistent BLAKE2 priority based on seed, asset,
+and side selects either 50 or 100 names. The priority persists through time so
+the experiment does not create artificial turnover by redrawing the whole book
+at every rebalance. B2 and B3 receive the same fresh selections. B3 retains a
+100-rank carryover buffer, making these breadth-adjusted variants rather than
+literal reruns of the baseline 75/75, rank-175 book.
+
+Only matched feasible B2/B3 seed pairs enter the paired distributions. The
+reported result must include every terminal failure, the feasible count at each
+breadth, every seed-level point, and the B3-minus-B2 differences in net Sharpe
+and executed turnover. Realised volatility and beta error remain supporting
+acceptance metrics. These seeds are sensitivity draws from one market history,
+not independent return samples.
