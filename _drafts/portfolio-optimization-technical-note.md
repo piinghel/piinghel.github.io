@@ -202,6 +202,18 @@ absolute hedge notional counts toward gross exposure; and hedge returns enter
 both holding-window and trailing 252-day realised beta. A directly tradeable
 proxy is required—the return index cannot be treated as a costless instrument.
 
+If the overlay fails, the next estimator family is exponentially weighted
+daily beta with precision-aware cross-sectional shrinkage. This is a frozen
+direction, not permission for another window search. Hollstein, Prokopczuk,
+and Wese Simen find that daily exponentially weighted estimates and simple
+shrinkage forecast future beta well across a broad US stock universe
+([Journal of Financial Markets, 2019](https://doi.org/10.1016/j.finmar.2019.03.001)).
+The shrinkage step follows the cross-sectional Bayesian logic of
+[Vasicek (1973)](https://doi.org/10.1111/j.1540-6261.1973.tb01452.x).
+[Engle's dynamic-beta framework](https://doi.org/10.2139/ssrn.2404020) is a
+more flexible later alternative, but it also introduces a materially larger
+modeling and validation burden.
+
 ## Complete constraint set
 
 Let $\boldsymbol 1$ be a vector of ones, $\boldsymbol\beta_t$ the estimated
