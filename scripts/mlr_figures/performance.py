@@ -14,6 +14,7 @@ from .support import (
     FigureSpec,
     FigureStyle,
     Series,
+    add_panel_title,
     add_split_marker,
     save_figure,
     style_axis,
@@ -151,10 +152,9 @@ def plot_performance(
         )
     wealth_ax.set_yscale("log")
     panel_title_color = "#000000" if not style.output_suffix else style.ink
-    wealth_ax.set_title(
+    add_panel_title(
+        wealth_ax,
         "Growth of $1 (log scale)",
-        loc="left",
-        pad=9,
         color=panel_title_color,
         fontsize=style.axis_label_size,
     )
@@ -164,10 +164,9 @@ def plot_performance(
     wealth_ax.grid(False, axis="y")
     for value in (1, 2, 3, 4, 6, 8):
         wealth_ax.axhline(value, color=style.grid, linewidth=0.8, zorder=0)
-    drawdown_ax.set_title(
+    add_panel_title(
+        drawdown_ax,
         "Drawdown (%)",
-        loc="left",
-        pad=9,
         color=panel_title_color,
         fontsize=style.axis_label_size,
     )

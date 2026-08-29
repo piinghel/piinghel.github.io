@@ -42,7 +42,8 @@ signal and execution date move. That small shift changes which predictions are
 available at the rebalance and, sometimes, which stocks enter the book.
 
 The archive retains the schedule grid and summary results, but not enough daily
-detail to reproduce them. I therefore use the evidence descriptively. The axes
+detail to reproduce them. I therefore use the evidence descriptively. Figure 1
+plots all 15 full-rebalance wealth paths on a common logarithmic scale. The axes
 suggest a sample of roughly 1999–2025; the exact endpoints were not retained.
 
 <div class="research-figure rebalancing-figure">
@@ -51,7 +52,7 @@ suggest a sample of roughly 1999–2025; the exact endpoints were not retained.
 
 <p class="figure-caption"><strong>Figure 1:</strong> Cumulative wealth for 15 full-rebalance schedules; highest and lowest terminal paths highlighted ex post; log scale, start = 1.</p>
 
-The paths part gradually, as small differences in signal dates and holdings
+The paths in Figure 1 part gradually, as small differences in signal dates and holdings
 compound into a large gap in terminal wealth. This is evidence of schedule
 sensitivity. Because the best and worst lines were labelled after the full
 sample was known, their order says nothing about a persistent weekday edge.
@@ -75,7 +76,7 @@ sample was known, their order says nothing about a persistent weekday edge.
 
 <p class="table-caption"><strong>Table 1:</strong> Dispersion across the 15 full-rebalance schedules.</p>
 
-Annualized geometric return differs by 2.43 percentage points between the best
+Table 1 quantifies that visual spread. Annualized geometric return differs by 2.43 percentage points between the best
 and worst schedules; the Sharpe ratio ranges from 1.50 to 1.75, and time
 underwater from 248 to 593 days. A single backtest would hide all of that behind
 one arbitrary calendar choice. The differences are large enough to matter.
@@ -100,6 +101,9 @@ portfolios, one for each weekday.
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Cumulative wealth for five three-tranche weekday portfolios; log scale, start = 1.</p>
+
+Table 2 reports the return, risk, drawdown, and underwater duration behind the
+five paths in Figure 2.
 
 <table class="research-table comparison-table rebalancing-results-table">
   <thead>

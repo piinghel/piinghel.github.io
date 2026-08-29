@@ -1068,6 +1068,10 @@ html[data-theme="dark"] {
   overflow: visible;
 }
 
+.walk-forward-mobile {
+  display: none;
+}
+
 .walk-forward-hand {
   fill: currentColor;
   font-family: "Permanent Marker", cursive;
@@ -1144,6 +1148,10 @@ html[data-theme="dark"] {
   overflow: visible;
 }
 
+.signal-flow-mobile {
+  display: none;
+}
+
 .signal-flow-hand {
   fill: currentColor;
   font-family: "Permanent Marker", cursive;
@@ -1216,6 +1224,61 @@ html[data-theme="dark"] {
   margin-bottom: 0.8rem;
   margin-left: 0;
   transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+  .post-content .research-figure.signal-flow-figure,
+  .post-content .research-figure.walk-forward-figure {
+    position: static;
+    left: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+    overflow-x: auto;
+    transform: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .signal-flow-desktop {
+    display: none;
+  }
+
+  .signal-flow-mobile {
+    display: block;
+  }
+
+  .signal-flow-mobile .signal-flow-title {
+    font-size: 17px;
+  }
+
+  .signal-flow-mobile .signal-flow-label {
+    font-size: 13px;
+  }
+
+  .walk-forward-desktop {
+    display: none;
+  }
+
+  .walk-forward-mobile {
+    display: block;
+  }
+
+  .walk-forward-mobile .walk-forward-fit {
+    font-size: 17px;
+  }
+
+  .walk-forward-mobile .walk-forward-time {
+    font-size: 14px;
+  }
+
+  .walk-forward-mobile .walk-forward-legend-label {
+    font-size: 14px;
+  }
+
+  .walk-forward-test-mobile {
+    fill: url(#walk-forward-hatch-mobile);
+  }
 }
 
 // Editorial typography and home-page rhythm. The structure stays minimal;

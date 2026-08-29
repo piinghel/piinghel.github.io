@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="790" viewBox="0 0 1200 790" role="img" aria-labelledby="title desc">
 <title id="title">Portfolio breadth robustness</title>
-<desc id="desc">Two grouped-bar panels compare actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from fifty to one hundred fifty names per side before and after 2022. At fifty names, B1 was not run and B2 was infeasible.</desc>
+<desc id="desc">Two grouped-bar panels compare actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from fifty to one hundred fifty names per side before and after 2022. B2's fifty-name cells are marked as failed portfolio formation.</desc>
 <g font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
 <rect x="115" y="16" width="20" height="14" rx="2" fill="#98A2B3"/>
 <text x="146.0" y="29.0" fill="#172033" font-size="14" font-weight="600" text-anchor="start">B1 signal-weighted baseline</text>
@@ -8,7 +8,7 @@
 <text x="506.0" y="29.0" fill="#172033" font-size="14" font-weight="600" text-anchor="start">B2 fresh-book optimizer</text>
 <rect x="790" y="16" width="20" height="14" rx="2" fill="#D97706"/>
 <text x="821.0" y="29.0" fill="#172033" font-size="14" font-weight="600" text-anchor="start">B3 transition-aware optimizer</text>
-<text x="600.0" y="56.0" fill="#172033" font-size="14" font-weight="600" text-anchor="middle">50 names: B1 not run · B2 infeasible under sector bounds</text>
+<text x="600.0" y="56.0" fill="#172033" font-size="14" font-weight="600" text-anchor="middle">× = B2 failed to form the required two-sided 50-name book</text>
 <text x="330.0" y="84.0" fill="#172033" font-size="19" font-weight="650" text-anchor="middle">Development through 2021</text>
 <text x="870.0" y="84.0" fill="#172033" font-size="19" font-weight="650" text-anchor="middle">Later period: 2022-May 2026</text>
 <text x="95.0" y="120.0" fill="#172033" font-size="19" font-weight="650" text-anchor="start">Net Sharpe</text>
@@ -21,6 +21,9 @@
 <line x1="95.0" y1="153.1" x2="1125.0" y2="153.1" stroke="#D9DEE8" stroke-width="1"/>
 <text x="83.0" y="158.1" fill="#667085" font-size="13" font-weight="400" text-anchor="end">1.5</text>
 <text x="150.0" y="375.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">50</text>
+<rect x="111.5" y="201.2" width="23.0" height="148.8" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
+<line x1="144.0" y1="335.0" x2="156.0" y2="347.0" stroke="#2563EB" stroke-width="2.2"/>
+<line x1="144.0" y1="347.0" x2="156.0" y2="335.0" stroke="#2563EB" stroke-width="2.2"/>
 <rect x="165.5" y="166.7" width="23.0" height="183.3" rx="2" fill="#D97706" fill-opacity="0.90"/>
 <text x="270.0" y="375.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">75</text>
 <rect x="231.5" y="203.0" width="23.0" height="147.0" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
@@ -35,6 +38,9 @@
 <rect x="498.5" y="178.9" width="23.0" height="171.1" rx="2" fill="#2563EB" fill-opacity="0.90"/>
 <rect x="525.5" y="172.4" width="23.0" height="177.6" rx="2" fill="#D97706" fill-opacity="0.90"/>
 <text x="690.0" y="375.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">50</text>
+<rect x="651.5" y="253.8" width="23.0" height="96.2" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
+<line x1="684.0" y1="335.0" x2="696.0" y2="347.0" stroke="#2563EB" stroke-width="2.2"/>
+<line x1="684.0" y1="347.0" x2="696.0" y2="335.0" stroke="#2563EB" stroke-width="2.2"/>
 <rect x="705.5" y="224.9" width="23.0" height="125.1" rx="2" fill="#D97706" fill-opacity="0.90"/>
 <text x="810.0" y="375.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">75</text>
 <rect x="771.5" y="247.2" width="23.0" height="102.8" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
@@ -58,6 +64,9 @@
 <line x1="95.0" y1="520.0" x2="1125.0" y2="520.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="83.0" y="525.0" fill="#667085" font-size="13" font-weight="400" text-anchor="end">40</text>
 <text x="150.0" y="713.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">50</text>
+<rect x="111.5" y="558.1" width="23.0" height="129.9" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
+<line x1="144.0" y1="673.0" x2="156.0" y2="685.0" stroke="#2563EB" stroke-width="2.2"/>
+<line x1="144.0" y1="685.0" x2="156.0" y2="673.0" stroke="#2563EB" stroke-width="2.2"/>
 <rect x="165.5" y="576.8" width="23.0" height="111.2" rx="2" fill="#D97706" fill-opacity="0.90"/>
 <text x="270.0" y="713.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">75</text>
 <rect x="231.5" y="560.9" width="23.0" height="127.1" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
@@ -72,6 +81,9 @@
 <rect x="498.5" y="501.1" width="23.0" height="186.9" rx="2" fill="#2563EB" fill-opacity="0.90"/>
 <rect x="525.5" y="564.7" width="23.0" height="123.3" rx="2" fill="#D97706" fill-opacity="0.90"/>
 <text x="690.0" y="713.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">50</text>
+<rect x="651.5" y="563.8" width="23.0" height="124.2" rx="2" fill="#98A2B3" fill-opacity="0.90"/>
+<line x1="684.0" y1="673.0" x2="696.0" y2="685.0" stroke="#2563EB" stroke-width="2.2"/>
+<line x1="684.0" y1="685.0" x2="696.0" y2="673.0" stroke="#2563EB" stroke-width="2.2"/>
 <rect x="705.5" y="594.8" width="23.0" height="93.2" rx="2" fill="#D97706" fill-opacity="0.90"/>
 <text x="810.0" y="713.0" fill="#667085" font-size="13" font-weight="400" text-anchor="middle">75</text>
 <rect x="771.5" y="568.9" width="23.0" height="119.1" rx="2" fill="#98A2B3" fill-opacity="0.90"/>

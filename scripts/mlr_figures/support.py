@@ -247,6 +247,30 @@ def style_axis(
     ax.set_axisbelow(True)
 
 
+def add_panel_title(
+    ax: plt.Axes,
+    label: str,
+    *,
+    color: str,
+    fontsize: float,
+    clearance_points: float = 7.0,
+) -> None:
+    """Place a panel label a fixed distance above its plotting area."""
+
+    ax.annotate(
+        label,
+        xy=(0.0, 1.0),
+        xycoords="axes fraction",
+        xytext=(0.0, clearance_points),
+        textcoords="offset points",
+        ha="left",
+        va="bottom",
+        color=color,
+        fontsize=fontsize,
+        annotation_clip=False,
+    )
+
+
 def add_split_marker(
     ax: plt.Axes,
     style: FigureStyle,

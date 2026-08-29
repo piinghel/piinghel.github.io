@@ -2,7 +2,7 @@
 layout: post
 title: "The Low-Volatility Factor: Why Position Sizing Matters"
 date: 2024-12-15
-last_modified_at: 2026-08-28
+last_modified_at: 2026-08-30
 show_date: false
 categories: ["Low volatility"]
 article_label: Low-volatility · portfolio construction
@@ -44,6 +44,9 @@ Both portfolios use point-in-time Russell 1000 membership and daily prices from
 July 1995 through 27 May 2026. A stock must trade above \$5 on an unadjusted
 basis and have enough history to estimate the selection signal, sizing
 volatility, and beta.
+Adjusted-price changes form the volatility signals, vendor total returns
+(including distributions) drive portfolio profit and loss, and the unadjusted
+close is used only for the \$5 eligibility screen.
 Requiring a beta estimate keeps the later beta comparison on the same set of
 stocks; beta does not enter the ranking or sizing rule. Each rebalance retains
 857–1,015 stocks, with a median of 973.
@@ -90,8 +93,10 @@ their position sizes.
 ## Equal weights leave the short book in control
 
 With the stocks fixed, equal weighting is the simplest place to start. The
-reference portfolio gives every stock the same dollar weight, but equal capital
-does not produce equal risk. The high-volatility short book has 37.9% realised
+reference portfolio gives every stock the same dollar weight and normalizes
+each book to 100% of capital: 100% long plus 100% short, or 200% gross exposure
+and zero net exposure. Equal capital does not produce equal risk. The
+high-volatility short book has 37.9% realised
 volatility; the low-volatility long book has 11.9%.
 
 Beta measures how strongly a stock tends to move with the market. A beta near 1
@@ -174,6 +179,23 @@ Net exposure does not tell us how the portfolio moves with the market. Beta
 does. Portfolio beta weights each stock's beta by its position, with negative
 weights for short positions.
 
+Relative to daily Russell 1000 returns, I estimate stock beta as
+
+$$
+\widehat{\beta}_{i,t}
+=
+\frac{\widehat{\operatorname{Cov}}_{252}
+\!\left(r_{i},r_m\right)}
+{\widehat{\operatorname{Var}}_{252}\!\left(r_m\right)},
+\qquad
+\widehat{\beta}_{p,t}=\sum_i w_{i,t}\widehat{\beta}_{i,t}.
+$$
+
+The rolling estimate requires at least 126 observations and is clipped to
+$$[-4,4]$$ before aggregation. The darker realised series below applies the
+same covariance-to-variance definition to gross portfolio and market returns
+over a trailing 252-day window, again requiring at least 126 observations.
+
 The short book uses less capital, but its stocks have much higher betas. Their
 market sensitivity offsets most of the larger long book's beta. The full-sample
 average beta estimated from the holdings is −0.014, and realised beta is −0.001.
@@ -184,13 +206,19 @@ negative, market beta. Targeting beta would require a separate constraint or an
 index-futures overlay.
 
 Estimated and realised beta both move over time (Figure 4), but their full-sample
-averages remain close to zero.
+averages remain close to zero. The muted dashed line is the holdings-based
+estimate available at the time; the darker solid line is beta realised over the
+trailing 252 trading days.
 
 <div class="low-vol-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realised beta of the volatility-scaled portfolio" version="12" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/beta_diagnostic" alt="Estimated and rolling realised beta of the volatility-scaled portfolio" version="13" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Estimated and rolling realised beta of the volatility-scaled portfolio.</p>
+
+The slower realised series sometimes lags the holdings-based estimate, but
+neither path stays fixed near zero. Stock-level volatility sizing therefore
+balances the two books without imposing a beta target.
 
 ## The scaled portfolio takes less risk and compounds better
 
@@ -287,7 +315,14 @@ that come with each sizing rule.
 
 <p class="table-caption"><strong>Table 2:</strong> Full-sample exposure and turnover.</p>
 
-The scaled portfolio earns a 7.1% arithmetic return after costs with 9.8%
+Table 2 makes the construction change concrete: scaling cuts gross exposure
+from 200% to 131%, moves net exposure from zero to +63%, shifts realised beta
+from −1.12 to approximately zero, and lowers annualised turnover from 14.4× to
+10.4× equity. The performance gap therefore belongs to the complete sizing
+rule, not to one isolated exposure change.
+
+Table 1 shows that the scaled portfolio earns a 7.1% arithmetic return after
+costs with 9.8%
 volatility. The equal-weight portfolio earns 2.4% with 33.4% volatility. Sharpe
 therefore rises from 0.07 to 0.73, while maximum drawdown falls from 87.1% to
 38.0%.
@@ -359,10 +394,11 @@ comparable with the dot-com reversal.
 
 ## Inverse-volatility sizing fixes the first problem
 
-Equal weighting is not a sensible way to build this portfolio. It gives the
+In this backtest, equal weighting is not a sensible way to build this
+portfolio. It gives the
 volatile short book most of the risk and produces much worse compounding and
 drawdowns, even though the stock selection is unchanged. I would replace it
-with inverse-volatility sizing.
+with inverse-volatility sizing as the next baseline, not as a final allocator.
 
 That decision solves only the first construction problem. The scaled portfolio
 still leaves gross exposure, net exposure, beta, correlations, and the risk of

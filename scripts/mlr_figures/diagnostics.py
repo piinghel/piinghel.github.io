@@ -17,6 +17,7 @@ from .support import (
     FigureSpec,
     FigureStyle,
     Series,
+    add_panel_title,
     save_figure,
     style_axis,
 )
@@ -311,17 +312,16 @@ def plot_portfolio_exposures(
     ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
     ax.xaxis.set_major_locator(mdates.YearLocator(4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    ax.set_title(
-        "Floating portfolio exposure (%)",
-        loc="left",
-        pad=8,
+    add_panel_title(
+        ax,
+        "Portfolio weight",
         color=style.ink,
         fontsize=style.axis_label_size,
     )
     style_axis(ax, style)
     ax.legend(
         loc="lower left",
-        bbox_to_anchor=(0.0, 1.20),
+        bbox_to_anchor=(0.0, 1.24),
         ncol=3,
         frameon=False,
         borderaxespad=0,
@@ -333,7 +333,7 @@ def plot_portfolio_exposures(
     fig.subplots_adjust(
         left=0.105,
         right=0.98,
-        top=0.76,
+        top=0.74,
         bottom=0.18,
     )
     save_figure(fig, output_dir, "portfolio-exposures", style)

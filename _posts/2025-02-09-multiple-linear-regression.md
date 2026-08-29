@@ -2,7 +2,7 @@
 layout: post
 title: "How to Combine Stock Signals with Multiple Linear and Ridge Regression"
 date: 2025-02-09
-last_modified_at: 2026-08-28
+last_modified_at: 2026-08-30
 categories: ["Regression"]
 article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -31,6 +31,15 @@ target, universe, and portfolio rules fixed, isolating the effect of
 regularisation. All three rankings then pass through the same position sizing,
 execution, and cost rules.
 
+The underlying panel uses point-in-time Russell 1000 membership and daily U.S.
+equity data from 3 January 1995 through 27 May 2026; the first mechanical
+walk-forward portfolios begin in September 1998 after the required training
+history. Every portfolio applies the same price, merger-target, duplicate-share-
+class, sizing, and execution rules. OLS and Ridge also use exactly the same
+eligible stock-date rows. The fixed score can differ because its five themes
+require their own complete input histories, so the fixed-versus-OLS comparison
+is a comparison of complete specifications, not weights alone.
+
 ## A fixed score is the simplest way to combine signals
 
 Fixed weights provide a useful baseline because every preference is visible. I
@@ -43,7 +52,8 @@ defensive theme pairs recent volatility with the average of the three largest
 daily gains over the latest month. The intention is to favour a calm return path
 rather than one propped up by a few sharp jumps. Momentum looks for a trend that
 has persisted beyond the latest short-term move. The remaining themes favour
-lower short positioning, larger companies, and steadier day-to-day returns.
+lower short positioning, larger companies, and a higher share of positive-
+return days.
 
 Let $$P_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ denote stock $$i$$'s
 within-date percentile rank, where $$N_t$$ is the number of available stocks for
@@ -81,6 +91,13 @@ X_{\mathrm{def},i,t}
 +X_{\mathrm{cons},i,t}
 \right).
 $$
+
+Here $$\sigma_{i,t}^{(h)}$$ is annualised volatility over the latest $$h$$
+sessions, and $$R_{i,t}^{(h,\,\mathrm{skip}\ 21)}$$ is the stock's $$h$$-session
+return ending 21 sessions before date $$t$$. $$SI$$ is reported shares sold
+short, lagged 21 sessions; $$ADV^{(63)}$$ is average daily share volume over 63
+sessions; and $$MC$$ is market capitalisation. The indicator in
+$$X_{\mathrm{cons}}$$ equals one on a negative-return day.
 
 The defensive score combines low volatility with avoidance of unusually large
 up days; its two components therefore contribute 10% each to the final score.
@@ -148,6 +165,23 @@ each date and sector. This is a forward, Sharpe-like ranking target, not the
 portfolio's Sharpe ratio. A raw-return target would express a different
 preference and could produce a riskier learned score.
 
+Writing the next 20 daily returns as $$r_{i,t+s}$$, the raw outcome and the
+model target are
+
+$$
+q_{i,t}
+=\sqrt{252}\,
+\frac{\frac1{20}\sum_{s=1}^{20}r_{i,t+s}}
+{\operatorname{sd}(r_{i,t+1},\ldots,r_{i,t+20})},
+\qquad
+y_{i,t}
+=2\frac{\operatorname{rank}_{t,\,\mathrm{sector}}(q_{i,t})}
+{K_{t,\,\mathrm{sector}}}-1.
+$$
+
+Thus $$y_{i,t}\in[-1,1]$$ is the within-date, within-sector rank of the forward
+outcome; $$K_{t,\,\mathrm{sector}}$$ is that group's largest dense rank.
+
 Predictor ranks retain cross-sector information, while the target asks which
 stocks subsequently did better than their sector peers. This reduces broad
 sector movement in the outcome the model is trying to learn. Portfolio
@@ -191,6 +225,11 @@ form the initial training sample, a 21-day gap separates training outcomes from
 the next prediction block, and the fitted model then scores 600 new dates. I
 repeat that process 12 times and average three date-thinned fits at each step to
 reduce the dependence created by overlapping monthly outcomes.
+
+For each fold, the training dates are sorted and split into three phases: the
+first model keeps dates 1, 4, 7, and so on; the second keeps dates 2, 5, 8; and
+the third keeps dates 3, 6, 9. Each model predicts the entire next block, and I
+average the three predictions—not their coefficients—before ranking stocks.
 
 <div class="research-figure walk-forward-figure">
   {%- include walk-forward-figure.html -%}
@@ -246,6 +285,11 @@ walk-forward procedure, portfolio construction, and 5 bp cost assumption. The gr
 $$c\in\{0,0.001,0.01,0.1\}$$ uses data through 2021. I prefer a gentle penalty
 that improves coefficient stability without depending on a large change in the
 portfolio results.
+
+That choice is judgemental: I did not predeclare a numerical acceptance
+threshold. The development-period rule was to select the smallest tested
+penalty that materially reduced coefficient size and refit movement while
+leaving the portfolio evidence close to OLS.
 
 Table 1 gives the first test of the penalty choice. It compares portfolio return
 and risk across the matched OLS–Ridge grid, before and after the same trading-cost
@@ -322,7 +366,9 @@ interpretation remains at the predictor-family level.
 Table 2 moves from coefficient behaviour to portfolio consequences. It compares
 the first mechanical walk-forward predictions in 1998 through the end of the
 2021 development period. The fixed benchmark uses its smaller hand-built signal
-set, while OLS and Ridge share the same 144 predictors.
+set, while OLS and Ridge share the same 144 predictors and eligible rows. The
+fixed score applies the same trading screens but can retain a different set of
+stock-date rows because its required input histories differ.
 
 | Development metric | Fixed | OLS | Ridge $c=0.01$ |
 | --- | ---: | ---: | ---: |
@@ -332,7 +378,7 @@ set, while OLS and Ridge share the same 144 predictors.
 | Sharpe ratio | 0.71 | 0.98 | 1.00 |
 | Maximum drawdown | −31.55% | −18.77% | −19.03% |
 | Market beta | 0.093 | 0.084 | 0.091 |
-| Turnover per rebalance | 78.78% | 167.67% | 165.72% |
+| Two-way turnover per rebalance | 78.78% | 167.67% | 165.72% |
 | Annual trading cost | 0.69 pp | 1.46 pp | 1.44 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
@@ -364,7 +410,7 @@ market regimes to settle long-run performance.
 | Sharpe ratio | 0.64 | 0.87 | 0.82 |
 | Maximum drawdown | −10.98% | −7.59% | −8.05% |
 | Market beta | 0.036 | 0.075 | 0.078 |
-| Turnover per rebalance | 69.70% | 152.75% | 149.61% |
+| Two-way turnover per rebalance | 69.70% | 152.75% | 149.61% |
 | Annual trading cost | 0.61 pp | 1.34 pp | 1.31 pp |
 {: .research-table .comparison-table .period-metrics-table }
 
@@ -473,7 +519,7 @@ drawdowns hidden by the period averages. The vertical rule separates the
 development period from the later diagnostic period.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="12" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and selected Ridge with development and later periods separated" version="13" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 6:</strong> Net cumulative performance and drawdowns for the three ranking systems after charging 5 bp per dollar traded. The upper panel uses a logarithmic wealth scale; the rule separates development from the later period.</p>
@@ -512,7 +558,7 @@ gross, and their difference, the net stock exposure. A positive net line means
 more capital is invested long than short.
 
 <div class="research-figure portfolio-exposure-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="15" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/portfolio-exposures" alt="Monthly long gross, short gross, and net stock exposure of the selected Ridge portfolio" version="16" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 8:</strong> Monthly average floating exposures for the selected Ridge portfolio.</p>

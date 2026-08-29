@@ -2,7 +2,7 @@
 layout: post
 title: "From Signal Weighting to Transition-Aware Portfolio Optimization"
 date: 2026-08-29
-last_modified_at: 2026-08-29
+last_modified_at: 2026-08-30
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -47,6 +47,24 @@ and report their mean; I do not compute the headline metrics from a blended
 return stream. Net performance charges 5 basis points for every dollar bought
 or sold. The [tranching study](/quants/2025/05/10/rebalancing-luck.html)
 explains why all three starting schedules matter.
+
+For a schedule with $$T$$ daily returns, annualized geometric return and net
+Sharpe are
+
+$$
+g=\left[\prod_{t=1}^{T}(1+r_t)\right]^{252/T}-1,
+\qquad
+\operatorname{SR}_{\mathrm{net}}
+=\sqrt{252}\,\frac{\overline r_{\mathrm{net}}}
+{\operatorname{sd}(r_{\mathrm{net}})},
+$$
+
+using a zero risk-free rate. If $$\Delta w_t$$ is the executed weight change,
+daily net return is $$r_{\mathrm{net},t}=r_{\mathrm{gross},t}
+-0.0005\lVert\Delta w_t\rVert_1$$, and annualized two-way turnover is
+$$Y^{-1}\sum_t\lVert\Delta w_t\rVert_1$$, where $$Y$$ is the elapsed number of
+calendar years. Thus 42.08× means that purchases plus sales total about 42.08
+times portfolio capital per year.
 
 Results through 2021 form the development period. January 2022 through May 2026
 is a pseudo-holdout: it was separated in advance, but later research decisions
@@ -215,10 +233,29 @@ r_{\mathrm{fill}}, & \text{otherwise}.
 \end{cases}
 $$
 
-The completed matrix is then symmetrized, made positive semidefinite, and
-rescaled to a unit diagonal, producing the valid correlation matrix
-\\(\widetilde{R}_t\\). This repair matters because pairwise estimates based on
-different overlapping histories need not jointly form a valid correlation
+The completed matrix is then symmetrized. Write
+
+$$
+R_t^{\mathrm{sym}}
+=\tfrac12\left(R_t^{\mathrm{fill}}+(R_t^{\mathrm{fill}})^\top\right)
+=Q_t\operatorname{diag}(\lambda_{1,t},\ldots,\lambda_{n_t,t})Q_t^\top,
+$$
+
+set $$\lambda_{k,t}^{+}=\max(\lambda_{k,t},0)$$, and define
+
+$$
+P_t=Q_t\operatorname{diag}(\lambda_{1,t}^{+},\ldots,\lambda_{n_t,t}^{+})Q_t^\top,
+\qquad
+S_t=\operatorname{diag}\!\left(\sqrt{P_{11,t}},\ldots,\sqrt{P_{n_tn_t,t}}\right),
+$$
+
+$$
+\widetilde R_t=S_t^{-1}P_tS_t^{-1}.
+$$
+
+This clips negative eigenvalues to make the matrix positive semidefinite, then
+restores a unit diagonal. The repair matters because pairwise estimates based
+on different overlapping histories need not jointly form a valid correlation
 matrix.
 
 The empirical matrix is still noisy, so I shrink it toward the identity:
@@ -436,7 +473,7 @@ when those differences accumulated and how much capital each path lost from its
 previous peak.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Net growth of one dollar on a logarithmic scale and transparent drawdown areas for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer, with the later period beginning in 2022" version="6" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Net growth of one dollar on a logarithmic scale and transparent drawdown areas for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer, with the later period beginning in 2022" version="7" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Net cumulative wealth and drawdown for the average of the three rebalance-schedule wealth paths after trading costs, 22 September 1998–27 May 2026. The vertical rule marks January 2022, the start of the later pseudo-holdout. The average path supplies context; Table 2's headline estimates remain means of schedule-level metrics.</p>
@@ -485,6 +522,11 @@ identity. Figure 2 varies shrinkage from zero to full identity while keeping the
 Ridge forecasts, selected stocks, constraints, costs, and execution fixed. If
 the result disappears outside one exact setting, it is too fragile to trust.
 
+In Figure 2, risk calibration is root-mean-square realised holding-window
+volatility divided by root-mean-square predicted volatility, so one is ideal;
+beta error is the mean absolute difference between predicted and realised
+holding-window beta, so lower is better.
+
 <div class="research-figure rho-ladder-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Risk calibration, beta error, turnover, and mean schedule-level net Sharpe for the fresh-book and transition-aware optimizers across covariance-shrinkage values from zero to one" version="4" %}
 </div>
@@ -514,21 +556,23 @@ carryover limits of 150, 175, 200, and 250. Figure 3 reports the actual Sharpe
 and turnover levels of each allocator rather than plotting their differences.
 
 <div class="research-figure deterministic-breadth-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/deterministic-breadth" alt="Grouped bars comparing actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from 50 to 150 selected names per side before and after 2022; at 50 names B1 was not run and B2 was infeasible" version="5" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/deterministic-breadth" alt="Grouped bars comparing actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from 50 to 150 selected names per side before and after 2022; B2 failed to form the required two-sided 50-name book" version="6" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Mean net Sharpe and annualized executed turnover across the three full-capital schedules. At 50/50, B3 is shown, B1 was not run, and B2 is infeasible under the frozen sector constraints. The 75/75, 100/100, and 150/150 books provide matched comparisons across all three allocators.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Mean net Sharpe and annualized executed turnover across the three full-capital schedules. At 50/50, B1 and B3 are shown; B2 failed to form the required two-sided long–short book because its selected short tail contained only three sectors under a 30% per-sector cap. The zero portfolio is mathematically feasible but is not a usable 50/50 book. The 75/75, 100/100, and 150/150 books provide matched comparisons across all three allocators.</p>
 
-At 50 names per side, the unpaired B3 book earns a mean net Sharpe of 1.40
-before 2022 and 0.95 afterward, with annualized turnover of 26.47× and 22.18×.
-Those values are useful evidence about B3, but the absent B1 run and infeasible
-B2 solve mean they are not a comparative result.
+At 50 names per side, B1 earns mean net Sharpe of 1.13 before 2022 and 0.73
+afterward, with annualized turnover of 30.93× and 29.57×. B3 records 1.40 and
+0.95 Sharpe with turnover of 26.47× and 22.18×. This is a valid B1–B3
+comparison, but not a matched optimizer comparison because B2 did not form the
+required two-sided long–short book.
 
-Across the matched breadths, the upper panel shows that B3 has the highest net
-Sharpe. Before 2022, B1 declines from 1.12 to 1.07 as the book widens, B2 from
-1.35 to 1.30, and B3 from 1.43 to 1.35. Later, B1 stays near 0.78–0.80, B2 falls
-from 0.71 to 0.64, and B3 ranges from 0.87 to 0.93. The ordering is therefore
-not an artefact of comparing B2 and B3 alone.
+The upper panel shows B3 with the highest net Sharpe at every displayed
+breadth. Before 2022, B1 moves from 1.13 at 50 names to 1.07 at 150, B2 moves
+from 1.35 to 1.30 across its matched 75–150 range, and B3 stays between 1.35 and
+1.43. Later, B1 rises from 0.73 at 50 to roughly 0.78–0.80 at the wider books,
+B2 falls from 0.71 to 0.64, and B3 ranges from 0.87 to 0.95. The ordering is
+therefore not an artefact of comparing B2 and B3 alone.
 
 Gross and net returns tell the same economic story. At 75 names, B3 earns
 13.91% gross and 12.32% net before 2022, versus 10.58% and 8.92% for B1 and
@@ -536,6 +580,10 @@ Gross and net returns tell the same economic story. At 75 names, B3 earns
 versus 8.96% and 7.47% for B1 and 13.58% and 11.09% for B2. In the later period,
 B3's gross/net return is 9.33%/7.99% at 75 names and 9.76%/8.37% at 150; both
 endpoints remain above B1 and B2 after costs.
+
+The 50-name return levels are also direct rather than differences: B1 earns
+11.33% gross and 9.62% net before 2022, versus 13.48% and 11.99% for B3. Later,
+the corresponding values are 8.85%/7.24% for B1 and 10.04%/8.83% for B3.
 
 The lower panel shows the same comparison in trading rather than performance.
 Transition-aware turnover stays near 28–29× before 2022 and 25× afterward;
@@ -590,13 +638,19 @@ tolerance, and execution drift adds only about 0.001 mean absolute beta. The
 weakness is the beta estimate used to form the stock book, not whether the
 solver obeys it.
 
-A 63-day stock-beta estimate makes the trade-off visible. I selected the
-candidate using forward beta error through 2021, then assessed that frozen
-choice in the later period. It removes the persistent episodes, but from 2022
-onward B3's net return falls from 7.99% to 7.39% and Sharpe from 0.87 to 0.82,
-while turnover barely changes. The altered beta estimate improves exposure by
-changing the stock portfolio, and that change gives up too much performance to
-adopt it.
+A shorter beta estimate makes the trade-off visible. The baseline combines a
+756-day stock–market correlation (minimum 252 observations) with 21-day stock
+and market volatilities (minimum 21). The candidate changes both components to
+63-day windows with a 42-observation minimum and leaves the allocator otherwise
+fixed. I selected it using forward beta error through 2021, then assessed that
+frozen choice in the later period. It removes the persistent episodes, but from
+2022 onward B3's net return falls from 7.99% to 7.39%—a 0.60 percentage-point
+decline against the predeclared 0.50-point tolerance—and Sharpe falls from 0.87
+to 0.82, while turnover barely changes. I therefore reject the candidate.
+
+The separate episode rule—absolute trailing realised beta above 0.20 for at
+least 63 trading sessions—is only a descriptive diagnostic; it is not an
+optimizer parameter.
 
 The cleaner next test is a costed benchmark overlay that leaves the B3 stock
 weights untouched. That separates beta management from stock selection;
@@ -612,6 +666,8 @@ forward as the implementation rule.
 
 I would not treat that allocator as ready for live capital. Rebalance timing
 matters. Volatility is underpredicted, market beta can persist, and the breadth
-test does not vary stock identity at a fixed portfolio size. Better beta control
-without a return penalty remains unproven; the benchmark-overlay experiment is
-the next useful diagnostic, and genuine confirmation still requires new data.
+test does not vary stock identity at a fixed portfolio size. The linear 5 bp
+cost rule also omits market impact and borrow, so the 0.85-point net-return lift
+is not a live-cost estimate. Better beta control without a return penalty
+remains unproven; the benchmark-overlay experiment is the next useful
+diagnostic, and genuine confirmation still requires new data.
