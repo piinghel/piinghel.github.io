@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "From Volatility Scaling to State-Aware Portfolio Optimization"
-last_modified_at: 2026-08-28
+last_modified_at: 2026-08-29
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/portfolio-optimization-preview.html
@@ -227,11 +227,22 @@ optimizer and +0.045 for the state-aware optimizer.
 
 <p class="figure-caption"><strong>Figure 3:</strong> Trailing 252-day realized beta, sampled monthly and averaged across the three staggered schedules. This is a slow outcome measure, not the beta estimate constrained at each rebalance.</p>
 
-The next beta study should compare the current hybrid estimator with a coherent
-252-day estimator and a fixed 252/756-day blend. The choice should be frozen on
-pre-2022 mean absolute beta error and tail error, then evaluated after 2022. A
-shorter window may adapt faster, but it should earn its place through forecast
-calibration rather than a better in-sample Sharpe.
+I tested that mechanism with four point-in-time estimates. A coherent 63-day
+regression was the only alternative that improved both average and tail beta
+error before 2022 and retained the improvement afterward. When imposed inside
+the allocators, it removed every persistent high-beta episode and reduced beta
+error for both optimizers. It did not pass as a common replacement, however.
+For the state-aware optimizer, later net return fell by 0.60 percentage points,
+just beyond the predeclared 0.50-point tolerance, while tail beta error was
+essentially unchanged.
+
+The current estimator therefore remains in the main comparison. This result
+also answers the window question: the 252-day chart does contain substantial
+measurement memory, and the estimator is partly stale, but simply shortening
+the optimizer window shifts the stock portfolio enough to impose a small return
+cost. The next useful test is a minimal benchmark-beta overlay that leaves the
+stock weights unchanged. It belongs in the technical research, not as another
+main-article figure.
 
 ## Conclusion
 
@@ -243,7 +254,7 @@ makes replacing them costly.
 
 That conclusion is narrower than saying the allocator is ready for live use.
 The later-period advantage is sensitive to rebalance timing, realized volatility
-does not stay close to the ex-ante budget, and the current beta estimator has
-weak forward calibration. The next research step is therefore not another
-return-model sweep. It is a predeclared beta-window comparison and continued
-evaluation on genuinely new data.
+does not stay close to the ex-ante budget, and beta control remains imperfect.
+The next research step is therefore not another return-model or window sweep.
+It is a predeclared beta-overlay test that separates exposure management from
+stock selection, followed by evaluation on genuinely new data.

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Technical Note: Portfolio Optimization Implementation"
-last_modified_at: 2026-08-28
+last_modified_at: 2026-08-29
 categories: ["Portfolio construction"]
 article_label: Technical note · Ridge allocation
 permalink: /quants/portfolio-optimization-technical-note.html
@@ -131,10 +131,36 @@ series uses the trailing 252 trading days. The 252-day series is therefore a
 slow outcome measure rather than a direct validation of the point-in-time
 constraint.
 
-The predeclared next study compares the current hybrid estimate with a coherent
-252-day estimator and a fixed 252/756-day blend. The specification will be
-selected on pre-2022 mean absolute beta error and tail error, then evaluated on
-the later period; portfolio Sharpe will not select the beta window.
+The predeclared comparison evaluated the current hybrid against coherent 63-day
+and 252-day regression betas and a fixed equal blend of coherent 252-day and
+756-day estimates. Selection used pre-2022 mean absolute 21-day beta error and
+its 90th percentile, with the later period reserved for the frozen comparison.
+Portfolio Sharpe did not select the estimator.
+
+The coherent 63-day estimate was the only candidate that improved both
+development metrics and retained the improvement later for both allocators. In
+the combined fixed-book diagnostic, later mean absolute error fell from 0.153
+to 0.143 and 90th-percentile error from 0.329 to 0.301. Matching the 252-day
+outcome window was not the solution: both the coherent 252-day estimate and the
+252/756 blend deteriorated in the later period.
+
+The 63-day implementation was then rerun inside matched B2 and B3 allocators.
+For B2, later holding-window beta error fell from 0.1760 to 0.1592 and all four
+persistent episodes disappeared. For B3, error fell from 0.1788 to 0.1647 and
+its persistent episodes also disappeared. B3 nevertheless missed two frozen
+gates: 90th-percentile error moved from 0.38557 to 0.38596, and later net return
+fell from 7.99% to 7.39%, beyond the 0.50-percentage-point tolerance. A universal
+63-day replacement was therefore rejected; using different beta estimators for
+B2 and B3 after seeing the results would add an unplanned degree of freedom.
+
+The next beta-management experiment will keep the stock book fixed. At each
+existing rebalance, the coherent 63-day estimate will size only enough opposite
+benchmark exposure to bring forecast beta to the nearest edge of the current
+±0.05 band. This tests whether the exposure improvement can be retained without
+paying the opportunity cost of changing individual stocks. Hedge turnover,
+cost, gross exposure, beta error, persistent episodes, return, and Sharpe must
+all be reported; the result will remain exploratory because the later period
+has already informed its design.
 
 ## Complete constraint set
 
