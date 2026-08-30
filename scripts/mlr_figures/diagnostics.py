@@ -23,6 +23,118 @@ from .support import (
 )
 
 
+def plot_factor_correlation(
+    rows: list[dict[str, str]],
+    output_dir: Path,
+    style: FigureStyle,
+) -> None:
+    """Plot the distinct pairwise correlations among the five final factors."""
+
+    factor_order = (
+        "defensive",
+        "momentum",
+        "short_positioning",
+        "size",
+        "return_consistency",
+    )
+    factor_labels = {
+        "defensive": "Defensive",
+        "momentum": "Momentum",
+        "short_positioning": "Short\npositioning",
+        "size": "Size",
+        "return_consistency": "Return\nconsistency",
+    }
+    lookup = {row["factor"]: row for row in rows}
+    if set(lookup) != set(factor_order):
+        raise ValueError("correlation matrix must contain the five final factors")
+
+    values = np.full((4, 4), np.nan)
+    for row_index, row_factor in enumerate(factor_order[1:]):
+        for column_index, column_factor in enumerate(factor_order[:-1]):
+            if column_index <= row_index:
+                values[row_index, column_index] = float(
+                    lookup[row_factor][column_factor]
+                )
+
+    color_map = LinearSegmentedColormap.from_list(
+        "factor_correlation", (style.negative, style.white, style.positive)
+    )
+    color_map.set_bad(style.white)
+    norm = TwoSlopeNorm(vmin=-0.3, vcenter=0.0, vmax=0.3)
+    fig, ax = plt.subplots(figsize=(6.8, 4.7), facecolor=style.white)
+    image = ax.imshow(values, cmap=color_map, norm=norm, interpolation="none")
+
+    ax.set_xticks(
+        np.arange(4),
+        [factor_labels[factor] for factor in factor_order[:-1]],
+    )
+    ax.set_yticks(
+        np.arange(4),
+        [factor_labels[factor] for factor in factor_order[1:]],
+    )
+    ax.tick_params(
+        axis="x",
+        which="major",
+        top=True,
+        bottom=False,
+        labeltop=True,
+        labelbottom=False,
+        length=0,
+        pad=8,
+        colors=style.ink,
+        labelsize=style.tick_label_size,
+        labelrotation=30,
+    )
+    for label in ax.get_xticklabels():
+        label.set_horizontalalignment("left")
+        label.set_rotation_mode("anchor")
+    ax.tick_params(
+        axis="y",
+        which="major",
+        length=0,
+        pad=8,
+        colors=style.ink,
+        labelsize=style.tick_label_size,
+    )
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    for row_index in range(4):
+        for column_index in range(row_index + 1):
+            value = values[row_index, column_index]
+            text_color = style.ink
+            if abs(value) >= 0.22:
+                text_color = "#0D1117" if style.output_suffix else "#FFFFFF"
+            ax.text(
+                column_index,
+                row_index,
+                f"{value:.2f}",
+                ha="center",
+                va="center",
+                color=text_color,
+                fontsize=style.annotation_size,
+                fontweight=600,
+            )
+
+    colorbar = fig.colorbar(
+        image,
+        ax=ax,
+        orientation="horizontal",
+        fraction=0.07,
+        pad=0.16,
+        shrink=0.72,
+        ticks=(-0.3, 0.0, 0.3),
+    )
+    colorbar.outline.set_visible(False)
+    colorbar.ax.tick_params(
+        length=0,
+        colors=style.muted,
+        labelsize=style.tick_label_size,
+    )
+    fig.subplots_adjust(left=0.25, right=0.98, top=0.84, bottom=0.18)
+    save_figure(fig, output_dir, "factor-correlation", style)
+
+
 def plot_alpha_sensitivity(
     diagnostics: dict[str, dict[str, str]],
     output_dir: Path,
@@ -387,7 +499,7 @@ def plot_selected_portfolio_tilts(
         values = sorted(grouped[predictor], key=lambda row: row["date"])
         dates = np.array([date.fromisoformat(row["date"]) for row in values])
         tilts = np.array([float(row["quarterly_mean_tilt"]) for row in values])
-        mean = metadata[predictor]["mean"]
+        mean = float(metadata[predictor]["mean"])
         color = style.ridge if mean >= 0 else style.ols
         ax.plot(dates, tilts, color=color, linewidth=1.35 * visual_scale)
         ax.fill_between(dates, 0, tilts, color=color, alpha=0.10)

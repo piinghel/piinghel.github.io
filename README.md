@@ -22,7 +22,16 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   --research-root ../projects/factor_combination
 ```
 
-That command requires the compact MLR figure-source files expected by
+The five-factor correlation map can be regenerated independently from the
+retained development matrix:
+
+```bash
+python3 scripts/render_multiple_linear_regression_figures.py \
+  --research-root ../projects/factor_combination \
+  --factor-correlation-only
+```
+
+The full figure command requires the compact MLR figure-source files expected by
 `render_multiple_linear_regression_figures.py`. They are not present in the
 current local factor-combination folder or its recoverable raw-run archive, so
 the published MLR SVGs remain the retained assets until that source bundle is

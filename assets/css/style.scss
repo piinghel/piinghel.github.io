@@ -83,6 +83,10 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
   width: min(760px, calc(100vw - 2rem));
 }
 
+.post-content .research-figure.factor-correlation-figure {
+  width: min(680px, calc(100vw - 2rem));
+}
+
 .post-content .research-figure.performance-figure {
   width: min(930px, calc(100vw - 2rem));
 }
@@ -127,25 +131,11 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
   margin-bottom: 0.55rem;
 }
 
-.post-content table.factor-correlation-table {
-  font-size: 0.86rem;
-
-  th:first-child {
-    width: 28%;
-  }
-
-  th:not(:first-child),
-  td {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-}
-
 .post-content table.standalone-factor-table {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
 
   th:first-child {
-    width: 21%;
+    width: 68%;
   }
 
   th:not(:first-child),
@@ -262,6 +252,14 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
   .post-content .low-vol-figure picture,
   .post-content .research-figure picture {
     min-width: 760px;
+  }
+
+  .post-content .research-figure.factor-correlation-figure {
+    overflow-x: visible;
+  }
+
+  .post-content .research-figure.factor-correlation-figure picture {
+    min-width: 0;
   }
 
   .post-content .rebalancing-figure img {

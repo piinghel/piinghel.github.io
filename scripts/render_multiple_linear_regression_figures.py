@@ -8,6 +8,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from mlr_figures.diagnostics import (
     plot_alpha_sensitivity,
+    plot_factor_correlation,
     plot_portfolio_exposures,
     plot_selected_coefficients,
     plot_selected_portfolio_tilts,
@@ -46,7 +47,31 @@ def parse_args() -> argparse.Namespace:
         default=default_output_dir(),
         help="Destination for the article SVG files.",
     )
+    parser.add_argument(
+        "--factor-correlation-only",
+        action="store_true",
+        help="Render only the five-factor development correlation map.",
+    )
     return parser.parse_args()
+
+
+def render_factor_correlation(
+    research_root: Path,
+    output_dir: Path,
+    style: FigureStyle,
+) -> None:
+    review_dir = research_root.resolve() / "outputs" / "review"
+    rows = read_rows(review_dir / "five_factor_rank_correlation_matrix_development.csv")
+    with plt.rc_context(
+        {
+            "font.family": "DejaVu Sans",
+            "axes.facecolor": style.white,
+            "savefig.bbox": "tight",
+            "savefig.pad_inches": 0.04,
+            "svg.hashsalt": "multiple-linear-regression",
+        }
+    ):
+        plot_factor_correlation(rows, output_dir.resolve(), style)
 
 
 def render_figures(
@@ -54,6 +79,7 @@ def render_figures(
     output_dir: Path,
     style: FigureStyle,
 ) -> None:
+    render_factor_correlation(research_root, output_dir, style)
     review_dir = research_root.resolve() / "outputs" / "review"
     output_dir = output_dir.resolve()
     spec = default_figure_spec(style)
@@ -112,6 +138,18 @@ def render_figures(
 
 def main() -> None:
     args = parse_args()
+    if args.factor_correlation_only:
+        render_factor_correlation(
+            args.research_root,
+            args.output_dir,
+            FigureStyle(),
+        )
+        render_factor_correlation(
+            args.research_root,
+            args.output_dir,
+            dark_figure_style(),
+        )
+        return
     render_figures(args.research_root, args.output_dir, FigureStyle())
     render_figures(args.research_root, args.output_dir, dark_figure_style())
 
