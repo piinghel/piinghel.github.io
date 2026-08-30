@@ -69760,4 +69760,11 @@ L 609.359756 320.470175
    <rect x="39.958344" y="306.81634" width="598.752" height="133.014706"/>
   </clipPath>
  </defs>
+ <style>
+  #text_7, #text_26 { display: none; }
+ </style>
+ <g id="bold-panel-titles" fill="#000000" font-family="DejaVu Sans, sans-serif" font-size="10.5" font-weight="700">
+  <text x="47" y="-3.3">Growth of $1 (log scale)</text>
+  <text x="47" y="297.8">Drawdown (%)</text>
+ </g>
 </svg>

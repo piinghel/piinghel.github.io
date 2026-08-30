@@ -157,6 +157,7 @@ def plot_performance(
         "Growth of $1 (log scale)",
         color=panel_title_color,
         fontsize=style.axis_label_size,
+        fontweight="bold",
     )
     wealth_ax.yaxis.set_major_locator(FixedLocator([1, 2, 3, 4, 6, 8]))
     wealth_ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
@@ -169,6 +170,7 @@ def plot_performance(
         "Drawdown (%)",
         color=panel_title_color,
         fontsize=style.axis_label_size,
+        fontweight="bold",
     )
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))

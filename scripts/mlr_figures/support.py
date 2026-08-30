@@ -254,6 +254,7 @@ def add_panel_title(
     color: str,
     fontsize: float,
     clearance_points: float = 7.0,
+    fontweight: str = "normal",
 ) -> None:
     """Place a panel label a fixed distance above its plotting area."""
 
@@ -267,6 +268,7 @@ def add_panel_title(
         va="bottom",
         color=color,
         fontsize=fontsize,
+        fontweight=fontweight,
         annotation_clip=False,
     )
 

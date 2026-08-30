@@ -2,7 +2,7 @@
 layout: post
 title: "Reducing Rebalancing Timing Risk with Tranching"
 date: 2025-05-10
-last_modified_at: 2026-08-22
+last_modified_at: 2026-08-30
 categories: ["Rebalancing"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
@@ -42,20 +42,24 @@ signal and execution date move. That small shift changes which predictions are
 available at the rebalance and, sometimes, which stocks enter the book.
 
 The archive retains the schedule grid and summary results, but not enough daily
-detail to reproduce them. I therefore use the evidence descriptively. Figure 1
-plots all 15 full-rebalance wealth paths on a common logarithmic scale. The axes
+detail to reproduce them. Because the daily returns are missing, I use these
+results only to describe the spread across schedules. Figure 1
+plots growth of one dollar for all 15 full-rebalance schedules on a common logarithmic scale. The axes
 suggest a sample of roughly 1999–2025; the exact endpoints were not retained.
 
 <div class="research-figure rebalancing-figure">
-  <img src="/assets/tranching/all_perf_plots.png" alt="Cumulative wealth on a logarithmic scale for fifteen full-rebalance schedules, with two terminal extremes highlighted after the backtest" width="1800" height="1200" loading="lazy" decoding="async">
+  <img src="/assets/tranching/all_perf_plots.png" alt="Growth of one dollar on a logarithmic scale for fifteen full-rebalance schedules, with two terminal extremes highlighted after the backtest" width="1800" height="1200" loading="lazy" decoding="async">
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Cumulative wealth for 15 full-rebalance schedules; highest and lowest terminal paths highlighted ex post; log scale, start = 1.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Growth of <span class="mathjax-ignore">$1</span> for 15 full-rebalance schedules; highest and lowest ending paths highlighted after the backtest; logarithmic scale.</p>
 
 The paths in Figure 1 part gradually, as small differences in signal dates and holdings
-compound into a large gap in terminal wealth. This is evidence of schedule
-sensitivity. Because the best and worst lines were labelled after the full
+compound into a large gap in ending value. The schedule choice clearly matters.
+Because the best and worst lines were labelled after the full
 sample was known, their order says nothing about a persistent weekday edge.
+
+Table 1 turns the visual spread in Figure 1 into exact ranges across the 15
+schedules.
 
 <table class="research-table comparison-table rebalancing-summary-table">
   <thead>
@@ -81,8 +85,7 @@ and worst schedules; the Sharpe ratio ranges from 1.50 to 1.75, and time
 underwater from 248 to 593 days. A single backtest would hide all of that behind
 one arbitrary calendar choice. The differences are large enough to matter.
 Their ex-post ranking has no forecasting value, and the missing cost record
-limits the comparison to timing dispersion before documented implementation
-costs.
+means these results describe timing differences rather than investable returns.
 
 ## Spreading the rebalance across three tranches
 
@@ -93,17 +96,18 @@ been refreshed, but no single day replaces every position at once.
 
 This construction averages across the three starting-week offsets while keeping
 the weekday fixed. A Monday version trades every sleeve on Monday, and the same
-is true for Tuesday through Friday. Figure 2 therefore shows five tranched
-portfolios, one for each weekday.
+is true for Tuesday through Friday. That leaves five tranched portfolios in
+Figure 2, one for each weekday.
 
 <div class="research-figure rebalancing-figure">
-  <img src="/assets/tranching/tranched_perf_plots.png" alt="Cumulative wealth on a logarithmic scale for five three-tranche portfolios, one for each rebalance weekday" width="1800" height="1200" loading="lazy" decoding="async">
+  <img src="/assets/tranching/tranched_perf_plots.png" alt="Growth of one dollar on a logarithmic scale for five three-tranche portfolios, one for each rebalance weekday" width="1800" height="1200" loading="lazy" decoding="async">
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Cumulative wealth for five three-tranche weekday portfolios; log scale, start = 1.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Growth of <span class="mathjax-ignore">$1</span> for five three-tranche weekday portfolios on a logarithmic scale.</p>
 
-Table 2 reports the return, risk, drawdown, and underwater duration behind the
-five paths in Figure 2.
+The five paths in Figure 2 cluster much more tightly than the 15 paths in
+Figure 1. Table 2 reports the return, risk, drawdown, and underwater duration
+behind them, showing how much dispersion remains.
 
 <table class="research-table comparison-table rebalancing-results-table">
   <thead>
@@ -148,15 +152,14 @@ than across weekdays. Two mechanisms could produce the smoother tranched path:
 averaging those offsets, and refreshing one-third of the predictions each week.
 The saved experiment cannot tell them apart.
 
-## Limits of the comparison
+## Three tranches look sufficient, but costs remain unknown
 
 Three tranches directly average the three starting-week offsets. The remaining
 weekday range is small, while more sleeves would mean smaller orders, more
-frequent runs, and more operational state for an uncertain incremental gain.
-Three sleeves are therefore my preferred limit for this test.
-
-My preference is therefore for the complete three-tranche implementation, not a
-claim that timing diversification alone caused the improvement. A cleaner test
+frequent runs, and more operational work for an uncertain incremental gain.
+I would stop at three sleeves. The results favor the full
+three-tranche design, but they cannot tell us how much of the smoother path came
+from spreading the rebalance dates rather than using fresher weekly predictions. A cleaner test
 would hold the prediction vintage fixed while changing only the execution
 schedule, and then test fresher weekly predictions separately.
 
@@ -167,8 +170,8 @@ older detailed table in repository history, and the charts visually agree with
 their dispersion, but the statistics cannot be recomputed from raster images.
 I also cannot recompute turnover, inspect individual trades, or run new tests.
 The results do not document whether costs were included or how they were
-defined. They should therefore be treated as evidence about timing dispersion
-with undocumented cost treatment, not as implementation-grade return estimates.
+defined. The archive is useful for studying timing differences, but it is not
+detailed enough to support a realistic after-cost return estimate.
 
 Costs decide whether the smoother observed path is worth implementing. Smaller
 orders may incur minimum fees and fixed operational overhead; spreading a large
@@ -184,7 +187,7 @@ The experiment changes how I would report a fixed-cycle strategy. One rebalance
 schedule is one draw from a wider set of plausible outcomes, not the backtest.
 The full timing grid makes that uncertainty visible.
 
-The complete three-tranche implementation leaves mean annualized geometric
+Using all three tranches leaves mean annualized geometric
 return almost unchanged, reduces mean volatility by 0.61 percentage points, and lifts the descriptive
 Sharpe from 1.64 to 1.80. It also shows much less dispersion than the 15
 full-rebalance schedules; the remaining variation across weekdays is
@@ -195,8 +198,8 @@ Fresher predictions may share credit for the improvement, and the missing daily
 archive prevents a realistic cost replay. I would freeze the three-sleeve
 design, rebuild the daily evidence, and compare it with a full-rebalance version
 using the same prediction vintages. Turnover, spreads, impact, borrow, and
-operational overhead would then determine whether the observed risk reduction
-survives implementation.
+operational overhead would then determine whether the risk reduction still
+holds after those costs.
 
 ## References
 

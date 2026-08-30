@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Shelf"
+title: "Resources"
 date: 2025-04-20
-last_modified_at: 2026-08-23
+last_modified_at: 2026-08-30
 categories: ["Resources"]
-article_label: Shelf · Research and software
+article_label: Resources · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
 ---
 

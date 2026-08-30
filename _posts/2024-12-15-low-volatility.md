@@ -12,7 +12,7 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> A low-volatility strategy buys the least volatile stocks and shorts the most volatile ones. With equal weights, the volatile short book dominates risk. Holding the stocks fixed, inverse-volatility sizing raises the after-cost arithmetic return from 2.4% to 7.1%, lowers volatility from 33.4% to 9.8%, and reduces the maximum drawdown from 87.1% to 38.0%. Scaling also changes gross, net, and beta exposure, so the comparison supports the complete sizing rule rather than one isolated effect.</p>
+<p class="article-summary"><strong>TL;DR:</strong> A low-volatility strategy buys the least volatile stocks and shorts the most volatile ones. With equal weights, the volatile short book dominates risk. Holding the stocks fixed, inverse-volatility sizing raises the after-cost arithmetic return from 2.4% to 7.1%, lowers volatility from 33.4% to 9.8%, and reduces the maximum drawdown from 87.1% to 38.0%. The full inverse-volatility rule works better here, but the test cannot tell us which of its exposure changes matters most.</p>
 
 The low-volatility effect is an empirical pattern: stocks with smaller price
 swings have often delivered better risk-adjusted returns than stocks with larger
@@ -30,23 +30,23 @@ those stocks fall.
 The ranking says which stocks belong in each book, but not how large their
 positions should be. Giving every stock the same dollar weight is easy to
 implement, yet one dollar in a volatile stock carries more risk than one dollar
-in a stable stock. The high-volatility short book can therefore drive the entire
+in a stable stock. The high-volatility short book can end up driving the entire
 portfolio.
 
 I compare equal weights with an inverse-volatility rule, which gives smaller
 positions to stocks whose prices move more. Both versions hold the same stocks
-and rebalance on the same dates. The comparison therefore stays focused on what
+and rebalance on the same dates. This keeps the comparison focused on what
 changes when the position sizes change.
 
 ## The stock ranking stays fixed
 
 Both portfolios use point-in-time Russell 1000 membership and daily prices from
-July 1995 through 27 May 2026. A stock must trade above \$5 on an unadjusted
+July 1995 through 27 May 2026. A stock must trade above five dollars on an unadjusted
 basis and have enough history to estimate the selection signal, sizing
 volatility, and beta.
 Adjusted-price changes form the volatility signals, vendor total returns
 (including distributions) drive portfolio profit and loss, and the unadjusted
-close is used only for the \$5 eligibility screen.
+close is used only for the five-dollar eligibility screen.
 Requiring a beta estimate keeps the later beta comparison on the same set of
 stocks; beta does not enter the ranking or sizing rule. Each rebalance retains
 857–1,015 stocks, with a median of 973.
@@ -113,12 +113,16 @@ three times the volatility and nearly three times the beta of the long book.
 
 <p class="figure-caption"><strong>Figure 2:</strong> Realised volatility and beta of the equal-weight long and short books.</p>
 
+Figure 2 makes the sizing problem clear: equal dollars leave the short book
+carrying most of both volatility and market risk. The next rule changes
+position size to address that imbalance.
+
 ## Scaling each stock by its own volatility
 
 Inverse-volatility sizing responds directly to the imbalance: a position becomes
 smaller as its volatility rises. I use a separate 60-day volatility estimate
 with a 5% floor. Each stock starts at $1/N$, then its weight is multiplied by
-20% divided by its estimated volatility. A stock with 10% volatility therefore
+20% divided by its estimated volatility. A stock with 10% volatility
 receives twice the preliminary weight of one with 20% volatility. I cap each
 position at 4% and each book at 100% gross exposure. The portfolio rebalances
 every three weeks and trades at the next market close.
@@ -201,7 +205,7 @@ market sensitivity offsets most of the larger long book's beta. The full-sample
 average beta estimated from the holdings is −0.014, and realised beta is −0.001.
 
 Stock-level volatility sizing leaves beta free to move. The portfolio can
-therefore have positive net stock exposure while carrying little, or even
+have positive net stock exposure while carrying little, or even
 negative, market beta. Targeting beta would require a separate constraint or an
 index-futures overlay.
 
@@ -217,7 +221,7 @@ trailing 252 trading days.
 <p class="figure-caption"><strong>Figure 4:</strong> Estimated and rolling realised beta of the volatility-scaled portfolio.</p>
 
 The slower realised series sometimes lags the holdings-based estimate, but
-neither path stays fixed near zero. Stock-level volatility sizing therefore
+neither path stays fixed near zero. Stock-level volatility sizing
 balances the two books without imposing a beta target.
 
 ## The scaled portfolio takes less risk and compounds better
@@ -315,36 +319,36 @@ that come with each sizing rule.
 
 <p class="table-caption"><strong>Table 2:</strong> Full-sample exposure and turnover.</p>
 
-Table 2 makes the construction change concrete: scaling cuts gross exposure
+Table 2 shows how much else changes with the sizing rule: scaling cuts gross exposure
 from 200% to 131%, moves net exposure from zero to +63%, shifts realised beta
 from −1.12 to approximately zero, and lowers annualised turnover from 14.4× to
-10.4× equity. The performance gap therefore belongs to the complete sizing
-rule, not to one isolated exposure change.
+10.4× equity. Because all four measures change together, the performance gap
+cannot be credited to any one of them.
 
 Table 1 shows that the scaled portfolio earns a 7.1% arithmetic return after
 costs with 9.8%
 volatility. The equal-weight portfolio earns 2.4% with 33.4% volatility. Sharpe
-therefore rises from 0.07 to 0.73, while maximum drawdown falls from 87.1% to
+rises from 0.07 to 0.73, while maximum drawdown falls from 87.1% to
 38.0%.
 
-The return and risk gaps lead to very different wealth paths (Figure 5). The
+The return and risk gaps lead to very different growth paths (Figure 5). The
 upper panel tracks the growth of one dollar; the lower panel shows each
 portfolio's decline from its previous peak.
 
 <div class="low-vol-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="12" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="13" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 5:</strong> After-cost growth of \$1 and drawdowns. Wealth is shown on a log scale.</p>
+<p class="figure-caption"><strong>Figure 5:</strong> After-cost growth of <span class="mathjax-ignore">$1</span> and drawdowns. Growth of <span class="mathjax-ignore">$1</span> is shown on a log scale.</p>
 
 The equal-weight portfolio's positive arithmetic return hides poor compounding:
 repeated large losses leave only 38 cents from each starting dollar. The scaled
-portfolio compounds at 6.9% a year and turns each starting dollar into \$7.78.
+portfolio compounds at 6.9% a year and turns each starting dollar into \\(\\$7.78\\).
 Its path still includes long flat periods and a 38% maximum drawdown.
 
-This is a comparison of two complete sizing rules, not a clean estimate of one
-mechanism. Volatility scaling also lowers gross exposure, creates positive net
-exposure, changes beta, and reduces turnover. Matched tests at the same gross
+This comparison changes several things at once. Volatility scaling lowers gross
+exposure, creates positive net exposure, changes beta, and reduces turnover, so
+it does not reveal which change drives the return gap. Matched tests at the same gross
 exposure, beta, or realised risk would show which of those changes explains the
 performance gap. The stock selections, signal windows, sizing window, position
 cap, book ceiling, and rebalance interval are held fixed.
@@ -367,7 +371,7 @@ sensitivity.
 
 Before costs, the long book lost 10.4 percentage points and the short book lost
 27.1. The two panels on the left of Figure 6 trace the episode. The upper panel
-compares the portfolio's before-cost wealth with the market; the lower panel
+compares the portfolio's before-cost growth of one dollar with the market; the lower panel
 separates the long- and short-book contributions. The dotted line marks the
 portfolio trough on 9 March 2000. Both books recover after that point, and the
 portfolio returns to roughly its starting value by 3 April 2001.
@@ -380,10 +384,10 @@ percentage points and the short book lost 16.3; trading costs removed another
 0.5 points.
 
 <div class="low-vol-figure regime-comparison-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Russell 1000 and low-volatility portfolio wealth with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="11" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the 2025 to 2026 AI rally" version="13" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 6:</strong> Dot-com rally and reversal (left) and the 2025–2026 AI rally (right). Top: portfolio wealth before trading costs and Russell 1000 wealth. Bottom: long- and short-book contributions. Each episode has its own vertical scale.</p>
+<p class="figure-caption"><strong>Figure 6:</strong> Dot-com rally and reversal (left) and the 2025–2026 AI rally (right). Top: growth of <span class="mathjax-ignore">$1</span> before trading costs for the portfolio and Russell 1000. Bottom: long- and short-book contributions. Each episode has its own vertical scale.</p>
 
 Both episodes expose the same weakness. Volatility scaling reduces the capital
 in the short book, but it does not remove the risk of a sharp rally in those
@@ -394,11 +398,10 @@ comparable with the dot-com reversal.
 
 ## Inverse-volatility sizing fixes the first problem
 
-In this backtest, equal weighting is not a sensible way to build this
-portfolio. It gives the
-volatile short book most of the risk and produces much worse compounding and
-drawdowns, even though the stock selection is unchanged. I would replace it
-with inverse-volatility sizing as the next baseline, not as a final allocator.
+Inverse-volatility sizing is clearly the better starting point in this backtest.
+It keeps the same stocks but produces better-balanced risk, stronger
+compounding, and smaller drawdowns. I would use it as the next baseline, not as
+a final allocator.
 
 That decision solves only the first construction problem. The scaled portfolio
 still leaves gross exposure, net exposure, beta, correlations, and the risk of
