@@ -8,7 +8,7 @@ article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 ---
 
-<p class="article-summary"><strong>TL;DR:</strong> I compare a five-theme score whose weights are chosen in advance with multiple linear regression and Ridge regression fitted to a broader predictor set. The OLS specification records a development-period Sharpe of 0.98 against 0.71 for the benchmark, but that comparison also changes the predictors and their data histories. Ridge makes the learned coefficients smaller and more stable while leaving the stock ranking almost unchanged: its rank correlation with OLS is 0.991. From January 2022 through May 2026, the selected Ridge model records a Sharpe of 0.82 against 0.87 for OLS. That four-year pseudo-holdout is too short to settle long-run performance.</p>
+<p class="article-summary"><strong>TL;DR:</strong> I compare a five-factor score whose weights are chosen in advance with multiple linear regression and Ridge regression fitted to a broader predictor set. The OLS specification records a development-period Sharpe of 0.98 against 0.71 for the benchmark, but that comparison also changes the predictors and their data histories. Ridge makes the learned coefficients smaller and more stable while leaving the stock ranking almost unchanged: its rank correlation with OLS is 0.991. From January 2022 through May 2026, the selected Ridge model records a Sharpe of 0.82 against 0.87 for OLS. That four-year pseudo-holdout is too short to settle long-run performance.</p>
 
 Once a stock model contains more than a handful of signals, finding another one
 is no longer the main problem. The harder decision is how much influence each
@@ -17,7 +17,7 @@ score chooses those weights in advance. Multiple linear regression can learn
 them from subsequent stock outcomes, while Ridge regression can restrain that
 learning when many predictors contain similar information.
 
-I start with a score built from five themes whose directions and weights are
+I start with a score built from five factors whose directions and weights are
 chosen in advance, then give multiple linear regression a broader set of 144
 predictors. Ordinary least squares (OLS) is free to assign each predictor its
 own coefficient. Ridge uses the same model but shrinks those coefficients. The
@@ -36,22 +36,22 @@ equity data from 3 January 1995 through 27 May 2026; the first mechanical
 walk-forward portfolios begin in September 1998 after the required training
 history. Every portfolio applies the same price, merger-target, duplicate-share-
 class, sizing, and execution rules. OLS and Ridge also use exactly the same
-eligible stock-date rows. The fixed score can differ because its five themes
+eligible stock-date rows. The fixed score can differ because its five factors
 require their own complete input histories, so the fixed-versus-OLS comparison
 is a comparison of complete specifications, not weights alone.
 
 ## A fixed score is the simplest way to combine signals
 
 Fixed weights provide a useful baseline because every preference is visible. I
-group familiar signals into five themes, give each theme the same influence, and
+group familiar signals into five factors, give each factor the same influence, and
 set the direction of each signal in advance. Those choices are easy to inspect,
-though the themes, horizons, and signs still reflect my judgment.
+though the factors, horizons, and signs still reflect my judgment.
 
-The five themes describe the kind of company the benchmark prefers. The
-defensive theme pairs recent volatility with the average of the three largest
+The five factors describe the kind of company the benchmark prefers. The
+defensive factor pairs recent volatility with the average of the three largest
 daily gains over the latest month. The intention is to favour a calm return path
 rather than one propped up by a few sharp jumps. Momentum looks for a trend that
-has persisted beyond the latest short-term move. The remaining themes favour
+has persisted beyond the latest short-term move. The remaining factors favour
 lower short positioning, larger companies, and a higher share of positive-
 return days.
 
@@ -59,7 +59,7 @@ Let $$P_t(z_{i,t})=\operatorname{rank}_t(z_{i,t})/N_t$$ denote stock $$i$$'s
 within-date percentile rank, where $$N_t$$ is the number of available stocks for
 that measure. Higher values are always more attractive. I write the average of
 the three largest daily returns in the past 21 sessions as
-$$\bar r^{(3)}_{i,t;21}$$. The five theme scores are
+$$\bar r^{(3)}_{i,t;21}$$. The five factor scores are
 
 $$
 \begin{aligned}
@@ -79,7 +79,7 @@ X_{\mathrm{cons},i,t}
 \end{aligned}
 $$
 
-The benchmark gives each theme 20%:
+The benchmark gives each factor 20%:
 
 $$
 X_{\mathrm{score},i,t}
@@ -106,7 +106,7 @@ scores favour low short interest relative to trading volume, larger companies,
 and fewer down days over three years. Ranking before aggregation prevents market
 capitalisation in dollars or volatility in percentage points from dominating
 through its units. Short-positioning data are lagged to when they were available,
-and a stock needs enough history for every theme before it can enter the benchmark.
+and a stock needs enough history for every factor before it can enter the benchmark.
 
 Multiple linear regression and Ridge receive 144 ranked predictors, but these
 are not 144 unrelated ideas. Price-based measures ask whether a stock has risen,
@@ -114,8 +114,8 @@ where it sits relative to a moving average or an earlier high, and how turbulent
 its path has been. Other predictors describe company size, market sensitivity,
 trading activity, liquidity, and lagged short positioning. Many of these ideas
 appear at several horizons or through closely related definitions. That breadth
-lets the model choose among short- and long-run versions of a theme, but the
-overlap also makes individual coefficients hard to pin down.
+lets the model choose among short- and long-run predictors from the same factor
+family, but the overlap also makes individual coefficients hard to pin down.
 
 ## Ranks put 144 unlike predictors on one scale
 
@@ -596,14 +596,14 @@ than a comparison of raw units.
 Figure 9 shows a portfolio that is mainly defensive and trend-following. The
 long book owns quieter stocks, spends more time above its long-run moving
 average, and remains closer to an earlier high. Several panels are variations on
-those same two themes rather than independent sources of exposure.
+those same two predictor families rather than independent sources of exposure.
 
 The chart describes the finished portfolio, not independent alpha attribution.
 Stock-level volatility sizing can strengthen the defensive pattern after the
 ranking is formed, while correlated predictors can exchange coefficient weight
 and still identify similar stocks. Both mechanisms can make Figure 9 look
-steadier, and more concentrated by theme, than the coefficient paths in Figure
-4, but the chart cannot separate their contributions.
+steadier, and more concentrated by predictor family, than the coefficient paths
+in Figure 4, but the chart cannot separate their contributions.
 
 The predictor deck itself offers limited diversification: about two thirds of
 the 144 inputs come from price history or price–volume interactions. Ranking,

@@ -184,10 +184,10 @@ window, a 5% annualized floor, and a 20% fallback. These annualized safeguards
 are converted to daily units before they enter \\(\mu_t\\) or \\(D_t\\).
 
 Before standardizing, I cap daily returns at ±30% to limit the influence of an
-isolated data error. I then divide each return by its contemporaneous rolling
-volatility and estimate each pairwise correlation on dates valid for both
-stocks. Let \\(\mathcal W_t^{(h_R)}\\) be the final \\(h_R\\) trading sessions.
-Then
+isolated data error; \\(r_{i,\tau}\\) denotes that bounded return below. I then
+divide each return by its contemporaneous rolling volatility and estimate each
+pairwise correlation on dates valid for both stocks. Let
+\\(\mathcal W_t^{(h_R)}\\) be the final \\(h_R\\) trading sessions. Then
 
 $$
 x_{i,\tau}
@@ -252,10 +252,10 @@ $$
 \widetilde R_t=S_t^{-1}P_tS_t^{-1}.
 $$
 
-This clips negative eigenvalues to make the matrix positive semidefinite, then
-restores a unit diagonal. The repair matters because pairwise estimates based
-on different overlapping histories need not jointly form a valid correlation
-matrix.
+This sets negative eigenvalues to zero, making the matrix positive
+semidefinite, and then restores a unit diagonal. The repair matters because
+pairwise estimates based on different overlapping histories need not jointly
+form a valid correlation matrix.
 
 The empirical matrix is still noisy, so I shrink it toward the identity:
 
@@ -624,11 +624,10 @@ days, with a 0.251 peak. The fresh-book optimizer has four episodes covering 600
 days, with a 0.309 peak. Since 2022, B3 is much calmer: monthly absolute beta
 averages 0.035, reaches 0.064 at the 90th percentile, and peaks at 0.081.
 
-This is not a failed solve. B3's point-in-time beta constraint binds on 48.3%
-of optimizer dates, no target-date beta violation exceeds the numerical
-tolerance, and execution drift adds only about 0.001 mean absolute beta. The
-weakness is the beta estimate used to form the stock book, not whether the
-solver obeys it.
+B3's point-in-time beta constraint binds on 48.3% of optimizer dates, no
+target-date beta violation exceeds the numerical tolerance, and execution drift
+adds only about 0.001 mean absolute beta. The optimizer obeys the constraint;
+the weakness is the beta estimate used to form the stock book.
 
 A shorter beta estimate makes the trade-off visible. The baseline combines a
 756-day stock–market correlation (minimum 252 observations) with 21-day stock
