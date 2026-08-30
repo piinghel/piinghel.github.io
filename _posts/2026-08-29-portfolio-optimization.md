@@ -8,7 +8,7 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 ---
 
-<p class="article-summary">From September 1998 through May 2026, I compare three allocation rules applied to the same point-in-time Russell 1000 universe and Ridge rankings. A fresh-book optimizer improves return but trades heavily. A transition-aware optimizer preserves its gross return while reducing annualized turnover from 42.08× to 27.61×; net return rises from 10.77% to 11.62%. That implementation advantage survives wider portfolios and covariance sensitivity, but realized market beta remains the unresolved risk.</p>
+<p class="article-summary">I compare three ways to turn the same Ridge ranking into a long–short portfolio. A fresh-book optimizer improves return but trades heavily. A transition-aware optimizer preserves its gross return while reducing annualized turnover from 42.08× to 27.61×; net return rises from 10.77% to 11.62%. That implementation advantage survives wider portfolios and covariance sensitivity, but realized market beta remains the unresolved risk.</p>
 
 A standard optimizer sees today's best portfolio, not the cost of getting there
 from yesterday's holdings. It can therefore replace a still-useful incumbent
@@ -17,10 +17,10 @@ reduce churn without giving back the allocation improvement.
 
 ## The evidence I hold fixed
 
-I use a frozen Bloomberg-derived research snapshot containing daily prices,
-point-in-time Russell 1000 membership, the Russell 1000 benchmark, and BICS
-sectors. Returns and portfolio P&L use Bloomberg's daily <code>PX_LAST</code>
-requested with full corporate-action adjustment. The P&L engine forward-fills
+I use a frozen research snapshot containing daily prices, point-in-time Russell
+1000 membership, the Russell 1000 benchmark, and sector classifications.
+Returns and portfolio P&L use corporate-action-adjusted daily closing prices.
+The P&L engine forward-fills
 a missing adjusted price until the position closes; it does not append a
 separate delisting-return series. The snapshot begins in 1995; model warm-up
 leaves an investable sample from September 1998 through 27 May 2026.
@@ -110,7 +110,7 @@ $$
 =
 \min\!\left\{
 \lambda_{\max},
-\frac{\sigma_{\mathrm{ref}}}
+\frac{\sigma_{\mathrm{target}}}
 {\widehat{\sigma}^{\mathrm{B1}}_{i,t}}
 \right\}.
 $$
@@ -145,9 +145,11 @@ w^{\mathrm{B1}}_{i,t}
 $$
 
 The logistic slope \\(\gamma\\) controls how strongly standardized scores
-separate without depending on the Ridge score's raw scale. The lookback, caps,
-volatility floor, missing-history fallback, and sleeve ceiling are listed once
-in Table 1.
+separate without depending on the Ridge score's raw scale. I set \\(\gamma=2\\),
+use a 60-session volatility window, cap the provisional signal share at 10%,
+and cap each final stock weight at 4%. The stock-volatility target and the
+missing-estimate fallback are both 20%, the floor is 5%, the inverse-volatility
+multiplier cannot exceed six, and each sleeve is capped at 100% gross.
 
 This rule is transparent, but it treats each stock separately. It cannot see
 that several modest positions may carry the same market or sector risk.
@@ -177,21 +179,19 @@ together. For each stock,
 \\(\widehat{\sigma}&#95;{i,t}^{(h&#95;\sigma)}\\) is the sample standard deviation
 of the previous \\(h&#95;\sigma\\) daily returns. It is bounded
 below by \\(\sigma&#95;{\min}\\) and replaced by
-\\(\sigma&#95;{\mathrm{fallback}}\\) when unavailable. These annualized safeguards
+\\(\sigma&#95;{\mathrm{fallback}}\\) when unavailable. I use a 21-session
+window, a 5% annualized floor, and a 20% fallback. These annualized safeguards
 are converted to daily units before they enter \\(\mu_t\\) or \\(D_t\\).
 
-I first clip each return, divide it by its contemporaneous rolling volatility,
-and estimate each pairwise correlation on dates valid for both stocks. Let
-\\(\mathcal W_t^{(h_R)}\\) be the final \\(h_R\\) trading sessions. Then
-
-$$
-r^{\mathrm{clip}}_{i,\tau}
-=\max\{-r_{\max},\min(r_{i,\tau},r_{\max})\}.
-$$
+Before standardizing, I cap daily returns at ±30% to limit the influence of an
+isolated data error. I then divide each return by its contemporaneous rolling
+volatility and estimate each pairwise correlation on dates valid for both
+stocks. Let \\(\mathcal W_t^{(h_R)}\\) be the final \\(h_R\\) trading sessions.
+Then
 
 $$
 x_{i,\tau}
-=\frac{r^{\mathrm{clip}}_{i,\tau}}
+=\frac{r_{i,\tau}}
 {\widehat{\sigma}_{i,\tau}^{(h_\sigma)}}.
 $$
 
@@ -211,15 +211,14 @@ $$
 $$
 
 The set \\(\mathcal T&#95;{ij,t}\\) keeps the dates on which both standardized
-returns are finite. I define \\(\widehat{R}&#95;{ij,t}\\) only when
-\\(|\mathcal T_{ij,t}|\geq m_{\min}\\) and both sample variances are positive.
-The model also has a separate minimum-history gate \\(m&#95;R\\) before it starts.
-The return bound \\(r_{\max}\\) protects the estimate from isolated data errors.
+returns are finite. I use a 756-session correlation window and require 252
+sessions before the estimator starts. Within that window, a pair needs at
+least two common finite observations and positive sample variances.
 The very small pairwise minimum still permits extremely noisy estimates for new
 stocks, which makes the repair and shrinkage steps material rather than
 cosmetic.
 A pair that still cannot be estimated receives the fallback correlation
-\\(r_{\mathrm{fill}}\\) before the matrix is repaired. That fallback is a fixed
+\\(r_{\mathrm{fill}}=0.50\\) before the matrix is repaired. That fallback is a fixed
 inherited prior for unestimable pairs, not a value validated here. In a signed
 long-short portfolio, a positive covariance is not uniformly conservative.
 
@@ -297,28 +296,24 @@ from the performance results below.
 The optimizer chooses signed weights \\(w_t\\), positive for the eligible long
 set \\(L_t\\) and negative for the eligible short set \\(S_t\\). The vector
 \\(\beta_t\\) contains each stock's estimated Russell 1000 beta. It combines a
-slow return-correlation estimate with a fast volatility ratio, where \\(r_m\\)
-is the Russell 1000 return:
+756-session return correlation, requiring at least 252 observations, with a
+21-session stock-to-market volatility ratio. With \\(r_m\\) denoting the
+Russell 1000 return,
 
 $$
 \widehat{\beta}_{i,t}
 =
-\operatorname{clip}\!\left(
 \widehat{\operatorname{Corr}}^{(\beta)}_{i,m,t}
 \frac{\widehat{\sigma}^{(\beta)}_{i,t}}
-{\widehat{\sigma}^{(\beta)}_{m,t}};
-\beta_{\min}^{\mathrm{clip}},\beta_{\max}^{\mathrm{clip}}
-\right).
+{\widehat{\sigma}^{(\beta)}_{m,t}}.
 $$
 
-The operator \\(\operatorname{clip}(x;a,b)=\min\{\max(x,a),b\}\\). The
-superscript \\((\beta)\\) distinguishes the beta estimator's volatility ratio
-from the covariance diagonal estimate. Its
-correlation horizon, volatility horizon, minimum histories, clipping bounds,
-and missing-estimate rule are given in Table 1. The stock-level estimates enter
-the portfolio only through \\(\beta_t^\top w_t\\), its predicted market beta.
+I cap the resulting stock beta between −4 and +4 and use zero when it cannot be
+estimated. The superscript \\((\beta)\\) distinguishes this volatility ratio
+from the covariance diagonal estimate. Stock-level beta enters the portfolio
+only through \\(\beta_t^\top w_t\\), its predicted market beta.
 
-Let \\(g_{k,i,t}=\mathbf{1}\{i\text{ belongs to BICS sector }k\}\\), with
+Let \\(g_{k,i,t}=\mathbf{1}\{i\text{ belongs to sector }k\}\\), with
 \\(g_{k,t}\\) collecting those indicators. With annual risk budget
 \\(\sigma_{\star}\\), gross limit \\(G_{\max}\\), name limit \\(w_{\max}\\), net
 bounds \\(n_{\min},n_{\max}\\), and portfolio-beta limit \\(b_{\max}\\), B2
@@ -338,7 +333,7 @@ $$
 \end{aligned}
 $$
 
-For each BICS sector \\(k\\), define
+For each sector \\(k\\), define
 \\(L_{k,t}=\{i\in L_t:g_{k,i,t}=1\}\\) and
 \\(S_{k,t}=\{i\in S_t:g_{k,i,t}=1\}\\). With sector-net limit
 \\(q_{\mathrm{net}}\\) and sector-sleeve share \\(q_{\mathrm{leg}}\\), B2 also
@@ -404,34 +399,26 @@ is no previous book, so the toll is inactive. A held stock outside the eligible
 set must be sold; that forced exit incurs realized cost but is not part of the
 soft-toll term inside the optimization.
 
-Table 1 collects the parameters that otherwise become easy to lose among the
-equations. These values define the frozen allocators; Figures 2 and 3 ask
-whether the conclusion survives changes to shrinkage and breadth.
+Table 1 keeps the few settings needed to understand the allocator comparison.
+Secondary estimation safeguards are stated in the methodology rather than
+repeated in the table. Figures 2 and 3 then test shrinkage and breadth.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
     <tr><th>Component</th><th>Frozen setting</th><th>Role in the design</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Fresh selection <i>N</i></th><td data-label="Frozen setting">75 long + 75 short</td><td data-label="Role in the design">Defines which new positions may enter; breadth is tested at 50, 75, 100, and 150 per side.</td></tr>
-    <tr><th scope="row">B1 score map <i>γ</i>, <i>p</i><sub>max</sub></th><td data-label="Frozen setting">2; 10%</td><td data-label="Role in the design">Controls the logistic slope and provisional signal-share cap.</td></tr>
-    <tr><th scope="row">B1 volatility <i>h</i><sub>B1</sub>, <i>σ</i><sub>min</sub><sup>B1</sup>, <i>σ</i><sub>ref</sub>, <i>σ</i><sub>fallback</sub><sup>B1</sup>, <i>λ</i><sub>max</sub></th><td data-label="Frozen setting">60; 5%; 20%; 20%; 6</td><td data-label="Role in the design">Sets the lookback, floor, reference/fallback volatility, and maximum inverse-volatility multiplier.</td></tr>
-    <tr><th scope="row">B1 sleeve/name limits <i>G</i><sub>ℓ</sub>, <i>w</i><sub>max</sub></th><td data-label="Frozen setting">100%; 4%</td><td data-label="Role in the design">Caps gross exposure within each sleeve and the final absolute stock weight.</td></tr>
-    <tr><th scope="row">B2/B3 volatility <i>h</i><sub>σ</sub>, <i>σ</i><sub>min</sub>, <i>σ</i><sub>fallback</sub></th><td data-label="Frozen setting">21; 5%; 20%</td><td data-label="Role in the design">Sets the covariance-volatility lookback, floor, and missing-history fallback.</td></tr>
-    <tr><th scope="row">Correlation <i>h</i><sub>R</sub>, <i>m</i><sub>R</sub>, <i>m</i><sub>min</sub>, <i>r</i><sub>max</sub>, <i>r</i><sub>fill</sub></th><td data-label="Frozen setting">756; 252; 2; 30%; 0.50</td><td data-label="Role in the design">Sets the co-movement lookback, overall and pairwise minimum histories, return bound, and missing-pair fallback.</td></tr>
-    <tr><th scope="row">Beta <i>h</i><sub>corr</sub><sup>β</sup>, <i>m</i><sub>corr</sub><sup>β</sup>, <i>h</i><sub>σ</sub><sup>β</sup>, <i>m</i><sub>σ</sub><sup>β</sup></th><td data-label="Frozen setting">756; 252; 21; 21</td><td data-label="Role in the design">Sets the raw-return correlation and volatility lookbacks and their minimum histories.</td></tr>
-    <tr><th scope="row">Beta bounds/missing rule <i>β</i><sub>min</sub><sup>clip</sup>, <i>β</i><sub>max</sub><sup>clip</sup></th><td data-label="Frozen setting">−4; +4; missing = 0</td><td data-label="Role in the design">Limits unstable stock-beta estimates and assigns zero when beta cannot be estimated.</td></tr>
-    <tr><th scope="row">Shrinkage <i>ρ</i></th><td data-label="Frozen setting">0.50 toward identity</td><td data-label="Role in the design">Halves noisy off-diagonal correlations; Figure 2 checks the choice.</td></tr>
-    <tr><th scope="row">Annualization/calibration <i>A</i>, <i>κ</i></th><td data-label="Frozen setting">252 sessions/year; 1.18</td><td data-label="Role in the design">Annualizes covariance and rescales predicted portfolio volatility.</td></tr>
-    <tr><th scope="row">Risk/gross limits <i>σ</i><sub>∗</sub>, <i>G</i><sub>max</sub></th><td data-label="Frozen setting">7%; 200%</td><td data-label="Role in the design">Limits predicted annual volatility and total absolute exposure.</td></tr>
-    <tr><th scope="row">Name/net/beta limits <i>w</i><sub>max</sub>, <i>n</i><sub>min</sub>, <i>n</i><sub>max</sub>, <i>b</i><sub>max</sub></th><td data-label="Frozen setting">4%; −25%; +25%; 0.05</td><td data-label="Role in the design">Controls concentration, directional exposure, and estimated market exposure.</td></tr>
-    <tr><th scope="row">Sector limits <i>q</i><sub>net</sub>, <i>q</i><sub>leg</sub></th><td data-label="Frozen setting">20%; 30%</td><td data-label="Role in the design">Limits both net sector bets and one-sided sector concentration.</td></tr>
-    <tr><th scope="row">B3 transition <i>c</i>, <i>K</i></th><td data-label="Frozen setting">2.5 bp; rank 175</td><td data-label="Role in the design">Sets the soft trade toll and the incumbent carryover boundary.</td></tr>
-    <tr><th scope="row">Realized cost <i>c</i><sub>exec</sub></th><td data-label="Frozen setting">5 bp per dollar traded</td><td data-label="Role in the design">Charges actual buys and sells in net performance; it is distinct from the optimizer toll.</td></tr>
+    <tr><th scope="row">Fresh selection</th><td data-label="Frozen setting">75 long + 75 short</td><td data-label="Role in the design">Defines the stocks that may enter the reference book.</td></tr>
+    <tr><th scope="row">B1 sizing</th><td data-label="Frozen setting"><i>γ</i> = 2; 60-day volatility; 20% volatility target; 4% per name</td><td data-label="Role in the design">Maps each score and stock volatility into a standalone weight; each sleeve is capped at 100%.</td></tr>
+    <tr><th scope="row">B2/B3 risk model</th><td data-label="Frozen setting">21-day volatility; 756-day correlation; <i>ρ</i> = 0.50; calibration 1.18</td><td data-label="Role in the design">Builds covariance from faster volatility and slower correlation estimates.</td></tr>
+    <tr><th scope="row">Portfolio limits</th><td data-label="Frozen setting">7% volatility; 200% gross; 4% per name; ±25% net; ±0.05 beta</td><td data-label="Role in the design">Constrains total risk, concentration, direction, and estimated market exposure.</td></tr>
+    <tr><th scope="row">Sector limits</th><td data-label="Frozen setting">±20% net; 30% of either leg</td><td data-label="Role in the design">Controls net sector bets and one-sided concentration.</td></tr>
+    <tr><th scope="row">B3 transition</th><td data-label="Frozen setting">2.5 bp trade toll; carryover to rank 175</td><td data-label="Role in the design">Makes replacement compete with the drifted incumbent book.</td></tr>
+    <tr><th scope="row">Realized trading cost</th><td data-label="Frozen setting">5 bp per dollar bought or sold</td><td data-label="Role in the design">Converts executed turnover into the net return used in evaluation.</td></tr>
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 1:</strong> Frozen allocation and risk-model parameters. “Fallback” is used only when a valid estimate is unavailable; it is not an additional target.</p>
+<p class="table-caption"><strong>Table 1:</strong> Headline settings for the reference 75-name portfolios. Estimation safeguards are defined in the surrounding methodology.</p>
 
 “Frozen” does not mean independently validated. The B1 settings, risk budget,
 and calibration factor come from the pre-existing allocation stack. The
@@ -556,22 +543,25 @@ carryover limits of 150, 175, 200, and 250. Figure 3 reports the actual Sharpe
 and turnover levels of each allocator rather than plotting their differences.
 
 <div class="research-figure deterministic-breadth-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/deterministic-breadth" alt="Grouped bars comparing actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from 50 to 150 selected names per side before and after 2022; B2 failed to form the required two-sided 50-name book" version="6" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/deterministic-breadth" alt="Grouped bars comparing actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from 50 to 150 selected names per side before and after 2022" version="7" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Mean net Sharpe and annualized executed turnover across the three full-capital schedules. At 50/50, B1 and B3 are shown; B2 failed to form the required two-sided long–short book because its selected short tail contained only three sectors under a 30% per-sector cap. The zero portfolio is mathematically feasible but is not a usable 50/50 book. The 75/75, 100/100, and 150/150 books provide matched comparisons across all three allocators.</p>
+<p class="figure-caption"><strong>Figure 3:</strong> Mean net Sharpe and annualized executed turnover across the three full-capital schedules. The matched 50-name optimizer pair uses a 35% per-leg sector cap; the 75-, 100-, and 150-name cells retain the reference 30% cap.</p>
+
+At 50 names, both optimizer cells use a 35% rather than 30% sector-share cap:
+one selected tail contains only three sectors, so a non-empty leg requires
+slightly more than one-third. The wider cells retain 30%.
 
 At 50 names per side, B1 earns mean net Sharpe of 1.13 before 2022 and 0.73
-afterward, with annualized turnover of 30.93× and 29.57×. B3 records 1.40 and
-0.95 Sharpe with turnover of 26.47× and 22.18×. This is a valid B1–B3
-comparison, but not a matched optimizer comparison because B2 did not form the
-required two-sided long–short book.
+afterward, with annualized turnover of 30.93× and 29.57×. B2 records 1.35 and
+0.71 Sharpe with turnover of 40.05× and 34.53×, while B3 records 1.40 and 0.96
+with turnover of 26.47× and 22.16×.
 
 The upper panel shows B3 with the highest net Sharpe at every displayed
 breadth. Before 2022, B1 moves from 1.13 at 50 names to 1.07 at 150, B2 moves
-from 1.35 to 1.30 across its matched 75–150 range, and B3 stays between 1.35 and
+from 1.35 to 1.30 across the 50–150 range, and B3 stays between 1.35 and
 1.43. Later, B1 rises from 0.73 at 50 to roughly 0.78–0.80 at the wider books,
-B2 falls from 0.71 to 0.64, and B3 ranges from 0.87 to 0.95. The ordering is
+B2 falls from 0.71 to 0.64, and B3 ranges from 0.87 to 0.96. The ordering is
 therefore not an artefact of comparing B2 and B3 alone.
 
 Gross and net returns tell the same economic story. At 75 names, B3 earns
@@ -581,24 +571,26 @@ versus 8.96% and 7.47% for B1 and 13.58% and 11.09% for B2. In the later period,
 B3's gross/net return is 9.33%/7.99% at 75 names and 9.76%/8.37% at 150; both
 endpoints remain above B1 and B2 after costs.
 
-The 50-name return levels are also direct rather than differences: B1 earns
-11.33% gross and 9.62% net before 2022, versus 13.48% and 11.99% for B3. Later,
-the corresponding values are 8.85%/7.24% for B1 and 10.04%/8.83% for B3.
+The 50-name return levels are also direct rather than differences. Before 2022,
+B1, B2, and B3 earn 11.33%/9.62%, 13.76%/11.50%, and 13.48%/11.99% gross/net.
+Later, the corresponding values are 8.85%/7.24%, 8.21%/6.35%, and
+10.06%/8.84%.
 
 The lower panel shows the same comparison in trading rather than performance.
-Transition-aware turnover stays near 28–29× before 2022 and 25× afterward;
-fresh-book turnover lies around 43–45× and 40–45×. B1 turns over 30× at 75 names
-and falls to roughly 25–27× at 150. B3 remains far below B2 throughout and below
-B1 at 75 and 100 names, but B1 is slightly lower at 150. The defensible claim is
-that transition awareness preserves its advantage over the fresh optimizer as
-the stock book widens—not that it always minimizes turnover among every rule.
+Transition-aware turnover ranges from 26.47× to 29.37× before 2022 and from
+22.16× to 25.41× afterward; fresh-book turnover lies around 40–45× before 2022
+and 35–45× afterward. B1 turns over 30× at 75 names and falls to roughly 25–27×
+at 150. B3 remains far below B2 throughout and below B1 at 75 and 100 names,
+but B1 is slightly lower at 150. The defensible claim is that transition
+awareness preserves its advantage over the fresh optimizer as the stock book
+widens—not that it always minimizes turnover among every rule.
 
-Wider portfolios do not improve every risk diagnostic. From 2022 onward,
-transition-aware holding-window beta error is 0.010–0.015 worse at all three
-matched breadths. Its realized-to-predicted-volatility ratio is 0.030–0.053
-closer to one, and QLIKE—a variance-forecast loss where lower is better—also
-improves. Breadth robustness therefore supports an implementation claim, not
-uniformly better risk control.
+Breadth does not improve every risk diagnostic. From 2022 onward,
+transition-aware holding-window beta error is 0.001–0.005 higher at all four
+breadths. Its volatility calibration and QLIKE—a variance-forecast loss where
+lower is better—improve at 75, 100, and 150 names but worsen slightly at 50.
+There are no target-risk violations. Breadth robustness therefore supports an
+implementation claim, not uniformly better risk control.
 
 The test also changes the rank cutoff. It does not show that the result survives
 different stock identities at a fixed breadth, so that claim remains open.
