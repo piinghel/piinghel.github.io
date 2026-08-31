@@ -2,7 +2,7 @@
 layout: post
 title: "Resources"
 date: 2025-04-20
-last_modified_at: 2026-08-30
+last_modified_at: 2026-08-31
 categories: ["Resources"]
 article_label: Resources · Research and software
 permalink: /quants/2025/04/20/reading-and-tools.html
@@ -20,6 +20,7 @@ permalink: /quants/2025/04/20/reading-and-tools.html
 - [CalmCode](https://calmcode.io/)
 - [fast.ai](https://www.fast.ai/)
 - [Concretum Research](https://concretumgroup.com/research/)
+- [Christoph Molnar · Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/) — A practical, critical guide to explaining models and individual predictions.
 
 ## Open-source tools
 
