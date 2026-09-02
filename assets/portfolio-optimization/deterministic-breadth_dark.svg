@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="790" viewBox="0 0 1200 790" role="img" aria-labelledby="title desc">
 <title id="title">Portfolio breadth robustness</title>
-<desc id="desc">Two grouped-bar panels compare actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from fifty to one hundred fifty names per side before and after 2022.</desc>
+<desc id="desc">Two grouped-bar panels compare actual net Sharpe and annualized turnover for the vol-scaled rule, optimizer, and optimizer with memory from fifty to one hundred fifty names per side before and after 2022.</desc>
 <g font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
 <rect x="115" y="16" width="20" height="14" rx="2" fill="#9CA3AF"/>
-<text x="146.0" y="29.0" fill="#F3F4F6" font-size="14" font-weight="600" text-anchor="start">B1 signal-weighted baseline</text>
+<text x="146.0" y="29.0" fill="#F3F4F6" font-size="14" font-weight="600" text-anchor="start">Vol-scaled rule</text>
 <rect x="475" y="16" width="20" height="14" rx="2" fill="#60A5FA"/>
-<text x="506.0" y="29.0" fill="#F3F4F6" font-size="14" font-weight="600" text-anchor="start">B2 fresh-book optimizer</text>
+<text x="506.0" y="29.0" fill="#F3F4F6" font-size="14" font-weight="600" text-anchor="start">Optimizer</text>
 <rect x="790" y="16" width="20" height="14" rx="2" fill="#FBBF24"/>
-<text x="821.0" y="29.0" fill="#F3F4F6" font-size="14" font-weight="600" text-anchor="start">B3 transition-aware optimizer</text>
+<text x="821.0" y="29.0" fill="#F3F4F6" font-size="14" font-weight="600" text-anchor="start">Optimizer with memory</text>
 <text x="330.0" y="64.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="middle">Development through 2021</text>
 <text x="870.0" y="64.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="middle">Later period: 2022-May 2026</text>
 <text x="95.0" y="100.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="start">Net Sharpe</text>
