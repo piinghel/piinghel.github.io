@@ -76,7 +76,7 @@ the expanding sequence.
 
 The design prevents the most direct leakage across prediction boundaries.
 
-## 1. A fixed score makes every preference visible
+## A fixed score makes every preference visible
 
 Fixed weights provide a useful baseline because every preference is visible. I
 group familiar signals into five factors, give each factor the same influence,
@@ -110,7 +110,7 @@ positioning are slightly negative at −0.08. Table A1 reports each factor's
 standalone return, but that test does not measure its incremental contribution
 to the combined score.
 
-## 2. The regression learns weights and directions
+## The regression learns weights and directions
 
 OLS and Ridge receive 144 predictors, but not 144 unrelated ideas. Price-based
 measures describe trend, distance from a moving average or earlier high, and
@@ -197,7 +197,7 @@ Every score then enters the inverse-volatility rule from the
 and bottom 75 stocks form the long and short books, and quieter stocks receive
 larger weights subject to name and book caps.
 
-## 3. The learned model takes less risk, not more return
+## The learned model takes less risk, not more return
 
 Table 2 compares the fixed score with the two learned rankings during
 development. Fixed versus OLS is the headline comparison; OLS versus Ridge is
@@ -247,11 +247,11 @@ Ridge remains close to OLS throughout.
 <p class="figure-caption"><strong>Figure 4:</strong> Net growth of <span class="mathjax-ignore">$1</span> on a logarithmic scale (top) and drawdown (bottom) for the three ranking rules after 5 bp per dollar traded. The vertical rule starts the later period.</p>
 
 The path supports a lower-risk learned portfolio, not a dramatic return gain.
-The Sharpe-like target and the defensive holdings described in Section 6 are
+The Sharpe-like target and the defensive holdings described later are
 consistent with that result. The missing matched-input test prevents a stronger
 causal claim.
 
-## 4. Ridge stabilises coefficients, not rankings
+## Ridge stabilises coefficients, not rankings
 
 Overlapping predictors make OLS coefficients hard to interpret. Ridge
 penalizes their squared size:
@@ -354,7 +354,7 @@ The result does not tell me why the ranking is so stable. Correlated predictors,
 bounded rank inputs, and the number of training rows could all matter. The
 current comparison does not separate them.
 
-## 5. Ridge does not improve performance before or after 2021
+## Ridge does not improve performance before or after 2021
 
 Table 3 shows the development result: Ridge moves Sharpe from 0.98 to 1.00,
 without a decisive improvement across the penalty grid. Table 5 repeats the
@@ -387,7 +387,7 @@ The penalty therefore does one useful job and no more. It steadies coefficients
 without changing the economic ranking or producing better portfolio results.
 Figure A1 shows the same conclusion in cumulative IC.
 
-## 6. The learned ranking leaves trading and exposure work open
+## The learned ranking leaves trading and exposure work open
 
 The learned rankings roughly double trading. Figure 7 compares two-way turnover
 per rebalance in the upper panel with annual cost under the 5 bp assumption
@@ -466,7 +466,7 @@ constraints, and a trading penalty based on current holdings.
 
 ## Appendix: selected supporting details
 
-### The fixed score averages five final factors
+### Fixed-score equations
 
 Write the same-date attractive-side ranks as $$L$$ for low volatility, $$U$$
 for upper-tail avoidance, $$M$$ for momentum, $$S$$ for low short positioning,
@@ -483,7 +483,7 @@ $$
 F_{i,t}=\frac{D_{i,t}+M_{i,t}+S_{i,t}+Z_{i,t}+C_{i,t}}{5}.
 $$
 
-### Standalone returns do not identify incremental value
+### Standalone factor returns
 
 <table class="research-table comparison-table portfolio-card-table standalone-factor-table">
   <thead>
@@ -505,7 +505,7 @@ Defensive leads, followed by return consistency; size is weakest. These runs
 answer how each factor performs alone, not how much it adds after controlling
 for the other four.
 
-### Cumulative IC adds timing, not a different conclusion
+### Cumulative IC
 
 Figure A1 accumulates daily rank IC from the first predictions in September
 1998 to the last complete forward outcome on 28 April 2026. A rising path means
@@ -522,7 +522,7 @@ The OLS and Ridge paths overlap through both periods. Table 4 carries the exact
 comparison, so the figure belongs here as a timing check rather than a main
 result.
 
-### Two matched tests would identify where the gain comes from
+### Matched tests
 
 The first test holds information fixed: fit OLS to the benchmark's six primitive
 inputs on the same eligible rows. Comparing that row with the fixed score would

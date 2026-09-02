@@ -2,7 +2,7 @@
 layout: post
 title: "Reducing Rebalancing Timing Risk with Tranching"
 date: 2025-05-10
-last_modified_at: 2026-08-30
+last_modified_at: 2026-09-02
 categories: ["Rebalancing"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
@@ -26,6 +26,14 @@ less.
 My long/short stock-ranking strategy provides a narrower test: can three
 overlapping sleeves preserve return while reducing dependence on the starting
 week?
+
+This post follows the
+[low-volatility sizing study](/quant/2024/12/15/low-volatility-factor.html) and
+the [Ridge ranking study](/quants/2025/02/09/multiple-linear-regression.html).
+It tests the rebalance schedules later used in the
+[portfolio-optimization post](/quants/2026/08/29/portfolio-optimization.html),
+where the ranking is sized jointly and the optimizer accounts for its current
+holdings.
 
 ## Fifteen ways to run the same strategy
 
@@ -137,7 +145,7 @@ portfolios, against 11.32% across the 15 full-rebalance schedules. The
 improvement is in the path. Mean volatility falls from 6.68% to 6.07%, or about
 9%; mean maximum drawdown falls
 from 12.77% to 11.60%; and mean time underwater falls by 86 days. With nearly
-the same return and less volatility, the descriptive mean Sharpe rises from 1.64
+the same return and less volatility, the mean Sharpe rises from 1.64
 to 1.80.
 
 The dispersion narrows as well. The geometric-return range contracts from 2.43
@@ -157,7 +165,7 @@ The saved experiment cannot tell them apart.
 Three tranches directly average the three starting-week offsets. The remaining
 weekday range is small, while more sleeves would mean smaller orders, more
 frequent runs, and more operational work for an uncertain incremental gain.
-I would stop at three sleeves. The results favor the full
+I stop at three sleeves. The results favor the full
 three-tranche design, but they cannot tell us how much of the smoother path came
 from spreading the rebalance dates rather than using fresher weekly predictions. A cleaner test
 would hold the prediction vintage fixed while changing only the execution
@@ -188,18 +196,22 @@ schedule is one draw from a wider set of plausible outcomes, not the backtest.
 The full timing grid makes that uncertainty visible.
 
 Using all three tranches leaves mean annualized geometric
-return almost unchanged, reduces mean volatility by 0.61 percentage points, and lifts the descriptive
+return almost unchanged, reduces mean volatility by 0.61 percentage points, and lifts the mean
 Sharpe from 1.64 to 1.80. It also shows much less dispersion than the 15
 full-rebalance schedules; the remaining variation across weekdays is
 comparatively small. I prefer the three-sleeve implementation as a working
 design because it relies less on getting one starting week right.
 
 Fresher predictions may share credit for the improvement, and the missing daily
-archive prevents a realistic cost replay. I would freeze the three-sleeve
+archive prevents a realistic cost replay. I freeze the three-sleeve
 design, rebuild the daily evidence, and compare it with a full-rebalance version
 using the same prediction vintages. Turnover, spreads, impact, borrow, and
 operational overhead would then determine whether the risk reduction still
 holds after those costs.
+
+The [portfolio-optimization post](/quants/2026/08/29/portfolio-optimization.html)
+uses these three schedules and makes each proposed trade compete with the
+portfolio it already owns.
 
 ## References
 

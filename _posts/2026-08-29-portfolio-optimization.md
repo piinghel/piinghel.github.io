@@ -10,14 +10,13 @@ permalink: /quants/2026/08/29/portfolio-optimization.html
 
 <p class="article-summary">Volatility scaling sizes stocks one at a time and leaves market, sector, and net exposure uncontrolled. A constrained mean-variance optimizer sizes the book jointly under explicit limits. Gross return rises from 10.3% to 13.1%, and Sharpe from 1.05 to 1.24, although realized volatility and drawdown do not improve. The price is dependence on covariance estimates and turnover that rises from 30× to 42×. Accounting for current holdings cuts turnover to 28×, raises Sharpe to 1.33, and lowers maximum drawdown to 18.1%. Realized beta remains the main open problem.</p>
 
-The [low-volatility study](/quant/2024/12/15/low-volatility-factor.html) showed
-that inverse-volatility sizing improves balance between the long and short books,
-but leaves gross, net, beta, and shared risk uncontrolled. The
-[Ridge study](/quants/2025/02/09/multiple-linear-regression.html) then showed that
-learned rankings roughly double turnover and ended with two tasks: size stocks
-jointly and charge proposed changes against the current book.
+The [low-vol post](/quant/2024/12/15/low-volatility-factor.html) showed that
+inverse-vol sizing balances the two books but leaves gross, net, and beta
+uncontrolled. The [Ridge post](/quants/2025/02/09/multiple-linear-regression.html)
+found that learned rankings roughly double turnover and left two tasks: size
+stocks jointly and charge proposed changes against the current book.
 
-This article does both. It uses three staggered schedules[^schedules] from the
+This post does both. It uses three staggered schedules[^schedules] from the
 [tranching study](/quants/2025/05/10/rebalancing-luck.html), so the result does
 not rest on one arbitrary starting week.
 
@@ -74,7 +73,7 @@ before running these tests.
 Sharpe uses a zero risk-free rate. Turnover is annualized two-way weight change,
 so 42× means purchases plus sales of 42 times capital per year.
 
-## 1. Volatility scaling cannot see shared risk
+## Volatility scaling cannot see shared risk
 
 Why not keep the simpler rule? The volatility-scaled rule maps the ranking into
 weights in four steps: rank,
@@ -88,7 +87,7 @@ beta, sector, or net-exposure constraint. Those exposures are whatever the
 separate stock weights produce. This is the unresolved problem left by the
 [low-volatility study](/quant/2024/12/15/low-volatility-factor.html).
 
-## 2. Constraints turn portfolio intentions into one allocation problem
+## Every exposure limit becomes one line in the optimizer
 
 So how does the optimizer express the controls the vol-scaled rule is missing?
 It starts from the same ranking but sizes every selected
@@ -142,7 +141,7 @@ Maximum absolute net exposure falls from 66% to the 25% optimizer limit. A
 matched sector history for all three rules was not saved, so sector control is
 shown by the saved rebalance records rather than a baseline time series.
 
-## 3. Joint sizing improves return, not realized risk by itself
+## Joint sizing improves return, not realized risk by itself
 
 Does explicit risk control also lower realized risk? Not by itself.
 
@@ -180,7 +179,7 @@ optimizer-with-memory path loses less in its worst episode. The plot averages th
 three schedule paths; Table 1 reports the mean of metrics calculated inside each
 schedule, so their endpoint and drawdown values need not match exactly.
 
-## 4. Better inputs are the cost of a more expressive optimizer
+## The optimizer is only as good as its covariance matrix
 
 What does the cleaner framework demand in return? Better inputs. An optimizer
 takes every number literally, and the covariance matrix is the
@@ -229,8 +228,8 @@ a stable middle, not one exact shrinkage value.
 The constraints are guardrails against the remaining estimation error. They
 stop the optimizer from turning one noisy input into an unbounded name, sector,
 beta, or gross position. They do not make the inputs correct: realized
-volatility still averages about 15% above forecast, and Section 8 shows that the
-beta estimate misses persistent exposure.
+volatility still averages about 15% above forecast, and realized beta still
+misses persistent exposure.
 
 That volatility miss looks like a configuration problem, not a failure of the
 framework. The model is systematically underpredicting risk, so I can adjust
@@ -238,7 +237,7 @@ $$\kappa$$ until forecast and realized volatility line up better. I would then
 rerun the comparison because the change also affects weights, feasibility,
 turnover, and returns.
 
-## 5. The optimizer trades more because it has no memory
+## The optimizer trades more because it has no memory
 
 So where does the extra turnover come from? The return gain comes with a trading
 problem. Annualized purchases plus sales
@@ -250,7 +249,7 @@ Small changes in scores or covariance can therefore replace a stock even when
 the proposed substitute adds little at the portfolio level. Can the optimizer
 keep the allocation gain if every change has to pay for itself?
 
-## 6. The current book turns marginal replacements into a decision
+## Making the optimizer pay for each trade
 
 What happens to a stock the optimizer already owns? Suppose a current long falls
 from rank 60 to rank 110. An optimizer that starts over must replace it because
@@ -322,7 +321,7 @@ Target changes sum to 1.59 times capital per rebalance, and the average interval
 between executions is 13.46 trading days. The design reduces discretionary
 replacements; it does not remove implementation risk.
 
-## 7. The trading gain survives wider portfolios
+## The trading gain survives wider portfolios
 
 Does the trading gain depend on choosing exactly 75 stocks? Figure 3 tests
 selection breadth from 50 to 150 stocks on each side. Net Sharpe
@@ -345,10 +344,10 @@ the volatility-scaled rule at the middle breadths, but not at the widest book.
 Wider books also change which stocks are selected, so the figure cannot isolate
 breadth from stock identity.
 
-The later-period panels are more dispersed. I treat them as the short check in
-Section 9, not as a second headline result.
+The later-period panels are more dispersed. I treat them as the short check
+below, not as a second headline result.
 
-## 8. Realized beta is the main open problem
+## Realized beta is the main open problem
 
 What still goes wrong after the optimizer satisfies its constraints? Realized
 beta. The optimizer enforces a point-in-time beta limit when it chooses weights.
@@ -404,7 +403,7 @@ The cleaner next test is a costed benchmark overlay that leaves the stock
 portfolio untouched. It would separate beta management from stock selection.
 Tightening the stock constraint first would mix them again.
 
-## 9. The later period is a short check
+## The later period is a short check
 
 All three rules weaken in the later period, with annualized net
 returns of 7.38%, 6.47%, and 7.99% for the vol-scaled rule, optimizer, and
@@ -487,7 +486,7 @@ Daily returns are capped at ±30% before correlation estimation. A missing pair
 gets the inherited 0.50 fallback, which is not always conservative in a
 long–short portfolio. I symmetrize the pairwise matrix, clip negative
 eigenvalues, and restore its unit diagonal before applying the shrinkage shown
-in Section 4. The calibration multiplier is $$\kappa=1.18$$, inherited from the
+in the main text. The calibration multiplier is $$\kappa=1.18$$, inherited from the
 original development configuration; it is the setting to adjust when forecast
 and realized volatility do not line up.
 

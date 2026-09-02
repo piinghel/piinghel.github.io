@@ -12,8 +12,9 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary">Equal dollars do not mean equal risk in a portfolio with a long book (stocks bought) and a short book (stocks sold short). The short book takes over an equal-weight strategy. I hold the stocks and rebalance dates fixed, then size each position inversely to its recent volatility. Portfolio volatility falls from 33% to 10%, and compounding turns positive.</p>
+<p class="article-summary">Equal dollars do not mean equal risk in a portfolio with long and short books. The short book takes over an equal-weight strategy. I hold the stocks and rebalance dates fixed, then size each position inversely to its recent volatility. Portfolio volatility falls from 33% to 10%, and compounding turns positive.</p>
 
+A long book contains stocks bought; a short book contains stocks sold short.
 The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
 is the empirical tendency for stable stocks to earn better risk-adjusted returns
 than volatile stocks. [Frazzini and
@@ -26,8 +27,8 @@ The state of the strategy is simple: point-in-time Russell 1000 stocks, a
 past-volatility ranking, the lowest decile long, the highest decile short, three-week
 rebalancing, and a five-basis-point trading cost. Only position size changes.
 
-Table 1 puts the implementable comparison at the top. The equal-weight rule
-allocates the same dollars to every selected stock. The inverse-volatility rule
+The equal-weight rule allocates the same dollars to every selected stock. The
+inverse-volatility rule
 allocates less to stocks whose prices have moved more.
 
 <table class="research-table comparison-table portfolio-card-table">
