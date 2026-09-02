@@ -8,7 +8,7 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 ---
 
-<p class="article-summary">Volatility scaling sizes stocks one at a time and leaves market, sector, and net exposure uncontrolled. A constrained mean-variance optimizer sizes the book jointly under explicit limits. Gross return rises from 10.3% to 13.1%, and Sharpe from 1.05 to 1.24, although realized volatility and drawdown do not improve. The price is dependence on covariance estimates and turnover that rises from 30× to 42×. Accounting for current holdings cuts turnover to 28×, raises Sharpe to 1.33, and lowers maximum drawdown to 18.1%. Realized beta remains the main open problem.</p>
+<p class="article-summary">Volatility scaling sizes stocks one at a time and leaves market, sector, and net exposure uncontrolled. A constrained mean-variance optimizer sizes the book jointly under explicit limits. Gross return rises from 10.3% to 13.1%. Sharpe reaches 1.24, although realized volatility and drawdown do not improve. The catch is dependence on covariance estimates and turnover that rises from 30× to 42×. Accounting for current holdings cuts turnover to 28× and raises Sharpe to 1.33, while realized beta remains the main open problem.</p>
 
 The [low-vol post](/quant/2024/12/15/low-volatility-factor.html) showed that
 inverse-vol sizing balances the two books but leaves gross, net, and beta
@@ -75,7 +75,7 @@ so 42× means purchases plus sales of 42 times capital per year.
 
 ## Volatility scaling cannot see shared risk
 
-Why not keep the simpler rule? The volatility-scaled rule maps the ranking into
+The volatility-scaled rule maps the ranking into
 weights in four steps: rank,
 logistic weight, inverse-volatility scaling, and caps. It sizes the long and
 short books separately and caps each at 100% gross. The rule is transparent,
@@ -132,10 +132,13 @@ it with the existing caps. Here the risk intentions live in the same problem as
 the return-unit score. The price is that the solution inherits every error in
 that score and covariance matrix.
 
-The two optimizers record zero portfolio-constraint breaches across
-1,447 rebalance dates. Mean gross exposure rises from 136% under volatility
-scaling to 176% and 183% for the two optimizers; the risk budget, rather than a
-fixed book size, allows that expansion.
+The two optimizers record zero portfolio-constraint breaches across about 1,450
+rebalance dates. Mean gross exposure rises from 136% under volatility scaling
+to 176% and 183% for the two optimizers. They use the 7% risk budget to run more
+gross, not to produce a safer realized portfolio: Table 1 shows that realized
+volatility and drawdown do not improve. That is the point of stating the
+intention as a constraint. Forecast volatility was capped; gross exposure was
+free to move within the other limits.
 
 Maximum absolute net exposure falls from 66% to the 25% optimizer limit. A
 matched sector history for all three rules was not saved, so sector control is
@@ -143,7 +146,7 @@ shown by the saved rebalance records rather than a baseline time series.
 
 ## Joint sizing improves return, not realized risk by itself
 
-Does explicit risk control also lower realized risk? Not by itself.
+Explicit risk control does not lower realized risk by itself.
 
 Table 1 separates the gain from the claim I cannot make. Moving from the
 volatility-scaled rule to the optimizer raises gross and net return,
@@ -163,7 +166,7 @@ net result: maximum drawdown falls from about 20% to 18%. That improvement is
 useful, but it is not proof that the risk forecast is calibrated.
 
 Figure 1 plots net growth on a logarithmic scale above drawdown. The optimizer
-finishes above the volatility-scaled rule, and the optimizer-with-memory
+finishes above the volatility-scaled rule, and the optimizer with memory
 path finishes highest. Its largest separations from the optimizer path open in
 2000 and 2021 rather than accumulating smoothly. The vertical line starts the
 later period.[^later-period]
@@ -174,15 +177,14 @@ later period.[^later-period]
 
 <p class="figure-caption"><strong>Figure 1:</strong> Net growth of <span class="mathjax-ignore">$1</span> on a logarithmic scale (top) and drawdown in percent (bottom) for the vol-scaled rule, optimizer, and optimizer with memory after trading costs, September 1998–May 2026. The paths average the three rebalance schedules; the vertical rule marks the start of the later period.</p>
 
-The main drawdowns are similar for the first two rules, while the
-optimizer-with-memory path loses less in its worst episode. The plot averages the
+The main drawdowns are similar for the first two rules, while the optimizer
+with memory loses less in its worst episode. The plot averages the
 three schedule paths; Table 1 reports the mean of metrics calculated inside each
 schedule, so their endpoint and drawdown values need not match exactly.
 
 ## The optimizer is only as good as its covariance matrix
 
-What does the cleaner framework demand in return? Better inputs. An optimizer
-takes every number literally, and the covariance matrix is the
+An optimizer takes every number literally, and the covariance matrix is the
 input it trusts most. Noisy correlations become positions. An unstable or
 overconfident matrix can make a portfolio look diversified while understating
 its risk.
@@ -197,8 +199,8 @@ C_t(\rho)=(1-\rho)\widetilde R_t+\rho I,
 $$
 
 With diagonal volatility matrix $$D_t$$, annualization factor $$A$$, and a
-calibration factor $$\kappa$$ that corrects forecast bias,[^calibration]
-the covariance input is
+calibration factor $$\kappa=1.18$$ that corrects forecast bias, the covariance
+input is
 
 $$
 \Sigma_t=A\kappa^2D_tC_t(\rho)D_t.
@@ -207,14 +209,14 @@ $$
 Figure 2 asks how much the risk forecast and portfolio result depend on
 shrinkage. The horizontal axis runs from the raw repaired correlation estimate
 to full identity. The panels compare forecast calibration, beta forecast error
-over the next holding period, turnover, and net Sharpe for the optimizer with
-and without memory.
+over the next holding period, turnover, and net Sharpe for the optimizer and
+the optimizer with memory.
 
 <div class="research-figure rho-ladder-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Risk calibration, beta forecast error, turnover, and mean schedule-level net Sharpe for the optimizer with and without memory across covariance-shrinkage values from zero to one" version="4" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Risk calibration, beta forecast error, turnover, and mean schedule-level net Sharpe for the optimizer and the optimizer with memory across covariance-shrinkage values from zero to one" version="4" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> How the risk forecast and result depend on correlation shrinkage. Panels show realized-to-forecast volatility, beta forecast error over the next holding period, annualized turnover, and net Sharpe for the optimizer with and without memory, September 1998–May 2026. The shaded region marks shrinkage from 0.3 to 0.6.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> How the risk forecast and result depend on correlation shrinkage. Panels show realized-to-forecast volatility, beta forecast error over the next holding period, annualized turnover, and net Sharpe for the optimizer and the optimizer with memory, September 1998–May 2026. The shaded region marks shrinkage from 0.3 to 0.6.</p>
 
 The useful region is the shaded middle. The curves change little from 0.3 to
 0.6, and the implemented value is 0.5. Moving shrinkage from 0.4 to 0.5 changes
@@ -233,9 +235,10 @@ misses persistent exposure.
 
 That volatility miss looks like a configuration problem, not a failure of the
 framework. The model is systematically underpredicting risk, so I can adjust
-$$\kappa$$ until forecast and realized volatility line up better. I would then
-rerun the comparison because the change also affects weights, feasibility,
-turnover, and returns.
+the calibration factor until forecast and realized volatility line up better.
+Estimating that adjustment on the development period is calibration, not
+tuning to the return result. I would then rerun the comparison because the
+change also affects weights, feasibility, turnover, and returns.
 
 ## The optimizer trades more because it has no memory
 
@@ -246,12 +249,13 @@ optimizer. At each rebalance, it solves only over the new selection;
 an existing holding receives no credit for already being in the book.
 
 Small changes in scores or covariance can therefore replace a stock even when
-the proposed substitute adds little at the portfolio level. Can the optimizer
-keep the allocation gain if every change has to pay for itself?
+the proposed substitute adds little at the portfolio level. The next test is
+whether the optimizer can keep the allocation gain if every change has to pay
+for itself.
 
 ## Making the optimizer pay for each trade
 
-What happens to a stock the optimizer already owns? Suppose a current long falls
+Suppose a current long falls
 from rank 60 to rank 110. An optimizer that starts over must replace it because
 it is outside the fresh 75. The optimizer with memory may keep it because it is
 still inside the wider top-175 rank tail.[^carryover]
@@ -267,7 +271,7 @@ $$
 \mu_t^\top w_t-c\lVert w_t-w_t^{\mathrm{pre}}\rVert_1,
 $$
 
-subject to the same constraints as the optimizer without memory. In words,
+subject to the same constraints as the optimizer. In words,
 carryover widens the eligible set for existing holdings, while the penalty
 charges any move away from the current weights. A new stock still has to enter
 through the fresh 75.
@@ -323,8 +327,8 @@ replacements; it does not remove implementation risk.
 
 ## The trading gain survives wider portfolios
 
-Does the trading gain depend on choosing exactly 75 stocks? Figure 3 tests
-selection breadth from 50 to 150 stocks on each side. Net Sharpe
+Figure 3 tests whether the trading gain depends on choosing exactly 75 stocks.
+It varies selection breadth from 50 to 150 stocks on each side. Net Sharpe
 is in the top row and annualized turnover in the bottom row; columns separate
 the development and later periods.
 
@@ -335,11 +339,11 @@ the development and later periods.
 <p class="figure-caption"><strong>Figure 3:</strong> Net Sharpe (top) and annualized purchases plus sales (bottom) for the three portfolio rules by selected stocks per side. The left panels end in 2021; the right panels cover January 2022–May 2026. The narrowest optimizer pair uses a looser sector-share cap because one selected tail contains only three sectors.</p>
 
 The optimizer with memory has the highest mean Sharpe at every tested
-breadth. During development, its gaps over the optimizer without memory range from
+breadth. During development, its gaps over the optimizer range from
 0.05 to 0.08, while schedule spread reaches 0.14. The ordering is stable, but
 the differences are small relative to rebalance timing.
 
-Turnover remains below the optimizer without memory throughout. It also falls below
+Turnover remains below the optimizer throughout. It also falls below
 the volatility-scaled rule at the middle breadths, but not at the widest book.
 Wider books also change which stocks are selected, so the figure cannot isolate
 breadth from stock identity.
@@ -367,15 +371,15 @@ different, point-in-time estimate.
 
 Look at the long departures from zero rather than one-month peaks. The
 optimizers reduce persistent beta relative to volatility scaling, but they do
-not remove it. The optimizer without memory has four episodes above 0.20 that
+not remove it. The optimizer has four episodes above 0.20 that
 last at least 63 trading days, covering 600 days in total. Its peak absolute
-beta is 0.309.
+beta is 0.31.
 
-The optimizer with memory has five such episodes covering 339 days. Its peak
-absolute beta is 0.251. The chart does not attribute returns to beta.
+The optimizer with memory has five such episodes covering about 340 days. Its
+peak absolute beta is 0.25. The chart does not attribute returns to beta.
 
-Constraint compliance is not the problem. The beta limit binds on nearly half
-of the optimizer-with-memory rebalance dates. The chosen portfolio remains inside the
+Constraint compliance is not the problem. For the optimizer with memory, the
+beta limit binds on nearly half of rebalance dates. The chosen portfolio remains inside the
 limit, and execution drift adds only a few thousandths. This points to the beta
 estimate used to choose stocks and weights.
 
@@ -408,8 +412,9 @@ Tightening the stock constraint first would mix them again.
 All three rules weaken in the later period, with annualized net
 returns of 7.38%, 6.47%, and 7.99% for the vol-scaled rule, optimizer, and
 optimizer with memory. The optimizer trails volatility scaling in this block.
-The optimizer-with-memory lead over it remains inside schedule spread,
-and five years is not enough to promote this check into the headline result.
+The gap between the optimizer with memory and the optimizer remains inside
+schedule spread, and five years is not enough to promote this check into the
+headline result.
 
 ## Conclusion
 
@@ -444,7 +449,7 @@ stock selection and can show whether the remaining risk drift is worth hedging.
   <tbody>
     <tr><th scope="row">Fresh selection</th><td data-label="Setting">75 long + 75 short</td><td data-label="Why">Keeps the comparison on the same selected stocks.</td></tr>
     <tr><th scope="row">Vol-scaled rule</th><td data-label="Setting"><span><i>γ</i> = 2; 60-day volatility; 20% target and fallback; 5% floor; 10% signal-share cap; 4% name cap; 6× multiplier cap; 100% gross per book</span></td><td data-label="Why">Preserves the sizing rule from the low-volatility study.</td></tr>
-    <tr><th scope="row">Covariance</th><td data-label="Setting"><span>21-day volatility; 756-day correlation; 252-day start; 0.50 missing-pair fallback; <i>ρ</i> = 0.50; <i>κ</i> = 1.18; daily returns capped at ±30%</span></td><td data-label="Why">Lets volatility react faster than correlation while shrinking noisy shared-risk estimates.</td></tr>
+    <tr><th scope="row">Covariance</th><td data-label="Setting"><span>21-day volatility; 756-day correlation; 252-day start; 0.50 missing-pair fallback; <i>ρ</i> = 0.50; daily returns capped at ±30%</span></td><td data-label="Why">Lets volatility react faster than correlation while shrinking noisy shared-risk estimates.</td></tr>
     <tr><th scope="row">Portfolio limits</th><td data-label="Setting">7% volatility; 200% gross; 4% per name; ±25% net; ±0.05 beta</td><td data-label="Why">Turns the intended risk and exposure limits into guardrails.</td></tr>
     <tr><th scope="row">Beta estimate</th><td data-label="Setting">756-day correlation; 252-day minimum; 21-day volatility; stock beta capped at ±4</td><td data-label="Why">Combines a stable correlation estimate with faster-moving volatility.</td></tr>
     <tr><th scope="row">Sector limits</th><td data-label="Setting">±20% net; 30% of either book</td><td data-label="Why">Stops one sector from dominating the net portfolio or either book.</td></tr>
@@ -486,15 +491,12 @@ Daily returns are capped at ±30% before correlation estimation. A missing pair
 gets the inherited 0.50 fallback, which is not always conservative in a
 long–short portfolio. I symmetrize the pairwise matrix, clip negative
 eigenvalues, and restore its unit diagonal before applying the shrinkage shown
-in the main text. The calibration multiplier is $$\kappa=1.18$$, inherited from the
-original development configuration; it is the setting to adjust when forecast
-and realized volatility do not line up.
+in the main text.
 
 [^schedules]: A staggered schedule runs the same rule from a different starting week. Each is a full-capital portfolio, not one slice of a combined portfolio. The [tranching study](/quants/2025/05/10/rebalancing-luck.html) introduced this calendar design.
 [^fresh-book]: Starting over means that the optimizer uses the current top and bottom 75 stocks at every rebalance and does not account for existing holdings.
 [^transition-aware]: Memory means that the optimizer starts from its price-drifted holdings, keeps eligible incumbents through carryover, and penalizes proposed trades.
 [^carryover]: Carryover lets an existing holding remain eligible outside the fresh 75 while it stays in the wider top or bottom 175.
 [^drifted]: The price-drifted book is the previous target portfolio after intervening price moves and before the next rebalance.
-[^calibration]: The calibration factor $$\kappa$$ rescales the covariance model so forecast portfolio volatility better matches realized volatility.
 [^trading]: Modeled turnover is the target-weight change seen by the optimizer. A forced exit is required by loss of eligibility; a discretionary replacement is chosen among otherwise eligible stocks.
 [^later-period]: The later period runs from January 2022 through May 2026. Schedule spread is the difference between the best and worst of the three staggered schedules for a metric.

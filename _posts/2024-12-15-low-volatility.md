@@ -14,14 +14,14 @@ github_repositories:
 
 <p class="article-summary">Equal dollars do not mean equal risk in a portfolio with long and short books. The short book takes over an equal-weight strategy. I hold the stocks and rebalance dates fixed, then size each position inversely to its recent volatility. Portfolio volatility falls from 33% to 10%, and compounding turns positive.</p>
 
-A long book contains stocks bought; a short book contains stocks sold short.
 The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
 is the empirical tendency for stable stocks to earn better risk-adjusted returns
 than volatile stocks. [Frazzini and
 Pedersen](https://www.nber.org/papers/w16601) link the pattern to investors'
-leverage constraints. This article starts the portfolio-construction series by
-asking a narrower question: once the ranking is fixed, how should I size the
-stocks?
+leverage constraints. A simple strategy buys stable stocks and sells volatile
+stocks short. The stocks bought are the long book; the stocks sold short are
+the short book. This article starts the portfolio-construction series by
+testing how to size those stocks once the ranking is fixed.
 
 The state of the strategy is simple: point-in-time Russell 1000 stocks, a
 past-volatility ranking, the lowest decile long, the highest decile short, three-week
@@ -33,11 +33,11 @@ allocates less to stocks whose prices have moved more.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
-    <tr><th>Rule</th><th>Arithmetic return, before costs</th><th>Arithmetic return, after costs</th><th>Geometric return, after costs</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
+    <tr><th>Rule</th><th>Arithmetic return, after costs</th><th>Geometric return, after costs</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Equal-weight</th><td data-label="Arithmetic return, before costs">3.2%</td><td data-label="Arithmetic return, after costs">2.4%</td><td data-label="Geometric return, after costs">−3.1%</td><td data-label="Net volatility">33.4%</td><td data-label="Net Sharpe">0.07</td><td data-label="Maximum drawdown">−87.1%</td><td data-label="Turnover">14.4×</td></tr>
-    <tr><th scope="row"><strong>Inverse-volatility</strong></th><td data-label="Arithmetic return, before costs"><strong>7.6%</strong></td><td data-label="Arithmetic return, after costs"><strong>7.1%</strong></td><td data-label="Geometric return, after costs"><strong>6.9%</strong></td><td data-label="Net volatility"><strong>9.8%</strong></td><td data-label="Net Sharpe"><strong>0.73</strong></td><td data-label="Maximum drawdown"><strong>−38.0%</strong></td><td data-label="Turnover"><strong>10.4×</strong></td></tr>
+    <tr><th scope="row">Equal-weight</th><td data-label="Arithmetic return, after costs">2.4%</td><td data-label="Geometric return, after costs">−3.1%</td><td data-label="Net volatility">33.4%</td><td data-label="Net Sharpe">0.07</td><td data-label="Maximum drawdown">−87.1%</td><td data-label="Turnover">14.4×</td></tr>
+    <tr><th scope="row"><strong>Inverse-volatility</strong></th><td data-label="Arithmetic return, after costs"><strong>7.1%</strong></td><td data-label="Geometric return, after costs"><strong>6.9%</strong></td><td data-label="Net volatility"><strong>9.8%</strong></td><td data-label="Net Sharpe"><strong>0.73</strong></td><td data-label="Maximum drawdown"><strong>−38.0%</strong></td><td data-label="Turnover"><strong>10.4×</strong></td></tr>
   </tbody>
 </table>
 
@@ -67,7 +67,7 @@ unadjusted close is used only for the price screen.
 
 ## The ranking separates risk more than return
 
-Does the ranking separate anything worth trading? At each rebalance, I split it
+At each rebalance, I split the ranking
 into ten groups of roughly equal size; each book holds about 100 stocks. The
 middle groups show whether the relation between the signal and outcomes changes
 smoothly rather than only at the two tails. Figure 1 plots Sharpe, geometric
@@ -102,14 +102,13 @@ and the volatile-stock short book.
 The short book carries more than three times the long book's volatility and
 almost three times its beta. Equal weighting therefore turns a stock-ranking
 idea into a large short-book risk position. Its long and short books average
-11.9% and 37.9% volatility. Both books average 100.0% gross exposure, leaving
-the portfolio at 200.0% gross, 0.0% net exposure, and −1.12 realized beta. I
+11.9% and 37.9% volatility. Both books average 100% gross exposure, leaving
+the portfolio at 200% gross and no net exposure. Realized beta is −1.12. I
 don't want one book to make most of the portfolio's risk decision.
 
 ## Inverse-volatility sizing balances book risk by using less short capital
 
-How much capital does the short book need once each stock carries comparable
-stand-alone risk? The alternative rule makes a stock's position smaller as its
+The alternative rule makes a stock's position smaller as its
 recent volatility rises. A stock with 40% annualized volatility gets half its
 equal share before the cap; a stock at the 20% reference keeps its equal share.
 The weight is
@@ -163,10 +162,8 @@ move the exposure again.
 
 ## Sizing cuts risk and restores positive compounding
 
-Does the book-level balance improve the whole portfolio? Table 1 gives the
-full-sample comparison. Inverse-volatility sizing earns more after costs, takes
-less risk, and trades less. The calculations use a zero cash rate, so cash
-outside stock positions earns no interest.
+Table 1 gives the full-sample portfolio comparison. Inverse-volatility sizing
+earns more after costs, takes less risk, and trades less.[^cash-rate]
 
 Figure 5 plots after-cost growth on a logarithmic scale above drawdown from the
 previous peak. Color distinguishes equal-weight and inverse-volatility sizing.
@@ -252,6 +249,7 @@ study](/quants/2026/08/29/portfolio-optimization.html) runs that test using the
 same ranking discipline and multiple rebalance schedules.
 
 [^beta-universe]: Requiring a beta estimate keeps the later beta comparison on the same stocks.
+[^cash-rate]: The calculations use a zero cash rate, so cash outside stock positions earns no interest.
 
 ## Appendix
 
@@ -271,10 +269,6 @@ $$
 Here, \(\widehat{\sigma}_{i,t}^{(h)}\) is stock \(i\)'s annualized volatility
 over the last \(h\) trading days. I bound the score before ranking so extreme
 observations tie at the nearest limit.
-
-[NEEDS INPUT: Why were the ranking horizons and bounds, sizing window and
-floor, reference volatility, caps, and beta settings chosen? The current
-article explains what they do but not why these exact values were used.]
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>

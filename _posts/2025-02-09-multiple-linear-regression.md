@@ -10,27 +10,25 @@ permalink: /quants/2025/02/09/multiple-linear-regression.html
 
 <p class="article-summary"><strong>TL;DR:</strong> I compare a five-factor score with fixed weights against linear regression that learns weights and directions over 144 predictors. Moving to the learned model raises development-period Sharpe from 0.71 to 0.98, mainly because volatility falls from 9.7% to 7.2%, although the comparison also changes predictors and eligible rows. Ridge shrinks unstable coefficients by about a third but leaves the ranking almost unchanged: rank correlation with OLS is 0.991, and performance is similar before and after 2021. The learned ranking also roughly doubles turnover. The next test must separate learned weighting from the broader predictor set.</p>
 
-Once a stock model contains more than a handful of signals, finding another one
-is no longer the main problem. The harder decision is how much influence each
-signal should have when they are combined into a single stock ranking. A fixed
-score chooses those weights in advance. Multiple linear regression can learn
-them from subsequent stock outcomes, while Ridge regression can restrain that
-learning when many predictors contain similar information.
+This article follows the
+[low-volatility study](/quant/2024/12/15/low-volatility-factor.html), which
+sizes one signal with inverse-volatility weights. Here I combine many signals
+into one ranking. The
+[next article](/quants/2026/08/29/portfolio-optimization.html) holds the learned
+ranking fixed, sizes the stocks jointly, and makes the allocation account for
+its current holdings.
 
 I start with a score built from five factors whose directions and weights are
-chosen in advance, then give multiple linear regression a broader set of 144
-predictors. Ordinary least squares (OLS) is free to assign each predictor its
-own coefficient. Ridge uses the same model but shrinks those coefficients. The
-practical question is whether that constraint improves the ranking or merely
-produces a steadier coefficient vector for the same signal.
+chosen in advance. It makes every preference visible. I then give multiple
+linear regression a broader set of 144 predictors and let it learn the weights
+and directions from subsequent stock outcomes.
 
-This article follows the
-[low-volatility study](/quant/2024/12/15/low-volatility-factor.html), which uses
-inverse-volatility sizing to balance one signal across stocks. Here I ask how to
-combine many signals into the ranking that enters that rule. The
-[next article](/quants/2026/08/29/portfolio-optimization.html) freezes the Ridge
-ranking, sizes the stocks jointly, and makes the allocation account for its
-current holdings.
+Once a stock model contains more than a handful of signals, finding another one
+is no longer the main problem. The harder decision is how much influence each
+signal should have in the combined ranking. Ordinary least squares (OLS) learns
+that combination. Ridge uses the same model but shrinks its coefficients when
+many predictors contain similar information. The practical question is whether
+that restraint improves the ranking or merely steadies the coefficient vector.
 
 Two comparisons answer different questions. Fixed weights versus OLS compares
 the five-factor score with the whole broader model. OLS versus Ridge isolates
@@ -308,7 +306,8 @@ ranking retains a 0.991 correlation with OLS. Ridge changes how predictors
 divide the weight much more than it changes which stocks are selected.
 
 Correlated predictors can exchange coefficients while preserving their combined
-score. Figure 6 follows the ten largest Ridge coefficients across refits.
+score. That is why Ridge can steady the coefficient vector without moving the
+ranking much. Figure 6 follows the ten largest Ridge coefficients across refits.
 Positive cells reward a high rank and negative cells favour a low rank; the 2022
 and 2024 columns are later refits and did not enter penalty selection.
 
@@ -322,6 +321,35 @@ Price relative to its moving average stays positive, while short-horizon MACD
 and illiquidity stay negative. Several other coefficients weaken or change
 sign. The broad predictor themes are easier to trust than any single
 coefficient.
+
+## Ridge does not improve performance before or after 2021
+
+Table 3 shows the development result: Ridge moves Sharpe from 0.98 to 1.00,
+without a decisive improvement across the penalty grid. Table 4 repeats the
+comparison in the later period using $$c=0.01$$.
+
+<table class="research-table comparison-table period-metrics-table portfolio-card-table">
+  <thead>
+    <tr><th>Later-period metric</th><th>Fixed</th><th>OLS</th><th>Ridge <i>c</i> = 0.01</th></tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">Annualized return, gross</th><td data-label="Fixed">7.85%</td><td data-label="OLS">8.84%</td><td data-label="Ridge c = 0.01">8.68%</td></tr>
+    <tr><th scope="row">Annualized return, net</th><td data-label="Fixed">7.24%</td><td data-label="OLS">7.50%</td><td data-label="Ridge c = 0.01">7.37%</td></tr>
+    <tr><th scope="row">Annualized volatility</th><td data-label="Fixed">11.33%</td><td data-label="OLS">8.64%</td><td data-label="Ridge c = 0.01">8.95%</td></tr>
+    <tr><th scope="row">Sharpe ratio</th><td data-label="Fixed">0.64</td><td data-label="OLS">0.87</td><td data-label="Ridge c = 0.01">0.82</td></tr>
+    <tr><th scope="row">Maximum drawdown</th><td data-label="Fixed">−10.98%</td><td data-label="OLS">−7.59%</td><td data-label="Ridge c = 0.01">−8.05%</td></tr>
+    <tr><th scope="row">Market beta</th><td data-label="Fixed">0.036</td><td data-label="OLS">0.075</td><td data-label="Ridge c = 0.01">0.078</td></tr>
+    <tr><th scope="row">Two-way turnover per rebalance</th><td data-label="Fixed">69.70%</td><td data-label="OLS">152.75%</td><td data-label="Ridge c = 0.01">149.61%</td></tr>
+    <tr><th scope="row">Annual trading cost</th><td data-label="Fixed">0.61 pp</td><td data-label="OLS">1.34 pp</td><td data-label="Ridge c = 0.01">1.31 pp</td></tr>
+  </tbody>
+</table>
+
+<p class="table-caption"><strong>Table 4:</strong> Later-period portfolio results using the penalty selected through 2021. Risk statistics use net returns.</p>
+
+Ridge trails OLS after 2021: net return is 0.13 percentage points lower,
+volatility is 0.31 points higher, and Sharpe is 0.82 rather than 0.87. Turnover
+and costs are only slightly lower. The gap counts against Ridge and is not a
+reason to retune it after seeing the later period.
 
 Information coefficient (IC) checks the whole ranking: the daily Spearman
 correlation between the predicted order and the subsequently realized,
@@ -342,46 +370,13 @@ its standard deviation.
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 4:</strong> Mean and standard deviation of daily rank IC, with IC IR shown for the development and later periods.</p>
+<p class="table-caption"><strong>Table 5:</strong> Mean and standard deviation of daily rank IC, with IC IR shown for the development and later periods.</p>
 
 Mean IC is about 0.047 for both learned models during development, with no
 useful IC IR improvement from Ridge. The later period is equally close. The
 fixed score's later mean IC is higher, but its IC is more variable and its IC IR
 remains below OLS. IC evaluates the whole cross-section; portfolio return
 depends on the selected tails, position sizing, execution, and costs.
-
-The result does not tell me why the ranking is so stable. Correlated predictors,
-bounded rank inputs, and the number of training rows could all matter. The
-current comparison does not separate them.
-
-## Ridge does not improve performance before or after 2021
-
-Table 3 shows the development result: Ridge moves Sharpe from 0.98 to 1.00,
-without a decisive improvement across the penalty grid. Table 5 repeats the
-comparison in the later period using $$c=0.01$$.
-
-<table class="research-table comparison-table period-metrics-table portfolio-card-table">
-  <thead>
-    <tr><th>Later-period metric</th><th>Fixed</th><th>OLS</th><th>Ridge <i>c</i> = 0.01</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">Annualized return, gross</th><td data-label="Fixed">7.85%</td><td data-label="OLS">8.84%</td><td data-label="Ridge c = 0.01">8.68%</td></tr>
-    <tr><th scope="row">Annualized return, net</th><td data-label="Fixed">7.24%</td><td data-label="OLS">7.50%</td><td data-label="Ridge c = 0.01">7.37%</td></tr>
-    <tr><th scope="row">Annualized volatility</th><td data-label="Fixed">11.33%</td><td data-label="OLS">8.64%</td><td data-label="Ridge c = 0.01">8.95%</td></tr>
-    <tr><th scope="row">Sharpe ratio</th><td data-label="Fixed">0.64</td><td data-label="OLS">0.87</td><td data-label="Ridge c = 0.01">0.82</td></tr>
-    <tr><th scope="row">Maximum drawdown</th><td data-label="Fixed">−10.98%</td><td data-label="OLS">−7.59%</td><td data-label="Ridge c = 0.01">−8.05%</td></tr>
-    <tr><th scope="row">Market beta</th><td data-label="Fixed">0.036</td><td data-label="OLS">0.075</td><td data-label="Ridge c = 0.01">0.078</td></tr>
-    <tr><th scope="row">Two-way turnover per rebalance</th><td data-label="Fixed">69.70%</td><td data-label="OLS">152.75%</td><td data-label="Ridge c = 0.01">149.61%</td></tr>
-    <tr><th scope="row">Annual trading cost</th><td data-label="Fixed">0.61 pp</td><td data-label="OLS">1.34 pp</td><td data-label="Ridge c = 0.01">1.31 pp</td></tr>
-  </tbody>
-</table>
-
-<p class="table-caption"><strong>Table 5:</strong> Later-period portfolio results using the penalty selected through 2021. Risk statistics use net returns.</p>
-
-Ridge trails OLS after 2021: net return is 0.13 percentage points lower,
-volatility is 0.31 points higher, and Sharpe is 0.82 rather than 0.87. Turnover
-and costs are only slightly lower. The gap counts against Ridge and is not a
-reason to retune it after seeing the later period.
 
 The penalty therefore does one useful job and no more. It steadies coefficients
 without changing the economic ranking or producing better portfolio results.
@@ -518,7 +513,7 @@ starts the later period.
 
 <p class="figure-caption"><strong>Figure A1:</strong> Cumulative daily rank IC for the fixed score, OLS, and selected Ridge rankings.</p>
 
-The OLS and Ridge paths overlap through both periods. Table 4 carries the exact
+The OLS and Ridge paths overlap through both periods. Table 5 carries the exact
 comparison, so the figure belongs here as a timing check rather than a main
 result.
 
