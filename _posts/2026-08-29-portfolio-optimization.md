@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Transition-Aware Optimization Earns Its Keep by Trading Less"
+title: "From Volatility Scaling to a Constrained Optimizer"
 date: 2026-08-29
 last_modified_at: 2026-09-02
 categories: ["Portfolio construction"]
@@ -8,7 +8,7 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 ---
 
-<p class="article-summary">A better stock ranking can still make a worse portfolio if small score changes trigger expensive trades. I test whether a portfolio rule that accounts for current holdings can keep the allocation gain while trading less. It does: turnover falls by about a third, from 42× to 28×, without reducing gross return. Net return and Sharpe improve, but the beta forecast remains weak.</p>
+<p class="article-summary">Volatility scaling sizes stocks one at a time and leaves portfolio exposures uncontrolled. A constrained optimizer sizes the whole book under explicit risk limits. Gross return rises from about 10% to 13%, but the framework depends on a covariance estimate and trades more. Making it account for current holdings removes that extra trading without giving back gross return. Realized beta remains the main open problem.</p>
 
 The [Ridge study](/quants/2025/02/09/multiple-linear-regression.html) found that
 learned rankings raised turnover and ended with two open tasks: size stocks
@@ -283,21 +283,21 @@ above it for the transition-aware portfolio. The beta limit is also enforced
 when weights are chosen, but exposure can change as prices and beta estimates
 move during the holding period.
 
-Figure 4 plots monthly trailing one-year realized beta for the two optimizers.
-The horizontal axis is time, color identifies the rule, and zero is the desired
-direction. Lines farther from zero mean more market exposure. I omit the
-optimizer's band because it applies to a different, point-in-time estimate.
+Figure 4 plots monthly trailing one-year realized beta for all three rules. The
+volatility-scaled rule supplies the baseline; the two optimizer lines show what
+joint sizing changes. I omit the optimizer's band because it applies to a
+different, point-in-time estimate.
 
 <div class="research-figure risk-beta-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" alt="Trailing 252-day realized market beta for the fresh-book and transition-aware optimizers, sampled monthly, with a zero reference line" version="7" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" alt="Trailing 252-day realized market beta for the volatility-scaled rule, fresh-book optimizer, and transition-aware optimizer, sampled monthly, with a zero reference line" version="8" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 4:</strong> Monthly trailing one-year realized market beta for the fresh-book and transition-aware optimizers, averaged across the three schedules, September 1998–May 2026. Values closer to zero carry less market exposure. The zero line is a reference, not the point-in-time constraint band.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> Monthly trailing one-year realized market beta for the volatility-scaled rule and both optimizers, averaged across the three schedules, September 1998–May 2026. The point-in-time optimizer constraint uses a different estimate and clock, so its target band is not overlaid.</p>
 
-Look at the long departures from zero rather than one-month peaks. Both rules
-have persistent episodes, and Table A4 gives their counts and magnitudes. The
-transition-aware line is calmer in the later years, but the chart does not
-attribute returns to beta.
+Look at the long departures from zero rather than one-month peaks. The
+optimizers reduce persistent beta relative to volatility scaling, but they do
+not remove it. Table A4 gives episode counts and magnitudes for the two
+optimizers; the chart does not attribute returns to beta.
 
 Constraint compliance is not the problem. The beta limit binds on nearly half
 of transition-aware rebalance dates. The chosen portfolio remains inside the
