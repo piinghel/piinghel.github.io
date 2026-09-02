@@ -464,20 +464,20 @@ down only when its gross exposure exceeds $$G_\ell$$:
 
 $$
 \begin{aligned}
+\Lambda(x)&=(1+e^{-x})^{-1},\\
 p_{i,t}
 &=\frac{\Lambda(\gamma d_\ell z_{i,t})}
-{\sum_{j\in\mathcal I_{\ell,t}}\Lambda(\gamma d_\ell z_{j,t})},
-&\Lambda(x)&=(1+e^{-x})^{-1},\\
+{\sum_{j\in\mathcal I_{\ell,t}}\Lambda(\gamma d_\ell z_{j,t})},\\
 \lambda_{i,t}
 &=\min\!\left\{\lambda_{\max},
 \frac{\sigma_{\mathrm{target}}}{\widehat\sigma_{i,t}}\right\},\\
 \widetilde w_{i,t}
 &=d_\ell\min\!\left\{w_{\max},
 \min(p_{i,t},p_{\max})\lambda_{i,t}\right\},\\
-w_{i,t}
-&=\eta_{\ell,t}\widetilde w_{i,t},
-&\eta_{\ell,t}&=\min\!\left\{1,
-\frac{G_\ell}{\sum_{j\in\mathcal I_{\ell,t}}|\widetilde w_{j,t}|}\right\}.
+\eta_{\ell,t}
+&=\min\!\left\{1,
+\frac{G_\ell}{\sum_{j\in\mathcal I_{\ell,t}}|\widetilde w_{j,t}|}\right\},\\
+w_{i,t}&=\eta_{\ell,t}\widetilde w_{i,t}.
 \end{aligned}
 $$
 
