@@ -8,59 +8,51 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 ---
 
-<p class="article-summary">Volatility scaling sizes stocks one at a time and leaves portfolio exposures uncontrolled. A constrained optimizer sizes the whole book under explicit risk limits. Gross return rises from about 10% to 13%, but the framework depends on a covariance estimate and trades more. Making it account for current holdings removes that extra trading without giving back gross return. Realized beta remains the main open problem.</p>
+<p class="article-summary">Volatility scaling sizes stocks one at a time and leaves market, sector, and net exposure uncontrolled. A constrained mean-variance optimizer sizes the book jointly under explicit limits. Gross return rises from 10.3% to 13.1%, and Sharpe from 1.05 to 1.24, although realized volatility and drawdown do not improve. The price is dependence on covariance estimates and turnover that rises from 30× to 42×. Accounting for current holdings cuts turnover to 28×, raises Sharpe to 1.33, and lowers maximum drawdown to 18.1%. Realized beta remains the main open problem.</p>
 
-The [Ridge study](/quants/2025/02/09/multiple-linear-regression.html) found that
-learned rankings raised turnover and ended with two open tasks: size stocks
-jointly and penalize changes from the current portfolio. The earlier
-[low-volatility study](/quant/2024/12/15/low-volatility-factor.html) reached the same
-joint-sizing question from a different direction. This article runs that test
-using the staggered schedules from the
-[tranching study](/quants/2025/05/10/rebalancing-luck.html).
+The [low-volatility study](/quant/2024/12/15/low-volatility-factor.html) showed
+that inverse-volatility sizing improves balance between the long and short books,
+but leaves gross, net, beta, and shared risk uncontrolled. The
+[Ridge study](/quants/2025/02/09/multiple-linear-regression.html) then showed that
+learned rankings roughly double turnover and ended with two tasks: size stocks
+jointly and charge proposed changes against the current book.
 
-The state of the strategy is fixed: Russell 1000 stocks, a walk-forward Ridge
-score, three-week staggered rebalancing, and a five-basis-point trading cost.
-Only the rule that turns scores into weights changes.
+This article does both. It uses three staggered schedules[^schedules] from the
+[tranching study](/quants/2025/05/10/rebalancing-luck.html), so the result does
+not rest on one arbitrary starting week.
 
-Table 1 reports gross return, net return, net Sharpe, and turnover for the three
-rules. Higher is better in the return and Sharpe columns; lower is better for
-turnover. The two optimizer rows are the central comparison.
+Table 1 gives the full-period comparison. The volatility-scaled rule sizes each
+stock separately. The fresh-book optimizer[^fresh-book] sizes the selected
+stocks jointly but starts over at each rebalance. The transition-aware
+optimizer[^transition-aware] starts from the current holdings and charges for
+changing them.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
-    <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Turnover</th></tr>
+    <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max DD</th><th>Turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">B1 · Signal-weighted</th><td data-label="Gross return">10.31%</td><td data-label="Net return">8.67%</td><td data-label="Net Sharpe">1.05</td><td data-label="Turnover">29.94×</td></tr>
-    <tr><th scope="row">B2 · Fresh-book optimizer</th><td data-label="Gross return">13.13%</td><td data-label="Net return">10.77%</td><td data-label="Net Sharpe">1.24</td><td data-label="Turnover">42.08×</td></tr>
-    <tr><th scope="row"><strong>B3 · Transition-aware optimizer</strong></th><td data-label="Gross return"><strong>13.17%</strong></td><td data-label="Net return"><strong>11.62%</strong></td><td data-label="Net Sharpe"><strong>1.33</strong></td><td data-label="Turnover"><strong>27.61×</strong></td></tr>
+    <tr><th scope="row">B1 · Volatility-scaled</th><td data-label="Gross return">10.31%</td><td data-label="Net return">8.67%</td><td data-label="Net volatility">8.24%</td><td data-label="Net Sharpe">1.05</td><td data-label="Max drawdown">19.63%</td><td data-label="Turnover">29.94×</td></tr>
+    <tr><th scope="row">B2 · Fresh-book optimizer</th><td data-label="Gross return">13.13%</td><td data-label="Net return">10.77%</td><td data-label="Net volatility">8.57%</td><td data-label="Net Sharpe">1.24</td><td data-label="Max drawdown">19.77%</td><td data-label="Turnover">42.08×</td></tr>
+    <tr><th scope="row"><strong>B3 · Transition-aware optimizer</strong></th><td data-label="Gross return"><strong>13.17%</strong></td><td data-label="Net return"><strong>11.62%</strong></td><td data-label="Net volatility"><strong>8.55%</strong></td><td data-label="Net Sharpe"><strong>1.33</strong></td><td data-label="Max drawdown"><strong>18.06%</strong></td><td data-label="Turnover"><strong>27.61×</strong></td></tr>
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 1:</strong> Key results, September 1998–May 2026. Metrics are means of three full-capital rebalance schedules. Returns are annualized; net results charge 5 basis points for every dollar bought or sold. Turnover is annualized purchases plus sales.</p>
+<p class="table-caption"><strong>Table 1:</strong> Return, realized risk, and trading, September 1998–May 2026. Metrics are means of three full-capital rebalance schedules. Returns and volatility are annualized; net results charge 5 basis points for every dollar bought or sold. Turnover is annualized purchases plus sales.</p>
 
-The rule that accounts for current holdings raises net Sharpe in every matched
-schedule. The schedule-level gain ranges from 0.05 to 0.16. Table 1 does not
-identify the mechanism; the ablation in Table 3 does.
+The fresh-book optimizer adds about three percentage points of gross return and
+lifts net Sharpe from 1.05 to 1.24. That is a performance gain, not a
+realized-risk gain: volatility is a third of a point higher and drawdown remains
+about 20%.
+
+Accounting for current holdings keeps the gross return, cuts trading below the
+volatility-scaled rule, and lowers drawdown. Its schedule-level Sharpe gain over
+the fresh-book optimizer ranges from 0.05 to 0.16; Table 3 tests the mechanism.
 
 ## What stays the same in every test
 
-I use a frozen research snapshot with daily prices, point-in-time Russell 1000
-membership, the Russell 1000 benchmark, and sector classifications. Adjusted
-closing prices drive both signals and P&L.
-
-At each rebalance, a fixed walk-forward Ridge model ranks eligible stocks using
-mostly price-based predictors. Its output is a risk-adjusted score, not a
-calibrated return forecast. Eligibility requires sufficient signal and risk
-history, as well as a price of at least five dollars. I exclude announced
-merger targets and duplicate share classes. The strongest and weakest scores
-form the new long and short lists. The [Ridge article](/quants/2025/02/09/multiple-linear-regression.html)
-describes the model and predictors.
-
-I freeze those scores so portfolio construction is the only moving part. Every
-rule receives the same stocks, rebalance dates, execution rules, and costs. A
-target formed at one close executes at the next close. The new portfolio first
-earns the following close-to-close return, which prevents same-close look-ahead.
+The comparison freezes the data, ranking, schedules, execution, and costs. Only
+the rule that turns a Ridge score into portfolio weights changes.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
@@ -79,102 +71,210 @@ earns the following close-to-close return, which prevents same-close look-ahead.
 
 <p class="table-caption"><strong>Table 2:</strong> Inputs, sample, timing, and evaluation held fixed across all three portfolio rules. Table A1 gives the rule-specific parameters.</p>
 
-The middle column states the shared setting; the last explains why it cannot
-drive a difference between rules. The ranking, schedule, and cost rows matter
-most for interpretation. The table does not test whether those fixed choices
-are optimal.
+## 1. Volatility scaling cannot see shared risk
 
-Each schedule is a separate full-capital portfolio. I calculate its return,
-Sharpe, drawdown, and turnover, then report the mean across schedules. I do not
-blend their return streams before calculating the headline metrics. The
-[tranching study](/quants/2025/05/10/rebalancing-luck.html) explains why the
-three starting schedules matter.
+The volatility-scaled rule maps the ranking into weights in four steps: rank,
+logistic weight, inverse-volatility scaling, and caps. It sizes the long and
+short books separately and caps each at 100% gross. The rule is transparent,
+and each stock's own volatility affects its weight.
 
-The development period ends in 2021. The later chronological check starts in
-2022.
+The rule never sees covariance. It cannot tell when several modest positions
+carry the same market or sector risk, and it has no portfolio-level volatility,
+beta, sector, or net-exposure constraint. Those exposures are whatever the
+separate stock weights produce. This is the unresolved problem left by the
+[low-volatility study](/quant/2024/12/15/low-volatility-factor.html).
 
-## Transition awareness changes the current portfolio, not the forecast
+## 2. Constraints turn portfolio intentions into one allocation problem
 
-The **signal-weighted rule** sizes each stock from its score and its own recent
-volatility. Stronger scores receive more weight, while more volatile stocks
-receive less. The long and short books are scaled separately. This makes the
-rule easy to inspect, but it treats stocks one at a time. It cannot recognize
-that several modest positions may carry the same market or sector risk.
+The constrained optimizer starts from the same ranking but sizes every selected
+stock jointly. Because the Ridge output is a risk-adjusted score rather than a
+return forecast, I put it in daily return units using recent volatility:
 
-The **fresh-book optimizer** starts with the same ranking. It converts each
-score to return units using recent stock volatility, then chooses all weights
-together. A covariance model captures common risk, while constraints limit
-forecast volatility, beta, gross and net exposure, sector exposure, and
-single-stock concentration. This allows the optimizer to reduce a high-scoring stock
-when another holding already carries similar risk.
+$$
+\mu_{i,t}=s_{i,t}\widehat{\sigma}_{i,t}.
+$$
 
-Volatility changes faster than correlation, so I estimate them on different
-windows. I then repair the pairwise correlation matrix and shrink its noisy
-off-diagonal estimates toward zero. A frozen calibration factor rescales the
-resulting portfolio-volatility forecast. These choices affect feasibility and
-weights, not just a diagnostic, which is why the shrinkage check later varies
-the full portfolio rather than rescaling a chart.
+The optimizer then chooses the weight vector $$w_t$$ against covariance matrix
+$$\Sigma_t$$. For long candidates $$L_t$$, short candidates $$S_t$$, and sector
+indicator $$g_{k,t}$$, the fresh-book problem is
 
-The fresh-book optimizer still has no memory. At each rebalance it solves for
-the best portfolio among the newly selected stocks. An existing holding gets no
-credit for already being in the book, even when its replacement offers only a
-small improvement.
+$$
+\begin{aligned}
+\max_{w_t}\quad & \mu_t^\top w_t \\
+\text{subject to}\quad
+& w_t^\top\Sigma_t w_t\leq 0.07^2, \\
+& \lVert w_t\rVert_1\leq 2.00,\qquad |w_{i,t}|\leq 0.04, \\
+& -0.25\leq\mathbf{1}^\top w_t\leq 0.25, \\
+& w_{i,t}\geq0\ \forall i\in L_t,\qquad
+  w_{i,t}\leq0\ \forall i\in S_t, \\
+& -0.05\leq\beta_t^\top w_t\leq0.05, \\
+& -0.20\leq g_{k,t}^\top w_t\leq0.20, \\
+& \sum_{i\in L_{k,t}}w_{i,t}
+  \leq0.30\sum_{i\in L_t}w_{i,t}, \\
+& \sum_{i\in S_{k,t}}|w_{i,t}|
+  \leq0.30\sum_{i\in S_t}|w_{i,t}|.
+\end{aligned}
+$$
 
-The **transition-aware optimizer** keeps the same score, covariance model, and
-constraints. It changes two things. First, an existing stock may remain
-eligible after its rank slips outside the fresh selection, provided it stays in
-a wider rank tail. Second, the objective subtracts a penalty for changing the
-price-drifted portfolio. Together, these rules create a buffer around marginal
-replacements.
+Each line states an intention: forecast volatility at most 7%, beta within
+±0.05, and net exposure within ±25%. The remaining lines keep gross exposure,
+single names, and sector concentration inside their limits. There is no required
+gross target, so gross exposure becomes whatever the risk budget and other
+constraints permit.
 
-There is no hard turnover cap. A strong enough improvement still leads to a
-trade, and an ineligible stock must still leave. The objective's trade penalty
-is also separate from the realized transaction cost in the backtest. One guides
-the optimizer; the other reduces net return for every dollar actually bought or
-sold. The full equations and safeguards are in the appendix.
+That is the engineering advantage. Adding beta or sector control to the
+volatility-scaled rule would require another sizing rule and a way to reconcile
+it with the existing caps. Here the risk intentions live in the same problem as
+the return-unit score. The price is that the solution inherits every error in
+that score and covariance matrix.
 
-## Trading less is the whole gain after costs
+The two optimizers record zero audited portfolio-constraint breaches across
+1,447 rebalance dates. Mean gross exposure rises from 136% under volatility
+scaling to 176% and 183% for the two optimizers; the risk budget, rather than a
+fixed book size, allows that expansion.
 
-The fresh-book optimizer raises gross return, but turnover increases from about
-30× to 42×. Transition awareness matches that gross return and cuts turnover to
-28×. Table 1 shows the resulting improvement in net return and Sharpe.
+Maximum absolute net exposure falls from 66% to the 25% optimizer limit. A
+matched sector history for all three rules was not saved, so sector control is
+verified through construction and the constraint audit rather than a baseline
+time series.
+
+## 3. Joint sizing improves return, not realized risk by itself
+
+Table 1 separates the gain from the claim I cannot make. Moving from the
+volatility-scaled rule to the fresh-book optimizer raises gross and net return,
+but realized volatility is slightly higher and drawdown is essentially
+unchanged. The improvement is return per unit of realized risk, alongside more
+explicit point-in-time risk control.
+
+Because the ranking, stocks, and execution are fixed, the extra gross return
+enters after the forecast. I read it as evidence that joint sizing removes some
+shared-risk drag that the separate rule carries, including the risk of letting
+one side of the book dominate. But the comparison bundles return-unit scaling,
+covariance, and constraints. A component test between the two rules would
+be needed to assign the gain to one of them.
+
+The current-holdings version improves the realized-risk evidence as well as the
+net result: maximum drawdown falls from about 20% to 18%. That improvement is
+useful, but it is not proof that the risk forecast is calibrated.
+
+Figure 1 plots net growth on a logarithmic scale above drawdown. The fresh-book
+optimizer finishes above the volatility-scaled rule, and the transition-aware
+path finishes highest. Its largest separations from the fresh-book path open in
+2000 and 2021 rather than accumulating smoothly. The vertical line starts the
+later period.[^later-period]
+
+<div class="research-figure performance-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Net growth of one dollar on a logarithmic scale and transparent drawdown areas for the volatility-scaled rule, fresh-book optimizer, and transition-aware optimizer, with the later period beginning in 2022" version="8" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1:</strong> Net growth of <span class="mathjax-ignore">$1</span> on a logarithmic scale (top) and drawdown in percent (bottom) for the volatility-scaled, fresh-book, and transition-aware rules after trading costs, September 1998–May 2026. The paths average the three rebalance schedules; the vertical rule marks the start of the later period.</p>
+
+The main drawdowns are similar for the first two rules, while the
+transition-aware path loses less in its worst episode. The plot averages the
+three schedule paths; Table 1 reports the mean of metrics calculated inside each
+schedule, so their endpoint and drawdown values need not match exactly.
+
+## 4. Better inputs are the cost of a more expressive optimizer
+
+An optimizer takes every number literally, and the covariance matrix is the
+input it trusts most. Noisy correlations become positions. An unstable or
+overconfident matrix can make a portfolio look diversified while understating
+its risk.
+
+Volatility changes faster than correlation, so I estimate stock volatility over
+21 sessions and correlation over 756. After repairing the pairwise estimate to
+a valid correlation matrix $$\widetilde R_t$$, I shrink it toward identity:
+
+$$
+C_t(\rho)=(1-\rho)\widetilde R_t+\rho I,
+\qquad 0\leq\rho\leq1.
+$$
+
+With diagonal volatility matrix $$D_t$$, annualization factor $$A$$, and a
+frozen calibration factor $$\kappa$$ that corrects historical forecast bias,[^calibration]
+the covariance input is
+
+$$
+\Sigma_t=A\kappa^2D_tC_t(\rho)D_t.
+$$
+
+Figure 2 asks how much the risk forecast and portfolio result depend on
+shrinkage. The horizontal axis runs from the raw repaired correlation estimate
+to full identity. The panels compare forecast calibration, beta forecast error,
+turnover, and net Sharpe for the two optimizers.
+
+<div class="research-figure rho-ladder-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Risk calibration, beta forecast error, turnover, and mean schedule-level net Sharpe for the fresh-book and transition-aware optimizers across covariance-shrinkage values from zero to one" version="4" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 2:</strong> How the risk forecast and result depend on correlation shrinkage. Panels show realized-to-forecast volatility, beta forecast error over the next holding period, annualized turnover, and net Sharpe for the fresh-book and transition-aware optimizers, September 1998–May 2026. The shaded region marks shrinkage from 0.3 to 0.6.</p>
+
+The useful region is the shaded middle. The curves change little from 0.3 to
+0.6, and the implemented value is 0.5. Table A3 shows that the nearest lower-risk
+setting leaves return and Sharpe effectively unchanged, so I keep the frozen
+choice rather than select the best historical cell.
+
+The extremes show why the input needs care. With no shrinkage, realized
+volatility is about 1.3 times forecast. Full shrinkage discards useful
+correlation and makes the miss roughly 1.7 times. The sensitivity sweep supports
+a stable middle, not one exact shrinkage value.
+
+The constraints are guardrails against the remaining estimation error. They
+stop the optimizer from turning one noisy input into an unbounded name, sector,
+beta, or gross position. They do not make the inputs correct: realized
+volatility still averages about 15% above forecast, and Section 8 shows that the
+beta estimate misses persistent exposure.
+
+That volatility miss looks like a calibration setting, not a failure of the
+framework. I can adjust $$\kappa$$ to align forecast and realized volatility,
+but the choice belongs on the development period because it changes weights,
+constraint feasibility, turnover, and returns. The corrected value should then
+be frozen before one later-period check.
+
+## 5. The fresh-book optimizer trades more because it has no memory
+
+The return gain comes with a trading problem. Annualized purchases plus sales
+rise from about 30 times capital under volatility scaling to 42 times under the
+fresh-book optimizer. At each rebalance, it solves only over the new selection;
+an existing holding receives no credit for already being in the book.
+
+Small changes in scores or covariance can therefore replace a stock even when
+the proposed substitute adds little at the portfolio level. Can the optimizer
+keep the allocation gain if every change has to pay for itself?
+
+## 6. The current book turns marginal replacements into a decision
+
+The transition-aware optimizer adds two mechanisms. **Carryover** keeps an
+existing stock eligible after it leaves the fresh 75, provided it remains in
+the wider top or bottom 175 rank tail. The trade penalty charges the objective
+for moving away from the price-drifted book—the weights after market moves and
+before the next rebalance.
+
+If $$w_t^{\mathrm{pre}}$$ is that current book and $$c$$ is the penalty, the
+objective becomes
+
+$$
+\max_{w_t}\quad
+\mu_t^\top w_t-c\lVert w_t-w_t^{\mathrm{pre}}\rVert_1,
+$$
+
+subject to the same constraints as the fresh-book optimizer. The objective uses
+a 2.5 bp penalty, while realized P&L is charged 5 bp for each dollar bought or
+sold. [NEEDS INPUT: explain why the objective uses a 2.5 bp trade penalty rather
+than the 5 bp realized trading cost.]
+
+Suppose a current long falls from rank 70 to rank 110. A fresh 75-stock book
+must replace it, but carryover keeps it eligible because rank 110 is inside the
+175-stock tail. The optimizer can then retain its drifted weight unless the
+replacement improves the score-risk objective enough to cover the trade
+penalty. A new stock still has to enter through the fresh 75.
 
 This distinction matters. The transition-aware rule does not win because its
 gross backtest compounds faster. It reaches nearly the same portfolio with
 fewer replacements. The cost saving is the gain.
 
-Figure 1 plots net growth on a logarithmic scale in the upper panel and
-drawdown in the lower panel. Each color is one portfolio rule. The vertical
-line starts the later period. A better path finishes higher in the top panel
-without spending more time deep in the bottom panel.
-
-<div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Net growth of one dollar on a logarithmic scale and transparent drawdown areas for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer, with the later period beginning in 2022" version="7" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 1:</strong> Net growth of <span class="mathjax-ignore">$1</span> on a logarithmic scale (top) and drawdown in percent (bottom) for the signal-weighted, fresh-book, and transition-aware rules after trading costs, September 1998–May 2026. The paths average the three rebalance schedules; the vertical rule marks the start of the later period.</p>
-
-Look first at the endpoints, then the major drawdowns. The transition-aware
-path finishes highest without a larger major loss, but the lead develops
-unevenly. The plot averages schedule paths; Table 1 reports schedule-level
-metrics instead.
-
-The later-period mean return edge over the fresh-book optimizer is about 1.5
-percentage points. The transition-aware schedules span 4.5 points. The mean
-gap therefore sits inside rebalance-timing dispersion.
-
-All three rules weaken after the boundary. One explanation is decay in the
-shared price-based ranking rather than a change in portfolio construction.
-Crowding, the rate regime, and universe drift are plausible mechanisms, but the
-current evidence does not distinguish them.
-
-## The trade penalty does most of the work; carryover adds to it
-
-Carryover lets an acceptable holding remain in the eligible set. The trade
-penalty makes a replacement compete with the cost of changing the book. In
-Table 3, the top row uses neither mechanism, the middle rows add one at a time,
-and the bottom row uses both. Read the return and Sharpe columns upward and the
-turnover column downward.
+Table 3 separates carryover from the trade penalty. The top row uses neither
+mechanism, the middle rows add one at a time, and the bottom row combines them.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
@@ -188,11 +288,11 @@ turnover column downward.
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 3:</strong> Carryover and trade-penalty ablation using the reference portfolios. The penalty guides the optimizer; the backtest still charges the same realized cost. The mechanisms interact, so their combined effect is not the sum of the two middle rows.</p>
+<p class="table-caption"><strong>Table 3:</strong> Carryover and trade-penalty mechanism comparison using the reference portfolios. The penalty guides the optimizer; the backtest still charges the same realized cost. The mechanisms interact, so their combined effect is not the sum of the two middle rows.</p>
 
 The penalty-only row captures most of the improvement. Adding carryover cuts
 turnover by another 7× and raises mean Sharpe by 0.06. That Sharpe increment is
-close to the 0.05 schedule range, so the case for carryover rests more on
+close to the 0.05 schedule spread, so the case for carryover rests more on
 trading than on a precisely estimated performance gain.
 
 Gross return barely changes across the four rows. I read this as evidence that
@@ -201,87 +301,47 @@ trade-level alpha test: changes in risk and exposure could offset the returns of
 the skipped trades. A matched analysis of replaced versus retained stocks, with
 the Ridge score's rank persistence, would separate those explanations.
 
-Trading does not disappear. Forced exits still account for 36% of modeled
-transition-aware turnover. The design reduces discretionary replacements; it
-cannot retain a stock that leaves the eligible universe.
+The mechanisms reinforce each other. Carryover makes acceptable incumbents
+eligible; the trade penalty gives the optimizer a reason to keep them. Either
+mechanism alone leaves one half of that decision missing, so their combined
+turnover reduction is larger than the sum of the two isolated reductions.
 
-## The covariance choice is not carrying the result
+Trading does not disappear. Forced exits—sales required because a stock leaves
+the eligible universe—still account for 36% of modeled turnover.[^trading]
+Target changes sum to 1.59 times capital per rebalance, and the average interval
+between executions is 13.46 trading days. The design reduces discretionary
+replacements; it does not remove implementation risk.
 
-Covariance shrinkage pulls noisy stock-correlation estimates toward zero. In
-Figure 2, the horizontal axis moves from the empirical matrix to treating every
-stock pair as uncorrelated. The panels show how much realized volatility
-exceeded forecast, beta error, annualized turnover, and net Sharpe. The two
-colors are the fresh-book and transition-aware optimizers over the full sample.
+## 7. The trading gain survives wider portfolios
 
-For the risk panels, lower is better and a volatility ratio near one is ideal.
-Lower turnover and higher Sharpe are better in the bottom row. A flat line
-means that the conclusion does not depend on one exact covariance setting.
-
-<div class="research-figure rho-ladder-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Risk calibration, beta error, turnover, and mean schedule-level net Sharpe for the fresh-book and transition-aware optimizers across covariance-shrinkage values from zero to one" version="4" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 2:</strong> Full-sample volatility calibration (top left), holding-period beta error (top right), annualized turnover (bottom left), and net Sharpe (bottom right) as correlation shrinkage moves from none to full identity. Slate is the fresh-book optimizer; orange is the transition-aware optimizer. The shaded region marks the stable middle of the range.</p>
-
-Look at the shaded middle. The curves change little from 0.3 to 0.6, and the
-implemented choice is 0.5. A nearby setting has slightly lower risk errors, but
-Table A3 shows no meaningful performance difference. I keep the frozen value
-rather than tune to the in-sample minimum.
-
-The extremes are more informative. With no shrinkage, noisy empirical
-correlations understate realized volatility. Treating every pair as
-uncorrelated makes the miss larger and beta error worse. Turnover declines as
-shrinkage rises, but that saving does not offset the loss in risk control and
-Sharpe. The transition-aware advantage survives throughout the useful middle
-of the range. This is a historical sensitivity check, not an independent
-estimate of the best shrinkage value.
-
-## The advantage survives wider portfolios
-
-Figure 3 puts net Sharpe in the top row and annualized turnover in the bottom
-row. The horizontal axis is the number of selected stocks on each side. The
-left column is the development period; the right is the later period. Within
-each breadth, color identifies the rule. Higher is better for Sharpe and lower
-is better for turnover.
+Figure 3 tests selection breadth from 50 to 150 stocks on each side. Net Sharpe
+is in the top row and annualized turnover in the bottom row; columns separate
+the development and later periods.
 
 <div class="research-figure deterministic-breadth-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/deterministic-breadth" alt="Grouped bars comparing actual net Sharpe and annualized turnover for the signal-weighted baseline, fresh-book optimizer, and transition-aware optimizer from 50 to 150 selected names per side before and after 2022" version="7" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/deterministic-breadth" alt="Grouped bars comparing actual net Sharpe and annualized turnover for the volatility-scaled rule, fresh-book optimizer, and transition-aware optimizer from 50 to 150 selected names per side before and after 2022" version="7" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Net Sharpe (top) and annualized purchases plus sales (bottom) for the three portfolio rules by selected stocks per side. The left panels end in 2021; the right panels cover January 2022–May 2026. The narrowest optimizer pair uses a looser sector-share cap because one selected tail contains only three sectors.</p>
 
 The transition-aware optimizer has the highest mean Sharpe at every tested
-breadth in both periods. In development, the gaps over the fresh-book optimizer
-run from 0.05 to 0.08 while schedule ranges reach 0.14. The ordering is stable,
-but those early-period differences are small.
+breadth. During development, its gaps over the fresh-book optimizer range from
+0.05 to 0.08, while schedule spread reaches 0.14. The ordering is stable, but
+the differences are small relative to rebalance timing.
 
-The later gaps are larger. At the narrowest book, mean Sharpe is 0.96 versus
-0.71. Schedule dispersion also widens, so the mean bars should not be read as
-precise rankings.
-
-Turnover tells a slightly different story. Transition awareness remains well
-below the fresh-book optimizer throughout. It also trades less than the
-signal-weighted rule at the middle breadths. At the widest book, the simpler rule
-trades slightly less. That is the one turnover comparison the transition-aware
-optimizer loses.
-
-The horizontal axis changes the rank cutoff. The transition-aware rule keeps a
-fixed 100-rank buffer as the book widens, but Figure 3 does not test different
+Turnover remains below the fresh-book optimizer throughout. It also falls below
+the volatility-scaled rule at the middle breadths, but not at the widest book.
+The wider books change the rank cutoff, so Figure 3 does not test different
 stock identities at a fixed breadth.
 
-The risk evidence is mixed. Transition awareness improves volatility forecasts
-at most breadths, but its later-period beta error is a few thousandths higher
-than the fresh-book optimizer's throughout. That does not change the trading
-result, but it rules out a claim that transition awareness improves every part
-of the risk model.
+The later-period panels are more dispersed. I treat them as the short check in
+Section 9, not as a second headline result.
 
-## Risk forecasts and capacity remain the weak links
+## 8. Realized beta is the main open problem
 
-The volatility target and beta limit answer different questions. The first is
-a point-in-time portfolio forecast. Realized volatility averages about 15%
-above it for the transition-aware portfolio. The beta limit is also enforced
-when weights are chosen, but exposure can change as prices and beta estimates
-move during the holding period.
+The optimizer enforces a point-in-time beta limit when it chooses weights.
+Realized beta can still change as prices and beta estimates move over the
+holding period.
 
 Figure 4 plots monthly trailing one-year realized beta for all three rules. The
 volatility-scaled rule supplies the baseline; the two optimizer lines show what
@@ -296,8 +356,8 @@ different, point-in-time estimate.
 
 Look at the long departures from zero rather than one-month peaks. The
 optimizers reduce persistent beta relative to volatility scaling, but they do
-not remove it. Table A4 gives episode counts and magnitudes for the two
-optimizers; the chart does not attribute returns to beta.
+not remove it. Realized beta reaches 0.25–0.31 for months. Table A4 gives episode
+counts and magnitudes; the chart does not attribute returns to beta.
 
 Constraint compliance is not the problem. The beta limit binds on nearly half
 of transition-aware rebalance dates. The chosen portfolio remains inside the
@@ -310,9 +370,14 @@ percentage points. That exceeds the 0.50-point tolerance I fixed before
 checking the later period, so I reject it.
 
 That missing attribution matters. Some of the return difference between rules
-or periods may come from market exposure rather than stock selection. The saved
-evidence has no beta-residual return decomposition, so I do not treat the later
-mean return lead as proof of stronger selection.
+may come from market exposure rather than stock selection. The saved evidence
+has no beta-residual return decomposition, so I do not treat a mean return lead
+as proof of stronger selection.
+
+Volatility calibration is more tractable. Realized volatility averages about
+15% above the transition-aware forecast, and the covariance model already has
+an explicit multiplier for that gap. I treat this as a development-period
+configuration update followed by a frozen rerun, not as a new source of edge.
 
 Turnover also remains high after the improvement. At roughly 28× purchases plus
 sales per year, capacity depends on market impact, borrow, and the stocks at the
@@ -323,11 +388,28 @@ The cleaner next test is a costed benchmark overlay that leaves the stock
 portfolio untouched. It would separate beta management from stock selection.
 Tightening the stock constraint first would mix them again.
 
+## 9. The later period is a short check
+
+All three rules weaken in the later period, with annualized net
+returns of 7.38%, 6.47%, and 7.99% for the volatility-scaled, fresh-book, and
+transition-aware rules. The fresh-book optimizer trails volatility scaling in
+this block. The transition-aware lead over it remains inside schedule spread,
+and five years is not enough to promote this check into the headline result.
+
 ## Conclusion
 
-I carry the transition-aware optimizer forward. It keeps the fresh-book
-optimizer's allocation gain and makes each change pay for itself. The ablation
-shows that carryover and the trade penalty work best together.
+I move from volatility scaling to the constrained optimizer, and I use the
+version that accounts for its current book.
+
+Joint sizing improves the allocation and turns exposure intentions into explicit
+constraints. That cleaner framework demands more careful covariance estimation,
+guardrails that keep bad inputs from becoming extreme positions, and a trading
+objective that starts from what the portfolio already owns.
+
+I treat the volatility miss as calibration work: re-estimate the multiplier on
+the development period, freeze it, and rerun the comparison. The separate
+research problem is beta, because its point-in-time estimate can satisfy the
+constraint while realized exposure still drifts.
 
 What this does not show: the later period is not a clean out-of-sample test,
 the breadth check changes rank cutoffs rather than stock identity, skipped
@@ -338,7 +420,7 @@ the estimated net edge.
 The next test is a costed benchmark overlay. It isolates beta management from
 stock selection and can show whether the remaining risk drift is worth hedging.
 
-## Appendix: implementation details
+## Appendix: selected implementation details and checks
 
 ### The frozen parameters define the comparison
 
@@ -348,7 +430,7 @@ stock selection and can show whether the remaining risk drift is worth hedging.
   </thead>
   <tbody>
     <tr><th scope="row">Fresh selection</th><td data-label="Frozen setting">75 long + 75 short</td><td data-label="Role">Defines the stocks that may enter the reference portfolio.</td></tr>
-    <tr><th scope="row">Signal-weighted rule</th><td data-label="Frozen setting"><span><i>γ</i> = 2; 60-day volatility; 20% target and fallback; 5% floor; 10% signal-share cap; 4% name cap; 6× multiplier cap; 100% gross per book</span></td><td data-label="Role">Maps each score and stock volatility into a standalone weight.</td></tr>
+    <tr><th scope="row">Volatility-scaled rule</th><td data-label="Frozen setting"><span><i>γ</i> = 2; 60-day volatility; 20% target and fallback; 5% floor; 10% signal-share cap; 4% name cap; 6× multiplier cap; 100% gross per book</span></td><td data-label="Role">Maps each score and stock volatility into a standalone weight.</td></tr>
     <tr><th scope="row">Covariance</th><td data-label="Frozen setting"><span>21-day volatility; 756-day correlation; 252-day start; 0.50 missing-pair fallback; <i>ρ</i> = 0.50; calibration 1.18; daily returns capped at ±30%</span></td><td data-label="Role">Combines faster volatility with slower, repaired, and shrunk correlation estimates.</td></tr>
     <tr><th scope="row">Portfolio limits</th><td data-label="Frozen setting">7% volatility; 200% gross; 4% per name; ±25% net; ±0.05 beta</td><td data-label="Role">Constrains total risk, concentration, direction, and forecast market exposure.</td></tr>
     <tr><th scope="row">Beta estimate</th><td data-label="Frozen setting">756-day correlation; 252-day minimum; 21-day volatility; stock beta capped at ±4</td><td data-label="Role">Supplies the point-in-time beta used by the portfolio constraint.</td></tr>
@@ -362,39 +444,19 @@ stock selection and can show whether the remaining risk drift is worth hedging.
 
 ### Returns and turnover are calculated within each schedule
 
-For a schedule with $$T$$ daily returns, annualized geometric return and net
-Sharpe are
+Sharpe uses a zero risk-free rate. Turnover is annualized two-way weight change,
+so 42× means purchases plus sales of 42 times capital per year. I calculate each
+metric inside a full-capital schedule and then report the mean across schedules.
 
-$$
-g=\left[\prod_{t=1}^{T}(1+r_t)\right]^{252/T}-1,
-\qquad
-\operatorname{SR}_{\mathrm{net}}
-=\sqrt{252}\,\frac{\overline r_{\mathrm{net}}}
-{\operatorname{sd}(r_{\mathrm{net}})},
-$$
+Results through 2021 form the development period. January 2022 through May 2026
+is the later period; subsequent research used knowledge of it, so it is not a
+clean out-of-sample test.
 
-using a zero risk-free rate. If $$\Delta w_t$$ is the executed weight change,
-daily net return is $$r_{\mathrm{net},t}=r_{\mathrm{gross},t}
--0.0005\lVert\Delta w_t\rVert_1$$. Annualized two-way turnover is
-$$Y^{-1}\sum_t\lVert\Delta w_t\rVert_1$$, where $$Y$$ is elapsed calendar
-years. A turnover value of 42.08× therefore means that purchases plus sales
-total 42.08 times portfolio capital per year.
+### Volatility scaling sizes each stock separately
 
-The interval between executions averages 13.46 trading days. Results through
-2021 form the development period.
-
-January 2022 through May 2026 is a later evaluation period that was separated
-in advance. Subsequent research used knowledge of it, so it is informative
-rather than a clean out-of-sample test.
-
-The P&L engine carries a missing adjusted price forward until the position
-closes. It does not append a separate delisting-return series.
-
-### Signal weighting sizes each stock separately
-
-Let \(s_{i,t}\) be stock \(i\)'s Ridge score, \(\mathcal I_{\ell,t}\) the
-stocks in book \(\ell\), and \(z_{i,t}\) the score's cross-sectional z-score
-within that book. Set \(d_\ell=+1\) for long and \(d_\ell=-1\) for short. The
+Let $$s_{i,t}$$ be stock $$i$$'s Ridge score, $$\mathcal I_{\ell,t}$$ the
+stocks in book $$\ell$$, and $$z_{i,t}$$ the score's cross-sectional z-score
+within that book. Set $$d_\ell=+1$$ for long and $$d_\ell=-1$$ for short. The
 normalized signal share is
 
 $$
@@ -404,7 +466,7 @@ p_{i,t}
 {\sum_{j\in\mathcal I_{\ell,t}}\Lambda(\gamma d_\ell z_{j,t})},
 $$
 
-where \(\Lambda(x)=(1+e^{-x})^{-1}\). The inverse-volatility multiplier is
+where $$\Lambda(x)=(1+e^{-x})^{-1}$$. The inverse-volatility multiplier is
 
 $$
 \lambda_{i,t}
@@ -447,59 +509,20 @@ $$
 Table A1 gives the volatility window, missing-value rule, floors, and weight
 caps used in this mapping.
 
-### Covariance combines fast volatility with slow correlation
+### Covariance repair handles incomplete pairwise estimates
 
-The Ridge output is a Sharpe-like score rather than a return forecast. I put it
-in daily return units using recent volatility:
-
-$$
-\mu_{i,t}=s_{i,t}\widehat{\sigma}_{i,t}^{(h_\sigma)}.
-$$
-
-The result remains a return-unit score, not a calibrated expected return. I
-estimate volatility faster than correlation, following Open Source Quant's
+I estimate pairwise correlations from volatility-standardized daily returns,
+following Open Source Quant's
 [covariance construction](https://osquant.com/papers/a-quants-guide-to-covariance-matrix-estimation/).
-Table A1 gives the windows and safeguards.
-
-For the correlation estimate,
-
-$$
-x_{i,\tau}
-=\frac{r_{i,\tau}}
-{\widehat{\sigma}_{i,\tau}^{(h_\sigma)}},
-\qquad
-\widehat{R}_{ij,t}
-=\operatorname{Corr}_{\tau\in\mathcal T_{ij,t}}
-\!\left(x_{i,\tau},x_{j,\tau}\right),
-$$
-
-where \(\mathcal T_{ij,t}\) contains the dates on which both standardized
-returns are finite. The estimator starts after 252 days. A pair needs two
-common finite observations and positive sample variance. A missing pair gets
-the inherited fallback correlation \(r_{\mathrm{fill}}=0.50\). This need not
-be conservative for a long–short portfolio.
+The estimator starts after 252 days. A pair needs two common finite observations
+and positive sample variance; otherwise it receives the inherited 0.50 fallback.
+That fallback is not always conservative for a long–short portfolio.
 
 Pairwise estimates may not form a valid correlation matrix. I symmetrize the
 filled matrix, set its negative eigenvalues to zero, and rescale it to restore a
-unit diagonal. If the resulting matrix is \(\widetilde R_t\), shrinkage gives
+unit diagonal. The main text gives the shrinkage and covariance equations.
 
-$$
-C_t(\rho)=(1-\rho)\widetilde R_t+\rho I,
-\qquad 0\leq\rho\leq1.
-$$
-
-With diagonal daily volatility matrix \(D_t\), annualization factor \(A\), and
-frozen calibration correction \(\kappa\), the risk model is
-
-$$
-\Sigma_t=A\kappa^2D_tC_t(\rho)D_t.
-$$
-
-The calibration correction enters as \(\kappa^2\) because it rescales the
-portfolio-volatility forecast. It was frozen before the performance checks in
-this article.
-
-### The fresh-book optimizer constrains joint risk
+### The beta estimate combines fast and slow inputs
 
 The beta estimate combines a long-window stock–market correlation with a
 short-window volatility ratio:
@@ -513,77 +536,20 @@ $$
 $$
 
 Table A1 gives the beta windows, observation minimum, and cap. I use zero when
-beta cannot be estimated.
+beta cannot be estimated. The main text gives the optimizer's full constraint
+set.
 
-Let \(L_t\) and \(S_t\) be the long and short candidate sets. With risk budget
-\(\sigma_\star\), gross limit \(G_{\max}\), name limit \(w_{\max}\), net
-bounds \(n_{\min},n_{\max}\), and beta limit \(b_{\max}\), the fresh-book
-optimizer solves
+### Volatility calibration is a configuration choice
 
-$$
-\begin{aligned}
-\max_{w_t}\quad & \mu_t^\top w_t \\
-\text{subject to}\quad
-& w_t^\top\Sigma_t w_t\leq \sigma_\star^2, \\
-& \lVert w_t\rVert_1\leq G_{\max},\qquad
-  |w_{i,t}|\leq w_{\max}\quad\forall i, \\
-& n_{\min}\leq\mathbf{1}^\top w_t\leq n_{\max}, \\
-& w_{i,t}\geq0\quad\forall i\in L_t,\qquad
-  w_{i,t}\leq0\quad\forall i\in S_t, \\
-& -b_{\max}\leq\beta_t^\top w_t\leq b_{\max}.
-\end{aligned}
-$$
+The current calibration factor is $$\kappa=1.18$$. During development, root-mean
+predicted volatility is 6.99% and realized volatility is 8.44% for the
+transition-aware optimizer.
 
-For sector indicator vector \(g_{k,t}\), sector-net limit
-\(q_{\mathrm{net}}\), and sector-book share \(q_{\mathrm{leg}}\), it also
-imposes
-
-$$
-\begin{aligned}
--q_{\mathrm{net}}
-&\leq g_{k,t}^\top w_t\leq q_{\mathrm{net}}, \\
-\sum_{i\in L_{k,t}}w_{i,t}
-&\leq q_{\mathrm{leg}}\sum_{i\in L_t}w_{i,t}, \\
-\sum_{i\in S_{k,t}}|w_{i,t}|
-&\leq q_{\mathrm{leg}}\sum_{i\in S_t}|w_{i,t}|.
-\end{aligned}
-$$
-
-The volatility budget is a forecast, not a promise about realized risk. The
-sector-net constraint controls direction; the separate sector-book constraint
-stops one sector from dominating either side. There is no required gross target,
-so the score objective expands the portfolio only until a risk or exposure
-limit binds.
-
-### Transition awareness penalizes changes to drifted holdings
-
-Let \(F_t^{(N)}\) be the fresh top-\(N\) and bottom-\(N\) candidates,
-\(H_t^{\mathrm{pre}}\) the drifted holdings before rebalancing, and
-\(T_t^{(K)}\) the current top-\(K\) and bottom-\(K\) ranks. The transition-aware
-optimizer may hold
-
-$$
-E_t=F_t^{(N)}\cup\left(H_t^{\mathrm{pre}}\cap T_t^{(K)}\right).
-$$
-
-A new stock enters only through the fresh selection. An existing stock may
-remain while it stays inside the wider rank tails, but it stays on its current
-side. A move from long to short, or short to long, requires re-entry through the
-fresh selection.
-
-If \(w_{t,E_t}^{\mathrm{pre}}\) is the price-drifted portfolio before the
-rebalance, restricted to \(E_t\), the optimizer solves
-
-$$
-\max_{w_t\in\mathbb R^{|E_t|}}\quad
-\mu_{t,E_t}^\top w_t
--c\lVert w_t-w_{t,E_t}^{\mathrm{pre}}\rVert_1,
-$$
-
-subject to the fresh-book optimizer's constraints. The coefficient \(c\) is
-the trade penalty in the objective. It is distinct from the realized trading
-cost charged by the backtest. The first build has no old holdings, and an
-ineligible stock must still be sold.
+Their ratio is 1.207, so a proportional correction points near 1.42. That is a
+location for a development-period calibration sweep, not a plug-in answer:
+changing $$\kappa$$ changes weights, feasibility, turnover, and returns. The
+chosen value should minimize a predeclared calibration loss, pass the same
+constraint and implementation audits, and be frozen before the later period.
 
 ### Supporting diagnostics preserve the exact comparisons
 
@@ -592,17 +558,13 @@ ineligible stock must still be sold.
     <tr><th>Portfolio rule</th><th>Net return through 2021</th><th>Net return from 2022</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">B1 · Signal-weighted</th><td data-label="Net return through 2021">8.92%</td><td data-label="Net return from 2022">7.38%</td></tr>
+    <tr><th scope="row">B1 · Volatility-scaled</th><td data-label="Net return through 2021">8.92%</td><td data-label="Net return from 2022">7.38%</td></tr>
     <tr><th scope="row">B2 · Fresh-book optimizer</th><td data-label="Net return through 2021">11.60%</td><td data-label="Net return from 2022">6.47%</td></tr>
     <tr><th scope="row">B3 · Transition-aware optimizer</th><td data-label="Net return through 2021">12.32%</td><td data-label="Net return from 2022">7.99%</td></tr>
   </tbody>
 </table>
 
 <p class="table-caption"><strong>Table A2:</strong> Annualized net return in the development and later periods, averaged across the three schedules.</p>
-
-Compare each row across the two period columns. Every rule weakens, while the
-transition-aware rule keeps the highest mean return. The main text explains why
-the later gap does not clear schedule dispersion.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
@@ -617,7 +579,7 @@ the later gap does not clear schedule dispersion.
 <p class="table-caption"><strong>Table A3:</strong> The transition-aware optimizer at the nearby and implemented covariance-shrinkage settings.</p>
 
 The first row minimizes the risk error; the second is the frozen choice. Return
-and Sharpe are effectively unchanged, which is why I do not retune the model.
+and Sharpe are effectively unchanged, which is why I do not retune shrinkage.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
@@ -632,17 +594,31 @@ and Sharpe are effectively unchanged, which is why I do not retune the model.
 
 <p class="table-caption"><strong>Table A4:</strong> Episodes with absolute trailing one-year beta above 0.20 for at least 63 trading days. The cutoff summarizes Figure 4; the optimizer does not use it.</p>
 
-The transition-aware rule has one more episode, but fewer days in breach and a
-lower peak. This table summarizes persistence; it does not explain the source
-of the exposure.
+### Glossary
 
-For the transition-aware portfolio, mean realized volatility is about 15%
-above forecast. The root-mean-square ratio is about 1.2.
+- **Book:** the complete set of long and short stock positions.
+- **Calibration factor $$\kappa$$:** a scalar applied to the covariance model
+  to align forecast and realized portfolio volatility. Because it changes the
+  optimized weights, it is estimated on development data and then frozen.
+- **Carryover and rank tail:** carryover lets an existing holding remain
+  eligible outside the fresh 75 while it stays in the wider top or bottom 175.
+- **Fresh-book optimizer:** the constrained optimizer solved only over the new
+  75-stock long and short selections, without reference to current holdings.
+- **Holding-period beta error:** the absolute difference between beta forecast
+  at a rebalance and beta realized before the next scheduled rebalance.
+- **Modeled turnover:** the target-weight change seen by the optimizer. A
+  **forced exit** is a required sale after a stock becomes ineligible; a
+  **discretionary replacement** swaps stocks that remain eligible.
+- **Price-drifted book:** the previous target weights after intervening price
+  moves and before the next rebalance.
+- **Schedule spread:** the difference between the best and worst of the three
+  staggered schedules for a reported metric.
+- **Transition-aware optimizer:** the constrained optimizer with carryover and
+  a penalty for changing the price-drifted book.
 
-Since 2022, monthly absolute beta averages about 0.04 and peaks near 0.08.
-
-The rejected beta candidate changes both estimation windows to 63 days and
-uses a 42-observation minimum.
-
-Its later net return falls by 0.60 percentage
-points and Sharpe by 0.05, while turnover is almost unchanged.
+[^schedules]: A staggered schedule runs the same rule from a different starting week. Each is a full-capital portfolio, not one slice of a combined portfolio. The [tranching study](/quants/2025/05/10/rebalancing-luck.html) introduced this calendar design.
+[^fresh-book]: “Fresh book” means that the optimizer starts from the current top and bottom 75 candidates at every rebalance and does not account for existing holdings.
+[^transition-aware]: “Transition aware” means that the optimizer starts from the price-drifted holdings, keeps eligible incumbents through carryover, and penalizes proposed trades.
+[^calibration]: The calibration factor $$\kappa$$ rescales the covariance model so forecast portfolio volatility better matches realized volatility. The appendix gives its current value and the development-only recalibration rule.
+[^trading]: Modeled turnover is the target-weight change seen by the optimizer. A forced exit is required by loss of eligibility; a discretionary replacement is chosen among otherwise eligible stocks.
+[^later-period]: The later period runs from January 2022 through May 2026. Schedule spread is the difference between the best and worst of the three staggered schedules for a metric.
