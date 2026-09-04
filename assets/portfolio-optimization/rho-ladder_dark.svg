@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
-<title id="title">How much covariance shrinkage matters</title>
+<title id="title">How much correlation shrinkage matters</title>
 <desc id="desc">Four panels compare risk calibration, beta error, turnover, and net Sharpe for the optimizer with and without trading controls as correlation shrinkage moves from zero to one.</desc>
 <g font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
 <line x1="90.0" y1="20.0" x2="126.0" y2="20.0" stroke="#60A5FA" stroke-width="3"/>
