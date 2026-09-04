@@ -165,10 +165,10 @@ shared-risk information and misses by more. The broad middle matters more than
 the exact point inside it.
 
 <div class="research-figure rho-ladder-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Development-period risk calibration, beta error, turnover, and net Sharpe across correlation-shrinkage values for both optimizers" version="11" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Development-period risk calibration, beta error, turnover, and net Sharpe across correlation-shrinkage values for both optimizers" version="12" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe across correlation-shrinkage values from zero to one. The shaded band marks 0.3 to 0.6; lines compare the optimizer with and without trading controls.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> The horizontal axis in every panel is correlation shrinkage, from zero to one. The panels show development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe. The shaded band marks 0.3 to 0.6; lines compare the optimizer with and without trading controls.</p>
 
 The portfolio limits also act as guardrails. They bound how far one noisy score,
 correlation, or beta estimate can move a name, sector, or the whole book. That
