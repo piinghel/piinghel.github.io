@@ -271,15 +271,9 @@ estimate used to choose stocks and weights.
 I tested a shorter beta window. It removes those persistent episodes, but it
 also reduces later net return by 0.6 percentage points. I required a replacement
 to stay within 0.5 points of later net return, so I keep the current stock-level
-estimate. A costed benchmark overlay is the next way to separate beta
-management from stock selection.
+estimate.
 
-Capacity is the other practical limit. Turnover falls to 28×, which is still
-high once market impact, borrow, and the stocks near the edge of the universe
-matter. A flat 5-basis-point charge gives a consistent comparison; a capacity
-study needs trade size and liquidity.
-
-## Trading controls still help after 2021, but timing matters
+## Final thoughts: after 2021 and what comes next
 
 Table 2 starts on the first trading day of 2022. All three rules weaken relative
 to their development results. The optimizer trails volatility scaling after
@@ -326,9 +320,7 @@ across schedules, the long book adds 7.2 points while the short book costs 16.4.
 This matches the failure mode in the [low-vol
 post](/quant/2024/12/15/low-volatility-factor.html): volatile stocks rally, the
 short book loses, and negative beta makes the loss a little worse when the
-market rises. Here beta is an amplifier, not the main cause. The next question
-is which shared sector, style, or stock exposures made the shorts rally
-together.
+market rises. Here beta is an amplifier, not the main cause.
 
 Even with wider timing variation, the final period leaves the implementation
 choice intact. I move from volatility scaling to the constrained optimizer and
@@ -337,21 +329,24 @@ explicit, and avoids many marginal replacements. In return, it demands careful
 covariance estimates, constraints that keep noisy estimates from dominating the
 portfolio, and separate beta control.
 
-The first follow-up is mechanical. I will recalibrate the volatility multiplier
-from the development-period forecast error and rerun all three rules. That will
-show whether matching the intended risk more closely changes the comparison or
-only its scale.
+The first follow-up is to recalibrate the volatility multiplier from the
+development-period forecast error, then rerun all three rules. That will show
+whether matching the intended risk more closely changes the comparison or only
+its scale.
 
 The drawdown points to the next research question. I want to trace the common
 sector, style, and stock exposures in the short book across schedules. That
 will tell me whether the residual loss came from the Ridge ranking, a shared
 constraint, or a small set of overlapping positions. A matched trade study can
 then ask whether the trading controls avoid weak replacements or merely delay
-necessary exits.
+necessary exits. If one style exposure repeatedly explains the losses, I will
+test an explicit limit for it alongside the existing sector and beta limits.
 
-The next portfolio change to test is the costed benchmark overlay. After that,
-a liquidity and borrow model should replace the flat trading charge before I
-make a capacity claim.
+Beta comes next. Its large swings suggest that one point-in-time stock-level
+estimate is too fragile for the whole job. I will test a costed benchmark
+overlay so that stock selection and market exposure can be managed separately.
+After that, a liquidity, market-impact, and borrow model should replace the flat
+trading charge before I make a capacity claim.
 
 ## Appendix: parameters and two implementation notes
 
