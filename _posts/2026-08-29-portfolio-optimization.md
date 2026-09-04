@@ -11,10 +11,14 @@ permalink: /quants/2026/08/29/portfolio-optimization.html
 <p class="article-summary">The Ridge model ranks stocks, but the volatility-scaled rule still sizes each stock separately. I replace it with an optimizer that sizes the whole portfolio under one risk budget. Through 2021, Sharpe rises from 1.12 to 1.35, while turnover rises from 30× to 43×. Adding a wider holding range and a trade penalty brings turnover back to 28× and lifts Sharpe to 1.43. That version still edges volatility scaling after 2021, although the result varies more across rebalance schedules. Beta control remains the next portfolio problem.</p>
 
 The [low-vol post](/quant/2024/12/15/low-volatility-factor.html) showed that
-inverse-volatility sizing balances the two books but leaves gross, net, and beta
-uncontrolled. The [Ridge post](/quants/2025/02/09/multiple-linear-regression.html)
-found that learned rankings double turnover and left two tasks: size stocks
-jointly and account for the positions already held. This post does both.
+inverse-volatility sizing balances the long and short books. But the rule still
+treats every stock on its own; it cannot see when several positions carry the
+same risk. In the
+[Ridge post](/quants/2025/02/09/multiple-linear-regression.html), I replaced the
+fixed score with a learned ranking. Sharpe improved, but turnover doubled. Here
+I keep that ranking fixed and change the allocation: the optimizer sizes stocks
+jointly, and the trading controls make it less eager to replace positions that
+still rank well.
 
 ## Study design and the three rules
 
