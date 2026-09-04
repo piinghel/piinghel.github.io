@@ -141,6 +141,12 @@ $$
 C_t(\rho)=(1-\rho)\widetilde R_t+\rho I.
 $$
 
+In [*Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543),
+Pedersen, Babu, and Levine (2021) show why this helps: noise can make some
+combinations of stocks look safer than they are, so mean-variance optimization
+gives them too much weight. Shrinking correlations toward zero keeps useful
+shared-risk information without trusting every estimated relationship equally.
+
 The shrunk correlation matrix becomes a covariance matrix through
 
 $$
@@ -163,12 +169,6 @@ the exact point inside it.
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe across correlation-shrinkage values from zero to one. The shaded band marks 0.3 to 0.6; lines compare the optimizer with and without trading controls.</p>
-
-The two ends fail for different reasons. At zero, the optimizer can chase every
-estimated correlation. At one, it behaves as if stock returns are uncorrelated.
-Several nearby settings in the middle produce similar allocations and results.
-Shared-risk structure matters, while the exact shrinkage value matters less
-inside the middle range.
 
 The portfolio limits also act as guardrails. They bound how far one noisy score,
 correlation, or beta estimate can move a name, sector, or the whole book. That
