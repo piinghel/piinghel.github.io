@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
 <title id="title">Covariance shrinkage robustness ladder</title>
-<desc id="desc">Four panels compare risk calibration, beta error, turnover, and net Sharpe for the optimizer with and without memory from rho zero to one.</desc>
+<desc id="desc">Four panels compare risk calibration, beta error, turnover, and net Sharpe for the optimizer and the optimizer using the current book from rho zero to one.</desc>
 <g font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
 <line x1="398.0" y1="20.0" x2="434.0" y2="20.0" stroke="#2563EB" stroke-width="3"/>
 <text x="445.0" y="25.0" fill="#172033" font-size="15" font-weight="600" text-anchor="start">Optimizer</text>
 <line x1="654.0" y1="20.0" x2="690.0" y2="20.0" stroke="#D97706" stroke-width="3"/>
-<text x="701.0" y="25.0" fill="#172033" font-size="15" font-weight="600" text-anchor="start">Optimizer with memory</text>
+<text x="701.0" y="25.0" fill="#172033" font-size="15" font-weight="600" text-anchor="start">Optimizer using current book</text>
 <text x="53.0" y="58.0" fill="#172033" font-size="22" font-weight="650" text-anchor="start">Risk calibration</text>
 <text x="53.0" y="82.0" fill="#667085" font-size="15" font-weight="400" text-anchor="start">Root-mean realised / predicted volatility</text>
 <rect x="242.9" y="97.0" width="135.9" height="226.0" fill="#E8F3EC"/>
@@ -28,30 +28,30 @@
 <line x1="560.0" y1="323.0" x2="560.0" y2="328.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="560.0" y="346.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">1.0</text>
 <text x="333.5" y="367.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">Correlation shrinkage (rho)</text>
-<path d="M107.0,264.1 L152.3,280.3 L197.6,291.5 L242.9,297.9 L288.2,300.0 L333.5,297.8 L378.8,290.5 L424.1,276.7 L469.4,252.7 L514.7,209.6 L560.0,121.8" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="264.1" r="4" fill="#2563EB"/>
-<circle cx="152.3" cy="280.3" r="4" fill="#2563EB"/>
-<circle cx="197.6" cy="291.5" r="4" fill="#2563EB"/>
-<circle cx="242.9" cy="297.9" r="4" fill="#2563EB"/>
-<circle cx="288.2" cy="300.0" r="4" fill="#2563EB"/>
-<circle cx="333.5" cy="297.8" r="4" fill="#2563EB"/>
-<circle cx="378.8" cy="290.5" r="4" fill="#2563EB"/>
-<circle cx="424.1" cy="276.7" r="4" fill="#2563EB"/>
-<circle cx="469.4" cy="252.7" r="4" fill="#2563EB"/>
-<circle cx="514.7" cy="209.6" r="4" fill="#2563EB"/>
-<circle cx="560.0" cy="121.8" r="4" fill="#2563EB"/>
-<path d="M107.0,271.5 L152.3,289.8 L197.6,301.8 L242.9,308.9 L288.2,311.2 L333.5,308.9 L378.8,301.3 L424.1,286.8 L469.4,261.6 L514.7,214.9 L560.0,112.7" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="271.5" r="4" fill="#D97706"/>
-<circle cx="152.3" cy="289.8" r="4" fill="#D97706"/>
-<circle cx="197.6" cy="301.8" r="4" fill="#D97706"/>
-<circle cx="242.9" cy="308.9" r="4" fill="#D97706"/>
-<circle cx="288.2" cy="311.2" r="4" fill="#D97706"/>
-<circle cx="333.5" cy="308.9" r="4" fill="#D97706"/>
-<circle cx="378.8" cy="301.3" r="4" fill="#D97706"/>
-<circle cx="424.1" cy="286.8" r="4" fill="#D97706"/>
-<circle cx="469.4" cy="261.6" r="4" fill="#D97706"/>
-<circle cx="514.7" cy="214.9" r="4" fill="#D97706"/>
-<circle cx="560.0" cy="112.7" r="4" fill="#D97706"/>
+<path d="M107.0,265.8 L152.3,283.3 L197.6,295.7 L242.9,303.3 L288.2,306.6 L333.5,305.7 L378.8,300.0 L424.1,288.6 L469.4,268.1 L514.7,231.0 L560.0,157.6" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="107.0" cy="265.8" r="4" fill="#2563EB"/>
+<circle cx="152.3" cy="283.3" r="4" fill="#2563EB"/>
+<circle cx="197.6" cy="295.7" r="4" fill="#2563EB"/>
+<circle cx="242.9" cy="303.3" r="4" fill="#2563EB"/>
+<circle cx="288.2" cy="306.6" r="4" fill="#2563EB"/>
+<circle cx="333.5" cy="305.7" r="4" fill="#2563EB"/>
+<circle cx="378.8" cy="300.0" r="4" fill="#2563EB"/>
+<circle cx="424.1" cy="288.6" r="4" fill="#2563EB"/>
+<circle cx="469.4" cy="268.1" r="4" fill="#2563EB"/>
+<circle cx="514.7" cy="231.0" r="4" fill="#2563EB"/>
+<circle cx="560.0" cy="157.6" r="4" fill="#2563EB"/>
+<path d="M107.0,272.8 L152.3,292.5 L197.6,305.7 L242.9,314.0 L288.2,317.5 L333.5,316.5 L378.8,310.7 L424.1,298.4 L469.4,276.6 L514.7,236.0 L560.0,151.0" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="107.0" cy="272.8" r="4" fill="#D97706"/>
+<circle cx="152.3" cy="292.5" r="4" fill="#D97706"/>
+<circle cx="197.6" cy="305.7" r="4" fill="#D97706"/>
+<circle cx="242.9" cy="314.0" r="4" fill="#D97706"/>
+<circle cx="288.2" cy="317.5" r="4" fill="#D97706"/>
+<circle cx="333.5" cy="316.5" r="4" fill="#D97706"/>
+<circle cx="378.8" cy="310.7" r="4" fill="#D97706"/>
+<circle cx="424.1" cy="298.4" r="4" fill="#D97706"/>
+<circle cx="469.4" cy="276.6" r="4" fill="#D97706"/>
+<circle cx="514.7" cy="236.0" r="4" fill="#D97706"/>
+<circle cx="560.0" cy="151.0" r="4" fill="#D97706"/>
 <text x="623.0" y="58.0" fill="#172033" font-size="22" font-weight="650" text-anchor="start">Beta error</text>
 <text x="623.0" y="82.0" fill="#667085" font-size="15" font-weight="400" text-anchor="start">Mean absolute holding-window beta error</text>
 <rect x="812.9" y="97.0" width="135.9" height="226.0" fill="#E8F3EC"/>
@@ -76,30 +76,30 @@
 <line x1="1130.0" y1="323.0" x2="1130.0" y2="328.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="1130.0" y="346.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">1.0</text>
 <text x="903.5" y="367.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">Correlation shrinkage (rho)</text>
-<path d="M677.0,279.0 L722.3,290.1 L767.6,297.5 L812.9,302.4 L858.2,303.4 L903.5,300.2 L948.8,292.2 L994.1,278.5 L1039.4,256.8 L1084.7,219.1 L1130.0,144.3" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="677.0" cy="279.0" r="4" fill="#2563EB"/>
-<circle cx="722.3" cy="290.1" r="4" fill="#2563EB"/>
-<circle cx="767.6" cy="297.5" r="4" fill="#2563EB"/>
-<circle cx="812.9" cy="302.4" r="4" fill="#2563EB"/>
-<circle cx="858.2" cy="303.4" r="4" fill="#2563EB"/>
-<circle cx="903.5" cy="300.2" r="4" fill="#2563EB"/>
-<circle cx="948.8" cy="292.2" r="4" fill="#2563EB"/>
-<circle cx="994.1" cy="278.5" r="4" fill="#2563EB"/>
-<circle cx="1039.4" cy="256.8" r="4" fill="#2563EB"/>
-<circle cx="1084.7" cy="219.1" r="4" fill="#2563EB"/>
-<circle cx="1130.0" cy="144.3" r="4" fill="#2563EB"/>
-<path d="M677.0,273.8 L722.3,288.3 L767.6,297.2 L812.9,304.3 L858.2,306.5 L903.5,304.1 L948.8,296.2 L994.1,282.0 L1039.4,257.9 L1084.7,214.4 L1130.0,121.5" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="677.0" cy="273.8" r="4" fill="#D97706"/>
-<circle cx="722.3" cy="288.3" r="4" fill="#D97706"/>
-<circle cx="767.6" cy="297.2" r="4" fill="#D97706"/>
-<circle cx="812.9" cy="304.3" r="4" fill="#D97706"/>
-<circle cx="858.2" cy="306.5" r="4" fill="#D97706"/>
-<circle cx="903.5" cy="304.1" r="4" fill="#D97706"/>
-<circle cx="948.8" cy="296.2" r="4" fill="#D97706"/>
-<circle cx="994.1" cy="282.0" r="4" fill="#D97706"/>
-<circle cx="1039.4" cy="257.9" r="4" fill="#D97706"/>
-<circle cx="1084.7" cy="214.4" r="4" fill="#D97706"/>
-<circle cx="1130.0" cy="121.5" r="4" fill="#D97706"/>
+<path d="M677.0,275.1 L722.3,286.0 L767.6,293.7 L812.9,299.2 L858.2,301.0 L903.5,299.0 L948.8,292.3 L994.1,280.4 L1039.4,261.1 L1084.7,228.4 L1130.0,167.9" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="677.0" cy="275.1" r="4" fill="#2563EB"/>
+<circle cx="722.3" cy="286.0" r="4" fill="#2563EB"/>
+<circle cx="767.6" cy="293.7" r="4" fill="#2563EB"/>
+<circle cx="812.9" cy="299.2" r="4" fill="#2563EB"/>
+<circle cx="858.2" cy="301.0" r="4" fill="#2563EB"/>
+<circle cx="903.5" cy="299.0" r="4" fill="#2563EB"/>
+<circle cx="948.8" cy="292.3" r="4" fill="#2563EB"/>
+<circle cx="994.1" cy="280.4" r="4" fill="#2563EB"/>
+<circle cx="1039.4" cy="261.1" r="4" fill="#2563EB"/>
+<circle cx="1084.7" cy="228.4" r="4" fill="#2563EB"/>
+<circle cx="1130.0" cy="167.9" r="4" fill="#2563EB"/>
+<path d="M677.0,274.0 L722.3,289.4 L767.6,299.0 L812.9,306.9 L858.2,309.9 L903.5,308.3 L948.8,301.1 L994.1,288.2 L1039.4,266.8 L1084.7,229.3 L1130.0,155.2" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="677.0" cy="274.0" r="4" fill="#D97706"/>
+<circle cx="722.3" cy="289.4" r="4" fill="#D97706"/>
+<circle cx="767.6" cy="299.0" r="4" fill="#D97706"/>
+<circle cx="812.9" cy="306.9" r="4" fill="#D97706"/>
+<circle cx="858.2" cy="309.9" r="4" fill="#D97706"/>
+<circle cx="903.5" cy="308.3" r="4" fill="#D97706"/>
+<circle cx="948.8" cy="301.1" r="4" fill="#D97706"/>
+<circle cx="994.1" cy="288.2" r="4" fill="#D97706"/>
+<circle cx="1039.4" cy="266.8" r="4" fill="#D97706"/>
+<circle cx="1084.7" cy="229.3" r="4" fill="#D97706"/>
+<circle cx="1130.0" cy="155.2" r="4" fill="#D97706"/>
 <text x="53.0" y="418.0" fill="#172033" font-size="22" font-weight="650" text-anchor="start">Executed turnover</text>
 <text x="53.0" y="442.0" fill="#667085" font-size="15" font-weight="400" text-anchor="start">Annualized two-sided L1</text>
 <rect x="242.9" y="457.0" width="135.9" height="226.0" fill="#E8F3EC"/>
@@ -124,43 +124,43 @@
 <line x1="560.0" y1="683.0" x2="560.0" y2="688.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="560.0" y="706.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">1.0</text>
 <text x="333.5" y="727.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">Correlation shrinkage (rho)</text>
-<path d="M107.0,473.5 L152.3,482.4 L197.6,490.4 L242.9,497.3 L288.2,503.0 L333.5,507.6 L378.8,510.9 L424.1,512.8 L469.4,513.0 L514.7,510.8 L560.0,503.2" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="473.5" r="4" fill="#2563EB"/>
-<circle cx="152.3" cy="482.4" r="4" fill="#2563EB"/>
-<circle cx="197.6" cy="490.4" r="4" fill="#2563EB"/>
-<circle cx="242.9" cy="497.3" r="4" fill="#2563EB"/>
-<circle cx="288.2" cy="503.0" r="4" fill="#2563EB"/>
-<circle cx="333.5" cy="507.6" r="4" fill="#2563EB"/>
-<circle cx="378.8" cy="510.9" r="4" fill="#2563EB"/>
-<circle cx="424.1" cy="512.8" r="4" fill="#2563EB"/>
-<circle cx="469.4" cy="513.0" r="4" fill="#2563EB"/>
-<circle cx="514.7" cy="510.8" r="4" fill="#2563EB"/>
-<circle cx="560.0" cy="503.2" r="4" fill="#2563EB"/>
-<path d="M107.0,618.0 L152.3,628.5 L197.6,637.5 L242.9,645.1 L288.2,651.3 L333.5,656.2 L378.8,660.0 L424.1,662.7 L469.4,664.1 L514.7,663.7 L560.0,659.1" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="618.0" r="4" fill="#D97706"/>
-<circle cx="152.3" cy="628.5" r="4" fill="#D97706"/>
-<circle cx="197.6" cy="637.5" r="4" fill="#D97706"/>
-<circle cx="242.9" cy="645.1" r="4" fill="#D97706"/>
-<circle cx="288.2" cy="651.3" r="4" fill="#D97706"/>
-<circle cx="333.5" cy="656.2" r="4" fill="#D97706"/>
-<circle cx="378.8" cy="660.0" r="4" fill="#D97706"/>
-<circle cx="424.1" cy="662.7" r="4" fill="#D97706"/>
-<circle cx="469.4" cy="664.1" r="4" fill="#D97706"/>
-<circle cx="514.7" cy="663.7" r="4" fill="#D97706"/>
-<circle cx="560.0" cy="659.1" r="4" fill="#D97706"/>
+<path d="M107.0,469.3 L152.3,478.0 L197.6,485.8 L242.9,492.7 L288.2,498.4 L333.5,503.0 L378.8,506.4 L424.1,508.5 L469.4,509.0 L514.7,507.4 L560.0,501.4" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="107.0" cy="469.3" r="4" fill="#2563EB"/>
+<circle cx="152.3" cy="478.0" r="4" fill="#2563EB"/>
+<circle cx="197.6" cy="485.8" r="4" fill="#2563EB"/>
+<circle cx="242.9" cy="492.7" r="4" fill="#2563EB"/>
+<circle cx="288.2" cy="498.4" r="4" fill="#2563EB"/>
+<circle cx="333.5" cy="503.0" r="4" fill="#2563EB"/>
+<circle cx="378.8" cy="506.4" r="4" fill="#2563EB"/>
+<circle cx="424.1" cy="508.5" r="4" fill="#2563EB"/>
+<circle cx="469.4" cy="509.0" r="4" fill="#2563EB"/>
+<circle cx="514.7" cy="507.4" r="4" fill="#2563EB"/>
+<circle cx="560.0" cy="501.4" r="4" fill="#2563EB"/>
+<path d="M107.0,611.8 L152.3,622.5 L197.6,631.7 L242.9,639.2 L288.2,645.4 L333.5,650.2 L378.8,654.0 L424.1,656.6 L469.4,658.0 L514.7,657.6 L560.0,653.3" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="107.0" cy="611.8" r="4" fill="#D97706"/>
+<circle cx="152.3" cy="622.5" r="4" fill="#D97706"/>
+<circle cx="197.6" cy="631.7" r="4" fill="#D97706"/>
+<circle cx="242.9" cy="639.2" r="4" fill="#D97706"/>
+<circle cx="288.2" cy="645.4" r="4" fill="#D97706"/>
+<circle cx="333.5" cy="650.2" r="4" fill="#D97706"/>
+<circle cx="378.8" cy="654.0" r="4" fill="#D97706"/>
+<circle cx="424.1" cy="656.6" r="4" fill="#D97706"/>
+<circle cx="469.4" cy="658.0" r="4" fill="#D97706"/>
+<circle cx="514.7" cy="657.6" r="4" fill="#D97706"/>
+<circle cx="560.0" cy="653.3" r="4" fill="#D97706"/>
 <text x="623.0" y="418.0" fill="#172033" font-size="22" font-weight="650" text-anchor="start">Net Sharpe</text>
 <text x="623.0" y="442.0" fill="#667085" font-size="15" font-weight="400" text-anchor="start">Mean of three full-capital schedules</text>
 <rect x="812.9" y="457.0" width="135.9" height="226.0" fill="#E8F3EC"/>
-<line x1="677.0" y1="657.9" x2="1130.0" y2="657.9" stroke="#D9DEE8" stroke-width="1"/>
-<text x="667.0" y="662.9" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.0</text>
-<line x1="677.0" y1="607.7" x2="1130.0" y2="607.7" stroke="#D9DEE8" stroke-width="1"/>
-<text x="667.0" y="612.7" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.1</text>
-<line x1="677.0" y1="557.4" x2="1130.0" y2="557.4" stroke="#D9DEE8" stroke-width="1"/>
-<text x="667.0" y="562.4" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.2</text>
-<line x1="677.0" y1="507.2" x2="1130.0" y2="507.2" stroke="#D9DEE8" stroke-width="1"/>
-<text x="667.0" y="512.2" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.3</text>
-<line x1="677.0" y1="457.0" x2="1130.0" y2="457.0" stroke="#D9DEE8" stroke-width="1"/>
-<text x="667.0" y="462.0" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.4</text>
+<line x1="677.0" y1="660.8" x2="1130.0" y2="660.8" stroke="#D9DEE8" stroke-width="1"/>
+<text x="667.0" y="665.8" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.0</text>
+<line x1="677.0" y1="616.5" x2="1130.0" y2="616.5" stroke="#D9DEE8" stroke-width="1"/>
+<text x="667.0" y="621.5" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.1</text>
+<line x1="677.0" y1="572.2" x2="1130.0" y2="572.2" stroke="#D9DEE8" stroke-width="1"/>
+<text x="667.0" y="577.2" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.2</text>
+<line x1="677.0" y1="527.9" x2="1130.0" y2="527.9" stroke="#D9DEE8" stroke-width="1"/>
+<text x="667.0" y="532.9" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.3</text>
+<line x1="677.0" y1="483.6" x2="1130.0" y2="483.6" stroke="#D9DEE8" stroke-width="1"/>
+<text x="667.0" y="488.6" fill="#667085" font-size="14" font-weight="400" text-anchor="end">1.4</text>
 <line x1="677.0" y1="683.0" x2="677.0" y2="688.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="677.0" y="706.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">0.0</text>
 <line x1="767.6" y1="683.0" x2="767.6" y2="688.0" stroke="#D9DEE8" stroke-width="1"/>
@@ -174,29 +174,29 @@
 <line x1="1130.0" y1="683.0" x2="1130.0" y2="688.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="1130.0" y="706.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">1.0</text>
 <text x="903.5" y="727.0" fill="#667085" font-size="14" font-weight="400" text-anchor="middle">Correlation shrinkage (rho)</text>
-<path d="M677.0,587.6 L722.3,570.8 L767.6,557.4 L812.9,549.1 L858.2,540.7 L903.5,537.4 L948.8,542.4 L994.1,550.7 L1039.4,567.5 L1084.7,599.3 L1130.0,662.9" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="677.0" cy="587.6" r="4" fill="#2563EB"/>
-<circle cx="722.3" cy="570.8" r="4" fill="#2563EB"/>
-<circle cx="767.6" cy="557.4" r="4" fill="#2563EB"/>
-<circle cx="812.9" cy="549.1" r="4" fill="#2563EB"/>
-<circle cx="858.2" cy="540.7" r="4" fill="#2563EB"/>
-<circle cx="903.5" cy="537.4" r="4" fill="#2563EB"/>
-<circle cx="948.8" cy="542.4" r="4" fill="#2563EB"/>
-<circle cx="994.1" cy="550.7" r="4" fill="#2563EB"/>
-<circle cx="1039.4" cy="567.5" r="4" fill="#2563EB"/>
-<circle cx="1084.7" cy="599.3" r="4" fill="#2563EB"/>
-<circle cx="1130.0" cy="662.9" r="4" fill="#2563EB"/>
-<path d="M677.0,524.0 L722.3,503.9 L767.6,493.8 L812.9,493.8 L858.2,490.5 L903.5,492.2 L948.8,498.9 L994.1,513.9 L1039.4,535.7 L1084.7,575.9 L1130.0,654.5" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="677.0" cy="524.0" r="4" fill="#D97706"/>
-<circle cx="722.3" cy="503.9" r="4" fill="#D97706"/>
-<circle cx="767.6" cy="493.8" r="4" fill="#D97706"/>
-<circle cx="812.9" cy="493.8" r="4" fill="#D97706"/>
-<circle cx="858.2" cy="490.5" r="4" fill="#D97706"/>
-<circle cx="903.5" cy="492.2" r="4" fill="#D97706"/>
-<circle cx="948.8" cy="498.9" r="4" fill="#D97706"/>
-<circle cx="994.1" cy="513.9" r="4" fill="#D97706"/>
-<circle cx="1039.4" cy="535.7" r="4" fill="#D97706"/>
-<circle cx="1084.7" cy="575.9" r="4" fill="#D97706"/>
-<circle cx="1130.0" cy="654.5" r="4" fill="#D97706"/>
+<path d="M677.0,545.6 L722.3,532.3 L767.6,520.5 L812.9,513.1 L858.2,507.2 L903.5,507.2 L948.8,510.2 L994.1,519.0 L1039.4,533.8 L1084.7,560.4 L1130.0,619.5" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="677.0" cy="545.6" r="4" fill="#2563EB"/>
+<circle cx="722.3" cy="532.3" r="4" fill="#2563EB"/>
+<circle cx="767.6" cy="520.5" r="4" fill="#2563EB"/>
+<circle cx="812.9" cy="513.1" r="4" fill="#2563EB"/>
+<circle cx="858.2" cy="507.2" r="4" fill="#2563EB"/>
+<circle cx="903.5" cy="507.2" r="4" fill="#2563EB"/>
+<circle cx="948.8" cy="510.2" r="4" fill="#2563EB"/>
+<circle cx="994.1" cy="519.0" r="4" fill="#2563EB"/>
+<circle cx="1039.4" cy="533.8" r="4" fill="#2563EB"/>
+<circle cx="1084.7" cy="560.4" r="4" fill="#2563EB"/>
+<circle cx="1130.0" cy="619.5" r="4" fill="#2563EB"/>
+<path d="M677.0,501.3 L722.3,482.1 L767.6,473.2 L812.9,471.8 L858.2,468.8 L903.5,471.8 L948.8,477.7 L994.1,491.0 L1039.4,508.7 L1084.7,545.6 L1130.0,623.9" fill="none" stroke="#D97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="677.0" cy="501.3" r="4" fill="#D97706"/>
+<circle cx="722.3" cy="482.1" r="4" fill="#D97706"/>
+<circle cx="767.6" cy="473.2" r="4" fill="#D97706"/>
+<circle cx="812.9" cy="471.8" r="4" fill="#D97706"/>
+<circle cx="858.2" cy="468.8" r="4" fill="#D97706"/>
+<circle cx="903.5" cy="471.8" r="4" fill="#D97706"/>
+<circle cx="948.8" cy="477.7" r="4" fill="#D97706"/>
+<circle cx="994.1" cy="491.0" r="4" fill="#D97706"/>
+<circle cx="1039.4" cy="508.7" r="4" fill="#D97706"/>
+<circle cx="1084.7" cy="545.6" r="4" fill="#D97706"/>
+<circle cx="1130.0" cy="623.9" r="4" fill="#D97706"/>
 </g>
 </svg>
