@@ -8,17 +8,13 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 ---
 
-<p class="article-summary">The Ridge model ranks stocks, but volatility scaling still sizes each stock separately. I replace it with an optimizer that sizes the whole book under one risk budget. Through 2021, Sharpe rises from 1.12 to 1.35, while turnover rises from 30× to 43×. Accounting for the current book brings turnover back to 28× and lifts Sharpe to 1.43. From January 2022 onward, that version still edges volatility scaling, although the result varies more across rebalance schedules. Realized beta still drifts beyond the point-in-time constraint, which leaves beta control as the next portfolio problem.</p>
+<p class="article-summary">The Ridge model ranks stocks, but the volatility-scaled rule still sizes each stock separately. I replace it with an optimizer that sizes the whole book under one risk budget. Through 2021, Sharpe rises from 1.12 to 1.35, while turnover rises from 30× to 43×. Accounting for the current book brings turnover back to 28× and lifts Sharpe to 1.43. From January 2022 onward, the optimizer using the current book still edges the volatility-scaled rule, although the result varies more across rebalance schedules. Estimated beta is constrained at each rebalance, but realized beta still drifts; beta control is the next portfolio problem.</p>
 
 The [low-vol post](/quant/2024/12/15/low-volatility-factor.html) showed that
 inverse-volatility sizing balances the two books but leaves gross, net, and beta
 uncontrolled. The [Ridge post](/quants/2025/02/09/multiple-linear-regression.html)
 found that learned rankings double turnover and left two tasks: size stocks
 jointly and account for the positions already held. This post does both.
-Together, the two posts leave one portfolio-construction question: can I
-control shared risk without replacing useful holdings at every rebalance? I
-answer it in two steps—first with joint sizing, then by making that optimizer
-account for the current book.
 
 ## Study design and the three rules
 
@@ -57,7 +53,7 @@ therefore carry the same market or sector risk without the rule recognizing the
 overlap.
 
 The optimizer starts from the same ranking and sizes all selected stocks at
-once. That ranking orders stocks; it is not an expected-return forecast. Its
+once. That score orders stocks rather than forecasting expected returns. Its
 training target divides forward return by volatility, so I map the score into
 return units using each stock's volatility:
 
@@ -162,7 +158,7 @@ the exact point inside it.
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Development-period risk calibration, beta error, turnover, and net Sharpe across covariance-shrinkage values for both optimizers" version="5" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe across correlation-shrinkage values from zero to one. The shaded band marks 0.3 to 0.6; lines compare the optimizer with the version using the current book.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe across correlation-shrinkage values from zero to one. The shaded band marks 0.3 to 0.6; lines compare the optimizer with the optimizer using the current book.</p>
 
 The two ends fail for different reasons. At zero, the optimizer can chase every
 estimated correlation. At one, it behaves as if stock returns are uncorrelated.
@@ -188,11 +184,10 @@ the newly selected stocks but gives no value to a position already in the book.
 A small change in rank or covariance can replace a holding even when the new
 stock adds little at the portfolio level.
 
-Take a long stock whose rank slips from 60 to 110. The standard optimizer drops
-it because only the top 75 enter the new selection. The version using the
-current book may retain it while it remains inside the wider top 175. It begins
-from the previous target weights after intervening price moves and before the
-new trade.
+Take a long stock whose rank slips from 60 to 110. The optimizer drops it
+because only the top 75 enter the new selection. The optimizer using the current
+book may retain it while it remains inside the wider top 175. It begins from the
+previous target weights after intervening price moves and before the new trade.
 
 If $$w_t^{\mathrm{pre}}$$ is that current book and $$c$$ is the trade
 coefficient, the objective becomes
@@ -268,9 +263,9 @@ estimate used to choose stocks and weights.
 
 I tested a shorter beta window. It removes those persistent episodes, but it
 also reduces later net return by 0.6 percentage points. I required a replacement
-to stay within 0.5 points, so I keep the current stock-level estimate. A costed
-benchmark overlay is the next way to separate beta management from stock
-selection.
+to stay within 0.5 points of later net return, so I keep the current stock-level
+estimate. A costed benchmark overlay is the next way to separate beta
+management from stock selection.
 
 Capacity is the other practical limit. Turnover falls to 28×, which is still
 high once market impact, borrow, and the stocks near the edge of the universe
@@ -279,10 +274,10 @@ study needs trade size and liquidity.
 
 ## The current book still helps after 2021, but timing matters
 
-Table 2 starts on the first trading day of 2022. All three rules weaken. The
-optimizer trails volatility scaling after trading more. Using the current book
-changes the result: net return is 8.0% versus 7.4%, Sharpe is 0.87 versus 0.78,
-and turnover falls below the baseline.
+Table 2 starts on the first trading day of 2022. All three rules weaken relative
+to their development results. The optimizer trails volatility scaling after
+trading more. Using the current book changes the result: net return is 8.0%
+versus 7.4%, Sharpe is 0.87 versus 0.78, and turnover falls below the baseline.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
@@ -297,31 +292,31 @@ and turnover falls below the baseline.
 
 <p class="table-caption"><strong>Table 2:</strong> Final evaluation from January 2022 through May 2026. Metrics are means of three staggered schedules and use the same execution and cost assumptions as Table 1.</p>
 
-That average needs one qualification. The current-book rule has a 4.5-point
-spread in net return across the three schedules, compared with 1.5 points for
-volatility scaling. Two schedules favor the optimizer and one is much weaker.
-The short final period therefore supports the value of trading more slowly,
-but with less confidence than the longer development result.
+That average needs one qualification. The optimizer using the current book has
+a 4.5-point spread in net return across the three schedules, compared with 1.5
+points for the volatility-scaled rule. Two schedules favor the optimizer and one
+is much weaker. The short final period therefore supports the value of trading
+more slowly, but with less confidence than the longer development result.
 
-The beta evidence points elsewhere. Current-book beta averages 0.01 over the
-evaluation period. It is mildly negative in 2022 and 2023, then turns positive.
-The loss in the first five months of 2026 occurs with beta around 0.22 and weak
-return after accounting for the market. The standard optimizer carries less of
-the market than volatility scaling throughout a market-positive period, which
-accounts for part of its return gap. Its higher trading cost widens that gap.
-Using the current book overcomes both effects through a stronger residual return
-and fewer trades.
+Market exposure explains only part of the weaker result. The optimizer using the
+current book has beta of 0.01 over the evaluation period. It is mildly negative
+in 2022 and 2023, then turns positive. The loss in the first five months of 2026
+occurs with beta around 0.22 and weak return after accounting for the market.
+The optimizer carries less of the market than the volatility-scaled rule
+throughout a market-positive period, which accounts for part of its return gap.
+Its higher trading cost widens that gap. Using the current book overcomes both
+effects through a stronger residual return and fewer trades.
 
 The worst drawdown is a useful check on that interpretation. In one schedule,
-the current-book optimizer fell 9.2% from its 28 December 2022 peak to 2
-February 2023. Its beta during the decline was −0.08, which accounts for about
+the optimizer using the current book fell 9.2% from its 28 December 2022 peak to
+2 February 2023. Its beta during the decline was −0.08, which accounts for about
 0.9 percentage points while the market rose 11.1%. Another schedule fell 9.1%
-over the same dates with positive beta. Negative beta made the first loss
-worse. The similar loss with positive beta points to positions shared across
-the schedules.
+over the same dates with positive beta. Negative beta made the first loss worse.
+The similar loss with positive beta points to positions shared across the
+schedules.
 
-The first split points to the short book. Averaged across the three schedules,
-the long book added 7.2 percentage points during the drawdown while the short
+Splitting the drawdown into the two books points to the shorts. Averaged across
+the three schedules, the long book added 7.2 percentage points while the short
 book cost 16.4. The next question is why the shorted stocks rallied together.
 
 The rolling extremes tell the same story. The worst three-month period ended on
@@ -329,11 +324,12 @@ The rolling extremes tell the same story. The worst three-month period ended on
 ended on 3 April 2024 and gained 11.3% with beta of 0.04. Market exposure was a
 small part of both moves.
 
-I move from volatility scaling to the constrained optimizer, and I use
-the version that accounts for the current book. It sizes shared risk jointly,
-makes exposure limits explicit, and avoids many marginal replacements. In
-return, it demands careful covariance estimates, sensible guardrails, and a
-clear separation between development choices and later evidence.
+Even with wider timing variation, the final period leaves the implementation
+choice intact. I move from volatility scaling to the constrained optimizer, and
+I use the version that accounts for the current book. It sizes shared risk
+jointly, makes exposure limits explicit, and avoids many marginal replacements.
+In return, it demands careful covariance estimates, constraints that keep noisy
+estimates from dominating the book, and separate beta control.
 
 The first follow-up is mechanical. I will recalibrate the volatility multiplier
 from the development-period forecast error and rerun all three rules. That will
@@ -344,8 +340,8 @@ The drawdown points to the next research question. I want to trace the common
 sector, style, and stock exposures in the short book across schedules. That
 will tell me whether the residual loss came from the Ridge ranking, a shared
 constraint, or a small set of overlapping positions. A matched trade study can
-then ask whether the current-book rule avoids weak replacements or merely
-delays necessary exits.
+then ask whether the optimizer using the current book avoids weak replacements
+or merely delays necessary exits.
 
 The next portfolio change to test is the costed benchmark overlay. After that,
 a liquidity and borrow model should replace the flat trading charge before I
