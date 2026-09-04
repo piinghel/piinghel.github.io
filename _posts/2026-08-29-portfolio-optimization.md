@@ -8,7 +8,7 @@ article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 ---
 
-<p class="article-summary">Volatility scaling sizes stocks one at a time, so portfolio exposures are whatever those separate decisions produce. A constrained optimizer sizes the whole book under one risk budget. Through 2021, gross return rises from 10.6% to 14.0% and Sharpe from 1.12 to 1.35, while turnover rises from 30× to 43×. The optimizer uses its risk budget to carry more gross exposure rather than lower realized volatility. Using the current book cuts turnover to 28× and lifts Sharpe to 1.43. The final evaluation is weaker, and realized beta remains the main problem.</p>
+<p class="article-summary">Volatility scaling sizes stocks one at a time, so portfolio exposures are whatever those separate decisions produce. A constrained optimizer sizes the whole book under one risk budget. Through 2021, gross return rises from 10.6% to 14.0% and Sharpe from 1.12 to 1.35, while turnover rises from 30× to 43×. The optimizer uses its risk budget to carry more gross exposure rather than lower realized volatility. Using the current book cuts turnover to 28× and lifts Sharpe to 1.43. From 2022 onward, that version still edges volatility scaling, though its result depends more on rebalance timing. Realized beta remains the main problem.</p>
 
 The [low-vol post](/quant/2024/12/15/low-volatility-factor.html) showed that
 inverse-volatility sizing balances the two books but leaves gross, net, and beta
@@ -20,9 +20,11 @@ jointly and account for the positions already held. This post does both.
 
 The data history begins in 1995. The common portfolio comparison starts in
 September 1998, after the signals and risk estimates have enough history, and
-runs through December 2021. I use September 2022 through May 2026 once, at the
-end, as a final evaluation period. Earlier research has already looked at those
-years, so I treat them as a short check rather than untouched evidence.
+runs through December 2021. The final evaluation starts on the first trading
+day of January 2022 and runs through May 2026. Its first forecasts use the
+history already available through 2021. This uses every P&L observation after
+the development period. Earlier research has already looked at those years, so
+I treat them as a short, previously inspected check.
 
 Every rule starts from the same Ridge ranking and trades the same three
 staggered schedules.[^schedules] A staggered schedule runs the full strategy
@@ -53,29 +55,37 @@ therefore carry the same market or sector risk without the rule recognizing the
 overlap.
 
 The optimizer starts from the same ranking and sizes all selected stocks at
-once. I first put each stock's risk-adjusted Ridge score in return units:
+once. The Ridge score is risk-adjusted because its training target divides
+forward return by volatility. The optimizer needs a return input, so I map the
+score into return units using each stock's volatility:
 
 $$
 \mu_{i,t}=s_{i,t}\widehat{\sigma}_{i,t}.
 $$
 
-It then chooses weights to maximize the portfolio score:
+Here $$s_{i,t}$$ is the Ridge score and $$\widehat\sigma_{i,t}$$ is the stock's
+volatility estimate. Their product is a return proxy for sizing. I treat it as
+a relative input to the optimizer.
+
+The optimizer then chooses weights to maximize the portfolio score:
 
 $$
 \begin{aligned}
 \max_{w_t}\quad & \mu_t^\top w_t \\
 \text{subject to}\quad
-& \text{forecast volatility}\leq\text{risk budget},\\
+& w_t^\top\Sigma_t w_t\leq\sigma_*^2,\\
 & \text{gross, net, and name weights within their limits},\\
 & \text{long weights}\geq0,\quad\text{short weights}\leq0,\\
 & \text{beta and sector exposures within their limits}.
 \end{aligned}
 $$
 
-That compact list is the practical advantage. A volatility target, beta range,
-or sector budget becomes one line in the allocation problem. Gross exposure is
-then an output of the risk budget instead of a separate target that has to agree
-with several other sizing rules. The exact limits are collected in Table A1.
+The first constraint says that forecast portfolio variance must fit inside the
+risk budget $$\sigma_*^2$$. The rest translate the intended exposures into the
+same problem. A volatility target, beta range, or sector budget becomes one line
+in the optimizer. Gross exposure is then an output of those choices instead of
+a separate target that has to agree with several other sizing rules. The exact
+limits are collected in Table A1.
 
 Table 1 reports the development-period result. The optimizer raises gross
 return by about three and a half percentage points and net Sharpe from 1.12 to
@@ -124,6 +134,17 @@ $$
 C_t(\rho)=(1-\rho)\widetilde R_t+\rho I.
 $$
 
+The shrunk correlation matrix becomes a covariance matrix through
+
+$$
+\Sigma_t=\kappa^2D_tC_t(\rho)D_t,
+$$
+
+where $$D_t$$ contains the stock-volatility estimates and $$\kappa$$ corrects
+their average level. This split lets volatility react quickly while correlation
+uses more history. Shrinkage controls how much of the estimated cross-stock
+structure reaches the optimizer.
+
 The middle of Figure 2 is the useful region. From 0.3 to 0.6 shrinkage, forecast
 calibration, beta error, turnover, and Sharpe move little. With no shrinkage,
 realized volatility runs above forecast. Full shrinkage throws away too much
@@ -135,6 +156,12 @@ the exact point inside it.
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe across correlation-shrinkage values from zero to one. The shaded band marks 0.3 to 0.6; lines compare the optimizer with the version using the current book.</p>
+
+The two ends fail for different reasons. At zero, the optimizer can chase every
+estimated correlation. At one, it behaves as if stocks share no residual risk
+at all. Several nearby settings in the middle produce similar allocations and
+results. The weaker endpoints show that shared-risk structure matters, while
+the exact amount of shrinkage matters less inside the middle range.
 
 The portfolio limits also act as guardrails. They bound how far one noisy score,
 correlation, or beta estimate can move a name, sector, or the whole book. That
@@ -171,7 +198,14 @@ $$
 under the same portfolio constraints. The wider holding range gives the
 optimizer more incumbents to choose from. The second term makes every change
 pay for moving away from the current weights. The trade coefficient controls
-that reluctance; realized P&L still uses the common cost assumption from the
+that reluctance.
+
+The L1 term counts both sides of a replacement. Selling a 1% position and buying
+another 1% position changes $$\lVert w_t-w_t^{\mathrm{pre}}\rVert_1$$ by 2%.
+The optimizer keeps the incumbent unless the new score-and-risk combination
+clears that hurdle. Constraints can still force a trade when the old position
+no longer fits. The coefficient is a tuning parameter inside the score
+objective; realized P&L uses the common transaction-cost assumption from the
 study design.
 
 Figure 3 checks both choices on the development period. The left column varies
@@ -189,9 +223,10 @@ The trade coefficient shows the expected trade-off. Moving from zero to 2.5
 cuts turnover from about 40× to 28× while Sharpe rises from 1.37 to 1.43. A
 coefficient of 5 cuts trading again but gives back some gross return. The rank
 cutoff behaves similarly: 75 trades more, while 275 lowers turnover only
-slightly without lifting Sharpe. I therefore use 2.5 and 175 as a local
-compromise. Three points around each setting support local stability. A wider
-search would be needed to claim a unique optimum.
+slightly without lifting Sharpe. Those outer points show the direction of the
+trade-off, but they sit too far apart to establish the local shape around 2.5
+and 175. I keep them as the current settings while I add the nearest values on
+each side, one run at a time.
 
 Carryover on its own does little, which surprised me. It matters once the trade
 term gives the optimizer a reason to keep an acceptable holding. Together the
@@ -235,26 +270,40 @@ high once market impact, borrow, and the stocks near the edge of the universe
 matter. A flat 5-basis-point charge gives a consistent comparison; a capacity
 study needs trade size and liquidity.
 
-## The final period makes the choice less clear
+## The final period favors memory, but timing matters
 
-Table 2 moves to September 2022 through May 2026. All three rules weaken. The
-optimizer trails volatility scaling. Using the current book recovers most of
-that gap and cuts turnover to 25×. Its Sharpe of 0.89 is close to the
-volatility-scaled rule's 0.90. The period spans less than four years, so I give
-this block less weight than the development result.
+Table 2 starts on the first trading day of 2022. All three rules weaken. The
+optimizer trails volatility scaling after trading more, while using the current
+book changes the result: net return is 8.0% versus 7.4%, Sharpe is 0.87 versus
+0.78, and turnover falls below the baseline.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max DD</th><th>Turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">B1 · Vol-scaled rule</th><td data-label="Gross return">10.02%</td><td data-label="Net return">8.42%</td><td data-label="Net volatility">9.46%</td><td data-label="Net Sharpe">0.90</td><td data-label="Max drawdown">8.65%</td><td data-label="Turnover">29.06×</td></tr>
-    <tr><th scope="row">B2 · Optimizer</th><td data-label="Gross return">9.02%</td><td data-label="Net return">6.78%</td><td data-label="Net volatility">9.50%</td><td data-label="Net Sharpe">0.74</td><td data-label="Max drawdown">9.41%</td><td data-label="Turnover">41.18×</td></tr>
-    <tr><th scope="row"><strong>B3 · Optimizer using current book</strong></th><td data-label="Gross return"><strong>9.70%</strong></td><td data-label="Net return"><strong>8.33%</strong></td><td data-label="Net volatility"><strong>9.43%</strong></td><td data-label="Net Sharpe"><strong>0.89</strong></td><td data-label="Max drawdown"><strong>9.05%</strong></td><td data-label="Turnover"><strong>24.99×</strong></td></tr>
+    <tr><th scope="row">B1 · Vol-scaled rule</th><td data-label="Gross return">8.92%</td><td data-label="Net return">7.38%</td><td data-label="Net volatility">9.73%</td><td data-label="Net Sharpe">0.78</td><td data-label="Max drawdown">8.65%</td><td data-label="Turnover">28.35×</td></tr>
+    <tr><th scope="row">B2 · Optimizer</th><td data-label="Gross return">8.63%</td><td data-label="Net return">6.47%</td><td data-label="Net volatility">9.39%</td><td data-label="Net Sharpe">0.71</td><td data-label="Max drawdown">9.41%</td><td data-label="Turnover">39.97×</td></tr>
+    <tr><th scope="row"><strong>B3 · Optimizer using current book</strong></th><td data-label="Gross return"><strong>9.33%</strong></td><td data-label="Net return"><strong>7.99%</strong></td><td data-label="Net volatility"><strong>9.32%</strong></td><td data-label="Net Sharpe"><strong>0.87</strong></td><td data-label="Max drawdown"><strong>9.05%</strong></td><td data-label="Turnover"><strong>24.62×</strong></td></tr>
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 2:</strong> Final evaluation from September 2022 through May 2026. Metrics are means of three staggered schedules and use the same execution and cost assumptions as Table 1.</p>
+<p class="table-caption"><strong>Table 2:</strong> Final evaluation from January 2022 through May 2026. Metrics are means of three staggered schedules and use the same execution and cost assumptions as Table 1.</p>
+
+That average needs one qualification. The current-book rule has a 4.5-point
+spread in net return across the three schedules, compared with 1.5 points for
+volatility scaling. Two schedules favor the optimizer and one is much weaker.
+The four-year period therefore supports the value of trading more slowly, but
+with less confidence than the longer development result.
+
+The beta evidence points elsewhere. Current-book beta averages 0.01 over the
+evaluation period. It is mildly negative in 2022 and 2023, then turns positive;
+the loss in the first five months of 2026 occurs with beta around 0.22 and weak
+return after accounting for the market. The standard optimizer carries less of
+the market than volatility scaling throughout a market-positive period, which
+accounts for part of its return gap. Its higher trading cost widens that gap.
+Using the current book overcomes both effects through a stronger residual return
+and fewer trades.
 
 I still move from volatility scaling to the constrained optimizer, and I use
 the version that accounts for the current book. It sizes shared risk jointly,
@@ -284,7 +333,7 @@ three rules so the forecast target matches the risk the portfolio realizes.
     <tr><th scope="row">Portfolio limits</th><td data-label="Setting">7% volatility; 200% gross; 4% per name; ±25% net; ±0.05 beta</td><td data-label="Why">Expresses the intended portfolio risk and exposure bounds.</td></tr>
     <tr><th scope="row">Beta estimate</th><td data-label="Setting">756-day correlation; 252-day minimum; 21-day volatility; stock beta capped at ±4</td><td data-label="Why">Combines a stable correlation estimate with faster-moving volatility.</td></tr>
     <tr><th scope="row">Sector limits</th><td data-label="Setting">±20% net; 30% of either book</td><td data-label="Why">Keeps one sector from dominating the net portfolio or either book.</td></tr>
-    <tr><th scope="row">Current-book settings</th><td data-label="Setting">2.5 bp trade coefficient; existing holdings may remain to rank 175</td><td data-label="Why">The local development sweep balances turnover, Sharpe, and drawdown.</td></tr>
+    <tr><th scope="row">Current-book settings</th><td data-label="Setting"><span><i>c</i> = 2.5 × 10<sup>−4</sup>; existing holdings may remain to rank 175</span></td><td data-label="Why">The local development sweep balances turnover, Sharpe, and drawdown.</td></tr>
     <tr><th scope="row">Realized trading cost</th><td data-label="Setting">5 bp per dollar bought or sold</td><td data-label="Why">Uses the same cost assumption as the earlier posts in the series.</td></tr>
   </tbody>
 </table>
