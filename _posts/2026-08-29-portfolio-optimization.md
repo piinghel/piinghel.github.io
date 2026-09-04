@@ -305,6 +305,19 @@ accounts for part of its return gap. Its higher trading cost widens that gap.
 Using the current book overcomes both effects through a stronger residual return
 and fewer trades.
 
+The worst drawdown is a useful check on that interpretation. In one schedule,
+the current-book optimizer lost 9.0% from 28 December 2022 to 2 February 2023
+with a market beta of −0.10. A daily regression attributes about one percentage
+point of the loss to being short a rising market. Another schedule lost a
+similar 8.7% over the same dates with beta near zero. Negative beta made the
+first loss worse, but most of the drawdown came from positions the schedules
+held in common.
+
+The rolling extremes tell the same story. The worst three-month period ended on
+2 February 2023 and lost 6.8%; its beta was −0.07. The best three-month period
+ended on 3 April 2024 and gained 11.3% with beta of 0.04. Market exposure was a
+small part of both moves.
+
 I still move from volatility scaling to the constrained optimizer, and I use
 the version that accounts for the current book. It sizes shared risk jointly,
 makes exposure limits explicit, and avoids many marginal replacements. In
@@ -324,21 +337,21 @@ three rules so the forecast target matches the risk the portfolio realizes.
 
 <table class="research-table comparison-table portfolio-card-table">
   <thead>
-    <tr><th>Component</th><th>Setting</th><th>Why</th></tr>
+    <tr><th>Component</th><th>Setting</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Initial selection</th><td data-label="Setting">75 long + 75 short</td><td data-label="Why">Anchors each rule to the same Ridge tails.</td></tr>
-    <tr><th scope="row">Vol-scaled rule</th><td data-label="Setting"><span><i>γ</i> = 2; 60-day volatility; 20% target and fallback; 5% floor; 10% signal-share cap; 4% name cap; 6× multiplier cap; 100% gross per book</span></td><td data-label="Why">Preserves the sizing rule from the low-volatility study.</td></tr>
-    <tr><th scope="row">Covariance</th><td data-label="Setting"><span>21-day volatility; 756-day correlation; 252-day start; 0.50 missing-pair fallback; <i>ρ</i> = 0.50; daily returns capped at ±30%</span></td><td data-label="Why">Lets volatility react faster than correlation while shrinking noisy shared-risk estimates.</td></tr>
-    <tr><th scope="row">Portfolio limits</th><td data-label="Setting">7% volatility; 200% gross; 4% per name; ±25% net; ±0.05 beta</td><td data-label="Why">Expresses the intended portfolio risk and exposure bounds.</td></tr>
-    <tr><th scope="row">Beta estimate</th><td data-label="Setting">756-day correlation; 252-day minimum; 21-day volatility; stock beta capped at ±4</td><td data-label="Why">Combines a stable correlation estimate with faster-moving volatility.</td></tr>
-    <tr><th scope="row">Sector limits</th><td data-label="Setting">±20% net; 30% of either book</td><td data-label="Why">Keeps one sector from dominating the net portfolio or either book.</td></tr>
-    <tr><th scope="row">Current-book settings</th><td data-label="Setting"><span><i>c</i> = 2.5 × 10<sup>−4</sup>; existing holdings may remain to rank 175</span></td><td data-label="Why">The local development sweep balances turnover, Sharpe, and drawdown.</td></tr>
-    <tr><th scope="row">Realized trading cost</th><td data-label="Setting">5 bp per dollar bought or sold</td><td data-label="Why">Uses the same cost assumption as the earlier posts in the series.</td></tr>
+    <tr><th scope="row">Initial selection</th><td data-label="Setting">75 long + 75 short</td></tr>
+    <tr><th scope="row">Vol-scaled rule</th><td data-label="Setting"><span><i>γ</i> = 2; 60-day volatility; 20% target and fallback; 5% floor; 10% signal-share cap; 4% name cap; 6× multiplier cap; 100% gross per book</span></td></tr>
+    <tr><th scope="row">Covariance</th><td data-label="Setting"><span>21-day volatility; 756-day correlation; 252-day start; 0.50 missing-pair fallback; <i>ρ</i> = 0.50; daily returns capped at ±30%</span></td></tr>
+    <tr><th scope="row">Portfolio limits</th><td data-label="Setting">7% volatility; 200% gross; 4% per name; ±25% net; ±0.05 beta</td></tr>
+    <tr><th scope="row">Beta estimate</th><td data-label="Setting">756-day correlation; 252-day minimum; 21-day volatility; stock beta capped at ±4</td></tr>
+    <tr><th scope="row">Sector limits</th><td data-label="Setting">±20% net; 30% of either book</td></tr>
+    <tr><th scope="row">Current-book settings</th><td data-label="Setting"><span><i>c</i> = 2.5 × 10<sup>−4</sup>; existing holdings may remain to rank 175</span></td></tr>
+    <tr><th scope="row">Realized trading cost</th><td data-label="Setting">5 bp per dollar bought or sold</td></tr>
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table A1:</strong> Rule settings and their role in the comparison. Exact values stay here unless they carry the argument in the main text.</p>
+<p class="table-caption"><strong>Table A1:</strong> Rule settings used throughout the comparison.</p>
 
 ### Volatility-scaled sizing
 
