@@ -125,7 +125,7 @@ less in its worst drawdown. Its lead opens mainly around 2000 and 2021 rather
 than building at a steady rate.
 
 <div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Development-period net growth and drawdowns for the volatility-scaled rule, optimizer, and optimizer with trading controls" version="10" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Development-period net growth and drawdowns for the volatility-scaled rule, optimizer, and optimizer with trading controls" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1:</strong> Net growth of <span class="mathjax-ignore">$1</span> on a logarithmic scale (top) and drawdown in percent (bottom) after trading costs, September 1998–December 2021. Each path averages three separately compounded staggered schedules.</p>
@@ -165,7 +165,7 @@ shared-risk information and misses by more. The broad middle matters more than
 the exact point inside it.
 
 <div class="research-figure rho-ladder-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Development-period risk calibration, beta error, turnover, and net Sharpe across covariance-shrinkage values for both optimizers" version="8" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" alt="Development-period risk calibration, beta error, turnover, and net Sharpe across covariance-shrinkage values for both optimizers" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Development-period forecast calibration, beta error over the next holding period, annualized turnover, and net Sharpe across correlation-shrinkage values from zero to one. The shaded band marks 0.3 to 0.6; lines compare the optimizer with and without trading controls.</p>
@@ -219,7 +219,7 @@ the cutoff while holding the coefficient at 2.5. Points are the mean of the
 three schedules and vertical lines show their range.
 
 <div class="research-figure parameter-sensitivity-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" alt="Development-period net Sharpe and annualized turnover for six trade coefficients and five holding-rank cutoffs" version="3" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" alt="Development-period net Sharpe and annualized turnover for six trade coefficients and five holding-rank cutoffs" version="5" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3:</strong> Local development-period sensitivity of net Sharpe (top) and annualized turnover (bottom). The selected settings are highlighted. Each column changes one setting and holds the other at its selected value; vertical bars span the three staggered schedules.</p>
@@ -257,7 +257,7 @@ rebalance. Realized beta can still drift as prices and exposures change over
 the holding period. Figure 4 shows that this happens in persistent episodes.
 
 <div class="research-figure risk-beta-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" alt="Development-period trailing realized beta for the volatility-scaled rule and both optimizers" version="10" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" alt="Development-period trailing realized beta for the volatility-scaled rule and both optimizers" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4:</strong> Monthly trailing one-year realized market beta for all three rules, averaged across the staggered schedules, September 1998–December 2021. The constraint uses a point-in-time estimate at each rebalance, while this chart measures the portfolio outcome over a trailing year.</p>
