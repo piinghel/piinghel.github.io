@@ -258,11 +258,6 @@ Each selected position starts from an equal share of its book, scaled by
 4% position cap. A book exceeding 100% gross scales down; a smaller book keeps
 its lower exposure.
 
-For the factor-combination problem and motivation for penalization, see
-Deutsche Bank Quantitative Strategy, *Machine Learning in Finance*,
-30 September 2016, pp. 16–19 and 39–41. Its lasso examples are distinct from
-the Ridge comparison here.
-
 The original matched return and coefficient files are unavailable. The
 OLS–Ridge tables and figures retain the previously reported results and have
 not been independently reproduced in this revision.
