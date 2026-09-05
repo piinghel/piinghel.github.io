@@ -14,34 +14,35 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">Weight limits can leave a portfolio exposed to concentrated risk. I check whether this happens in the existing strategy, then test what stock, sector and PCA risk caps change. The optimizer spreads forecast risk reasonably well, but some concentrations remain. Moderate caps reduce them with limited changes to the holdings; tighter caps have a larger effect on position sizing.</p>
+<p class="article-summary">My portfolio already limits stock and sector weights. Here I check whether it still takes too much risk in one direction, and what happens when I limit risk contributions directly. Moderate caps reduce the concentrations I find without changing much else; tighter caps reshape the portfolio, with less obvious benefits.</p>
 
-The [existing optimizer](/quants/2026/08/29/portfolio-optimization.html)
-controls total forecast volatility, gross exposure, beta, sector capital, and
-position size. A portfolio can meet all those limits while one stock, sector,
-or shared market move accounts for a large fraction of its risk. The AI rally
-prompted me to look at this: technology and semiconductor positions can each
-meet a weight limit while depending on the same underlying move.
+In the [previous article](/quants/2026/08/29/portfolio-optimization.html),
+I built an optimizer with limits on volatility, gross exposure, beta, sector
+weights, and position size. But limiting how much capital I put into a position
+doesn't necessarily limit how much risk it contributes.
 
-Does this happen in our portfolio despite its existing weight limits? If so,
-can risk limits reduce the concentration without constantly changing the
-holdings?
+The AI rally made me want to check this more closely. Several technology and
+semiconductor positions can each meet a weight limit while depending on the
+same underlying move. Before adding more constraints, though, I wanted to know:
+does my portfolio actually have this problem? And if it does, can I reduce the
+concentration without constantly changing the holdings?
 
 Just as in my other articles, I keep the Ridge predictions, selected stocks,
-trading controls, execution, and 5 bp charge on traded notional fixed.
-I run the full strategy
-on three staggered rebalance schedules from September 1998 through May 2026.
-I report September 1998–December 2021 and January 2022–May 2026 separately.
-This is exploratory: I had already examined the later period in earlier work
-and added some tighter thresholds after seeing the first results.
+trading controls, execution, and 5 bp charge on traded notional fixed. The
+comparison is about allocation. I use three staggered rebalance schedules from
+September 1998 through May 2026, reporting results before and after 2021
+separately. I had already looked at the later period in earlier work, and added
+some tighter thresholds after seeing the first results, so this is an
+exploration rather than an untouched test. The three schedules let me check
+sensitivity to rebalance timing; they share the same market history.
 
 ## Measuring risk contributions
 
-I look at concentration in three ways. Stock contributions tell me whether a
-single name dominates; sector contributions group those names by industry.
-Principal components give me another view, based on how stocks move together.
-They can pick up shared risk that crosses the sector boundaries. In each case,
-I need the contribution as a share of the portfolio's total forecast variance.
+I use three views of risk: individual stocks, sectors, and principal components.
+The first two tell me where risk sits among names and industries. Principal
+components capture how stocks move together, including shared moves that cross
+sector boundaries. For each view, I measure contributions to total forecast
+variance.
 
 Let $$w$$ contain the signed portfolio weights, $$\Sigma$$ the current forecast
 covariance matrix, and
@@ -50,9 +51,8 @@ $$
 V(w)=w^\top\Sigma w
 $$
 
-the portfolio's forecast variance. Every limit below uses a share of this actual
-variance. It therefore keeps the same meaning when the portfolio uses less than
-its maximum risk budget.
+the portfolio's forecast variance. The limits use shares of this variance,
+even when the portfolio uses less than its maximum risk budget.
 
 For principal component $$k$$, with eigenvalue $$\lambda_k$$ and eigenvector
 $$q_k$$, the share is
@@ -107,25 +107,27 @@ largest stock risk contribution is 9.6% in 1998–2021 and 7.2% after 2021.
 The corresponding sector figures are 30.8% and
 27.3%; for the largest PCA direction, they are 15.6% and 15.4%.
 
-Still, the portfolio usually spreads its modeled risk across many directions.
+So the weight limits do leave some larger risk contributions. But the portfolio
+usually spreads its modeled risk across many directions.
 The median effective number of PCA directions,
 $$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40. This describes how evenly forecast
 risk is spread across components; several components may share an economic
-theme. The portfolio is broadly diversified under this model, with some larger
-contributions worth examining.
+theme. I see a broadly diversified portfolio under this model, with a few
+concentrations worth checking more closely.
 
 ## How much do risk limits change the portfolio?
 
 At 20%, an all-PC cap would leave almost every rebalance alone: the uncapped
 eligible-universe control exceeds it on only 0.69% of rebalances over the full
 sample. At 10%, the frequency rises to 13.55%;
-at 7.5%, it is 30.20%. These frequencies ask how often the uncapped portfolio
-would break each limit. Table 1 instead counts corrections along the capped
-portfolio's own path in the later period. Looking only at the first ten
-components would miss part of this tail. The component making the largest
-portfolio risk contribution lies after PC10 on
-26.05% of observations; ranked by covariance eigenvalue, it can be as late as
-PC141.
+at 7.5%, it is 30.20%. These frequencies count breaches in the uncapped
+portfolio over the full sample. Table 1 counts corrections in the capped
+portfolio after 2021, so the percentages answer different questions.
+
+I also wouldn't stop at the first ten components. They explain the most
+variance in the stock universe, but needn't contribute the most risk to this
+particular portfolio. Its largest contribution comes from a component after
+PC10 on 26.05% of observations, and can come from as far down as PC141.
 
 Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
 15% changes roughly 98%. A 2% stock cap changes almost every target.
@@ -137,21 +139,20 @@ Figure 1 compares how often each tested limit requires an adjustment.
 
 <p class="figure-caption"><strong>Figure 1: How often do risk caps require an adjustment?</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Solver warnings for Sector 15%, Stock 4% and Stock 6%; execution not audited for PCA 7.5% and Stock 3%.</p>
 
-PCA caps intervene more often in the later period. Frequency alone does not
-tell me how different the holdings become; Table 1 adds that comparison.
+PCA caps intervene more often in the later period. But a cap that requires
+frequent small adjustments is different from one that reshapes the holdings.
+Table 1 helps separate the two.
 
 The caps apply to target weights using the covariance estimated at that
 rebalance. Rounding, execution, and subsequent price moves can take the actual
 portfolio above a cap before it trades again.
 
-Table 1 puts the reduction in concentration beside the frequency and size of
-the portfolio changes. “Own concentration” follows the largest contribution in
-the dimension being capped: I take its 95th percentile within each schedule,
-then average the three. “Targets corrected” counts rebalances where the capped
-run needed a local correction. Target L1 adds the absolute weight differences
-between the capped and control targets on the same date. Each portfolio evolves
-independently, so the distance includes differences accumulated since earlier
-rebalances. Executed turnover appears separately in Table 2.
+“Own concentration” is the 95th percentile of the largest contribution in the
+dimension being capped, averaged across schedules. “Targets corrected” counts
+rebalances that needed a local correction. Target L1 adds the absolute weight
+differences between capped and control targets on the same date. These
+portfolios evolve independently, so it includes differences built up over time,
+not just the adjustment at that rebalance. Executed turnover is in Table 2.
 
 <table class="research-table comparison-table control-table">
   <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections and residual violations use a 10<sup>−6</sup> tolerance. * Solver warnings for Sector 15% and Stock 4%; Stock 3% execution not audited.</caption>
@@ -168,7 +169,13 @@ rebalances. Executed turnover appears separately in Table 2.
   </tbody>
 </table>
 
-Figure 2 compares all three dimensions under the 2% stock cap. The later 95th
+The 20% sector cap corrects targets fairly often, yet its average target
+difference is 6.6% of capital, versus 19.4% at a 15% cap. That distinction
+matters to me: I want to limit an exposure without making the cap determine
+the allocation at almost every rebalance.
+
+A stock cap also leaves open the question of shared risk. Figure 2 compares
+all three dimensions under the 2% stock cap. The later 95th
 percentile of the largest stock contribution falls from 7.17% to 2%, while the
 corresponding PCA statistic rises from 15.44% to 16.05%. Smaller stock
 contributions can still add up to a large shared exposure.
@@ -177,9 +184,9 @@ contributions can still add up to a large shared exposure.
   {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Each value is the mean across three schedules of the 95th percentile of the largest contribution, measured at rebalance targets. All contributions are shares of forecast variance. These summaries compare distributions across dates; they do not trace a transfer of risk on individual dates.</p>
+<p class="figure-caption"><strong>Figure 2: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Schedule-mean 95th percentiles of the largest contributions to forecast variance, measured at rebalance targets. These compare distributions across dates, not a same-date transfer of risk.</p>
 
-## Protection, performance, and trading
+## What does it cost?
 
 How much do these changes cost in return and trading? Table 2 compares each
 capped portfolio with its control. I calculate each metric, including maximum
@@ -216,41 +223,40 @@ drawdown, for each full-capital schedule before averaging the three.
 
 <p class="figure-caption">* Sector 15% and Stock 4% have solver warnings; Stock 3% execution was not audited.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. Testing stopped.</p>
 
-The moderate limits leave realized volatility, drawdown, and turnover
-close to the corresponding control. They mainly redistribute forecast risk
-inside a portfolio that already uses almost all of its 7% forecast budget. I
-see little overall performance benefit from adding a cap. Nor does it close
-the gap between forecast and realized risk: volatility remains near 8.4%
-before 2022 and 9.3% afterward.
+With moderate caps, performance and trading stay close to the matching control.
+That leaves little historical performance gain, but also little observed cost
+for reducing the modeled concentration. The caps don't fix the gap between
+forecast and realized volatility: despite the 7% forecast target, realized
+volatility remains near 8.4% before 2022 and 9.3% afterward.
 
-The 10% sector cap is a deliberately strict test. In the only completed
-schedule, it requires a correction at every rebalance. The later 95th percentile
-of the largest sector contribution falls from 28.6% to 10%, but the corresponding
+I pushed the sector cap down to 10% to see what a stricter limit would do. In
+the only completed schedule, it requires a correction at every rebalance.
+The later 95th percentile of the largest sector contribution falls from 28.6%
+to 10%, but the corresponding
 PCA contribution barely changes, from 14.6% to 14.2%.
 
 Against the original optimizer on that same schedule, net Sharpe falls from
-1.40 to 1.31 in development
-and from 0.93 to 0.90 later. Later maximum drawdown improves from 9.16% to 7.47%,
+1.40 to 1.31 in development and from 0.93 to 0.90 later.
+Later maximum drawdown improves from 9.16% to 7.47%,
 while earlier drawdown worsens slightly and turnover rises in both periods.
-Only one schedule finished. The next attempt could not find a solution within
-the iteration limit. The runs were taking too long, and the result was not
+The next schedule could not find a solution within the iteration limit.
+The runs were taking too long, and the result was not
 promising enough to justify continuing, so I abandoned the 10% sector test.
 
-The 2% stock cap has a different trade-off. Its later net Sharpe rises from 0.87 to
-0.93 and later maximum drawdown falls from 9.05% to 8.47%, but the improvement
+The 2% stock cap looks more appealing if I focus on the later period. Net Sharpe
+rises from 0.87 to 0.93 and maximum drawdown falls from 9.05% to 8.47%, but the improvement
 is uneven across schedules. Development-period Sharpe declines, annual turnover
 rises by about 0.55 times capital per year, and cumulative net return is about
 0.69 percentage points lower in the technology unwind and 1.06 points lower in
-the financial-crisis/rebound window. Those trade-offs give me little reason
-to choose it on the strength of its later Sharpe alone.
+the financial-crisis/rebound window. I wouldn't choose it just for that higher
+later Sharpe.
 
 ## What happens to the other risks?
 
-What connects the stocks behind that shared exposure? The strategy's
-low-volatility tilt can span several principal
-components, while a principal component can mix low volatility with sector and
-market structure. PCA divides up modeled risk, but it cannot by itself tell me
-which economic theme the portfolio depends on.
+I don't want to remove the low-volatility tilt that the strategy is meant to
+take. That tilt can span several principal components, while each component
+can mix low volatility with sector and market exposure. PCA tells me how
+modeled risk is distributed, but doesn't name the economic bet behind it.
 
 As a simple check, I look at whether the shorts are still more volatile than the longs.
 For each book, I take the geometric mean of stock forecast volatility, weighted
@@ -261,21 +267,17 @@ The short-to-long ratio is 1.58 before 2022 and
 compares the stocks' volatilities; measuring how much portfolio risk comes from
 that tilt would require factor attribution.
 
-## Guardrail or diagnostic?
+## Would I add these limits?
 
-I would start by monitoring these concentrations. PCA 10%, or a similarly
-moderate limit, is a plausible backstop when I want extra protection. Before
-using it routinely, though, I want to be able to explain what loss I am trying
-to prevent. I can accept a cap that adds no historical Sharpe if it protects
-against a risk I care about. Lower concentration in the model is a useful
-starting point for that decision, but the model may itself miss the risk.
+For now, I'd monitor these concentrations rather than add all the caps. PCA
+10% looks like a reasonable backstop: it cuts the concentration tail under the
+model with little change in performance or trading. I don't need it to improve
+historical Sharpe to find it useful. But before adopting it, I want to know
+whether it limits the risks that concern me. Lower concentration under the
+model leaves that question open.
 
-Concentration is also only one part of the question raised by the AI rally. PCA
-can reveal a shared direction without naming its economic source. The next step
-is portfolio attribution: trace forecast risk and realized profit and loss to
-stocks, sectors, and styles, then test whether technology, momentum, or another
-theme is actually driving the book.
-
-The three schedules show how much these choices depend on rebalance timing;
-they still share one market history. I would want attribution and new data
-before making a concentration cap a routine part of the allocator.
+That's why I want to work on portfolio attribution next. The AI rally prompted
+this investigation, but these tests don't tell me whether technology, momentum,
+or another theme is driving the portfolio. Tracing forecast risk and realized
+profit and loss to stocks, sectors, and styles would get me closer to that
+question.

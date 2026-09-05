@@ -1,6 +1,6 @@
 ---
 name: quant-blog-style
-description: Apply Pieter-Jan Inghelbrecht's research-blog style to new or existing posts, figures, tables and captions. Use for presentation and editorial consistency on piinghel.github.io or when this house style is requested; empirical reruns and publication need their own task authorization.
+description: Apply Pieter-Jan Inghelbrecht's personal, direct research-blog voice and presentation style to posts, figures, tables and captions. Use for natural prose, voice edits and editorial consistency on piinghel.github.io or when this house style is requested; empirical reruns and publication need their own task authorization.
 ---
 
 # Quant blog style
@@ -11,14 +11,19 @@ not reasons to redesign an effective display or override the user's choices.
 
 ## Establish the argument
 
+For drafting or prose edits, read [the voice guide](references/voice.md).
+It draws on Sander Dieleman, Max Halford, Chip Huyen and Rob Carver as examples
+of personal technical writing, without prescribing an imitation or template.
+
 Read the current post, its rendered page and repository guidance. For a new
 post, identify the practical question and the evidence that answers it. Use
 short headings and connected prose: research decision, experiment, result,
 interpretation. This is a reasoning sequence, not a mandatory section template.
 
 Keep the summary brief. Let the introduction develop the question rather than
-repeat the summary's results. Use first person for actual choices and judgments;
-avoid invented anecdotes, promotional claims and narrating the workflow.
+repeat the summary's results. Use first person for actual choices and judgments.
+Keep useful accounts of failed attempts and stopping decisions; leave routine
+editing, file handling and deployment logs out of the article.
 Explain enough method to assess the comparison, with detailed settings in a
 quiet table or research documentation. End on the decision supported by the
 evidence and the uncertainty that could change it.
