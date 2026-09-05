@@ -167,8 +167,10 @@ class RidgeRenderingTests(unittest.TestCase):
                         self.assertEqual(
                             lines["OLS"].get_linewidth(), lines["Ridge"].get_linewidth()
                         )
-                        self.assertNotEqual(
-                            lines["OLS"].get_linestyle(), lines["Ridge"].get_linestyle()
+                        self.assertTrue(
+                            {"OLS", "Ridge"}.issubset(
+                                {text.get_text() for text in axis.texts}
+                            )
                         )
                         np.testing.assert_allclose(
                             lines["OLS"].get_ydata(), [1, 0.9, 1.2, 1.1, 1.5]

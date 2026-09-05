@@ -106,9 +106,10 @@ would matter. When they are merely similar, the model puts a small weight on
 what they share and a large weight on the gap between them.
 
 That gap might contain useful information about the shape of a price trend.
-It might also be mostly measurement noise. This is why I wouldn't diagnose
-overfitting just by spotting opposite signs in a coefficient table: I need to
-look at what the predictors are doing together.
+It might also be mostly measurement noise. The large weight on the gap makes
+the score sensitive to changes in how the two signals move together. Opposite
+signs give me a reason to inspect that relationship; they do not, by themselves,
+establish overfitting. A good portfolio backtest also leaves that question open.
 
 Ridge discourages large coefficients by adding a penalty:
 
@@ -121,8 +122,9 @@ $$
 
 Here $n$ counts training stock-date observations. The intercept is unpenalized;
 $c=0$ gives OLS. With positive $c$, a large coefficient has to earn its place
-by reducing prediction error enough to offset the penalty. Ridge shrinks the
-slopes; lasso's L1 penalty can also set them to zero.
+by reducing prediction error enough to offset the penalty. This makes it harder
+to rely on large offsetting weights, though Ridge does not force coefficients
+to follow the signs I would choose for standalone factors.
 
 The recorded fitting rule starts with 900 trading dates from January 1995,
 leaves a 21-date gap, then predicts the next 600 trading dates. I refit from
@@ -138,7 +140,8 @@ in the next prediction block. I average their three predicted scores equally,
 then rank that average. For a linear model, this is equivalent to averaging
 their intercepts and coefficient vectors; those averaged coefficients are
 what the heatmap and movement diagnostics describe. The 20-session targets
-still overlap within these samples.
+still overlap within these samples, and stocks on the same date share market
+and sector shocks. Three fits therefore do not provide three independent tests.
 
 Keeping the older data gives the model more observations to estimate a common
 combination, which can slow adaptation when relationships change. Development
@@ -238,10 +241,10 @@ target. Its separate contribution would require a comparison with a model
 trained on an unadjusted return target.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="18" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Portfolio paths from the three rankings.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison. The dotted line marks January 2022.</p>
+<p class="figure-caption"><strong>Figure 1: Portfolio paths from the three rankings.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
 ## What Ridge changes
 
@@ -287,15 +290,12 @@ with comparable net return and substantially more trading.
 Ridge regularizes the combination, but its smaller coefficients bring little
 change to the investment decision. I chose the penalty to shrink coefficients
 while keeping the portfolio close to OLS, so the similar performance partly
-reflects that choice. I prefer Ridge as a simple baseline because
-I am less comfortable relying on large weights that nearly cancel each other.
+reflects that choice. I prefer Ridge as a simple baseline because I am less
+comfortable relying on large weights that nearly cancel each other: small
+changes in the relationship between those inputs can then matter too much.
 The later results give me no clear performance reason to prefer it to OLS.
 For this portfolio, the extra trading introduced by the learned ranking matters
 far more than the choice between the two regressions.
 
 To isolate what learning the weights adds, I would next fit OLS and Ridge on
 the benchmark's same twelve predictors, keeping the portfolio rules fixed.
-
-The [aggregate results and figure code](https://github.com/piinghel/piinghel.github.io/tree/main/assets/multiple-linear-regression/evidence)
-reproduce the displays. A full independent reproduction of the original model
-training remains outstanding.
