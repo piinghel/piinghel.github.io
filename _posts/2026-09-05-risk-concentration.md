@@ -203,6 +203,12 @@ largest PCA contribution rises from 15.44% to 16.05%. Many small stock
 allocations can still load on the same correlated direction. The cap succeeds
 on its own definition while shifting some risk elsewhere.
 
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Each value is the mean across three schedules of that schedule's 95th percentile at rebalance targets. Stock and sector use signed Euler contributions; PCA uses its non-negative decomposition. These distribution summaries show a cross-dimensional trade-off, not a claim that the same risk moved between dimensions on the same dates.</p>
+
 PCA directions and economically named styles can overlap without being
 interchangeable. A low-volatility tilt can span several current principal
 components, while a principal component can mix low volatility with sector and
