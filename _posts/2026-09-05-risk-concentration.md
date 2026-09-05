@@ -96,9 +96,8 @@ variance.
 These caps are non-convex because changing the weights changes both the risk
 contributions and total variance. I enforce them through successive local
 approximations, then recompute the exact shares to check each target. This
-checks feasibility, not global optimality. If no target passes, the
-configuration remains incomplete rather than using an uncapped fallback.
-Solver or convergence warnings keep a result provisional.
+checks feasibility, not global optimality. If no target passes, the run stops
+rather than using an uncapped fallback.
 
 ## Is risk concentrated in this portfolio?
 
@@ -136,7 +135,7 @@ Figure 1 compares how often each tested limit requires an adjustment.
   {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Paired dots comparing the percentage of rebalances requiring adjustment under each PCA, sector and stock risk cap, in the development and later periods" version="4" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: How often do risk caps require an adjustment?</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Provisional results.</p>
+<p class="figure-caption"><strong>Figure 1: How often do risk caps require an adjustment?</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Solver warnings for Sector 15%, Stock 4% and Stock 6%; execution not audited for PCA 7.5% and Stock 3%.</p>
 
 PCA caps intervene more often in the later period. Frequency alone does not
 tell me how different the holdings become; Table 1 adds that comparison.
@@ -155,7 +154,7 @@ independently, so the distance includes differences accumulated since earlier
 rebalances. Executed turnover appears separately in Table 2.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections and residual violations use a 10<sup>−6</sup> tolerance. * Provisional results.</caption>
+  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections and residual violations use a 10<sup>−6</sup> tolerance. * Solver warnings for Sector 15% and Stock 4%; Stock 3% execution not audited.</caption>
   <thead>
     <tr><th>Configuration</th><th>Matched control</th><th>Own concentration<br>control → capped</th><th>Targets corrected</th><th>Mean target L1</th><th>Residual violations</th></tr>
   </thead>
@@ -215,7 +214,7 @@ drawdown, for each full-capital schedule before averaging the three.
   </tbody>
 </table>
 
-<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings; Stock 3% awaits execution audit.<br>** Sector 10%: one schedule only; test stopped. Results remain preliminary.</p>
+<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings; Stock 3% execution was not audited.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. Testing stopped.</p>
 
 The moderate limits leave realized volatility, drawdown, and turnover
 close to the corresponding control. They mainly redistribute forecast risk
@@ -224,7 +223,7 @@ see little overall performance benefit from adding a cap. Nor does it close
 the gap between forecast and realized risk: volatility remains near 8.4%
 before 2022 and 9.3% afterward.
 
-The 10% sector cap is a deliberately strict test. In the first completed
+The 10% sector cap is a deliberately strict test. In the only completed
 schedule, it requires a correction at every rebalance. The later 95th percentile
 of the largest sector contribution falls from 28.6% to 10%, but the corresponding
 PCA contribution barely changes, from 14.6% to 14.2%.
@@ -233,10 +232,9 @@ Against the original optimizer on that same schedule, net Sharpe falls from
 1.40 to 1.31 in development
 and from 0.93 to 0.90 later. Later maximum drawdown improves from 9.16% to 7.47%,
 while earlier drawdown worsens slightly and turnover rises in both periods.
-I stopped pursuing the 10% sector cap: it was slow to solve, too strict for the
-guardrail I wanted, and the initial results were not compelling. I am not adding
-it to the portfolio. These results cover one schedule and remain preliminary;
-the full comparison is incomplete.
+Only one schedule finished. The next attempt could not find a solution within
+the iteration limit. The runs were taking too long, and the result was not
+promising enough to justify continuing, so I abandoned the 10% sector test.
 
 The 2% stock cap has a different trade-off. Its later net Sharpe rises from 0.87 to
 0.93 and later maximum drawdown falls from 9.05% to 8.47%, but the improvement
