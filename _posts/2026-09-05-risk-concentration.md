@@ -14,19 +14,19 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">A weight limit tells me how much capital is in a position, not how much risk it contributes. I ask whether risk limits can stop one stock, sector, or shared market move from dominating the portfolio without getting in the way on most rebalances. The evidence so far suggests that the existing optimizer already spreads risk reasonably well: moderate caps change little, while strict caps become new sizing rules. This is an exploratory study on reused history.</p>
+<p class="article-summary">A weight limit tells me how much capital is in a position, not how much risk it contributes. I test whether risk limits can stop one stock, sector, or shared market move from dominating the portfolio without getting in the way on most rebalances. The evidence so far suggests that the existing optimizer already spreads modeled risk reasonably well: moderate caps change little, while strict caps become new sizing rules. This is an exploratory study on reused history.</p>
 
-The [state-aware optimizer](/quants/2026/08/29/portfolio-optimization.html)
+The [existing optimizer](/quants/2026/08/29/portfolio-optimization.html)
 controls total forecast volatility, gross exposure, beta, sector capital, and
 position size. It does not answer who supplies the risk. A portfolio can stay
 inside its 7% forecast-volatility budget while one stock, sector, or shared
 direction supplies a large fraction of that risk. The technology rally around
-[AI](https://www.bis.org/publ/qtrpdf/r_qt2512.pdf) made the distinction
-practical: several acceptable technology or semiconductor weights can still
-depend on the same underlying move. I wanted to know whether the existing
-limits left similar concentration in this B3 strategy. The practical question is:
-can I stop one stock, sector, or shared market move from dominating the
-portfolio's risk without constantly changing the portfolio?
+AI made the distinction practical: several acceptable technology or
+semiconductor weights can still depend on the same underlying move. I wanted to
+know whether the existing limits left similar concentration in this strategy.
+The practical question is: can I stop one stock, sector, or shared
+market move from dominating the portfolio's risk without constantly changing
+the portfolio?
 
 I keep the Ridge predictions, selected stocks, trading controls, execution, and
 5 bp charge on traded notional fixed. Because PCA directions come from the
@@ -95,7 +95,10 @@ of conservative local convex approximations. After every candidate, I recompute
 the exact shares from $$w^\top\Sigma w$$. Any candidate whose exact cap excess
 remains above $$10^{-6}$$ is rejected; feasible targets with solver or
 outer-convergence warnings remain provisional. This verifies the returned
-target within tolerance without claiming a globally optimal solution.
+target within tolerance without claiming a globally optimal solution. If no
+candidate passes the exact check, the run marks the arm incomplete rather than
+using the uncapped target or scaling it: scaling changes variance, but not a
+variance share.
 
 ## When the limits begin to bind
 
@@ -106,11 +109,15 @@ absolute weight is capped at 4%. The corresponding sector figures are 30.8% and
 27.3%; for the largest PCA direction, they are 15.6% and 15.4%. This is enough
 concentration to justify testing a guardrail, without implying that every date
 or every dimension has a serious problem. The median effective number of PCA
-directions is about 40, so this is not an obvious one-bet portfolio.
+directions, $$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40. This describes
+dispersion within the forecast covariance model, not economic diversification.
 
-The uncapped eligible-universe portfolio exceeds a 20% all-PC limit on only
-0.69% of rebalances. At 10%, the frequency rises to 13.55%; at 7.5%, it is
-30.20%. Looking only at the first ten components would miss part of this tail.
+Over the full sample, the uncapped eligible-universe control exceeds a 20%
+all-PC limit on only 0.69% of rebalances. At 10%, the frequency rises to 13.55%;
+at 7.5%, it is 30.20%. These unconditional control breaches differ from Table
+1's later-period correction frequency, which follows the constrained
+portfolio's own path. Looking only at the first ten components would miss part
+of this tail.
 The component making the largest portfolio risk contribution lies after PC10 on
 26.05% of observations; ranked by covariance eigenvalue, it can be as late as
 PC141.
@@ -119,16 +126,12 @@ Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
 15% changes roughly 98% and is close to continuously active. A 2% stock cap
 changes almost every target. The amount moved matters as well as the frequency:
 an optimizer can make a small correction on many dates without rebuilding the
-portfolio. PCA 10% moves about 1.5% of capital in the development period and
-4.8% later. Sector 20% moves roughly 7% in both periods; Sector 15% moves nearly
-20%. Stock 2% moves 26.5% before 2022 and 17.0% later.
-
-<!-- FINAL EVIDENCE SLOT: insert the audited light/dark threshold-impact figure.
-     It shows correction frequency and target L1 change for every tested PCA,
-     sector, and stock threshold, with schedule min/max ranges. -->
-
-<!-- FINAL CAPTION SLOT: Figure 1. Define periods, schedule ranges, covariance
-     controls, 5 bp costs, provisional solver markers, and exploratory additions. -->
+portfolio. The capped and control targets have an average L1 distance of 1.5%
+of capital for PCA 10% in the development period and 4.8% later. The distance
+is roughly 7% for Sector 20% in both periods, nearly 20% for Sector 15%, and
+26.5% before 2022 and 17.0% later for Stock 2%. Because the two strategies
+evolve independently, these are path differences rather than the immediate
+size of a single rebalance correction.
 
 These are rebalance-target controls. Rounding, execution, and subsequent price
 moves can take the carried portfolio above a cap before the next rebalance. I
@@ -137,7 +140,7 @@ question is whether the chosen target satisfies the requested share using that
 date's covariance matrix.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 1: What the completed guardrails change.</strong> January 2022–May 2026. “Own concentration” is the mean across schedules of the 95th percentile of the largest contribution in the capped dimension, measured on matched targets before and after the cap. “Targets corrected” means the path-dependent constrained run required a local correction. Target L1 compares the independently run control and capped targets on the same dates; it is the sum of absolute weight changes as a percentage of capital, not executed turnover. Corrections and residual violations use a 10<sup>−6</sup> tolerance. Sector 15%* remains provisional because one target returned an inaccurate-optimum status, although its reconstructed constraints held.</caption>
+  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026. “Own concentration” is the mean across schedules of the 95th percentile of the largest contribution in the capped dimension, measured on matched targets before and after the cap. “Targets corrected” means the path-dependent constrained run required a local correction. Target L1 compares the independently run control and capped targets on the same dates; it is the sum of absolute weight changes as a percentage of capital, not executed turnover. Corrections and residual violations use a 10<sup>−6</sup> tolerance. Sector 15%* remains provisional because one target returned an inaccurate-optimum status, although its reconstructed constraints held.</caption>
   <thead>
     <tr><th>Configuration</th><th>Matched control</th><th>Own concentration<br>control → capped</th><th>Targets corrected</th><th>Mean target L1</th><th>Residual violations</th></tr>
   </thead>
@@ -149,6 +152,14 @@ date's covariance matrix.
   </tbody>
 </table>
 
+The strict stock test also shows why one concentration measure is not enough.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Values are means across three schedule-level 95th percentiles at rebalance targets, on a common forecast-variance scale. They show a cross-dimensional trade-off, not a same-date flow of risk.</p>
+
 ## Protection, performance, and trading
 
 Table 2 keeps performance beside the risk-control result. Returns are annualized
@@ -158,7 +169,7 @@ then averaged across the three schedules. Maximum drawdown is likewise the mean
 of three schedule-level maximum drawdowns.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 2: Performance and trading under concentration limits.</strong> Means of three schedule-level metrics. Returns are geometric and annualized; realized volatility is annualized. Net results charge 5 bp on traded notional. Turnover is two-way executed turnover, annualized. Drawdowns are positive loss magnitudes. The PCA covariance control has no concentration cap. Sector 15%* retains the provisional status defined in Table 1. Stock 2% is the audited strict counterexample; the pending Stock 3% result is not shown.</caption>
+  <caption><strong>Table 2: Performance and trading under concentration limits.</strong> Means of three schedule-level metrics. Returns are geometric and annualized; realized volatility is annualized. Net results charge 5 bp on traded notional. Turnover is two-way executed turnover, annualized. Drawdowns are positive loss magnitudes. The PCA covariance control has no concentration cap. Sector 15%* retains the provisional status defined in Table 1; Stock 2% is the audited strict counterexample.</caption>
   <thead>
     <tr><th>Constraint</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Realized vol.</th><th>Max net DD</th><th>Turnover</th></tr>
   </thead>
@@ -180,12 +191,13 @@ of three schedule-level maximum drawdowns.
   </tbody>
 </table>
 
-The completed moderate limits leave realized volatility, drawdown, and turnover
+The displayed moderate limits leave realized volatility, drawdown, and turnover
 close to the corresponding control. They mainly redistribute forecast risk
 inside a portfolio that already uses almost all of its 7% forecast budget. I do
-not see evidence here that another hard limit improves the portfolio as a
-whole. The limits also do not repair the risk model's level: realized volatility
-remains near 8.4% before 2022 and 9.3% afterward.
+not see evidence here that another hard limit improves historical performance
+as a whole, but that is not the guardrail's test. The limits also do not repair
+the risk model's level: realized volatility remains near 8.4% before 2022 and
+9.3% afterward.
 
 The 2% stock cap is more consequential. Its later net Sharpe rises from 0.87 to
 0.93 and later maximum drawdown falls from 9.05% to 8.47%, but the improvement
@@ -198,10 +210,10 @@ selection rule.
 ## Risk moves rather than disappearing
 
 The 2% stock cap lowers the later 95th percentile of the largest stock
-contribution from 7.17% to 2%. At the same time, the 95th percentile of the
-largest PCA contribution rises from 15.44% to 16.05%. Many small stock
-allocations can still load on the same correlated direction. The cap succeeds
-on its own definition while shifting some risk elsewhere.
+contribution from 7.17% to 2%. The corresponding PCA statistic rises by about
+0.6 percentage points, from 15.44% to 16.05%. Many small stock allocations can
+still load on the same correlated direction. The cap succeeds on its own
+definition without producing a corresponding reduction in PCA concentration.
 
 PCA directions and economically named styles can overlap without being
 interchangeable. A low-volatility tilt can span several current principal
@@ -209,28 +221,28 @@ components, while a principal component can mix low volatility with sector and
 market structure. PCA supplies an additive decomposition of the current risk
 model. A style exposure supplies an economic interpretation.
 
-The intended low-volatility exposure remains substantial under every completed
-limit. I measure it as the ratio of the shorts' to the longs' weighted geometric
-mean stock forecast volatility. Under the original optimizer that ratio is
-1.58 before 2022 and 1.75 later; under the 2% stock cap it is still 1.56 and
-1.73. That distinction matters here. Removing the strategy's intended tilt
-would make the portfolio look more diversified by one measure while changing
-the return source I meant to implement.
+As a descriptive low-volatility diagnostic, I compare the shorts' and longs'
+geometric mean stock forecast volatility, weighting each leg by positive
+within-book weight magnitudes. The short-to-long ratio is 1.58 before 2022 and
+1.75 later under the original optimizer; under the 2% stock cap it is still
+1.56 and 1.73. This is not a factor loading or risk attribution. It simply shows
+that the intended low-volatility ordering remains substantial.
 
 ## Guardrail or diagnostic?
 
-The evidence so far does not make a strong case for adding another hard limit.
-PCA 10% trims a forecast-risk tail with small target changes. Sector 20% and
-Stock 4% intervene more often, but the completed moderate tests leave realized
-performance and trading close to the original allocator. Sector 15% and Stock
-2% are different: they routinely reshape the target, and the strict stock cap
-also trades more and redirects risk into correlated components.
+The study establishes that the caps work on their stated forecast-risk measure.
+PCA 10%, for example, lowers the later concentration tail from 15.88% to 10%,
+with similar realized performance and trading and an average 4.8% target L1
+distance from its control. Sector 20% achieves its own limit with a larger but
+still moderate target difference. Sector 15% and Stock 2% are different: they
+act on nearly every target and behave more like sizing rules.
 
-My current preference is therefore to keep these measures as monitoring
-diagnostics and treat moderate caps as possible backstops, not automatic new
-portfolio rules. The PCA 7.5% and Stock 3% schedule runs have finished and await
-the final merge and audit; Sector 10% is still running. They will show whether
-that reading survives the final grid.
+What the history does not establish is whether these modeled reductions protect
+against a future economic loss or a risk-model error. A guardrail need not raise
+historical Sharpe to be useful, but its protection should match a risk I care
+about. My current preference is therefore monitoring first, with PCA 10% or a
+similarly moderate limit available as a selective backstop rather than an
+automatic portfolio rule.
 
 Concentration is also only one part of the question raised by the AI rally. PCA
 can reveal a shared direction without naming its economic source. The next step

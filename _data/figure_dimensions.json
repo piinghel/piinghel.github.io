@@ -71,6 +71,14 @@
     "width": 1200,
     "height": 520
   },
+  "/assets/risk-concentration/risk-migration": {
+    "width": 619,
+    "height": 281
+  },
+  "/assets/risk-concentration/risk-migration_mobile": {
+    "width": 374,
+    "height": 317
+  },
   "/assets/tranching/schedule-performance": {
     "width": 612,
     "height": 346
