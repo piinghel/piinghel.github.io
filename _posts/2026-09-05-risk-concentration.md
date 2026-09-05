@@ -155,17 +155,17 @@ portfolios evolve independently, so it includes differences built up over time,
 not just the adjustment at that rebalance. Executed turnover is in Table 2.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections and residual violations use a 10<sup>−6</sup> tolerance. * Solver warnings for Sector 15% and Stock 4%; Stock 3% execution not audited.</caption>
+  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections use a 10<sup>−6</sup> tolerance. * Solver warnings for Sector 15% and Stock 4%; Stock 3% execution not audited.</caption>
   <thead>
-    <tr><th>Configuration</th><th>Matched control</th><th>Own concentration<br>control → capped</th><th>Targets corrected</th><th>Mean target L1</th><th>Residual violations</th></tr>
+    <tr><th>Configuration</th><th>Matched control</th><th>Own concentration<br>control → capped</th><th>Targets corrected</th><th>Mean target L1</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">All PCs · 10%</th><td>PCA covariance control</td><td>15.88% → 10.00%</td><td>27.1%</td><td>4.8%</td><td>0</td></tr>
-    <tr><th scope="row">Sector · 20%</th><td>Original optimizer</td><td>27.28% → 20.00%</td><td>58.1%</td><td>6.6%</td><td>0</td></tr>
-    <tr><th scope="row">Sector · 15%*</th><td>Original optimizer</td><td>27.28% → 15.00%</td><td>98.3%</td><td>19.4%</td><td>0</td></tr>
-    <tr><th scope="row">Stock · 4%*</th><td>Original optimizer</td><td>7.17% → 4.00%</td><td>50.7%</td><td>4.1%</td><td>0</td></tr>
-    <tr><th scope="row">Stock · 3%*</th><td>Original optimizer</td><td>7.17% → 3.00%</td><td>83.4%</td><td>7.1%</td><td>0</td></tr>
-    <tr><th scope="row">Stock · 2%</th><td>Original optimizer</td><td>7.17% → 2.00%</td><td>100.0%</td><td>17.0%</td><td>0</td></tr>
+    <tr><th scope="row">All PCs · 10%</th><td>PCA covariance control</td><td>15.88% → 10.00%</td><td>27.1%</td><td>4.8%</td></tr>
+    <tr><th scope="row">Sector · 20%</th><td>Original optimizer</td><td>27.28% → 20.00%</td><td>58.1%</td><td>6.6%</td></tr>
+    <tr><th scope="row">Sector · 15%*</th><td>Original optimizer</td><td>27.28% → 15.00%</td><td>98.3%</td><td>19.4%</td></tr>
+    <tr><th scope="row">Stock · 4%*</th><td>Original optimizer</td><td>7.17% → 4.00%</td><td>50.7%</td><td>4.1%</td></tr>
+    <tr><th scope="row">Stock · 3%*</th><td>Original optimizer</td><td>7.17% → 3.00%</td><td>83.4%</td><td>7.1%</td></tr>
+    <tr><th scope="row">Stock · 2%</th><td>Original optimizer</td><td>7.17% → 2.00%</td><td>100.0%</td><td>17.0%</td></tr>
   </tbody>
 </table>
 
