@@ -15,13 +15,16 @@ github_repositories:
 
 <p class="article-summary">Linear regression turns many overlapping stock predictors into one learned ranking. Here OLS and Ridge produce similar net returns to a small fixed-weight benchmark with lower volatility, but roughly twice the trading. Ridge reduces coefficient size and movement by about a third while leaving the ranking almost unchanged; it does not clearly improve on OLS after 2021.</p>
 
-A systematic equity model can contain several versions of momentum, volatility,
-liquidity and size, many describing closely related ideas. Fixed weights require
-judgment about their signs, horizons and relative influence. I use linear
-regression to learn that combination from history while keeping it easy to
-inspect. Ridge adds regularization when overlapping inputs make individual
-coefficients less well determined. I judge both by the rankings and portfolios
-they produce outside their training windows.
+Several versions of momentum, volatility, liquidity and size can each look
+reasonable on their own. Combining them is less straightforward. How much
+weight should I give to each, especially when several describe much the same
+thing?
+
+I use linear regression to learn those weights from history. It is simple
+enough that I can inspect what the model does with overlapping predictors.
+I then add a Ridge penalty to discourage large, offsetting coefficients. The
+test is whether that changes which stocks I hold and how the portfolio performs
+outside its training windows.
 
 ## Predictors and the ranking target
 
@@ -41,22 +44,22 @@ cross-section.
 The target ranks each stock's average daily return over the next 20 sessions
 divided by its volatility over those sessions. For positive forward returns,
 a quieter gain receives a better outcome than an equally large volatile gain.
-This is a deliberate risk-adjusted preference; a raw-return target would ask
-a different investment question.
+I am asking the model to prefer those quieter gains, so the risk preference
+starts in the training target, before I size a single position.
 
 I rank that outcome within each date and sector, asking which stocks do better
 than their sector peers. Predictor ranks retain cross-sector information.
 Selection is global, so the resulting portfolio can still have sector
-exposures. The target defines what the score should prefer; it does not
-directly maximize portfolio Sharpe.
+exposures. How well that stock-level preference translates into portfolio
+Sharpe is something I check in the backtest.
 
 As a reference, I use a fixed score with five equally weighted themes:
 defensive, momentum, low short positioning, larger company size, and return
 consistency. The defensive theme averages low volatility and avoidance of
-unusually large up days. This compact benchmark makes the results easier to
-interpret. Its comparison with regression changes the predictor set and data
-coverage as well as the weights; only OLS versus Ridge holds the inputs and
-eligible stocks fixed.
+unusually large up days. This gives me a small, readable rule to compare with
+the learned scores. Regression also uses more predictors and different data
+coverage, so any difference can come from those inputs as well as their
+weights. OLS and Ridge use exactly the same inputs and eligible stocks.
 
 ## Learning the combination
 
@@ -68,13 +71,15 @@ OLS chooses the coefficients to minimize squared error against the target
 ranks. A positive coefficient rewards a high predictor rank, conditional on
 the other inputs; a negative coefficient reverses that preference.
 
-Related predictors can substitute for one another. For example, a score
+The awkward part is that related predictors can substitute for one another.
+For example, a score
 contribution of $2x_1-1.8x_2$ can be written as
 $0.2x_1+1.8(x_1-x_2)$. If the inputs are very similar, much of the common
 signal cancels and their small difference receives a large weight. That
 difference might contain useful information about the shape of a price trend,
-or it might amplify measurement noise and estimation error. Opposing signs
-identify a relationship to investigate; they do not establish overfitting.
+or it might amplify measurement noise and estimation error. Seeing opposite
+signs makes me want to inspect that difference before deciding the model is
+overfitting.
 
 Ridge discourages large coefficients by adding a penalty:
 
@@ -86,9 +91,9 @@ $$
 $$
 
 Here $n$ counts training stock-date observations. The intercept is unpenalized;
-$c=0$ gives OLS. Positive $c$ shrinks the slopes, but any improvement in
-held-out rankings or portfolio outcomes must come from the evidence. This L2
-penalty shrinks coefficients; lasso's L1 penalty can also set them to zero.
+$c=0$ gives OLS. With positive $c$, a large coefficient has to earn its place
+by reducing prediction error enough to offset the penalty. Ridge shrinks the
+slopes; lasso's L1 penalty can also set them to zero.
 
 I use expanding walk-forward fits, with a 21-session buffer between training
 outcomes and the next prediction block. Predictions begin in September 1998.
@@ -97,9 +102,9 @@ research choices, so it is later, reused evidence rather than an untouched
 holdout.
 
 I selected $c=0.01$ during development because it reduced coefficient size and
-movement while keeping the portfolio close to OLS. This was a qualitative
-choice without a predeclared numerical acceptance threshold. The tested
-penalties gave little reason to expect a reliable performance advantage.
+movement while keeping the portfolio close to OLS. I made that trade-off by
+judgment, without setting a numerical acceptance threshold in advance. The
+tested penalties gave me little reason to expect a reliable performance gain.
 
 All three scores enter the same portfolio rule: the top and bottom 75 stocks,
 inverse-volatility sizing with stock and book caps, three-week rebalancing,
@@ -113,8 +118,8 @@ long- and short-side trades relative to strategy capital.
 Figure 1 follows the ten largest mean absolute Ridge coefficients across
 refits. Price relative to its moving average remains positive; short-horizon
 MACD and illiquidity remain negative. Other coefficients weaken or change sign.
-The model combines trend, technical-price and liquidity information, but each
-coefficient is conditional on close substitutes elsewhere in the predictor set.
+To read these weights, I need to keep the other predictors in mind: the model
+can spread a similar signal across several of them.
 
 The first two rows illustrate how that combination works. Holding the other
 predictor ranks fixed, the positive price-to-126-day-average weight rewards a
@@ -129,16 +134,18 @@ a large normalized upward gap between its faster and slower price averages.
 
 At the selected penalty, coefficient size and absolute movement between refits
 fall by roughly one third, yet the full ranking has a 0.991 correlation with
-OLS. About 14 of 150 selected names differ. A smaller coefficient vector can
-also have smaller absolute refit movements, so these reductions alone do not
-establish more reliable predictor effects.
+OLS. About 14 of 150 selected names differ. Despite the coefficient changes,
+I still hold much the same stocks. Some of the smaller refit movements may simply
+come from starting with smaller coefficients, so I would want to perturb the
+inputs or training history before calling the model more stable.
 
-Substitution among related inputs is consistent with this result. Selection
-then ignores score differences that leave a stock on the same side of the
-cutoff. The heatmap describes the fitted combination; its rows are neither
-standalone importance measures nor independent contributions to return.
-The next question is whether regularization improves the ranking and the
-portfolio built from it.
+Related inputs give the model room to change coefficients while keeping much
+the same score. Selection adds another filter: if a stock stays on the same
+side of the cutoff, changing its score need not change whether I hold it. That
+helps explain why a visibly different set of weights can lead to much the same
+portfolio. I read the heatmap as a picture of the fitted combination; measuring
+each predictor's importance or contribution to return would take a separate
+test.
 
 ## Ranking and portfolio results
 
@@ -165,13 +172,14 @@ development gain from Ridge disappears in the later period.
 </table>
 
 The fixed score has the highest later-period mean IC, with more variable daily
-IC. Regression therefore does not uniformly improve ranking accuracy against
-this benchmark. IC covers the full cross-section; the portfolio trades its
-tails and adds position sizing, execution and costs.
+IC. On this measure, the small fixed rule is still a useful competitor.
+But I do not trade the entire ranking. The portfolio holds its tails, sizes
+those positions and pays to change them, so I also need to follow the scores
+through to returns.
 
-Table 2 follows the score through to those investment outcomes. During
-development, OLS has similar net return to the fixed score, lower volatility
-and a shallower maximum drawdown. Extra trading consumes 0.77 percentage points
+Table 2 shows the result. During development, OLS has similar net return to the
+fixed score, lower volatility and a shallower maximum drawdown. Extra trading
+consumes 0.77 percentage points
 of its 0.88-point gross-return advantage. Most of the higher Sharpe comes from
 lower volatility.
 
@@ -213,17 +221,16 @@ the defensive portfolio behaviour; this comparison does not separate them.
 
 Linear regression provides a workable way to combine this broad predictor set
 into a stock ranking. Its portfolio has lower risk than the small fixed score,
-with similar net return and substantially more trading. A comparison on
-identical inputs would be needed to assign that difference specifically to
-learned weights.
+with similar net return and substantially more trading. To find out how much
+of that comes from learning the weights, I would next give the fixed and
+learned rules the same inputs.
 
 Ridge regularizes the combination, but its smaller coefficients bring little
-change to the investment decision. I prefer it as a simple baseline that limits
-reliance on large, offsetting weights. That is an estimation preference; the
-later results offer no clear performance reason to prefer it to OLS. Stability
-ultimately means that modest changes in inputs or training history leave useful
-rankings and manageable trading, which coefficient shrinkage alone cannot
-establish.
+change to the investment decision. I prefer it as a simple baseline because
+I am less comfortable relying on large weights that nearly cancel each other.
+The later results give me no clear performance reason to prefer it to OLS.
+For this portfolio, the extra trading introduced by the learned ranking matters
+far more than the choice between the two regressions.
 
 Most predictors still come from prices, so expanding this set does not give
 me 144 independent sources of information. The flat trading charge also omits

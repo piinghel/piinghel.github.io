@@ -85,8 +85,7 @@ control.
 
 Table 1 shows how much the allocation change matters. Inverse-volatility sizing
 reduces volatility from 33.4% to 9.8% and turns geometric return positive.
-Turnover also falls. The result makes the sizing decision clear under these
-backtest assumptions.
+Turnover also falls. Given this choice, I would use inverse-volatility sizing.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 1: Risk and return under the two sizing rules.</strong> Results for 12 July 1995–27 May 2026. Net return is geometric; returns, volatility and two-way turnover are annualized. Net results charge 5 bp on traded notional; turnover sums absolute executed trades relative to strategy capital. Sharpe uses a zero cash rate.</caption>
@@ -113,10 +112,10 @@ compounded value.
 
 <p class="figure-caption"><strong>Figure 2: Sizing changes both risk and compounding.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. The rules retain their different exposures and volatilities; Table 1 supplies the risk comparison.</p>
 
-The comparison captures a complete sizing change: individual weights, book
-capital, beta and turnover move together. It establishes the benefit of this
-allocation rule here; isolating each component would require matched exposure
-and constraint comparisons.
+I changed more than individual position sizes here. The short book uses less
+capital, beta shifts and turnover falls. To find out how much each change
+contributes, I would need to vary them separately while matching the other
+exposures and constraints.
 
 ## What individual sizing misses
 
@@ -143,9 +142,8 @@ sample. Both comparisons measure returns from the first date's close.
 
 Positive net stock exposure does not prevent these losses. Estimated beta is
 mildly negative in both episodes, but market beta alone does not describe every
-risk shared by the short positions. The book contributions establish where
-the losses occur. Sector and style attribution would be needed to explain
-what those positions have in common.
+risk shared by the short positions. I can see that the shorts drive the losses;
+sector and style attribution would help explain what those stocks have in common.
 
 ## From individual weights to joint construction
 

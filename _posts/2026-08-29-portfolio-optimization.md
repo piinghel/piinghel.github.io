@@ -50,10 +50,9 @@ geometric annualized returns; Sharpe uses arithmetic mean daily return and a
 zero risk-free rate. Two-way turnover sums absolute executed trades relative
 to strategy capital, annualized over the reporting window.
 
-This compares complete allocation rules. Covariance, the score scaling used
-for sizing, and the constraints change together between the first two rules.
-The comparison can tell me which rule works better here; it cannot assign
-the difference to covariance alone.
+I change covariance, score scaling and constraints together when moving from
+individual to joint sizing. This tests which complete rule I would use;
+separating the benefit of covariance would need another comparison.
 
 ## Development results
 
@@ -100,11 +99,11 @@ be read alongside volatility and Sharpe in Table 1.
 
 ## Keeping existing holdings
 
-The optimizer starts from the newly selected stocks at every rebalance,
-without a preference for retaining a position already held. A small change in
+At each rebalance, the optimizer chooses weights for the newly selected stocks
+without giving any credit for already owning them. A small change in
 rank or covariance can then trigger a replacement whose benefit is smaller
-than its trading cost. I want the allocation decision to include that cost of
-changing direction.
+than its trading cost. A slightly better portfolio on paper can be a worse
+trade in practice.
 
 Take a long stock whose rank slips from 60 to 110. The optimizer drops it
 because only the top 75 enter the new selection. The optimizer with trading
@@ -112,9 +111,9 @@ controls may retain it while it remains inside the wider top 175. It starts from
 the existing weights after intervening price moves.
 
 Let $$w_t$$ be the signed portfolio weights and $$\mu_t$$ the sizing scores:
-Ridge predictions multiplied by each stock's daily volatility. Their scale is
-used for relative allocation. Calibrating them to expected returns would
-require another estimation step. If
+Ridge predictions multiplied by each stock's daily volatility. These scores
+tell the optimizer how to allocate relative to other stocks; I have not
+calibrated them as expected returns. If
 $$w_t^{\mathrm{pre}}$$ contains the weights just before rebalancing and
 $$c$$ is the trade coefficient, the objective becomes
 
@@ -132,8 +131,8 @@ The L1 term counts both sides of a replacement. Selling a 1% position and buying
 another 1% position changes $$\lVert w_t-w_t^{\mathrm{pre}}\rVert_1$$ by 2%.
 The optimizer keeps the incumbent unless the new score-and-risk combination
 clears that hurdle. Constraints can still force a trade when the old position
-no longer fits. The coefficient is a tuning parameter inside the score
-objective, distinct from the 5 bp fee charged to realized trades. A holding
+no longer fits. I tune this coefficient to control how readily the optimizer
+trades; the backtest separately charges 5 bp on executed trades. A holding
 that leaves the wider eligible set must also be closed; those forced exits
 enter executed turnover as mandatory trades.
 
@@ -165,18 +164,18 @@ Figure 2 checks both choices on the development period. The trade-coefficient gr
 the penalty while holding the rank cutoff at 175. The rank-cutoff group varies
 the cutoff while holding $$c=2.5\times10^{-4}$$. The coefficient axis is in
 units of $$10^{-4}$$, so the plotted value 2.5 denotes that setting. Points are the mean of the
-three schedules; whiskers show the observed schedule range.
+three schedules; whiskers in the Sharpe panels show the observed schedule range.
 
 <div class="research-figure parameter-sensitivity-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover for six trade coefficients and five holding-rank cutoffs" version="7" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: A broad return–turnover trade-off.</strong> Development-period net Sharpe and annual turnover. Points are schedule means; whiskers span observed schedules, not confidence intervals. Each group varies one setting while holding the other fixed; the chosen settings are highlighted.</p>
+<p class="figure-caption"><strong>Figure 2: A broad return–turnover trade-off.</strong> Development-period net Sharpe and annual turnover. Points are schedule means; whiskers in the Sharpe panels span the observed schedules. Each group varies one setting while holding the other fixed; the chosen settings are highlighted.</p>
 
 From 1 through 3, net Sharpe stays between 1.42 and 1.43 while turnover keeps
-falling, from 34× to 27×. The data therefore identify a broad trade-off rather
-than one best coefficient. I use 2.5 because it sits toward the lower-turnover
-end of that plateau; pushing to 5 gives back some return.
+falling, from 34× to 27×. There is little to choose between these settings on
+Sharpe. I use 2.5 because it sits toward the lower-turnover end of that plateau;
+pushing to 5 gives back some return.
 
 Rank cutoffs from 150 to 200 also give similar Sharpe, with modest turnover
 savings. I use 175 as a practical balance; moving to 200 saves less than
@@ -227,9 +226,9 @@ how much capital to put behind the strategy.
 
 The risk model lets individual volatility respond faster than stock
 correlations and shrinks estimated correlations toward zero. Even with those
-safeguards, it understates risk here. The beta constraint also uses an estimate. The
-constraints help organize the allocation decision, but their effectiveness
-has to be checked against the portfolio that is actually held.
+safeguards, it understates risk here. The beta constraint also uses an estimate.
+I can ask the optimizer to respect these estimates, but I still need to check
+the risk of the portfolio it actually holds.
 
 ## What joint sizing delivers
 

@@ -25,7 +25,7 @@ geometric return ranges from 5.42% to 9.91% across the three schedules in this
 study. Choosing the best one after seeing those results would turn an
 implementation detail into another backtest selection decision.
 
-This revised study draws on [Newfound’s work on timing luck](https://blog.thinknewfound.com/2018/01/quantifying-timing-luck/)
+This study draws on [Newfound’s work on timing luck](https://blog.thinknewfound.com/2018/01/quantifying-timing-luck/)
 and [Concretum’s study of tranching in factor portfolios](https://concretumgroup.com/the-tranching-dilemma-a-cost-aware-approach-to-mitigate-rebalance-timing-luck-in-factor-portfolios/).
 
 I use a Ridge stock ranking with a constrained optimizer, a rank buffer for
@@ -115,7 +115,7 @@ sleeves' costs: about 1.41 percentage points in development and 1.24 later.
 This assumes separate sleeve trades, with no netting savings or fixed ticket
 charges. More weekly trade events need not mean more traded notional.
 
-I would fund all three sleeves. The evidence supports less dependence on the
-starting week and a measured improvement in risk-adjusted performance, using
-the same strategy. It does not remove the common exposures behind the remaining
-drawdowns. Other weekdays or holding periods would be separate calendar tests.
+I would fund all three sleeves. I get the same strategy with less riding on
+the starting week, and the combined portfolio has better Sharpe in both
+periods. The common exposures behind the remaining drawdowns still need
+attention. Other weekdays or holding periods would be separate calendar tests.
