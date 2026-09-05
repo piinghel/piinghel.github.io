@@ -40,12 +40,16 @@
     "height": 313
   },
   "/assets/multiple-linear-regression/performance-and-drawdowns": {
-    "width": 615,
-    "height": 515
+    "width": 570,
+    "height": 472
+  },
+  "/assets/multiple-linear-regression/performance-and-drawdowns_mobile": {
+    "width": 326,
+    "height": 439
   },
   "/assets/multiple-linear-regression/top-coefficients": {
-    "width": 621,
-    "height": 308
+    "width": 605,
+    "height": 377
   },
   "/assets/portfolio-optimization/parameter-sensitivity": {
     "width": 1200,

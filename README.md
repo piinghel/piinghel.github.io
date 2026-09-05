@@ -41,11 +41,11 @@ a framework migration would not strengthen the research.
 
 ## Figure sources
 
-The regression article figures are refreshed with:
+The regression article figures are regenerated from the included aggregate evidence:
 
 ```bash
 python3 scripts/render_multiple_linear_regression_figures.py \
-  --research-root ../projects/factor_combination
+  --review-dir assets/multiple-linear-regression/evidence
 ```
 
 The factor correlation comparison can be regenerated from the included matrix:
@@ -55,20 +55,19 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   --factor-correlation-only
 ```
 
-The primary renderer produces only the coefficient heatmap and performance /
-drawdown figure. It requires two compact source files under `outputs/review/`:
+The primary renderer produces the coefficient heatmap and performance /
+drawdown figure. It requires two compact source files in the review directory:
 `multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz` and
 `multiple_linear_selected_return_drawdown_figure_source.csv.gz`. It does not
 require IC, penalty-sweep, holdings-tilt or factor-correlation inputs.
-The two retained historical source files are not present in the
-current local factor-combination folder or its recoverable raw-run archive, so
-the published MLR SVGs remain the retained assets until that source bundle is
-restored. The figure code can still be reviewed, but a clean full regeneration
-cannot currently be claimed.
+The [evidence directory](assets/multiple-linear-regression/evidence) also
+contains the ranking and portfolio summaries behind the article tables, plus
+the coefficient-persistence diagnostics. These are the three-theme benchmark,
+OLS and Ridge results on matched stock-date rows. The figures and reporting
+can be reproduced from these aggregate files; full model fitting requires the
+original research inputs and dependencies.
 
-The renderer is prepared for a new validated compact bundle, without replacing
-those retained assets. Supply the exact output of the matched-study
-exporter, rather than copying it into a historical review folder:
+To review another validated compact bundle before changing article assets:
 
 ```bash
 python3 scripts/render_multiple_linear_regression_figures.py \
@@ -78,20 +77,14 @@ python3 scripts/render_multiple_linear_regression_figures.py \
 
 This produces light/dark heatmaps and desktop/phone performance figures. The
 heatmap uses a common signed scale without cell annotations; exact coefficients
-remain in the source bundle. Performance preserves source paths and checks that
+remain in the source bundle. Performance preserves the source series and checks that
 drawdowns include the initial index of 1 before adding its starting reference.
 Missing, inconsistent or non-positive log-growth evidence is rejected before
-any chart is written. Synthetic fixture tests establish rendering behavior,
-not empirical reproduction. Review real exports before updating article assets,
-mobile include paths, captions or numerical claims.
+any chart is written. Fixture tests check rendering behavior. The published
+matched export is also reconciled against the daily returns of all three
+starting-week schedules, including costs and initial-index drawdowns.
 
-The September layout repair to the retained performance SVGs removes the
-unused future-date margin and moves model labels below the panels. All 52
-line groups in each theme were checked unchanged; this is a presentation
-repair, not a regeneration of the underlying return series. The renderer now
-uses the final observation as its right limit for future regenerated figures.
-
-The size-choice diagnostic uses the retained daily factor scores:
+The historical five-theme size-choice diagnostic uses the retained daily factor scores:
 
 ```bash
 python3 scripts/check_benchmark_size.py \
@@ -139,16 +132,15 @@ penalty only from the second. All four rows use development through 2021.
 
 | Material | Location | Reproduction scope |
 | --- | --- | --- |
-| Site and regression figure sources | This repository | Correlation chart from its included matrix; matched Ridge figure bundle remains unavailable |
+| Site and regression figure sources | This repository | Matched Ridge figures and result tables from included aggregate evidence; correlation chart from its included matrix |
 | Low-volatility sizing | [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) | Independent sizing example; full runner needs its configured inputs and dependencies |
 | Optimizer methods and evidence | [portfolio-optimization-study](https://github.com/piinghel/portfolio-optimization-study) | One-rebalance control example and figures from included portfolio results |
 | Rebalance tranching | [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) | Mixture calculations, examples and figures from included daily portfolios |
 | Ridge estimator and research index | [systematic-equity-research](https://github.com/piinghel/systematic-equity-research) | Sample-scaled estimator and a runnable example |
 
-Source recovery for the matched OLS–Ridge comparison covered project folders,
-worktrees, research caches, local Git history, and available GitHub project
-trees in September 2026. Optimizer returns use the selected Ridge strategy and
-cannot substitute for the missing paired OLS results.
+Each study records its own evidence and reproduction scope. Returns from a
+different portfolio specification cannot substitute for a matched model
+comparison.
 
 ## Site maintenance
 
