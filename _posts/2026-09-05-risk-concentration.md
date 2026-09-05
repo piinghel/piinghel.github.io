@@ -119,21 +119,23 @@ then averaged across the three schedules. Maximum drawdown is likewise the mean
 of three schedule-level maximum drawdowns.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 1: Performance and trading under moderate limits.</strong> Means of three schedule-level metrics. Returns are geometric and annualized; realized volatility is annualized. Net results charge 5 bp on traded notional. Turnover is two-way executed turnover, annualized. Drawdowns are positive loss magnitudes. The final stock row remains pending completion and audit.</caption>
+  <caption><strong>Table 1: Performance and trading under concentration limits.</strong> Means of three schedule-level metrics. Returns are geometric and annualized; realized volatility is annualized. Net results charge 5 bp on traded notional. Turnover is two-way executed turnover, annualized. Drawdowns are positive loss magnitudes. The PCA covariance control has no concentration cap. Sector 15%* is provisional because isolated solver dates returned an inaccurate-optimum status; all audited constraints still held within numerical tolerance. The final stock row remains pending completion and audit.</caption>
   <thead>
     <tr><th>Constraint</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Realized vol.</th><th>Max net DD</th><th>Turnover</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="7">Development · September 1998–December 2021</th></tr>
     <tr><th scope="row">Optimizer + trading controls</th><td>13.92%</td><td>12.32%</td><td>1.43</td><td>8.40%</td><td>18.06%</td><td>28.2×</td></tr>
-    <tr><th scope="row">Eligible-universe covariance control</th><td>13.80%</td><td>12.22%</td><td>1.43</td><td>8.33%</td><td>18.24%</td><td>28.0×</td></tr>
+    <tr><th scope="row">PCA covariance control · no cap</th><td>13.80%</td><td>12.22%</td><td>1.43</td><td>8.33%</td><td>18.24%</td><td>28.0×</td></tr>
     <tr><th scope="row">All PCs · 10%</th><td>13.79%</td><td>12.21%</td><td>1.43</td><td>8.32%</td><td>18.22%</td><td>28.0×</td></tr>
     <tr><th scope="row">Sector · 20%</th><td>13.99%</td><td>12.40%</td><td>1.43</td><td>8.40%</td><td>18.02%</td><td>28.2×</td></tr>
+    <tr><th scope="row">Sector · 15%*</th><td>13.90%</td><td>12.30%</td><td>1.42</td><td>8.40%</td><td>18.29%</td><td>28.3×</td></tr>
     <tr class="period-heading"><th colspan="7">Later · January 2022–May 2026</th></tr>
     <tr><th scope="row">Optimizer + trading controls</th><td>9.33%</td><td>7.99%</td><td>0.87</td><td>9.32%</td><td>9.05%</td><td>24.6×</td></tr>
-    <tr><th scope="row">Eligible-universe covariance control</th><td>9.45%</td><td>8.11%</td><td>0.88</td><td>9.32%</td><td>9.14%</td><td>24.5×</td></tr>
+    <tr><th scope="row">PCA covariance control · no cap</th><td>9.45%</td><td>8.11%</td><td>0.88</td><td>9.32%</td><td>9.14%</td><td>24.5×</td></tr>
     <tr><th scope="row">All PCs · 10%</th><td>9.47%</td><td>8.12%</td><td>0.88</td><td>9.30%</td><td>9.11%</td><td>24.6×</td></tr>
     <tr><th scope="row">Sector · 20%</th><td>9.52%</td><td>8.18%</td><td>0.89</td><td>9.29%</td><td>9.03%</td><td>24.6×</td></tr>
+    <tr><th scope="row">Sector · 15%*</th><td>9.52%</td><td>8.17%</td><td>0.89</td><td>9.24%</td><td>8.98%</td><td>24.7×</td></tr>
     <!-- FINAL EVIDENCE SLOT: add the audited moderate stock row selected from
          2%, 3%, and 4%, then reassess whether one strict row is needed. -->
   </tbody>
