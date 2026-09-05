@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Sizing a Low-Volatility Portfolio"
-description: "The same stock ranking, resized: less short capital, lower risk, and positive compounding."
+description: "The same stock ranking, resized: less capital in volatile shorts and a different balance of portfolio risk."
 date: 2024-12-15
 last_modified_at: 2026-09-05
 show_date: false
@@ -13,7 +13,7 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary">Equal capital in a stable-stock long book and a volatile-stock short book creates very unequal risk. Inverse-volatility sizing corrects much of that imbalance here, cutting portfolio volatility from 33% to 10% and turning compounding positive after trading costs. It leaves shared risk uncontrolled, however, and coordinated short-book losses still cause large drawdowns.</p>
+<p class="article-summary">Equal capital in a stable-stock long book and a volatile-stock short book creates very unequal risk. Inverse-volatility sizing puts much less capital into the volatile shorts, changing market exposure as well as individual weights. Here portfolio volatility falls from 33% to 10% and turnover declines, but coordinated short-book losses still cause large drawdowns.</p>
 
 One dollar in stable stocks and one dollar short in volatile stocks is an easy
 starting rule. But I have deliberately chosen the two sides for different
@@ -83,6 +83,11 @@ book's market sensitivity. Full-sample realized beta moves from −1.12 to
 I haven't asked the sizing rule to target that beta. It is an outcome of these
 weights, and the near-zero average hides variation through time.
 
+I changed more than individual position sizes here. The short book uses less
+capital, beta shifts and turnover falls. To find out how much each change
+contributes, I would need to vary them separately while matching the other
+exposures and constraints.
+
 ## What improves
 
 Table 1 shows how much the allocation change matters. Inverse-volatility sizing
@@ -112,11 +117,6 @@ moves erode the equal-weight portfolio's compounded value, leaving just
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Sizing changes both risk and compounding.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. The rules retain their different exposures and volatilities; Table 1 supplies the risk comparison.</p>
-
-I changed more than individual position sizes here. The short book uses less
-capital, beta shifts and turnover falls. To find out how much each change
-contributes, I would need to vary them separately while matching the other
-exposures and constraints.
 
 ## What individual sizing misses
 

@@ -117,8 +117,7 @@ traded notional stays the same.
 
 I would fund all three sleeves. I get the same strategy with less riding on
 the starting week, and the combined portfolio has better Sharpe in both
-periods. For me, that is worth the extra bookkeeping. The common exposures
-behind the remaining drawdowns still need attention. Other weekdays or holding
+periods. For me, that is worth the extra bookkeeping. Other weekdays or holding
 periods would be separate calendar tests.
 
 ## Research notes

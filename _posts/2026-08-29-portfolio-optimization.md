@@ -165,11 +165,9 @@ That is why I use the two controls together. They change which stocks remain
 eligible and how much I hold, so the difference includes changes in positions
 as well as trading costs.
 
-Figure 2 checks both choices on the development period. The trade-coefficient group varies
-the penalty while holding the rank cutoff at 175. The rank-cutoff group varies
-the cutoff while holding $$c=2.5\times10^{-4}$$. The coefficient axis is in
-units of $$10^{-4}$$, so the plotted value 2.5 denotes that setting. Points are the mean of the
-three schedules; whiskers in the Sharpe panels show the observed schedule range.
+Figure 2 checks nearby settings in development, varying one control at a time
+around the chosen penalty and rank cutoff. The coefficient axis uses units of
+$$10^{-4}$$; the plotted value 2.5 is the setting in Table 4.
 
 <div class="research-figure parameter-sensitivity-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover for six trade coefficients and five holding-rank cutoffs" version="7" %}
@@ -178,14 +176,12 @@ three schedules; whiskers in the Sharpe panels show the observed schedule range.
 <p class="figure-caption"><strong>Figure 2: A broad return–turnover trade-off.</strong> Development-period net Sharpe and annual turnover. Points are schedule means; whiskers in the Sharpe panels span the observed schedules. Each group varies one setting while holding the other fixed; the chosen settings are highlighted.</p>
 
 From 1 through 3, net Sharpe stays between 1.42 and 1.43 while turnover keeps
-falling, from 34× to 27×. I don't see a compelling reason to chase a particular
-Sharpe within that narrow range. Trading gives me a more useful way to choose:
-2.5 sits toward the lower-turnover end of the plateau, while pushing to 5 gives
-back some return.
+falling, from 34× to 27×. I choose 2.5 for the lower turnover within that
+plateau; pushing to 5 gives back some return.
 
 Rank cutoffs from 150 to 200 also give similar Sharpe, with modest turnover
-savings. I use 175 as a practical balance; moving to 200 saves less than
-another turn and raises mean maximum drawdown from 18.1% to 19.2%.
+savings. I use 175: moving to 200 saves less than another turn and worsens
+mean maximum drawdown.
 
 A 5 bp charge on 28.2 times annual turnover costs about 1.41% of strategy capital
 per year on an arithmetic basis. The gap between gross and net geometric

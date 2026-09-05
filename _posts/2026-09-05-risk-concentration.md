@@ -144,9 +144,8 @@ Figure 1 compares how often each tested limit requires an adjustment.
 
 <p class="figure-caption"><strong>Figure 1: How often do risk caps require an adjustment?</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Provisional results.</p>
 
-PCA caps intervene more often in the later period. The tighter sector and stock
-caps require adjustments at almost every rebalance. How much those adjustments
-change the holdings is a separate question, covered in Table 1.
+PCA caps intervene more often in the later period. Frequency alone does not
+tell me how different the holdings become; Table 1 adds that comparison.
 
 The caps apply to target weights using the covariance estimated at that
 rebalance. Rounding, execution, and subsequent price moves can take the actual
@@ -174,8 +173,10 @@ rebalances. Executed turnover appears separately in Table 2.
   </tbody>
 </table>
 
-Figure 2 compares all three dimensions under the 2% stock cap. Stock
-concentration falls sharply, while the largest PCA contribution rises slightly.
+Figure 2 compares all three dimensions under the 2% stock cap. The later 95th
+percentile of the largest stock contribution falls from 7.17% to 2%, while the
+corresponding PCA statistic rises from 15.44% to 16.05%. Smaller stock
+contributions can still add up to a large shared exposure.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
@@ -229,13 +230,8 @@ to choose it on the strength of its later Sharpe alone.
 
 ## What happens to the other risks?
 
-The 2% stock cap lowers the later 95th percentile of the largest stock
-contribution from 7.17% to 2%. The corresponding PCA statistic rises by about
-0.6 percentage points, from 15.44% to 16.05%. Many small stock allocations can
-still load on the same correlated direction. Limiting each stock's contribution
-does little to reduce that shared exposure in this comparison.
-
-This also matters for the strategy's low-volatility tilt. It can span several principal
+What connects the stocks behind that shared exposure? The strategy's
+low-volatility tilt can span several principal
 components, while a principal component can mix low volatility with sector and
 market structure. PCA divides up modeled risk, but it cannot by itself tell me
 which economic theme the portfolio depends on.
@@ -250,12 +246,6 @@ compares the stocks' volatilities; measuring how much portfolio risk comes from
 that tilt would require factor attribution.
 
 ## Guardrail or diagnostic?
-
-PCA 10% lowers the later concentration tail from 15.88% to 10%,
-with similar realized performance and trading and an average 4.8% target L1
-distance from its control. Sector 20% achieves its own limit with a larger but
-still moderate target difference. Sector 15% and Stock 2% are different: they
-act on nearly every target and behave more like sizing rules.
 
 I would start by monitoring these concentrations. PCA 10%, or a similarly
 moderate limit, is a plausible backstop when I want extra protection. Before

@@ -245,13 +245,6 @@ borrow, financing and market impact.
 
 ## Research notes
 
-Boosted trees, random forests and neural networks can capture nonlinearities
-and interactions. Recent research also explores
-[transformer-based asset-pricing models](https://www.nber.org/papers/w33351)
-that share information across stocks (Kelly et al., 2025; revised 2026).
-Whether that flexibility improves this ranking after costs remains a question
-for a later study.
-
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes. The first
 fit uses 900 dates; subsequent 600-date prediction blocks follow expanding
