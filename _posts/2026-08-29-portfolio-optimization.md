@@ -3,7 +3,7 @@ layout: post
 title: "Joint Sizing with Fewer Trades"
 description: "Joint sizing adds turnover. A rank buffer and trade penalty recover more of the gross return."
 date: 2026-08-29
-last_modified_at: 2026-09-05
+last_modified_at: 2026-09-06
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -64,8 +64,31 @@ overlap.
 
 The optimizer sizes the selected stocks together under a forecast-risk budget,
 with limits on gross and net exposure, individual names, market beta, and
-sectors. I use a 7% forecast-volatility budget and maximize the portfolio's sizing
-score within those limits. The exact limits are collected at the end.
+sectors. Let $$w_t$$ be the signed portfolio weights. For each stock, I form
+a sizing score $$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$ from its Ridge
+prediction $$s_{i,t}$$ and estimated daily volatility
+$$\widehat\sigma_{i,t}$$. These scores guide relative allocation; I have not
+calibrated them as expected returns.
+
+The basic optimizer solves
+
+$$
+\begin{aligned}
+\max_{w_t}\quad & \mu_t^\top w_t \\
+\text{subject to}\quad
+& w_t^\top\Sigma_t w_t\leq 0.07^2,\\
+& w_t\in\mathcal W_t.
+\end{aligned}
+$$
+
+Here $$\Sigma_t$$ is the forecast covariance matrix on an annualized scale,
+so $$w_t^\top\Sigma_t w_t$$ is annual portfolio variance. Its off-diagonal
+terms capture how positions move together: each stock's risk depends on the
+rest of the proposed portfolio. The set $$\mathcal W_t$$ imposes the remaining limits:
+200% gross, ±25% net, 4% per name, ±0.05 estimated beta, and the sector caps
+in Table 4. Long candidates can receive positive or zero weights; short
+candidates negative or zero weights. The optimizer seeks the highest combined
+score within these limits and the 7% forecast-risk budget.
 
 In Table 1, joint sizing adds about three and a half percentage points of gross
 return at similar realized risk. It also trades 42.5 times capital annually,
@@ -115,10 +138,7 @@ because only the top 75 enter the new selection. The optimizer with trading
 controls may retain it while it remains inside the wider top 175. It starts from
 the existing weights after intervening price moves.
 
-Let $$w_t$$ be the signed portfolio weights and $$\mu_t$$ the sizing scores:
-Ridge predictions multiplied by each stock's daily volatility. These scores
-tell the optimizer how to allocate relative to other stocks; I have not
-calibrated them as expected returns. If
+The sizing scores and risk budget stay the same. If
 $$w_t^{\mathrm{pre}}$$ contains the weights just before rebalancing and
 $$c$$ is the trade coefficient, the objective becomes
 
