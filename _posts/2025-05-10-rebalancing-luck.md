@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Combining Rebalance Weeks Reduces Timing Risk"
-description: "Averaging schedule statistics improves reporting; combining daily returns also reduces portfolio risk."
+description: "Three equal sleeves reduce dependence on the starting week and improve risk-adjusted performance."
 date: 2025-05-10
 last_modified_at: 2026-09-05
 categories: ["Rebalancing"]
@@ -14,61 +14,69 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">A strategy that rebalances every three weeks can look quite different depending on its starting week. Splitting capital across all three weeks avoids choosing one calendar and reduces volatility by about 8% in development and 5% later for this Ridge strategy. Most of the risk remains because the three portfolios tend to gain and lose together.</p>
+<p class="article-summary">A three-week strategy need not depend on one starting week. Funding three equal sleeves and rebalancing one each week reduces that calendar choice. Here it lowers volatility by about 8% in development and 5% later, improving Sharpe in both periods. The sleeves still share most of their risk.</p>
 
-## Averaging results or combining portfolios?
+## The starting-week problem
 
-The [portfolio-optimization article](/quants/2026/08/29/portfolio-optimization.html)
-compares construction rules using the mean of three schedule-level statistics.
-One schedule trades in weeks 1, 4, 7, and so on; another in weeks 2, 5, 8; the
-third in weeks 3, 6, 9. Reporting their mean makes the comparison less dependent
-on a convenient starting date.
+A strategy that rebalances every three weeks has three possible starting
+weeks. Even with the same forecasting and allocation rules, each schedule
+sees a different sequence of signals and prices. After 2021, annualized net
+geometric return ranges from 5.42% to 9.91% across the three schedules in this
+study. Choosing the best one after seeing those results would turn an
+implementation detail into another backtest selection decision.
 
-Averaging the three Sharpe ratios summarizes those separate backtests. To
-measure the portfolio I would actually trade, I need to divide the capital
-between the schedules and combine their daily returns.
+I use a Ridge stock ranking with a constrained optimizer, a rank buffer for
+existing holdings and a penalty on trading. The universe is point-in-time
+Russell 1000 membership. Each schedule uses next-close execution and pays
+5 bp per dollar traded. Only its starting week changes.
 
-I use the Ridge ranking and constrained optimizer with trading controls
-from that article. The universe, forecasts, sizing rule, and cost convention are
-unchanged. A *sleeve* is one of those schedule-specific
-portfolios, funded with its share of the total fixed notional.
+## Three sleeves
 
-All comparisons use matched dates: 22 September 1998–31 December 2021 for
-development, and 3 January 2022–27 May 2026 for the later period. The latter has
-already informed research choices elsewhere in this series. The comparison
-covers three starting weeks, with forecasts updated on each rebalance date.
-Different weekdays would require additional backtests.
+I divide the capital equally between the three schedules. Each sleeve receives
+one third of the total, holds its own portfolio and continues to rebalance
+every three weeks. One sleeve trades each week:
 
-Matching the three starts drops a few early September observations used by the
-first two schedules in the optimization tables, explaining the small difference
-in development means.
+|  | Week 1 | Week 2 | Week 3 | Week 4 |
+|---|---|---|---|---|
+| Single schedule | Rebalance all | — | — | Rebalance all |
+| Three sleeves | Rebalance A | Rebalance B | Rebalance C | Rebalance A |
+{: .research-table .schedule-table }
 
-## Combining daily returns
+<p class="table-caption"><strong>Table 1:</strong> Sleeve A, B and C each receive one third of capital. The combined strategy trades weekly; each sleeve retains its three-week cycle.</p>
 
-After 2021, annualized net geometric return ranges from 5.42% to 9.91% across
-the three starting weeks. Choosing
-one schedule after seeing that spread would turn an implementation detail into
-a backtest selection rule. The mixture avoids that choice without needing to
-predict which week will work best next.
+This spreads capital over all three starting weeks without forecasting which
+one will work best. It preserves the holding cycle within each sleeve while
+making the overall portfolio less dependent on one calendar.
 
-If $$r_{j,t}$$ is daily net P&L per unit of fixed
-notional for schedule $$j$$, then funding each with one third of the total gives
+## The combined portfolio
+
+Figure 1 compares the three schedules with their equal-funded mixture. Each
+panel starts at one, so the later-period differences are visible separately
+from the long development history. The mixture participates in the schedules'
+shared gains and losses while spreading their timing differences.
+
+<div class="research-figure rebalancing-figure">
+  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" version="1" alt="Net growth of one dollar for three rebalance schedules and their equal-funded mixture, shown separately for development and later history" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1:</strong> Compounded net daily P&amp;L per unit of fixed notional, with a log scale in each panel. The bold line combines daily returns before compounding. Development runs from 22 September 1998 through December 2021; later history runs from January 2022 through 27 May 2026 and has already informed research choices. Panel scales differ.</p>
+
+For daily net P&L per unit of fixed notional $r_{j,t}$, the combined series is
 
 $$
 r_{\mathrm{mix},t}=\frac{r_{1,t}+r_{2,t}+r_{3,t}}{3}.
 $$
 
-The arithmetic mean return of this mixture equals the mean arithmetic return
-of its sleeves. Geometric return, volatility, Sharpe, and drawdown must be
-recomputed from the mixed daily series. In particular, compounding an average
-daily return is different from averaging three separately compounded indices.
-I use the former here. As elsewhere in the series, compounding is a performance
-summary; the underlying simulations use fixed-notional sizing and floating
-weights between rebalances.
+Its arithmetic mean return equals the mean of the sleeves' arithmetic returns.
+Volatility, Sharpe, geometric return and drawdown must be recomputed from this
+combined daily series. Averaging three standalone Sharpes summarizes three
+backtests; it does not give the Sharpe of the funded mixture.
 
-Table 1 separates the mean standalone statistics from the statistics of the
-actual return mixture. The small change in geometric return accompanies a
-clearer reduction in volatility, using the same forecasts.
+Table 2 makes that distinction explicit. In development, mixture volatility
+falls from the mean standalone 8.40% to 7.72%, and Sharpe rises from 1.43 to 1.55.
+Later, volatility falls from 9.32% to 8.83% and Sharpe rises from 0.87 to 0.92.
+Net geometric return changes little, while maximum drawdown also improves
+relative to the mean standalone statistic.
 
 <table class="research-table comparison-table">
   <thead><tr><th>Period / construction</th><th>Gross geometric return</th><th>Net geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
@@ -80,75 +88,26 @@ clearer reduction in volatility, using the same forecasts.
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 1:</strong> Mean statistics across three standalone schedules versus statistics recomputed after averaging their daily returns. Annualization uses 252 sessions and a zero cash rate. Each standalone drawdown is measured over that schedule's own worst episode.</p>
+<p class="table-caption"><strong>Table 2:</strong> Mean standalone statistics versus statistics recomputed from the combined daily returns on matched dates. Annualization uses 252 sessions and a zero cash rate. Each standalone maximum drawdown belongs to that schedule's own worst episode.</p>
 
-## Timing dispersion and diversification
+The simulations size against fixed notional and let weights drift between
+trades. Compounding the normalized P&L gives a performance index; a funded
+account replay would also need reinvestment, financing and borrow assumptions.
 
-[Concretum's *The Tranching Dilemma*](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
-makes the calendar problem visual by plotting the spread in geometric returns
-as more schedules are combined. Its monthly momentum experiment also
-distinguishes rising trade counts from broadly unchanged funded turnover.
-Its strategy, schedule grid, and costs differ from mine; I use its framing to
-examine the three schedules here.
+## What improves, and what remains
 
-Figure 1 shows what happens as I fund more starting weeks. The top row tracks
-the spread in return across the possible combinations. The bottom row shows
-their volatility. These are two different benefits: less dependence on one
-calendar and less variation in daily P&L.
+Pairwise daily return correlations are around 0.76–0.77 in development and
+0.84–0.85 later. The schedules therefore share most of their variation. Combining
+them reduces timing risk, but a rally in common short holdings can still hurt
+all three sleeves together. The later mixture still has an 8.83% drawdown.
 
-<div class="research-figure rebalancing-figure">
-  {% include theme-svg-figure.html base="/assets/tranching/timing-dispersion" version="2" alt="Return spread narrows as starting weeks are combined; the all-three mixture reduces volatility by 8.1 percent in development and 5.3 percent later" %}
-</div>
+Funding each sleeve with one third of notional also funds one third of its
+proportional trading costs. Annual arithmetic cost drag is the mean of the
+sleeves' costs: about 1.41 percentage points in development and 1.24 later.
+This assumes separate sleeve trades, with no netting savings or fixed ticket
+charges. More weekly trade events need not mean more traded notional.
 
-<p class="figure-caption"><strong>Figure 1:</strong> All seven combinations: three individual weeks, three pairs, and all three weeks. Segments connect the lowest and highest values at each sleeve count. Return scales differ by period; volatility uses a common scale. Dashed lines mark mean single-schedule volatility. Results include the 5 bp trading charge. <a href="/assets/tranching/timing_metrics.csv">Data</a> · <a href="https://github.com/piinghel/piinghel.github.io/blob/main/scripts/render_timing_figure.py">Figure code</a>.</p>
-
-Using two sleeves narrows the observed spread in both periods. At three sleeves,
-the spread is zero because there is only one combination left.
-Another weekday, holding period, or prediction-release convention could still
-change the result.
-
-The remaining portfolio risk is substantial. Pairwise daily return correlations
-are around 0.76–0.77 in development and 0.84–0.85 later. With correlated sleeves,
-the variance of their mixture is
-
-$$
-\operatorname{Var}(r_{\mathrm{mix}})
-=\frac{1}{9}\sum_{i=1}^{3}\sum_{j=1}^{3}
-\operatorname{Cov}(r_i,r_j).
-$$
-
-For intuition, three equally volatile sleeves with pairwise correlation of
-0.85 have mixture volatility of about 95% of a single sleeve's volatility.
-Three schedules provide much less diversification than three independent bets.
-
-Tranching diversifies differences between the schedules; their common exposures
-remain. That is why the later-period volatility reduction is modest even
-though the starting-week choice disappears. It also leaves the roughly 9%
-drawdown discussed in the optimization article: the short holdings can still
-rally together across all three schedules.
-
-## Trading costs
-
-Each schedule pays five basis points per unit of executed absolute weight
-change, including exits. Giving it one third of the total notional also gives
-it one third of the total cost contribution. The mixture's annual arithmetic
-cost drag is therefore exactly the mean of the three sleeves' cost drags:
-about 1.41 percentage points in development and 1.24 points later. Adding
-sleeves spreads that proportional cost across the funded portfolios.
-
-This calculation preserves the separate sleeve trades. It assumes no savings
-from netting opposing orders across sleeves and adds no fixed charge per
-ticket. An implementation could have more trade tickets without more funded
-turnover. Minimum fees, spread, market impact, borrow, and financing would need
-their own estimates before assessing capacity or choosing an operational schedule.
-
-## How I would rebalance
-
-I would fund the three schedules and keep reporting their standalone results
-alongside the mixture. That makes the implementation less dependent on one
-starting week and keeps its calendar sensitivity visible.
-
-The next useful question is why all three sleeves lose money together. P&L
-attribution alongside risk decomposition would help distinguish a common
-exposure from stock-specific losses, especially through the short-book
-drawdowns in the [optimizer study](/quants/2026/08/29/portfolio-optimization.html).
+I would fund all three sleeves. The evidence supports less dependence on the
+starting week and a measured improvement in risk-adjusted performance, using
+the same strategy. It does not remove the common exposures behind the remaining
+drawdowns. Other weekdays or holding periods would be separate calendar tests.

@@ -75,17 +75,21 @@ retains five 20% weights. Selection ties follow the stable security identifier.
 The public CSV contains aggregate diagnostics; the local input contains
 security-level scores. Portfolio returns require a separate execution replay.
 
-The timing figure can be reproduced from the included aggregate metrics, with
-Python's standard library only:
+The main timing figure is reproduced from the included portfolio-level daily
+net returns in `assets/tranching/schedule_returns.csv`, using Matplotlib and
+NumPy from `requirements-figures.txt`:
 
 ```bash
-python3 scripts/render_timing_figure.py
+python3 scripts/render_timing_performance.py
 ```
 
-It shows every one-, two-, and three-week combination for the constrained Ridge
-strategy. The daily-return aggregation lives in the private portfolio research
-project; the source manifest records its three schedule-return inputs. The
-earlier LightGBM example and overlapping Ridge path chart remain in Git history.
+It shows the three starting weeks and their equal-notional mixture, compounded
+separately within development and later history. The mixture column is checked
+against the mean of the three schedule returns before export. These 6,963 matched
+dates come from `outputs/review/timing/timing_daily.parquet` in the systematic
+equity research project. Its source manifest records the schedule-return inputs.
+The older combination-dispersion figure remains reproducible with
+`python3 scripts/render_timing_figure.py` and the included aggregate metrics.
 No licensed security-level data are published by this site.
 
 The low-volatility article was fully reproduced in September 2026 with retained
