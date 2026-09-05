@@ -60,9 +60,11 @@ c_k^{\mathrm{PC}}
 $$
 
 These shares are non-negative and add to one across all components. The PCA is
-estimated on the contemporaneously eligible index universe, then restricted to
-the stocks held by the portfolio. This avoids defining the directions from the
-same extreme rank tails whose concentration I want to measure.
+estimated on the contemporaneously eligible index universe. I use the
+held-stock block of that same covariance in the optimizer and restrict all
+full-universe factor loadings to the held names. Keeping all full-universe
+factors reconstructs the optimizer covariance, so their contributions still add
+to one. This is why the PCA tests need a matched no-cap covariance control.
 
 The stock contribution is its signed Euler allocation of variance,
 
@@ -87,6 +89,14 @@ $$w_S^\top\Sigma w_S$$, answers a different question because it excludes the
 sector's covariance with everything else and does not add to total portfolio
 variance.
 
+These ratios make the hard caps non-convex because the denominator changes with
+the weights. I first solve the original optimizer, then use a bounded sequence
+of conservative local convex approximations. After every candidate, I recompute
+the exact shares from $$w^\top\Sigma w$$. Any candidate whose exact cap excess
+remains above $$10^{-6}$$ is rejected; feasible targets with solver or
+outer-convergence warnings remain provisional. This verifies the returned
+target within tolerance without claiming a globally optimal solution.
+
 ## When the limits begin to bind
 
 The uncapped optimizer confirms that weight and risk limits are not equivalent.
@@ -101,8 +111,9 @@ directions is about 40, so this is not an obvious one-bet portfolio.
 The uncapped eligible-universe portfolio exceeds a 20% all-PC limit on only
 0.69% of rebalances. At 10%, the frequency rises to 13.55%; at 7.5%, it is
 30.20%. Looking only at the first ten components would miss part of this tail.
-The portfolio's largest component lies after PC10 on 26.05% of observations and
-can rank as late as PC141.
+The component making the largest portfolio risk contribution lies after PC10 on
+26.05% of observations; ranked by covariance eigenvalue, it can be as late as
+PC141.
 
 Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
 15% changes roughly 98% and is close to continuously active. A 2% stock cap
@@ -125,16 +136,29 @@ treat those as implementation and drift outcomes. The optimizer's narrower
 question is whether the chosen target satisfies the requested share using that
 date's covariance matrix.
 
+<table class="research-table comparison-table control-table">
+  <caption><strong>Table 1: What the completed guardrails change.</strong> January 2022–May 2026. “Own concentration” is the mean across schedules of the 95th percentile of the largest contribution in the capped dimension, measured on matched targets before and after the cap. “Targets corrected” means the path-dependent constrained run required a local correction. Target L1 compares the independently run control and capped targets on the same dates; it is the sum of absolute weight changes as a percentage of capital, not executed turnover. Corrections and residual violations use a 10<sup>−6</sup> tolerance. Sector 15%* remains provisional because one target returned an inaccurate-optimum status, although its reconstructed constraints held.</caption>
+  <thead>
+    <tr><th>Configuration</th><th>Matched control</th><th>Own concentration<br>control → capped</th><th>Targets corrected</th><th>Mean target L1</th><th>Residual violations</th></tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">All PCs · 10%</th><td>PCA covariance control</td><td>15.88% → 10.00%</td><td>27.1%</td><td>4.8%</td><td>0</td></tr>
+    <tr><th scope="row">Sector · 20%</th><td>Original optimizer</td><td>27.28% → 20.00%</td><td>58.1%</td><td>6.6%</td><td>0</td></tr>
+    <tr><th scope="row">Sector · 15%*</th><td>Original optimizer</td><td>27.28% → 15.00%</td><td>98.3%</td><td>19.4%</td><td>0</td></tr>
+    <tr><th scope="row">Stock · 2%</th><td>Original optimizer</td><td>7.17% → 2.00%</td><td>100.0%</td><td>17.0%</td><td>0</td></tr>
+  </tbody>
+</table>
+
 ## Protection, performance, and trading
 
-Table 1 keeps performance beside the risk-control result. Returns are annualized
+Table 2 keeps performance beside the risk-control result. Returns are annualized
 geometric returns, matching the preceding article; net returns deduct the
 trading charge. Every number is first calculated for a full-capital schedule,
 then averaged across the three schedules. Maximum drawdown is likewise the mean
 of three schedule-level maximum drawdowns.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 1: Performance and trading under concentration limits.</strong> Means of three schedule-level metrics. Returns are geometric and annualized; realized volatility is annualized. Net results charge 5 bp on traded notional. Turnover is two-way executed turnover, annualized. Drawdowns are positive loss magnitudes. The PCA covariance control has no concentration cap. Sector 15%* is provisional because isolated solver dates returned an inaccurate-optimum status; all audited constraints still held within numerical tolerance. The final stock row remains pending completion and audit.</caption>
+  <caption><strong>Table 2: Performance and trading under concentration limits.</strong> Means of three schedule-level metrics. Returns are geometric and annualized; realized volatility is annualized. Net results charge 5 bp on traded notional. Turnover is two-way executed turnover, annualized. Drawdowns are positive loss magnitudes. The PCA covariance control has no concentration cap. Sector 15%* retains the provisional status defined in Table 1. Stock 2% is the audited strict counterexample; the pending Stock 3% result is not shown.</caption>
   <thead>
     <tr><th>Constraint</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Realized vol.</th><th>Max net DD</th><th>Turnover</th></tr>
   </thead>
@@ -145,14 +169,14 @@ of three schedule-level maximum drawdowns.
     <tr><th scope="row">All PCs · 10%</th><td>13.79%</td><td>12.21%</td><td>1.43</td><td>8.32%</td><td>18.22%</td><td>28.0×</td></tr>
     <tr><th scope="row">Sector · 20%</th><td>13.99%</td><td>12.40%</td><td>1.43</td><td>8.40%</td><td>18.02%</td><td>28.2×</td></tr>
     <tr><th scope="row">Sector · 15%*</th><td>13.90%</td><td>12.30%</td><td>1.42</td><td>8.40%</td><td>18.29%</td><td>28.3×</td></tr>
+    <tr><th scope="row">Stock · 2%</th><td>13.89%</td><td>12.26%</td><td>1.41</td><td>8.47%</td><td>18.01%</td><td>28.7×</td></tr>
     <tr class="period-heading"><th colspan="7">Later · January 2022–May 2026</th></tr>
     <tr><th scope="row">Optimizer + trading controls</th><td>9.33%</td><td>7.99%</td><td>0.87</td><td>9.32%</td><td>9.05%</td><td>24.6×</td></tr>
     <tr><th scope="row">PCA covariance control · no cap</th><td>9.45%</td><td>8.11%</td><td>0.88</td><td>9.32%</td><td>9.14%</td><td>24.5×</td></tr>
     <tr><th scope="row">All PCs · 10%</th><td>9.47%</td><td>8.12%</td><td>0.88</td><td>9.30%</td><td>9.11%</td><td>24.6×</td></tr>
     <tr><th scope="row">Sector · 20%</th><td>9.52%</td><td>8.18%</td><td>0.89</td><td>9.29%</td><td>9.03%</td><td>24.6×</td></tr>
     <tr><th scope="row">Sector · 15%*</th><td>9.52%</td><td>8.17%</td><td>0.89</td><td>9.24%</td><td>8.98%</td><td>24.7×</td></tr>
-    <!-- FINAL EVIDENCE SLOT: add the audited moderate stock row selected from
-         2%, 3%, and 4%, then reassess whether one strict row is needed. -->
+    <tr><th scope="row">Stock · 2%</th><td>9.96%</td><td>8.60%</td><td>0.93</td><td>9.30%</td><td>8.47%</td><td>24.9×</td></tr>
   </tbody>
 </table>
 
@@ -186,10 +210,12 @@ market structure. PCA supplies an additive decomposition of the current risk
 model. A style exposure supplies an economic interpretation.
 
 The intended low-volatility exposure remains substantial under every completed
-limit, with only a modest reduction under the 2% stock cap. That distinction
-matters here. Removing the strategy's intended tilt would make the portfolio
-look more diversified by one measure while changing the return source I meant
-to implement.
+limit. I measure it as the ratio of the shorts' to the longs' weighted geometric
+mean stock forecast volatility. Under the original optimizer that ratio is
+1.58 before 2022 and 1.75 later; under the 2% stock cap it is still 1.56 and
+1.73. That distinction matters here. Removing the strategy's intended tilt
+would make the portfolio look more diversified by one measure while changing
+the return source I meant to implement.
 
 ## Guardrail or diagnostic?
 
@@ -202,8 +228,9 @@ also trades more and redirects risk into correlated components.
 
 My current preference is therefore to keep these measures as monitoring
 diagnostics and treat moderate caps as possible backstops, not automatic new
-portfolio rules. PCA 7.5%, Sector 10%, and Stock 3% are still being completed
-and audited; they will show whether that reading survives the final grid.
+portfolio rules. The PCA 7.5% and Stock 3% schedule runs have finished and await
+the final merge and audit; Sector 10% is still running. They will show whether
+that reading survives the final grid.
 
 Concentration is also only one part of the question raised by the AI rally. PCA
 can reveal a shared direction without naming its economic source. The next step
