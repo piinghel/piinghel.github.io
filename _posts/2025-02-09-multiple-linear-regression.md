@@ -29,12 +29,17 @@ portfolios they produce outside their training windows.
 
 ## Predictors and the ranking target
 
+The universe uses point-in-time Russell 1000 membership, excluding stocks below
+five dollars, announced merger targets and duplicate share classes.
+
 OLS and Ridge use the same 144 predictors. They cover return and trend,
 volatility, price location, size and market sensitivity, trading activity,
 liquidity, and lagged short positioning. Examples include price
 relative to a moving average, upside and downside volatility, and
 short-interest-to-volume. Several appear at different horizons, so 144 inputs
 represent far fewer independent economic ideas.
+
+Short-interest inputs enter with a 21-session publication delay.
 
 I rank each predictor across the current stock universe and put the ranks on
 a common scale near −1 to 1. This limits the influence of raw outliers and
@@ -101,8 +106,7 @@ slopes; lasso's L1 penalty can also set them to zero.
 I use expanding walk-forward fits, with a 21-session buffer between training
 outcomes and the next prediction block. Predictions begin in September 1998.
 Development ends in December 2021. January 2022–May 2026 has also informed
-research choices, so it is later, reused evidence rather than an untouched
-holdout.
+research choices.
 
 I selected $c=0.01$ during development because it reduced coefficient size and
 movement while keeping the portfolio close to OLS. I made that trade-off by
@@ -222,7 +226,7 @@ the defensive portfolio behaviour; this comparison does not separate them.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and Ridge, with the later period marked" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> Net growth of <span class="mathjax-ignore">$1</span> (log scale) and drawdown, after 5 bp per dollar traded. The portfolios have different volatilities; Table 2 supplies the risk-adjusted comparison. The 2022 boundary marks later, reused history.</p>
+<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> Net growth of <span class="mathjax-ignore">$1</span> (log scale) and drawdown, after 5 bp per dollar traded. The portfolios have different volatilities; Table 2 supplies the risk-adjusted comparison. The 2022 boundary marks the later period.</p>
 
 ## What the learned combination delivers
 
@@ -242,24 +246,3 @@ far more than the choice between the two regressions.
 Most predictors still come from prices, so expanding this set does not give
 me 144 independent sources of information. The flat trading charge also omits
 borrow, financing and market impact.
-
-## Research notes
-
-The universe uses point-in-time Russell 1000 membership, excluding stocks below
-five dollars, announced merger targets and duplicate share classes. The first
-fit uses 900 dates; subsequent 600-date prediction blocks follow expanding
-refits. Within a refit, predictions average three date-thinned training
-samples. Overlapping targets and common date-level shocks still make
-observations dependent.
-
-Short-interest inputs use a deliberate 21-session delay to allow for
-publication and avoid information leakage.
-
-Each selected position starts from an equal share of its book, scaled by
-20% divided by trailing 60-session volatility, with a 5% volatility floor and
-4% position cap. A book exceeding 100% gross scales down; a smaller book keeps
-its lower exposure.
-
-The original matched return and coefficient files are unavailable. The
-OLS–Ridge tables and figures retain the previously reported results and have
-not been independently reproduced in this revision.

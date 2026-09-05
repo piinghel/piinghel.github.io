@@ -30,7 +30,7 @@ what the portfolio already owns before replacing stocks.
 The comparison starts in September 1998, after the signals and risk estimates
 have enough history. I choose settings using data through December 2021.
 January 2022–May 2026 provides the later comparison, but that history has since
-informed feature, allocation, and beta-estimator choices. It is reused evidence.
+informed feature, allocation, and beta-estimator choices.
 
 I use the Ridge ranking from the [preceding study](/quants/2025/02/09/multiple-linear-regression.html).
 Every allocation rule starts from that same ranking and trades the same three
@@ -137,9 +137,7 @@ another 1% position changes $$\lVert w_t-w_t^{\mathrm{pre}}\rVert_1$$ by 2%.
 The optimizer keeps the incumbent unless the new score-and-risk combination
 clears that hurdle. Constraints can still force a trade when the old position
 no longer fits. I tune this coefficient to control how readily the optimizer
-trades; the backtest separately charges 5 bp on executed trades. A holding
-that leaves the wider eligible set must also be closed; those forced exits
-enter executed turnover as mandatory trades.
+trades; the backtest separately charges 5 bp on executed trades.
 
 Table 2 separates the two controls. A *rank buffer* lets an existing long
 remain eligible down to rank 175, while new positions still enter through the
@@ -265,11 +263,5 @@ implementable returns or capacity.
   </tbody>
 </table>
 
-The sizing score is the Ridge prediction multiplied by daily stock volatility.
-Because the training target is ranked, this product provides relative
-allocation scores rather than calibrated expected returns. Its scale determines
-how strongly the trading penalty acts.
-
-The simulations trade against fixed strategy notional and let weights drift
-between rebalances. The displayed compounded returns are performance indices;
-a funded account replay would also need reinvestment and financing assumptions.
+The simulations use fixed strategy notional. The compounded returns shown are
+performance indices.

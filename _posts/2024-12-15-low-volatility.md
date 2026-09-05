@@ -158,15 +158,5 @@ That is where I would take the next experiment: size the holdings jointly,
 using covariance and explicit portfolio limits, then check whether those
 choices reduce realized drawdowns without giving away the return after costs.
 
-## Research notes
-
 This is one historical comparison on a single three-week calendar. The 5 bp
-trading charge excludes borrow, financing and market impact. Quantities stay
-fixed between trades, and the performance index compounds daily P&L measured
-against fixed strategy notional, with no interest on unallocated cash.
-
-The signal and portfolio returns use vendor-adjusted prices; the beta
-diagnostic uses the vendor's total-return series. Missing prices carry forward;
-a holding removed at a later rebalance is valued at its last observed price.
-The backtest adds no separate delisting loss or merger payment, so terminal
-outcomes depend on what is already reflected in adjusted prices.
+trading charge excludes borrow, financing and market impact.

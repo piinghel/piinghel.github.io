@@ -93,18 +93,12 @@ $$w_S^\top\Sigma w_S$$, answers a different question because it excludes the
 sector's covariance with everything else and does not add to total portfolio
 variance.
 
-There is a catch when I ask the optimizer to enforce these shares. Changing a
-weight changes both the contribution on top and the portfolio variance below
-it. The resulting hard caps are non-convex. I first solve the original
-optimizer, then solve a bounded sequence of conservative convex approximations
-around the current weights. For each candidate, I recompute
-the exact shares from $$w^\top\Sigma w$$. Any candidate whose exact cap excess
-remains above $$10^{-6}$$ is rejected. Passing that check means the target meets
-the cap within tolerance; the search can still miss a better feasible
-portfolio. Targets with solver or convergence warnings remain provisional.
-If no candidate passes, I mark that configuration incomplete. Falling back to
-the uncapped target would abandon the limit, and scaling the portfolio down
-would leave its variance shares unchanged.
+These caps are non-convex because changing the weights changes both the risk
+contributions and total variance. I enforce them through successive local
+approximations, then recompute the exact shares to check each target. This
+checks feasibility, not global optimality. If no target passes, the
+configuration remains incomplete rather than using an uncapped fallback.
+Solver or convergence warnings keep a result provisional.
 
 ## Is risk concentrated in this portfolio?
 
@@ -220,7 +214,23 @@ see little overall performance benefit from adding a cap. Nor does it close
 the gap between forecast and realized risk: volatility remains near 8.4%
 before 2022 and 9.3% afterward.
 
-The 2% stock cap is more consequential. Its later net Sharpe rises from 0.87 to
+The 10% sector cap is a deliberately strict test. In the first completed
+schedule, it requires a correction at every rebalance. The later 95th percentile
+of the largest sector contribution falls from 28.6% to 10%, but the corresponding
+PCA contribution barely changes, from 14.6% to 14.2%.
+
+Against the original optimizer on that same schedule, net Sharpe falls from
+1.40 to 1.31 in development
+and from 0.93 to 0.90 later. Later maximum drawdown improves from 9.16% to 7.47%,
+while earlier drawdown worsens slightly and turnover rises in both periods.
+I consider this too strict for the occasional guardrail I want, so I am not
+adding it to the portfolio.
+
+These 10% results are preliminary and separate from the three-schedule figures
+and tables above. The saved sector shares pass the cap check, but solver and
+convergence warnings remain, and execution still requires audit.
+
+The 2% stock cap has a different trade-off. Its later net Sharpe rises from 0.87 to
 0.93 and later maximum drawdown falls from 9.05% to 8.47%, but the improvement
 is uneven across schedules. Development-period Sharpe declines, annual turnover
 rises by about 0.55 times capital per year, and cumulative net return is about

@@ -109,22 +109,11 @@ proportional trading costs. Annual arithmetic cost drag is the mean of the
 sleeves' costs: about 1.41 percentage points in development and 1.24 later.
 This assumes separate sleeve trades, with no netting savings or fixed ticket
 charges. I send trades more often, but each sleeve is only a third of the size.
+Borrow and financing costs are excluded.
 
-There is a small operational trade-off. I would need to track three sets of
-holdings and rebalance dates, reconcile each sleeve, and run trades every week.
-That is more bookkeeping than maintaining a single schedule, even when total
-traded notional stays the same.
+Running three sleeves means tracking three portfolios and trading every week.
 
 I would fund all three sleeves. I get the same strategy with less riding on
 the starting week, and the combined portfolio has better Sharpe in both
 periods. For me, that is worth the extra bookkeeping. Other weekdays or holding
 periods would be separate calendar tests.
-
-## Research notes
-
-The linked allocation study gives the ranking, universe and sizing rules.
-Each schedule executes at the next close and pays 5 bp per dollar traded.
-The backtest keeps strategy notional fixed and lets weights drift between
-trades. The displayed index compounds average daily P&L per unit of notional;
-a funded account replay would also need reinvestment, financing and borrow
-assumptions.
