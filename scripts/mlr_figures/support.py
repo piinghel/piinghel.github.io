@@ -16,9 +16,9 @@ import numpy as np
 
 @dataclass(frozen=True)
 class FigureStyle:
-    benchmark: str = "#a7b1b8"
-    ols: str = "#526777"
-    ridge: str = "#756A8E"
+    benchmark: str = "#7E878E"
+    ols: str = "#397493"
+    ridge: str = "#B47848"
     ink: str = "#33404b"
     muted: str = "#6a7883"
     grid: str = "#dbe1e3"
@@ -40,9 +40,9 @@ def dark_figure_style() -> FigureStyle:
     """Match the regression figures to the website's dark surface."""
 
     return FigureStyle(
-        benchmark="#8B949E",
-        ols="#91A4B5",
-        ridge="#A093B8",
+        benchmark="#A0A8AF",
+        ols="#75AFCA",
+        ridge="#D6A171",
         ink="#C9D1D9",
         muted="#8B949E",
         grid="#30363D",

@@ -3,7 +3,7 @@ layout: post
 title: "Combining Stock Predictors with Linear Regression"
 description: "Learning a joint stock ranking from overlapping predictors, and what Ridge regularization adds."
 date: 2025-02-09
-last_modified_at: 2026-09-05
+last_modified_at: 2026-09-06
 categories: ["Regression"]
 article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -37,8 +37,9 @@ prices and trading activity. They cover momentum and trend, volatility,
 liquidity, size and short positioning. Many measure the same idea at different
 horizons, so the model has to combine many overlapping inputs.
 
-I rank each predictor across the current stock universe and put the ranks on
-a common scale near −1 to 1. This limits the influence of raw outliers and
+On each date, I rank stocks cross-sectionally on each predictor and rescale
+those ranks to roughly −1 to 1. Each stock is compared with the other stocks
+available on that date. This limits the influence of raw outliers and
 makes inputs measured in different units comparable. It also discards the
 distance between raw values: the model learns from relative positions in the
 cross-section.
@@ -245,6 +246,14 @@ After 2021, the fixed rule earns more net return than either regression, with
 more volatility and a lower Sharpe. The learned portfolios' main advantage
 here is lower risk. Their extra trading remains substantial in both periods.
 
+For Ridge, the Sharpe improvement over the fixed rule is about 34% during
+development and 21% later. That is a useful gain, but a modest payoff for the
+broader predictor set and extra trading: annual net return improves by only
+0.59 percentage points during development and is 0.68 points lower later.
+Volatility falls by about 19% and 25%, respectively. The improvement is mainly
+in risk-adjusted performance, and this comparison changes both the inputs and
+how they are combined.
+
 The OLS–Ridge difference is much smaller. Ridge's 0.25-point development return
 gain comes with higher volatility, leaving both Sharpes close to 1.00. That
 small Sharpe difference changes sign across the three starting-week schedules.
@@ -260,10 +269,10 @@ target. Its separate contribution would require a comparison with a model
 trained on an unadjusted return target.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and Ridge, with the later period marked" version="16" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale and separate drawdown panels on one common scale for fixed weights, OLS, and Ridge" version="17" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdown below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison. The 2022 boundary marks the later period.</p>
+<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale). The separate drawdown panels share one scale. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison. The dotted line marks January 2022.</p>
 
 ## What the learned combination delivers
 
@@ -274,7 +283,10 @@ learning the weights adds, I would next fit the regressions on the benchmark's
 same twelve predictors.
 
 Ridge regularizes the combination, but its smaller coefficients bring little
-change to the investment decision. I prefer it as a simple baseline because
+change to the investment decision. I chose the penalty to shrink coefficients
+while keeping the portfolio close to OLS, so the similar performance partly
+reflects that choice. Stronger shrinkage remains a separate question.
+I prefer Ridge as a simple baseline because
 I am less comfortable relying on large weights that nearly cancel each other.
 The later results give me no clear performance reason to prefer it to OLS.
 For this portfolio, the extra trading introduced by the learned ranking matters

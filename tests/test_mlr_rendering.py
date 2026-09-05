@@ -162,7 +162,7 @@ class RidgeRenderingTests(unittest.TestCase):
                     )
                     fig = save.call_args.args[0]
                     try:
-                        axis, drawdown_axis = fig.axes
+                        axis, *drawdown_axes = fig.axes
                         lines = {line.get_label(): line for line in axis.lines}
                         self.assertEqual(
                             lines["OLS"].get_linewidth(), lines["Ridge"].get_linewidth()
@@ -173,12 +173,28 @@ class RidgeRenderingTests(unittest.TestCase):
                         np.testing.assert_allclose(
                             lines["OLS"].get_ydata(), [1, 0.9, 1.2, 1.1, 1.5]
                         )
-                        self.assertEqual(len(drawdown_axis.collections), 1)
+                        self.assertEqual(len(drawdown_axes), 3)
+                        for model, drawdown_axis in zip(
+                            spec.model_order, drawdown_axes, strict=True
+                        ):
+                            paths = [
+                                line
+                                for line in drawdown_axis.lines
+                                if len(line.get_ydata()) == len(drawdowns[model].values)
+                            ]
+                            self.assertEqual(len(paths), 1)
+                            np.testing.assert_array_equal(
+                                paths[0].get_ydata(), drawdowns[model].values
+                            )
+                            self.assertEqual(
+                                drawdown_axis.get_ylim(), drawdown_axes[0].get_ylim()
+                            )
                         self.assertGreaterEqual(axis.get_ylim()[1], 1.5)
                         self.assertLessEqual(axis.get_ylim()[0], 0.9)
                         self.assertEqual(
                             sum(
                                 t.get_text() == "Drawdown (%)"
+                                for drawdown_axis in drawdown_axes
                                 for t in drawdown_axis.texts
                             ),
                             1,
