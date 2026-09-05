@@ -24,12 +24,12 @@
     "height": 440
   },
   "/assets/2024-12-15-low-volatility-factor/regime_comparison": {
-    "width": 836,
-    "height": 567
+    "width": 878,
+    "height": 584
   },
   "/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile": {
-    "width": 368,
-    "height": 785
+    "width": 384,
+    "height": 791
   },
   "/assets/2024-12-15-low-volatility-factor/target_exposures": {
     "width": 629,
@@ -65,15 +65,23 @@
   },
   "/assets/portfolio-optimization/performance-and-drawdowns_mobile": {
     "width": 480,
-    "height": 680
+    "height": 650
   },
   "/assets/portfolio-optimization/rho-ladder": {
     "width": 1200,
-    "height": 725
+    "height": 780
+  },
+  "/assets/portfolio-optimization/rho-ladder_mobile": {
+    "width": 480,
+    "height": 1435
   },
   "/assets/portfolio-optimization/risk-calibration-and-beta": {
     "width": 1200,
     "height": 520
+  },
+  "/assets/portfolio-optimization/risk-calibration-and-beta_mobile": {
+    "width": 480,
+    "height": 560
   },
   "/assets/risk-concentration/risk-migration": {
     "width": 619,

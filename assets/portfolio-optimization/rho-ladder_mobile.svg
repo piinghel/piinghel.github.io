@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1435" viewBox="0 0 480 1435" role="img" aria-labelledby="title desc">
+<title id="title">How much correlation shrinkage matters</title>
+<desc id="desc">Four panels compare risk calibration, beta error, turnover, and net Sharpe for the optimizer with and without trading controls as correlation shrinkage moves from zero to one.</desc>
+<g font-family="DejaVu Sans, sans-serif">
+<line x1="24.0" y1="20.0" x2="54.0" y2="20.0" stroke="#345B7E" stroke-width="3"/>
+<text x="64.0" y="25.0" fill="#172033" font-size="18" font-weight="400" text-anchor="start">Optimizer</text>
+<line x1="24.0" y1="50.0" x2="54.0" y2="50.0" stroke="#378579" stroke-width="3"/>
+<text x="64.0" y="55.0" fill="#172033" font-size="18" font-weight="400" text-anchor="start">Optimizer + trading controls</text>
+<text x="16.0" y="113.0" fill="#172033" font-size="20" font-weight="600" text-anchor="start">Risk calibration</text>
+<text x="16.0" y="137.0" fill="#667085" font-size="18" font-weight="400" text-anchor="start">Root-mean realized / forecast volatility</text>
+<rect x="181.9" y="160.0" width="111.9" height="200.0" fill="#EDF1F3"/>
+<line x1="70.0" y1="360.0" x2="443.0" y2="360.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="365.0" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.00</text>
+<line x1="70.0" y1="310.0" x2="443.0" y2="310.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="315.0" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.20</text>
+<line x1="70.0" y1="260.0" x2="443.0" y2="260.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="265.0" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.40</text>
+<line x1="70.0" y1="210.0" x2="443.0" y2="210.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="215.0" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.60</text>
+<line x1="70.0" y1="160.0" x2="443.0" y2="160.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="165.0" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.80</text>
+<line x1="70.0" y1="360.0" x2="70.0" y2="365.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="70.0" y="383.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.0</text>
+<line x1="144.6" y1="360.0" x2="144.6" y2="365.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="144.6" y="383.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.2</text>
+<line x1="219.2" y1="360.0" x2="219.2" y2="365.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="219.2" y="383.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.4</text>
+<line x1="293.8" y1="360.0" x2="293.8" y2="365.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="293.8" y="383.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.6</text>
+<line x1="368.4" y1="360.0" x2="368.4" y2="365.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="368.4" y="383.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.8</text>
+<line x1="443.0" y1="360.0" x2="443.0" y2="365.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="443.0" y="383.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">1.0</text>
+<path d="M70.0,282.0 L107.3,293.6 L144.6,301.9 L181.9,306.9 L219.2,309.1 L256.5,308.5 L293.8,304.8 L331.1,297.2 L368.4,283.5 L405.7,258.9 L443.0,210.2" fill="none" stroke="#345B7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="282.0" r="4" fill="#345B7E"/>
+<circle cx="107.3" cy="293.6" r="4" fill="#345B7E"/>
+<circle cx="144.6" cy="301.9" r="4" fill="#345B7E"/>
+<circle cx="181.9" cy="306.9" r="4" fill="#345B7E"/>
+<circle cx="219.2" cy="309.1" r="4" fill="#345B7E"/>
+<circle cx="256.5" cy="308.5" r="4" fill="#345B7E"/>
+<circle cx="293.8" cy="304.8" r="4" fill="#345B7E"/>
+<circle cx="331.1" cy="297.2" r="4" fill="#345B7E"/>
+<circle cx="368.4" cy="283.5" r="4" fill="#345B7E"/>
+<circle cx="405.7" cy="258.9" r="4" fill="#345B7E"/>
+<circle cx="443.0" cy="210.2" r="4" fill="#345B7E"/>
+<path d="M70.0,286.7 L107.3,299.8 L144.6,308.5 L181.9,314.0 L219.2,316.3 L256.5,315.7 L293.8,311.8 L331.1,303.7 L368.4,289.2 L405.7,262.2 L443.0,205.8" fill="none" stroke="#378579" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="286.7" r="4" fill="#378579"/>
+<circle cx="107.3" cy="299.8" r="4" fill="#378579"/>
+<circle cx="144.6" cy="308.5" r="4" fill="#378579"/>
+<circle cx="181.9" cy="314.0" r="4" fill="#378579"/>
+<circle cx="219.2" cy="316.3" r="4" fill="#378579"/>
+<circle cx="256.5" cy="315.7" r="4" fill="#378579"/>
+<circle cx="293.8" cy="311.8" r="4" fill="#378579"/>
+<circle cx="331.1" cy="303.7" r="4" fill="#378579"/>
+<circle cx="368.4" cy="289.2" r="4" fill="#378579"/>
+<circle cx="405.7" cy="262.2" r="4" fill="#378579"/>
+<circle cx="443.0" cy="205.8" r="4" fill="#378579"/>
+<text x="256.5" y="410.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
+<text x="16.0" y="448.0" fill="#172033" font-size="20" font-weight="600" text-anchor="start">Beta error</text>
+<text x="16.0" y="472.0" fill="#667085" font-size="18" font-weight="400" text-anchor="start">Next-holding-period mean absolute error</text>
+<rect x="181.9" y="495.0" width="111.9" height="200.0" fill="#EDF1F3"/>
+<line x1="70.0" y1="672.8" x2="443.0" y2="672.8" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="677.8" fill="#667085" font-size="18" font-weight="400" text-anchor="end">0.18</text>
+<line x1="70.0" y1="628.3" x2="443.0" y2="628.3" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="633.3" fill="#667085" font-size="18" font-weight="400" text-anchor="end">0.20</text>
+<line x1="70.0" y1="583.9" x2="443.0" y2="583.9" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="588.9" fill="#667085" font-size="18" font-weight="400" text-anchor="end">0.22</text>
+<line x1="70.0" y1="539.4" x2="443.0" y2="539.4" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="544.4" fill="#667085" font-size="18" font-weight="400" text-anchor="end">0.24</text>
+<line x1="70.0" y1="695.0" x2="70.0" y2="700.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="70.0" y="718.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.0</text>
+<line x1="144.6" y1="695.0" x2="144.6" y2="700.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="144.6" y="718.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.2</text>
+<line x1="219.2" y1="695.0" x2="219.2" y2="700.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="219.2" y="718.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.4</text>
+<line x1="293.8" y1="695.0" x2="293.8" y2="700.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="293.8" y="718.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.6</text>
+<line x1="368.4" y1="695.0" x2="368.4" y2="700.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="368.4" y="718.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.8</text>
+<line x1="443.0" y1="695.0" x2="443.0" y2="700.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="443.0" y="718.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">1.0</text>
+<path d="M70.0,652.6 L107.3,662.2 L144.6,669.1 L181.9,674.0 L219.2,675.6 L256.5,673.7 L293.8,667.8 L331.1,657.3 L368.4,640.2 L405.7,611.3 L443.0,557.8" fill="none" stroke="#345B7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="652.6" r="4" fill="#345B7E"/>
+<circle cx="107.3" cy="662.2" r="4" fill="#345B7E"/>
+<circle cx="144.6" cy="669.1" r="4" fill="#345B7E"/>
+<circle cx="181.9" cy="674.0" r="4" fill="#345B7E"/>
+<circle cx="219.2" cy="675.6" r="4" fill="#345B7E"/>
+<circle cx="256.5" cy="673.7" r="4" fill="#345B7E"/>
+<circle cx="293.8" cy="667.8" r="4" fill="#345B7E"/>
+<circle cx="331.1" cy="657.3" r="4" fill="#345B7E"/>
+<circle cx="368.4" cy="640.2" r="4" fill="#345B7E"/>
+<circle cx="405.7" cy="611.3" r="4" fill="#345B7E"/>
+<circle cx="443.0" cy="557.8" r="4" fill="#345B7E"/>
+<path d="M70.0,651.7 L107.3,665.3 L144.6,673.7 L181.9,680.8 L219.2,683.4 L256.5,682.0 L293.8,675.6 L331.1,664.2 L368.4,645.2 L405.7,612.1 L443.0,546.5" fill="none" stroke="#378579" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="651.7" r="4" fill="#378579"/>
+<circle cx="107.3" cy="665.3" r="4" fill="#378579"/>
+<circle cx="144.6" cy="673.7" r="4" fill="#378579"/>
+<circle cx="181.9" cy="680.8" r="4" fill="#378579"/>
+<circle cx="219.2" cy="683.4" r="4" fill="#378579"/>
+<circle cx="256.5" cy="682.0" r="4" fill="#378579"/>
+<circle cx="293.8" cy="675.6" r="4" fill="#378579"/>
+<circle cx="331.1" cy="664.2" r="4" fill="#378579"/>
+<circle cx="368.4" cy="645.2" r="4" fill="#378579"/>
+<circle cx="405.7" cy="612.1" r="4" fill="#378579"/>
+<circle cx="443.0" cy="546.5" r="4" fill="#378579"/>
+<text x="256.5" y="745.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
+<text x="16.0" y="783.0" fill="#172033" font-size="20" font-weight="600" text-anchor="start">Annual turnover</text>
+<text x="16.0" y="807.0" fill="#667085" font-size="18" font-weight="400" text-anchor="start">Two-way turnover (× capital)</text>
+<rect x="181.9" y="830.0" width="111.9" height="200.0" fill="#EDF1F3"/>
+<line x1="70.0" y1="984.5" x2="443.0" y2="984.5" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="989.5" fill="#667085" font-size="18" font-weight="400" text-anchor="end">30</text>
+<line x1="70.0" y1="939.1" x2="443.0" y2="939.1" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="944.1" fill="#667085" font-size="18" font-weight="400" text-anchor="end">35</text>
+<line x1="70.0" y1="893.6" x2="443.0" y2="893.6" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="898.6" fill="#667085" font-size="18" font-weight="400" text-anchor="end">40</text>
+<line x1="70.0" y1="848.2" x2="443.0" y2="848.2" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="853.2" fill="#667085" font-size="18" font-weight="400" text-anchor="end">45</text>
+<line x1="70.0" y1="1030.0" x2="70.0" y2="1035.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="70.0" y="1053.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.0</text>
+<line x1="144.6" y1="1030.0" x2="144.6" y2="1035.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="144.6" y="1053.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.2</text>
+<line x1="219.2" y1="1030.0" x2="219.2" y2="1035.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="219.2" y="1053.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.4</text>
+<line x1="293.8" y1="1030.0" x2="293.8" y2="1035.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="293.8" y="1053.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.6</text>
+<line x1="368.4" y1="1030.0" x2="368.4" y2="1035.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="368.4" y="1053.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.8</text>
+<line x1="443.0" y1="1030.0" x2="443.0" y2="1035.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="443.0" y="1053.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">1.0</text>
+<path d="M70.0,840.9 L107.3,848.6 L144.6,855.5 L181.9,861.6 L219.2,866.7 L256.5,870.7 L293.8,873.7 L331.1,875.6 L368.4,876.1 L405.7,874.6 L443.0,869.3" fill="none" stroke="#345B7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="840.9" r="4" fill="#345B7E"/>
+<circle cx="107.3" cy="848.6" r="4" fill="#345B7E"/>
+<circle cx="144.6" cy="855.5" r="4" fill="#345B7E"/>
+<circle cx="181.9" cy="861.6" r="4" fill="#345B7E"/>
+<circle cx="219.2" cy="866.7" r="4" fill="#345B7E"/>
+<circle cx="256.5" cy="870.7" r="4" fill="#345B7E"/>
+<circle cx="293.8" cy="873.7" r="4" fill="#345B7E"/>
+<circle cx="331.1" cy="875.6" r="4" fill="#345B7E"/>
+<circle cx="368.4" cy="876.1" r="4" fill="#345B7E"/>
+<circle cx="405.7" cy="874.6" r="4" fill="#345B7E"/>
+<circle cx="443.0" cy="869.3" r="4" fill="#345B7E"/>
+<path d="M70.0,967.0 L107.3,976.5 L144.6,984.6 L181.9,991.2 L219.2,996.7 L256.5,1001.0 L293.8,1004.3 L331.1,1006.7 L368.4,1007.9 L405.7,1007.5 L443.0,1003.7" fill="none" stroke="#378579" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="967.0" r="4" fill="#378579"/>
+<circle cx="107.3" cy="976.5" r="4" fill="#378579"/>
+<circle cx="144.6" cy="984.6" r="4" fill="#378579"/>
+<circle cx="181.9" cy="991.2" r="4" fill="#378579"/>
+<circle cx="219.2" cy="996.7" r="4" fill="#378579"/>
+<circle cx="256.5" cy="1001.0" r="4" fill="#378579"/>
+<circle cx="293.8" cy="1004.3" r="4" fill="#378579"/>
+<circle cx="331.1" cy="1006.7" r="4" fill="#378579"/>
+<circle cx="368.4" cy="1007.9" r="4" fill="#378579"/>
+<circle cx="405.7" cy="1007.5" r="4" fill="#378579"/>
+<circle cx="443.0" cy="1003.7" r="4" fill="#378579"/>
+<text x="256.5" y="1080.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
+<text x="16.0" y="1118.0" fill="#172033" font-size="20" font-weight="600" text-anchor="start">Net Sharpe</text>
+<text x="16.0" y="1142.0" fill="#667085" font-size="18" font-weight="400" text-anchor="start">Mean across three schedules</text>
+<rect x="181.9" y="1165.0" width="111.9" height="200.0" fill="#EDF1F3"/>
+<line x1="70.0" y1="1345.4" x2="443.0" y2="1345.4" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="1350.4" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.0</text>
+<line x1="70.0" y1="1306.2" x2="443.0" y2="1306.2" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="1311.2" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.1</text>
+<line x1="70.0" y1="1267.0" x2="443.0" y2="1267.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="1272.0" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.2</text>
+<line x1="70.0" y1="1227.7" x2="443.0" y2="1227.7" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="1232.7" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.3</text>
+<line x1="70.0" y1="1188.5" x2="443.0" y2="1188.5" stroke="#D9DEE8" stroke-width="1"/>
+<text x="60.0" y="1193.5" fill="#667085" font-size="18" font-weight="400" text-anchor="end">1.4</text>
+<line x1="70.0" y1="1365.0" x2="70.0" y2="1370.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="70.0" y="1388.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.0</text>
+<line x1="144.6" y1="1365.0" x2="144.6" y2="1370.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="144.6" y="1388.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.2</text>
+<line x1="219.2" y1="1365.0" x2="219.2" y2="1370.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="219.2" y="1388.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.4</text>
+<line x1="293.8" y1="1365.0" x2="293.8" y2="1370.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="293.8" y="1388.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.6</text>
+<line x1="368.4" y1="1365.0" x2="368.4" y2="1370.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="368.4" y="1388.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.8</text>
+<line x1="443.0" y1="1365.0" x2="443.0" y2="1370.0" stroke="#D9DEE8" stroke-width="1"/>
+<text x="443.0" y="1388.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">1.0</text>
+<path d="M70.0,1243.4 L107.3,1231.7 L144.6,1221.2 L181.9,1214.7 L219.2,1209.4 L256.5,1209.4 L293.8,1212.1 L331.1,1219.9 L368.4,1233.0 L405.7,1256.5 L443.0,1308.8" fill="none" stroke="#345B7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="1243.4" r="4" fill="#345B7E"/>
+<circle cx="107.3" cy="1231.7" r="4" fill="#345B7E"/>
+<circle cx="144.6" cy="1221.2" r="4" fill="#345B7E"/>
+<circle cx="181.9" cy="1214.7" r="4" fill="#345B7E"/>
+<circle cx="219.2" cy="1209.4" r="4" fill="#345B7E"/>
+<circle cx="256.5" cy="1209.4" r="4" fill="#345B7E"/>
+<circle cx="293.8" cy="1212.1" r="4" fill="#345B7E"/>
+<circle cx="331.1" cy="1219.9" r="4" fill="#345B7E"/>
+<circle cx="368.4" cy="1233.0" r="4" fill="#345B7E"/>
+<circle cx="405.7" cy="1256.5" r="4" fill="#345B7E"/>
+<circle cx="443.0" cy="1308.8" r="4" fill="#345B7E"/>
+<path d="M70.0,1204.2 L107.3,1187.2 L144.6,1179.4 L181.9,1178.1 L219.2,1175.5 L256.5,1178.1 L293.8,1183.3 L331.1,1195.1 L368.4,1210.8 L405.7,1243.4 L443.0,1312.7" fill="none" stroke="#378579" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="1204.2" r="4" fill="#378579"/>
+<circle cx="107.3" cy="1187.2" r="4" fill="#378579"/>
+<circle cx="144.6" cy="1179.4" r="4" fill="#378579"/>
+<circle cx="181.9" cy="1178.1" r="4" fill="#378579"/>
+<circle cx="219.2" cy="1175.5" r="4" fill="#378579"/>
+<circle cx="256.5" cy="1178.1" r="4" fill="#378579"/>
+<circle cx="293.8" cy="1183.3" r="4" fill="#378579"/>
+<circle cx="331.1" cy="1195.1" r="4" fill="#378579"/>
+<circle cx="368.4" cy="1210.8" r="4" fill="#378579"/>
+<circle cx="405.7" cy="1243.4" r="4" fill="#378579"/>
+<circle cx="443.0" cy="1312.7" r="4" fill="#378579"/>
+<text x="256.5" y="1415.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
+</g>
+</svg>
