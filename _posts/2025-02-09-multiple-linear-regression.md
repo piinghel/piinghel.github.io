@@ -30,9 +30,12 @@ and portfolios they produce outside their training windows.
 I start with a linear model deliberately. It makes the learned combination
 easy to inspect and gives me a tractable baseline for understanding how the
 predictors work together. Ridge adds a modest control on estimation without
-changing that structure. Models such as LightGBM could capture nonlinearities
-and interactions; whether that extra flexibility improves the investment
-decision is a question for a later study.
+changing that structure. Boosted trees, random forests and neural networks can
+capture nonlinearities and interactions. Recent research also explores
+[transformer-based asset-pricing models](https://www.nber.org/papers/w33351)
+that share information across stocks (Kelly et al., 2025; revised 2026).
+Whether that extra flexibility improves this ranking and its returns after
+costs is a question for a later study.
 
 ## Predictors and the ranking target
 

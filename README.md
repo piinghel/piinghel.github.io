@@ -135,6 +135,10 @@ cannot substitute for the missing paired OLS results.
 
 ## Site maintenance
 
+The reusable [Quant Blog Style skill](.agents/skills/quant-blog-style/SKILL.md)
+records the house conventions for prose, figures, captions, tables and mobile
+presentation. Invoke it as `$quant-blog-style` when preparing future posts.
+
 `_sass/site.scss` owns layout, typography, tables, and theme tokens;
 `_sass/_figures.scss` owns figure sizing. Dense figures and tables scroll within
 the article on narrow screens. Keep one shared composition for both themes.
