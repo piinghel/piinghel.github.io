@@ -181,7 +181,7 @@ corresponding PCA statistic rises from 15.44% to 16.05%. Smaller stock
 contributions can still add up to a large shared exposure.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
+  {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="2" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Schedule-mean 95th percentiles of the largest contributions to forecast variance, measured at rebalance targets. These compare distributions across dates, not a same-date transfer of risk.</p>
@@ -221,7 +221,7 @@ caps use the original optimizer.
   </tbody>
 </table>
 
-<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. Testing stopped.</p>
+<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. On that same schedule, net Sharpe falls from 1.40 to 1.31 in development and from 0.93 to 0.90 later—not from the three-schedule averages above. Testing stopped.</p>
 
 With moderate caps, performance and trading stay close to the matching control.
 That leaves little historical performance gain, but also little observed cost
@@ -235,9 +235,7 @@ The later 95th percentile of the largest sector contribution falls from 28.6%
 to 10%, but the corresponding
 PCA contribution barely changes, from 14.6% to 14.2%.
 
-Against the original optimizer on that same schedule, net Sharpe falls from
-1.40 to 1.31 in development and from 0.93 to 0.90 later.
-Later maximum drawdown improves from 9.16% to 7.47%,
+On that same schedule, later maximum drawdown improves from 9.16% to 7.47%,
 while earlier drawdown worsens slightly and turnover rises in both periods.
 The next schedule could not find a solution within the iteration limit.
 The runs were taking too long, and the result was not
