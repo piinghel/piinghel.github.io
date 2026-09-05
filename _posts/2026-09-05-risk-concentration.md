@@ -20,7 +20,11 @@ The [state-aware optimizer](/quants/2026/08/29/portfolio-optimization.html)
 controls total forecast volatility, gross exposure, beta, sector capital, and
 position size. It does not answer who supplies the risk. A portfolio can stay
 inside its 7% forecast-volatility budget while one stock, sector, or shared
-direction supplies a large fraction of that risk. The practical question is:
+direction supplies a large fraction of that risk. The technology rally around
+[AI](https://www.bis.org/publ/qtrpdf/r_qt2512.pdf) made the distinction
+practical: several acceptable technology or semiconductor weights can still
+depend on the same underlying move. I wanted to know whether the existing
+limits left similar concentration in this B3 strategy. The practical question is:
 can I stop one stock, sector, or shared market move from dominating the
 portfolio's risk without constantly changing the portfolio?
 
@@ -84,6 +88,14 @@ sector's covariance with everything else and does not add to total portfolio
 variance.
 
 ## When the limits begin to bind
+
+The uncapped optimizer confirms that weight and risk limits are not equivalent.
+Across the three schedules, the mean 95th percentile of the largest stock risk
+contribution is 9.6% in 1998–2021 and 7.2% after 2021, even though each stock's
+absolute weight is capped at 4%. The corresponding sector figures are 30.8% and
+27.3%; for the largest PCA direction, they are 15.6% and 15.4%. This is enough
+concentration to justify testing a guardrail, without implying that every date
+or every dimension has a serious problem.
 
 The uncapped eligible-universe portfolio exceeds a 20% all-PC limit on only
 0.69% of rebalances. At 10%, the frequency rises to 13.55%; at 7.5%, it is
