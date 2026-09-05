@@ -8,27 +8,9 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from check_site import check_site, figure_dimensions
 from mlr_figures.support import load_daily_series, load_selected_coefficients
-from render_timing_figure import load_metrics, render
 
 
 class FigureInputTests(unittest.TestCase):
-    def test_timing_chart_rejects_missing_combinations_and_clipped_values(self):
-        source = (
-            Path(__file__).resolve().parents[1] / "assets/tranching/timing_metrics.csv"
-        )
-        rows = load_metrics(source)
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "metrics.csv"
-            with path.open("w", newline="", encoding="utf-8") as output:
-                writer = csv.DictWriter(output, fieldnames=list(rows[0]))
-                writer.writeheader()
-                writer.writerows(rows[:-1])
-            with self.assertRaisesRegex(ValueError, "seven combinations"):
-                load_metrics(path)
-        rows[0]["volatility"] = "100"
-        with self.assertRaisesRegex(ValueError, "outside chart axes"):
-            render(rows, dark=False)
-
     def test_size_check_preserves_selection_for_monotone_scores(self):
         import datetime
 

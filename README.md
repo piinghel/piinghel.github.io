@@ -13,8 +13,8 @@ bundle exec jekyll serve
 
 Research figures use matching light/dark SVG variants. Ordinary line charts
 have phone-specific layouts where needed; dense figures remain scrollable.
-Their generating code lives in `scripts/` or the
-corresponding project under `projects/`.
+Their generating code lives in `scripts/` or the corresponding study repository
+linked below.
 
 ## Checks and drafts
 
@@ -26,7 +26,7 @@ python3 -m unittest discover -s tests -v
 ```
 
 The checker validates local links and fragments, SVG XML references, matching
-theme dimensions, image descriptions, and exclusion of private development
+theme dimensions, image descriptions, and exclusion of development
 files. After regenerating figures, run
 `python3 scripts/check_site.py --update-dimensions` to refresh their intrinsic
 sizes before rebuilding the site.
@@ -67,7 +67,7 @@ restored. The figure code can still be reviewed, but a clean full regeneration
 cannot currently be claimed.
 
 The renderer is prepared for a new validated compact bundle, without replacing
-those retained assets. Supply the exact output of the private matched-study
+those retained assets. Supply the exact output of the matched-study
 exporter, rather than copying it into a historical review folder:
 
 ```bash
@@ -105,23 +105,20 @@ retains five 20% weights. Selection ties follow the stable security identifier.
 The public CSV contains aggregate diagnostics; the local input contains
 security-level scores. Portfolio returns require a separate execution replay.
 
-The main timing figure is reproduced from the included portfolio-level daily
-net returns in `assets/tranching/schedule_returns.csv`, using Matplotlib and
-NumPy from `requirements-figures.txt`:
+The timing calculations, figure generators and their portfolio-level inputs live
+in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching).
+From that repository:
 
 ```bash
-python3 scripts/render_timing_performance.py
+uv sync --locked
+uv run python -m rebalance_tranching.performance
 ```
 
-It shows the three starting weeks and their equal-notional mixture from January
-2022 onward, when the calendar differences are most visible. The development
-comparison remains in the article's metrics table. The mixture column is checked
-against the mean of the three schedule returns before export. These 6,963 matched
-dates come from `outputs/review/timing/timing_daily.parquet` in the systematic
-equity research project. Its source manifest records the schedule-return inputs.
-The older combination-dispersion figure remains reproducible with
-`python3 scripts/render_timing_figure.py` and the included aggregate metrics.
-No licensed security-level data are published by this site.
+The command rebuilds the three schedules and their mixture from January 2022
+onward, in both themes and desktop/phone layouts. The same repository owns the
+supporting dispersion figure and tests that reconcile the chart-ready returns
+with the daily evidence. Only the reviewed SVG copies belong in this site's
+`assets/tranching/`; do not maintain another copy of the calculation or renderer.
 
 The low-volatility article was fully reproduced in September 2026 with retained
 daily outputs in its research project. The latest run uses commit `0f8acbe`,
@@ -142,11 +139,11 @@ penalty only from the second. All four rows use development through 2021.
 
 | Material | Location | Reproduction scope |
 | --- | --- | --- |
-| Blog, timing chart, correlation chart, size diagnostic | This public repository | Charts from included aggregate CSVs; size diagnostic requires local daily scores |
-| Low-volatility backtest | [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) | Licensed input export and shared P&L package required |
-| Optimizer figures, timing returns, Ridge estimator | [systematic-equity-research](https://github.com/piinghel/systematic-equity-research) | Included portfolio-level evidence; independently runnable |
-| Full portfolio and timing backtests | Private `portfolio-optimization` repository | Shared research packages and licensed inputs required |
-| Factor construction | Private `factor-combination` repository | Standalone factors retained; matched OLS–Ridge bundle missing |
+| Site and regression figure sources | This repository | Correlation chart from its included matrix; matched Ridge figure bundle remains unavailable |
+| Low-volatility sizing | [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) | Independent sizing example; full runner needs its configured inputs and dependencies |
+| Optimizer methods and evidence | [portfolio-optimization-study](https://github.com/piinghel/portfolio-optimization-study) | One-rebalance control example and figures from included portfolio results |
+| Rebalance tranching | [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) | Mixture calculations, examples and figures from included daily portfolios |
+| Ridge estimator and research index | [systematic-equity-research](https://github.com/piinghel/systematic-equity-research) | Sample-scaled estimator and a runnable example |
 
 Source recovery for the matched OLS–Ridge comparison covered project folders,
 worktrees, research caches, local Git history, and available GitHub project

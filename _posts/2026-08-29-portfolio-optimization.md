@@ -11,7 +11,7 @@ series_previous: /quants/2025/02/09/multiple-linear-regression.html
 series_next: /quants/2026/09/05/risk-concentration.html
 github_repositories:
   - label: Research materials
-    url: https://github.com/piinghel/systematic-equity-research
+    url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
 <p class="article-summary">The joint allocation rule raises this Ridge portfolio's development-period Sharpe from 1.12 to 1.35, but adds turnover. Letting the optimizer keep acceptable holdings and penalizing replacements cuts turnover by about a third while preserving gross return. I use both controls, though the advantage is smaller and less consistent after 2021. Risk forecasts also understate realized volatility.</p>

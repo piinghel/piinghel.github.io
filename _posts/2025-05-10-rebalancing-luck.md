@@ -11,7 +11,7 @@ series_previous: /quants/2026/09/05/risk-concentration.html
 series_end: true
 github_repositories:
   - label: Research code
-    url: https://github.com/piinghel/systematic-equity-research
+    url: https://github.com/piinghel/rebalance-tranching
 ---
 
 <p class="article-summary">A three-week strategy need not depend on one starting week. Splitting strategy notional into three equal sleeves and rebalancing one each week reduces that calendar choice. Here it lowers volatility by about 8% in development and 5% later, improving Sharpe in both periods. The sleeves still share most of their risk.</p>
