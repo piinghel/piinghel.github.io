@@ -6,7 +6,7 @@ from pathlib import Path
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
+from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
 
 from .support import (
     FigureSpec,
@@ -25,33 +25,37 @@ def plot_performance(
     output_dir: Path,
     style: FigureStyle,
     spec: FigureSpec,
+    *,
+    mobile: bool = False,
 ) -> None:
     fig, (wealth_ax, drawdown_ax) = plt.subplots(
         2,
         1,
-        figsize=(10.8, 6.7),
+        figsize=(4.8, 6.2) if mobile else (8.5, 6.7),
         facecolor=style.white,
         sharex=True,
-        gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.04},
+        gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.24},
     )
     for axis in (wealth_ax, drawdown_ax):
-        style_axis(axis, style)
+        style_axis(axis, style, labelsize=11 if mobile else style.tick_label_size)
         add_split_marker(
             axis,
             style,
             spec.split_date,
-            label=axis is wealth_ax,
-            label_fontsize=style.annotation_size,
-            label_text="Later period starts",
+            label=axis is drawdown_ax,
+            label_fontsize=10 if mobile else style.annotation_size,
+            label_text="Later period",
             label_at_top=True,
         )
     for model in spec.model_order:
-        width = 2.0 if model == "selected_c0p01" else 1.5
+        width = 1.2 if model == "fixed_factor_benchmark" else 1.6
+        line_style = (0, (4, 2)) if model == "selected_c0p01" else "solid"
         wealth_ax.plot(
             wealth[model].dates,
             wealth[model].values,
             color=spec.model_colors[model],
             linewidth=width,
+            linestyle=line_style,
             label=spec.model_labels[model],
         )
         drawdown_ax.plot(
@@ -59,40 +63,41 @@ def plot_performance(
             drawdowns[model].values,
             color=spec.model_colors[model],
             linewidth=width - 0.2,
+            linestyle=line_style,
             zorder=2,
         )
-        drawdown_ax.fill_between(
-            drawdowns[model].dates,
-            drawdowns[model].values,
-            0,
-            color=spec.model_colors[model],
-            alpha=0.035,
-            linewidth=0,
-            zorder=1,
-        )
+        if model == "fixed_factor_benchmark":
+            drawdown_ax.fill_between(
+                drawdowns[model].dates,
+                drawdowns[model].values,
+                0,
+                color=spec.model_colors[model],
+                alpha=0.07,
+                linewidth=0,
+                zorder=1,
+            )
     wealth_ax.set_yscale("log")
     panel_title_color = "#000000" if not style.output_suffix else style.ink
     add_panel_title(
         wealth_ax,
-        "Growth of $1 (log scale)",
+        "Net growth index (log scale)",
         color=panel_title_color,
-        fontsize=style.axis_label_size,
-        fontweight="bold",
+        fontsize=12 if mobile else style.axis_label_size,
+        fontweight="semibold",
     )
-    wealth_ax.yaxis.set_major_locator(FixedLocator([1, 2, 3, 4, 6, 8]))
+    wealth_ax.yaxis.set_major_locator(LogLocator(base=2, subs=(1.0, 1.5)))
     wealth_ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
     wealth_ax.yaxis.set_minor_formatter(NullFormatter())
-    wealth_ax.grid(False, axis="y")
-    for value in (1, 2, 3, 4, 6, 8):
-        wealth_ax.axhline(value, color=style.grid, linewidth=0.8, zorder=0)
+    wealth_ax.axhline(1, color=style.muted, linewidth=0.6, zorder=0)
+    drawdown_ax.axhline(0, color=style.muted, linewidth=0.6, zorder=0)
     add_panel_title(
         drawdown_ax,
         "Drawdown (%)",
         color=panel_title_color,
-        fontsize=style.axis_label_size,
-        fontweight="bold",
+        fontsize=12 if mobile else style.axis_label_size,
+        fontweight="semibold",
     )
-    drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(4))
+    drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     drawdown_ax.set_xlim(
         min(item.dates[0] for item in wealth.values()),
@@ -104,13 +109,14 @@ def plot_performance(
         ncol=3,
         frameon=False,
         labelcolor=style.ink,
-        fontsize=style.legend_size,
+        fontsize=11 if mobile else style.legend_size,
         bbox_to_anchor=(0.53, 0.0),
     )
     fig.subplots_adjust(
-        left=0.10,
+        left=0.14 if mobile else 0.10,
         right=0.98,
-        top=0.98,
+        top=0.94,
         bottom=0.13,
     )
-    save_figure(fig, output_dir, "performance-and-drawdowns", style)
+    stem = "performance-and-drawdowns_mobile" if mobile else "performance-and-drawdowns"
+    save_figure(fig, output_dir, stem, style)

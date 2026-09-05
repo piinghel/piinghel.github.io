@@ -23,7 +23,7 @@ class FigureStyle:
     muted: str = "#6a7883"
     grid: str = "#dbe1e3"
     white: str = "#ffffff"
-    negative: str = "#756A8E"
+    negative: str = "#B47750"
     positive: str = "#6F91AD"
     long_leg: str = "#4F7396"
     short_leg: str = "#756A8E"
@@ -47,7 +47,7 @@ def dark_figure_style() -> FigureStyle:
         muted="#8B949E",
         grid="#30363D",
         white="#0D1117",
-        negative="#A093B8",
+        negative="#C99B76",
         positive="#7FA4C4",
         long_leg="#78A0C4",
         short_leg="#A093B8",
@@ -77,7 +77,7 @@ def default_figure_spec(style: FigureStyle) -> FigureSpec:
         model_labels={
             "fixed_factor_benchmark": "Fixed weights",
             "ols_c0": "OLS",
-            "selected_c0p01": "Ridge c = 0.01",
+            "selected_c0p01": "Ridge",
         },
         model_colors={
             "fixed_factor_benchmark": style.benchmark,
@@ -88,7 +88,9 @@ def default_figure_spec(style: FigureStyle) -> FigureSpec:
         feature_labels={
             "X_feature_price_macd_10_21": "MACD · 10 / 21d",
             "X_feature_price_price_to_ma126": "Price / moving average · 126d",
-            "X_feature_price_high_to_initial90_exclude10": "Prior high / start · 90d",
+            "X_feature_price_high_to_initial90_exclude10": (
+                "90d high / window-start price\n(excludes latest 10d)"
+            ),
             "X_feature_pv_illiquidity_mean21": "Illiquidity · 21d mean",
             "X_feature_market_cap_log_std504": "Market-cap variability · 504d",
             "X_feature_liquidity_turnover_level63": "Share turnover · 63d",
@@ -98,6 +100,7 @@ def default_figure_spec(style: FigureStyle) -> FigureSpec:
             "X_feature_market_cap_log_std21": "Market-cap variability · 21d",
             "X_feature_short_interest_to_volume_log_ratio": "Short interest / volume",
             "X_feature_price_price_to_min5": "Price / 5d low",
+            "X_feature_price_ret252_shift0": "Trailing return · 252d",
             "X_feature_price_rsi252": "RSI · 252d",
             "X_feature_price_atr126": "ATR · 126d",
             "X_feature_price_atr21": "ATR · 21d",
@@ -158,6 +161,34 @@ def load_daily_series(
     return series
 
 
+def load_performance(
+    review_dir: Path, model_order: tuple[str, ...]
+) -> tuple[dict[str, Series], dict[str, Series]]:
+    """Validate paired paths, retaining initial-capital losses and source values."""
+    path = review_dir / "multiple_linear_selected_return_drawdown_figure_source.csv.gz"
+    returns = load_daily_series(
+        path, value_column="cumulative_net_return_pct", model_order=model_order
+    )
+    drawdowns = load_daily_series(
+        path, value_column="drawdown_pct", model_order=model_order
+    )
+    wealth = {}
+    for model, series in returns.items():
+        growth = 1.0 + series.values / 100.0
+        if np.any(growth <= 0):
+            raise ValueError(f"log growth must remain positive: {model}")
+        peaks = np.maximum.accumulate(np.r_[1.0, growth])[1:]
+        expected = 100.0 * (growth / peaks - 1.0)
+        if not np.allclose(drawdowns[model].values, expected, atol=1e-7, rtol=1e-7):
+            raise ValueError(
+                f"drawdown does not match growth with initial capital: {model}"
+            )
+        dates = np.r_[series.dates[0] - timedelta(days=1), series.dates]
+        wealth[model] = Series(dates, np.r_[1.0, growth])
+        drawdowns[model] = Series(dates, np.r_[0.0, drawdowns[model].values])
+    return wealth, drawdowns
+
+
 def load_selected_coefficients(review_dir: Path) -> list[dict[str, str]]:
     rows = read_rows(
         review_dir / "multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz"
@@ -182,6 +213,20 @@ def load_selected_coefficients(review_dir: Path) -> list[dict[str, str]]:
         float(row["c"]) != 0.01 or row["selected"].lower() != "true" for row in selected
     ):
         raise ValueError("coefficient heatmap must use the selected c=0.01 model")
+    ranks = defaultdict(set)
+    refit_dates = defaultdict(set)
+    for row in selected:
+        ranks[row["feature"]].add(int(row["heatmap_rank"]))
+        refit_dates[int(row["fold_id"])].add(date.fromisoformat(row["test_date"]))
+    if any(len(value) != 1 for value in ranks.values()) or {
+        rank for value in ranks.values() for rank in value
+    } != set(range(1, 11)):
+        raise ValueError("heatmap ranks must uniquely identify the ten predictors")
+    if any(len(value) != 1 for value in refit_dates.values()):
+        raise ValueError("each coefficient fold must have one refit date")
+    dates = [next(iter(refit_dates[fold])) for fold in sorted(refit_dates)]
+    if dates != sorted(set(dates)):
+        raise ValueError("coefficient refit dates must increase with fold order")
     return selected
 
 
@@ -245,13 +290,13 @@ def add_split_marker(
     if label:
         ax.text(
             split_date + timedelta(days=-100 if label_at_top else 100),
-            0.95 if label_at_top else 0.05,
+            1.015 if label_at_top else 0.05,
             label_text,
             transform=ax.get_xaxis_transform(),
             color=style.muted,
             fontsize=label_fontsize,
             ha="right" if label_at_top else "left",
-            va="top" if label_at_top else "bottom",
+            va="bottom",
         )
 
 

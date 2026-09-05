@@ -66,6 +66,25 @@ the published MLR SVGs remain the retained assets until that source bundle is
 restored. The figure code can still be reviewed, but a clean full regeneration
 cannot currently be claimed.
 
+The renderer is prepared for a new validated compact bundle, without replacing
+those retained assets. Supply the exact output of the private matched-study
+exporter, rather than copying it into a historical review folder:
+
+```bash
+python3 scripts/render_multiple_linear_regression_figures.py \
+  --review-dir /path/to/validated-matched-review \
+  --output-dir /path/to/new-figure-review
+```
+
+This produces light/dark heatmaps and desktop/phone performance figures. The
+heatmap uses a common signed scale without cell annotations; exact coefficients
+remain in the source bundle. Performance preserves source paths and checks that
+drawdowns include the initial index of 1 before adding its starting reference.
+Missing, inconsistent or non-positive log-growth evidence is rejected before
+any chart is written. Synthetic fixture tests establish rendering behavior,
+not empirical reproduction. Review real exports before updating article assets,
+mobile include paths, captions or numerical claims.
+
 The September layout repair to the retained performance SVGs removes the
 unused future-date margin and moves model labels below the panels. All 52
 line groups in each theme were checked unchanged; this is a presentation

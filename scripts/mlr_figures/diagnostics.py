@@ -126,12 +126,12 @@ def plot_selected_coefficients(
     values = np.array(
         [[lookup[(feature, fold)] for fold in folds] for feature in features]
     )
-    limit = float(np.max(np.abs(values)))
+    limit = float(np.max(np.abs(values))) or 1.0
     color_map = LinearSegmentedColormap.from_list(
         "coefficient", (style.negative, style.white, style.positive)
     )
-    fig, ax = plt.subplots(figsize=(9.6, 4.8), facecolor=style.white)
-    ax.pcolormesh(
+    fig, ax = plt.subplots(figsize=(9.6, 5.6), facecolor=style.white)
+    mesh = ax.pcolormesh(
         np.arange(values.shape[1] + 1) - 0.5,
         np.arange(values.shape[0] + 1) - 0.5,
         values,
@@ -154,29 +154,24 @@ def plot_selected_coefficients(
             for feature in features
         ],
     )
-    ax.tick_params(axis="x", which="both", length=0, colors=style.muted, labelsize=8.3)
-    ax.tick_params(axis="y", which="both", length=0, colors=style.ink, labelsize=8.5)
-    for row_index in range(values.shape[0]):
-        for column_index in range(values.shape[1]):
-            value = values[row_index, column_index]
-            ax.text(
-                column_index,
-                row_index,
-                f"{value:+.3f}",
-                ha="center",
-                va="center",
-                color=style.white if abs(value) > 0.57 * limit else style.ink,
-                fontsize=7.8,
-            )
+    ax.set_xlabel("Refit year", color=style.ink, fontsize=10.5, labelpad=9)
+    ax.tick_params(axis="x", which="both", length=0, colors=style.muted, labelsize=10)
+    ax.tick_params(axis="y", which="both", length=0, colors=style.ink, labelsize=10)
     ax.set_xticks(np.arange(-0.5, len(folds), 1), minor=True)
     ax.set_yticks(np.arange(-0.5, len(features), 1), minor=True)
     ax.grid(which="minor", color=style.white, linewidth=1.5)
     for spine in ax.spines.values():
         spine.set_visible(False)
     fig.subplots_adjust(
-        left=0.29,
-        right=0.99,
+        left=0.36,
+        right=0.90,
         top=0.98,
         bottom=0.14,
     )
+    color_axis = fig.add_axes((0.925, 0.25, 0.014, 0.62))
+    colorbar = fig.colorbar(mesh, cax=color_axis)
+    colorbar.solids.set_rasterized(False)
+    colorbar.set_label("Coefficient", color=style.ink, fontsize=10)
+    colorbar.ax.tick_params(colors=style.muted, labelsize=9, length=0)
+    colorbar.outline.set_visible(False)
     save_figure(fig, output_dir, "top-coefficients", style)

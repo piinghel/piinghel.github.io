@@ -13,10 +13,9 @@ from mlr_figures.diagnostics import (
 from mlr_figures.performance import plot_performance
 from mlr_figures.support import (
     FigureStyle,
-    Series,
     dark_figure_style,
     default_figure_spec,
-    load_daily_series,
+    load_performance,
     load_selected_coefficients,
     read_rows,
 )
@@ -28,10 +27,16 @@ def default_output_dir() -> Path:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
+    sources = parser.add_mutually_exclusive_group()
+    sources.add_argument(
         "--research-root",
         type=Path,
         help="Path to the factor_combination research project.",
+    )
+    sources.add_argument(
+        "--review-dir",
+        type=Path,
+        help="Exact compact evidence directory emitted by matched_model_review.py.",
     )
     parser.add_argument(
         "--correlation-source",
@@ -71,27 +76,14 @@ def render_factor_correlation(
 
 
 def render_figures(
-    research_root: Path,
+    review_dir: Path,
     output_dir: Path,
     style: FigureStyle,
 ) -> None:
-    review_dir = research_root.resolve() / "outputs" / "review"
+    review_dir = review_dir.resolve()
     output_dir = output_dir.resolve()
     spec = default_figure_spec(style)
-    wealth = load_daily_series(
-        review_dir / "multiple_linear_selected_return_drawdown_figure_source.csv.gz",
-        value_column="cumulative_net_return_pct",
-        model_order=spec.model_order,
-    )
-    wealth = {
-        model: Series(item.dates, 1.0 + item.values / 100.0)
-        for model, item in wealth.items()
-    }
-    drawdowns = load_daily_series(
-        review_dir / "multiple_linear_selected_return_drawdown_figure_source.csv.gz",
-        value_column="drawdown_pct",
-        model_order=spec.model_order,
-    )
+    wealth, drawdowns = load_performance(review_dir, spec.model_order)
     selected_coefficients = load_selected_coefficients(review_dir)
     # Load every required source before changing any published output.
 
@@ -105,6 +97,7 @@ def render_figures(
         }
     ):
         plot_performance(wealth, drawdowns, output_dir, style, spec)
+        plot_performance(wealth, drawdowns, output_dir, style, spec, mobile=True)
         plot_selected_coefficients(selected_coefficients, output_dir, style, spec)
 
 
@@ -125,10 +118,13 @@ def main() -> None:
             dark_figure_style(),
         )
         return
-    if args.research_root is None:
-        raise SystemExit("--research-root is required for the full figure set")
-    render_figures(args.research_root, args.output_dir, FigureStyle())
-    render_figures(args.research_root, args.output_dir, dark_figure_style())
+    if args.research_root is None and args.review_dir is None:
+        raise SystemExit(
+            "--review-dir or --research-root is required for the full figure set"
+        )
+    review_dir = args.review_dir or args.research_root / "outputs" / "review"
+    render_figures(review_dir, args.output_dir, FigureStyle())
+    render_figures(review_dir, args.output_dir, dark_figure_style())
 
 
 if __name__ == "__main__":
