@@ -124,7 +124,9 @@ by reducing prediction error enough to offset the penalty. Ridge shrinks the
 slopes; lasso's L1 penalty can also set them to zero.
 
 I refit on expanding training histories and evaluate each fit on the next
-block of observations. Predictions begin in September 1998.
+block of observations. Keeping the older data gives the model more observations
+to estimate a common combination, which can slow adaptation when the
+relationships change. Predictions begin in September 1998.
 Development ends in December 2021. January 2022–May 2026 has also informed
 research choices, including the benchmark revision.
 
@@ -133,7 +135,10 @@ movement while keeping the portfolio close to OLS. I made that trade-off by
 judgment, without setting a numerical acceptance threshold in advance. The
 comparison below evaluates that choice with the revised fixed rule.
 
-All three scores enter the same portfolio rule: the top and bottom 75 stocks,
+I keep portfolio construction fixed so the comparison follows differences in
+the rankings. Inverse-volatility sizing gives less weight to volatile stocks;
+three starting weeks show sensitivity to the rebalancing calendar.
+All three scores enter the same rule: the top and bottom 75 stocks,
 inverse-volatility sizing with stock and book caps, three-week rebalancing,
 next-close execution, and 5 bp per dollar traded. Reported portfolio statistics
 are averaged across three starting-week schedules. Returns use arithmetic
@@ -151,9 +156,9 @@ expands.
 
 The first two rows illustrate how that combination works. Holding the other
 predictor ranks fixed, the positive price-to-126-day-average weight rewards a
-stock above its longer trend, while the negative 10/21-day MACD weight penalizes
-a large normalized upward gap between its faster and slower price averages.
-Together, those weights favor longer-term strength with less recent acceleration.
+higher price-to-trend ratio. The negative 10/21-day MACD weight favors a lower
+normalized fast-minus-slow gap. Together, they favor relative longer-term
+strength with weaker recent momentum.
 
 <div class="research-figure coefficient-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
@@ -179,7 +184,6 @@ Related inputs give the model room to redistribute their weights while keeping
 much the same score. Selection adds another filter: a score change affects
 membership only when it moves a stock across the portfolio cutoff.
 
-I therefore read Figure 1 as relative stability with weakening magnitudes.
 The overlapping training histories and selection of the largest average weights
 make this a descriptive finding. After removing the difference in coefficient
 size, OLS and Ridge show similar changes in direction between refits. The
@@ -247,6 +251,7 @@ small Sharpe difference changes sign across the three starting-week schedules.
 After 2021 its mean Sharpe is 0.79 versus 0.83 for OLS. Ridge saves less than
 0.03 percentage points in annual trading costs in either period. Changing the
 regression penalty does little to reduce the learned score's trading bill.
+The flat trading charge also omits borrow, financing and market impact.
 
 Figure 2 shows the paths behind the period averages. OLS and Ridge remain
 close, while both have shallower development drawdowns than the fixed score.
@@ -275,7 +280,20 @@ The later results give me no clear performance reason to prefer it to OLS.
 For this portfolio, the extra trading introduced by the learned ranking matters
 far more than the choice between the two regressions.
 
-The flat trading charge also omits borrow, financing and market impact.
+Two extensions would test different ways of combining the signals. I could
+learn weights on the three theme scores while keeping their economically chosen
+directions. That would let the data change each theme's importance without
+reversing its investment rationale. Comparing this with unrestricted weights on
+the same three scores would test the value of those sign constraints.
+Separately, I could allow a few penalized smooth curves in place of straight-line
+effects: does momentum keep helping as its rank rises, or does the contribution
+flatten at the extremes? This would test
+the shape of each effect before adding interactions between predictors.
+
+The curved and linear models would also use identical inputs. I would keep
+portfolio rules fixed in both experiments, judging changes in net performance
+and trading as well as ranking quality. Choices would be made on the earlier
+period, then frozen for evaluation on newly collected data.
 
 The [aggregate results and figure code](https://github.com/piinghel/piinghel.github.io/tree/main/assets/multiple-linear-regression/evidence)
 reproduce the displays. A full independent reproduction of the original model

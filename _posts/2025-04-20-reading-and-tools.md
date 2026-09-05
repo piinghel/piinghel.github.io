@@ -36,11 +36,15 @@ navigation: false
 
 ## Portfolio construction and risk
 
+- [180 Years of Market Drawdowns](https://www.youtube.com/watch?v=27x632vOjXk) — Robert Frey (2015, talk).
 - [Enhanced Portfolio Optimization](https://www.aqr.com/Insights/Research/White-Papers/Enhanced-Portfolio-Optimization) — Pedersen, Babu, and Levine (2021).
 - [Risk Everywhere: Modeling and Managing Volatility](https://www.aqr.com/Insights/Research/Working-Paper/Risk-Everywhere-Modeling-and-Managing-Volatility) — Bollerslev, Hood, Huss, and Pedersen (2016).
 
 ## Asset pricing and prediction
 
+- [Value and Momentum Everywhere](https://onlinelibrary.wiley.com/doi/10.1111/jofi.12021) — Asness, Moskowitz, and Pedersen (2013).
+- [Momentum Crashes](https://www.nber.org/papers/w20439) — Daniel and Moskowitz (2016).
+- [Empirical Asset Pricing via Machine Learning](https://www.nber.org/papers/w25398) — Gu, Kelly, and Xiu (2020).
 - [Artificial Intelligence Asset Pricing Models](https://www.nber.org/papers/w33351) — Kelly, Kuznetsov, Malamud, and Xu (2025; revised 2026).
 - [Building Cross-Sectional Systematic Strategies by Learning to Rank](https://arxiv.org/abs/2012.07149) — Poh, Lim, Zohren, and Roberts (2021).
 - [How Global Is Predictability? The Power of Financial Transfer Learning](https://ssrn.com/abstract=4620157) — Hellum, Pedersen, and Rønn-Nielsen (2023).
