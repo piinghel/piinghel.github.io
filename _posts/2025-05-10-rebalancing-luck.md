@@ -18,22 +18,21 @@ github_repositories:
 
 ## The starting-week problem
 
-A strategy that rebalances every three weeks has three possible starting
-weeks. Even with the same forecasting and allocation rules, each schedule
-sees a different sequence of signals and prices. After 2021, annualized net
+“Rebalance every three weeks” sounds like a complete rule. It still leaves me
+with a choice of three starting weeks. Each one sees a different sequence of
+signals and prices, even though I use the same forecasting and allocation
+rules. After 2021, annualized net
 geometric return ranges from 5.42% to 9.91% across the three schedules in this
-study. Choosing the best one after seeing those results would turn an
-implementation detail into another backtest selection decision.
+study. That is a lot to leave to the calendar. Choosing the best week after
+seeing the results would just give me another way to fit the backtest.
 
 This study draws on [Newfound’s work on timing luck](https://blog.thinknewfound.com/2018/01/quantifying-timing-luck/)
 and [Concretum’s study of tranching in factor portfolios](https://concretumgroup.com/the-tranching-dilemma-a-cost-aware-approach-to-mitigate-rebalance-timing-luck-in-factor-portfolios/).
 
-I use a Ridge stock ranking with a constrained optimizer, a rank buffer for
-existing holdings and a penalty on trading. The universe is point-in-time
-Russell 1000 membership. Each schedule uses next-close execution and pays
-5 bp per dollar traded. Only its starting week changes. The saved Ridge score
-includes a range predictor that omits downward overnight gaps; these schedules
-have not been rerun with its correction.
+I take the [same stock strategy](/quants/2026/08/29/portfolio-optimization.html)
+and run it from each of the three starting weeks. The ranking, sizing and
+trading assumptions stay the same. I then split the strategy across all three
+schedules instead of choosing one.
 
 ## Three sleeves
 
@@ -50,14 +49,10 @@ and continues to rebalance every three weeks. One sleeve trades each week:
   </tbody>
 </table>
 
-This spreads notional over all three starting weeks without forecasting which
-one will work best. It preserves the holding cycle within each sleeve while
-making the overall portfolio less dependent on one calendar.
-
-The backtest keeps strategy notional fixed and lets weights drift between
-trades. I combine daily normalized P&L across sleeves and compound that series
-into the displayed performance index. A funded account replay would also need
-reinvestment, financing and borrow assumptions.
+I no longer need to choose a winning starting week. Each sleeve keeps the same
+three-week holding cycle, and the overall portfolio participates in all three
+schedules. Trading one sleeve each week is enough; I don't need to replace the
+whole portfolio weekly.
 
 ## The combined portfolio
 
@@ -79,9 +74,9 @@ r_{\mathrm{mix},t}=\frac{r_{1,t}+r_{2,t}+r_{3,t}}{3}.
 $$
 
 Its arithmetic mean return equals the mean of the sleeves' arithmetic returns.
-Volatility, Sharpe, geometric return and drawdown must be recomputed from this
-combined daily series. Averaging three standalone Sharpes summarizes three
-backtests; it does not give the Sharpe of the combined daily series.
+For volatility, Sharpe, geometric return and drawdown, I have to go back to the
+combined daily series. What matters is whether the sleeves gain and lose on
+the same days. Averaging three standalone Sharpes throws away that information.
 
 Table 2 makes that distinction explicit. In development, mixture volatility
 falls from the mean standalone 8.40% to 7.72%, and Sharpe rises from 1.43 to 1.55.
@@ -113,9 +108,28 @@ Allocating one third of notional to each sleeve also incurs one third of its
 proportional trading costs. Annual arithmetic cost drag is the mean of the
 sleeves' costs: about 1.41 percentage points in development and 1.24 later.
 This assumes separate sleeve trades, with no netting savings or fixed ticket
-charges. More weekly trade events need not mean more traded notional.
+charges. I send trades more often, but each sleeve is only a third of the size.
+
+There is a small operational trade-off. I would need to track three sets of
+holdings and rebalance dates, reconcile each sleeve, and run trades every week.
+That is more bookkeeping than maintaining a single schedule, even when total
+traded notional stays the same.
 
 I would fund all three sleeves. I get the same strategy with less riding on
 the starting week, and the combined portfolio has better Sharpe in both
-periods. The common exposures behind the remaining drawdowns still need
-attention. Other weekdays or holding periods would be separate calendar tests.
+periods. For me, that is worth the extra bookkeeping. The common exposures
+behind the remaining drawdowns still need attention. Other weekdays or holding
+periods would be separate calendar tests.
+
+## Research notes
+
+The linked allocation study gives the ranking, universe and sizing rules.
+Each schedule executes at the next close and pays 5 bp per dollar traded.
+The backtest keeps strategy notional fixed and lets weights drift between
+trades. The displayed index compounds average daily P&L per unit of notional;
+a funded account replay would also need reinvestment, financing and borrow
+assumptions.
+
+These results use saved Ridge predictions with a range predictor that omits
+downward overnight gaps. The schedules have not yet been rerun with the
+corrected predictor.

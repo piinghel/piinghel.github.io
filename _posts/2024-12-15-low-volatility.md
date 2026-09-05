@@ -15,10 +15,10 @@ github_repositories:
 
 <p class="article-summary">Equal capital in a stable-stock long book and a volatile-stock short book creates very unequal risk. Inverse-volatility sizing corrects much of that imbalance here, cutting portfolio volatility from 33% to 10% and turning compounding positive after trading costs. It leaves shared risk uncontrolled, however, and coordinated short-book losses still cause large drawdowns.</p>
 
-Buying stable stocks and shorting volatile ones creates a position-sizing
-problem before any portfolio is formed: the two sides were deliberately
-selected for different levels of risk. Giving them equal capital allows the
-volatile short book to dominate the outcome.
+One dollar in stable stocks and one dollar short in volatile stocks is an easy
+starting rule. But I have deliberately chosen the two sides for different
+levels of risk. Giving them equal capital lets the volatile short book
+dominate the outcome. The sizing decision is already part of the strategy.
 
 The ranking comes from the [low-volatility
 effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865): stable stocks
@@ -68,7 +68,9 @@ Here $N$ is the number of stocks in the book. Volatility is estimated over
 100% gross, its positions scale down proportionally. A smaller book keeps its
 lower capital allocation.
 
-This last choice matters. The stable long book averages 97% gross exposure,
+Leaving the smaller book alone does a lot of the work here. Scaling it back up
+would put capital straight back into the volatile shorts. With the rule above,
+the stable long book averages 97% gross exposure,
 while the volatile short book averages 34%. At those actual book sizes, each
 has standalone volatility of about 10%; equal weighting had left the short
 book above 37%. Similar standalone volatilities do not imply equal contributions
@@ -78,8 +80,8 @@ The capital difference leaves about 63% net stock exposure. Because the smaller
 short book contains higher-beta stocks, it still offsets much of the long
 book's market sensitivity. Full-sample realized beta moves from −1.12 to
 −0.001, but holdings-based and rolling realized estimates vary through time.
-That average is an incidental outcome of the weights, not an explicit beta
-control.
+I haven't asked the sizing rule to target that beta. It is an outcome of these
+weights, and the near-zero average hides variation through time.
 
 ## What improves
 
@@ -98,13 +100,12 @@ Turnover also falls. Given this choice, I would use inverse-volatility sizing.
   </tbody>
 </table>
 
-Figure 2 shows the paths behind those averages. Equal weighting ends at
-35 cents per starting dollar despite its positive arithmetic return.
-Sharpe uses that positive arithmetic mean; compounding also reflects the
-large swings, so geometric return can be negative.
-Inverse-volatility sizing reaches 7.54 dollars, although it still suffers
-a 38% maximum drawdown. Repeated large moves erode the equal-weight portfolio's
-compounded value.
+The equal-weight row can look odd at first: how does a positive Sharpe go with
+a negative geometric return? Sharpe uses the arithmetic mean, which is
+positive here. Compounding also reflects the size of the swings. Repeated large
+moves erode the equal-weight portfolio's compounded value, leaving just
+35 cents per starting dollar in Figure 2. Inverse-volatility sizing reaches
+7.54 dollars, although it still suffers a 38% maximum drawdown.
 
 <div class="low-vol-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="15" %}
@@ -137,8 +138,8 @@ back toward its starting value.
 
 From 3 April 2025 to 27 May 2026, the market gains about 39% while the portfolio
 loses 13%. Longs contribute +4.2 points and shorts −16.3 before costs.
-This episode has the same loss direction, with no reversal in the available
-sample. Both comparisons measure returns from the first date's close.
+The shorts drive the loss again, and the portfolio hasn't recovered by the end
+of the available sample. Both comparisons measure returns from the first date's close.
 
 Positive net stock exposure does not prevent these losses. Estimated beta is
 mildly negative in both episodes, but market beta alone does not describe every

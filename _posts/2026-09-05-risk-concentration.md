@@ -16,24 +16,34 @@ github_repositories:
 
 <p class="article-summary">A portfolio can hold many small positions and still depend on a few shared risks. I add stock, sector and PCA risk caps to see whether I can contain that concentration without constantly changing the holdings. On this reused history, the existing optimizer already spreads modeled risk reasonably well. Moderate caps change little; tight ones start to dictate how I size the portfolio.</p>
 
-The [existing optimizer](/quants/2026/08/29/portfolio-optimization.html)
-controls total forecast volatility, gross exposure, beta, sector capital, and
-position size. Yet a portfolio can stay inside its 7% forecast-volatility budget
-while one stock, sector, or shared
-direction supplies a large fraction of that risk. The technology rally around
-AI made the distinction practical: several acceptable technology or
-semiconductor weights can still depend on the same underlying move. I wanted to
-know whether the existing limits left similar concentration in this strategy,
-and whether I could contain it without constantly changing the holdings.
+The technology rally around AI made me look again at what my portfolio limits
+actually control. Several technology or semiconductor positions can each look
+modest and still depend on the same underlying move. A long list of holdings
+doesn't settle how many risks I am taking.
 
-I keep the Ridge predictions, selected stocks, trading controls, execution, and
-5 bp charge on traded notional fixed. The comparison runs the complete strategy
+The [existing optimizer](/quants/2026/08/29/portfolio-optimization.html)
+already limits forecast volatility, gross exposure, beta, sector capital and
+position size. It can satisfy all of those limits, including its 7%
+forecast-volatility budget, while getting a large share of its risk from one
+stock, sector or shared direction. I wanted to know how often that happens
+here, and whether an extra limit could contain it without constantly changing
+the holdings.
+
+Just as in my other articles, I keep the Ridge predictions, selected stocks,
+trading controls, execution, and 5 bp charge on traded notional fixed.
+The comparison runs the complete strategy
 on three staggered rebalance schedules from September 1998 through May 2026. I report
 September 1998–December 2021 and January 2022–May 2026 separately. Both periods
 are exploratory: the later history has already informed this research programme,
 and I added some tighter thresholds after inspecting the first results.
 
 ## Measuring where risk sits
+
+I look at concentration in three ways. Stock contributions tell me whether a
+single name dominates; sector contributions group those names by industry.
+Principal components give me another view, based on how stocks move together.
+They can pick up shared risk that crosses the sector boundaries. In each case,
+I need the contribution as a share of the portfolio's total forecast variance.
 
 Let $$w$$ contain the signed portfolio weights, $$\Sigma$$ the current forecast
 covariance matrix, and
@@ -85,8 +95,10 @@ $$w_S^\top\Sigma w_S$$, answers a different question because it excludes the
 sector's covariance with everything else and does not add to total portfolio
 variance.
 
-These ratios make the hard caps non-convex because the denominator changes with
-the weights. I first solve the original optimizer, then use a bounded sequence
+There is a catch when I ask the optimizer to enforce these shares. Changing a
+weight changes both the contribution on top and the portfolio variance below
+it. The resulting hard caps are non-convex. I first solve the original
+optimizer, then use a bounded sequence
 of conservative local convex approximations. After every candidate, I recompute
 the exact shares from $$w^\top\Sigma w$$. Any candidate whose exact cap excess
 remains above $$10^{-6}$$ is rejected. Passing that check means the target meets
@@ -111,8 +123,9 @@ the forecast covariance model; several directions may share an economic theme.
 That combination of broad dispersion and occasional concentration is why I
 test caps as guardrails.
 
-Over the full sample, the uncapped eligible-universe control exceeds a 20%
-all-PC limit on only 0.69% of rebalances. At 10%, the frequency rises to 13.55%;
+At 20%, an all-PC cap would leave almost every rebalance alone: the uncapped
+eligible-universe control exceeds it on only 0.69% of rebalances over the full
+sample. At 10%, the frequency rises to 13.55%;
 at 7.5%, it is 30.20%. These frequencies ask how often the uncapped portfolio
 would break each limit. Table 1 instead counts corrections along the capped
 portfolio's own path in the later period. Looking only at the first ten
@@ -137,7 +150,7 @@ single rebalance correction can be much smaller.
   {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel comparison of how often PCA, sector, and stock risk caps intervene and how different the resulting target portfolios are from matched controls" version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Tighter limits move from occasional guardrails to sizing rules.</strong> Development covers September 1998–December 2021; the later period covers January 2022–May 2026. Points are schedule means and whiskers are the range across three rebalance schedules, not confidence intervals. Weight difference is the L1 distance—the sum of absolute same-date target-weight differences—between the independently evolving capped and matched-control portfolios. Filled markers are audited; hollow markers are provisional. Lines connect tested settings only. The gray references mark PCA 10% and Sector 20% as candidate thresholds, not optima.</p>
+<p class="figure-caption"><strong>Figure 1: Tighter limits move from occasional guardrails to sizing rules.</strong> Development: September 1998–December 2021; later: January 2022–May 2026. Points are means across three schedules; whiskers span their range. Weight difference is the target L1 distance from the independently run matched control, defined above. Filled markers are audited; hollow markers are provisional. Lines connect tested settings. Gray references mark the candidate limits PCA 10% and Sector 20%.</p>
 
 Figure 1 makes that distinction clear. Sector 20% changes targets
 fairly often but leaves them much closer to the control than Sector 15% does.
@@ -252,11 +265,12 @@ distance from its control. Sector 20% achieves its own limit with a larger but
 still moderate target difference. Sector 15% and Stock 2% are different: they
 act on nearly every target and behave more like sizing rules.
 
-I would monitor these concentrations first and keep PCA 10%, or a similarly
-moderate limit, available for cases where I want extra protection. A cap need
-not raise historical Sharpe to be useful, but I want to know what loss it might
-prevent. Lower concentration in the model leaves that question open, especially
-if the model itself misses the risk.
+I would start by monitoring these concentrations. PCA 10%, or a similarly
+moderate limit, is a plausible backstop when I want extra protection. Before
+using it routinely, though, I want to be able to explain what loss I am trying
+to prevent. I can accept a cap that adds no historical Sharpe if it protects
+against a risk I care about. Lower concentration in the model is a useful
+starting point for that decision, but the model may itself miss the risk.
 
 Concentration is also only one part of the question raised by the AI rally. PCA
 can reveal a shared direction without naming its economic source. The next step

@@ -20,11 +20,12 @@ reasonable on their own. Combining them is less straightforward. How much
 weight should I give to each, especially when several describe much the same
 thing?
 
-I use linear regression to learn those weights from history. It is simple
-enough that I can inspect what the model does with overlapping predictors.
-I then add a Ridge penalty to discourage large, offsetting coefficients. The
-test is whether that changes which stocks I hold and how the portfolio performs
-outside its training windows.
+Linear regression appeals to me here because I can let the data choose the
+weights and still inspect the combination. That doesn't make the overlap go
+away: the model can give large, opposing weights to very similar predictors.
+I compare ordinary least squares with Ridge, which penalizes large
+coefficients, and follow both through to the stocks they select and the
+portfolios they produce outside their training windows.
 
 ## Predictors and the ranking target
 
@@ -72,14 +73,16 @@ ranks. A positive coefficient rewards a high predictor rank, conditional on
 the other inputs; a negative coefficient reverses that preference.
 
 The awkward part is that related predictors can substitute for one another.
-For example, a score
-contribution of $2x_1-1.8x_2$ can be written as
-$0.2x_1+1.8(x_1-x_2)$. If the inputs are very similar, much of the common
-signal cancels and their small difference receives a large weight. That
-difference might contain useful information about the shape of a price trend,
-or it might amplify measurement noise and estimation error. Seeing opposite
-signs makes me want to inspect that difference before deciding the model is
-overfitting.
+Take two versions of a trend signal. A score contribution of
+$2x_1-1.8x_2$ can be written as $0.2x_1+1.8(x_1-x_2)$. If the two inputs were
+identical, the difference term would vanish and only their combined weight
+would matter. When they are merely similar, the model puts a small weight on
+what they share and a large weight on the gap between them.
+
+That gap might contain useful information about the shape of a price trend.
+It might also be mostly measurement noise. This is why I wouldn't diagnose
+overfitting just by spotting opposite signs in a coefficient table: I need to
+look at what the predictors are doing together.
 
 Ridge discourages large coefficients by adding a penalty:
 
@@ -133,19 +136,22 @@ a large normalized upward gap between its faster and slower price averages.
 <p class="figure-caption"><strong>Figure 1:</strong> Signed coefficients across refits for the selected Ridge model. The ten displayed predictors are selected by mean absolute weight; coefficient magnitude describes conditional model weight.</p>
 
 At the selected penalty, coefficient size and absolute movement between refits
-fall by roughly one third, yet the full ranking has a 0.991 correlation with
-OLS. About 14 of 150 selected names differ. Despite the coefficient changes,
-I still hold much the same stocks. Some of the smaller refit movements may simply
-come from starting with smaller coefficients, so I would want to perturb the
-inputs or training history before calling the model more stable.
+fall by roughly one third. Yet the full ranking has a 0.991 correlation with
+OLS, and only about 14 of 150 selected names differ. Ridge has changed the
+coefficients quite a bit while leaving me with much the same stocks.
 
-Related inputs give the model room to change coefficients while keeping much
-the same score. Selection adds another filter: if a stock stays on the same
-side of the cutoff, changing its score need not change whether I hold it. That
-helps explain why a visibly different set of weights can lead to much the same
-portfolio. I read the heatmap as a picture of the fitted combination; measuring
-each predictor's importance or contribution to return would take a separate
-test.
+The two-predictor example helps make sense of this. Related inputs give the
+model room to change their individual weights while keeping much the same
+score. Selection adds another filter: if a stock stays on the same side of the
+cutoff, a change in its score need not change whether I hold it. The portfolio
+can therefore be much less sensitive to regularization than the coefficient
+table suggests.
+
+I still want to be careful about calling those coefficients more stable.
+Starting with smaller weights can itself produce smaller absolute changes at
+the next refit. I would test modest changes to the inputs or training history
+before trusting individual predictor effects more. The heatmap shows how the
+model combines them; it doesn't measure their separate contributions to return.
 
 ## Ranking and portfolio results
 
@@ -200,11 +206,12 @@ lower volatility.
   </tbody>
 </table>
 
-Ridge changes these outcomes little. Development Sharpe is 1.00 versus 0.98
+The portfolio results give me little reason to make much of the OLS–Ridge
+difference. Development Sharpe is 1.00 versus 0.98
 for OLS. After 2021 it is 0.82 versus 0.87, with slightly lower return and
 higher volatility. Annual trading cost falls by only 0.02 percentage points
-in development and 0.03 later. Regularization provides little relief from the
-learned score's trading burden.
+in development and 0.03 later. If I want to reduce the learned score's trading
+bill, changing the regression penalty is doing very little for me.
 
 Figure 2 shows the paths behind the period averages. OLS and Ridge remain
 close, while both have shallower development drawdowns than the fixed score.

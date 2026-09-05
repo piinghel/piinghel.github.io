@@ -32,7 +32,8 @@ have enough history. I choose settings using data through December 2021.
 January 2022–May 2026 provides the later comparison, but that history has since
 informed feature, allocation, and beta-estimator choices. It is reused evidence.
 
-Every rule starts from the same Ridge ranking and trades the same three
+I use the Ridge ranking from the [preceding study](/quants/2025/02/09/multiple-linear-regression.html).
+Every allocation rule starts from that same ranking and trades the same three
 staggered schedules. A staggered schedule runs the full strategy
 from a different starting week. Each schedule rebalances every three weeks,
 uses the same next-close execution, and pays 5 basis points on traded notional.
@@ -105,6 +106,10 @@ rank or covariance can then trigger a replacement whose benefit is smaller
 than its trading cost. A slightly better portfolio on paper can be a worse
 trade in practice.
 
+The optimizer is doing what I asked: finding attractive weights for the stocks
+it is allowed to hold. I have to give it both permission to keep an acceptable
+holding and a reason to care about the trade required to replace it.
+
 Take a long stock whose rank slips from 60 to 110. The optimizer drops it
 because only the top 75 enter the new selection. The optimizer with trading
 controls may retain it while it remains inside the wider top 175. It starts from
@@ -173,9 +178,10 @@ three schedules; whiskers in the Sharpe panels show the observed schedule range.
 <p class="figure-caption"><strong>Figure 2: A broad return–turnover trade-off.</strong> Development-period net Sharpe and annual turnover. Points are schedule means; whiskers in the Sharpe panels span the observed schedules. Each group varies one setting while holding the other fixed; the chosen settings are highlighted.</p>
 
 From 1 through 3, net Sharpe stays between 1.42 and 1.43 while turnover keeps
-falling, from 34× to 27×. There is little to choose between these settings on
-Sharpe. I use 2.5 because it sits toward the lower-turnover end of that plateau;
-pushing to 5 gives back some return.
+falling, from 34× to 27×. I don't see a compelling reason to chase a particular
+Sharpe within that narrow range. Trading gives me a more useful way to choose:
+2.5 sits toward the lower-turnover end of the plateau, while pushing to 5 gives
+back some return.
 
 Rank cutoffs from 150 to 200 also give similar Sharpe, with modest turnover
 savings. I use 175 as a practical balance; moving to 200 saves less than
@@ -220,9 +226,9 @@ sector or style exposure requires a separate attribution study.
 ## The risk budget is an estimate
 
 The optimizer's 7% volatility budget applies to its forecast. Development
-volatility is about 8.4% for both joint rules, so I cannot treat the budget as
-a promise about realized risk. That gap is large enough to matter when deciding
-how much capital to put behind the strategy.
+volatility is about 8.4% for both joint rules. I asked for 7% and got something
+closer to 8.4% in practice. That gap matters when deciding how much capital to
+put behind the strategy, even if the optimizer has respected its constraint.
 
 The risk model lets individual volatility respond faster than stock
 correlations and shrinks estimated correlations toward zero. Even with those
