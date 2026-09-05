@@ -133,14 +133,16 @@ button { font: inherit; }
   color: var(--ink);
   margin-bottom: 2rem;
 }
-.post-content .figure-caption, .post-content .table-caption {
+.post-content .figure-caption, .post-content .table-caption, .research-table caption {
   margin: 0.65rem 0 1.8rem;
   font-family: var(--font-sans);
   font-size: 0.86rem;
   line-height: 1.55;
   color: var(--muted-ink);
 }
-.figure-caption strong, .table-caption strong { color: var(--ink); font-weight: 600; }
+.figure-caption strong, .table-caption strong, .research-table caption strong { color: var(--ink); font-weight: 600; }
+.research-table caption { caption-side: top; text-align: left; margin: 0; padding: 0 0 0.8rem; }
+.post-content .table-caption { margin-bottom: 0.8rem; }
 .article-toc { margin-top: 1.5rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--rule); font-family: var(--font-sans); }
 .article-toc[hidden] { display: none; }
 .article-toc-title { font-size: 0.76rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
@@ -175,6 +177,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table.settings-table th:first-child { width: 28%; }
 .research-table.settings-table td { text-align: left; }
 .research-table .period-break > * { border-top: 1px solid var(--rule); }
+.research-table .period-heading th { padding-top: 1rem; color: var(--muted-ink); font-size: 0.82rem; font-weight: 600; }
+.research-table .period-heading:not(:first-child) th { border-top: 1px solid var(--rule); }
 .research-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; margin: 1.6rem 0 0.5rem; }
 .research-table-scroll .research-table { min-width: 620px; }
 .research-table-scroll .control-table { min-width: 460px; }

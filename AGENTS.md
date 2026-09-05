@@ -2,9 +2,17 @@
 
 ## Project
 
-This is a Jekyll site for concise, technically serious research notes. Keep prose natural and direct: explain the implementation and evidence clearly, without marketing language or unnecessary abstraction.
+This is a Jekyll site for concise, technically serious research articles. Keep prose natural and direct: explain the research decision and evidence clearly, without marketing language or unnecessary abstraction.
 
 ## Editing rules
+
+- Recover the article's practical research question before rewriting. Keep
+  follow-up questions when a result motivates the next decision within that
+  same argument. Delete unsupported branches rather than filling an appendix.
+- Describe implementation only when it changes the research design, evidence
+  or interpretation. Keep material limitations once, where they matter.
+- Do not publish confidential sell-side reports, citations to them, Bloomberg
+  references, or licensed source data. Keep private research inputs local.
 
 - Let the first-person voice come from actual experiments and choices: what I
   tried, what I observed, and why I chose the next step. Use Max Halford and Rob
@@ -32,9 +40,10 @@ This is a Jekyll site for concise, technically serious research notes. Keep pros
 ## Figures
 
 - Use captions for interpretation; do not embed figure titles in images.
-- In the low-volatility article, Figure 3 uses the panel labels `Long gross`,
-  `Short gross`, and `Net exposure`. Figure 5 combines performance and drawdown.
-- Low-volatility Figure 6 is one 2-by-2 image: dot-com on the left and the
+- Use captions above tables and below figures. Keep numeric columns aligned,
+  define units and periods, and avoid repeating the same title inside an image.
+- The low-volatility performance figure combines performance and drawdown.
+- Its rally figure is one 2-by-2 image: dot-com on the left and the
   April 2025–May 2026 rally on the right, indexed growth above linked gross
   book contributions. Do not assign an AI or growth-factor cause without
   holdings-level attribution.

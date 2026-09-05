@@ -115,7 +115,9 @@ penalties gave little reason to expect a reliable performance advantage.
 All three scores enter the same portfolio rule: the top and bottom 75 stocks,
 inverse-volatility sizing with stock and book caps, three-week rebalancing,
 next-close execution, and 5 bp per dollar traded. Reported portfolio statistics
-are averaged across three starting-week schedules.
+are averaged across three starting-week schedules. Returns use arithmetic
+annualization and a zero cash rate for Sharpe. Two-way turnover counts all
+long- and short-side trades relative to strategy capital.
 
 ## What the model learns
 
@@ -152,6 +154,7 @@ OLS and Ridge have almost identical mean IC in both periods. The small
 development gain from Ridge disappears in the later period.
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
+  <caption><strong>Table 1: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
   <thead>
     <tr><th>Period and ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
@@ -165,8 +168,6 @@ development gain from Ridge disappears in the later period.
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 1:</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</p>
-
 The fixed score has the highest later-period mean IC, with more variable daily
 IC. Regression therefore does not uniformly improve ranking accuracy against
 this benchmark. IC covers the full cross-section; the portfolio trades its
@@ -178,33 +179,22 @@ and a shallower maximum drawdown. Extra trading consumes 0.77 percentage points
 of its 0.88-point gross-return advantage. Most of the higher Sharpe comes from
 lower volatility.
 
-<table class="research-table comparison-table period-metrics-table portfolio-card-table">
+<table class="research-table comparison-table portfolio-card-table">
+  <caption><strong>Table 2: Net performance and trading.</strong> Returns and volatility are annualized; turnover is measured per rebalance.</caption>
   <thead>
-    <tr><th>Period / metric</th><th>Fixed</th><th>OLS</th><th>Ridge <i>c</i> = 0.01</th></tr>
+    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th colspan="4">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Annualized return, gross</th><td>7.61%</td><td>8.49%</td><td>8.82%</td></tr>
-    <tr><th scope="row">Annualized return, net</th><td>6.92%</td><td>7.03%</td><td>7.38%</td></tr>
-    <tr><th scope="row">Annualized volatility</th><td>9.73%</td><td>7.15%</td><td>7.36%</td></tr>
-    <tr><th scope="row">Sharpe ratio</th><td>0.71</td><td>0.98</td><td>1.00</td></tr>
-    <tr><th scope="row">Maximum drawdown</th><td>−31.55%</td><td>−18.77%</td><td>−19.03%</td></tr>
-    <tr><th scope="row">Market beta</th><td>0.093</td><td>0.084</td><td>0.091</td></tr>
-    <tr><th scope="row">Two-way turnover per rebalance</th><td>78.78%</td><td>167.67%</td><td>165.72%</td></tr>
-    <tr><th scope="row">Annual trading cost</th><td>0.69 pp</td><td>1.46 pp</td><td>1.44 pp</td></tr>
-  <tr><th colspan="4">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Annualized return, gross</th><td>7.85%</td><td>8.84%</td><td>8.68%</td></tr>
-    <tr><th scope="row">Annualized return, net</th><td>7.24%</td><td>7.50%</td><td>7.37%</td></tr>
-    <tr><th scope="row">Annualized volatility</th><td>11.33%</td><td>8.64%</td><td>8.95%</td></tr>
-    <tr><th scope="row">Sharpe ratio</th><td>0.64</td><td>0.87</td><td>0.82</td></tr>
-    <tr><th scope="row">Maximum drawdown</th><td>−10.98%</td><td>−7.59%</td><td>−8.05%</td></tr>
-    <tr><th scope="row">Market beta</th><td>0.036</td><td>0.075</td><td>0.078</td></tr>
-    <tr><th scope="row">Two-way turnover per rebalance</th><td>69.70%</td><td>152.75%</td><td>149.61%</td></tr>
-    <tr><th scope="row">Annual trading cost</th><td>0.61 pp</td><td>1.34 pp</td><td>1.31 pp</td></tr>
+    <tr class="period-heading"><th colspan="6">Development · September 1998–December 2021</th></tr>
+    <tr><th scope="row">Fixed</th><td>6.92%</td><td>9.73%</td><td>0.71</td><td>−31.55%</td><td>78.8%</td></tr>
+    <tr><th scope="row">OLS</th><td>7.03%</td><td>7.15%</td><td>0.98</td><td>−18.77%</td><td>167.7%</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.38%</td><td>7.36%</td><td>1.00</td><td>−19.03%</td><td>165.7%</td></tr>
+    <tr class="period-heading"><th colspan="6">Later · January 2022–May 2026</th></tr>
+    <tr><th scope="row">Fixed</th><td>7.24%</td><td>11.33%</td><td>0.64</td><td>−10.98%</td><td>69.7%</td></tr>
+    <tr><th scope="row">OLS</th><td>7.50%</td><td>8.64%</td><td>0.87</td><td>−7.59%</td><td>152.8%</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.37%</td><td>8.95%</td><td>0.82</td><td>−8.05%</td><td>149.6%</td></tr>
   </tbody>
 </table>
-
-<p class="table-caption"><strong>Table 2:</strong> Means of three schedule-level portfolio statistics. Returns are annualized arithmetic means; volatility, Sharpe and drawdown use returns after 5 bp per dollar traded. Two-way turnover sums absolute long- and short-side trades relative to strategy capital at each rebalance. Annual trading cost is in percentage points of return.</p>
 
 Ridge changes these outcomes little. Development Sharpe is 1.00 versus 0.98
 for OLS. After 2021 it is 0.82 versus 0.87, with slightly lower return and
@@ -223,7 +213,7 @@ the defensive portfolio behaviour; this comparison does not separate them.
 
 <p class="figure-caption"><strong>Figure 2:</strong> Net growth of <span class="mathjax-ignore">$1</span> (top, log scale) and drawdown (bottom), after 5 bp per dollar traded. The 2022 boundary marks later, reused history.</p>
 
-## What Ridge adds
+## What the learned combination delivers
 
 Linear regression provides a workable way to combine this broad predictor set
 into a stock ranking. Its portfolio has lower risk than the small fixed score,
@@ -239,10 +229,9 @@ ultimately means that modest changes in inputs or training history leave useful
 rankings and manageable trading, which coefficient shrinkage alone cannot
 establish.
 
-The predictors remain concentrated in related price-based measures, and the
-later history has already participated in research. Those limits constrain
-claims about independent information and future performance. The flat trading
-charge also omits borrow, financing and market impact.
+Most predictors still come from prices, so expanding this set does not give
+me 144 independent sources of information. The flat trading charge also omits
+borrow, financing and market impact.
 
 ## Research notes
 
@@ -262,16 +251,6 @@ The original matched return and coefficient files are unavailable. The
 OLS–Ridge tables and figures retain the previously reported results and have
 not been independently reproduced in this revision.
 
-A separate check of the current model run found opposing weights on correlated
-predictors. Removing two examined difference components reduced Ridge's
-historical rank IC. In two examined refits, Ridge was also less sensitive than
-OLS to small input perturbations.
-These retrospective diagnostics support examining what the differences encode,
-rather than prohibiting opposing signs. They do not establish robustness to
-changes in training history or reproduce the portfolio comparison above.
-
-That check also found that the current relative-ATR predictor omits downward
-overnight gaps. Its definition needs correction or explicit reinterpretation,
-followed by a matched rerun, before drawing economic conclusions from its
-contrast with close-return volatility. The effect on the reported portfolio
-results remains unmeasured.
+The relative-range predictor in the reported model omits downward overnight
+gaps. Its economic interpretation and the effect of correcting it remain
+under review.

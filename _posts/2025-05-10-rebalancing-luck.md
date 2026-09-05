@@ -33,8 +33,11 @@ Russell 1000 membership. Each schedule uses next-close execution and pays
 ## Three sleeves
 
 I divide the capital equally between the three schedules. Each sleeve receives
-one third of the total, holds its own portfolio and continues to rebalance
-every three weeks. One sleeve trades each week:
+one third of the strategy notional, holds its own portfolio and continues to rebalance
+every three weeks. The backtest keeps that notional fixed; the chart compounds
+normalized daily P&L into a performance index. One sleeve trades each week:
+
+<p class="table-caption"><strong>Table 1: Three staggered sleeves.</strong> Sleeve A, B and C each receive one third of capital. The combined strategy trades weekly; each sleeve retains its three-week cycle.</p>
 
 |  | Week 1 | Week 2 | Week 3 | Week 4 |
 |---|---|---|---|---|
@@ -42,24 +45,22 @@ every three weeks. One sleeve trades each week:
 | Three sleeves | Rebalance A | Rebalance B | Rebalance C | Rebalance A |
 {: .research-table .schedule-table }
 
-<p class="table-caption"><strong>Table 1:</strong> Sleeve A, B and C each receive one third of capital. The combined strategy trades weekly; each sleeve retains its three-week cycle.</p>
-
 This spreads capital over all three starting weeks without forecasting which
 one will work best. It preserves the holding cycle within each sleeve while
 making the overall portfolio less dependent on one calendar.
 
 ## The combined portfolio
 
-Figure 1 compares the three schedules with their equal-funded mixture. Each
-panel starts at one, so the later-period differences are visible separately
-from the long development history. The mixture participates in the schedules'
-shared gains and losses while spreading their timing differences.
+Figure 1 shows the three schedules and their equal-funded mixture from 2022
+onward. The starting week makes a visible difference: the same strategy follows
+three distinct paths. Combining the schedules spreads that timing risk while
+retaining their shared gains and losses.
 
 <div class="research-figure rebalancing-figure">
-  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" version="1" alt="Net growth of one dollar for three rebalance schedules and their equal-funded mixture, shown separately for development and later history" %}
+  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" version="2" alt="Net growth of one dollar from 2022 to May 2026 for three rebalance schedules and their equal-funded mixture" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Compounded net daily P&amp;L per unit of fixed notional, with a log scale in each panel. The bold line combines daily returns before compounding. Development runs from 22 September 1998 through December 2021; later history runs from January 2022 through 27 May 2026 and has already informed research choices. Panel scales differ.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Net growth from January 2022 through 27 May 2026, on a log scale. The bold line compounds the average daily return of the three schedules. This later period has already informed research choices.</p>
 
 For daily net P&L per unit of fixed notional $r_{j,t}$, the combined series is
 
@@ -79,6 +80,7 @@ Net geometric return changes little, while maximum drawdown also improves
 relative to the mean standalone statistic.
 
 <table class="research-table comparison-table">
+  <caption><strong>Table 2: Combining the three schedules.</strong> Mean standalone statistics versus statistics recomputed from the combined daily returns on matched dates. Annualization uses 252 sessions and a zero cash rate. Each standalone maximum drawdown belongs to that schedule's own worst episode.</caption>
   <thead><tr><th>Period / construction</th><th>Gross geometric return</th><th>Net geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
     <tr><th scope="row">Development · mean standalone</th><td>13.91%</td><td>12.31%</td><td>8.40%</td><td>1.43</td><td>−18.06%</td></tr>
@@ -87,8 +89,6 @@ relative to the mean standalone statistic.
     <tr><th scope="row">Later · three-sleeve mixture</th><td>9.36%</td><td>8.02%</td><td>8.83%</td><td>0.92</td><td>−8.83%</td></tr>
   </tbody>
 </table>
-
-<p class="table-caption"><strong>Table 2:</strong> Mean standalone statistics versus statistics recomputed from the combined daily returns on matched dates. Annualization uses 252 sessions and a zero cash rate. Each standalone maximum drawdown belongs to that schedule's own worst episode.</p>
 
 The simulations size against fixed notional and let weights drift between
 trades. Compounding the normalized P&L gives a performance index; a funded

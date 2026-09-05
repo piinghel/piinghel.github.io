@@ -61,6 +61,12 @@ the published MLR SVGs remain the retained assets until that source bundle is
 restored. The figure code can still be reviewed, but a clean full regeneration
 cannot currently be claimed.
 
+The September layout repair to the retained performance SVGs removes the
+unused future-date margin and moves model labels below the panels. All 52
+line groups in each theme were checked unchanged; this is a presentation
+repair, not a regeneration of the underlying return series. The renderer now
+uses the final observation as its right limit for future regenerated figures.
+
 The size-choice diagnostic uses the retained daily factor scores:
 
 ```bash
@@ -83,8 +89,9 @@ NumPy from `requirements-figures.txt`:
 python3 scripts/render_timing_performance.py
 ```
 
-It shows the three starting weeks and their equal-notional mixture, compounded
-separately within development and later history. The mixture column is checked
+It shows the three starting weeks and their equal-notional mixture from January
+2022 onward, when the calendar differences are most visible. The development
+comparison remains in the article's metrics table. The mixture column is checked
 against the mean of the three schedule returns before export. These 6,963 matched
 dates come from `outputs/review/timing/timing_daily.parquet` in the systematic
 equity research project. Its source manifest records the schedule-return inputs.
@@ -93,7 +100,11 @@ The older combination-dispersion figure remains reproducible with
 No licensed security-level data are published by this site.
 
 The low-volatility article was fully reproduced in September 2026 with retained
-daily outputs in its research project. The optimizer figures were regenerated
+daily outputs in its research project. The latest run uses commit `0f8acbe`,
+which values exits and retained positions from the execution-date price panel
+when calculating turnover. Gross returns and non-cost diagnostics reconcile
+with the previous run; Table 1, terminal wealth and the net performance figure
+use the corrected costs. The optimizer figures were regenerated
 from the active main-worktree evidence. Older experimental branches and their
 reports are historical, not interchangeable with the current article's runs.
 

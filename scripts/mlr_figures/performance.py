@@ -118,6 +118,7 @@ def plot_performance(
             wealth[model].values,
             color=spec.model_colors[model],
             linewidth=width,
+            label=spec.model_labels[model],
         )
         drawdown_ax.plot(
             drawdowns[model].dates,
@@ -134,21 +135,6 @@ def plot_performance(
             alpha=0.035,
             linewidth=0,
             zorder=1,
-        )
-        offset = {
-            "fixed_factor_benchmark": -10,
-            "ols_c0": 0,
-            "selected_c0p01": 10,
-        }[model]
-        wealth_ax.annotate(
-            spec.model_labels[model],
-            (wealth[model].dates[-1], wealth[model].values[-1]),
-            xytext=(7, offset),
-            textcoords="offset points",
-            color=spec.model_colors[model],
-            fontsize=style.legend_size,
-            fontweight=600 if model == "selected_c0p01" else 400,
-            va="center",
         )
     wealth_ax.set_yscale("log")
     panel_title_color = "#000000" if not style.output_suffix else style.ink
@@ -174,12 +160,23 @@ def plot_performance(
     )
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    right = wealth[spec.model_order[0]].dates[-1] + timedelta(days=520)
-    drawdown_ax.set_xlim(wealth[spec.model_order[0]].dates[0], right)
+    drawdown_ax.set_xlim(
+        min(item.dates[0] for item in wealth.values()),
+        max(item.dates[-1] for item in wealth.values()),
+    )
+    fig.legend(
+        *wealth_ax.get_legend_handles_labels(),
+        loc="lower center",
+        ncol=3,
+        frameon=False,
+        labelcolor=style.ink,
+        fontsize=style.legend_size,
+        bbox_to_anchor=(0.53, 0.0),
+    )
     fig.subplots_adjust(
         left=0.10,
-        right=0.87,
+        right=0.98,
         top=0.98,
-        bottom=0.08,
+        bottom=0.13,
     )
     save_figure(fig, output_dir, "performance-and-drawdowns", style)

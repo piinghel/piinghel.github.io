@@ -12,8 +12,11 @@
       region.className = "research-table-scroll";
       region.tabIndex = 0;
       region.setAttribute("role", "region");
-      const caption = table.nextElementSibling;
-      region.setAttribute("aria-label", caption && caption.classList.contains("table-caption")
+      const caption = table.caption ||
+        (table.previousElementSibling?.classList.contains("table-caption")
+          ? table.previousElementSibling : table.nextElementSibling);
+      region.setAttribute("aria-label", caption &&
+        (caption.tagName === "CAPTION" || caption.classList.contains("table-caption"))
         ? caption.textContent.trim() : "Research table");
       table.before(region);
       region.appendChild(table);

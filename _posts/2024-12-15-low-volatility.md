@@ -89,25 +89,24 @@ Turnover also falls. The result makes the sizing decision clear under these
 backtest assumptions.
 
 <table class="research-table comparison-table portfolio-card-table">
+  <caption><strong>Table 1: Risk and return under the two sizing rules.</strong> Results for 12 July 1995–27 May 2026. Net return is geometric; returns, volatility and two-way turnover are annualized. Net results charge 5 bp on traded notional; turnover sums absolute executed trades relative to strategy capital. Sharpe uses a zero cash rate.</caption>
   <thead>
-    <tr><th>Rule</th><th>Arithmetic return, after costs</th><th>Geometric return, after costs</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
+    <tr><th>Rule</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Equal-weight</th><td>2.4%</td><td>−3.1%</td><td>33.4%</td><td>0.07</td><td>−87.1%</td><td>14.4×</td></tr>
-    <tr><th scope="row"><strong>Inverse-volatility</strong></th><td><strong>7.1%</strong></td><td><strong>6.9%</strong></td><td><strong>9.8%</strong></td><td><strong>0.73</strong></td><td><strong>−38.0%</strong></td><td><strong>10.4×</strong></td></tr>
+    <tr><th scope="row">Equal-weight</th><td>−3.3%</td><td>33.4%</td><td>0.07</td><td>−87.8%</td><td>18.8×</td></tr>
+    <tr><th scope="row"><strong>Inverse-volatility</strong></th><td><strong>6.8%</strong></td><td><strong>9.8%</strong></td><td><strong>0.72</strong></td><td><strong>−38.0%</strong></td><td><strong>12.4×</strong></td></tr>
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 1:</strong> Results for 12 July 1995–27 May 2026. Returns, volatility, Sharpe and two-way turnover are annualized. Net results charge 5 bp on traded notional; turnover sums absolute executed trades relative to strategy capital. Sharpe uses a zero cash rate.</p>
-
 Figure 2 shows the paths behind those averages. Equal weighting ends at
-38 cents per starting dollar despite its positive arithmetic return.
-Inverse-volatility sizing reaches 7.78 dollars, although it still suffers
+35 cents per starting dollar despite its positive arithmetic return.
+Inverse-volatility sizing reaches 7.54 dollars, although it still suffers
 a 38% maximum drawdown. Repeated large moves erode the equal-weight portfolio's
 compounded value.
 
 <div class="low-vol-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="13" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="14" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2:</strong> Compounded daily P&amp;L per unit of strategy notional (top, log scale) and drawdown (bottom), July 1995–May 2026, after the 5 bp trading charge.</p>
@@ -130,15 +129,15 @@ the lower panels locate the return in the long and short books.
 
 <p class="figure-caption"><strong>Figure 3:</strong> Before-cost indexed growth for the inverse-volatility portfolio and Russell 1000 (top), with linked long- and short-book contributions in percentage points (bottom). The left column covers the dot-com rally and reversal; the right covers April 2025–May 2026. The vertical line marks the dot-com portfolio trough.</p>
 
-During the dot-com rally, the market gains about 52% while the portfolio loses
+From 8 October 1998 to 9 March 2000, the market gains about 52% while the portfolio loses
 38% after costs. The short book contributes −27.1 percentage points before
 costs, versus −10.4 from the longs. The later reversal brings the portfolio
 back toward its starting value.
 
-The recent episode has the same loss direction without a reversal in the
-available sample. The market gains about 39%, while the portfolio loses 13%.
-Longs contribute +4.2 points and shorts −16.3 before costs. Table A2 gives
-the exact windows and contributions.
+From 3 April 2025 to 27 May 2026, the market gains about 39% while the portfolio
+loses 13%. Longs contribute +4.2 points and shorts −16.3 before costs.
+This episode has the same loss direction, with no reversal in the available
+sample. Both comparisons measure returns from the first date's close.
 
 Positive net stock exposure does not prevent these losses. Estimated beta is
 mildly negative in both episodes, but market beta alone does not describe every
@@ -148,67 +147,25 @@ what those positions have in common.
 
 ## From individual weights to joint construction
 
-Inverse-volatility sizing corrects much of the imbalance created by allocating
-equal capital to books selected for opposite volatility characteristics.
-It is the clear choice in this comparison. The research lesson is what remains:
-scaling each stock separately does not explicitly control shared exposures,
-market beta or the losses caused when short positions rally together.
+Equal capital gave the high-volatility short book far more risk than the long
+book. Inverse-volatility sizing corrected much of that imbalance, partly by
+committing less capital to the shorts. But coordinated short-stock rallies
+remained the main source of the two losses examined here. Getting the
+individual position sizes under control did not control their shared risk.
 
-The next allocation decision is therefore how to size the holdings jointly,
-using covariance and explicit portfolio limits. That addresses a risk the
-individual sizing rule never measures. It would still need to be judged by
-realized risk, drawdowns and returns after trading costs.
+That is where I would take the next experiment: size the holdings jointly,
+using covariance and explicit portfolio limits, then check whether those
+choices reduce realized drawdowns without giving away the return after costs.
 
 ## Research notes
 
-This is one historical comparison on a single three-week calendar. The flat
-trading charge omits borrow fees, financing and market impact; expensive or
-unavailable borrow could materially change short-book implementation.
+This is one historical comparison on a single three-week calendar. The 5 bp
+trading charge excludes borrow, financing and market impact. Quantities stay
+fixed between trades, and the performance index compounds daily P&L measured
+against fixed strategy notional, with no interest on unallocated cash.
 
-The simulator holds quantities fixed between trades and measures daily P&L
-against fixed strategy notional. Compounding that series produces the displayed
-performance index. A funded account replay would also need reinvestment and
-financing assumptions; unallocated cash earns no interest here.
-
-Signal volatility and strategy P&L use vendor-adjusted price changes. The beta
-diagnostic uses the vendor's separate total-return series, aligned to the market
-calendar. Requiring beta estimates keeps that comparison on the same stocks.
-
-Missing prices are carried forward, and an exit from the data closes at the
-last observed price. Missing terminal losses or buyout proceeds can bias either
-book's result, depending on the event. An event-specific terminal-return check
-would address this limitation.
-
-<table class="research-table settings-table">
-  <thead>
-    <tr><th>Component</th><th>Exact setting</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">Ranking</th><td>21-, 63-, and 126-day annualized volatility; score bounded at 5%–200%</td></tr>
-    <tr><th scope="row">Selection</th><td>Decile 1 long; decile 10 short</td></tr>
-    <tr><th scope="row">Sizing volatility</th><td>60 days; 5% floor; 20% reference</td></tr>
-    <tr><th scope="row">Position and book caps</th><td>4% per stock; 100% gross per book</td></tr>
-    <tr><th scope="row">Beta</th><td>252-day window; 126 observations required; stock beta clipped to [−4, 4]</td></tr>
-  </tbody>
-</table>
-
-<p class="table-caption"><strong>Table A1:</strong> Signal, sizing and beta settings. Ranking and sizing use different volatility windows.</p>
-
-<table class="research-table comparison-table portfolio-card-table">
-  <thead>
-    <tr><th>Episode metric</th><th>Dot-com rally</th><th>2025–2026 rally</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">Window</th><td>8 Oct 1998–9 Mar 2000</td><td>3 Apr 2025–27 May 2026</td></tr>
-    <tr><th scope="row">Russell 1000 return</th><td>52.2%</td><td>38.5%</td></tr>
-    <tr><th scope="row">Portfolio return, after costs</th><td>−38.0%</td><td>−12.6%</td></tr>
-    <tr><th scope="row">Average net stock exposure</th><td>72.0%</td><td>68.6%</td></tr>
-    <tr><th scope="row">Average estimated beta</th><td>−0.07</td><td>−0.12</td></tr>
-    <tr><th scope="row">Realized beta</th><td>−0.06</td><td>−0.11</td></tr>
-    <tr><th scope="row">Long-book contribution, before costs</th><td>−10.4 pp</td><td>+4.2 pp</td></tr>
-    <tr><th scope="row">Short-book contribution, before costs</th><td>−27.1 pp</td><td>−16.3 pp</td></tr>
-    <tr><th scope="row">Compounded trading-cost drag</th><td>−0.4 pp</td><td>−0.5 pp</td></tr>
-  </tbody>
-</table>
-
-<p class="table-caption"><strong>Table A2:</strong> Exact rally windows and book contributions for Figure 3. Each window starts at the close of its first date. Before-cost contributions sum to gross compounded return; the trading-cost row bridges gross and net return.</p>
+The signal and portfolio returns use vendor-adjusted prices; the beta
+diagnostic uses the vendor's total-return series. Missing prices carry
+forward, and stocks leaving the data close at their last observed price.
+That treatment can miss terminal losses or buyout proceeds, so the results
+remain sensitive to how those events are recorded.
