@@ -25,9 +25,6 @@ sass:
   load_paths:
     - assets/css
 
-classes: wide
-
-
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
@@ -38,9 +35,6 @@ header_pages:
 header_links:
   - label: Resources
     url: /quants/2025/04/20/reading-and-tools.html
-
-minima:
-  skin: classic
 
 # Add MathJax support
 markdown: kramdown

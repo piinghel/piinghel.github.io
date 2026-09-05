@@ -8,9 +8,58 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from check_site import check_site, figure_dimensions
 from mlr_figures.support import load_daily_series, load_selected_coefficients
+from render_timing_figure import load_metrics, render
 
 
 class FigureInputTests(unittest.TestCase):
+    def test_timing_chart_rejects_missing_combinations_and_clipped_values(self):
+        source = (
+            Path(__file__).resolve().parents[1] / "assets/tranching/timing_metrics.csv"
+        )
+        rows = load_metrics(source)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "metrics.csv"
+            with path.open("w", newline="", encoding="utf-8") as output:
+                writer = csv.DictWriter(output, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows[:-1])
+            with self.assertRaisesRegex(ValueError, "seven combinations"):
+                load_metrics(path)
+        rows[0]["volatility"] = "100"
+        with self.assertRaisesRegex(ValueError, "outside chart axes"):
+            render(rows, dark=False)
+
+    def test_size_check_preserves_selection_for_monotone_scores(self):
+        import datetime
+
+        import polars as pl
+        from check_benchmark_size import summarize_size_choices
+
+        factors = [
+            "defensive",
+            "momentum",
+            "short_positioning",
+            "size",
+            "return_consistency",
+        ]
+        frame = pl.DataFrame(
+            {
+                "date": [datetime.date(2020, 1, 2)] * 160,
+                "asset_id_bb_global": [f"stock-{i:03d}" for i in range(160)],
+                **{name: [i / 160 for i in range(160)] for name in factors},
+            }
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "scores.parquet"
+            frame.write_parquet(path)
+            result = summarize_size_choices(path)
+            self.assertEqual(result["replaced_names"].to_list(), [0.0, 0.0])
+            for correlation in result["rank_correlation"]:
+                self.assertAlmostEqual(correlation, 1.0)
+            pl.concat([frame, frame.head(1)]).write_parquet(path)
+            with self.assertRaisesRegex(ValueError, "duplicate"):
+                summarize_size_choices(path)
+
     def test_series_sort_and_validate(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "series.csv"
@@ -65,7 +114,7 @@ class FigureInputTests(unittest.TestCase):
 
     def test_published_svgs_have_resolved_vector_references(self):
         dimensions = figure_dimensions(Path(__file__).resolve().parents[1])
-        self.assertIn("/assets/tranching/timing-paths", dimensions)
+        self.assertIn("/assets/tranching/timing-dispersion", dimensions)
 
 
 if __name__ == "__main__":

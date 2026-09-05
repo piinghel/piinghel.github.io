@@ -47,12 +47,10 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   --research-root ../projects/factor_combination
 ```
 
-The five-factor correlation map can be regenerated independently from the
-retained development matrix:
+The factor correlation comparison can be regenerated from the included matrix:
 
 ```bash
 python3 scripts/render_multiple_linear_regression_figures.py \
-  --research-root ../projects/factor_combination \
   --factor-correlation-only
 ```
 
@@ -63,14 +61,63 @@ the published MLR SVGs remain the retained assets until that source bundle is
 restored. The figure code can still be reviewed, but a clean full regeneration
 cannot currently be claimed.
 
-The timing article now uses the frozen constrained Ridge portfolio, not the
-unreproducible archived LightGBM example. Its two figures and downloadable
-aggregate metrics come from `portfolio_optimization.rebalance_timing` in the
-[portfolio-optimization project](https://github.com/piinghel/portfolio-optimization).
-The source manifest contains the hashes of the three schedule-return inputs.
+The size-choice diagnostic uses the retained daily factor scores:
+
+```bash
+python3 scripts/check_benchmark_size.py \
+  --scores ../projects/factor_combination/outputs/review/five_factor_scores.parquet \
+  --output assets/multiple-linear-regression/benchmark-size-sensitivity.csv
+```
+
+It compares same-date Spearman rankings and membership of the top/bottom 75
+candidate sets. Removing size reweights four factors to 25%; reversing size
+retains five 20% weights. Selection ties follow the stable security identifier.
+The public CSV contains aggregate diagnostics; the local input contains
+security-level scores. Portfolio returns require a separate execution replay.
+
+The timing figure can be reproduced from the included aggregate metrics, with
+Python's standard library only:
+
+```bash
+python3 scripts/render_timing_figure.py
+```
+
+It shows every one-, two-, and three-week combination for the constrained Ridge
+strategy. The daily-return aggregation lives in the private portfolio research
+project; the source manifest records its three schedule-return inputs. The
+earlier LightGBM example and overlapping Ridge path chart remain in Git history.
 No licensed security-level data are published by this site.
 
 The low-volatility article was fully reproduced in September 2026 with retained
 daily outputs in its research project. The optimizer figures were regenerated
 from the active main-worktree evidence. Older experimental branches and their
 reports are historical, not interchangeable with the current article's runs.
+
+The optimizer's downloadable CSVs are copies of
+`article_period_comparison.csv` and `article_parameter_sensitivity.csv` from
+the active research worktree at `5ed6a51`. Table 2 uses B2 and B3 from the first
+file, the zero trade-coefficient row for buffer only, and holding cutoff 75 for
+penalty only from the second. All four rows use development through 2021.
+
+## Research repositories
+
+| Material | Location | Reproduction scope |
+| --- | --- | --- |
+| Blog, timing chart, correlation chart, size diagnostic | This public repository | Charts from included aggregate CSVs; size diagnostic requires local daily scores |
+| Low-volatility backtest | [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) | Licensed input export and shared P&L package required |
+| Optimizer figures, timing returns, Ridge estimator | [systematic-equity-research](https://github.com/piinghel/systematic-equity-research) | Included portfolio-level evidence; independently runnable |
+| Full portfolio and timing backtests | Private `portfolio-optimization` repository | Shared research packages and licensed inputs required |
+| Factor construction | Private `factor-combination` repository | Standalone factors retained; matched OLS–Ridge bundle missing |
+
+Source recovery for the matched OLS–Ridge comparison covered project folders,
+worktrees, research caches, local Git history, and available GitHub project
+trees in September 2026. Optimizer returns use the selected Ridge strategy and
+cannot substitute for the missing paired OLS results.
+
+## Site maintenance
+
+`_sass/site.scss` owns layout, typography, tables, and theme tokens;
+`_sass/_figures.scss` owns figure sizing. Dense figures and tables scroll within
+the article on narrow screens. Keep one shared composition for both themes.
+The retired Minima overrides, unused social icons, signal-flow diagram, and
+duplicate turnover chart have been removed with their callers.

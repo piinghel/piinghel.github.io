@@ -10,7 +10,6 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
-from matplotlib.patches import Patch
 
 from .support import (
     FigureSpec,
@@ -59,100 +58,53 @@ def plot_factor_correlation(
             "correlation matrix must be finite, symmetric, and unit diagonal"
         )
 
-    values = np.full((4, 4), np.nan)
-    for row_index, row_factor in enumerate(factor_order[1:]):
-        for column_index, column_factor in enumerate(factor_order[:-1]):
-            if column_index <= row_index:
-                values[row_index, column_index] = float(
-                    lookup[row_factor][column_factor]
-                )
-
-    color_map = LinearSegmentedColormap.from_list(
-        "factor_correlation", (style.negative, style.white, style.positive)
+    pairs = sorted(
+        [
+            (float(matrix[i, j]), factor_order[i], factor_order[j])
+            for i in range(5)
+            for j in range(i + 1, 5)
+        ],
+        reverse=True,
     )
-    color_map.set_bad(style.white)
-    norm = TwoSlopeNorm(vmin=-0.3, vcenter=0.0, vmax=0.3)
-    if np.nanmax(np.abs(values)) > 0.3:
-        raise ValueError("factor correlations exceed the declared color scale")
-    fig, ax = plt.subplots(figsize=(6.8, 4.7), facecolor=style.white)
-    image = ax.pcolormesh(
-        np.arange(5) - 0.5, np.arange(5) - 0.5, values, cmap=color_map, norm=norm
+    if any(abs(value) > 1 for value, _, _ in pairs):
+        raise ValueError("correlations must lie within [-1, 1]")
+    fig, ax = plt.subplots(figsize=(8.6, 4.6), facecolor=style.white)
+    labels = [
+        f"{factor_labels[left]} / {factor_labels[right]}".replace("\n", " ")
+        for _, left, right in pairs
+    ]
+    values = np.array([value for value, _, _ in pairs])
+    positions = np.arange(len(pairs))
+    colors = [style.positive if value >= 0 else style.negative for value in values]
+    ax.hlines(positions, 0, values, colors=style.grid, linewidth=1.5)
+    ax.scatter(values, positions, c=colors, s=40, zorder=3)
+    ax.axvline(0, color=style.muted, linewidth=0.7)
+    ax.set_yticks(positions, labels, fontsize=11, color=style.ink)
+    ax.set_ylim(len(pairs) - 0.5, -0.5)
+    ax.set_xlim(
+        min(-0.1, float(values.min()) - 0.04), max(0.35, float(values.max()) + 0.06)
     )
-    ax.set_aspect("equal")
-    ax.set_xlim(-0.5, 3.5)
-    ax.set_ylim(3.5, -0.5)
-
-    ax.set_xticks(
-        np.arange(4),
-        [factor_labels[factor] for factor in factor_order[:-1]],
+    ax.set_xlabel(
+        "Mean Spearman rank correlation", fontsize=11, color=style.ink, labelpad=12
     )
-    ax.set_yticks(
-        np.arange(4),
-        [factor_labels[factor] for factor in factor_order[1:]],
-    )
-    ax.tick_params(
-        axis="x",
-        which="major",
-        top=True,
-        bottom=False,
-        labeltop=True,
-        labelbottom=False,
-        length=0,
-        pad=8,
-        colors=style.ink,
-        labelsize=style.tick_label_size,
-        labelrotation=30,
-    )
-    for label in ax.get_xticklabels():
-        label.set_horizontalalignment("left")
-        label.set_rotation_mode("anchor")
-    ax.tick_params(
-        axis="y",
-        which="major",
-        length=0,
-        pad=8,
-        colors=style.ink,
-        labelsize=style.tick_label_size,
-    )
+    ax.tick_params(axis="x", labelsize=10.5, colors=style.muted, length=0)
+    ax.tick_params(axis="y", length=0, pad=12)
+    ax.xaxis.grid(True, color=style.grid, linewidth=0.6)
+    ax.set_axisbelow(True)
     for spine in ax.spines.values():
         spine.set_visible(False)
-
-    for row_index in range(4):
-        for column_index in range(row_index + 1):
-            value = values[row_index, column_index]
-            text_color = style.ink
-            if abs(value) >= 0.22:
-                text_color = "#0D1117" if style.output_suffix else "#FFFFFF"
-            ax.text(
-                column_index,
-                row_index,
-                f"{value:.2f}",
-                ha="center",
-                va="center",
-                color=text_color,
-                fontsize=style.annotation_size,
-                fontweight=600,
-            )
-
-    colorbar = fig.colorbar(
-        image,
-        ax=ax,
-        orientation="horizontal",
-        fraction=0.07,
-        pad=0.16,
-        shrink=0.72,
-        ticks=(-0.3, 0.0, 0.3),
-    )
-    colorbar.outline.set_visible(False)
-    if colorbar.solids is not None:
-        colorbar.solids.set_rasterized(False)
-        colorbar.solids.set_edgecolor("face")
-    colorbar.ax.tick_params(
-        length=0,
-        colors=style.muted,
-        labelsize=style.tick_label_size,
-    )
-    fig.subplots_adjust(left=0.25, right=0.98, top=0.84, bottom=0.18)
+    for y, value in enumerate(values):
+        ax.annotate(
+            f"{value:.2f}",
+            (value, y),
+            xytext=(8, 0),
+            textcoords="offset points",
+            ha="left",
+            va="center",
+            fontsize=10.5,
+            color=style.ink,
+        )
+    fig.subplots_adjust(left=0.43, right=0.97, top=0.98, bottom=0.16)
     save_figure(fig, output_dir, "factor-correlation", style)
 
 
@@ -259,85 +211,6 @@ def plot_alpha_sensitivity(
         wspace=0.25,
     )
     save_figure(fig, output_dir, "alpha-sensitivity", style)
-
-
-def plot_turnover_costs(
-    rows: list[dict[str, str]],
-    output_dir: Path,
-    style: FigureStyle,
-) -> None:
-    model_keys = (
-        "fixed_factor_benchmark",
-        "alpha_0_ols",
-        "alpha_scaled_c0p01_selected",
-    )
-    labels = ("Fixed weights", "OLS", "Ridge c = 0.01")
-    colors = (style.benchmark, style.ols, style.ridge)
-    periods = ("development_1995_2021", "later_2022_2026")
-    lookup = {(row["model"], row["period"]): row for row in rows}
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.5), facecolor=style.white)
-    axes = np.asarray(axes).reshape(-1)
-    x = np.arange(len(model_keys))
-    width = 0.34
-    for ax, column, title in (
-        (axes[0], "turnover_per_rebalance_pct", "Turnover per rebalance (%)"),
-        (
-            axes[1],
-            "annual_cost_drag_pct_points",
-            "Annual trading cost at 5 bp (pp)",
-        ),
-    ):
-        style_axis(ax, style)
-        for period_index, period in enumerate(periods):
-            offset = (period_index - 0.5) * width
-            values = [float(lookup[(model, period)][column]) for model in model_keys]
-            bars = ax.bar(
-                x + offset,
-                values,
-                width,
-                color=colors,
-                alpha=1.0 if period_index == 0 else 0.48,
-            )
-            if period_index == 1:
-                for bar in bars:
-                    bar.set_hatch("///")
-                    bar.set_edgecolor(style.white)
-        ax.set_title(
-            title,
-            loc="left",
-            color=style.ink,
-            fontsize=style.panel_title_size,
-            fontweight=500,
-        )
-        ax.set_xticks(x, labels)
-    legend_handles = (
-        Patch(facecolor=style.muted, edgecolor="none", label="Development"),
-        Patch(
-            facecolor=style.muted,
-            edgecolor=style.white,
-            alpha=0.48,
-            hatch="///",
-            label="Later period",
-        ),
-    )
-    fig.legend(
-        handles=legend_handles,
-        frameon=False,
-        fontsize=style.legend_size,
-        labelcolor=style.ink,
-        ncol=2,
-        loc="upper center",
-        bbox_to_anchor=(0.54, 1.0),
-    )
-    fig.subplots_adjust(
-        left=0.10,
-        right=0.98,
-        top=0.82,
-        bottom=0.16,
-        hspace=0.0,
-        wspace=0.30,
-    )
-    save_figure(fig, output_dir, "turnover-and-costs", style)
 
 
 def plot_selected_coefficients(

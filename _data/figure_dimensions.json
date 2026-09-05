@@ -23,10 +23,6 @@
     "width": 629,
     "height": 386
   },
-  "/assets/brand/blog-mark": {
-    "width": 32,
-    "height": 32
-  },
   "/assets/multiple-linear-regression/alpha-sensitivity": {
     "width": 598,
     "height": 224
@@ -36,8 +32,8 @@
     "height": 355
   },
   "/assets/multiple-linear-regression/factor-correlation": {
-    "width": 290,
-    "height": 291
+    "width": 561,
+    "height": 313
   },
   "/assets/multiple-linear-regression/performance-and-drawdowns": {
     "width": 697,
@@ -50,10 +46,6 @@
   "/assets/multiple-linear-regression/top-coefficients": {
     "width": 621,
     "height": 308
-  },
-  "/assets/multiple-linear-regression/turnover-and-costs": {
-    "width": 672,
-    "height": 286
   },
   "/assets/portfolio-optimization/parameter-sensitivity": {
     "width": 1200,
@@ -72,11 +64,7 @@
     "height": 520
   },
   "/assets/tranching/timing-dispersion": {
-    "width": 1200,
-    "height": 510
-  },
-  "/assets/tranching/timing-paths": {
-    "width": 1200,
-    "height": 510
+    "width": 1120,
+    "height": 880
   }
 }

@@ -1,0 +1,36 @@
+// One composition per figure, with a local scroll region on small screens.
+.post-content .research-figure,
+.post-content .low-vol-figure {
+  width: 100%;
+  margin: 2rem auto 0.5rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+.theme-svg-figure,
+.theme-svg-figure img { display: block; width: 100%; margin: 0; }
+.theme-svg-figure--dark { display: none; }
+html[data-theme="dark"] {
+  .theme-svg-figure--light { display: none; }
+  .theme-svg-figure--dark { display: block; }
+}
+.post-content .decile-profile-figure { max-width: 662px; }
+.walk-forward-drawing { color: var(--ink); }
+.walk-forward-svg { display: block; width: 100%; height: auto; }
+.walk-forward-hand { fill: currentColor; font-family: var(--font-sans); font-size: 18px; font-weight: 600; }
+.walk-forward-time { fill: var(--muted-ink); font-size: 20px; }
+.walk-forward-fit { font-size: 21px; }
+.walk-forward-rule, .walk-forward-track, .walk-forward-training,
+.walk-forward-buffer, .walk-forward-test, .walk-forward-hatch-line { vector-effect: non-scaling-stroke; }
+.walk-forward-rule { fill: none; stroke: var(--rule); stroke-width: 1.4; }
+.walk-forward-track { fill: currentColor; fill-opacity: 0.045; stroke: var(--rule); }
+.walk-forward-training { fill: currentColor; fill-opacity: 0.64; stroke: currentColor; }
+.walk-forward-buffer { fill: var(--page-surface); stroke: currentColor; stroke-dasharray: 2 2; }
+.walk-forward-test { fill: url(#walk-forward-hatch-desktop); stroke: var(--muted-ink); }
+.walk-forward-hatch-line { stroke: var(--muted-ink); stroke-width: 2; }
+@media (max-width: 768px) {
+  .research-figure picture, .low-vol-figure picture, .walk-forward-drawing { min-width: 760px; }
+  .factor-correlation-figure picture { min-width: 640px; }
+  .decile-profile-figure picture { min-width: 540px; }
+  .naive-leg-risk-figure picture { min-width: 640px; }
+}

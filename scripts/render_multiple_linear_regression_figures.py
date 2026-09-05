@@ -11,7 +11,6 @@ from mlr_figures.diagnostics import (
     plot_factor_correlation,
     plot_selected_coefficients,
     plot_selected_portfolio_tilts,
-    plot_turnover_costs,
 )
 from mlr_figures.performance import plot_ic, plot_performance
 from mlr_figures.support import (
@@ -36,8 +35,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--research-root",
         type=Path,
-        required=True,
         help="Path to the factor_combination research project.",
+    )
+    parser.add_argument(
+        "--correlation-source",
+        type=Path,
+        help="Explicit matrix CSV for the correlation-only renderer.",
     )
     parser.add_argument(
         "--output-dir",
@@ -48,18 +51,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--factor-correlation-only",
         action="store_true",
-        help="Render only the five-factor development correlation map.",
+        help="Render only the five-factor development correlation comparison.",
     )
     return parser.parse_args()
 
 
 def render_factor_correlation(
-    research_root: Path,
+    source: Path,
     output_dir: Path,
     style: FigureStyle,
 ) -> None:
-    review_dir = research_root.resolve() / "outputs" / "review"
-    rows = read_rows(review_dir / "five_factor_rank_correlation_matrix_development.csv")
+    rows = read_rows(source)
     with plt.rc_context(
         {
             "font.family": "DejaVu Sans",
@@ -103,13 +105,14 @@ def render_figures(
         review_dir,
         alpha_models=spec.alpha_models,
     )
-    period_metrics = read_rows(
-        review_dir / "multiple_linear_period_portfolio_metrics.csv"
-    )
     selected_coefficients = load_selected_coefficients(review_dir)
     selected_portfolio_tilts = load_selected_portfolio_tilts(review_dir)
     # Load every required source before changing any published output.
-    render_factor_correlation(research_root, output_dir, style)
+    render_factor_correlation(
+        review_dir / "five_factor_rank_correlation_matrix_development.csv",
+        output_dir,
+        style,
+    )
 
     with plt.rc_context(
         {
@@ -130,23 +133,27 @@ def render_figures(
             style,
             spec,
         )
-        plot_turnover_costs(period_metrics, output_dir, style)
 
 
 def main() -> None:
     args = parse_args()
     if args.factor_correlation_only:
+        source = (
+            args.correlation_source or default_output_dir() / "factor-correlations.csv"
+        )
         render_factor_correlation(
-            args.research_root,
+            source,
             args.output_dir,
             FigureStyle(),
         )
         render_factor_correlation(
-            args.research_root,
+            source,
             args.output_dir,
             dark_figure_style(),
         )
         return
+    if args.research_root is None:
+        raise SystemExit("--research-root is required for the full figure set")
     render_figures(args.research_root, args.output_dir, FigureStyle())
     render_figures(args.research_root, args.output_dir, dark_figure_style())
 

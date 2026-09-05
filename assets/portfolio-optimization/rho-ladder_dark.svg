@@ -99,7 +99,7 @@
 <circle cx="1099.7" cy="229.3" r="4" fill="#FBBF24"/>
 <circle cx="1145.0" cy="155.2" r="4" fill="#FBBF24"/>
 <text x="53.0" y="418.0" fill="#F3F4F6" font-size="24" font-weight="650" text-anchor="start">Annual turnover</text>
-<text x="53.0" y="442.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="start">Purchases + sales (× capital)</text>
+<text x="53.0" y="442.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="start">Two-way turnover (× capital)</text>
 <rect x="242.9" y="457.0" width="135.9" height="226.0" fill="#203D31"/>
 <line x1="107.0" y1="631.6" x2="560.0" y2="631.6" stroke="#3B4250" stroke-width="1"/>
 <text x="97.0" y="636.6" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">30</text>

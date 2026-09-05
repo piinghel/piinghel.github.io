@@ -62,20 +62,30 @@ layout: base
     </div>
   </div>
 
-  <nav class="post-navigation">
-    {%- if page.previous -%}
+  {%- unless page.navigation == false -%}
+  {%- assign previous_note = page.previous -%}
+  {%- assign next_note = page.next -%}
+  {%- if page.series_previous -%}
+    {%- assign previous_note = site.posts | where: "url", page.series_previous | first -%}
+  {%- endif -%}
+  {%- if page.series_next -%}
+    {%- assign next_note = site.posts | where: "url", page.series_next | first -%}
+  {%- endif -%}
+  <nav class="post-navigation" aria-label="Related research notes">
+    {%- if previous_note -%}
       <div class="post-nav-prev">
         <span class="post-nav-label">Previous</span>
-        <a href="{{ page.previous.url | relative_url }}">{{ page.previous.title | escape }}</a>
+        <a href="{{ previous_note.url | relative_url }}">{{ previous_note.title | escape }}</a>
       </div>
     {%- endif -%}
-    {%- if page.next -%}
+    {%- if next_note and page.series_end != true -%}
       <div class="post-nav-next">
         <span class="post-nav-label">Next</span>
-        <a href="{{ page.next.url | relative_url }}">{{ page.next.title | escape }}</a>
+        <a href="{{ next_note.url | relative_url }}">{{ next_note.title | escape }}</a>
       </div>
     {%- endif -%}
   </nav>
+  {%- endunless -%}
 
   {%- if site.disqus.shortname -%}
     {%- include disqus_comments.html -%}

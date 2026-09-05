@@ -24,7 +24,7 @@ I use its constrained Ridge portfolio with trading controls, split equally
 across the three starting weeks. The [timing
 article](/quants/2025/05/10/rebalancing-luck.html) explains that mixture. The
 later sample runs from 3 January 2022 to 27 May 2026 and has already been reused
-during research. Nothing here turns it into fresh validation.
+during research, so this analysis uses a period that has participated in model selection.
 
 For daily P&L per unit of fixed strategy notional,
 

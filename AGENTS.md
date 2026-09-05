@@ -6,6 +6,20 @@ This is a Jekyll site for concise, technically serious research notes. Keep pros
 
 ## Editing rules
 
+- Let the first-person voice come from actual experiments and choices: what I
+  tried, what I observed, and why I chose the next step. Use Max Halford and Rob
+  Carver as broad references for conversational technical writing; avoid forced
+  anecdotes, jokes, and academic scaffolding. Keep Resources mostly links.
+- Write for a systematic-equity reader: use "two-way turnover", "traded
+  notional", and other normal domain terms. Define the convention once.
+- Use short, natural headings and introduce each practical problem before its
+  equation. Avoid formulaic process language and the word "fresh" in prose.
+- Keep revision logs, archive searches, hashes, and renderer details in project
+  documentation. Article source notes should be brief and useful to the reader.
+- Describe what measures show and which assumptions they use. Replace repeated
+  negative contrasts with direct definitions, such as observed ranges across
+  schedules. Preserve material limitations through concrete scope statements.
+
 - Inspect the current article, assets, and git state before editing.
 - Use `apply_patch` for source edits and keep changes narrowly scoped.
 - Never stage, modify, revert, or delete `.DS_Store` files.

@@ -3,6 +3,8 @@ layout: base
 ---
 
 <div class="home">
+  <h1 class="home-title">Systematic equity research</h1>
+  <p class="home-intro">Notes on stock signals, portfolio risk, and the cost of turning forecasts into positions.</p>
   {% if site.paginate %}
     {% assign posts = paginator.posts %}
   {% else %}
@@ -14,17 +16,20 @@ layout: base
     <ul class="post-list">
       {%- for post in posts -%}
       <li>
-        <h3>
+        <h2>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}
           </a>
-        </h3>
+        </h2>
         <div class="post-list-details">
-          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+          {%- unless post.show_date == false -%}
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+          {%- endunless -%}
           {%- for category in post.categories limit: 2 -%}
             <span class="post-topic">{{ category }}</span>
           {%- endfor -%}
         </div>
+        {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}
         {%- endif -%}
