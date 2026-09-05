@@ -38,23 +38,26 @@ have not been rerun with its correction.
 ## Three sleeves
 
 Each sleeve receives one third of strategy notional, holds its own portfolio
-and continues to rebalance every three weeks. The backtest keeps that notional
-fixed and lets weights drift between trades. I combine daily normalized P&L
-across sleeves and compound that series into the displayed performance index.
-A funded account replay would also need reinvestment, financing and borrow
-assumptions. One sleeve trades each week:
+and continues to rebalance every three weeks. One sleeve trades each week:
 
-<p class="table-caption"><strong>Table 1: Three staggered sleeves.</strong> Sleeve A, B and C each receive one third of strategy notional. The combined strategy trades weekly; each sleeve retains its three-week cycle.</p>
-
-|  | Week 1 | Week 2 | Week 3 | Week 4 |
-|---|---|---|---|---|
-| Single schedule | Rebalance all | — | — | Rebalance all |
-| Three sleeves | Rebalance A | Rebalance B | Rebalance C | Rebalance A |
-{: .research-table .schedule-table }
+<table class="research-table sleeve-schedule">
+  <caption><strong>Table 1: Two rotations over six weeks.</strong> W1–W6 denote weeks; ● marks a rebalance and — means hold.</caption>
+  <thead><tr><th>Sleeve</th><th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>W5</th><th>W6</th></tr></thead>
+  <tbody>
+    <tr class="sleeve-a"><th scope="row">A <small>⅓ notional</small></th><td class="rebalance"><span role="img" aria-label="Rebalance">●</span></td><td>—</td><td>—</td><td class="rebalance"><span role="img" aria-label="Rebalance">●</span></td><td>—</td><td>—</td></tr>
+    <tr class="sleeve-b"><th scope="row">B <small>⅓ notional</small></th><td>—</td><td class="rebalance"><span role="img" aria-label="Rebalance">●</span></td><td>—</td><td>—</td><td class="rebalance"><span role="img" aria-label="Rebalance">●</span></td><td>—</td></tr>
+    <tr class="sleeve-c"><th scope="row">C <small>⅓ notional</small></th><td>—</td><td>—</td><td class="rebalance"><span role="img" aria-label="Rebalance">●</span></td><td>—</td><td>—</td><td class="rebalance"><span role="img" aria-label="Rebalance">●</span></td></tr>
+  </tbody>
+</table>
 
 This spreads notional over all three starting weeks without forecasting which
 one will work best. It preserves the holding cycle within each sleeve while
 making the overall portfolio less dependent on one calendar.
+
+The backtest keeps strategy notional fixed and lets weights drift between
+trades. I combine daily normalized P&L across sleeves and compound that series
+into the displayed performance index. A funded account replay would also need
+reinvestment, financing and borrow assumptions.
 
 ## The combined portfolio
 
@@ -63,11 +66,11 @@ onward. The starting week makes a visible difference: the same strategy follows
 three distinct paths. Combining the schedules spreads that timing risk while
 retaining their shared gains and losses.
 
-<div class="research-figure rebalancing-figure">
-  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" version="2" alt="Net performance index from 2022 to May 2026 for three rebalance schedules and their three-sleeve mixture" %}
+<div class="research-figure rebalancing-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" mobile="/assets/tranching/schedule-performance_mobile" version="3" alt="Net performance index from 2022 to May 2026 for Sleeves A, B and C and their three-sleeve mixture" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Net growth from January 2022 through 27 May 2026, on a log scale. The bold line compounds the average daily return of the three schedules. This later period has already informed research choices.</p>
+<p class="figure-caption"><strong>Figure 1: Combining starting weeks reduces schedule dependence.</strong> Net growth index, January 2022–27 May 2026, on a log scale. The bold line compounds average daily P&amp;L. Paths retain their own volatilities; Table 2 compares risk as well as return. This later period has informed research choices.</p>
 
 For daily net P&L per unit of fixed notional $r_{j,t}$, the combined series is
 
@@ -87,13 +90,15 @@ Net geometric return changes little, while maximum drawdown also improves
 relative to the mean standalone statistic.
 
 <table class="research-table comparison-table">
-  <caption><strong>Table 2: Combining the three schedules.</strong> Mean standalone statistics versus statistics recomputed from the combined daily returns on matched dates. Annualization uses 252 sessions and a zero cash rate. Each standalone maximum drawdown belongs to that schedule's own worst episode.</caption>
-  <thead><tr><th>Period / construction</th><th>Gross geometric return</th><th>Net geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
+  <caption><strong>Table 2: Combining the three schedules.</strong> Mean standalone statistics versus the combined daily series on matched dates. Net return is geometric, after 5 bp trading costs; annualization uses 252 sessions and Sharpe a zero cash rate. Drawdowns refer to each construction's own worst episode.</caption>
+  <thead><tr><th>Construction</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
-    <tr><th scope="row">Development · mean standalone</th><td>13.91%</td><td>12.31%</td><td>8.40%</td><td>1.43</td><td>−18.06%</td></tr>
-    <tr><th scope="row">Development · three-sleeve mixture</th><td>13.97%</td><td>12.37%</td><td>7.72%</td><td>1.55</td><td>−15.53%</td></tr>
-    <tr><th scope="row">Later · mean standalone</th><td>9.33%</td><td>7.99%</td><td>9.32%</td><td>0.87</td><td>−9.05%</td></tr>
-    <tr><th scope="row">Later · three-sleeve mixture</th><td>9.36%</td><td>8.02%</td><td>8.83%</td><td>0.92</td><td>−8.83%</td></tr>
+    <tr class="period-heading"><th colspan="5">Development · September 1998–December 2021</th></tr>
+    <tr><th scope="row">Mean standalone</th><td>12.31%</td><td>8.40%</td><td>1.43</td><td>−18.06%</td></tr>
+    <tr class="selected-rule"><th scope="row">Three-sleeve mixture</th><td>12.37%</td><td>7.72%</td><td>1.55</td><td>−15.53%</td></tr>
+    <tr class="period-heading"><th colspan="5">Later · January 2022–May 2026</th></tr>
+    <tr><th scope="row">Mean standalone</th><td>7.99%</td><td>9.32%</td><td>0.87</td><td>−9.05%</td></tr>
+    <tr class="selected-rule"><th scope="row">Three-sleeve mixture</th><td>8.02%</td><td>8.83%</td><td>0.92</td><td>−8.83%</td></tr>
   </tbody>
 </table>
 

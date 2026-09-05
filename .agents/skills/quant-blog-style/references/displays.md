@@ -29,6 +29,14 @@ Comparable models receive similar prominence; a designated reference may be
 thinner but remains readable. Use solid/dashed lines when two models nearly
 overlap. Keep the time axis common across vertically aligned panels.
 
+Check whether compared strategies take different amounts of risk. State that
+growth paths retain their actual exposures/volatilities, and point to the
+nearby volatility and risk-adjusted metrics. A higher endpoint alone does not
+establish a better strategy. Do not silently rescale paths to equal volatility:
+that changes the experiment and needs an explicit definition and authorization.
+Keep this caution proportional to the actual difference, rather than adding a
+generic warning to every chart.
+
 Drawdowns normally use thin lines. If a fill helps, use a light gray reference
 fill or one lightly filled primary series. Avoid several overlapping filled
 areas. Include the initial index level in peak/drawdown calculations; changing

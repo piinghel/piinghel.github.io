@@ -21,9 +21,9 @@ how much of each should I hold? Scaling by individual volatility is a useful
 start, but several apparently modest positions can share the same risk.
 
 I want to know whether sizing the stocks jointly makes better use of the
-ranking, and whether that benefit survives trading costs. The first optimizer
-improves development performance but trades more. That result leads to the next
-test: let it consider what the portfolio already owns before replacing stocks.
+ranking, and whether that benefit survives trading costs. I compare joint
+sizing with individual volatility scaling, then let the optimizer consider
+what the portfolio already owns before replacing stocks.
 
 ## Three allocation rules
 
@@ -37,11 +37,11 @@ staggered schedules. A staggered schedule runs the full strategy
 from a different starting week. Each schedule rebalances every three weeks,
 uses the same next-close execution, and pays 5 basis points on traded notional.
 
-- The **volatility-scaled rule** maps rank to a signal weight, scales each stock
+- **Volatility-scaled** maps rank to a signal weight, scales each stock
   by its own volatility, and applies caps.
-- The **optimizer** takes the same selected stocks and sizes them together under
+- **Optimizer** takes the same selected stocks and sizes them together under
   portfolio constraints.
-- The **optimizer with trading controls** solves the same problem, but it may
+- **Optimizer + trading controls** solves the same problem, but it may
   keep existing holdings from a wider rank range and penalizes changes in its
   objective.
 
@@ -75,25 +75,28 @@ gross return while removing much of the extra trading.
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 1: Joint sizing and trading costs.</strong> September 1998–December 2021, means of three schedule-level metrics. Returns are geometric and annualized; volatility is annualized. Net results charge 5 bp on traded notional. Drawdowns are reported as positive loss magnitudes.</caption>
   <thead>
-    <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown loss</th><th>Turnover</th></tr>
+    <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Sharpe</th><th>Drawdown loss</th><th>Annual turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">B1 · Vol-scaled rule</th><td>10.58%</td><td>8.92%</td><td>7.92%</td><td>1.12</td><td>19.63%</td><td>30.27×</td></tr>
-    <tr><th scope="row">B2 · Optimizer</th><td>14.00%</td><td>11.60%</td><td>8.41%</td><td>1.35</td><td>19.77%</td><td>42.52×</td></tr>
-    <tr><th scope="row"><strong>B3 · Optimizer + trading controls</strong></th><td><strong>13.91%</strong></td><td><strong>12.32%</strong></td><td><strong>8.40%</strong></td><td><strong>1.43</strong></td><td><strong>18.06%</strong></td><td><strong>28.19×</strong></td></tr>
+    <tr><th scope="row">Volatility-scaled</th><td>10.58%</td><td>8.92%</td><td>7.92%</td><td>1.12</td><td>19.63%</td><td>30.3×</td></tr>
+    <tr><th scope="row">Optimizer</th><td>14.00%</td><td>11.60%</td><td>8.41%</td><td>1.35</td><td>19.77%</td><td>42.5×</td></tr>
+    <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>13.91%</td><td>12.32%</td><td>8.40%</td><td>1.43</td><td>18.06%</td><td>28.2×</td></tr>
   </tbody>
 </table>
 
 Figure 1 gives the path behind the averages. The optimizer finishes above the
 volatility-scaled rule. Adding the trading controls finishes highest and loses
 less in its worst drawdown. Its lead opens mainly around 2000 and 2021 rather
-than building at a steady rate.
+than building at a steady rate. These are portfolios at their actual risk
+levels: annualized volatility is 7.92% for volatility scaling, 8.41% for the
+optimizer and 8.40% with trading controls. The higher paths therefore need to
+be read alongside volatility and Sharpe in Table 1.
 
-<div class="research-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" alt="Development-period net growth and drawdowns for the volatility-scaled rule, optimizer, and optimizer with trading controls" version="12" %}
+<div class="research-figure performance-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for the volatility-scaled rule, optimizer, and optimizer with trading controls" version="13" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Net growth of <span class="mathjax-ignore">$1</span> on a logarithmic scale (top) and drawdown in percent (bottom) after trading costs, September 1998–December 2021. Each path averages three separately compounded staggered schedules.</p>
+<p class="figure-caption"><strong>Figure 1: Development-period results.</strong> Net growth index (log scale) and drawdown after trading costs, September 1998–December 2021. Paths average three separately compounded schedules and retain each rule's own risk level; cumulative performance alone is not a risk-adjusted comparison.</p>
 
 ## Keeping existing holdings
 
@@ -142,13 +145,13 @@ more useful: the optimizer can retain an acceptable incumbent instead of
 paying to replace it.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 2: What the trading controls contribute.</strong> Development-period means across three schedules, September 1998–December 2021. Returns are annualized geometric returns. The buffer uses rank 175 and the penalty uses <i>c</i> = 2.5 × 10<sup>−4</sup>. Other allocation settings are the same. <a href="/assets/portfolio-optimization/parameter-sensitivity.csv">Control results</a> · <a href="/assets/portfolio-optimization/period-comparison.csv">Baseline results</a>.</caption>
+  <caption><strong>Table 2: What the trading controls contribute.</strong> Development-period means across three schedules, September 1998–December 2021. Returns are geometric and annualized, with net results charging 5 bp per dollar traded. The buffer uses rank 175 and the penalty uses <i>c</i> = 2.5 × 10<sup>−4</sup>; other allocation settings are the same.</caption>
   <thead><tr><th>Trading rule</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Annual turnover</th></tr></thead>
   <tbody>
-    <tr><th scope="row">Neither control</th><td>14.00%</td><td>11.60%</td><td>1.35</td><td>42.52×</td></tr>
-    <tr><th scope="row">Rank buffer only</th><td>14.07%</td><td>11.84%</td><td>1.37</td><td>39.54×</td></tr>
-    <tr><th scope="row">Trade penalty only</th><td>13.95%</td><td>11.95%</td><td>1.39</td><td>35.35×</td></tr>
-    <tr><th scope="row"><strong>Buffer + penalty</strong></th><td><strong>13.91%</strong></td><td><strong>12.32%</strong></td><td><strong>1.43</strong></td><td><strong>28.19×</strong></td></tr>
+    <tr><th scope="row">Neither control</th><td>14.00%</td><td>11.60%</td><td>1.35</td><td>42.5×</td></tr>
+    <tr><th scope="row">Rank buffer only</th><td>14.07%</td><td>11.84%</td><td>1.37</td><td>39.5×</td></tr>
+    <tr><th scope="row">Trade penalty only</th><td>13.95%</td><td>11.95%</td><td>1.39</td><td>35.4×</td></tr>
+    <tr class="selected-rule"><th scope="row">Buffer + penalty</th><td>13.91%</td><td>12.32%</td><td>1.43</td><td>28.2×</td></tr>
   </tbody>
 </table>
 
@@ -158,27 +161,26 @@ That is why I use the two controls together. They change which stocks remain
 eligible and how much I hold, so the difference includes changes in positions
 as well as trading costs.
 
-Figure 2 checks both choices on the development period. The left column varies
-the trade coefficient while holding the rank cutoff at 175. The right varies
+Figure 2 checks both choices on the development period. The trade-coefficient group varies
+the penalty while holding the rank cutoff at 175. The rank-cutoff group varies
 the cutoff while holding $$c=2.5\times10^{-4}$$. The coefficient axis is in
 units of $$10^{-4}$$, so the plotted value 2.5 denotes that setting. Points are the mean of the
-three schedules and vertical lines show their range.
+three schedules; whiskers show the observed schedule range.
 
-<div class="research-figure parameter-sensitivity-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" alt="Development-period net Sharpe and annualized turnover for six trade coefficients and five holding-rank cutoffs" version="6" %}
+<div class="research-figure parameter-sensitivity-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover for six trade coefficients and five holding-rank cutoffs" version="7" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Local development-period sensitivity of net Sharpe (top) and annualized turnover (bottom). The selected settings are highlighted. Each column changes one setting and holds the other at its selected value; vertical bars span the three staggered schedules.</p>
+<p class="figure-caption"><strong>Figure 2: A broad return–turnover trade-off.</strong> Development-period net Sharpe and annual turnover. Points are schedule means; whiskers span observed schedules, not confidence intervals. Each group varies one setting while holding the other fixed; the chosen settings are highlighted.</p>
 
 From 1 through 3, net Sharpe stays between 1.42 and 1.43 while turnover keeps
 falling, from 34× to 27×. The data therefore identify a broad trade-off rather
 than one best coefficient. I use 2.5 because it sits toward the lower-turnover
 end of that plateau; pushing to 5 gives back some return.
 
-The rank cutoff is also locally stable. Moving from 150 to 175 raises Sharpe
-from 1.41 to 1.43 and lowers turnover by about one turn. Moving on to 200 saves
-less than another turn, leaves Sharpe at 1.42, and raises mean maximum drawdown
-from 18.1% to 19.2%. I use 175 as a practical balance.
+Rank cutoffs from 150 to 200 also give similar Sharpe, with modest turnover
+savings. I use 175 as a practical balance; moving to 200 saves less than
+another turn and raises mean maximum drawdown from 18.1% to 19.2%.
 
 A 5 bp charge on 28.2 times annual turnover costs about 1.41% of strategy capital
 per year on an arithmetic basis. The gap between gross and net geometric
@@ -194,12 +196,12 @@ trading more. The trading controls change the result: net return is 8.0% versus
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 3: The allocation rules in later history.</strong> January 2022–May 2026, a later period revisited during research. Schedule averaging, geometric-return, drawdown, and cost conventions match Table 1.</caption>
   <thead>
-    <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown loss</th><th>Turnover</th></tr>
+    <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Sharpe</th><th>Drawdown loss</th><th>Annual turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">B1 · Vol-scaled rule</th><td>8.92%</td><td>7.38%</td><td>9.73%</td><td>0.78</td><td>8.65%</td><td>28.35×</td></tr>
-    <tr><th scope="row">B2 · Optimizer</th><td>8.63%</td><td>6.47%</td><td>9.39%</td><td>0.71</td><td>9.41%</td><td>39.97×</td></tr>
-    <tr><th scope="row"><strong>B3 · Optimizer + trading controls</strong></th><td><strong>9.33%</strong></td><td><strong>7.99%</strong></td><td><strong>9.32%</strong></td><td><strong>0.87</strong></td><td><strong>9.05%</strong></td><td><strong>24.62×</strong></td></tr>
+    <tr><th scope="row">Volatility-scaled</th><td>8.92%</td><td>7.38%</td><td>9.73%</td><td>0.78</td><td>8.65%</td><td>28.4×</td></tr>
+    <tr><th scope="row">Optimizer</th><td>8.63%</td><td>6.47%</td><td>9.39%</td><td>0.71</td><td>9.41%</td><td>40.0×</td></tr>
+    <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>9.33%</td><td>7.99%</td><td>9.32%</td><td>0.87</td><td>9.05%</td><td>24.6×</td></tr>
   </tbody>
 </table>
 

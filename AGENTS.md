@@ -49,7 +49,9 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   holdings-level attribution.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
 - Publish reproducible light and dark SVG variants from one shared figure
-  composition, and keep the same table structure at every viewport width.
+  composition per viewport. Stack episode groups and other multi-panel charts
+  on phones when needed for readable labels; preserve scales and definitions.
+  Keep the same table structure at every viewport width.
 
 ## Verification and delivery
 

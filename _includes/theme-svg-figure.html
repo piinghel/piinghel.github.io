@@ -1,7 +1,10 @@
 {% assign dimensions = site.data.figure_dimensions[include.base] %}
+{% assign mobile_dimensions = site.data.figure_dimensions[include.mobile] %}
 <picture class="theme-svg-figure theme-svg-figure--light">
+  {% if include.mobile %}<source media="(max-width: 600px)" srcset="{{ include.mobile }}.svg?v={{ include.version }}" width="{{ mobile_dimensions.width }}" height="{{ mobile_dimensions.height }}">{% endif %}
   <img src="{{ include.base }}.svg?v={{ include.version }}" alt="{{ include.alt | escape }}"{% if dimensions %} width="{{ dimensions.width }}" height="{{ dimensions.height }}"{% endif %} loading="lazy" decoding="async">
 </picture>
 <picture class="theme-svg-figure theme-svg-figure--dark">
+  {% if include.mobile %}<source media="(max-width: 600px)" srcset="{{ include.mobile }}_dark.svg?v={{ include.version }}" width="{{ mobile_dimensions.width }}" height="{{ mobile_dimensions.height }}">{% endif %}
   <img src="{{ include.base }}_dark.svg?v={{ include.version }}" alt="{{ include.alt | escape }}"{% if dimensions %} width="{{ dimensions.width }}" height="{{ dimensions.height }}"{% endif %} loading="lazy" decoding="async">
 </picture>

@@ -11,8 +11,9 @@ bundle install
 bundle exec jekyll serve
 ```
 
-Research figures use one shared layout at every viewport width, with light and
-dark SVG variants. Their generating code lives in `scripts/` or the
+Research figures use matching light/dark SVG variants. Ordinary line charts
+have phone-specific layouts where needed; dense figures remain scrollable.
+Their generating code lives in `scripts/` or the
 corresponding project under `projects/`.
 
 ## Checks and drafts
@@ -112,7 +113,7 @@ use the corrected costs. The optimizer figures were regenerated
 from the active main-worktree evidence. Older experimental branches and their
 reports are historical, not interchangeable with the current article's runs.
 
-The optimizer's downloadable CSVs are copies of
+The optimizer's retained supporting CSVs are copies of
 `article_period_comparison.csv` and `article_parameter_sensitivity.csv` from
 the active research worktree at `5ed6a51`. Table 2 uses B2 and B3 from the first
 file, the zero trade-coefficient row for buffer only, and holding cutoff 75 for

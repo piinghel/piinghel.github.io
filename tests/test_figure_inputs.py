@@ -116,6 +116,20 @@ class FigureInputTests(unittest.TestCase):
         dimensions = figure_dimensions(Path(__file__).resolve().parents[1])
         self.assertIn("/assets/tranching/timing-dispersion", dimensions)
 
+    def test_local_link_checker_checks_mobile_picture_sources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "index.html").write_text(
+                '<picture><source media="(max-width:600px)" '
+                'srcset="/mobile.svg?v=1 1x, /mobile-dark.svg 2x"></picture>',
+                encoding="utf-8",
+            )
+            errors = check_site(root)
+            self.assertEqual(len(errors), 2)
+            (root / "mobile.svg").touch()
+            (root / "mobile-dark.svg").touch()
+            self.assertEqual(check_site(root), [])
+
 
 if __name__ == "__main__":
     unittest.main()

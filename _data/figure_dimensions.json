@@ -11,13 +11,25 @@
     "width": 629,
     "height": 184
   },
+  "/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile": {
+    "width": 328,
+    "height": 328
+  },
   "/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns": {
     "width": 694,
     "height": 498
   },
+  "/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile": {
+    "width": 327,
+    "height": 440
+  },
   "/assets/2024-12-15-low-volatility-factor/regime_comparison": {
     "width": 836,
     "height": 567
+  },
+  "/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile": {
+    "width": 368,
+    "height": 785
   },
   "/assets/2024-12-15-low-volatility-factor/target_exposures": {
     "width": 629,
@@ -37,11 +49,19 @@
   },
   "/assets/portfolio-optimization/parameter-sensitivity": {
     "width": 1200,
-    "height": 720
+    "height": 660
+  },
+  "/assets/portfolio-optimization/parameter-sensitivity_mobile": {
+    "width": 480,
+    "height": 1240
   },
   "/assets/portfolio-optimization/performance-and-drawdowns": {
     "width": 1200,
     "height": 780
+  },
+  "/assets/portfolio-optimization/performance-and-drawdowns_mobile": {
+    "width": 480,
+    "height": 680
   },
   "/assets/portfolio-optimization/rho-ladder": {
     "width": 1200,
@@ -52,7 +72,11 @@
     "height": 520
   },
   "/assets/tranching/schedule-performance": {
-    "width": 806,
+    "width": 612,
+    "height": 346
+  },
+  "/assets/tranching/schedule-performance_mobile": {
+    "width": 346,
     "height": 346
   },
   "/assets/tranching/timing-dispersion": {

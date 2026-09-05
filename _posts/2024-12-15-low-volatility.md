@@ -42,11 +42,11 @@ have more than three times the long book's standalone volatility and almost
 three times its beta. Shorting them reverses that market exposure, leaving
 the combined portfolio with realized beta of −1.12.
 
-<div class="low-vol-figure naive-leg-risk-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="10" %}
+<div class="low-vol-figure naive-leg-risk-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" mobile="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Annualized realized volatility (left) and average point-in-time beta (right) for the equal-weight stable-stock long book and volatile-stock short book, July 1995–May 2026.</p>
+<p class="figure-caption"><strong>Figure 1: Equal capital gives the volatile book more risk.</strong> Annualized realized volatility and average point-in-time beta, July 1995–May 2026. The high-volatility book's beta is measured before applying the short sign.</p>
 
 Total portfolio risk also depends on covariance between the books. Even before
 that joint calculation, the standalone figures identify a clear imbalance:
@@ -91,7 +91,7 @@ backtest assumptions.
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 1: Risk and return under the two sizing rules.</strong> Results for 12 July 1995–27 May 2026. Net return is geometric; returns, volatility and two-way turnover are annualized. Net results charge 5 bp on traded notional; turnover sums absolute executed trades relative to strategy capital. Sharpe uses a zero cash rate.</caption>
   <thead>
-    <tr><th>Rule</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
+    <tr><th>Rule</th><th>Net geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Annual turnover</th></tr>
   </thead>
   <tbody>
     <tr><th scope="row">Equal-weight</th><td>−3.3%</td><td>33.4%</td><td>0.07</td><td>−87.8%</td><td>18.8×</td></tr>
@@ -101,15 +101,17 @@ backtest assumptions.
 
 Figure 2 shows the paths behind those averages. Equal weighting ends at
 35 cents per starting dollar despite its positive arithmetic return.
+Sharpe uses that positive arithmetic mean; compounding also reflects the
+large swings, so geometric return can be negative.
 Inverse-volatility sizing reaches 7.54 dollars, although it still suffers
 a 38% maximum drawdown. Repeated large moves erode the equal-weight portfolio's
 compounded value.
 
-<div class="low-vol-figure performance-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="14" %}
+<div class="low-vol-figure performance-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Compounded daily P&amp;L per unit of strategy notional (top, log scale) and drawdown (bottom), July 1995–May 2026, after the 5 bp trading charge.</p>
+<p class="figure-caption"><strong>Figure 2: Sizing changes both risk and compounding.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. The rules retain their different exposures and volatilities; Table 1 supplies the risk comparison.</p>
 
 The comparison captures a complete sizing change: individual weights, book
 capital, beta and turnover move together. It establishes the benefit of this
@@ -120,14 +122,14 @@ and constraint comparisons.
 
 The remaining drawdowns show the limit of treating positions individually.
 Figure 3 examines two market rallies when the short book lost heavily:
-the dot-com episode and April 2025–May 2026. Each column uses its own scale;
-the lower panels locate the return in the long and short books.
+the dot-com episode and April 2025–May 2026. The contribution panels locate
+the return in the long and short books.
 
-<div class="low-vol-figure regime-comparison-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="14" %}
+<div class="low-vol-figure regime-comparison-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3:</strong> Before-cost indexed growth for the inverse-volatility portfolio and Russell 1000 (top), with linked long- and short-book contributions in percentage points (bottom). The left column covers the dot-com rally and reversal; the right covers April 2025–May 2026. The vertical line marks the dot-com portfolio trough.</p>
+<p class="figure-caption"><strong>Figure 3: Short-book losses in two market rallies.</strong> Before-cost indexed growth above linked cumulative book contributions in percentage points. Corresponding panels share scales. The dot-com episode comes first, followed by April 2025–May 2026; the marked line identifies the dot-com portfolio trough.</p>
 
 From 8 October 1998 to 9 March 2000, the market gains about 52% while the portfolio loses
 38% after costs. The short book contributes −27.1 percentage points before

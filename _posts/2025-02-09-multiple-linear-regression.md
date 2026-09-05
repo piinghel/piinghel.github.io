@@ -16,26 +16,12 @@ github_repositories:
 <p class="article-summary">Linear regression turns many overlapping stock predictors into one learned ranking. Here OLS and Ridge produce similar net returns to a small fixed-weight benchmark with lower volatility, but roughly twice the trading. Ridge reduces coefficient size and movement by about a third while leaving the ranking almost unchanged; it does not clearly improve on OLS after 2021.</p>
 
 A systematic equity model can contain several versions of momentum, volatility,
-liquidity and size. Different horizons capture different behaviour, but many
-inputs describe closely related ideas. The practical question is how to combine
-them into one useful ordering of stocks.
-
-Fixed weights make each predictor's influence transparent. As the set grows,
-they also require more judgment about signs, horizons and how much weight each
-family should receive. Linear regression learns a joint combination from
-history. Ridge adds regularization when closely related inputs make the
-individual coefficients less well determined. I judge both by the rankings
-and portfolios they produce outside their training windows.
-
-I start with a linear model deliberately. It makes the learned combination
-easy to inspect and gives me a tractable baseline for understanding how the
-predictors work together. Ridge adds a modest control on estimation without
-changing that structure. Boosted trees, random forests and neural networks can
-capture nonlinearities and interactions. Recent research also explores
-[transformer-based asset-pricing models](https://www.nber.org/papers/w33351)
-that share information across stocks (Kelly et al., 2025; revised 2026).
-Whether that extra flexibility improves this ranking and its returns after
-costs is a question for a later study.
+liquidity and size, many describing closely related ideas. Fixed weights require
+judgment about their signs, horizons and relative influence. I use linear
+regression to learn that combination from history while keeping it easy to
+inspect. Ridge adds regularization when overlapping inputs make individual
+coefficients less well determined. I judge both by the rankings and portfolios
+they produce outside their training windows.
 
 ## Predictors and the ranking target
 
@@ -164,15 +150,17 @@ development gain from Ridge disappears in the later period.
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
   <caption><strong>Table 1: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
   <thead>
-    <tr><th>Period and ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
+    <tr><th>Ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Development · Fixed score</th><td>0.0399</td><td>0.1217</td><td>0.328</td></tr>
-    <tr><th scope="row">Development · OLS</th><td>0.0461</td><td>0.0864</td><td>0.534</td></tr>
-    <tr><th scope="row">Development · Ridge $c=0.01$</th><td>0.0469</td><td>0.0885</td><td>0.530</td></tr>
-    <tr class="period-break"><th scope="row">2022–2026 · Fixed score</th><td>0.0502</td><td>0.1392</td><td>0.361</td></tr>
-    <tr><th scope="row">2022–2026 · OLS</th><td>0.0417</td><td>0.1068</td><td>0.390</td></tr>
-    <tr><th scope="row">2022–2026 · Ridge $c=0.01$</th><td>0.0415</td><td>0.1113</td><td>0.373</td></tr>
+    <tr class="period-heading"><th colspan="4">Development · September 1998–December 2021</th></tr>
+    <tr><th scope="row">Fixed</th><td>0.0399</td><td>0.1217</td><td>0.328</td></tr>
+    <tr><th scope="row">OLS</th><td>0.0461</td><td>0.0864</td><td>0.534</td></tr>
+    <tr><th scope="row">Ridge</th><td>0.0469</td><td>0.0885</td><td>0.530</td></tr>
+    <tr class="period-heading"><th colspan="4">Later · January 2022–April 2026</th></tr>
+    <tr><th scope="row">Fixed</th><td>0.0502</td><td>0.1392</td><td>0.361</td></tr>
+    <tr><th scope="row">OLS</th><td>0.0417</td><td>0.1068</td><td>0.390</td></tr>
+    <tr><th scope="row">Ridge</th><td>0.0415</td><td>0.1113</td><td>0.373</td></tr>
   </tbody>
 </table>
 
@@ -188,9 +176,9 @@ of its 0.88-point gross-return advantage. Most of the higher Sharpe comes from
 lower volatility.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 2: Net performance and trading.</strong> Returns and volatility are annualized; turnover is measured per rebalance.</caption>
+  <caption><strong>Table 2: Net performance and trading.</strong> Net returns use arithmetic annualization, after 5 bp per dollar traded; volatility is annualized. Two-way turnover is measured per rebalance.</caption>
   <thead>
-    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr>
+    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover / rebalance</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="6">Development · September 1998–December 2021</th></tr>
@@ -219,7 +207,7 @@ the defensive portfolio behaviour; this comparison does not separate them.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" alt="Net growth on a logarithmic scale and drawdowns for fixed weights, OLS, and Ridge, with the later period marked" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Net growth of <span class="mathjax-ignore">$1</span> (top, log scale) and drawdown (bottom), after 5 bp per dollar traded. The 2022 boundary marks later, reused history.</p>
+<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> Net growth of <span class="mathjax-ignore">$1</span> (log scale) and drawdown, after 5 bp per dollar traded. The portfolios have different volatilities; Table 2 supplies the risk-adjusted comparison. The 2022 boundary marks later, reused history.</p>
 
 ## What the learned combination delivers
 
@@ -242,6 +230,13 @@ me 144 independent sources of information. The flat trading charge also omits
 borrow, financing and market impact.
 
 ## Research notes
+
+Boosted trees, random forests and neural networks can capture nonlinearities
+and interactions. Recent research also explores
+[transformer-based asset-pricing models](https://www.nber.org/papers/w33351)
+that share information across stocks (Kelly et al., 2025; revised 2026).
+Whether that flexibility improves this ranking after costs remains a question
+for a later study.
 
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes. The first

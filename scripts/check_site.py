@@ -26,6 +26,13 @@ class Page(HTMLParser):
         for key in ("href", "src"):
             if attributes.get(key):
                 self.links.append(str(attributes[key]))
+        if tag in {"source", "img"} and attributes.get("srcset"):
+            # Site picture sources contain file URLs, never inline data URLs.
+            self.links.extend(
+                candidate.strip().split()[0]
+                for candidate in str(attributes["srcset"]).split(",")
+                if candidate.strip()
+            )
         if tag == "img":
             self.images.append(attributes)
 

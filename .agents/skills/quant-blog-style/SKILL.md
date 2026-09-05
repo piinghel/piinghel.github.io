@@ -70,6 +70,10 @@ main title at the beginning of its caption below the display. Put a table's
 caption above it. Panel labels identify variables or scope; they do not repeat
 the caption's title. Keep axis units visible.
 
+Do not add inline CSV downloads or “supporting results” links to table captions.
+Keep reproducibility material in the existing research repository and its
+documentation unless the user explicitly requests a reader-facing download.
+
 ## Verify the reading experience
 
 Render light and dark variants from the same data and layout. Inspect the page

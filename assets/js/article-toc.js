@@ -24,9 +24,18 @@
     const scrollRegions = Array.from(article.querySelectorAll(
       ".research-table-scroll, .research-figure, .low-vol-figure"
     ));
+    const scrollHints = new Map(scrollRegions.map((region) => {
+      const hint = document.createElement("p");
+      hint.className = "research-scroll-hint";
+      hint.textContent = "Scroll horizontally to see the full comparison.";
+      hint.hidden = true;
+      region.after(hint);
+      return [region, hint];
+    }));
     const updateScrollAccess = () => {
       scrollRegions.forEach((region) => {
         const scrollable = region.scrollWidth > region.clientWidth + 1;
+        scrollHints.get(region).hidden = !scrollable;
         region.tabIndex = scrollable ? 0 : -1;
         if (!region.classList.contains("research-table-scroll")) {
           region.setAttribute("role", "group");

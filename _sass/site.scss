@@ -179,8 +179,18 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table .period-break > * { border-top: 1px solid var(--rule); }
 .research-table .period-heading th { padding-top: 1rem; color: var(--muted-ink); font-size: 0.82rem; font-weight: 600; }
 .research-table .period-heading:not(:first-child) th { border-top: 1px solid var(--rule); }
+.research-table .selected-rule > * { background: var(--soft-accent); }
+.sleeve-schedule th, .sleeve-schedule td { padding: 0.65rem 0.3rem; text-align: center; }
+.sleeve-schedule th:first-child { text-align: left; }
+.sleeve-schedule small { display: block; color: var(--muted-ink); font-weight: 400; white-space: nowrap; }
+.sleeve-schedule .sleeve-a { --sleeve: #708da7; }
+.sleeve-schedule .sleeve-b { --sleeve: #b98556; }
+.sleeve-schedule .sleeve-c { --sleeve: #86a488; }
+.sleeve-schedule .rebalance { color: var(--sleeve); background: color-mix(in srgb, var(--sleeve) 12%, transparent); }
+.research-scroll-hint { font: 0.76rem var(--font-sans); color: var(--muted-ink); margin: 0.4rem 0; }
 .research-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; margin: 1.6rem 0 0.5rem; }
 .research-table-scroll .research-table { min-width: 620px; }
+.research-table-scroll .sleeve-schedule { min-width: 0; }
 .research-table-scroll .control-table { min-width: 460px; }
 .research-table-scroll .standalone-factor-table, .research-table-scroll .settings-table { min-width: 0; }
 @media (min-width: 1160px) {
