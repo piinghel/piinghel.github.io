@@ -165,7 +165,7 @@ fixed between trades, and the performance index compounds daily P&L measured
 against fixed strategy notional, with no interest on unallocated cash.
 
 The signal and portfolio returns use vendor-adjusted prices; the beta
-diagnostic uses the vendor's total-return series. Missing prices carry
-forward, and stocks leaving the data close at their last observed price.
-That treatment can miss terminal losses or buyout proceeds, so the results
-remain sensitive to how those events are recorded.
+diagnostic uses the vendor's total-return series. Missing prices carry forward;
+a holding removed at a later rebalance is valued at its last observed price.
+The backtest adds no separate delisting loss or merger payment, so terminal
+outcomes depend on what is already reflected in adjusted prices.

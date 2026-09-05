@@ -38,7 +38,7 @@ decision is a question for a later study.
 
 OLS and Ridge use the same 144 predictors. They cover return and trend,
 volatility, price location, size and market sensitivity, trading activity,
-liquidity, and publication-lagged short positioning. Examples include price
+liquidity, and lagged short positioning. Examples include price
 relative to a moving average, upside and downside volatility, and
 short-interest-to-volume. Several appear at different horizons, so 144 inputs
 represent far fewer independent economic ideas.
@@ -126,6 +126,11 @@ refits. Price relative to its moving average remains positive; short-horizon
 MACD and illiquidity remain negative. Other coefficients weaken or change sign.
 The model combines trend, technical-price and liquidity information, but each
 coefficient is conditional on close substitutes elsewhere in the predictor set.
+
+The first two rows illustrate how that combination works. Holding the other
+predictor ranks fixed, the positive price-to-126-day-average weight rewards a
+stock above its longer trend, while the negative 10/21-day MACD weight penalizes
+a large normalized upward gap between its faster and slower price averages.
 
 <div class="research-figure coefficient-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="11" %}
@@ -241,6 +246,9 @@ fit uses 900 dates; subsequent 600-date prediction blocks follow expanding
 refits. Within a refit, predictions average three date-thinned training
 samples. Overlapping targets and common date-level shocks still make
 observations dependent.
+
+Short-interest inputs use a deliberate 21-session delay to allow for
+publication and avoid information leakage.
 
 Each selected position starts from an equal share of its book, scaled by
 20% divided by trailing 60-session volatility, with a 5% volatility floor and

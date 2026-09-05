@@ -61,7 +61,6 @@ class FigureSpec:
     model_order: tuple[str, ...]
     model_labels: Mapping[str, str]
     model_colors: Mapping[str, str]
-    alpha_models: tuple[str, ...]
     split_date: date
     feature_labels: Mapping[str, str]
 
@@ -85,12 +84,6 @@ def default_figure_spec(style: FigureStyle) -> FigureSpec:
             "ols_c0": style.ols,
             "selected_c0p01": style.ridge,
         },
-        alpha_models=(
-            "alpha_0_ols",
-            "alpha_scaled_c0p001",
-            "alpha_scaled_c0p01_selected",
-            "alpha_scaled_c0p1",
-        ),
         split_date=date(2022, 1, 1),
         feature_labels={
             "X_feature_price_macd_10_21": "MACD · 10 / 21d",
@@ -165,31 +158,6 @@ def load_daily_series(
     return series
 
 
-def load_alpha_diagnostics(
-    review_dir: Path,
-    *,
-    alpha_models: tuple[str, ...],
-) -> dict[str, dict[str, str]]:
-    diagnostics = {
-        row["model"]: row
-        for row in read_rows(review_dir / "multiple_linear_development_selection.csv")
-        if row["model"] in alpha_models
-    }
-    for model in alpha_models:
-        if model not in diagnostics:
-            raise ValueError(f"missing development diagnostics for {model}")
-    rank_changes = {
-        row["model"]: row
-        for row in read_rows(review_dir / "multiple_linear_rank_change_diagnostics.csv")
-        if row["model"] in alpha_models and row["period"] == "development_1995_2021"
-    }
-    for model in alpha_models:
-        if model not in rank_changes:
-            raise ValueError(f"missing development rank-change diagnostics for {model}")
-        diagnostics[model].update(rank_changes[model])
-    return diagnostics
-
-
 def load_selected_coefficients(review_dir: Path) -> list[dict[str, str]]:
     rows = read_rows(
         review_dir / "multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz"
@@ -215,33 +183,6 @@ def load_selected_coefficients(review_dir: Path) -> list[dict[str, str]]:
     ):
         raise ValueError("coefficient heatmap must use the selected c=0.01 model")
     return selected
-
-
-def load_selected_portfolio_tilts(review_dir: Path) -> list[dict[str, str]]:
-    rows = read_rows(
-        review_dir
-        / "multiple_linear_selected_portfolio_tilt_figure_source_c0p01.csv.gz"
-    )
-    if len(rows) != 1120 or len({row["predictor"] for row in rows}) != 10:
-        raise ValueError("expected 112 quarters for ten selected portfolio tilts")
-    keys = {(row["predictor"], row["date"]) for row in rows}
-    if len(keys) != len(rows):
-        raise ValueError("duplicate predictor-quarter tilt observations")
-    calendars = defaultdict(set)
-    for row in rows:
-        calendars[row["predictor"]].add(date.fromisoformat(row["date"]))
-    if (
-        any(len(value) != 112 for value in calendars.values())
-        or len({tuple(sorted(value)) for value in calendars.values()}) != 1
-    ):
-        raise ValueError("portfolio tilt calendars must match")
-    if not np.isfinite([float(row["quarterly_mean_tilt"]) for row in rows]).all():
-        raise ValueError("portfolio tilts must be finite")
-    if any(
-        float(row["c"]) != 0.01 or row["selected"].lower() != "true" for row in rows
-    ):
-        raise ValueError("portfolio tilts must use the selected c=0.01 model")
-    return rows
 
 
 def style_axis(

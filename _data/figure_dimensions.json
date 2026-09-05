@@ -23,14 +23,6 @@
     "width": 629,
     "height": 386
   },
-  "/assets/multiple-linear-regression/alpha-sensitivity": {
-    "width": 598,
-    "height": 224
-  },
-  "/assets/multiple-linear-regression/cumulative-ic": {
-    "width": 665,
-    "height": 355
-  },
   "/assets/multiple-linear-regression/factor-correlation": {
     "width": 561,
     "height": 313
@@ -38,10 +30,6 @@
   "/assets/multiple-linear-regression/performance-and-drawdowns": {
     "width": 615,
     "height": 515
-  },
-  "/assets/multiple-linear-regression/portfolio-feature-tilts": {
-    "width": 659,
-    "height": 507
   },
   "/assets/multiple-linear-regression/top-coefficients": {
     "width": 621,

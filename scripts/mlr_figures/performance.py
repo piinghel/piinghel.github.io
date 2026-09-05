@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 from pathlib import Path
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
 from .support import (
@@ -19,70 +17,6 @@ from .support import (
     save_figure,
     style_axis,
 )
-
-
-def plot_ic(
-    series: dict[str, Series],
-    output_dir: Path,
-    style: FigureStyle,
-    spec: FigureSpec,
-) -> None:
-    fig, ax = plt.subplots(figsize=(10.2, 5.5), facecolor=style.white)
-    for model in spec.model_order:
-        values = np.cumsum(series[model].values)
-        ax.plot(
-            series[model].dates,
-            values,
-            color=spec.model_colors[model],
-            linewidth=2.0 if model == "selected_c0p01" else 1.6,
-        )
-        offset = {
-            "fixed_factor_benchmark": -10,
-            "ols_c0": 2,
-            "selected_c0p01": 10,
-        }[model]
-        ax.annotate(
-            spec.model_labels[model],
-            (series[model].dates[-1], values[-1]),
-            xytext=(7, offset),
-            textcoords="offset points",
-            color=(
-                style.muted
-                if model == "fixed_factor_benchmark"
-                else spec.model_colors[model]
-            ),
-            fontsize=style.legend_size,
-            fontweight=600 if model == "selected_c0p01" else 400,
-            va="center",
-        )
-    style_axis(ax, style)
-    add_split_marker(
-        ax,
-        style,
-        spec.split_date,
-        label=True,
-        label_fontsize=style.annotation_size,
-        label_text="Later period starts",
-        label_at_top=True,
-    )
-    ax.set_title(
-        "Cumulative daily rank IC",
-        loc="left",
-        pad=9,
-        color=style.muted,
-        fontsize=style.axis_label_size * 1.2,
-    )
-    ax.xaxis.set_major_locator(mdates.YearLocator(4))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    right = series[spec.model_order[0]].dates[-1] + timedelta(days=520)
-    ax.set_xlim(series[spec.model_order[0]].dates[0], right)
-    fig.subplots_adjust(
-        left=0.10,
-        right=0.87,
-        top=0.97,
-        bottom=0.12,
-    )
-    save_figure(fig, output_dir, "cumulative-ic", style)
 
 
 def plot_performance(

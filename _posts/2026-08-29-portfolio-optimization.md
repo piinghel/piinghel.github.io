@@ -256,6 +256,7 @@ implementable returns or capacity.
     <tr><th scope="row">Selection</th><td>75 long + 75 short; existing holdings eligible through rank 175 with the buffer</td></tr>
     <tr><th scope="row">Volatility-scaled baseline</th><td>Logistic signal shares with slope 2; 60-day volatility, 20% reference and 5% floor; 4% name cap; each book scales down above 100% gross</td></tr>
     <tr><th scope="row">Joint portfolio limits</th><td>7% forecast volatility; 200% gross; 4% per name; ±25% net; ±0.05 estimated beta</td></tr>
+    <tr><th scope="row">Covariance estimate</th><td>21-day volatility; 756-day correlations of volatility-standardized returns (252 observations minimum); 50% shrinkage toward identity; volatility multiplied by 1.18</td></tr>
     <tr><th scope="row">Sector limits</th><td>±20% net; 30% of either book</td></tr>
     <tr><th scope="row">Trading penalty</th><td><i>c</i> = 2.5 × 10<sup>−4</sup>, applied to the absolute change from drifted pre-trade weights</td></tr>
   </tbody>

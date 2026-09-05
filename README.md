@@ -54,8 +54,12 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   --factor-correlation-only
 ```
 
-The full figure command requires the compact MLR figure-source files expected by
-`render_multiple_linear_regression_figures.py`. They are not present in the
+The primary renderer produces only the coefficient heatmap and performance /
+drawdown figure. It requires two compact source files under `outputs/review/`:
+`multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz` and
+`multiple_linear_selected_return_drawdown_figure_source.csv.gz`. It does not
+require IC, penalty-sweep, holdings-tilt or factor-correlation inputs.
+The two retained historical source files are not present in the
 current local factor-combination folder or its recoverable raw-run archive, so
 the published MLR SVGs remain the retained assets until that source bundle is
 restored. The figure code can still be reviewed, but a clean full regeneration
