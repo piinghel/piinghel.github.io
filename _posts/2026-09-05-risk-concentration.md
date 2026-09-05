@@ -21,12 +21,12 @@ controls total forecast volatility, gross exposure, beta, sector capital, and
 position size. It does not answer who supplies the risk. A portfolio can stay
 inside its 7% forecast-volatility budget while one stock, sector, or shared
 direction supplies a large fraction of that risk. The technology rally around
-[AI](https://www.bis.org/publ/qtrpdf/r_qt2512.pdf) made the distinction
-practical: several acceptable technology or semiconductor weights can still
-depend on the same underlying move. I wanted to know whether the existing
-limits left similar concentration in this B3 strategy. The practical question is:
-can I stop one stock, sector, or shared market move from dominating the
-portfolio's risk without constantly changing the portfolio?
+AI made the distinction practical: several acceptable technology or
+semiconductor weights can still depend on the same underlying move. I wanted to
+know whether the existing limits left similar concentration in this B3
+strategy. The practical question is: can I stop one stock, sector, or shared
+market move from dominating the portfolio's risk without constantly changing
+the portfolio?
 
 I keep the Ridge predictions, selected stocks, trading controls, execution, and
 5 bp charge on traded notional fixed. Because PCA directions come from the
@@ -123,12 +123,11 @@ portfolio. PCA 10% moves about 1.5% of capital in the development period and
 4.8% later. Sector 20% moves roughly 7% in both periods; Sector 15% moves nearly
 20%. Stock 2% moves 26.5% before 2022 and 17.0% later.
 
-<!-- FINAL EVIDENCE SLOT: insert the audited light/dark threshold-impact figure.
-     It shows correction frequency and target L1 change for every tested PCA,
-     sector, and stock threshold, with schedule min/max ranges. -->
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel threshold map showing how often PCA, sector, and stock risk caps correct rebalance targets and the resulting target-weight changes in the development and later periods" version="1" %}
+</div>
 
-<!-- FINAL CAPTION SLOT: Figure 1. Define periods, schedule ranges, covariance
-     controls, 5 bp costs, provisional solver markers, and exploratory additions. -->
+<p class="figure-caption"><strong>Figure 1: Tighter limits move from occasional guardrails to sizing rules.</strong> Points are means across three schedules; whiskers span their observed range, not confidence intervals. The top row shows how often a cap requires a correction; the bottom row compares target weights with the matched no-cap portfolio. Lines connect tested thresholds and do not estimate the gaps between them. Hollow PCA 7.5% and Stock 3% points have completed schedule runs but await final merge and execution audit; the still-running Sector 10% test is absent. PCA uses its full-universe covariance control; sectors and stocks use the original optimizer.</p>
 
 These are rebalance-target controls. Rounding, execution, and subsequent price
 moves can take the carried portfolio above a cap before the next rebalance. I
@@ -207,7 +206,7 @@ on its own definition while shifting some risk elsewhere.
   {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Each value is the mean across three schedules of that schedule's 95th percentile at rebalance targets. Stock and sector use signed Euler contributions; PCA uses its non-negative decomposition. These distribution summaries show a cross-dimensional trade-off, not a claim that the same risk moved between dimensions on the same dates.</p>
+<p class="figure-caption"><strong>Figure 2: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Each value is the mean across three schedules of that schedule's 95th percentile at rebalance targets. Stock and sector use signed Euler contributions; PCA uses its non-negative decomposition. These distribution summaries show a cross-dimensional trade-off, not a claim that the same risk moved between dimensions on the same dates.</p>
 
 PCA directions and economically named styles can overlap without being
 interchangeable. A low-volatility tilt can span several current principal
