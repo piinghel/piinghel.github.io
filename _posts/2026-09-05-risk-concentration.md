@@ -14,7 +14,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">A weight limit tells me how much capital is in a position, not how much risk it contributes. I ask whether risk limits can stop one stock, sector, or shared market move from dominating the portfolio without getting in the way on most rebalances. The strict 2% stock cap shows the possible cost: more trading and risk migration. This is an exploratory study on reused history, not a new allocator selection.</p>
+<p class="article-summary">A weight limit tells me how much capital is in a position, not how much risk it contributes. I ask whether risk limits can stop one stock, sector, or shared market move from dominating the portfolio without getting in the way on most rebalances. The evidence so far suggests that the existing optimizer already spreads risk reasonably well: moderate caps change little, while strict caps become new sizing rules. This is an exploratory study on reused history.</p>
 
 The [state-aware optimizer](/quants/2026/08/29/portfolio-optimization.html)
 controls total forecast volatility, gross exposure, beta, sector capital, and
@@ -95,7 +95,8 @@ contribution is 9.6% in 1998–2021 and 7.2% after 2021, even though each stock'
 absolute weight is capped at 4%. The corresponding sector figures are 30.8% and
 27.3%; for the largest PCA direction, they are 15.6% and 15.4%. This is enough
 concentration to justify testing a guardrail, without implying that every date
-or every dimension has a serious problem.
+or every dimension has a serious problem. The median effective number of PCA
+directions is about 40, so this is not an obvious one-bet portfolio.
 
 The uncapped eligible-universe portfolio exceeds a 20% all-PC limit on only
 0.69% of rebalances. At 10%, the frequency rises to 13.55%; at 7.5%, it is
@@ -107,7 +108,9 @@ Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
 15% changes roughly 98% and is close to continuously active. A 2% stock cap
 changes almost every target. The amount moved matters as well as the frequency:
 an optimizer can make a small correction on many dates without rebuilding the
-portfolio.
+portfolio. PCA 10% moves about 1.5% of capital in the development period and
+4.8% later. Sector 20% moves roughly 7% in both periods; Sector 15% moves nearly
+20%. Stock 2% moves 26.5% before 2022 and 17.0% later.
 
 <!-- FINAL EVIDENCE SLOT: insert the audited light/dark threshold-impact figure.
      It shows correction frequency and target L1 change for every tested PCA,
@@ -155,10 +158,10 @@ of three schedule-level maximum drawdowns.
 
 The completed moderate limits leave realized volatility, drawdown, and turnover
 close to the corresponding control. They mainly redistribute forecast risk
-inside a portfolio that already uses almost all of its 7% forecast budget. That
-is the behavior I want from a forecast-risk guardrail. It
-does not repair the risk model's level: realized volatility remains near 8.4%
-before 2022 and 9.3% afterward.
+inside a portfolio that already uses almost all of its 7% forecast budget. I do
+not see evidence here that another hard limit improves the portfolio as a
+whole. The limits also do not repair the risk model's level: realized volatility
+remains near 8.4% before 2022 and 9.3% afterward.
 
 The 2% stock cap is more consequential. Its later net Sharpe rises from 0.87 to
 0.93 and later maximum drawdown falls from 9.05% to 8.47%, but the improvement
@@ -188,22 +191,28 @@ matters here. Removing the strategy's intended tilt would make the portfolio
 look more diversified by one measure while changing the return source I meant
 to implement.
 
-## A moderate guardrail
+## Guardrail or diagnostic?
 
-<!-- FINAL INTERPRETATION SLOT: choose the moderate protective recommendation
-     after PCA 7.5%, sector 10%, and stock 3% complete, including solver status,
-     stress windows, schedule dispersion, negative contribution mass,
-     standalone leg risk, and low-volatility diagnostics. -->
+The evidence so far does not make a strong case for adding another hard limit.
+PCA 10% trims a forecast-risk tail with small target changes. Sector 20% and
+Stock 4% intervene more often, but the completed moderate tests leave realized
+performance and trading close to the original allocator. Sector 15% and Stock
+2% are different: they routinely reshape the target, and the strict stock cap
+also trades more and redirects risk into correlated components.
 
-The evidence so far favors limits that cut the historical tail while leaving
-the allocator room to express its signal and intended style. PCA 10% and sector
-20% behave like guardrails in that sense. A 2% stock cap behaves more like a
-continuous portfolio-design rule: it changes almost every target, trades more,
-and redirects risk into correlated components.
+My current preference is therefore to keep these measures as monitoring
+diagnostics and treat moderate caps as possible backstops, not automatic new
+portfolio rules. PCA 7.5%, Sector 10%, and Stock 3% are still being completed
+and audited; they will show whether that reading survives the final grid.
+
+Concentration is also only one part of the question raised by the AI rally. PCA
+can reveal a shared direction without naming its economic source. The next step
+is portfolio attribution: trace forecast risk and realized profit and loss to
+stocks, sectors, and styles, then test whether technology, momentum, or another
+theme is actually driving the book.
 
 These thresholds were inspected on one reused market history. The three
 rebalance schedules expose timing sensitivity, but they are not independent
-market samples. I would use the moderate limits as candidates for forward
-monitoring, with the uncapped book and risk-migration diagnostics beside them.
-New data, rather than the highest historical Sharpe in this grid, would decide
-whether a candidate belongs in the allocator.
+market samples. New data and attribution, rather than the highest historical
+Sharpe in this grid, should decide whether any candidate belongs in the
+allocator.
