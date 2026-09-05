@@ -296,8 +296,7 @@ where $$D_t$$ contains annualized stock-volatility estimates. Volatility uses
 21 days and correlations use 756 days of volatility-standardized returns,
 with 252 observations required. This lets the risk level respond without
 re-estimating every stock relationship on a short window. The multiplier
-$$\kappa=1.18$$ scales forecast volatility; I retain it from the preceding
-allocator.
+$$\kappa=1.18$$ scales forecast volatility.
 
 Before shrinkage, daily returns are capped at ±30% for correlation estimation.
 Missing pairs use a 0.50 fallback. I symmetrize the pairwise matrix, clip
@@ -385,6 +384,3 @@ estimates and leaves substantial shared short-book risk to understand.
     <tr><th scope="row">Trading penalty</th><td><i>c</i> = 2.5 × 10<sup>−4</sup>, applied to the absolute change from drifted pre-trade weights</td></tr>
   </tbody>
 </table>
-
-The simulations use fixed strategy notional. The compounded returns shown are
-performance indices.

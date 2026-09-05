@@ -1,12 +1,4 @@
 {
-  "/assets/2024-12-15-low-volatility-factor/beta_diagnostic": {
-    "width": 629,
-    "height": 306
-  },
-  "/assets/2024-12-15-low-volatility-factor/decile_profile": {
-    "width": 627,
-    "height": 558
-  },
   "/assets/2024-12-15-low-volatility-factor/naive_leg_risk": {
     "width": 629,
     "height": 184
@@ -30,10 +22,6 @@
   "/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile": {
     "width": 384,
     "height": 791
-  },
-  "/assets/2024-12-15-low-volatility-factor/target_exposures": {
-    "width": 629,
-    "height": 386
   },
   "/assets/multiple-linear-regression/factor-correlation": {
     "width": 561,
@@ -109,11 +97,11 @@
   },
   "/assets/tranching/calendar-return-risk": {
     "width": 648,
-    "height": 331
+    "height": 245
   },
   "/assets/tranching/calendar-return-risk_mobile": {
-    "width": 331,
-    "height": 554
+    "width": 346,
+    "height": 418
   },
   "/assets/tranching/schedule-performance": {
     "width": 648,
@@ -122,9 +110,5 @@
   "/assets/tranching/schedule-performance_mobile": {
     "width": 374,
     "height": 403
-  },
-  "/assets/tranching/timing-dispersion": {
-    "width": 1120,
-    "height": 880
   }
 }

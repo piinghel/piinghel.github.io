@@ -96,7 +96,7 @@ class FigureInputTests(unittest.TestCase):
 
     def test_published_svgs_have_resolved_vector_references(self):
         dimensions = figure_dimensions(Path(__file__).resolve().parents[1])
-        self.assertIn("/assets/tranching/timing-dispersion", dimensions)
+        self.assertIn("/assets/tranching/calendar-grid", dimensions)
 
     def test_local_link_checker_checks_mobile_picture_sources(self):
         with tempfile.TemporaryDirectory() as directory:
