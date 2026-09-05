@@ -46,12 +46,6 @@
   width: min(930px, calc(100vw - 2rem));
 }
 
-// The archived rebalancing charts are raster-only. In dark mode, invert their
-// neutral canvas while preserving the green/blue series through hue rotation.
-html[data-theme="dark"] .post-content .rebalancing-figure img {
-  filter: invert(0.92) hue-rotate(180deg);
-}
-
 // Keep article figures inside the reading column when the sticky contents rail
 // is visible. Wider figures otherwise sit underneath the rail.
 @media (min-width: 1160px) {
@@ -84,7 +78,7 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
 }
 
 .post-content .research-figure.factor-correlation-figure {
-  width: min(680px, calc(100vw - 2rem));
+  width: min(520px, calc(100vw - 2rem));
 }
 
 .post-content .research-figure.performance-figure {
@@ -111,8 +105,10 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
   width: min(790px, calc(100vw - 2rem));
 }
 
-.post-content .research-figure.portfolio-exposure-figure {
-  width: min(800px, calc(100vw - 2rem));
+@media (min-width: 1160px) {
+  .post-content .research-figure {
+    max-width: 860px;
+  }
 }
 
 .post-content .table-caption {
@@ -145,7 +141,6 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
   }
 }
 
-.post-content table.research-table.component-performance-table tbody td,
 .post-content table.research-table.alpha-selection-table tbody td,
 .post-content table.research-table.period-metrics-table tbody td,
 .post-content table.research-table.ic-summary-table tbody td {
@@ -160,62 +155,6 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
   width: min(800px, calc(100vw - 2rem));
 }
 
-.post-content table.rebalancing-summary-table,
-.post-content table.rebalancing-results-table {
-  th:not(:first-child),
-  td {
-    color: #58656f;
-  }
-
-  tbody td {
-    font-weight: 400;
-  }
-
-  .summary-row th,
-  .summary-row td {
-    border-top: 1px solid #b7c0c7;
-    color: #2d7476;
-    font-weight: 600;
-  }
-}
-
-.post-content table.rebalancing-summary-table.comparison-table,
-.post-content table.rebalancing-results-table.comparison-table {
-  thead th:nth-child(n + 2),
-  tbody td:nth-child(n + 2) {
-    color: #58656f;
-    font-weight: 400;
-  }
-
-  tbody .summary-row th,
-  tbody .summary-row td {
-    color: #2d7476;
-    font-weight: 600;
-  }
-}
-
-.post-content table.rebalancing-summary-table th:first-child {
-  width: 38%;
-}
-
-.post-content table.rebalancing-results-table {
-  width: min(850px, calc(100vw - 3rem));
-  max-width: none;
-  margin-left: 50%;
-  transform: translateX(-50%);
-
-  th:first-child {
-    width: 19%;
-  }
-
-  th:nth-child(2),
-  th:nth-child(3),
-  th:nth-child(4) {
-    width: 13%;
-  }
-}
-
-/* MathJax keeps display equations inside the reading column. */
 .post-content mjx-container[display="true"] {
   max-width: 100%;
   overflow-x: auto;
@@ -262,80 +201,36 @@ html[data-theme="dark"] .post-content .rebalancing-figure img {
     min-width: 0;
   }
 
-  .post-content .rebalancing-figure img {
-    width: 760px;
-    min-width: 760px;
-    max-width: none;
-  }
-
   .post-content mjx-container[display="true"] {
     font-size: 0.92em !important;
   }
+}
 
-  .post-content table.research-table.portfolio-card-table,
-  .post-content table.research-table.rebalancing-results-table {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    margin-left: 0;
-    border: 0;
-    background: transparent;
-    transform: none;
-  }
+// Keep comparisons in columns on every screen; only the enclosing region
+// scrolls. Keyboard users can focus it and pan without scrolling the page.
+.research-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  margin: 2rem 0 0.7rem;
+}
 
-  .post-content table.research-table.portfolio-card-table thead,
-  .post-content table.research-table.rebalancing-results-table thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
+.research-table-scroll:focus-visible,
+.research-figure:focus-visible,
+.low-vol-figure:focus-visible {
+  outline: 2px solid #6f91ad;
+  outline-offset: 4px;
+}
 
-  .post-content table.research-table.portfolio-card-table tbody,
-  .post-content table.research-table.portfolio-card-table tr,
-  .post-content table.research-table.portfolio-card-table tbody th,
-  .post-content table.research-table.portfolio-card-table tbody td,
-  .post-content table.research-table.rebalancing-results-table tbody,
-  .post-content table.research-table.rebalancing-results-table tr,
-  .post-content table.research-table.rebalancing-results-table tbody th,
-  .post-content table.research-table.rebalancing-results-table tbody td {
-    display: block;
-    width: 100% !important;
-    box-sizing: border-box;
-  }
+.post-content .research-table-scroll table.research-table {
+  margin: 0;
+  transform: none;
+  min-width: 640px;
+  width: 100%;
+}
 
-  .post-content table.research-table.portfolio-card-table tbody tr,
-  .post-content table.research-table.rebalancing-results-table tbody tr {
-    margin: 0 0 0.8rem;
-    border: 1px solid var(--table-rule);
-    border-radius: 0.4rem;
-    background: var(--table-surface);
-  }
-
-  .post-content table.research-table.portfolio-card-table tbody th,
-  .post-content table.research-table.rebalancing-results-table tbody th {
-    padding: 0.72rem 0.78rem 0.48rem;
-    border-bottom: 1px solid var(--table-rule);
-    background: var(--table-header-surface);
-  }
-
-  .post-content table.research-table.portfolio-card-table tbody td,
-  .post-content table.research-table.rebalancing-results-table tbody td {
-    display: grid;
-    grid-template-columns: minmax(7.5rem, 0.8fr) minmax(0, 1fr);
-    gap: 0.75rem;
-    padding: 0.48rem 0.78rem;
-    text-align: right;
-  }
-
-  .post-content table.research-table.portfolio-card-table tbody td::before,
-  .post-content table.research-table.rebalancing-results-table tbody td::before {
-    content: attr(data-label);
-    color: var(--muted-ink);
-    font-weight: 600;
-    text-align: left;
-  }
-
+.post-content table.research-table.settings-table {
+  th:first-child { width: 28%; }
+  th, td { text-align: left; font-weight: 400; }
+  thead th, tbody th { font-weight: 600; }
 }

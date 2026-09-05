@@ -1,220 +1,179 @@
 ---
 layout: post
-title: "Reducing Rebalancing Timing Risk with Tranching"
+title: "What Averaging Rebalance Weeks Already Fixes"
 date: 2025-05-10
-last_modified_at: 2026-09-02
+last_modified_at: 2026-09-05
 categories: ["Rebalancing"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
 ---
 
-"Rebalance every three weeks" sounds precise, but it leaves two calendar choices:
-where the three-week cycle begins, and which weekday the portfolio trades. Two
-otherwise identical implementations can then compound to different outcomes merely
-because one starts a few days earlier. That dispersion is usually called
-*rebalance timing luck*.
+## Summary
 
-[Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck) finds
-that the effect is largest when turnover is high, portfolios are concentrated,
-or holdings change quickly. [Concretum Research](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
-makes the same problem concrete in a monthly momentum strategy: average return
-hardly changes as more schedules are combined, but the gap between the luckiest
-and unluckiest schedule contracts sharply. Tranching spreads the portfolio
-across several execution schedules, so any one arbitrary calendar choice matters
-less.
+A strategy that rebalances every three weeks still needs a starting week. I already report results across all three choices, which prevents one lucky calendar from representing the strategy. Allocating across those schedules goes a step further: it diversifies their daily P&L. In the current constrained Ridge portfolio, the three-sleeve mixture reduces volatility by about 8% in development and 5% in the later period. It removes the starting-week choice within this grid, but the sleeves remain strongly correlated. That distinction matters more to me than finding a supposedly optimal number of tranches.
 
-My long/short stock-ranking strategy provides a narrower test: can three
-overlapping sleeves preserve return while reducing dependence on the starting
-week?
+## An average result is not an averaged portfolio
 
-This post follows the
-[low-volatility sizing study](/quant/2024/12/15/low-volatility-factor.html) and
-the [Ridge ranking study](/quants/2025/02/09/multiple-linear-regression.html).
-It tests the rebalance schedules later used in the
-[portfolio-optimization post](/quants/2026/08/29/portfolio-optimization.html),
-where the ranking is sized jointly and the optimizer accounts for its current
-holdings.
+The [portfolio-optimization article](/quants/2026/08/29/portfolio-optimization.html)
+compares construction rules using the mean of three schedule-level statistics.
+Each schedule follows the same three-week cycle, shifted by one week. Reporting
+their mean makes the comparison less dependent on a convenient starting date.
 
-## Fifteen ways to run the same strategy
+But averaging three Sharpe ratios does not give the Sharpe ratio of a portfolio
+that holds all three schedules. The first operation summarizes an experiment;
+the second changes the return stream. I wanted to check how much the second
+operation buys when the first is already part of the research process.
 
-The strategy uses LightGBM predictions and holds each portfolio for three
-weeks. A full-rebalance implementation has three possible starting-week offsets
-and five possible weekdays, giving 15 schedules:
+I use the frozen Ridge ranking and constrained optimizer with trading controls
+from that article. The universe, forecasts, sizing rule, and cost convention are
+unchanged. This is a new aggregation of saved daily backtests, not a new model
+fit or a search over rebalance dates. A *sleeve* is one of those schedule-specific
+portfolios, funded with its share of the total fixed notional.
 
-$$
-3\text{ offsets}\times 5\text{ weekdays}=15\text{ schedules}.
-$$
+All comparisons use matched dates: 22 September 1998–31 December 2021 for
+development, and 3 January 2022–27 May 2026 for the later period. The latter has
+already informed research choices elsewhere in this series; it is reused
+history, not an untouched holdout. Only three starting weeks are available in
+this experiment. It does not test different weekdays or isolate execution
+timing from the changing forecasts available on each rebalance date.
 
-The model, universe, ranking rule, and holding period are unchanged. Only the
-signal and execution date move. That small shift changes which predictions are
-available at the rebalance and, sometimes, which stocks enter the book.
+Matching the three starts here also drops a few early September observations
+used by the first two schedules in the optimization tables. That accounts for
+the small difference in their reported development means.
 
-The archive retains the schedule grid and summary results, but not enough daily
-detail to reproduce them. Because the daily returns are missing, I use these
-results only to describe the spread across schedules. Figure 1
-plots growth of one dollar for all 15 full-rebalance schedules on a common logarithmic scale. The axes
-suggest a sample of roughly 1999–2025; the exact endpoints were not retained.
+## The starting week still changes the path
+
+Figure 1 shows the three standalone schedules as thin lines and their
+equal-notional mixture in blue. Each panel starts a fresh compounded index.
+The logarithmic axes show proportional changes; their ranges differ because
+the development period is much longer.
 
 <div class="research-figure rebalancing-figure">
-  <img src="/assets/tranching/all_perf_plots.png" alt="Growth of one dollar on a logarithmic scale for fifteen full-rebalance schedules, with two terminal extremes highlighted after the backtest" width="1800" height="1200" loading="lazy" decoding="async">
+  {% include theme-svg-figure.html base="/assets/tranching/timing-paths" version="1" alt="Three starting-week compounded net return paths and their equal-notional mixture, shown separately for development and the later period on logarithmic axes" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1:</strong> Growth of <span class="mathjax-ignore">$1</span> for 15 full-rebalance schedules; highest and lowest ending paths highlighted after the backtest; logarithmic scale.</p>
+<p class="figure-caption"><strong>Figure 1:</strong> Starting-week paths and the three-sleeve mixture, after five-basis-point proportional trading costs. These are compounded indices of fixed-notional daily P&L, not financed account histories.</p>
 
-The paths in Figure 1 part gradually, as small differences in signal dates and holdings
-compound into a large gap in ending value. The schedule choice clearly matters.
-Because the best and worst lines were labelled after the full
-sample was known, their order says nothing about a persistent weekday edge.
+The development paths finish fairly close together. In the shorter later
+period, annualized net geometric return ranges from 5.42% to 9.91%. Choosing
+one schedule after seeing that spread would turn an implementation detail into
+a backtest selection rule. The mixture avoids that choice without needing to
+predict which week will work best next.
 
-Table 1 turns the visual spread in Figure 1 into exact ranges across the 15
-schedules.
+The construction is explicit. If $$r_{j,t}$$ is daily net P&L per unit of fixed
+notional for schedule $$j$$, then funding each with one third of the total gives
 
-<table class="research-table comparison-table rebalancing-summary-table">
-  <thead>
-    <tr>
-      <th>Metric</th>
-      <th>Range across schedules</th>
-      <th>Mean</th>
-    </tr>
-  </thead>
+$$
+r_{\mathrm{mix},t}=\frac{r_{1,t}+r_{2,t}+r_{3,t}}{3}.
+$$
+
+The arithmetic mean return of this mixture equals the mean arithmetic return
+of its sleeves. Geometric return, volatility, Sharpe, and drawdown must be
+recomputed from the mixed daily series. In particular, compounding an average
+daily return is different from averaging three separately compounded indices.
+I use the former here. As elsewhere in the series, compounding is a performance
+summary; the underlying simulations use fixed-notional sizing and floating
+weights between rebalances.
+
+Table 1 separates the mean standalone statistics from the statistics of the
+actual return mixture. The small change in geometric return accompanies a
+clearer reduction in volatility. It does not imply that tranching improved the
+forecasts.
+
+<table class="research-table comparison-table">
+  <thead><tr><th>Period / construction</th><th>Gross geometric return</th><th>Net geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
-    <tr><th scope="row">Annualized geometric return</th><td data-label="Range">10.10%–12.53%</td><td data-label="Mean">11.32%</td></tr>
-    <tr><th scope="row">Volatility</th><td data-label="Range">6.45%–6.97%</td><td data-label="Mean">6.68%</td></tr>
-    <tr><th scope="row">Sharpe ratio</th><td data-label="Range">1.50–1.75</td><td data-label="Mean">1.64</td></tr>
-    <tr><th scope="row">Maximum drawdown</th><td data-label="Range">10.70%–14.77%</td><td data-label="Mean">12.77%</td></tr>
-    <tr><th scope="row">Maximum underwater duration</th><td data-label="Range">248–593 days</td><td data-label="Mean">413 days</td></tr>
+    <tr><th scope="row">Development · mean standalone</th><td>13.91%</td><td>12.31%</td><td>8.40%</td><td>1.43</td><td>−18.06%</td></tr>
+    <tr><th scope="row">Development · three-sleeve mixture</th><td>13.97%</td><td>12.37%</td><td>7.72%</td><td>1.55</td><td>−15.53%</td></tr>
+    <tr><th scope="row">Later · mean standalone</th><td>9.33%</td><td>7.99%</td><td>9.32%</td><td>0.87</td><td>−9.05%</td></tr>
+    <tr><th scope="row">Later · three-sleeve mixture</th><td>9.36%</td><td>8.02%</td><td>8.83%</td><td>0.92</td><td>−8.83%</td></tr>
   </tbody>
 </table>
 
-<p class="table-caption"><strong>Table 1:</strong> Dispersion across the 15 full-rebalance schedules.</p>
+<p class="table-caption"><strong>Table 1:</strong> Mean statistics across three standalone schedules versus statistics recomputed after averaging their daily returns. Annualization uses 252 sessions and a zero cash rate. Mean standalone drawdown averages three separate worst episodes, not necessarily a common event.</p>
 
-Table 1 quantifies that visual spread. Annualized geometric return differs by 2.43 percentage points between the best
-and worst schedules; the Sharpe ratio ranges from 1.50 to 1.75, and time
-underwater from 248 to 593 days. A single backtest would hide all of that behind
-one arbitrary calendar choice. The differences are large enough to matter.
-Their ex-post ranking has no forecasting value, and the missing cost record
-means these results describe timing differences rather than investable returns.
+## What the shrinking dispersion does—and does not—show
 
-## Spreading the rebalance across three tranches
+[Concretum's *The Tranching Dilemma*](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
+makes the calendar problem visual by plotting the spread in geometric returns
+as more schedules are combined. Its monthly momentum experiment also
+distinguishes rising trade counts from broadly unchanged funded turnover.
+That is a useful way to frame the decision, though its strategy, schedule grid,
+and cost assumptions differ from mine.
 
-The tranched implementation splits the portfolio into three equal-capital
-sleeves. One sleeve rebalances each week on the chosen weekday, and each remains
-on the same three-week holding cycle. After three weeks the whole portfolio has
-been refreshed, but no single day replaces every position at once.
-
-This construction averages across the three starting-week offsets while keeping
-the weekday fixed. A Monday version trades every sleeve on Monday, and the same
-is true for Tuesday through Friday. That leaves five tranched portfolios in
-Figure 2, one for each weekday.
+Figure 2 applies the dispersion idea to the available three-week grid. Each dot
+is a distinct equal-notional combination: three individual schedules, three
+pairs, and one mixture of all three. The vertical segment joins the lowest and
+highest geometric return at each sleeve count. The panel scales differ so that
+the much smaller development spread remains visible.
 
 <div class="research-figure rebalancing-figure">
-  <img src="/assets/tranching/tranched_perf_plots.png" alt="Growth of one dollar on a logarithmic scale for five three-tranche portfolios, one for each rebalance weekday" width="1800" height="1200" loading="lazy" decoding="async">
+  {% include theme-svg-figure.html base="/assets/tranching/timing-dispersion" version="1" alt="All combinations of one, two, and three starting-week sleeves, showing the range of annualized net geometric returns separately in development and the later period" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> Growth of <span class="mathjax-ignore">$1</span> for five three-tranche weekday portfolios on a logarithmic scale.</p>
+<p class="figure-caption"><strong>Figure 2:</strong> Geometric-return dispersion across every subset of the three saved schedules. Dots are observed combinations, not independent trials or confidence intervals.</p>
 
-The five paths in Figure 2 cluster much more tightly than the 15 paths in
-Figure 1. Table 2 reports the return, risk, drawdown, and underwater duration
-behind them, showing how much dispersion remains.
+Using two sleeves narrows the observed spread in both periods. At three sleeves,
+the spread is zero because there is only one combination left. That endpoint
+is a property of the grid, not evidence that timing risk in general has vanished.
+Another weekday, holding period, or prediction-release convention could still
+change the result.
 
-<table class="research-table comparison-table rebalancing-results-table">
-  <thead>
-    <tr>
-      <th>Weekday</th>
-      <th>Annualized geometric return</th>
-      <th>Volatility</th>
-      <th>Sharpe</th>
-      <th>Max drawdown</th>
-      <th>Max underwater</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">Monday</th><td data-label="Annualized geometric return">11.32%</td><td data-label="Volatility">6.08%</td><td data-label="Sharpe">1.80</td><td data-label="Max drawdown">11.08%</td><td data-label="Max underwater">370 days</td></tr>
-    <tr><th scope="row">Tuesday</th><td data-label="Annualized geometric return">11.23%</td><td data-label="Volatility">6.04%</td><td data-label="Sharpe">1.79</td><td data-label="Max drawdown">11.63%</td><td data-label="Max underwater">301 days</td></tr>
-    <tr><th scope="row">Wednesday</th><td data-label="Annualized geometric return">11.24%</td><td data-label="Volatility">6.08%</td><td data-label="Sharpe">1.78</td><td data-label="Max drawdown">11.89%</td><td data-label="Max underwater">299 days</td></tr>
-    <tr><th scope="row">Thursday</th><td data-label="Annualized geometric return">11.63%</td><td data-label="Volatility">6.06%</td><td data-label="Sharpe">1.85</td><td data-label="Max drawdown">11.01%</td><td data-label="Max underwater">303 days</td></tr>
-    <tr><th scope="row">Friday</th><td data-label="Annualized geometric return">11.43%</td><td data-label="Volatility">6.11%</td><td data-label="Sharpe">1.80</td><td data-label="Max drawdown">12.37%</td><td data-label="Max underwater">364 days</td></tr>
-    <tr class="summary-row"><th scope="row">Mean</th><td data-label="Annualized geometric return">11.37%</td><td data-label="Volatility">6.07%</td><td data-label="Sharpe">1.80</td><td data-label="Max drawdown">11.60%</td><td data-label="Max underwater">327 days</td></tr>
-  </tbody>
-</table>
+The remaining portfolio risk is substantial. Pairwise daily return correlations
+are around 0.76–0.77 in development and 0.84–0.85 later. With correlated sleeves,
+the variance of their mixture is
 
-<p class="table-caption"><strong>Table 2:</strong> Performance of the three-tranche portfolios by weekday.</p>
+$$
+\operatorname{Var}(r_{\mathrm{mix}})
+=\frac{1}{9}\sum_{i=1}^{3}\sum_{j=1}^{3}
+\operatorname{Cov}(r_i,r_j).
+$$
 
-Mean annualized geometric return barely moves: 11.37% across the five tranched
-portfolios, against 11.32% across the 15 full-rebalance schedules. The
-improvement is in the path. Mean volatility falls from 6.68% to 6.07%, or about
-9%; mean maximum drawdown falls
-from 12.77% to 11.60%; and mean time underwater falls by 86 days. With nearly
-the same return and less volatility, the mean Sharpe rises from 1.64
-to 1.80.
+Tranching diversifies differences between the schedules; their common exposures
+remain. That is why the later-period volatility reduction is modest even
+though the starting-week choice disappears. It also leaves the roughly 9%
+drawdown discussed in the optimization article. Splitting the rebalance cannot
+be expected to repair a short book whose holdings rally together.
 
-The dispersion narrows as well. The geometric-return range contracts from 2.43
-to 0.40 percentage points, the maximum-drawdown range from 4.07 to 1.36 points,
-and the underwater-duration range from 345 to 71 days. Combining the three
-starting-week offsets removes roughly five-sixths of the observed return range.
-The five remaining weekday portfolios are close: their volatilities span only
-6.04% to 6.11%, and their Sharpes 1.78 to 1.85.
+## Costs follow funded trades, not the number of sleeves
 
-The visible calendar dispersion is much larger across starting-week offsets
-than across weekdays. Two mechanisms could produce the smoother tranched path:
-averaging those offsets, and refreshing one-third of the predictions each week.
-The saved experiment cannot tell them apart.
+Each saved schedule pays five basis points per unit of executed absolute weight
+change, including exits. Giving it one third of the total notional also gives
+it one third of the total cost contribution. The mixture's annual arithmetic
+cost drag is therefore exactly the mean of the three sleeves' cost drags:
+about 1.41 percentage points in development and 1.24 points later. Adding
+sleeves does not multiply that proportional cost by three.
 
-## Three tranches look sufficient, but costs remain unknown
+This calculation preserves the separate sleeve trades. It assumes no savings
+from netting opposing orders across sleeves and adds no fixed charge per
+ticket. An implementation could have more trade tickets without more funded
+turnover. Minimum fees, spread, market impact, borrow, and financing would need
+their own estimates before choosing an operational schedule. These backtests
+do not establish capacity or an optimal tranche count.
 
-Three tranches directly average the three starting-week offsets. The remaining
-weekday range is small, while more sleeves would mean smaller orders, more
-frequent runs, and more operational work for an uncertain incremental gain.
-I stop at three sleeves. The results favor the full
-three-tranche design, but they cannot tell us how much of the smoother path came
-from spreading the rebalance dates rather than using fresher weekly predictions. A cleaner test
-would hold the prediction vintage fixed while changing only the execution
-schedule, and then test fresher weekly predictions separately.
+## I would keep the three-week coverage
 
-The retained research archive contains the two return-path charts and the
-summary metrics reported here, but not the daily schedule returns or the
-figure-generation code. The saved tables are internally consistent with the
-older detailed table in repository history, and the charts visually agree with
-their dispersion, but the statistics cannot be recomputed from raster images.
-I also cannot recompute turnover, inspect individual trades, or run new tests.
-The results do not document whether costs were included or how they were
-defined. The archive is useful for studying timing differences, but it is not
-detailed enough to support a realistic after-cost return estimate.
+Averaging across weeks already fixes a major reporting weakness: the strategy
+is no longer represented by whichever starting week happens to look good.
+Actually funding the three schedules adds a measurable, moderate reduction in
+volatility. Both are worth keeping, and they answer different questions.
 
-Costs decide whether the smoother observed path is worth implementing. Smaller
-orders may incur minimum fees and fixed operational overhead; spreading a large
-order, however, may reduce market impact. More frequent rebalancing creates both
-fresher signals and more opportunities to trade. The practical choice should
-rest on net results using current holdings, turnover, spread and impact
-estimates, borrow costs, and operational overhead—not on reported backtest
-smoothness alone.
+I would spend the next research effort on the risk shared by the sleeves rather
+than on a larger calendar grid. The optimizer can control portfolio-level risk
+without explaining which exposures paid for taking it. That calls for a P&L
+attribution alongside the risk decomposition, especially through the short-book
+drawdowns.
 
-## Conclusion
+## Reproducibility and revision
 
-The experiment changes how I would report a fixed-cycle strategy. One rebalance
-schedule is one draw from a wider set of plausible outcomes, not the backtest.
-The full timing grid makes that uncertainty visible.
+The [aggregate metrics](/assets/tranching/timing_metrics.csv) include all seven
+combinations in both periods. The
+[manifest](/assets/tranching/timing_manifest.json) records conventions and hashes
+of the three source return files. The calculation and SVG renderer live in
+the research project's rebalance-timing module; licensed security-level data
+are not distributed here.
 
-Using all three tranches leaves mean annualized geometric
-return almost unchanged, reduces mean volatility by 0.61 percentage points, and lifts the mean
-Sharpe from 1.64 to 1.80. It also shows much less dispersion than the 15
-full-rebalance schedules; the remaining variation across weekdays is
-comparatively small. I prefer the three-sleeve implementation as a working
-design because it relies less on getting one starting week right.
-
-Fresher predictions may share credit for the improvement, and the missing daily
-archive prevents a realistic cost replay. I freeze the three-sleeve
-design, rebuild the daily evidence, and compare it with a full-rebalance version
-using the same prediction vintages. Turnover, spreads, impact, borrow, and
-operational overhead would then determine whether the risk reduction still
-holds after those costs.
-
-The [portfolio-optimization post](/quants/2026/08/29/portfolio-optimization.html)
-uses these three schedules and makes each proposed trade compete with the
-portfolio it already owns.
-
-## References
-
-- [Rebalance Timing Luck](https://www.thinknewfound.com/rebalance-timing-luck) — Newfound Research
-- [Global Tactical Asset Allocation: Updated Results and Real-Market Implementation Using Python and IBKR](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5230603) — Mohamed Gabriel, Alberto Pagani, and Carlo Zarattini
-- [The Tranching Dilemma](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5747964) — Carlo Zarattini and Alberto Pagani
+This revision replaces an older LightGBM example whose retained archive lacked
+daily returns, exact sample dates, and a complete cost record. Its figures and
+tables remain in the site's Git history, but I no longer use them to support
+the current portfolio's implementation choice.

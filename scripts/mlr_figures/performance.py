@@ -62,7 +62,7 @@ def plot_ic(
         spec.split_date,
         label=True,
         label_fontsize=style.annotation_size,
-        label_text="Model fixed before 2022",
+        label_text="Later period starts",
         label_at_top=True,
     )
     ax.set_title(
@@ -108,7 +108,7 @@ def plot_performance(
             spec.split_date,
             label=axis is wealth_ax,
             label_fontsize=style.annotation_size,
-            label_text="Model fixed before 2022",
+            label_text="Later period starts",
             label_at_top=True,
         )
     for model in spec.model_order:

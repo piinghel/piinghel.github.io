@@ -1,12 +1,24 @@
 title: Pieter-Jan Inghelbrecht
+url: https://piinghel.github.io
 description: >
   Research notes on systematic strategies, machine learning, and portfolio construction.
 
 theme: minima
 
-# Publish the two explicitly permalinked portfolio-optimization review drafts.
-# Their URLs remain labelled as previews until the evidence gate is complete.
-show_drafts: true
+# Preview unfinished articles only with `jekyll serve --drafts`.
+show_drafts: false
+
+exclude:
+  - AGENTS.md
+  - README.md
+  - scripts
+  - script
+  - Gemfile
+  - Gemfile.lock
+  - minima.gemspec
+  - tests
+  - requirements-figures.txt
+  - LICENSE.txt
 
 sass:
   style: compressed

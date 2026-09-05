@@ -3,156 +3,156 @@
 <desc id="desc">Net Sharpe and annual turnover across six trade coefficients and five holding-rank cutoffs during development. Thin vertical lines show the range across three rebalance schedules.</desc>
 <g font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
 <line x1="90.0" y1="22.0" x2="126.0" y2="22.0" stroke="#AAB2C0" stroke-width="2"/>
-<text x="137.0" y="27.0" fill="#AAB2C0" font-size="14" font-weight="400" text-anchor="start">Schedule range</text>
+<text x="137.0" y="27.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="start">Schedule range</text>
 <circle cx="300" cy="22" r="6" fill="#FBBF24"/>
-<text x="315.0" y="27.0" fill="#AAB2C0" font-size="14" font-weight="400" text-anchor="start">Chosen setting</text>
-<text x="53.0" y="63.0" fill="#F3F4F6" font-size="22" font-weight="650" text-anchor="start">Trade coefficient</text>
+<text x="315.0" y="27.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="start">Chosen setting</text>
+<text x="53.0" y="63.0" fill="#F3F4F6" font-size="24" font-weight="650" text-anchor="start">Trade coefficient</text>
 <path d="M117.0,214.4 L205.0,146.9 L293.0,138.4 L337.0,146.9 L381.0,155.3 L557.0,180.7" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="53.0" y="84.0" fill="#F3F4F6" font-size="16" font-weight="650" text-anchor="start">Net Sharpe</text>
+<text x="53.0" y="84.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="start">Net Sharpe</text>
 <line x1="117.0" y1="244.0" x2="557.0" y2="244.0" stroke="#3B4250" stroke-width="1"/>
-<text x="105.0" y="249.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">1.35</text>
+<text x="105.0" y="249.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">1.35</text>
 <line x1="117.0" y1="180.7" x2="557.0" y2="180.7" stroke="#3B4250" stroke-width="1"/>
-<text x="105.0" y="185.7" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">1.40</text>
+<text x="105.0" y="185.7" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">1.40</text>
 <line x1="117.0" y1="117.3" x2="557.0" y2="117.3" stroke="#3B4250" stroke-width="1"/>
-<text x="105.0" y="122.3" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">1.45</text>
+<text x="105.0" y="122.3" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">1.45</text>
 <line x1="117.0" y1="256.7" x2="117.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="112.0" y1="256.7" x2="122.0" y2="256.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="112.0" y1="180.7" x2="122.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="117.0" cy="214.4" r="6" fill="#AAB2C0"/>
-<text x="117.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">0.0</text>
+<text x="117.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">0</text>
 <line x1="205.0" y1="180.7" x2="205.0" y2="104.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="200.0" y1="180.7" x2="210.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="200.0" y1="104.7" x2="210.0" y2="104.7" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="205.0" cy="146.9" r="6" fill="#AAB2C0"/>
-<text x="205.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">1.0</text>
+<text x="205.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">1</text>
 <line x1="293.0" y1="155.3" x2="293.0" y2="104.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="288.0" y1="155.3" x2="298.0" y2="155.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="288.0" y1="104.7" x2="298.0" y2="104.7" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="293.0" cy="138.4" r="6" fill="#AAB2C0"/>
-<text x="293.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">2.0</text>
+<text x="293.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">2</text>
 <line x1="337.0" y1="180.7" x2="337.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="332.0" y1="180.7" x2="342.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="332.0" y1="117.3" x2="342.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="337.0" cy="146.9" r="6" fill="#FBBF24"/>
-<text x="337.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">2.5</text>
+<text x="337.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">2.5</text>
 <line x1="381.0" y1="193.3" x2="381.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="376.0" y1="193.3" x2="386.0" y2="193.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="376.0" y1="117.3" x2="386.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="381.0" cy="155.3" r="6" fill="#AAB2C0"/>
-<text x="381.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">3.0</text>
+<text x="381.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">3</text>
 <line x1="557.0" y1="218.7" x2="557.0" y2="130.0" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="552.0" y1="218.7" x2="562.0" y2="218.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="552.0" y1="130.0" x2="562.0" y2="130.0" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="557.0" cy="180.7" r="6" fill="#AAB2C0"/>
-<text x="557.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">5.0</text>
-<text x="337.0" y="330.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">Coefficient c (×10⁻⁴)</text>
-<text x="638.0" y="63.0" fill="#F3F4F6" font-size="22" font-weight="650" text-anchor="start">Holding cutoff</text>
+<text x="557.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">5</text>
+<text x="337.0" y="330.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">Coefficient c (×10⁻⁴)</text>
+<text x="638.0" y="63.0" fill="#F3F4F6" font-size="24" font-weight="650" text-anchor="start">Holding cutoff</text>
 <path d="M702.0,193.3 L867.0,172.2 L922.0,146.9 L977.0,155.3 L1142.0,176.4" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="638.0" y="84.0" fill="#F3F4F6" font-size="16" font-weight="650" text-anchor="start">Net Sharpe</text>
+<text x="638.0" y="84.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="start">Net Sharpe</text>
 <line x1="702.0" y1="244.0" x2="1142.0" y2="244.0" stroke="#3B4250" stroke-width="1"/>
-<text x="690.0" y="249.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">1.35</text>
+<text x="690.0" y="249.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">1.35</text>
 <line x1="702.0" y1="180.7" x2="1142.0" y2="180.7" stroke="#3B4250" stroke-width="1"/>
-<text x="690.0" y="185.7" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">1.40</text>
+<text x="690.0" y="185.7" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">1.40</text>
 <line x1="702.0" y1="117.3" x2="1142.0" y2="117.3" stroke="#3B4250" stroke-width="1"/>
-<text x="690.0" y="122.3" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">1.45</text>
+<text x="690.0" y="122.3" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">1.45</text>
 <line x1="702.0" y1="218.7" x2="702.0" y2="168.0" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="697.0" y1="218.7" x2="707.0" y2="218.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="697.0" y1="168.0" x2="707.0" y2="168.0" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="702.0" cy="193.3" r="6" fill="#AAB2C0"/>
-<text x="702.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">75.0</text>
+<text x="702.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">75</text>
 <line x1="867.0" y1="180.7" x2="867.0" y2="155.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="862.0" y1="180.7" x2="872.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="862.0" y1="155.3" x2="872.0" y2="155.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="867.0" cy="172.2" r="6" fill="#AAB2C0"/>
-<text x="867.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">150.0</text>
+<text x="867.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">150</text>
 <line x1="922.0" y1="180.7" x2="922.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="917.0" y1="180.7" x2="927.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="917.0" y1="117.3" x2="927.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="922.0" cy="146.9" r="6" fill="#FBBF24"/>
-<text x="922.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">175.0</text>
+<text x="922.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">175</text>
 <line x1="977.0" y1="180.7" x2="977.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="972.0" y1="180.7" x2="982.0" y2="180.7" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="972.0" y1="117.3" x2="982.0" y2="117.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="977.0" cy="155.3" r="6" fill="#AAB2C0"/>
-<text x="977.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">200.0</text>
+<text x="977.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">200</text>
 <line x1="1142.0" y1="206.0" x2="1142.0" y2="155.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="1137.0" y1="206.0" x2="1147.0" y2="206.0" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="1137.0" y1="155.3" x2="1147.0" y2="155.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="1142.0" cy="176.4" r="6" fill="#AAB2C0"/>
-<text x="1142.0" y="306.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">275.0</text>
-<text x="922.0" y="330.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">Rank cutoff</text>
-<text x="53.0" y="409.0" fill="#F3F4F6" font-size="16" font-weight="650" text-anchor="start">Annual turnover (× capital)</text>
+<text x="1142.0" y="306.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">275</text>
+<text x="922.0" y="330.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">Rank cutoff</text>
+<text x="53.0" y="409.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="start">Annual turnover (× capital)</text>
 <path d="M117.0,458.5 L205.0,499.5 L293.0,532.1 L337.0,544.7 L381.0,555.1 L557.0,579.0" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <line x1="117.0" y1="607.0" x2="557.0" y2="607.0" stroke="#3B4250" stroke-width="1"/>
-<text x="105.0" y="612.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">20</text>
+<text x="105.0" y="612.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">20</text>
 <line x1="117.0" y1="531.0" x2="557.0" y2="531.0" stroke="#3B4250" stroke-width="1"/>
-<text x="105.0" y="536.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">30</text>
+<text x="105.0" y="536.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">30</text>
 <line x1="117.0" y1="455.0" x2="557.0" y2="455.0" stroke="#3B4250" stroke-width="1"/>
-<text x="105.0" y="460.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">40</text>
+<text x="105.0" y="460.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">40</text>
 <line x1="117.0" y1="459.1" x2="117.0" y2="458.1" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="112.0" y1="459.1" x2="122.0" y2="459.1" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="112.0" y1="458.1" x2="122.0" y2="458.1" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="117.0" cy="458.5" r="6" fill="#AAB2C0"/>
-<text x="117.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">0.0</text>
+<text x="117.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">0</text>
 <line x1="205.0" y1="500.0" x2="205.0" y2="499.0" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="200.0" y1="500.0" x2="210.0" y2="500.0" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="200.0" y1="499.0" x2="210.0" y2="499.0" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="205.0" cy="499.5" r="6" fill="#AAB2C0"/>
-<text x="205.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">1.0</text>
+<text x="205.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">1</text>
 <line x1="293.0" y1="532.8" x2="293.0" y2="531.6" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="288.0" y1="532.8" x2="298.0" y2="532.8" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="288.0" y1="531.6" x2="298.0" y2="531.6" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="293.0" cy="532.1" r="6" fill="#AAB2C0"/>
-<text x="293.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">2.0</text>
+<text x="293.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">2</text>
 <line x1="337.0" y1="545.4" x2="337.0" y2="544.2" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="332.0" y1="545.4" x2="342.0" y2="545.4" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="332.0" y1="544.2" x2="342.0" y2="544.2" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="337.0" cy="544.7" r="6" fill="#FBBF24"/>
-<text x="337.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">2.5</text>
+<text x="337.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">2.5</text>
 <line x1="381.0" y1="555.8" x2="381.0" y2="554.8" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="376.0" y1="555.8" x2="386.0" y2="555.8" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="376.0" y1="554.8" x2="386.0" y2="554.8" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="381.0" cy="555.1" r="6" fill="#AAB2C0"/>
-<text x="381.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">3.0</text>
+<text x="381.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">3</text>
 <line x1="557.0" y1="579.6" x2="557.0" y2="578.5" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="552.0" y1="579.6" x2="562.0" y2="579.6" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="552.0" y1="578.5" x2="562.0" y2="578.5" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="557.0" cy="579.0" r="6" fill="#AAB2C0"/>
-<text x="557.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">5.0</text>
-<text x="337.0" y="655.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">Coefficient c (×10⁻⁴)</text>
-<text x="638.0" y="409.0" fill="#F3F4F6" font-size="16" font-weight="650" text-anchor="start">Annual turnover (× capital)</text>
+<text x="557.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">5</text>
+<text x="337.0" y="655.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">Coefficient c (×10⁻⁴)</text>
+<text x="638.0" y="409.0" fill="#F3F4F6" font-size="19" font-weight="650" text-anchor="start">Annual turnover (× capital)</text>
 <path d="M702.0,490.3 L867.0,536.9 L922.0,544.7 L977.0,550.8 L1142.0,560.6" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <line x1="702.0" y1="607.0" x2="1142.0" y2="607.0" stroke="#3B4250" stroke-width="1"/>
-<text x="690.0" y="612.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">20</text>
+<text x="690.0" y="612.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">20</text>
 <line x1="702.0" y1="531.0" x2="1142.0" y2="531.0" stroke="#3B4250" stroke-width="1"/>
-<text x="690.0" y="536.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">30</text>
+<text x="690.0" y="536.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">30</text>
 <line x1="702.0" y1="455.0" x2="1142.0" y2="455.0" stroke="#3B4250" stroke-width="1"/>
-<text x="690.0" y="460.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="end">40</text>
+<text x="690.0" y="460.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">40</text>
 <line x1="702.0" y1="491.6" x2="702.0" y2="488.4" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="697.0" y1="491.6" x2="707.0" y2="491.6" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="697.0" y1="488.4" x2="707.0" y2="488.4" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="702.0" cy="490.3" r="6" fill="#AAB2C0"/>
-<text x="702.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">75.0</text>
+<text x="702.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">75</text>
 <line x1="867.0" y1="537.9" x2="867.0" y2="536.3" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="862.0" y1="537.9" x2="872.0" y2="537.9" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="862.0" y1="536.3" x2="872.0" y2="536.3" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="867.0" cy="536.9" r="6" fill="#AAB2C0"/>
-<text x="867.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">150.0</text>
+<text x="867.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">150</text>
 <line x1="922.0" y1="545.4" x2="922.0" y2="544.2" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="917.0" y1="545.4" x2="927.0" y2="545.4" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="917.0" y1="544.2" x2="927.0" y2="544.2" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="922.0" cy="544.7" r="6" fill="#FBBF24"/>
-<text x="922.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">175.0</text>
+<text x="922.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">175</text>
 <line x1="977.0" y1="551.4" x2="977.0" y2="550.4" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="972.0" y1="551.4" x2="982.0" y2="551.4" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="972.0" y1="550.4" x2="982.0" y2="550.4" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="977.0" cy="550.8" r="6" fill="#AAB2C0"/>
-<text x="977.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">200.0</text>
+<text x="977.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">200</text>
 <line x1="1142.0" y1="561.2" x2="1142.0" y2="559.9" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="1137.0" y1="561.2" x2="1147.0" y2="561.2" stroke="#AAB2C0" stroke-width="2"/>
 <line x1="1137.0" y1="559.9" x2="1147.0" y2="559.9" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="1142.0" cy="560.6" r="6" fill="#AAB2C0"/>
-<text x="1142.0" y="631.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">275.0</text>
-<text x="922.0" y="655.0" fill="#AAB2C0" font-size="13" font-weight="400" text-anchor="middle">Rank cutoff</text>
+<text x="1142.0" y="631.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">275</text>
+<text x="922.0" y="655.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">Rank cutoff</text>
 </g>
 </svg>

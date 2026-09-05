@@ -468,7 +468,7 @@ table {
   display: table;
   width: 100%;
   max-width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   overflow: visible;
   margin: 2rem 0 0.7rem;
   border-collapse: collapse;
@@ -484,7 +484,7 @@ table {
     padding: 0.68rem 0.7rem;
     border: 0;
     border-bottom: 1px solid var(--rule);
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
     vertical-align: top;
     white-space: normal;
   }
@@ -552,20 +552,6 @@ table {
     text-align: left;
   }
 
-  &.comparison-table thead th:nth-child(2),
-  &.comparison-table tbody td:nth-child(2) {
-    color: #58656f;
-  }
-
-  &.comparison-table thead th:nth-child(3),
-  &.comparison-table tbody td:nth-child(3) {
-    color: var(--ink);
-  }
-
-  &.comparison-table tbody td:nth-child(3) {
-    font-weight: 600;
-  }
-
   &.comparison-table.period-metrics-table thead th:nth-child(3),
   &.comparison-table.period-metrics-table tbody td:nth-child(3) {
     color: #526777;
@@ -581,8 +567,6 @@ table {
     font-weight: 600;
   }
 
-  &.comparison-table.component-performance-table thead th,
-  &.comparison-table.component-performance-table tbody td,
   &.comparison-table.alpha-selection-table thead th,
   &.comparison-table.alpha-selection-table tbody td,
   &.comparison-table.ic-summary-table thead th,
@@ -632,25 +616,11 @@ table {
 }
 
 .post-content table.research-table.portfolio-card-table th:first-child {
-  width: 32%;
+  width: auto;
 }
 
 .theme-svg-figure {
   display: block;
-}
-
-.theme-svg-figure--dark {
-  display: none;
-}
-
-html[data-theme="dark"] {
-  .theme-svg-figure--light {
-    display: none;
-  }
-
-  .theme-svg-figure--dark {
-    display: block;
-  }
 }
 
 // Keep the themed SVG switch stronger than legacy article picture rules.

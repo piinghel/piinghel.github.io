@@ -1,5 +1,5 @@
 {%- if page.layout == "post" -%}
-  <!-- Equations are article-only; index and identity pages stay script-free. -->
+  <!-- Load the equation renderer only on article pages. -->
   <script>
     window.MathJax = {
       tex: {

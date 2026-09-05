@@ -18,14 +18,19 @@ This is a Jekyll site for concise, technically serious research notes. Keep pros
 ## Figures
 
 - Use captions for interpretation; do not embed figure titles in images.
-- Figure 4 may retain the three panel labels `Long gross`, `Short gross`, and `Net exposure`.
-- Figure 6 is one image with cumulative wealth above shaded drawdowns, a shared x-axis, and one legend.
-- Figure 6 is one 2-by-2 image: dot-com on the left, the 2025–2026 AI rally on
-  the right, wealth above additive leg contributions. It has one caption.
+- In the low-volatility article, Figure 3 uses the panel labels `Long gross`,
+  `Short gross`, and `Net exposure`. Figure 5 combines performance and drawdown.
+- Low-volatility Figure 6 is one 2-by-2 image: dot-com on the left and the
+  April 2025–May 2026 rally on the right, indexed growth above linked gross
+  book contributions. Do not assign an AI or growth-factor cause without
+  holdings-level attribution.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
 - Publish reproducible light and dark SVG variants from one shared figure
   composition, and keep the same table structure at every viewport width.
 
 ## Verification and delivery
 
-Run `bundle exec jekyll build` after concrete article or asset changes. Check rendered references and `git diff --check`. Leave only the two known `.DS_Store` modifications in the working tree, then commit and push `main` so the live page can be checked.
+Run `bundle exec jekyll build` after concrete article or asset changes, followed
+by `python3 scripts/check_site.py _site`. Check rendered references and
+`git diff --check`. Preserve any user-owned changes, especially `.DS_Store`,
+then commit and push `main` so the live page can be checked.

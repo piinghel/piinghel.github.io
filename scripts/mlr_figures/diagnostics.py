@@ -11,13 +11,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from matplotlib.patches import Patch
-from matplotlib.ticker import PercentFormatter
 
 from .support import (
     FigureSpec,
     FigureStyle,
-    Series,
-    add_panel_title,
     save_figure,
     style_axis,
 )
@@ -45,8 +42,22 @@ def plot_factor_correlation(
         "return_consistency": "Return\nconsistency",
     }
     lookup = {row["factor"]: row for row in rows}
-    if set(lookup) != set(factor_order):
+    if len(rows) != len(factor_order) or set(lookup) != set(factor_order):
         raise ValueError("correlation matrix must contain the five final factors")
+    matrix = np.array(
+        [
+            [float(lookup[row][column]) for column in factor_order]
+            for row in factor_order
+        ]
+    )
+    if (
+        not np.isfinite(matrix).all()
+        or not np.allclose(matrix, matrix.T)
+        or not np.allclose(np.diag(matrix), 1)
+    ):
+        raise ValueError(
+            "correlation matrix must be finite, symmetric, and unit diagonal"
+        )
 
     values = np.full((4, 4), np.nan)
     for row_index, row_factor in enumerate(factor_order[1:]):
@@ -61,8 +72,15 @@ def plot_factor_correlation(
     )
     color_map.set_bad(style.white)
     norm = TwoSlopeNorm(vmin=-0.3, vcenter=0.0, vmax=0.3)
+    if np.nanmax(np.abs(values)) > 0.3:
+        raise ValueError("factor correlations exceed the declared color scale")
     fig, ax = plt.subplots(figsize=(6.8, 4.7), facecolor=style.white)
-    image = ax.imshow(values, cmap=color_map, norm=norm, interpolation="none")
+    image = ax.pcolormesh(
+        np.arange(5) - 0.5, np.arange(5) - 0.5, values, cmap=color_map, norm=norm
+    )
+    ax.set_aspect("equal")
+    ax.set_xlim(-0.5, 3.5)
+    ax.set_ylim(3.5, -0.5)
 
     ax.set_xticks(
         np.arange(4),
@@ -126,6 +144,9 @@ def plot_factor_correlation(
         ticks=(-0.3, 0.0, 0.3),
     )
     colorbar.outline.set_visible(False)
+    if colorbar.solids is not None:
+        colorbar.solids.set_rasterized(False)
+        colorbar.solids.set_edgecolor("face")
     colorbar.ax.tick_params(
         length=0,
         colors=style.muted,
@@ -394,61 +415,6 @@ def plot_selected_coefficients(
         bottom=0.14,
     )
     save_figure(fig, output_dir, "top-coefficients", style)
-
-
-def plot_portfolio_exposures(
-    exposures: dict[str, Series],
-    output_dir: Path,
-    style: FigureStyle,
-) -> None:
-    """Plot monthly floating capital exposures for the selected portfolio."""
-
-    fig, ax = plt.subplots(figsize=(9.0, 4.4), facecolor=style.white)
-    for column, label, color in (
-        ("long_gross", "Long gross", style.long_leg),
-        ("short_gross", "Short gross", style.short_leg),
-        ("net_stock_exposure", "Net stock exposure", style.net_exposure),
-    ):
-        series = exposures[column]
-        ax.plot(series.dates, series.values, color=color, linewidth=1.8, label=label)
-
-    dates = exposures["long_gross"].dates
-    long_values = exposures["long_gross"].values
-    net_values = exposures["net_stock_exposure"].values
-    ax.set_ylim(
-        min(0.0, float(np.min(net_values)) - 0.03),
-        min(1.05, float(np.max(long_values)) + 0.05),
-    )
-    ax.set_xlim(dates[0], dates[-1])
-    ax.margins(x=0)
-    ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
-    ax.xaxis.set_major_locator(mdates.YearLocator(4))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    add_panel_title(
-        ax,
-        "Portfolio weight",
-        color=style.ink,
-        fontsize=style.axis_label_size,
-    )
-    style_axis(ax, style)
-    ax.legend(
-        loc="lower left",
-        bbox_to_anchor=(0.0, 1.24),
-        ncol=3,
-        frameon=False,
-        borderaxespad=0,
-        handlelength=2.4,
-        columnspacing=1.8,
-        labelcolor=style.ink,
-        fontsize=style.legend_size,
-    )
-    fig.subplots_adjust(
-        left=0.105,
-        right=0.98,
-        top=0.74,
-        bottom=0.18,
-    )
-    save_figure(fig, output_dir, "portfolio-exposures", style)
 
 
 def plot_selected_portfolio_tilts(

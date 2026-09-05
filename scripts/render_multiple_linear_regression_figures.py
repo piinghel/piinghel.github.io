@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from mlr_figures.diagnostics import (
     plot_alpha_sensitivity,
     plot_factor_correlation,
-    plot_portfolio_exposures,
     plot_selected_coefficients,
     plot_selected_portfolio_tilts,
     plot_turnover_costs,
@@ -23,7 +22,6 @@ from mlr_figures.support import (
     load_alpha_diagnostics,
     load_daily_series,
     load_selected_coefficients,
-    load_selected_exposures,
     load_selected_portfolio_tilts,
     read_rows,
 )
@@ -79,7 +77,6 @@ def render_figures(
     output_dir: Path,
     style: FigureStyle,
 ) -> None:
-    render_factor_correlation(research_root, output_dir, style)
     review_dir = research_root.resolve() / "outputs" / "review"
     output_dir = output_dir.resolve()
     spec = default_figure_spec(style)
@@ -110,8 +107,9 @@ def render_figures(
         review_dir / "multiple_linear_period_portfolio_metrics.csv"
     )
     selected_coefficients = load_selected_coefficients(review_dir)
-    selected_exposures = load_selected_exposures(review_dir)
     selected_portfolio_tilts = load_selected_portfolio_tilts(review_dir)
+    # Load every required source before changing any published output.
+    render_factor_correlation(research_root, output_dir, style)
 
     with plt.rc_context(
         {
@@ -126,7 +124,6 @@ def render_figures(
         plot_performance(wealth, drawdowns, output_dir, style, spec)
         plot_alpha_sensitivity(diagnostics, output_dir, style, spec)
         plot_selected_coefficients(selected_coefficients, output_dir, style, spec)
-        plot_portfolio_exposures(selected_exposures, output_dir, style)
         plot_selected_portfolio_tilts(
             selected_portfolio_tilts,
             output_dir,

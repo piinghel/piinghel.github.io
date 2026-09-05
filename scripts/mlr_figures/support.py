@@ -145,6 +145,13 @@ def load_daily_series(
     missing = set(model_order) - set(grouped)
     if missing:
         raise ValueError(f"missing model series in {path.name}: {sorted(missing)}")
+    for model in model_order:
+        grouped[model].sort(key=lambda item: item[0])
+        dates = [item[0] for item in grouped[model]]
+        if len(set(dates)) != len(dates):
+            raise ValueError(f"duplicate model dates in {path.name}: {model}")
+        if not np.isfinite([item[1] for item in grouped[model]]).all():
+            raise ValueError(f"non-finite values in {path.name}: {model}")
     series = {
         model: Series(
             np.array([item[0] for item in grouped[model]]),
@@ -187,14 +194,22 @@ def load_selected_coefficients(review_dir: Path) -> list[dict[str, str]]:
     rows = read_rows(
         review_dir / "multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz"
     )
-    selected_by_key = {
-        (row["feature"], row["fold_id"]): row
-        for row in rows
-        if int(row["heatmap_rank"]) <= 10
-    }
+    selected_rows = [row for row in rows if int(row["heatmap_rank"]) <= 10]
+    selected_by_key = {(row["feature"], row["fold_id"]): row for row in selected_rows}
+    if len(selected_by_key) != len(selected_rows):
+        raise ValueError("duplicate feature/fold coefficient observations")
     selected = list(selected_by_key.values())
     if len(selected) != 120:
         raise ValueError("expected ten selected predictors across twelve folds")
+    folds = defaultdict(set)
+    for row in selected:
+        folds[row["feature"]].add(row["fold_id"])
+    if len(folds) != 10 or any(len(value) != 12 for value in folds.values()):
+        raise ValueError("coefficient observations must cover ten complete predictors")
+    if len({tuple(sorted(value)) for value in folds.values()}) != 1:
+        raise ValueError("coefficient fold calendars must match")
+    if not np.isfinite([float(row["coefficient"]) for row in selected]).all():
+        raise ValueError("coefficient observations must be finite")
     if any(
         float(row["c"]) != 0.01 or row["selected"].lower() != "true" for row in selected
     ):
@@ -209,22 +224,24 @@ def load_selected_portfolio_tilts(review_dir: Path) -> list[dict[str, str]]:
     )
     if len(rows) != 1120 or len({row["predictor"] for row in rows}) != 10:
         raise ValueError("expected 112 quarters for ten selected portfolio tilts")
+    keys = {(row["predictor"], row["date"]) for row in rows}
+    if len(keys) != len(rows):
+        raise ValueError("duplicate predictor-quarter tilt observations")
+    calendars = defaultdict(set)
+    for row in rows:
+        calendars[row["predictor"]].add(date.fromisoformat(row["date"]))
+    if (
+        any(len(value) != 112 for value in calendars.values())
+        or len({tuple(sorted(value)) for value in calendars.values()}) != 1
+    ):
+        raise ValueError("portfolio tilt calendars must match")
+    if not np.isfinite([float(row["quarterly_mean_tilt"]) for row in rows]).all():
+        raise ValueError("portfolio tilts must be finite")
     if any(
         float(row["c"]) != 0.01 or row["selected"].lower() != "true" for row in rows
     ):
         raise ValueError("portfolio tilts must use the selected c=0.01 model")
     return rows
-
-
-def load_selected_exposures(review_dir: Path) -> dict[str, Series]:
-    """Load the retained monthly exposure paths for the selected portfolio."""
-
-    rows = read_rows(review_dir / "multiple_linear_selected_exposure_figure_source.csv")
-    dates = np.array([date.fromisoformat(row["date"]) for row in rows])
-    return {
-        column: Series(dates, np.array([float(row[column]) for row in rows]))
-        for column in ("long_gross", "short_gross", "net_stock_exposure")
-    }
 
 
 def style_axis(
@@ -280,7 +297,7 @@ def add_split_marker(
     *,
     label: bool = False,
     label_fontsize: float = 8.0,
-    label_text: str = "Specification fixed\nbefore 2022",
+    label_text: str = "Later period starts",
     label_at_top: bool = False,
 ) -> None:
     ax.axvline(split_date, color=style.muted, linewidth=0.9, linestyle=(0, (2, 3)))

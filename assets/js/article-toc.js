@@ -5,6 +5,40 @@
   const article = document.querySelector(".post-content");
   const list = toc && toc.querySelector("[data-article-toc-list]");
 
+  if (article) {
+    article.querySelectorAll("table.research-table").forEach((table) => {
+      if (table.parentElement.classList.contains("research-table-scroll")) return;
+      const region = document.createElement("div");
+      region.className = "research-table-scroll";
+      region.tabIndex = 0;
+      region.setAttribute("role", "region");
+      const caption = table.nextElementSibling;
+      region.setAttribute("aria-label", caption && caption.classList.contains("table-caption")
+        ? caption.textContent.trim() : "Research table");
+      table.before(region);
+      region.appendChild(table);
+    });
+    const scrollRegions = Array.from(article.querySelectorAll(
+      ".research-table-scroll, .research-figure, .low-vol-figure"
+    ));
+    const updateScrollAccess = () => {
+      scrollRegions.forEach((region) => {
+        const scrollable = region.scrollWidth > region.clientWidth + 1;
+        region.tabIndex = scrollable ? 0 : -1;
+        if (!region.classList.contains("research-table-scroll")) {
+          region.setAttribute("role", "group");
+          const image = region.querySelector("img");
+          region.setAttribute("aria-label", image ? image.alt : "Research diagram");
+        }
+      });
+    };
+    updateScrollAccess();
+    window.addEventListener("resize", updateScrollAccess);
+    article.querySelectorAll("img").forEach((image) => {
+      image.addEventListener("load", updateScrollAccess, { once: true });
+    });
+  }
+
   if (!toc || !article || !list) return;
 
   const headings = Array.from(article.querySelectorAll("h2"));

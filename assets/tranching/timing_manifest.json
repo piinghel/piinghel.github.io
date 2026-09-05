@@ -1,0 +1,13 @@
+{
+  "rule": "Frozen B3: Ridge ranking, constrained optimizer with trading controls",
+  "aggregation": "Equal fixed-notional mixture of saved daily returns; no new forecasts or trades",
+  "annualization": 252,
+  "cash_rate": 0,
+  "costs": "Existing 5 bp proportional costs, averaged without cross-sleeve netting",
+  "sources": {
+    "o0/returns.csv": "6c43f0891459ca327f06c4e275d814c37dc7484ba3f1053b61d859c690f3497b",
+    "o1/returns.csv": "d8a6b397bbc24b4777c0d88b20dafca5ed6f1eef55d113dd86d2c9112b569d9d",
+    "o2/returns.csv": "cfbb99d463dd2ebd6b3a7531d0f2241bb806f9f85df2e8cc5047370b95b68da8"
+  },
+  "later_period": "Reused history, not an untouched holdout"
+}

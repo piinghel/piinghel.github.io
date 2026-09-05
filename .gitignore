@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 *.py[cod]
 *.csv
+!assets/tranching/timing_metrics.csv
 *.parquet
 *.tmp
 *.bak

@@ -1,6 +1,7 @@
+{% assign dimensions = site.data.figure_dimensions[include.base] %}
 <picture class="theme-svg-figure theme-svg-figure--light">
-  <img src="{{ include.base }}.svg?v={{ include.version }}" alt="{{ include.alt | escape }}" loading="lazy" decoding="async">
+  <img src="{{ include.base }}.svg?v={{ include.version }}" alt="{{ include.alt | escape }}"{% if dimensions %} width="{{ dimensions.width }}" height="{{ dimensions.height }}"{% endif %} loading="lazy" decoding="async">
 </picture>
-<picture class="theme-svg-figure theme-svg-figure--dark" aria-hidden="true">
-  <img src="{{ include.base }}_dark.svg?v={{ include.version }}" alt="" loading="lazy" decoding="async">
+<picture class="theme-svg-figure theme-svg-figure--dark">
+  <img src="{{ include.base }}_dark.svg?v={{ include.version }}" alt="{{ include.alt | escape }}"{% if dimensions %} width="{{ dimensions.width }}" height="{{ dimensions.height }}"{% endif %} loading="lazy" decoding="async">
 </picture>
