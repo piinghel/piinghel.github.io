@@ -135,26 +135,18 @@ portfolio risk contribution lies after PC10 on
 PC141.
 
 Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
-15% changes roughly 98%. A 2% stock cap changes almost every target. Frequent
-adjustments need not produce a very different portfolio. I compare the holdings
-by adding the absolute weight differences
-between the capped and control targets: their L1 distance. It averages 1.5%
-of capital for PCA 10% in the development period and 4.8% later. The distance
-is roughly 7% for Sector 20% in both periods, nearly 20% for Sector 15%, and
-26.5% before 2022 and 17.0% later for Stock 2%. Because the two strategies
-evolve independently, this measures how far their holdings have diverged,
-including differences accumulated since earlier rebalances.
+15% changes roughly 98%. A 2% stock cap changes almost every target.
+Figure 1 compares how often each tested limit requires an adjustment.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel comparison of how often PCA, sector, and stock risk caps intervene and how different the resulting target portfolios are from matched controls" version="3" %}
+  {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Paired dots comparing the percentage of rebalances requiring adjustment under each PCA, sector and stock risk cap, in the development and later periods" version="4" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: How often risk caps intervene and how much portfolios differ.</strong> Development: September 1998–December 2021; later: January 2022–May 2026. Points are means across three schedules; whiskers span their range. Weight difference is the target L1 distance from the independently run matched control, defined above, as a percentage of capital. Filled markers are audited; hollow markers are provisional. Lines connect tested settings. Gray references mark the candidate limits PCA 10% and Sector 20%.</p>
+<p class="figure-caption"><strong>Figure 1: How often do risk caps require an adjustment?</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Provisional results.</p>
 
-In Figure 1, Sector 20% requires frequent adjustments but leaves the holdings
-much closer to the control than Sector 15% does. Stock 2% affects almost every
-rebalance and produces larger differences. PCA caps change the portfolio more
-in the later period.
+PCA caps intervene more often in the later period. The tighter sector and stock
+caps require adjustments at almost every rebalance. How much those adjustments
+change the holdings is a separate question, covered in Table 1.
 
 The caps apply to target weights using the covariance estimated at that
 rebalance. Rounding, execution, and subsequent price moves can take the actual
@@ -164,8 +156,10 @@ Table 1 puts the reduction in concentration beside the frequency and size of
 the portfolio changes. “Own concentration” follows the largest contribution in
 the dimension being capped: I take its 95th percentile within each schedule,
 then average the three. “Targets corrected” counts rebalances where the capped
-run needed a local correction. Target L1 compares holdings with the control;
-executed turnover appears separately in Table 2.
+run needed a local correction. Target L1 adds the absolute weight differences
+between the capped and control targets on the same date. Each portfolio evolves
+independently, so the distance includes differences accumulated since earlier
+rebalances. Executed turnover appears separately in Table 2.
 
 <table class="research-table comparison-table control-table">
   <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections and residual violations use a 10<sup>−6</sup> tolerance. Sector 15%* remains provisional: one target returned an inaccurate-optimum status, although its reconstructed constraints held.</caption>
