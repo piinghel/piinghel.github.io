@@ -277,7 +277,3 @@ how strongly the trading penalty acts.
 The simulations trade against fixed strategy notional and let weights drift
 between rebalances. The displayed compounded returns are performance indices;
 a funded account replay would also need reinvestment and financing assumptions.
-The Ridge predictor deck includes the relative-range feature whose downward-gap
-omission was identified during review. All allocation rules share those saved
-predictions; these results compare allocation of that score, and have not yet
-been rerun with a corrected predictor.

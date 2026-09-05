@@ -129,7 +129,3 @@ The backtest keeps strategy notional fixed and lets weights drift between
 trades. The displayed index compounds average daily P&L per unit of notional;
 a funded account replay would also need reinvestment, financing and borrow
 assumptions.
-
-These results use saved Ridge predictions with a range predictor that omits
-downward overnight gaps. The schedules have not yet been rerun with the
-corrected predictor.

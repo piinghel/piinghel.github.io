@@ -270,7 +270,3 @@ its lower exposure.
 The original matched return and coefficient files are unavailable. The
 OLS–Ridge tables and figures retain the previously reported results and have
 not been independently reproduced in this revision.
-
-The relative-range predictor in the reported model omits downward overnight
-gaps. Its economic interpretation and the effect of correcting it remain
-under review.
