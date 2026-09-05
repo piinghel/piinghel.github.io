@@ -223,12 +223,10 @@ Against the original optimizer on that same schedule, net Sharpe falls from
 1.40 to 1.31 in development
 and from 0.93 to 0.90 later. Later maximum drawdown improves from 9.16% to 7.47%,
 while earlier drawdown worsens slightly and turnover rises in both periods.
-I consider this too strict for the occasional guardrail I want, so I am not
-adding it to the portfolio.
-
-These 10% results are preliminary and separate from the three-schedule figures
-and tables above. The saved sector shares pass the cap check, but solver and
-convergence warnings remain, and execution still requires audit.
+I stopped pursuing the 10% sector cap: it was slow to solve, too strict for the
+guardrail I wanted, and the initial results were not compelling. I am not adding
+it to the portfolio. These results cover one schedule and remain preliminary;
+the full comparison is incomplete.
 
 The 2% stock cap has a different trade-off. Its later net Sharpe rises from 0.87 to
 0.93 and later maximum drawdown falls from 9.05% to 8.47%, but the improvement
