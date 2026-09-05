@@ -14,7 +14,7 @@ github_repositories:
     url: https://github.com/piinghel/rebalance-tranching
 ---
 
-<p class="article-summary">I split the strategy into three equal parts, called tranches, each with its own rebalance schedule. Across September 1998–May 2026, combining them leaves average annualized return almost unchanged: 11.37% becomes 11.43%. The return spread across calendars falls from 2.06 to 0.40 percentage points, and portfolio volatility falls too.</p>
+<p class="article-summary">I split the strategy into three equal parts, called tranches, each with its own rebalance schedule. Across September 1998–May 2026, combining them leaves average annualized return almost unchanged: 11.37% becomes 11.43%. Average portfolio volatility falls from 8.53% to 7.88%, while the return spread across calendars narrows from 2.06 to 0.40 percentage points.</p>
 
 ## The starting-week problem
 
@@ -31,28 +31,30 @@ I use the [same stock strategy](/quants/2026/08/29/portfolio-optimization.html)
 throughout: the forecasts, point-in-time universe, selection and sizing rules,
 and gross exposure cap stay fixed. Friday refers to the signal date; execution
 is at the next trading-session close. All returns include the existing 5 bp
-allowance for transaction costs and market impact. The main figures cover the
-full matched history. I also split the tables into development (September
+allowance for transaction costs and market impact. The calendar grid and
+return–volatility comparison cover the full matched history. I also split the
+tables into development (September
 1998–December 2021) and later history (January 2022–May 2026), so the much longer
 development period cannot hide a change in the more recent results. The later
 period has already informed research choices; it is not an untouched test.
 
-Figure 1 starts with the original three Friday calendars. The shaded band sits
-between the best and worst fixed calendars over the full period, with the
-three-tranche portfolio in blue. Its 11.67% return is close to the 11.61%
-average across all three Friday calendars. The benefit is reducing dependence
-on the chosen week; it does not capture the whole best-to-worst return gap.
+The original three Friday calendars have a fairly modest full-history spread
+of 0.67 percentage points. Their combined return is 11.67%, close to the 11.61%
+average across all three calendars. The larger 2.06-point range above includes
+the weekday choice as well.
 
-The full-history Friday spread is 0.67 percentage points, but that average hides
-larger differences over shorter stretches. From January 2022 to May 2026, the
-same three calendars return **5.42% to 9.91%**, a **4.49-point spread**. Their
-combined return is 8.02%, close to the standalone average of 7.99%.
+Figure 1 uses January 2022–May 2026 to make the more recent divergence easier to
+see. Over that period, the three Friday calendars return **5.42% to 9.91%**,
+a **4.49-point spread**. The shaded band joins the best and worst fixed
+calendars, with the three-tranche portfolio in blue. Its 8.02% return is close
+to the 7.99% average across all three Friday calendars. This is a larger calendar effect than over the full
+history; tranching does not capture that entire best-to-worst gap as extra return.
 
 <div class="research-figure rebalancing-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" mobile="/assets/tranching/schedule-performance_mobile" version="5" alt="Full-history Friday calendars: shaded band between fixed Week 2 and Week 3 paths, returning 12.04% and 11.37% annually. The three-tranche portfolio returns 11.67%." %}
+  {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" mobile="/assets/tranching/schedule-performance_mobile" version="6" alt="January 2022–May 2026 Friday calendars: shaded band between fixed Week 2 and Week 3 paths, returning 9.91% and 5.42% annually. The three-tranche portfolio returns 8.02%." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: The calendar changes the investor's experience.</strong> 22 September 1998–27 May 2026. Shading joins the fixed Friday calendars with the highest and lowest full-period returns; these need not be the highest and lowest paths at every date. The blue portfolio combines all three offsets. The index compounds daily net P&amp;L per unit of fixed notional; endpoint labels give annualized geometric returns.</p>
+<p class="figure-caption"><strong>Figure 1: A larger divergence in the later period.</strong> 3 January 2022–27 May 2026. Shading joins the fixed Friday calendars with the highest and lowest returns over this period; these need not be the highest and lowest paths at every date. The blue portfolio combines all three offsets. The index compounds daily net P&amp;L per unit of fixed notional; endpoint labels give annualized geometric returns.</p>
 
 ## Three tranches
 
@@ -234,10 +236,12 @@ Trades are accounted for separately across tranches, with no netting savings.
 Fixed-ticket charges, borrow and financing are outside the model. The practical
 change here is tracking three books and sending smaller orders more often.
 
-I would fund all three tranches. Over the full history, I keep almost the same
-average return, remove about four fifths of the calendar spread, and lower
-portfolio volatility. The separate periods support the same decision, although
-the size of the volatility benefit changes. These results already pay the
-existing 5 bp costs. For me, that is enough to justify maintaining three books
-and sending smaller orders more often. I still have to choose a weekday, but
-less of the outcome rests on one arbitrary calendar.
+I would fund all three tranches. The full-history Friday spread is fairly
+modest, so I wouldn't base the decision on the striking later-period chart
+alone. The volatility reduction is the more useful takeaway for me: from
+8.53% to 7.88% across the full calendar comparison, with almost unchanged
+average return. This is a useful, incremental reduction in risk. That benefit
+appears in both periods, though its size changes,
+and the results already include the existing 5 bp costs. For me, that is enough
+to justify maintaining three books and sending smaller orders more often.
+Less dependence on the calendar comes alongside that reduction in portfolio risk.
