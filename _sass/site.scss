@@ -190,6 +190,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-scroll-hint { font: 0.76rem var(--font-sans); color: var(--muted-ink); margin: 0.4rem 0; }
 .research-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; margin: 1.6rem 0 0.5rem; }
 .research-table-scroll .research-table { min-width: 620px; }
+.research-caption-content { display: block; }
 .research-table-scroll .sleeve-schedule { min-width: 0; }
 .research-table-scroll .control-table { min-width: 460px; }
 .research-table-scroll .standalone-factor-table, .research-table-scroll .settings-table { min-width: 0; }

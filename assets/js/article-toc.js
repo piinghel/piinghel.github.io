@@ -24,6 +24,12 @@
     const scrollRegions = Array.from(article.querySelectorAll(
       ".research-table-scroll, .research-figure, .low-vol-figure"
     ));
+    article.querySelectorAll(".research-table caption").forEach((caption) => {
+      const content = document.createElement("span");
+      content.className = "research-caption-content";
+      while (caption.firstChild) content.appendChild(caption.firstChild);
+      caption.appendChild(content);
+    });
     const scrollHints = new Map(scrollRegions.map((region) => {
       const hint = document.createElement("p");
       hint.className = "research-scroll-hint";
@@ -34,6 +40,8 @@
     }));
     const updateScrollAccess = () => {
       scrollRegions.forEach((region) => {
+        const caption = region.querySelector(".research-caption-content");
+        if (caption) caption.style.maxWidth = `${region.clientWidth}px`;
         const scrollable = region.scrollWidth > region.clientWidth + 1;
         scrollHints.get(region).hidden = !scrollable;
         region.tabIndex = scrollable ? 0 : -1;
