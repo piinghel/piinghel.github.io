@@ -188,36 +188,36 @@ contributions can still add up to a large shared exposure.
 
 ## What does it cost?
 
-How much do these changes cost in return and trading? Table 2 compares each
-capped portfolio with its control. I calculate each metric, including maximum
-drawdown, for each full-capital schedule before averaging the three.
+Moderate caps leave net return, volatility, Sharpe, and turnover close to their
+controls (Table 2). PCA uses its matching covariance control; stock and sector
+caps use the original optimizer.
 
-<table class="research-table comparison-table control-table">
-  <caption><strong>Table 2: Performance and trading under concentration limits.</strong> Three-schedule means, except Sector 10%**. Returns are geometric and annualized; volatility and two-way executed turnover are annualized. Net results charge 5 bp on traded notional. Drawdowns are positive loss magnitudes.</caption>
+<table class="research-table comparison-table risk-performance-table">
+  <caption><strong>Table 2: Returns, risk, and trading.</strong> Three-schedule means, except Sector 10%**. Net returns are geometric, after 5 bp trading costs. Return, volatility, and two-way turnover are annualized; turnover is a multiple of capital.</caption>
   <thead>
-    <tr><th>Constraint</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Realized vol.</th><th>Max net DD</th><th>Turnover</th></tr>
+    <tr><th>Portfolio</th><th>Net return</th><th>Vol.</th><th>Net Sharpe</th><th>Turnover</th></tr>
   </thead>
   <tbody>
-    <tr class="period-heading"><th colspan="7">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Optimizer + trading controls</th><td>13.92%</td><td>12.32%</td><td>1.43</td><td>8.40%</td><td>18.06%</td><td>28.2×</td></tr>
-    <tr><th scope="row">PCA covariance control · no cap</th><td>13.80%</td><td>12.22%</td><td>1.43</td><td>8.33%</td><td>18.24%</td><td>28.0×</td></tr>
-    <tr><th scope="row">All PCs · 10%</th><td>13.79%</td><td>12.21%</td><td>1.43</td><td>8.32%</td><td>18.22%</td><td>28.0×</td></tr>
-    <tr><th scope="row">Sector · 20%</th><td>13.99%</td><td>12.40%</td><td>1.43</td><td>8.40%</td><td>18.02%</td><td>28.2×</td></tr>
-    <tr><th scope="row">Sector · 15%*</th><td>13.90%</td><td>12.30%</td><td>1.42</td><td>8.40%</td><td>18.29%</td><td>28.3×</td></tr>
-    <tr><th scope="row">Sector · 10%**</th><td>12.66%</td><td>11.06%</td><td>1.31</td><td>8.27%</td><td>15.81%</td><td>28.6×</td></tr>
-    <tr><th scope="row">Stock · 4%*</th><td>13.94%</td><td>12.34%</td><td>1.42</td><td>8.42%</td><td>17.85%</td><td>28.3×</td></tr>
-    <tr><th scope="row">Stock · 3%</th><td>13.91%</td><td>12.30%</td><td>1.42</td><td>8.44%</td><td>17.82%</td><td>28.4×</td></tr>
-    <tr><th scope="row">Stock · 2%</th><td>13.89%</td><td>12.26%</td><td>1.41</td><td>8.47%</td><td>18.01%</td><td>28.7×</td></tr>
-    <tr class="period-heading"><th colspan="7">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Optimizer + trading controls</th><td>9.33%</td><td>7.99%</td><td>0.87</td><td>9.32%</td><td>9.05%</td><td>24.6×</td></tr>
-    <tr><th scope="row">PCA covariance control · no cap</th><td>9.45%</td><td>8.11%</td><td>0.88</td><td>9.32%</td><td>9.14%</td><td>24.5×</td></tr>
-    <tr><th scope="row">All PCs · 10%</th><td>9.47%</td><td>8.12%</td><td>0.88</td><td>9.30%</td><td>9.11%</td><td>24.6×</td></tr>
-    <tr><th scope="row">Sector · 20%</th><td>9.52%</td><td>8.18%</td><td>0.89</td><td>9.29%</td><td>9.03%</td><td>24.6×</td></tr>
-    <tr><th scope="row">Sector · 15%*</th><td>9.52%</td><td>8.17%</td><td>0.89</td><td>9.24%</td><td>8.98%</td><td>24.7×</td></tr>
-    <tr><th scope="row">Sector · 10%**</th><td>9.50%</td><td>8.12%</td><td>0.90</td><td>9.10%</td><td>7.47%</td><td>25.3×</td></tr>
-    <tr><th scope="row">Stock · 4%*</th><td>9.45%</td><td>8.11%</td><td>0.88</td><td>9.31%</td><td>8.98%</td><td>24.6×</td></tr>
-    <tr><th scope="row">Stock · 3%</th><td>9.65%</td><td>8.30%</td><td>0.90</td><td>9.32%</td><td>8.89%</td><td>24.7×</td></tr>
-    <tr><th scope="row">Stock · 2%</th><td>9.96%</td><td>8.60%</td><td>0.93</td><td>9.30%</td><td>8.47%</td><td>24.9×</td></tr>
+    <tr class="period-heading"><th colspan="5">Development · September 1998–December 2021</th></tr>
+    <tr><th scope="row">Original</th><td>12.32%</td><td>8.40%</td><td>1.43</td><td>28.2×</td></tr>
+    <tr><th scope="row">PCA control</th><td>12.22%</td><td>8.33%</td><td>1.43</td><td>28.0×</td></tr>
+    <tr><th scope="row">PCA 10%</th><td>12.21%</td><td>8.32%</td><td>1.43</td><td>28.0×</td></tr>
+    <tr><th scope="row">Sector 20%</th><td>12.40%</td><td>8.40%</td><td>1.43</td><td>28.2×</td></tr>
+    <tr><th scope="row">Sector 15%*</th><td>12.30%</td><td>8.40%</td><td>1.42</td><td>28.3×</td></tr>
+    <tr><th scope="row">Sector 10%**</th><td>11.06%</td><td>8.27%</td><td>1.31</td><td>28.6×</td></tr>
+    <tr><th scope="row">Stock 4%*</th><td>12.34%</td><td>8.42%</td><td>1.42</td><td>28.3×</td></tr>
+    <tr><th scope="row">Stock 3%</th><td>12.30%</td><td>8.44%</td><td>1.42</td><td>28.4×</td></tr>
+    <tr><th scope="row">Stock 2%</th><td>12.26%</td><td>8.47%</td><td>1.41</td><td>28.7×</td></tr>
+    <tr class="period-heading"><th colspan="5">Later · January 2022–May 2026</th></tr>
+    <tr><th scope="row">Original</th><td>7.99%</td><td>9.32%</td><td>0.87</td><td>24.6×</td></tr>
+    <tr><th scope="row">PCA control</th><td>8.11%</td><td>9.32%</td><td>0.88</td><td>24.5×</td></tr>
+    <tr><th scope="row">PCA 10%</th><td>8.12%</td><td>9.30%</td><td>0.88</td><td>24.6×</td></tr>
+    <tr><th scope="row">Sector 20%</th><td>8.18%</td><td>9.29%</td><td>0.89</td><td>24.6×</td></tr>
+    <tr><th scope="row">Sector 15%*</th><td>8.17%</td><td>9.24%</td><td>0.89</td><td>24.7×</td></tr>
+    <tr><th scope="row">Sector 10%**</th><td>8.12%</td><td>9.10%</td><td>0.90</td><td>25.3×</td></tr>
+    <tr><th scope="row">Stock 4%*</th><td>8.11%</td><td>9.31%</td><td>0.88</td><td>24.6×</td></tr>
+    <tr><th scope="row">Stock 3%</th><td>8.30%</td><td>9.32%</td><td>0.90</td><td>24.7×</td></tr>
+    <tr><th scope="row">Stock 2%</th><td>8.60%</td><td>9.30%</td><td>0.93</td><td>24.9×</td></tr>
   </tbody>
 </table>
 

@@ -193,6 +193,12 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-caption-content { display: block; position: sticky; left: 0; }
 .research-table-scroll .sleeve-schedule { min-width: 0; }
 .research-table-scroll .control-table { min-width: 460px; }
+.research-table-scroll .risk-performance-table { min-width: 0; table-layout: fixed; }
+.risk-performance-table th:first-child { width: 30%; }
+.research-table.risk-performance-table th, .research-table.risk-performance-table td { padding: 0.5rem 0.3rem; }
+@media (max-width: 600px) {
+  .research-table.risk-performance-table { font-size: 0.84rem; }
+}
 .research-table-scroll .standalone-factor-table, .research-table-scroll .settings-table { min-width: 0; }
 @media (min-width: 1160px) {
   // Header and body start on the same reading edge; the contents occupy a rail.
