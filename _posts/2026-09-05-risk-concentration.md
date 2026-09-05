@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "When Risk Limits Start Changing the Portfolio"
-description: "Risk-contribution limits can protect a long-short optimizer, but tight limits move risk elsewhere and increase trading."
+description: "Do weight limits leave concentrated portfolio risk? Testing what stock, sector and PCA risk caps reduce, and how much they change the portfolio."
 date: 2026-09-05
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Risk concentration
@@ -14,29 +14,27 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">A portfolio can hold many small positions and still depend on a few shared risks. Is that happening in this strategy? I first measure where its forecast risk is concentrated, then test what stock, sector and PCA risk caps change. The existing optimizer already spreads modeled risk reasonably well, but some concentrations remain. Moderate caps reduce them with limited portfolio changes; tight ones start to dictate how I size the portfolio.</p>
+<p class="article-summary">Weight limits can leave a portfolio exposed to concentrated risk. I check whether this happens in the existing strategy, then test what stock, sector and PCA risk caps change. The optimizer spreads forecast risk reasonably well, but some concentrations remain. Moderate caps reduce them with limited changes to the holdings; tighter caps have a larger effect on position sizing.</p>
 
 The [existing optimizer](/quants/2026/08/29/portfolio-optimization.html)
 controls total forecast volatility, gross exposure, beta, sector capital, and
-position size. Yet a portfolio can stay inside its 7% forecast-volatility budget
-while one stock, sector, or shared
-direction supplies a large fraction of that risk. The technology rally around
-AI made the distinction practical: several acceptable technology or
-semiconductor weights can still depend on the same underlying move. I wanted to
-know whether the existing limits left similar concentration in this strategy.
-The first question is whether this is actually a problem for our portfolio:
-despite its weight limits, does too much risk come from one stock, sector, or
-shared market move? Where concentration appears, the second question is whether
-I can limit it without constantly changing the portfolio.
+position size. A portfolio can meet all those limits while one stock, sector,
+or shared market move accounts for a large fraction of its risk. The AI rally
+prompted me to look at this: technology and semiconductor positions can each
+meet a weight limit while depending on the same underlying move.
 
-I keep the Ridge predictions, selected stocks, trading controls, execution, and
-5 bp charge on traded notional fixed. The comparison runs the complete strategy
-on three staggered rebalance schedules from September 1998 through May 2026. I report
-September 1998–December 2021 and January 2022–May 2026 separately. Both periods
-are exploratory: the later history has already informed this research programme,
-and I added some tighter thresholds after inspecting the first results.
+Does this happen in our portfolio despite its existing weight limits? If so,
+can risk limits reduce the concentration without constantly changing the
+holdings?
 
-## Measuring where risk sits
+As in my earlier posts, I use the same Ridge predictions, stock-selection rules
+and trading setup, with a 5 bp charge on traded notional. I run the full strategy
+on three staggered rebalance schedules from September 1998 through May 2026.
+I report September 1998–December 2021 and January 2022–May 2026 separately.
+This is exploratory: I had already examined the later period in earlier work
+and added some tighter thresholds after seeing the first results.
+
+## Measuring risk contributions
 
 Let $$w$$ contain the signed portfolio weights, $$\Sigma$$ the current forecast
 covariance matrix, and
@@ -88,13 +86,13 @@ $$w_S^\top\Sigma w_S$$, answers a different question because it excludes the
 sector's covariance with everything else and does not add to total portfolio
 variance.
 
-These ratios make the hard caps non-convex because the denominator changes with
-the weights. I first solve the original optimizer, then use a bounded sequence
-of conservative local convex approximations. After every candidate, I recompute
+The caps are non-convex because the denominator changes with the weights.
+I first solve the original optimizer, then solve a bounded sequence of
+conservative convex approximations around the current weights. For each candidate, I recompute
 the exact shares from $$w^\top\Sigma w$$. Any candidate whose exact cap excess
 remains above $$10^{-6}$$ is rejected. Passing that check means the target meets
 the cap within tolerance; the search can still miss a better feasible
-portfolio. Targets with solver or outer-convergence warnings remain provisional.
+portfolio. Targets with solver or convergence warnings remain provisional.
 If no candidate passes, I mark that configuration incomplete. Falling back to
 the uncapped target would abandon the limit, and scaling the portfolio down
 would leave its variance shares unchanged.
@@ -109,10 +107,10 @@ The corresponding sector figures are 30.8% and
 
 Still, the portfolio usually spreads its modeled risk across many directions.
 The median effective number of PCA directions,
-$$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40. This counts diversification within
-the forecast covariance model; several directions may share an economic theme.
-That combination of broad dispersion and occasional concentration is why I
-test caps as guardrails.
+$$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40. This describes how evenly forecast
+risk is spread across components; several components may share an economic
+theme. The portfolio is broadly diversified under this model, with some larger
+contributions worth examining.
 
 ## How much do risk limits change the portfolio?
 
@@ -127,27 +125,26 @@ portfolio risk contribution lies after PC10 on
 PC141.
 
 Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
-15% changes roughly 98% and is close to continuously active. A 2% stock cap
-changes almost every target. The amount moved matters as well as the frequency:
-an optimizer can make a small correction on many dates without rebuilding the
-portfolio. I measure that difference by adding the absolute weight differences
+15% changes roughly 98%. A 2% stock cap changes almost every target. Frequent
+adjustments need not produce a very different portfolio. I compare the holdings
+by adding the absolute weight differences
 between the capped and control targets: their L1 distance. It averages 1.5%
 of capital for PCA 10% in the development period and 4.8% later. The distance
 is roughly 7% for Sector 20% in both periods, nearly 20% for Sector 15%, and
 26.5% before 2022 and 17.0% later for Stock 2%. Because the two strategies
-evolve independently, this measures how far their holdings have diverged. A
-single rebalance correction can be much smaller.
+evolve independently, this measures how far their holdings have diverged,
+including differences accumulated since earlier rebalances.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel comparison of how often PCA, sector, and stock risk caps intervene and how different the resulting target portfolios are from matched controls" version="3" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Tighter limits move from occasional guardrails to sizing rules.</strong> Development covers September 1998–December 2021; the later period covers January 2022–May 2026. Points are schedule means and whiskers are the range across three rebalance schedules, not confidence intervals. Weight difference is the L1 distance—the sum of absolute same-date target-weight differences—between the independently evolving capped and matched-control portfolios. Filled markers are audited; hollow markers are provisional. Lines connect tested settings only. The gray references mark PCA 10% and Sector 20% as candidate thresholds, not optima.</p>
+<p class="figure-caption"><strong>Figure 1: How often risk caps intervene and how much portfolios differ.</strong> Development: September 1998–December 2021; later period: January 2022–May 2026. Points show schedule means; whiskers span the three schedules. The lower row shows L1 distance: the sum of absolute target-weight differences from the matched control, as a percentage of capital. Each portfolio evolves independently. Filled markers are audited; hollow markers are provisional. Lines connect tested settings. Gray lines mark the candidate thresholds discussed in the text.</p>
 
-Figure 1 makes that distinction clear. Sector 20% changes targets
-fairly often but leaves them much closer to the control than Sector 15% does.
-Stock 2% changes almost every target and leaves the holdings much further from
-the control. PCA caps become more consequential in the later period.
+In Figure 1, Sector 20% requires frequent adjustments but leaves the holdings
+much closer to the control than Sector 15% does. Stock 2% affects almost every
+rebalance and produces larger differences. PCA caps change the portfolio more
+in the later period.
 
 The caps apply to target weights using the covariance estimated at that
 rebalance. Rounding, execution, and subsequent price moves can take the actual
@@ -173,14 +170,14 @@ executed turnover appears separately in Table 2.
   </tbody>
 </table>
 
-Figure 2 shows why I also check the other dimensions: the 2% stock cap lowers
-stock concentration while leaving a larger risk share in the largest PCA direction.
+Figure 2 compares all three dimensions under the 2% stock cap. Stock
+concentration falls sharply, while the largest PCA contribution rises slightly.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Values are means across three schedule-level 95th percentiles at rebalance targets, on a common forecast-variance scale. They show a cross-dimensional trade-off, not a same-date flow of risk.</p>
+<p class="figure-caption"><strong>Figure 2: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Each value is the mean across three schedules of the 95th percentile of the largest contribution, measured at rebalance targets. All contributions are shares of forecast variance. These summaries compare distributions across dates; they do not trace a transfer of risk on individual dates.</p>
 
 ## Protection, performance, and trading
 
@@ -226,21 +223,20 @@ rises by about 0.55 times capital per year, and cumulative net return is about
 the financial-crisis/rebound window. Those trade-offs give me little reason
 to choose it on the strength of its later Sharpe alone.
 
-## Risk moves rather than disappearing
+## What happens to the other risks?
 
 The 2% stock cap lowers the later 95th percentile of the largest stock
 contribution from 7.17% to 2%. The corresponding PCA statistic rises by about
 0.6 percentage points, from 15.44% to 16.05%. Many small stock allocations can
-still load on the same correlated direction. The stock cap does what I asked,
-but that leaves the shared exposure intact.
+still load on the same correlated direction. Limiting each stock's contribution
+does little to reduce that shared exposure in this comparison.
 
-To understand that exposure, I also need to look at the stocks themselves.
-A low-volatility tilt can span several current principal
+This also matters for the strategy's low-volatility tilt. It can span several principal
 components, while a principal component can mix low volatility with sector and
 market structure. PCA divides up modeled risk, but it cannot by itself tell me
 which economic theme the portfolio depends on.
 
-I first check whether the shorts are still more volatile than the longs.
+As a simple check, I look at whether the shorts are still more volatile than the longs.
 For each book, I take the geometric mean of stock forecast volatility, weighted
 by each position's share of that book's absolute weights.
 The short-to-long ratio is 1.58 before 2022 and
