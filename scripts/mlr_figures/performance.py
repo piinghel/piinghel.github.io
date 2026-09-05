@@ -6,7 +6,6 @@ from pathlib import Path
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
 
 from .support import (
@@ -29,16 +28,15 @@ def plot_performance(
     *,
     mobile: bool = False,
 ) -> None:
-    fig, axes = plt.subplots(
-        4,
+    fig, (wealth_ax, drawdown_ax) = plt.subplots(
+        2,
         1,
-        figsize=(4.8, 7.8) if mobile else (8.5, 7.2),
+        figsize=(4.8, 6.2) if mobile else (8.5, 6.7),
         facecolor=style.white,
         sharex=True,
-        gridspec_kw={"height_ratios": [3.0, 0.8, 0.8, 0.8], "hspace": 0.40},
+        gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.24},
     )
-    wealth_ax, *drawdown_axes = axes
-    for axis in axes:
+    for axis in (wealth_ax, drawdown_ax):
         style_axis(
             axis,
             style,
@@ -50,11 +48,7 @@ def plot_performance(
             style,
             spec.split_date,
         )
-    drawdown_floor = 10 * np.floor(
-        min(series.values.min() for series in drawdowns.values()) / 10
-    )
-    drawdown_floor = min(-10.0, drawdown_floor)
-    for model, drawdown_ax in zip(spec.model_order, drawdown_axes, strict=True):
+    for model in spec.model_order:
         width = 1.25 if model == "fixed_factor_benchmark" else 1.5
         line_style = (0, (5, 2.5)) if model == "selected_c0p01" else "solid"
         wealth_ax.plot(
@@ -69,29 +63,21 @@ def plot_performance(
             drawdowns[model].dates,
             drawdowns[model].values,
             color=spec.model_colors[model],
-            linewidth=0.85,
+            linewidth=width - 0.2,
+            linestyle=line_style,
+            label=spec.model_labels[model],
             zorder=2,
         )
-        drawdown_ax.fill_between(
-            drawdowns[model].dates,
-            drawdowns[model].values,
-            0,
-            color=spec.model_colors[model],
-            alpha=0.09,
-            linewidth=0,
-            zorder=1,
-        )
-        drawdown_ax.set_ylim(drawdown_floor, 0)
-        drawdown_ax.set_yticks([drawdown_floor, 0])
-        drawdown_ax.axhline(0, color=style.grid, linewidth=0.6, zorder=0)
-        add_panel_title(
-            drawdown_ax,
-            spec.model_labels[model],
-            color=spec.model_colors[model],
-            fontsize=10 if mobile else style.axis_label_size,
-            fontweight="semibold",
-            clearance_points=3,
-        )
+        if model == "fixed_factor_benchmark":
+            drawdown_ax.fill_between(
+                drawdowns[model].dates,
+                drawdowns[model].values,
+                0,
+                color=spec.model_colors[model],
+                alpha=0.07,
+                linewidth=0,
+                zorder=1,
+            )
     wealth_ax.set_yscale("log")
     panel_title_color = "#000000" if not style.output_suffix else style.ink
     add_panel_title(
@@ -105,18 +91,14 @@ def plot_performance(
     wealth_ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}×"))
     wealth_ax.yaxis.set_minor_formatter(NullFormatter())
     wealth_ax.axhline(1, color=style.muted, linewidth=0.6, zorder=0)
-    drawdown_axes[0].text(
-        1,
-        1.02,
+    drawdown_ax.axhline(0, color=style.muted, linewidth=0.6, zorder=0)
+    add_panel_title(
+        drawdown_ax,
         "Drawdown (%)",
-        transform=drawdown_axes[0].transAxes,
-        ha="right",
-        va="bottom",
         color=panel_title_color,
-        fontsize=10 if mobile else style.axis_label_size,
+        fontsize=12 if mobile else style.axis_label_size,
         fontweight="semibold",
     )
-    drawdown_ax = drawdown_axes[-1]
     drawdown_ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 4))
     drawdown_ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     drawdown_ax.set_xlim(

@@ -269,10 +269,10 @@ target. Its separate contribution would require a comparison with a model
 trained on an unadjusted return target.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale and separate drawdown panels on one common scale for fixed weights, OLS, and Ridge" version="17" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="18" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale). The separate drawdown panels share one scale. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison. The dotted line marks January 2022.</p>
+<p class="figure-caption"><strong>Figure 2: Portfolio paths from the three rankings.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison. The dotted line marks January 2022.</p>
 
 ## What the learned combination delivers
 
