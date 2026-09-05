@@ -99,13 +99,29 @@
     "width": 389,
     "height": 634
   },
-  "/assets/tranching/schedule-performance": {
+  "/assets/tranching/calendar-grid": {
     "width": 612,
+    "height": 274
+  },
+  "/assets/tranching/calendar-grid_mobile": {
+    "width": 331,
+    "height": 266
+  },
+  "/assets/tranching/calendar-return-risk": {
+    "width": 648,
+    "height": 310
+  },
+  "/assets/tranching/calendar-return-risk_mobile": {
+    "width": 331,
+    "height": 526
+  },
+  "/assets/tranching/schedule-performance": {
+    "width": 648,
     "height": 346
   },
   "/assets/tranching/schedule-performance_mobile": {
-    "width": 346,
-    "height": 346
+    "width": 374,
+    "height": 403
   },
   "/assets/tranching/timing-dispersion": {
     "width": 1120,
