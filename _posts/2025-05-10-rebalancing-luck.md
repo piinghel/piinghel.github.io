@@ -7,7 +7,7 @@ last_modified_at: 2026-09-05
 categories: ["Rebalancing"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
-series_previous: /quants/2026/08/29/portfolio-optimization.html
+series_previous: /quants/2026/09/05/risk-concentration.html
 series_end: true
 github_repositories:
   - label: Research code

@@ -8,7 +8,7 @@ categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
 series_previous: /quants/2025/02/09/multiple-linear-regression.html
-series_next: /quants/2025/05/10/rebalancing-luck.html
+series_next: /quants/2026/09/05/risk-concentration.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/systematic-equity-research
