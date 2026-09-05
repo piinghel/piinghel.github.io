@@ -371,8 +371,6 @@ Joint sizing therefore gives me a way to express portfolio limits and use the
 ranking with less unnecessary trading. It still relies on imperfect risk
 estimates and leaves substantial shared short-book risk to understand.
 
-The 5 bp trading charge omits borrow, financing and market impact.
-
 ## Allocation settings
 
 <table class="research-table settings-table">
