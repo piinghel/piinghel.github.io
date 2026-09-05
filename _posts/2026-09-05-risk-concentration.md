@@ -133,6 +133,17 @@ is roughly 7% for Sector 20% in both periods, nearly 20% for Sector 15%, and
 evolve independently, this measures how far their holdings have diverged. A
 single rebalance correction can be much smaller.
 
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel comparison of how often PCA, sector, and stock risk caps intervene and how different the resulting target portfolios are from matched controls" version="2" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1: Tighter limits move from occasional guardrails to sizing rules.</strong> Development covers September 1998–December 2021; the later period covers January 2022–May 2026. Points are schedule means and whiskers are the range across three rebalance schedules, not confidence intervals. Weight difference is the L1 distance—the sum of absolute same-date target-weight differences—between the independently evolving capped and matched-control portfolios. Filled markers are audited; hollow markers are provisional. Lines connect tested settings only. The gray references mark PCA 10% and Sector 20% as candidate thresholds, not optima.</p>
+
+Figure 1 makes that distinction clear. Sector 20% changes targets
+fairly often but leaves them much closer to the control than Sector 15% does.
+Stock 2% changes almost every target and leaves the holdings much further from
+the control. PCA caps become more consequential in the later period.
+
 The caps apply to target weights using the covariance estimated at that
 rebalance. Rounding, execution, and subsequent price moves can take the actual
 portfolio above a cap before it trades again.
@@ -157,14 +168,14 @@ executed turnover appears separately in Table 2.
   </tbody>
 </table>
 
-Figure 1 shows why I also check the other dimensions: the 2% stock cap lowers
+Figure 2 shows why I also check the other dimensions: the 2% stock cap lowers
 stock concentration while leaving a larger risk share in the largest PCA direction.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="1" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Values are means across three schedule-level 95th percentiles at rebalance targets, on a common forecast-variance scale. They show a cross-dimensional trade-off, not a same-date flow of risk.</p>
+<p class="figure-caption"><strong>Figure 2: A stock cap narrows one dimension, not all of them.</strong> January 2022–May 2026. Values are means across three schedule-level 95th percentiles at rebalance targets, on a common forecast-variance scale. They show a cross-dimensional trade-off, not a same-date flow of risk.</p>
 
 ## Protection, performance, and trading
 
