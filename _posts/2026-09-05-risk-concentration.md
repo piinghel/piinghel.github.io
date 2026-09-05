@@ -14,7 +14,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">A portfolio can hold many small positions and still depend on a few shared risks. I add stock, sector and PCA risk caps to see whether I can contain that concentration without constantly changing the holdings. On this reused history, the existing optimizer already spreads modeled risk reasonably well. Moderate caps change little; tight ones start to dictate how I size the portfolio.</p>
+<p class="article-summary">A portfolio can hold many small positions and still depend on a few shared risks. Is that happening in this strategy? I first measure where its forecast risk is concentrated, then test what stock, sector and PCA risk caps change. The existing optimizer already spreads modeled risk reasonably well, but some concentrations remain. Moderate caps reduce them with limited portfolio changes; tight ones start to dictate how I size the portfolio.</p>
 
 The [existing optimizer](/quants/2026/08/29/portfolio-optimization.html)
 controls total forecast volatility, gross exposure, beta, sector capital, and
@@ -23,8 +23,11 @@ while one stock, sector, or shared
 direction supplies a large fraction of that risk. The technology rally around
 AI made the distinction practical: several acceptable technology or
 semiconductor weights can still depend on the same underlying move. I wanted to
-know whether the existing limits left similar concentration in this strategy,
-and whether I could contain it without constantly changing the holdings.
+know whether the existing limits left similar concentration in this strategy.
+The first question is whether this is actually a problem for our portfolio:
+despite its weight limits, does too much risk come from one stock, sector, or
+shared market move? Where concentration appears, the second question is whether
+I can limit it without constantly changing the portfolio.
 
 I keep the Ridge predictions, selected stocks, trading controls, execution, and
 5 bp charge on traded notional fixed. The comparison runs the complete strategy
@@ -96,7 +99,7 @@ If no candidate passes, I mark that configuration incomplete. Falling back to
 the uncapped target would abandon the limit, and scaling the portfolio down
 would leave its variance shares unchanged.
 
-## When the limits begin to bind
+## Is risk concentrated in this portfolio?
 
 Even with a 4% position limit, a stock can contribute much more than 4% of
 portfolio risk. Across the three schedules, the mean 95th percentile of the
@@ -110,6 +113,8 @@ $$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40. This counts diversification with
 the forecast covariance model; several directions may share an economic theme.
 That combination of broad dispersion and occasional concentration is why I
 test caps as guardrails.
+
+## How much do risk limits change the portfolio?
 
 Over the full sample, the uncapped eligible-universe control exceeds a 20%
 all-PC limit on only 0.69% of rebalances. At 10%, the frequency rises to 13.55%;
@@ -134,7 +139,7 @@ evolve independently, this measures how far their holdings have diverged. A
 single rebalance correction can be much smaller.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel comparison of how often PCA, sector, and stock risk caps intervene and how different the resulting target portfolios are from matched controls" version="2" %}
+  {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Six-panel comparison of how often PCA, sector, and stock risk caps intervene and how different the resulting target portfolios are from matched controls" version="3" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1: Tighter limits move from occasional guardrails to sizing rules.</strong> Development covers September 1998–December 2021; the later period covers January 2022–May 2026. Points are schedule means and whiskers are the range across three rebalance schedules, not confidence intervals. Weight difference is the L1 distance—the sum of absolute same-date target-weight differences—between the independently evolving capped and matched-control portfolios. Filled markers are audited; hollow markers are provisional. Lines connect tested settings only. The gray references mark PCA 10% and Sector 20% as candidate thresholds, not optima.</p>
