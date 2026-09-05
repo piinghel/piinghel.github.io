@@ -206,7 +206,7 @@ drawdown, for each full-capital schedule before averaging the three.
     <tr><th scope="row">Sector · 15%*</th><td>13.90%</td><td>12.30%</td><td>1.42</td><td>8.40%</td><td>18.29%</td><td>28.3×</td></tr>
     <tr><th scope="row">Sector · 10%**</th><td>12.66%</td><td>11.06%</td><td>1.31</td><td>8.27%</td><td>15.81%</td><td>28.6×</td></tr>
     <tr><th scope="row">Stock · 4%*</th><td>13.94%</td><td>12.34%</td><td>1.42</td><td>8.42%</td><td>17.85%</td><td>28.3×</td></tr>
-    <tr><th scope="row">Stock · 3%*</th><td>13.91%</td><td>12.30%</td><td>1.42</td><td>8.44%</td><td>17.82%</td><td>28.4×</td></tr>
+    <tr><th scope="row">Stock · 3%</th><td>13.91%</td><td>12.30%</td><td>1.42</td><td>8.44%</td><td>17.82%</td><td>28.4×</td></tr>
     <tr><th scope="row">Stock · 2%</th><td>13.89%</td><td>12.26%</td><td>1.41</td><td>8.47%</td><td>18.01%</td><td>28.7×</td></tr>
     <tr class="period-heading"><th colspan="7">Later · January 2022–May 2026</th></tr>
     <tr><th scope="row">Optimizer + trading controls</th><td>9.33%</td><td>7.99%</td><td>0.87</td><td>9.32%</td><td>9.05%</td><td>24.6×</td></tr>
@@ -216,12 +216,12 @@ drawdown, for each full-capital schedule before averaging the three.
     <tr><th scope="row">Sector · 15%*</th><td>9.52%</td><td>8.17%</td><td>0.89</td><td>9.24%</td><td>8.98%</td><td>24.7×</td></tr>
     <tr><th scope="row">Sector · 10%**</th><td>9.50%</td><td>8.12%</td><td>0.90</td><td>9.10%</td><td>7.47%</td><td>25.3×</td></tr>
     <tr><th scope="row">Stock · 4%*</th><td>9.45%</td><td>8.11%</td><td>0.88</td><td>9.31%</td><td>8.98%</td><td>24.6×</td></tr>
-    <tr><th scope="row">Stock · 3%*</th><td>9.65%</td><td>8.30%</td><td>0.90</td><td>9.32%</td><td>8.89%</td><td>24.7×</td></tr>
+    <tr><th scope="row">Stock · 3%</th><td>9.65%</td><td>8.30%</td><td>0.90</td><td>9.32%</td><td>8.89%</td><td>24.7×</td></tr>
     <tr><th scope="row">Stock · 2%</th><td>9.96%</td><td>8.60%</td><td>0.93</td><td>9.30%</td><td>8.47%</td><td>24.9×</td></tr>
   </tbody>
 </table>
 
-<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings; Stock 3% execution was not audited.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. Testing stopped.</p>
+<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. Testing stopped.</p>
 
 With moderate caps, performance and trading stay close to the matching control.
 That leaves little historical performance gain, but also little observed cost
