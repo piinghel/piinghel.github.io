@@ -14,20 +14,21 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">A portfolio-level volatility limit does not stop one stock, sector, or correlated direction from carrying a large part of forecast risk. I add separate concentration limits to the state-aware optimizer. Completed tests so far show that moderate limits can reduce the intended tail without changing the portfolio much, while a strict stock limit trades more and moves risk into correlated directions. This is an exploratory study on reused history, not a new allocator selection.</p>
+<p class="article-summary">A weight limit tells me how much capital is in a position, not how much risk it contributes. I ask whether risk limits can stop one stock, sector, or shared market move from dominating the portfolio without getting in the way on most rebalances. The strict 2% stock cap shows the possible cost: more trading and risk migration. This is an exploratory study on reused history, not a new allocator selection.</p>
 
 The [state-aware optimizer](/quants/2026/08/29/portfolio-optimization.html)
 controls total forecast volatility, gross exposure, beta, sector capital, and
-position size. Those limits still leave a practical question. A portfolio can
-stay inside its 7% forecast-volatility budget while one stock, sector, or shared
-direction supplies a large fraction of that risk. How restrictive must another
-limit be before it changes the book, and what does the protection cost?
+position size. It does not answer who supplies the risk. A portfolio can stay
+inside its 7% forecast-volatility budget while one stock, sector, or shared
+direction supplies a large fraction of that risk. The practical question is:
+can I stop one stock, sector, or shared market move from dominating the
+portfolio's risk without constantly changing the portfolio?
 
 I keep the Ridge predictions, selected stocks, trading controls, execution, and
-5 bp charge on traded notional fixed. Stock and sector tests retain the original
-selected-universe covariance. PCA tests estimate covariance on the full
-point-in-time eligible universe, so I compare them with an otherwise uncapped
-eligible-universe control. The comparison runs the complete strategy on three
+5 bp charge on traded notional fixed. Because PCA directions come from the
+eligible universe, I measure PCA effects against a matched no-cap covariance
+control; stock and sector effects use the original optimizer. The comparison
+runs the complete strategy on three
 staggered rebalance schedules from September 1998 through May 2026. I report
 September 1998–December 2021 and January 2022–May 2026 separately. Both periods
 are exploratory: the later history has already informed this research programme,
@@ -82,13 +83,6 @@ $$w_S^\top\Sigma w_S$$, answers a different question because it excludes the
 sector's covariance with everything else and does not add to total portfolio
 variance.
 
-PCA directions and economically named styles can overlap without being
-interchangeable. A low-volatility tilt can span several current principal
-components, while a principal component can mix low volatility with sector and
-market structure. PCA supplies an additive decomposition of the current risk
-model. A style exposure supplies an economic interpretation. I monitor the
-strategy's low-volatility tilt rather than forcing it to zero.
-
 ## When the limits begin to bind
 
 The uncapped eligible-universe portfolio exceeds a 20% all-PC limit on only
@@ -104,11 +98,17 @@ an optimizer can make a small correction on many dates without rebuilding the
 portfolio.
 
 <!-- FINAL EVIDENCE SLOT: insert the audited light/dark threshold-impact figure.
-     It shows correction frequency, target L1 change, and net-Sharpe change for
-     every tested PCA, sector, and stock threshold, with schedule min/max ranges. -->
+     It shows correction frequency and target L1 change for every tested PCA,
+     sector, and stock threshold, with schedule min/max ranges. -->
 
 <!-- FINAL CAPTION SLOT: Figure 1. Define periods, schedule ranges, covariance
      controls, 5 bp costs, provisional solver markers, and exploratory additions. -->
+
+These are rebalance-target controls. Rounding, execution, and subsequent price
+moves can take the carried portfolio above a cap before the next rebalance. I
+treat those as implementation and drift outcomes. The optimizer's narrower
+question is whether the chosen target satisfies the requested share using that
+date's covariance matrix.
 
 ## Protection, performance, and trading
 
@@ -144,7 +144,7 @@ of three schedule-level maximum drawdowns.
 The completed moderate limits leave realized volatility, drawdown, and turnover
 close to the corresponding control. They mainly redistribute forecast risk
 inside a portfolio that already uses almost all of its 7% forecast budget. That
-is useful protection when the goal is to prevent an unusually dominant bet. It
+is the behavior I want from a forecast-risk guardrail. It
 does not repair the risk model's level: realized volatility remains near 8.4%
 before 2022 and 9.3% afterward.
 
@@ -164,17 +164,17 @@ largest PCA contribution rises from 15.44% to 16.05%. Many small stock
 allocations can still load on the same correlated direction. The cap succeeds
 on its own definition while shifting some risk elsewhere.
 
+PCA directions and economically named styles can overlap without being
+interchangeable. A low-volatility tilt can span several current principal
+components, while a principal component can mix low volatility with sector and
+market structure. PCA supplies an additive decomposition of the current risk
+model. A style exposure supplies an economic interpretation.
+
 The intended low-volatility exposure remains substantial under every completed
 limit, with only a modest reduction under the 2% stock cap. That distinction
 matters here. Removing the strategy's intended tilt would make the portfolio
 look more diversified by one measure while changing the return source I meant
 to implement.
-
-Target-date compliance also does not guarantee continuous compliance. Rounding,
-execution, and subsequent price moves can take the carried portfolio above a
-cap before the next rebalance. I treat those as implementation and drift
-outcomes. The optimizer's question is narrower: did the chosen target satisfy
-the requested share using that date's covariance matrix?
 
 ## A moderate guardrail
 
