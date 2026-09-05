@@ -1,7 +1,7 @@
 arm,family,p95_share_pct,schedule_count
-baseline_selected,pc,15.43549603255038,3
-stock_02,pc,16.050858980499903,3
-baseline_selected,sector,27.278793527156225,3
-stock_02,sector,26.43037575116947,3
 baseline_selected,stock,7.167869299573661,3
 stock_02,stock,2.000000001285266,3
+baseline_selected,sector,27.278793527156225,3
+stock_02,sector,26.43037575116947,3
+baseline_selected,pc,15.43549603255038,3
+stock_02,pc,16.050858980499903,3
