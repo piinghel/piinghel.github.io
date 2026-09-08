@@ -53,9 +53,13 @@ question; collapse useful derivations, and delete unrelated material.
 The draft now uses verified saved-ledger aggregates for full strategy history,
 annual long/short contributions, changing covered style exposures, matched
 factor payoffs, sector/industry stock groupings and within-factor stock drivers.
-The five figures pair history with period P&L, exposures through time, the book
+The five empirical figures pair history with period P&L, exposures through time, the book
 bridge, factor P&L with realized covariance risk, and the existing Rocket score
 comparison. The article keeps attribution coverage and model dependence visible.
+The symbolic uncertainty diagram uses `_includes/attribution-error-diagram.html`
+and scoped rules in `_sass/_figures.scss`; it needs no empirical inputs and
+adapts to both themes. The uncertainty derivation shows the general WLS
+covariance propagation separately from the book's GLS special case.
 No refits, trading-rule changes or counterfactual portfolios were run.
 
 Next research steps are deliberately separate: resolve material uncovered P&L,

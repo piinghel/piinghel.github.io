@@ -341,12 +341,60 @@ Across a finite set of stocks, those effects won't cancel perfectly. Some can
 be picked up by the regression as momentum return. **Even a correctly specified
 factor model has estimation noise.**
 
-The residual is whatever remains after subtracting the estimated factor effects
-from the observed stock return. If the fit assigns too much return to factors,
-it assigns too little to the residual. Think of moving a divider inside a fixed
-total: the two pieces change in opposite directions, while their sum stays the
-same. That is why getting the attribution to add up cannot tell me whether the
-split is precise.
+Here is the math for one day. Let $$r$$ be the vector of stock returns and
+$$B$$ the matrix of loadings. Within the assumed model, $$f$$ is the underlying
+factor return and $$\varepsilon$$ the stock-specific return. A hat marks an
+estimate, and $$\eta$$ is the factor-return estimation error:
+
+$$
+\begin{aligned}
+r&=Bf+\varepsilon,\\
+\widehat f&=f+\eta.
+\end{aligned}
+$$
+
+The estimated residual is whatever remains after subtracting the fitted factor
+effects. Substituting the second equation into that subtraction gives
+
+$$
+\begin{aligned}
+\widehat\varepsilon
+&=r-B\widehat f\\
+&=(Bf+\varepsilon)-B(f+\eta)\\
+&=\varepsilon-B\eta.
+\end{aligned}
+$$
+
+That last term is the important one: the error picked up by the factors is
+removed from the residual. To translate it into portfolio P&L, multiply by
+the signed position weights $$w$$. Call this attribution error $$\delta$$:
+
+$$
+\delta=w^\top B\eta=e^\top\eta,
+\qquad e=B^\top w.
+$$
+
+For the covered positions, call the underlying factor contribution $$F=w^\top Bf$$
+and the stock-specific contribution $$I=w^\top\varepsilon$$. Figure 5 shows what estimation does to
+them. The same error appears twice, with opposite signs; these are **not two
+independent errors**.
+
+<div class="research-figure">
+  {% include attribution-error-diagram.html %}
+</div>
+<p class="figure-caption"><strong>Figure 5: The split moves; its sum stays fixed.</strong> Within the assumed model, estimation adds the same amount to factor P&amp;L that it subtracts from residual P&amp;L. The error can have either sign.</p>
+
+Getting the attribution to add up therefore cannot tell me whether either
+piece is precise. If the factor-return error has covariance $$V_\eta$$, the
+standard error of each portfolio attribution is
+
+$$
+s=\sqrt{e^\top V_\eta e}.
+$$
+
+This measures uncertainty in the **explanation of the P&L**. It is different
+from the volatility of the portfolio's returns. Factor errors can move together,
+so the off-diagonal entries of $$V_\eta$$ matter too.
 
 In this drawdown, the estimated residual contribution was **−1.87 points**.
 Before reading that as a stock-selection problem, I'd want to know how much
@@ -354,8 +402,19 @@ factor-estimation noise could move that number. An uncertainty interval that
 includes zero would mean the estimate is also compatible with zero stock-specific
 P&L under the model. An interval entirely below zero would give stronger evidence
 of a negative stock-specific contribution, but would still not establish a
-persistent weakness in stock selection. The figures here show point estimates;
-attribution-error intervals have not been calculated for this example.
+persistent weakness in stock selection.
+
+For the whole period, write the residual estimate as $$\widehat I_T$$ and its
+attribution standard error as $$s_T$$. With zero-mean Gaussian estimation errors
+and known error variance, a 95% interval takes the form
+
+$$
+\widehat I_T\;\pm\;1.96\,s_T.
+$$
+
+The same width applies to the total factor attribution under these assumptions.
+The empirical figures here show point estimates: $$s_T$$ and these intervals
+have not been calculated for this example.
 
 There is a second uncertainty: **did I choose a suitable model?** Mine omits
 value, quality and finer industry effects, so some common returns can end up
@@ -364,38 +423,58 @@ automatically cover those omissions. I'd also check whether the apparent
 stock-selection problem survives another reasonable factor specification.
 
 <details>
-<summary>Why attribution errors cancel, and what an uncertainty interval needs</summary>
+<summary>Computing the standard error, including across days</summary>
 <div markdown="1">
 
-In the fixed-loading setup of *Elements*, §14.2.2, write estimated factor
-returns as $$\widehat f_t=f_t+\eta_t$$. Holding the observed stock return fixed gives
+The remaining ingredient is $$V_\eta$$. For weighted least squares in an
+identified, full-rank factor basis, write the estimator as
 
 $$
-\widehat\varepsilon_t=\varepsilon_t-B\eta_t.
+\begin{aligned}
+A&=(B^\top WB)^{-1}B^\top W,\\
+\widehat f&=Ar=f+A\varepsilon.
+\end{aligned}
 $$
 
-Estimated factor P&L gains $$w_t^\top B\eta_t$$ while estimated residual P&L
-loses the same amount. The total is unchanged, even though either component
-can move substantially.
+Since $$\eta=A\varepsilon$$, residual-noise covariance $$D$$ implies
 
-The chapter derives uncertainty intervals under a specified model for the
-errors. In a full-rank generalized least-squares fit with known residual
-covariance $$D$$, the factor-estimation error covariance is
+$$
+V_\eta=ADA^\top.
+$$
+
+*Elements*, §14.2.2, uses generalized least squares with known $$D$$.
+Setting $$W=D^{-1}$$ simplifies this to
 
 $$
 V_\eta=(B^\top D^{-1}B)^{-1}.
 $$
 
-With portfolio exposure $$e=B^\top w$$, the factor-attribution error variance
-is $$e^\top V_\eta e$$. This concerns uncertainty about the attribution,
-not the portfolio's forecast return variance. Turning it into an interval
-requires distributional assumptions; combining days also requires assumptions
-about dependence over time.
+My market-cap weighting requires the more general expression. The sector
+constraint also requires working in an independent factor basis, with matching
+portfolio exposures. And $$D$$ describes the underlying stock-specific noise;
+it cannot simply be assumed equal to the covariance of fitted residuals, from
+which the regression has already removed some noise.
 
-My market-cap-weighted fit is not that known-$$D$$ estimator. Its weighting,
-sector constraint and estimated residual risks must be accounted for before
-using such intervals. They would still be conditional on the chosen model;
-they would not cover every omitted factor or mistaken loading.
+Across days, the attribution error is $$\Delta_T=\sum_t\delta_t$$. Treating
+the loadings and portfolio weights as fixed, its variance is
+
+$$
+s_T^2=\sum_t\operatorname{Var}(\delta_t)
++2\sum_{t<u}\operatorname{Cov}(\delta_t,\delta_u).
+$$
+
+If the daily estimation errors are uncorrelated, the cross-day terms vanish:
+
+$$
+s_T^2=\sum_t e_t^\top V_{\eta,t}e_t.
+$$
+
+So I add daily **error variances**, then take the square root. I don't add
+standard errors or annualize the result: the interval concerns this particular
+period's P&L. Dependence across days, estimated residual risks and changing
+model parameters require more care. Even a well-calculated interval remains
+conditional on the model and does not cover every omitted factor or mistaken
+loading.
 
 </div>
 </details>
@@ -591,7 +670,7 @@ held Rocket short, I now look at the strategy's **prediction model**. Its
 predictor contributions explain a score used to rank stocks, so they answer a
 different question from the factor P&L above.
 
-The five predictors in Figure 5 went from a combined **−0.0266 to +0.0196**
+The five predictors in Figure 6 went from a combined **−0.0266 to +0.0196**
 between the start and end of the period.
 The full prediction stayed negative, changing from **−0.0793 to −0.0869**.
 The remaining terms and intercept offset the positive subtotal at the end.
@@ -600,7 +679,7 @@ The remaining terms and intercept offset the positive subtotal at the end.
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/rocket-prediction" mobile="/_draft_assets/portfolio-attribution/rocket-prediction_mobile" version="1" alt="Rocket's five displayed predictors change from a negative to a positive subtotal, but remaining terms plus intercept keep the full prediction negative at both observed endpoints." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 5: Some predictors improved, but the overall score stayed negative.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Values are model scores.</p>
+<p class="figure-caption"><strong>Figure 6: Some predictors improved, but the overall score stayed negative.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Values are model scores.</p>
 
 
 The full prediction was negative throughout the 24 sessions. But its sign alone
