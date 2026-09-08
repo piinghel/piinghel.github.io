@@ -36,8 +36,9 @@ borrow, financing and market impact.
 
 ## What is the strategy doing over time?
 
-The long-term return curve looks encouraging, but the weaker stretches in
-Figure 1 make me want to know which parts of the portfolio stopped working.
+The strategy has made money over the full history, with several difficult
+stretches along the way (Figure 1). The recent years show why the return curve
+alone isn't enough: a positive year can hide a losing part of the portfolio.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/strategy-history" mobile="/_draft_assets/portfolio-attribution/strategy-history_mobile" version="1" alt="Cumulative net P&L, additive drawdown and annual P&L from September 1998 to May 2026." %}
@@ -64,9 +65,10 @@ longs carried the result while shorts lost money. Both sides contributed in
 
 </div>
 
-With a strong 2025 between weaker stretches, I wouldn't describe this as a
-steady decline. But the portfolio is clearly earning its money in different
-ways. Did its positions change, or did similar bets start paying off differently?
+The recent weakness is concentrated on the short side, although 2025 shows
+that it hasn't lost money every year. That rules out a simple story of both
+books steadily deteriorating. To understand the change, I need to connect
+these returns to the positions that earned them.
 
 ## Have the exposures changed?
 
@@ -93,6 +95,12 @@ The beta tilt changes more: its annual average moves from about +0.02 in
 2026. Here beta is a standardized characteristic in a joint factor model;
 that number is not the portfolio's regression beta to a benchmark.
 
+So the strategy has changed, but it still carries a recognizable set of tilts.
+The short book has become smaller in dollars, and the beta tilt has moderated
+since 2022; the size, momentum and volatility tilts have persisted. A larger
+net dollar position therefore doesn't, by itself, tell me how exposure to
+market movements changed.
+
 There's a gap here that I can't ignore. The model covers roughly 92–98%
 of gross exposure on average across these years, but the holdings it misses
 lost **8.76 P&L points in 2024**. That is a lot to leave out when explaining
@@ -114,9 +122,10 @@ understand what went wrong.
 
 
 The short loss was more than twice the long gain. The five worst stocks lost
-4.037 points in total, only **24.7% of the short-book loss**. This is broader
-than a few bad names. It also reverses the preceding 24 sessions, when the
-shorts earned 4.778 points and the whole portfolio earned 1.412 points.
+4.037 points in total, only **24.7% of the short-book loss**. A handful of bad
+positions therefore cannot explain the episode. It was a broad short-book
+loss, reversing the preceding 24 sessions when shorts earned 4.778 points.
+That makes shared exposures worth examining alongside individual names.
 
 <details>
 <summary>Adding contributions and measuring drawdowns</summary>
@@ -153,8 +162,9 @@ Health Care has the largest sector loss, **−3.074 points**, followed by
 Consumer Discretionary (−1.516), Materials (−1.330) and Financials (−1.292).
 Within Health Care, Sotera and Dentsply account for −1.070 and −0.764 points.
 Together they explain about 60% of that sector's gross loss after offsetting
-gains. In Financials, Rocket contributes −1.104 points. These names give me
-somewhere to start: I can open the positions and see what happened.
+gains. In Financials, Rocket contributes −1.104 points. The concentration is
+clearer at this level: the whole short-book loss is broad, but a few names
+explain a large part of the losses within particular sectors.
 
 Going one level deeper, Financial Services loses −1.324 points, while the
 whole Financials sector loses −1.292. Other industries in the sector partly
@@ -324,160 +334,11 @@ The risk panel adds something the loss ranking misses. Residual P&L loses
 1.872 points, but contributes **4.604 points of realized volatility**, more
 than any single factor. Beta contributes 1.991 volatility points and
 volatility 1.191. Here **risk contribution** measures how each daily component
-moves with total daily P&L. This tells me what moved together during the loss.
-To know whether the risk model saw it coming, I'd need its forecasts from
-before the episode.
-
-### How much should I trust that split?
-
-The portfolio lost **9.17 P&L points**. That number is known. But how much
-was due to common factors, and how much was specific to the stocks? That split
-is estimated. This is the uncertainty that *Elements*, §14.2, asks us to take
-seriously.
-
-Think about how we estimated momentum's return. Stocks with high momentum can
-also move on earnings announcements, company news and other individual events.
-Across a finite set of stocks, those effects won't cancel perfectly. Some can
-be picked up by the regression as momentum return. **Even a correctly specified
-factor model has estimation noise.**
-
-Here is the math for one day. Let $$r$$ be the vector of stock returns and
-$$B$$ the matrix of loadings. Within the assumed model, $$f$$ is the underlying
-factor return and $$\varepsilon$$ the stock-specific return. A hat marks an
-estimate, and $$\eta$$ is the factor-return estimation error:
-
-$$
-\begin{aligned}
-r&=Bf+\varepsilon,\\
-\widehat f&=f+\eta.
-\end{aligned}
-$$
-
-The estimated residual is whatever remains after subtracting the fitted factor
-effects. Substituting the second equation into that subtraction gives
-
-$$
-\begin{aligned}
-\widehat\varepsilon
-&=r-B\widehat f\\
-&=(Bf+\varepsilon)-B(f+\eta)\\
-&=\varepsilon-B\eta.
-\end{aligned}
-$$
-
-That last term is the important one: the error picked up by the factors is
-removed from the residual. To translate it into portfolio P&L, multiply by
-the signed position weights $$w$$. Call this attribution error $$\delta$$:
-
-$$
-\delta=w^\top B\eta=e^\top\eta,
-\qquad e=B^\top w.
-$$
-
-For the covered positions, call the underlying factor contribution $$F=w^\top Bf$$
-and the stock-specific contribution $$I=w^\top\varepsilon$$. Figure 5 shows what estimation does to
-them. The same error appears twice, with opposite signs; these are **not two
-independent errors**.
-
-<div class="research-figure">
-  {% include attribution-error-diagram.html %}
-</div>
-<p class="figure-caption"><strong>Figure 5: The split moves; its sum stays fixed.</strong> Within the assumed model, estimation adds the same amount to factor P&amp;L that it subtracts from residual P&amp;L. The error can have either sign.</p>
-
-Getting the attribution to add up therefore cannot tell me whether either
-piece is precise. If the factor-return error has covariance $$V_\eta$$, the
-standard error of each portfolio attribution is
-
-$$
-s=\sqrt{e^\top V_\eta e}.
-$$
-
-This measures uncertainty in the **explanation of the P&L**. It is different
-from the volatility of the portfolio's returns. Factor errors can move together,
-so the off-diagonal entries of $$V_\eta$$ matter too.
-
-In this drawdown, the estimated residual contribution was **−1.87 points**.
-Before reading that as a stock-selection problem, I'd want to know how much
-factor-estimation noise could move that number. An uncertainty interval that
-includes zero would mean the estimate is also compatible with zero stock-specific
-P&L under the model. An interval entirely below zero would give stronger evidence
-of a negative stock-specific contribution, but would still not establish a
-persistent weakness in stock selection.
-
-For the whole period, write the residual estimate as $$\widehat I_T$$ and its
-attribution standard error as $$s_T$$. With zero-mean Gaussian estimation errors
-and known error variance, a 95% interval takes the form
-
-$$
-\widehat I_T\;\pm\;1.96\,s_T.
-$$
-
-The same width applies to the total factor attribution under these assumptions.
-The empirical figures here show point estimates: $$s_T$$ and these intervals
-have not been calculated for this example.
-
-There is a second uncertainty: **did I choose a suitable model?** Mine omits
-value, quality and finer industry effects, so some common returns can end up
-in the residual. An interval for estimation noise within this model would not
-automatically cover those omissions. I'd also check whether the apparent
-stock-selection problem survives another reasonable factor specification.
-
-<details>
-<summary>Computing the standard error, including across days</summary>
-<div markdown="1">
-
-The remaining ingredient is $$V_\eta$$. For weighted least squares in an
-identified, full-rank factor basis, write the estimator as
-
-$$
-\begin{aligned}
-A&=(B^\top WB)^{-1}B^\top W,\\
-\widehat f&=Ar=f+A\varepsilon.
-\end{aligned}
-$$
-
-Since $$\eta=A\varepsilon$$, residual-noise covariance $$D$$ implies
-
-$$
-V_\eta=ADA^\top.
-$$
-
-*Elements*, §14.2.2, uses generalized least squares with known $$D$$.
-Setting $$W=D^{-1}$$ simplifies this to
-
-$$
-V_\eta=(B^\top D^{-1}B)^{-1}.
-$$
-
-My market-cap weighting requires the more general expression. The sector
-constraint also requires working in an independent factor basis, with matching
-portfolio exposures. And $$D$$ describes the underlying stock-specific noise;
-it cannot simply be assumed equal to the covariance of fitted residuals, from
-which the regression has already removed some noise.
-
-Across days, the attribution error is $$\Delta_T=\sum_t\delta_t$$. Treating
-the loadings and portfolio weights as fixed, its variance is
-
-$$
-s_T^2=\sum_t\operatorname{Var}(\delta_t)
-+2\sum_{t<u}\operatorname{Cov}(\delta_t,\delta_u).
-$$
-
-If the daily estimation errors are uncorrelated, the cross-day terms vanish:
-
-$$
-s_T^2=\sum_t e_t^\top V_{\eta,t}e_t.
-$$
-
-So I add daily **error variances**, then take the square root. I don't add
-standard errors or annualize the result: the interval concerns this particular
-period's P&L. Dependence across days, estimated residual risks and changing
-model parameters require more care. Even a well-calculated interval remains
-conditional on the model and does not cover every omitted factor or mistaken
-loading.
-
-</div>
-</details>
+moves with total daily P&L. The residual was therefore a major source of day-to-day portfolio variation,
+even though the modeled factors explain more of the accumulated loss. That is
+why the largest P&L bar and the largest risk bar differ. These figures describe
+what happened during the episode; they do not establish whether a forecast
+made beforehand anticipated it.
 
 <details>
 <summary>Why standalone volatility does not answer the risk question</summary>
@@ -560,16 +421,17 @@ while its factor return became negative. These are jointly estimated factor
 returns. They need not match the returns of a separately constructed momentum
 or low-volatility investment strategy.
 
-Could I keep the stock views I want with less of these shared bets? That's
-worth testing, but reducing an exposure could also give up gains in other
-periods. I'd need to build the alternative portfolio and account for its
-trading costs to find out.
+This answers the exposure-or-payoff question: **both mattered, in different
+ways**. Beta lost money despite a slightly smaller negative tilt. Volatility
+and momentum combined larger average tilts with factor returns that turned
+against them. Simply saying the strategy took more risk would miss the first
+mechanism; simply blaming changing markets would miss the second.
 
-There is another catch: **zero direct exposure does not mean protection from
-a factor move**. If momentum moves with other factors I still hold, their
-contributions can carry the loss. *Elements*, §14.3, makes this distinction
-between a factor loading and sensitivity through correlations. I would check
-both before treating an exposure limit as a hedge.
+An exposure limit is consequently a candidate to test, rather than a fix
+established by this drawdown. It would change the positions and could remove
+gains elsewhere. It also needs to account for correlations: **zero direct
+exposure does not mean protection from a factor move**. Other factors held by
+the portfolio can move with it, as *Elements*, §14.3, explains below.
 
 <details>
 <summary>What changes when factors move together?</summary>
@@ -615,10 +477,12 @@ through one factor and still make money overall, as Table 4 shows.
 
 </div>
 
-BJ's is a good example: it lost through beta but made money overall because
-its other components more than offset that loss. Rocket lost through beta
-too, but that accounts for only about a fifth of its total loss. To understand
-the rest, I need to look at the other components and how the position changed.
+BJ's lost through beta but made money overall because its other components
+more than offset that loss. Rocket's beta contribution accounts for only about
+a fifth of its total loss. The beta ranking therefore identifies stocks
+carrying that particular exposure; the stock-P&L ranking identifies the names
+that actually cost the portfolio money. Rocket matters under both views, so
+I'll use it to connect the attribution to an actual position.
 
 ## What happened to the Rocket position?
 
@@ -670,16 +534,18 @@ held Rocket short, I now look at the strategy's **prediction model**. Its
 predictor contributions explain a score used to rank stocks, so they answer a
 different question from the factor P&L above.
 
-The five predictors in Figure 6 went from a combined **−0.0266 to +0.0196**
+The five predictors in Figure 5 went from a combined **−0.0266 to +0.0196**
 between the start and end of the period.
 The full prediction stayed negative, changing from **−0.0793 to −0.0869**.
-The remaining terms and intercept offset the positive subtotal at the end.
+At the end, the remaining terms and intercept contributed **−0.1065**:
+$$+0.0196-0.1065=-0.0869$$. Those terms kept the overall score negative despite
+the improvement in the five displayed predictors.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/rocket-prediction" mobile="/_draft_assets/portfolio-attribution/rocket-prediction_mobile" version="1" alt="Rocket's five displayed predictors change from a negative to a positive subtotal, but remaining terms plus intercept keep the full prediction negative at both observed endpoints." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 6: Some predictors improved, but the overall score stayed negative.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Values are model scores.</p>
+<p class="figure-caption"><strong>Figure 5: Some predictors improved, but the overall score stayed negative.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Values are model scores.</p>
 
 
 The full prediction was negative throughout the 24 sessions. But its sign alone
@@ -687,9 +553,15 @@ doesn't tell me where Rocket ranked against other stocks, or whether that rank
 improved. The score is not a calibrated expected return. Candidate ranks,
 existing holdings and trading constraints together determine the position.
 
-Now I want to understand **what kept the score negative as the stock rose,
-and how that score translated into the position**. For that, I'll need the
-complete model output and the rules that turn it into holdings.
+The price, position and prediction now tell a consistent story: Rocket rose
+while the portfolio stayed short, and the full score remained negative even
+as the displayed predictors improved. Looking at just those five predictors
+would have given a misleading account of the model's view.
+
+This establishes why the short lost money and which part of the score kept it
+negative. It does not establish why the trading rules retained that position.
+That requires Rocket's rank in the eligible universe and the constraints at
+each trading decision; the two score endpoints cannot supply that answer.
 
 <details>
 <summary>How the predictors add up to the full score</summary>
@@ -711,34 +583,189 @@ of the five predictors. Together they account for the full prediction.
 </div>
 </details>
 
-## What would I look at next?
+## How much should I trust that split?
 
-The early-2023 loss gives me a concrete place to start. The portfolio kept
-several style tilts whose payoffs turned against it together. I'd like to
-try changing one exposure limit while keeping the forecasts and risk model
-fixed, then compare the holdings, turnover and net P&L across both good and
-bad periods. A limit that helps in this drawdown still has to earn its place
-over the rest of the history.
+The portfolio lost **9.17 P&L points**. That number is known. But how much
+was due to common factors, and how much was specific to the stocks? That split
+is estimated. This is the uncertainty that *Elements*, §14.2, asks us to take
+seriously.
 
-There is also a stock-selection and sizing question. The fitted residual
-contributed +7.411 points in 2025 but −4.595 through May 2026, even though
-momentum contributed +6.052 in that partial year. I'd miss that change by
-looking only at the total. Are the residual losses spread across many stocks,
-or did the portfolio put more weight on the ones that did badly? Before
-blaming stock selection or sizing, I also need to check that changes in model
-coverage or specification aren't driving the comparison.
+Think about how we estimated momentum's return. Stocks with high momentum can
+also move on earnings announcements, company news and other individual events.
+Across a finite set of stocks, those effects won't cancel perfectly. Some can
+be picked up by the regression as momentum return. **Even a correctly specified
+factor model has estimation noise.**
 
-This is where I find Paleologo's distinction between selection and sizing
-helpful. I can compare
-**actual and equal-risk idiosyncratic contributions**, using the same dates,
-positions and a common risk budget. If the larger positions systematically
-receive worse signed outcomes, sizing deserves attention; if the equal-risk
-comparison also performs poorly, selection remains a concern. Equalizing risk
-also changes concentration and diversification, so the performance difference
-isn't a pure measure of sizing skill. The decomposition below separates these
-effects. *Advanced
-Portfolio Management*, §8.2.1, develops comparisons with equal-sized positions;
-*Elements*, §14.4, separates signed outcomes from risk allocations.
+Here is the math for one day. Let $$r$$ be the vector of stock returns and
+$$B$$ the matrix of loadings. Within the assumed model, $$f$$ is the underlying
+factor return and $$\varepsilon$$ the stock-specific return. A hat marks an
+estimate, and $$\eta$$ is the factor-return estimation error:
+
+$$
+\begin{aligned}
+r&=Bf+\varepsilon,\\
+\widehat f&=f+\eta.
+\end{aligned}
+$$
+
+The estimated residual is whatever remains after subtracting the fitted factor
+effects. Substituting the second equation into that subtraction gives
+
+$$
+\begin{aligned}
+\widehat\varepsilon
+&=r-B\widehat f\\
+&=(Bf+\varepsilon)-B(f+\eta)\\
+&=\varepsilon-B\eta.
+\end{aligned}
+$$
+
+That last term is the important one: the error picked up by the factors is
+removed from the residual. To translate it into portfolio P&L, multiply by
+the signed position weights $$w$$. Call this attribution error $$\delta$$:
+
+$$
+\delta=w^\top B\eta=e^\top\eta,
+\qquad e=B^\top w.
+$$
+
+For the covered positions, call the underlying factor contribution $$F=w^\top Bf$$
+and the stock-specific contribution $$I=w^\top\varepsilon$$. Figure 6 shows what estimation does to
+them. The same error appears twice, with opposite signs; these are **not two
+independent errors**.
+
+<div class="research-figure">
+  {% include attribution-error-diagram.html %}
+</div>
+<p class="figure-caption"><strong>Figure 6: The split moves; its sum stays fixed.</strong> Within the assumed model, estimation adds the same amount to factor P&amp;L that it subtracts from residual P&amp;L. The error can have either sign.</p>
+
+Getting the attribution to add up therefore cannot tell me whether either
+piece is precise. If the factor-return error has covariance $$V_\eta$$, the
+standard error of each portfolio attribution is
+
+$$
+s=\sqrt{e^\top V_\eta e}.
+$$
+
+This measures uncertainty in the **explanation of the P&L**. It is different
+from the volatility of the portfolio's returns. Factor errors can move together,
+so the off-diagonal entries of $$V_\eta$$ matter too.
+
+For this drawdown, **−1.87 points is the fitted residual loss, not yet evidence
+of poor stock-selection skill**. The distinction has a precise test: compare
+that estimate with its attribution uncertainty. If the interval includes zero,
+zero stock-specific P&L remains compatible with the estimate under the model.
+If the whole interval is below zero, the episode supports a negative
+stock-specific contribution under that model. Establishing a persistent
+selection weakness would require evidence across other periods too.
+
+For the whole period, write the residual estimate as $$\widehat I_T$$ and its
+attribution standard error as $$s_T$$. With zero-mean Gaussian estimation errors
+and known error variance, a 95% interval takes the form
+
+$$
+\widehat I_T\;\pm\;1.96\,s_T.
+$$
+
+The same width applies to the total factor attribution under these assumptions.
+The empirical figures here show point estimates; $$s_T$$ has not been
+calculated for this example. **The conclusion I can draw is that the chosen
+model allocates most of the loss to common factors. I cannot tell from these
+figures whether the residual loss is distinguishable from estimation noise.**
+A reconciled total or a residual-volatility chart cannot answer that question.
+
+There is a second uncertainty: **did I choose a suitable model?** Mine omits
+value, quality and finer industry effects, so some common returns can end up
+in the residual. An interval for estimation noise within this model would not
+automatically cover those omissions. To attribute the residual loss to stock
+selection, the interpretation would also have to survive a reasonable change
+in factor specification. Otherwise the conclusion concerns this particular
+model's unexplained return.
+
+<details>
+<summary>Computing the standard error, including across days</summary>
+<div markdown="1">
+
+The remaining ingredient is $$V_\eta$$. For weighted least squares in an
+identified, full-rank factor basis, write the estimator as
+
+$$
+\begin{aligned}
+A&=(B^\top WB)^{-1}B^\top W,\\
+\widehat f&=Ar=f+A\varepsilon.
+\end{aligned}
+$$
+
+Since $$\eta=A\varepsilon$$, residual-noise covariance $$D$$ implies
+
+$$
+V_\eta=ADA^\top.
+$$
+
+*Elements*, §14.2.2, uses generalized least squares with known $$D$$.
+Setting $$W=D^{-1}$$ simplifies this to
+
+$$
+V_\eta=(B^\top D^{-1}B)^{-1}.
+$$
+
+My market-cap weighting requires the more general expression. The sector
+constraint also requires working in an independent factor basis, with matching
+portfolio exposures. And $$D$$ describes the underlying stock-specific noise;
+it cannot simply be assumed equal to the covariance of fitted residuals, from
+which the regression has already removed some noise.
+
+Across days, the attribution error is $$\Delta_T=\sum_t\delta_t$$. Treating
+the loadings and portfolio weights as fixed, its variance is
+
+$$
+s_T^2=\sum_t\operatorname{Var}(\delta_t)
++2\sum_{t<u}\operatorname{Cov}(\delta_t,\delta_u).
+$$
+
+If the daily estimation errors are uncorrelated, the cross-day terms vanish:
+
+$$
+s_T^2=\sum_t e_t^\top V_{\eta,t}e_t.
+$$
+
+So I add daily **error variances**, then take the square root. I don't add
+standard errors or annualize the result: the interval concerns this particular
+period's P&L. Dependence across days, estimated residual risks and changing
+model parameters require more care. Even a well-calculated interval remains
+conditional on the model and does not cover every omitted factor or mistaken
+loading.
+
+</div>
+</details>
+
+## What does this tell me about the strategy?
+
+The strategy's recent performance depends on which book is carrying the
+result. Its exposures have also changed, while several style tilts have
+persisted. That combination explains why I need both the long–short history
+and the exposure history to understand it.
+
+The early-2023 drawdown makes the connection concrete. Long gains were
+outweighed by a broad short-book loss. Within the factor model, beta,
+volatility and momentum were the main losing styles: existing bets met
+unfavourable payoffs, with larger average tilts adding to the volatility and
+momentum losses. At the position level, Rocket shows how a rising stock and a
+persistently negative model score can coexist with a costly short position.
+
+These results identify the bets and positions to examine. They don't yet
+choose a better portfolio. Of the possible changes, the one directly motivated
+by this episode is to test a tighter exposure limit while keeping the
+predictions fixed, including the resulting trades and costs. The comparison
+has to include the profitable periods too, because the same tilts can earn
+money there.
+
+Stock selection and sizing need a separate distinction. A residual loss can
+come from poor signed outcomes across the book, or from putting more risk on
+the stocks that did badly. The stock totals above cannot separate those two.
+The calculation below shows exactly how to do it; it has not been evaluated
+for this episode. I would also resolve model coverage and attribution
+uncertainty before using it to judge either skill.
 
 <details>
 <summary>The calculation behind selection and sizing</summary>
@@ -781,12 +808,11 @@ Quantitative Investing*, §14.4.
 </div>
 </details>
 
-Before changing the strategy, I'd first account for the losses on holdings
-the factor model missed, then work through the selection and sizing comparison.
-That should help me decide where to spend time: the exposure limits, the
-position sizes, or the predictions themselves. Any change would still need
-a realistic backtest with trading costs, covering more than the drawdown
-that gave me the idea.
+The useful result of this exercise is a more specific diagnosis: which book
+lost, which shared bets contributed, and which positions carried them. It
+also sets a boundary on the interpretation: the factor split explains the
+loss under a model; it does not, on its own, establish a failure of stock
+selection or a profitable change to the strategy.
 
 ## References
 
