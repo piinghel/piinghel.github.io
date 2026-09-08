@@ -193,11 +193,37 @@ is negative, so a positive loading and positive factor return produce a loss.
 Repeating that calculation over the drawdown gives the **−0.225-point beta
 contribution** we'll examine below.
 
-The residual contribution is the signed weight times the stock's residual
-return. Together, the factor and residual contributions reconstruct the modeled
-position P&L. Trading costs, uncovered holdings and any difference from the
-accounting P&L stay separate. Otherwise an accounting mismatch could quietly
-become apparent stock-picking performance.
+### From a stock return to portfolio attribution
+
+The same multiplication applies to the residual. For a covered stock, on the
+model's return basis, the pieces add back to its contribution:
+
+$$
+\begin{aligned}
+c_{i,t}&=w_{i,t^-}r_{i,t}\\
+&=\sum_k c_{i,k,t}+w_{i,t^-}\widehat\varepsilon_{i,t}.
+\end{aligned}
+$$
+
+Now imagine a grid: one row per stock, one column per factor, plus a residual
+column. **Adding across a row gives that stock's P&L. Adding down a factor
+column gives that factor's portfolio contribution.** Grouping stock rows by
+sector gives sector P&L instead. These are different ways to add up the same
+underlying contributions.
+
+For the beta bar, I add every stock's signed beta exposure each day, multiply
+by that day's beta return, then add the daily contributions over the period:
+
+$$
+\begin{aligned}
+e_{k,t}&=\sum_i w_{i,t^-}b_{i,k,t^-},\\
+C_k&=\sum_t e_{k,t}\widehat f_{k,t}.
+\end{aligned}
+$$
+
+That is how Rocket's **−0.225 points** become part of the portfolio's
+**−3.271-point beta loss**. A stock can contribute through several factors;
+I don't assign its entire P&L to whichever factor looks most important.
 
 <details>
 <summary>What is fitted, and where does the risk model enter?</summary>
@@ -259,6 +285,31 @@ Figure 4 puts those contributions alongside their contribution to realized risk.
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/episode-factors-risk" mobile="/_draft_assets/portfolio-attribution/episode-factors-risk_mobile" version="1" alt="Episode factor contributions to P&L and realized portfolio volatility. Beta and volatility are the largest modeled losses; residual is the largest contributor to realized volatility." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: The biggest loss and the biggest risk contribution differ.</strong> 29 December 2022–2 February 2023. P&amp;L contributions total −9.170 points; contributions to annualized realized volatility total 11.116 points. Panels have different scales.</p>
+
+The last step is to reconcile the attribution with what the portfolio actually
+lost. Table 2 adds all modeled factors—including the intercept and sector
+effects—then the residuals, uncovered holdings and costs. Any difference
+between the model's return basis and the accounting P&L gets its own line.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 2: Rebuilding the drawdown from its contributions.</strong> P&amp;L points, 29 December 2022–2 February 2023.</p>
+
+| Component | Contribution |
+| :--- | ---: |
+| All modeled factors | −6.9142 |
+| Residual on covered stocks | −1.8722 |
+| Stocks outside model coverage | −0.2634 |
+| Trading costs | −0.1205 |
+| Return-basis reconciliation | 0.0000 |
+| **Net portfolio P&L** | **−9.1703** |
+{: .research-table .comparison-table .risk-performance-table }
+
+</div>
+
+The reconciliation difference is negligible here. Keeping it separate matters:
+otherwise a mismatch in prices or trade timing could be mistaken for a
+stock-selection result. The residual only describes the stocks the model
+actually covered.
 
 It's useful to compare Health Care's **−3.074-point stock P&L** with
 its **+0.157-point modeled sector effect**. Health Care stocks also have
@@ -379,7 +430,7 @@ sessions separates two possibilities: the strategy took a different bet,
 or an existing bet started losing.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 2: What changed across the turn of the year?</strong> Prior period: 23 November–28 December 2022. Loss period: 29 December 2022–2 February 2023. Exposure is the average signed standardized exposure on matched model-covered holdings; P&amp;L is in points.</p>
+<p class="table-caption"><strong>Table 3: What changed across the turn of the year?</strong> Prior period: 23 November–28 December 2022. Loss period: 29 December 2022–2 February 2023. Exposure is the average signed standardized exposure on matched model-covered holdings; P&amp;L is in points.</p>
 
 | Factor | Exposure before | During loss | P&L before | During loss |
 | :--- | ---: | ---: | ---: | ---: |
@@ -394,6 +445,11 @@ The beta exposure was slightly less negative during the loss. Its fitted
 factor return changed sign, from a summed −1.943 points to +7.472 points.
 So the portfolio lost through beta even with a slightly smaller negative
 exposure: the factor's return had turned against it.
+
+The averages in Table 3 summarize the change, but the attribution uses daily
+positions. Multiplying the average beta exposure by the period's summed factor
+return gives about −3.131 points; adding the actual daily products gives
+−3.271. The difference comes from how exposure varied through the period.
 
 Volatility combines both changes: the negative exposure grew, and its factor
 return switched from −0.394 to +2.665 points. Momentum exposure also grew
@@ -442,10 +498,10 @@ what economic bet was responsible.
 ## Which stocks carried the losing factor?
 
 Rocket, NCR and BJ's contributed most to the beta loss. But a stock can lose
-through one factor and still make money overall, as Table 3 shows.
+through one factor and still make money overall, as Table 4 shows.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 3: A factor loss inside a winning stock.</strong> Contributions in P&amp;L points, 29 December 2022–2 February 2023. Stock totals are gross.</p>
+<p class="table-caption"><strong>Table 4: A factor loss inside a winning stock.</strong> Contributions in P&amp;L points, 29 December 2022–2 February 2023. Stock totals are gross.</p>
 
 | Stock | Beta component | Total stock P&L |
 | :--- | ---: | ---: |
