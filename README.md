@@ -18,15 +18,17 @@ linked below.
 
 ## Checks and drafts
 
-### Two short posts in progress
+### Drafts in progress
 
-This local branch prepares two short posts. Neither is approved for publication.
+This local branch prepares two posts. Neither is approved for publication.
 Both live in `_drafts/` with `published: false` and are excluded from normal builds.
 
 - `_drafts/research-workflow.md`: how the document library, experiment registry
   and blog connect sources, tests and decisions.
-- `_drafts/portfolio-dashboard.md`: a brief introduction and walkthrough linking
-  to the public synthetic dashboard and its source code.
+- `_drafts/portfolio-attribution.md`: the combined attribution article and
+  dashboard walkthrough. It develops the accounting, additive/linked conventions,
+  covariance risk, factor interpretation and prediction explanations in one place.
+  The former short dashboard introduction has been merged into this article.
 
 Preview them with the site's existing layout and themes:
 
@@ -34,19 +36,34 @@ Preview them with the site's existing layout and themes:
 bundle exec jekyll serve --drafts --unpublished --host 127.0.0.1 --port 4001
 ```
 
-Open `/drafts/research-workflow/` or `/drafts/portfolio-dashboard/`.
+Open `/drafts/research-workflow/` or `/quants/portfolio-attribution.html`.
 
-The small plan:
+The attribution plan, one question at a time:
 
-1. Review the angle and wording of each post; keep both around a one-minute read.
-2. Add one concrete example to the workflow post and, if useful, one synthetic
-   dashboard screenshot with a short walkthrough. Check any new factual claims
-   against the source or registered evidence before adding them.
-3. Recheck desktop/phone layouts and links, then wait for explicit publication
-   approval before assigning final permalinks, merging or pushing.
+1. **Accounting:** work through one holding and one period until signed P&L,
+   costs, fixed notional, additive drawdowns and linked contributions are clear.
+2. **Risk:** compare P&L with covariance contributions on identical dates; explain
+   negative shares, horizon choice and forecast coverage with a small example.
+3. **Factors:** distinguish stock classifications from factor effects; inspect
+   exposures, residuals and coverage before interpreting a historical loss.
+4. **Decisions:** follow one position through the five aligned panels, including
+   the full prediction and available sizing/constraint context.
+5. **Publication:** resolve the provisional historical tables, add only useful
+   figures or a synthetic walkthrough, and recheck the rendered article. Wait for
+   explicit approval before merging or pushing. No new empirical runs are part
+   of this editorial pass; agree the next diagnostic before running it.
 
-The existing `_drafts/portfolio-attribution.md` is a separate, longer empirical
-study. Its claims and publication readiness have not been reassessed here.
+The workflow post can stay short; add one concrete source-to-decision example
+when refining it.
+
+For attribution evidence, start in the existing `performance_attribution`
+registry project. Table 1 references revision 1 of
+`performance-attribution:stock-heatmap:finding:short-drawdown`, its verified run,
+and `performance-attribution:stock-heatmap:artifact:observations` (lines 360–367).
+The older linked-drawdown and whole-period risk tables remain clearly marked
+provisional in collapsed sections. Their earlier `book_attribution.csv` export
+has not been located; recover and match it before publication. Preserve those
+values as earlier-draft material, not as a newly verified empirical conclusion.
 
 ```bash
 bundle exec jekyll build
@@ -61,9 +78,9 @@ files. After regenerating figures, run
 `python3 scripts/check_site.py --update-dimensions` to refresh their intrinsic
 sizes before rebuilding the site.
 
-Drafts are excluded from the normal build. Preview the portfolio-attribution
-draft explicitly with `bundle exec jekyll serve --drafts`. It reconciles saved
-book-level P&L and realized risk but is not a finished sector/style study.
+Drafts are excluded from the normal build. Use both `--drafts` and `--unpublished`
+to preview these explicitly unpublished articles. The attribution draft is an
+explanatory working article, not a completed sector/style or causal study.
 
 Jekyll remains deliberate: the site needs static articles, equations, SVGs,
 stable permalinks, and RSS. The local build already serves those requirements;
