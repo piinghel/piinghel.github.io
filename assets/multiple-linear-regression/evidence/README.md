@@ -1,7 +1,7 @@
 # Ridge article evidence
 
 Aggregate evidence for the fixed three-theme, OLS and Ridge comparison in
-*Combining Stock Predictors with Linear Regression*. These files reproduce
+*Combining Multiple Predictors: The Linear Case*. These files reproduce
 the article's figures and reported summaries. They contain no stock-level
 observations or positions.
 
