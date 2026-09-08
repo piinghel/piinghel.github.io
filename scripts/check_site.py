@@ -39,7 +39,12 @@ class Page(HTMLParser):
 
 def figure_dimensions(root: Path) -> dict[str, dict[str, int]]:
     dimensions = {}
-    for path in sorted((root / "assets").rglob("*.svg")):
+    figure_paths = [
+        path
+        for directory in ("assets", "_draft_assets")
+        for path in (root / directory).rglob("*.svg")
+    ]
+    for path in sorted(figure_paths):
         tree = ET.parse(path)
         svg = tree.getroot()
         ids = {element.attrib["id"] for element in svg.iter() if "id" in element.attrib}

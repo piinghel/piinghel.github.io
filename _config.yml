@@ -9,6 +9,8 @@ theme: minima
 show_drafts: false
 
 exclude:
+  - _config.preview.yml
+  - _draft_assets
   - AGENTS.md
   - README.md
   - scripts

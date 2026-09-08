@@ -27,16 +27,33 @@ Both live in `_drafts/` with `published: false` and are excluded from normal bui
   and blog connect sources, tests and decisions.
 - `_drafts/portfolio-attribution.md`: the combined attribution article and
   dashboard walkthrough. It develops the accounting, additive/linked conventions,
-  covariance risk, factor interpretation and prediction explanations in one place.
+  covariance risk, factor interpretation and prediction explanations in one place,
+  as a personal study grounded in Paleologo's two books and real portfolio data.
   The former short dashboard introduction has been merged into this article.
 
 Preview them with the site's existing layout and themes:
 
 ```bash
-bundle exec jekyll serve --drafts --unpublished --host 127.0.0.1 --port 4001
+bundle exec jekyll serve --config _config.yml,_config.preview.yml --drafts --unpublished --host 127.0.0.1 --port 4001
 ```
 
 Open `/drafts/research-workflow/` or `/quants/portfolio-attribution.html`.
+
+The article's controlling question is: understand what the whole strategy is
+doing over time, which exposures and positions drive its returns and risks,
+and what changes deserve investigation. The route is strategy history →
+sectors/industries/factors → stocks within each contribution → position and
+prediction histories → a relevant research decision. The short drawdown is
+one worked example, not the thesis of the article.
+
+Write for a portfolio manager, quant researcher or allocator. Keep source-copy
+metadata, unfinished-work notes and revision history here, out of the article.
+Only retain explanations that help interpret a display or answer a practical
+question; collapse useful derivations, and delete unrelated material.
+The real-data figures currently cover the book P&L bridge and Rocket's prediction.
+Next visuals: strategy-wide exposure/risk history, matched sector/industry/factor
+episode contributions, and stocks within a selected factor term. These remain
+uncompleted work; the article must not imply results from those comparisons.
 
 The attribution plan, one question at a time:
 
@@ -48,8 +65,8 @@ The attribution plan, one question at a time:
    exposures, residuals and coverage before interpreting a historical loss.
 4. **Decisions:** follow one position through the five aligned panels, including
    the full prediction and available sizing/constraint context.
-5. **Publication:** resolve the provisional historical tables, add only useful
-   figures or a synthetic walkthrough, and recheck the rendered article. Wait for
+5. **Publication:** add only useful
+   figures from the real portfolio, and recheck the rendered article. Wait for
    explicit approval before merging or pushing. No new empirical runs are part
    of this editorial pass; agree the next diagnostic before running it.
 
@@ -57,13 +74,60 @@ The workflow post can stay short; add one concrete source-to-decision example
 when refining it.
 
 For attribution evidence, start in the existing `performance_attribution`
-registry project. Table 1 references revision 1 of
+registry project. The book totals reference revision 1 of
 `performance-attribution:stock-heatmap:finding:short-drawdown`, its verified run,
 and `performance-attribution:stock-heatmap:artifact:observations` (lines 360–367).
-The older linked-drawdown and whole-period risk tables remain clearly marked
-provisional in collapsed sections. Their earlier `book_attribution.csv` export
-has not been located; recover and match it before publication. Preserve those
-values as earlier-draft material, not as a newly verified empirical conclusion.
+The older linked-drawdown and whole-period risk tables were removed from the
+article because they distract from this episode and their original export has
+not been located. They remain recoverable from local commit `9ecc65f`; match
+their evidence before reusing them. They are not newly verified results.
+
+The two figures also use revision 1 of the verified observations artifact:
+Figure 1 uses lines 360–367; Figure 2 uses Rocket's saved predictor contributions
+and scores, lines 17–75. Its remainder is the saved full prediction minus the
+same five predictor contributions. The position paragraph uses lines 2–16.
+These are real-market-data backtest observations, not live performance.
+No simulated replacement series or interpolated daily histories are used.
+
+Reproduce the figures from the registry artifact's local file:
+
+```bash
+python3 scripts/render_attribution_figures.py \
+  --source /path/to/verified/explore_stock_histories.json \
+  --source-sha256 9589895774cd7a5f75c8cba4af80a0c3cd2ba6dea070a14d949201e3bc956950 \
+  --output-dir _draft_assets/portfolio-attribution
+python3 scripts/check_site.py --update-dimensions
+```
+
+The source artifact stays outside this repository. Normal builds exclude
+`_draft_assets`; the local preview configuration includes it. Keep these outside
+the theme's `assets` directory because Jekyll's theme asset reader bypasses
+normal source exclusions.
+Check that both the article and its real-data figures are absent from a normal
+build before any later publication decision.
+
+### Attribution reading plan
+
+Read one section, derive its identity, then connect it to one real-data display.
+The remaining portfolio comparisons below are plans, not completed experiments.
+
+| Reading | Physical PDF pages (printed pages) | Practical question and next display |
+| --- | --- | --- |
+| *Advanced Portfolio Management*, 2021, §8.1.1 | 136–138 (124–126) | From the book-level bridge to a reconciled factor breakdown. |
+| *Elements*, 9 September 2024 draft, §14.1 | 453–454 (427–428) | Which holdings apply to each return, and what does trading P&L contain? |
+| *Elements*, §14.2 | 455–458 (429–432) | How can factor/residual estimation errors cancel while total P&L reconciles? |
+| *Advanced Portfolio Management*, §8.2.1 | 140–145 (128–133) | Define actual versus equal-sized positions, the included holdings, and feasibility limits. |
+| *Elements*, §14.4 | 469–475 (443–449) | Derive selection, risk-weighted sizing and effective diversification; then specify a real-data comparison. |
+| Later: *Elements*, §14.3; *Advanced Portfolio Management*, timing discussion in §8.2.1 | Locate and read the complete relevant subsections before drafting | Correlated-factor interpretation, then allocation through time. |
+
+Exact library editions: `paleologo_2021_advanced_portfolio_management.pdf`
+(document `da1e85e5a83a0af7`) and
+`paleologo_elements_of_quantitative_investing_draft_2024-09-09.pdf`
+(document `1be2bc901895cf0b`). The latter is a private author draft, not the
+published 2025 edition; do not redistribute the PDF or its page images.
+The article's algebra is explanatory, and its figures are our own renderings
+of the saved research observations. Factor/sizing counterfactuals need a
+separately agreed diagnostic design before computation.
 
 ```bash
 bundle exec jekyll build

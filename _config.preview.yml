@@ -1,0 +1,3 @@
+# Local-only real-data article figures; normal builds exclude this directory.
+include:
+  - _draft_assets

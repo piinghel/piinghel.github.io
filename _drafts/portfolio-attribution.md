@@ -1,8 +1,8 @@
 ---
 layout: post
 title: "Understanding portfolio performance attribution"
-description: "Following portfolio P&L through holdings, risk contributions, factors and saved predictions."
-article_label: Portfolio attribution · Working draft
+description: "Understanding a strategy through its changing exposures, sources of return, drawdowns and individual positions."
+article_label: Portfolio attribution
 permalink: /quants/portfolio-attribution.html
 toc: true
 show_date: false
@@ -10,116 +10,85 @@ published: false
 navigation: false
 ---
 
-<p class="article-summary">I want to understand how a portfolio earned its return: which positions contributed, how they interacted, and what the model was seeing while the positions were held. This article works from the daily P&L ledger towards risk, factor attribution and individual predictions, using the dashboard I built to keep those views connected.</p>
+<p class="article-summary">I want to understand what my strategy is actually doing: which exposures it takes, how they change over time, and what produces its gains and drawdowns. Performance attribution lets me connect the portfolio's overall behaviour to sectors, industries, factors and individual positions.</p>
 
-This is a working draft that I intend to develop as I work through the attribution.
-The [public dashboard](https://piinghel-portfolio-pnl.streamlit.app/) uses synthetic
-data. The historical example below comes from the saved research portfolio;
-the two should not be compared as if they were the same strategy.
+The investigation starts with the whole strategy. I then select periods when
+its behaviour changes and work down to the holdings behind that change.
+The loss from **29 December 2022–2 February 2023** provides a worked example;
+Rocket provides a closer look at one position within it.
 
-## Follow the loss back to the positions
+This is a personal study alongside Giuseppe Paleologo's *Advanced Portfolio
+Management* (2021), Chapter 8, and *The Elements of Quantitative Investing*,
+Chapter 14. The figures use saved backtest observations based on real market
+data. The portfolio is the constrained Ridge strategy with trading controls
+from the [optimizer article](/quants/2026/08/29/portfolio-optimization.html),
+allocated equally across [three starting weeks](/quants/2025/05/10/rebalancing-luck.html).
+This history has already been used in model selection.
 
-The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) raises a
-question about losses on the short side. Before changing a constraint, I want
-to understand where those losses accumulated and what decisions put the
-portfolio there.
+## What is the strategy doing over time?
 
-I separate four questions. **P&L attribution** locates the gains and losses.
-**Risk attribution** measures how each component contributed to portfolio
-variation. **Factor attribution** decomposes returns under a particular model.
-**Prediction explanations** reconstruct the score used to assess a stock.
-Keeping those questions distinct makes it easier to connect their answers.
+Before explaining a good or bad month, I want to see how the portfolio itself
+has evolved. Has the balance between long and short exposure changed? Have
+particular sectors become larger? Are the same factors driving risk throughout
+the history, or does that concentration move?
 
-Here I attribute the portfolio's own P&L. Attribution relative to a benchmark
-would need an additional definition of active weights and returns. The optional
-benchmark line in the dashboard is a separate reference; it does not enter
-the portfolio's P&L partition.
+The useful comparison places the return and drawdown path alongside exposure and risk
+contributions on the same date axis. **Exposure** tells me the size and
+direction of a bet. **Risk contribution** tells me how it interacts with
+the rest of the portfolio. **P&L contribution** tells me what it earned or
+lost. Seeing all three helps distinguish taking a larger bet from experiencing
+a different outcome on a similar bet.
 
-I use its constrained Ridge portfolio with trading controls, split equally
-across the three starting weeks. The [timing
-article](/quants/2025/05/10/rebalancing-luck.html) explains that mixture. The
-saved portfolio ends on 27 May 2026. This history has already participated in
-model selection; the examples are retrospective diagnostics.
+The comparison through time matters. If a factor's P&L deteriorates, did its
+return turn against the strategy, did the strategy increase its exposure, or
+did both happen? If an industry becomes a larger holding, did that result from
+new trades or from the prices of existing positions moving? These questions
+give the portfolio overview a purpose before I zoom into any one episode.
 
-## Start with the daily P&L
+The episode below shows how to investigate a period within that broader
+history: locate the loss, identify the shared exposures, then inspect the
+positions behind them.
 
-For a simple price-only position in one currency, daily contribution can be
-written as
+## Where did this period's P&L come from?
 
-$$
-c_{i,t}=\frac{q_{i,t^-}(P_{i,t}-P_{i,t-1})}{N}
-       =w_{i,t^-}r_{i,t}.
-$$
+In the dashboard, I select the episode and open the P&L breakdown. The first
+question is whether the loss sits in the long book, the short book, or recorded
+costs. Figure 1 answers it: longs earned **7.306 points**, shorts lost
+**16.356 points**, and costs subtracted another **0.120 points**.
 
-Here $$N$$ is fixed strategy notional, $$q_{i,t^-}$$ is the signed position held
-over the price move, and $$w_{i,t^-}$$ is its signed starting dollar exposure
-divided by $$N$$. The position is negative for a short. The price and holdings
-bases must agree, including adjustments for splits and other corporate actions.
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/episode-bridge" mobile="/_draft_assets/portfolio-attribution/episode-bridge_mobile" version="1" alt="Real portfolio P&L bridge: longs add 7.306 percentage points, shorts subtract 16.356 and costs subtract 0.120, leaving a net loss of 9.170 points." %}
+</div>
 
-Suppose a short position starts at 2% of fixed notional and the stock rises
-10%. Its contribution is $$-0.02\times0.10=-0.002$$: a loss of **0.20 percentage
-points of portfolio notional**, before costs. This example holds the position
-fixed over the move. With trading during the period, I need the actual daily
-holdings and P&L; multiplying the period's stock return by its final weight
-would give a different calculation.
+<p class="figure-caption"><strong>Figure 1: Following the loss through the two books.</strong> Saved three-schedule portfolio, 29 December 2022–2 February 2023. Longs, shorts and costs build the additive net P&amp;L, all on the same fixed notional.</p>
 
-Summing securities by their actual daily holding side gives
 
-$$
-r_{p,t}=c_{L,t}+c_{S,t}+c_{C,t}.
-$$
+The short loss was more than twice the long gain. That gives me a reason to
+inspect the short side more closely. Next I want to know whether the loss was
+spread across unrelated holdings or concentrated in common industries and
+factor exposures.
 
-The first two terms are signed before-cost contributions from the long and
-short books. A rally in a stock sold short gives a negative short contribution.
-The last term is the negative five-basis-point proportional trading charge.
-These components reconcile to the saved net daily series before any chart or
-statistic is produced. Borrow, financing and market impact are absent from
-this simulation. Its net P&L is therefore net of the recorded trading charge.
+The bars add to the net loss because both books use the **same fixed
+notional**, with recorded trading costs kept separate. That lets me move from
+the portfolio total to individual stocks without changing the scale.
 
-Long and short contributions use the **same fixed notional**. Renormalizing
-each side to 100% would change the question and break this reconciliation.
-Shared costs remain a separate component; I do not invent a cost allocation
-to individual stocks. When the chart shows only the largest contributors,
-“Other” contains the exact sum of the omitted rows.
+<details>
+<summary>Why the dashboard adds daily P&L</summary>
+<div markdown="1">
 
-## Adding P&L through time
+The backtest charges five basis points on traded notional; borrow, financing
+and market impact are absent. Net means after that recorded charge.
 
-The dashboard accumulates daily contributions on fixed notional:
+For each date, $r_{p,t}=c_{L,t}+c_{S,t}+c_{C,t}$$ is net P&L divided by fixed
+notional. The dashboard accumulates it as
 
 $$
 A_t=\sum_{s\le t}r_{p,s},\qquad
 D_t=A_t-\max(0,A_1,\ldots,A_t).
 $$
 
-The drawdown is the distance below the earlier peak of this additive path,
-in units of fixed notional. The initial zero is included. When I narrow the
-view, the total drawdown chart retains earlier peaks, while period P&L is
-recalculated for the selected dates.
-
-Table 1 shows the 24 sessions from 29 December 2022 through 2 February 2023.
-The long book earned 7.306 percentage points, but the short book lost 16.356.
-Recorded trading costs account for another 0.120 points. That places the
-first investigation on the short holdings: the long gains were less than
-half the short losses.
-
-<p class="table-caption"><strong>Table 1:</strong> Saved equal-notional three-schedule portfolio, 29 December 2022–2 February 2023. Signed additive P&L in percentage points of fixed notional. Values are rounded; the underlying contributions reconcile to net P&L.</p>
-
-<table class="research-table comparison-table">
-  <thead><tr><th>Component</th><th>Additive P&L</th></tr></thead>
-  <tbody>
-    <tr><th scope="row">Long book, gross</th><td>+7.306 pp</td></tr>
-    <tr><th scope="row">Short book, gross</th><td>−16.356 pp</td></tr>
-    <tr><th scope="row">Trading costs</th><td>−0.120 pp</td></tr>
-    <tr><th scope="row">Portfolio, net</th><td>−9.170 pp</td></tr>
-  </tbody>
-</table>
-
-That finding does not tell me what removing shorts would have earned. A
-long-only alternative would need its own sizing, capital and risk constraints.
-The observed long contribution is one component of the portfolio that actually
-ran.
-
-### When returns are compounded
+The drawdown measures the distance below the earlier peak of that additive
+path. This is why all comparisons here keep the same dates and notional.
 
 Adding daily P&L answers how much the strategy earned per unit of its fixed
 notional. It does not reproduce a compounded drawdown. To reconcile the latter,
@@ -137,36 +106,206 @@ episode beginning after a peak, I reset the index to 1 at that peak and start
 with the following session's P&L. This makes the linked contributions add to
 the compounded change over that episode.
 
-A two-day example shows why the distinction matters. Returns of +10% and
-−10% add to zero, while an index moves from 1 to 1.10 to 0.99. Applying the
-prior index level gives linked contributions of +10% and −11%, adding to −1%.
-The dashboard uses the additive convention. The linked convention below
-describes a separately constructed compounded index.
-
-<details>
-<summary>Earlier draft: linked drawdown contributions</summary>
-<div markdown="1">
-
-Table 2 retains the linked figures from the earlier draft. Their original
-export still needs to be recovered and matched before publication; only the
-additive totals in Table 1 have been reconfirmed in this editing pass.
-
-<p class="table-caption"><strong>Table 2:</strong> Provisional linked contributions, 29 December 2022–2 February 2023, with the net index reset to 1 at the preceding peak. These are not the additive values displayed by the dashboard.</p>
-
-<table class="research-table comparison-table">
-  <thead><tr><th>Component</th><th>Linked contribution</th></tr></thead>
-  <tbody>
-    <tr><th scope="row">Long book, gross</th><td>+7.044 pp</td></tr>
-    <tr><th scope="row">Short book, gross</th><td>−15.758 pp</td></tr>
-    <tr><th scope="row">Trading costs</th><td>−0.116 pp</td></tr>
-    <tr><th scope="row">Portfolio, net</th><td>−8.830 pp</td></tr>
-  </tbody>
-</table>
+The changing multiplier $$V_{t-1}$$ is the reason a component's linked
+contribution differs from its additive P&L. The dashboard uses the additive
+convention. The linked convention below describes a separately constructed
+compounded index; it requires the actual daily series, not just the period totals.
 
 </div>
 </details>
 
-## How a component contributes to risk
+## Which groups and stocks explain it?
+
+I keep the dates fixed and look at the loss in two ways. **Sector and industry
+groupings** collect the complete P&L of stocks belonging to each group.
+**Factor attribution** divides stock returns into modeled common effects
+and residuals. These are alternative explanations of the same portfolio P&L.
+
+For an industry with a large loss, I want to see the stocks inside it:
+was one name responsible, or did most holdings move together? For a losing
+factor, I want to see which stocks contributed to that particular factor term.
+Ranking stocks by their total P&L would not answer the second question.
+
+For example, a stock's contribution to a particular factor comes from its
+signed position weight multiplied by its loading on that factor and the
+factor's return. A stock can lose through that exposure while earning money
+overall through other effects. Following the factor term down to its stocks
+keeps that distinction visible.
+
+The practical comparison is then with the period before the drawdown:
+were these exposures already present, and did the same stocks carry them?
+This helps separate a change in portfolio construction from a change in the
+returns experienced by existing exposures.
+
+The factor bridge must retain residual, uncovered and unreconciled P&L so
+that every part of the loss remains accounted for.
+
+<details>
+<summary>Derive the factor contribution, then check its limits</summary>
+<div markdown="1">
+
+In a linear factor attribution, I write the stock return as
+
+$
+r_{i,t}=\sum_k b_{i,k,t^-}f_{k,t}+\varepsilon_{i,t}.
+$
+
+The loadings $b$ describe the stock's exposures before the return;
+$f$ contains the period's factor returns. Multiplying by signed starting
+weights and adding across holdings produces each factor's portfolio P&L.
+The residual collects the part of modeled stock returns left unexplained by
+that specification. A common intercept, when present, can be represented as
+a factor with loading 1; it needs its own interpretation rather than being
+automatically labelled market beta.
+
+
+Reading: *Advanced Portfolio Management*, §8.1.1.
+
+There are two different checks here. The components must add to the ledger.
+Then I need to judge how well the model allocates P&L between factors and
+residuals. *Elements*, §14.2.2, makes that second problem explicit. In its
+fixed-loading setup, write estimated factor returns as
+$\widehat f_t=f_t+\eta_t$. Holding the observed stock return fixed gives
+
+$
+\widehat\varepsilon_t=\varepsilon_t-B\eta_t.
+$
+
+At portfolio level the estimated factor component gains $w_t^\top B\eta_t$
+and the estimated residual component loses the same amount. **The two errors
+cancel in total P&L.** A perfectly reconciled chart can therefore contain an
+uncertain factor/residual split. This is a model identity, not an estimate of
+the error in my portfolio. See *The Elements of Quantitative Investing*,
+§14.2.2.
+
+</div>
+</details>
+
+## What happened inside one position?
+
+I switch to **Stocks → Short**, keep the same dates, and open Rocket.
+The aim is to connect the stock's movement to the loss actually borne by the
+portfolio.
+
+Rocket's adjusted price rose **62.35%** over the episode. The portfolio held it
+short on all **24 sessions**, recording a gross loss of **1.104 percentage
+points of strategy notional**. This is one contributor to the −16.356-point
+short-book loss, not an explanation of the entire book.
+
+The absolute weight was **1.643%** on the first saved date and **2.610%** on
+the last. A larger dollar weight can result from an adverse price move as well
+as from trading. Those endpoints alone do not show that the strategy actively
+increased the short.
+
+I read the shared date axis from top to bottom:
+**price → cumulative P&L → position size → predictor contributions → model inputs**.
+The first three panels establish when the loss accumulated and what exposure
+was present. The last two help me understand the saved model output.
+
+I keep the episode fixed while moving between the stock and portfolio views.
+
+<details>
+<summary>How a short stock contributes to portfolio P&L</summary>
+<div markdown="1">
+
+For a simple price-only position in one currency, daily contribution can be
+written as
+
+$$
+c_{i,t}=\frac{q_{i,t^-}(P_{i,t}-P_{i,t-1})}{N}
+       =w_{i,t^-}r_{i,t}.
+$$
+
+Here $$N$$ is fixed strategy notional, $$q_{i,t^-}$$ is the signed position held
+over the price move, and $$w_{i,t^-}$$ is its signed starting dollar exposure
+divided by $$N$$. The position is negative for a short. The price and holdings
+bases must agree, including adjustments for splits and other corporate actions.
+
+
+The negative position turns a positive price move into negative P&L. Across
+multiple sessions, I sum the actual daily contributions. Rocket's period
+return multiplied by its final weight would not reconstruct the saved
+−1.104-point loss.
+
+*Elements*, §14.1, separates holdings-snapshot P&L from trading within the
+interval. For a stock traded during the episode, daily holdings and trade
+timing are needed to reconcile the result.
+
+Reading: *The Elements of Quantitative Investing*, §14.1.
+
+</div>
+</details>
+
+### What did the model say?
+
+A loss while holding a short raises a practical question: had the model changed
+its view while the position remained? A positive patch in a predictor heatmap
+could suggest that, but I need to check the full prediction.
+
+Figure 2 compares the same five displayed predictor contributions at the first
+and last saved dates. Their subtotal changed from **−0.0266 to +0.0196**.
+The full prediction stayed negative, changing from **−0.0793 to −0.0869**.
+The remaining terms and intercept offset the positive subtotal at the end.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/rocket-prediction" mobile="/_draft_assets/portfolio-attribution/rocket-prediction_mobile" version="1" alt="Rocket's five displayed predictors change from a negative to a positive subtotal, but remaining terms plus intercept keep the full prediction negative at both observed endpoints." %}
+</div>
+
+<p class="figure-caption"><strong>Figure 2: A partial explanation can point the other way.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Lines compare endpoints. The first two rows add to the full prediction on each date. Values are model scores, not portfolio returns.</p>
+
+
+The full prediction was negative throughout the 24 sessions. The positive
+subtotal therefore gives me no reason to conclude that the model had changed
+its overall view.
+
+The useful follow-up is **what kept the score negative as the stock rose,
+and how did that score translate into the position?** That takes me from
+the predictor chart to the complete model output and the position rules.
+
+<details>
+<summary>Reconcile the predictor panel to the full score</summary>
+<div markdown="1">
+
+For a saved linear prediction,
+
+$$
+s_{i,t}=a_t+\sum_j\theta_{j,t}x_{i,j,t}.
+$$
+
+Each predictor contributes its saved coefficient times its transformed input,
+$$\theta_{j,t}x_{i,j,t}$$. A change can come from the input or from a coefficient
+refit. These are model-score units, distinct from realized factor P&L.
+
+In Figure 2, the remaining terms plus intercept are calculated as the saved
+full score minus the subtotal of the same five predictors. The first two rows
+therefore add to the last on each date. Missing predictions on trading
+sessions should stay blank rather than being interpreted as zero scores.
+
+</div>
+</details>
+
+## Did the strategy take the risks I expected?
+
+One position helps explain a specific outcome; the strategy-level question is
+whether such positions add up to the intended portfolio. I want to compare
+which stocks and factors contributed most to risk before the drawdown with
+which contributed most to the subsequent loss.
+
+That comparison also belongs in stronger periods. Are gains repeatedly coming
+from the same intended exposures, or from occasional bets elsewhere? Are
+residual gains broad across stocks, or dependent on a handful of names?
+Looking at both gains and losses keeps one memorable episode from defining
+the entire strategy.
+
+
+
+Placing P&L and risk contributions side by side answers another question:
+did the biggest losing stocks also contribute most to portfolio variation
+during the episode?
+
+<details>
+<summary>Why standalone volatility does not answer the risk question</summary>
+<div markdown="1">
 
 A book's own volatility does not say how much risk it contributes alongside
 the rest of the portfolio. For the realized daily component series, define
@@ -201,149 +340,89 @@ position can lose money over the period while tending to help on the
 portfolio's worse days. I therefore want the contribution to P&L and the
 contribution to risk side by side, on the same selected dates.
 
-<details>
-<summary>Earlier draft: whole-period risk and linked returns</summary>
-<div markdown="1">
 
-Table 3 preserves the earlier draft's comparison over
-3 January 2022–27 May 2026. Its original numerical export still needs to be matched before these
-values can support a final interpretation. It is a different window from
-Table 1, so its risk shares cannot be used as the risk split of that drawdown.
-
-<p class="table-caption"><strong>Table 3:</strong> Provisional earlier-draft values for 1,103 daily observations. Linked returns are whole-period contributions; volatility contributions are annualized. These figures have not been reverified for this combined draft.</p>
-
-<table class="research-table comparison-table">
-  <thead><tr><th>Component</th><th>Linked return</th><th>Contribution to annual volatility</th><th>Share of net variance</th></tr></thead>
-  <tbody>
-    <tr><th scope="row">Long book, gross</th><td>+62.72 pp</td><td>+2.564 pp</td><td>29.05%</td></tr>
-    <tr><th scope="row">Short book, gross</th><td>−16.15 pp</td><td>+6.265 pp</td><td>70.97%</td></tr>
-    <tr><th scope="row">Trading cost</th><td>−6.40 pp</td><td>−0.002 pp</td><td>−0.02%</td></tr>
-    <tr><th scope="row">Portfolio, net</th><td>+40.17 pp</td><td>8.827 pp</td><td>100.00%</td></tr>
-  </tbody>
-</table>
-
-If confirmed, the negative cost contribution to volatility would describe
-the timing of costs relative to portfolio P&L. Costs still subtract from
-the total return.
+This realized calculation uses holdings that changed during the window.
+Forecast risk instead applies the covariance model available at a decision
+time to that snapshot of holdings: $$\sqrt{w^\top\Sigma w}$$. A comparison
+needs consistent horizons and explicit model coverage. Missing forecasts
+remain missing; they are not zero risk.
 
 </div>
 </details>
 
-### Forecast risk and realized risk
+## From understanding to a research decision
 
-The covariance calculation above uses the P&L of holdings that changed through
-the historical window. Forecast risk asks how the holdings at a particular
-decision time might behave under the covariance model available then. Its
-portfolio volatility is $$\sqrt{w^\top\Sigma w}$$, with weights and covariance
-in consistent units.
+The purpose of these views is to identify which part of the strategy needs
+closer examination. Persistent factor concentration raises a construction
+question. Poor residual outcomes raise questions about forecasts and stock
+selection. Larger allocations to worse outcomes raise a sizing question.
+The evidence needed for each is different.
 
-Comparing the two requires attention to horizon, changes in holdings and model
-coverage. A missing forecast for part of the book must remain missing; treating
-it as zero or scaling up the covered positions would change the portfolio
-being described. A discrepancy is a useful diagnostic, but a single realized
-episode cannot identify which covariance estimate was wrong.
+Paleologo's selection/sizing distinction gives the next investigation a
+purpose: did the strategy choose losing stocks, or allocate more risk to
+its worse choices? *Advanced Portfolio Management*, §8.2.1, approaches this
+by comparing actual positions with equal-sized positions, examining their
+idiosyncratic P&L.
 
-## Stocks, sectors and factors
+For my portfolio, I want to establish whether larger risk allocations
+coincided with worse stock-specific outcomes. The relevant comparison puts
+**actual and equal-risk idiosyncratic contributions side by side**, on the
+same dates and with the same included positions. That would test an allocation
+question that the observed stock P&L alone cannot answer.
 
-Grouping stock P&L by sector answers where the gains and losses occurred.
-Every stock's complete contribution goes into its classification. A sector
-factor answers a different question: how much P&L the attribution model assigns
-to that shared exposure after accounting for its other factors.
+<details>
+<summary>Work through the selection and sizing identity</summary>
+<div markdown="1">
 
-For example, profitable stocks in one industry might earn their gains through
-momentum exposure or stock-specific residual returns even while the model's
-industry component loses money. Both decompositions can reconcile to the same
-portfolio. Adding their totals together would count the same P&L twice.
-
-In a linear factor attribution, I write the stock return as
-
-$$
-r_{i,t}=\sum_k b_{i,k,t^-}f_{k,t}+\varepsilon_{i,t}.
-$$
-
-The loadings $$b$$ describe the stock's exposures before the return;
-$$f$$ contains the period's factor returns. Multiplying by signed starting
-weights and adding across holdings produces each factor's portfolio P&L.
-The residual collects the part of modeled stock returns left unexplained by
-that specification. A common intercept, when present, can be represented as
-a factor with loading 1; it needs its own interpretation rather than being
-automatically labelled market beta.
-
-Paleologo develops this progression from total P&L to factor groups and
-individual factors in *Advanced Portfolio Management*, first edition (2021),
-§8.1.1, printed pp. 124–126 (physical PDF pp. 136–138). It is a useful way to
-organise the investigation: first locate a component, then examine what is
-inside it. [Book details](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6).
-
-For the dashboard, the complete bridge also retains trading costs, uncovered
-holdings and any reconciliation difference between ledger and model P&L.
-Those terms should remain identifiable. A large residual can reflect omitted
-factors or imperfect loadings as well as stock-specific outcomes; its name
-alone does not establish alpha.
-
-The current classification sidecars are retrospective. They are useful for
-describing the saved holdings but do not establish which industry classification
-was available when a trade was chosen. Likewise, attributing P&L to correlated
-factors depends on the specification. I want to inspect that dependence before
-turning a factor label into an economic explanation.
-
-## Connecting the charts
-
-I built the dashboard so that I can follow this investigation without losing
-the selected dates. I start with a drawdown or an unusually strong month,
-then inspect stock, sector, industry and factor contributions. Clicking a stock
-bar opens its history; returning brings me back to the same breakdown.
-
-The stock view stacks **price → cumulative P&L → position size → predictor
-contributions → model inputs** on one date axis. Price defaults to a logarithmic
-scale. Dragging across a shorter period recalculates the analysis, and Reset
-period restores the wider selection.
-
-I read the first three panels together. Did the price move against the
-position? Was the position already large, or did it grow through trading or
-price drift? Was the loss spread across sessions or concentrated in one move?
-Holding markers locate changes in the saved positions; verifying execution
-would require the corresponding trade records.
-
-### What the predictor panels explain
-
-For a saved linear prediction, the score is
+*Elements*, §14.4, gives me a complementary way to work through the question.
+For one date, let $$\varepsilon_i$$ be a stock's idiosyncratic return,
+$$\sigma_i>0$$ its matching idiosyncratic volatility, and $$w_i$$ its signed
+position weight. Define
 
 $$
-s_{i,t}=a_t+\sum_j\theta_{j,t}x_{i,j,t}.
+u_i=\frac{\varepsilon_i}{\sigma_i}\operatorname{sign}(w_i),
+\qquad a_i=\sigma_i|w_i|.
 $$
 
-The contribution panel displays $$\theta_{j,t}x_{i,j,t}$$ in model-score units;
-the input panel shows the saved transformed input $$x_{i,j,t}$$. These are
-different quantities from realized factor P&L. A contribution can change
-because the input changed or because a refit changed its coefficient.
+The first quantity measures the signed outcome in volatility units; the second
+measures the size of the risk taken. Their product is exactly
+$$u_i a_i=w_i\varepsilon_i$$. Averaging across the $$n$$ included positions,
+with cross-sectional covariance defined using divisor $$n$$, gives
 
-The displayed top predictors are only part of the score. The remaining terms
-and intercept can offset them, so I check the full saved explanation before
-interpreting the heatmap's colour as the model's overall view. Empty trading
-sessions stay blank when predictions are missing.
+$$
+\sum_i w_i\varepsilon_i
+=\overline u\sum_i a_i
++n\operatorname{Cov}_{i}(u_i,a_i).
+$$
 
-The next distinction is between a score and a position. The public demo has
-a simple top-N selection rule. In an optimized strategy, sizing, constraints,
-turnover controls and existing holdings also affect the decision. The score
-explains a model output; explaining a trade requires that additional decision
-context.
+This identity makes the question concrete. The first term uses the average
+signed outcome. The second is positive when larger risk positions coincide
+with better signed outcomes on that date. A hit rate discards the magnitude
+of those standardized outcomes, so it answers a different question.
 
-## Working through the attribution
+If idiosyncratic returns are uncorrelated under the model, the corresponding
+portfolio volatility is $$\sqrt{\sum_i a_i^2}$$. Dividing the identity by it
+gives a selection term multiplied by diversification,
+$$\sum_i a_i/\sqrt{\sum_i a_i^2}$$, plus a sizing term. This is a
+single-period risk-normalized result; a reported time-series information
+ratio requires its own aggregation convention. See *The Elements of
+Quantitative Investing*, §14.4.
 
-For the next pass, I want to follow the selected drawdown from the reconciled
-book totals to the stocks and factor exposures underneath it. I will compare
-the loss concentration with the risk contributions over those same dates,
-then use the position and predictor histories to identify a specific decision
-worth examining.
+</div>
+</details>
 
-Finally, an accounting attribution cannot establish what a different decision
-would have earned. Testing the retention rule requires a matched portfolio
-replay with the same forecasts, information dates, and cost convention. The
-attribution should tell me which counterfactual is worth running.
+For the episode examined here, the evidence locates the loss on the short
+side and shows one short held through a large price rise while its full
+prediction remained negative. The open question is whether this reflects
+common exposures across the book, stock-specific forecast errors, or the way
+those views were sized. Resolving that question determines which strategy
+decision deserves testing.
 
-The [public dashboard](https://piinghel-portfolio-pnl.streamlit.app/) is available
-to try, with fictional companies, prices, holdings and predictions. Its
-[source code and bundle format](https://github.com/piinghel/portfolio-pnl-dashboard)
-are available for exploring another portfolio. The synthetic example demonstrates
-the workflow; the historical attribution above remains a separate working study.
+## References
+
+Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
+Chapter 8; [*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
+Chapter 14.
+
+The dashboard's [source code and bundle format](https://github.com/piinghel/portfolio-pnl-dashboard)
+are available for exploring another portfolio.

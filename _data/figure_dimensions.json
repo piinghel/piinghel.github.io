@@ -1,4 +1,20 @@
 {
+  "/_draft_assets/portfolio-attribution/episode-bridge": {
+    "width": 634,
+    "height": 324
+  },
+  "/_draft_assets/portfolio-attribution/episode-bridge_mobile": {
+    "width": 360,
+    "height": 324
+  },
+  "/_draft_assets/portfolio-attribution/rocket-prediction": {
+    "width": 634,
+    "height": 317
+  },
+  "/_draft_assets/portfolio-attribution/rocket-prediction_mobile": {
+    "width": 360,
+    "height": 374
+  },
   "/assets/2024-12-15-low-volatility-factor/naive_leg_risk": {
     "width": 629,
     "height": 184
