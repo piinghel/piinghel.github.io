@@ -18,6 +18,36 @@ linked below.
 
 ## Checks and drafts
 
+### Two short posts in progress
+
+This local branch prepares two short posts. Neither is approved for publication.
+Both live in `_drafts/` with `published: false` and are excluded from normal builds.
+
+- `_drafts/research-workflow.md`: how the document library, experiment registry
+  and blog connect sources, tests and decisions.
+- `_drafts/portfolio-dashboard.md`: a brief introduction and walkthrough linking
+  to the public synthetic dashboard and its source code.
+
+Preview them with the site's existing layout and themes:
+
+```bash
+bundle exec jekyll serve --drafts --unpublished --host 127.0.0.1 --port 4001
+```
+
+Open `/drafts/research-workflow/` or `/drafts/portfolio-dashboard/`.
+
+The small plan:
+
+1. Review the angle and wording of each post; keep both around a one-minute read.
+2. Add one concrete example to the workflow post and, if useful, one synthetic
+   dashboard screenshot with a short walkthrough. Check any new factual claims
+   against the source or registered evidence before adding them.
+3. Recheck desktop/phone layouts and links, then wait for explicit publication
+   approval before assigning final permalinks, merging or pushing.
+
+The existing `_drafts/portfolio-attribution.md` is a separate, longer empirical
+study. Its claims and publication readiness have not been reassessed here.
+
 ```bash
 bundle exec jekyll build
 python3 scripts/check_site.py _site
