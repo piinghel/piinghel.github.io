@@ -125,10 +125,11 @@ The book sections guide the derivations; the equal-risk sizing comparison remain
 | --- | --- | --- |
 | *Advanced Portfolio Management*, 2021, §8.1.1 | 136–138 (124–126) | From the book-level bridge to a reconciled factor breakdown. |
 | *Elements*, 9 September 2024 draft, §14.1 | 453–454 (427–428) | Which holdings apply to each return, and what does trading P&L contain? |
-| *Elements*, §14.2 | 455–458 (429–432) | How can factor/residual estimation errors cancel while total P&L reconciles? |
+| *Elements*, §14.2 | 455–458 (429–432) | How can factor/residual estimation errors cancel while total P&L reconciles? What assumptions do attribution-error intervals require? |
 | *Advanced Portfolio Management*, §8.2.1 | 140–145 (128–133) | Define actual versus equal-sized positions, the included holdings, and feasibility limits. |
 | *Elements*, §14.4 | 469–475 (443–449) | Derive selection, risk-weighted sizing and effective diversification; then specify a real-data comparison. |
-| Later: *Elements*, §14.3; *Advanced Portfolio Management*, timing discussion in §8.2.1 | Locate and read the complete relevant subsections before drafting | Correlated-factor interpretation, then allocation through time. |
+| *Elements*, §14.3 | 460–466 (434–440) | Why can zero direct exposure leave correlated sensitivity? Ordinary versus maximal attribution and factor representation. |
+| Later: *Advanced Portfolio Management*, timing discussion in §8.2.1 | Locate and read the complete relevant subsection before drafting | Allocation through time. |
 
 Exact library editions: `paleologo_2021_advanced_portfolio_management.pdf`
 (document `da1e85e5a83a0af7`) and
@@ -138,6 +139,15 @@ published 2025 edition; do not redistribute the PDF or its page images.
 The article's algebra is explanatory, and its figures are our own renderings
 of the saved research observations. Factor/sizing counterfactuals need a
 separately agreed diagnostic design before computation.
+
+For the computation explanation, trace the registered aggregate artifact's
+factor-manifest hash to the private input bundle, then check its `method`,
+`model` and `code_sha256` fields against `joint_model.py` and `factor_ledger.py`.
+This identifies the actual cross-sectional estimator and accounting bridge;
+the book's known-residual-covariance GLS uncertainty formula is a separate
+theoretical case, not an uncertainty estimate for the article's WLS fit.
+Library page images checked for equations: *Elements* physical PDF pages 457
+and 463. Keep original pages and private manifests outside the site.
 
 ```bash
 bundle exec jekyll build

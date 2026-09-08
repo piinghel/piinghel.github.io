@@ -126,8 +126,10 @@ For each date, $$r_{p,t}=c_{L,t}+c_{S,t}+c_{C,t}$$ is net P&L divided by fixed
 notional. Accumulating these contributions gives
 
 $$
-A_t=\sum_{s\le t}r_{p,s},\qquad
-D_t=A_t-\max(0,A_1,\ldots,A_t).
+\begin{aligned}
+A_t&=\sum_{s\le t}r_{p,s},\\
+D_t&=A_t-\max(0,A_1,\ldots,A_t).
+\end{aligned}
 $$
 
 The drawdown measures the distance below the earlier peak of that additive
@@ -159,13 +161,99 @@ whole Financials sector loses −1.292. Other industries in the sector partly
 offset it. I'm using later classifications to group these historical holdings,
 so the labels may differ from those used at the time.
 
-The factor model asks a different question: how much of those stock returns
-is associated with shared characteristics? Figure 4 attributes **−3.271
+## How does the risk model explain the loss?
+
+Adding up the stocks tells me where I lost money. To ask how much came from
+shared bets, I need a **factor model**. It gives each stock a set of exposures,
+then uses them to split its return into common effects and a residual.
+This is the starting point in *Advanced Portfolio Management*, §8.1.1.
+
+There are three steps behind the factor breakdown:
+
+1. **Describe the stocks before the price move.** In this example I use size,
+   momentum, volatility, beta, short-term reversal and sector membership.
+   The style scores are standardized so their scale is consistent across stocks.
+   These are the model's **loadings**: how much of each characteristic a stock has.
+2. **Estimate what those characteristics earned that day.** I fit the day's
+   stock returns across the eligible stock universe, using the prior day's
+   loadings. All factors enter the regression together. The fitted coefficients
+   are that day's **factor returns**; the difference between each stock's actual
+   and fitted return is its **residual**.
+3. **Apply the portfolio's positions.** For each stock and factor, multiply the
+   signed starting weight by the loading and the estimated factor return.
+   Add across stocks for the day's contribution, then across days for the period.
+
+$$
+c_{i,k,t}=w_{i,t^-}\,b_{i,k,t^-}\,\widehat f_{k,t}.
+$$
+
+For Rocket's beta contribution, these three pieces are the short weight,
+Rocket's beta loading and the day's estimated beta return. The short weight
+is negative, so a positive loading and positive factor return produce a loss.
+Repeating that calculation over the drawdown gives the **−0.225-point beta
+contribution** we'll examine below.
+
+The residual contribution is the signed weight times the stock's residual
+return. Together, the factor and residual contributions reconstruct the modeled
+position P&L. Trading costs, uncovered holdings and any difference from the
+accounting P&L stay separate. Otherwise an accounting mismatch could quietly
+become apparent stock-picking performance.
+
+<details>
+<summary>What is fitted, and where does the risk model enter?</summary>
+<div markdown="1">
+
+For one day, stack stock returns in $$r$$ and prior-day loadings in $$B$$.
+The fitted decomposition is
+
+$$
+\begin{aligned}
+r&=B\widehat f+\widehat\varepsilon,\\
+\widehat f&=\arg\min_f(r-Bf)^\top W(r-Bf).
+\end{aligned}
+$$
+
+Here $$W$$ controls how much each stock matters in the fit. This example uses
+square-root market-cap weights. The fit includes a common intercept and sector
+effects constrained to have a weighted mean of zero, avoiding a duplicate
+intercept. The intercept is the model's common baseline; it is not the return
+of a traded market index. Different universes, regression weights or factor
+definitions can change the attribution.
+
+The factor returns are estimated **after** observing that day's stock returns.
+Using today's return as the outcome is appropriate for explaining today's P&L;
+using it to build yesterday's exposure or risk forecast would introduce look-ahead.
+This is a cross-sectional fit across stocks each day, rather than a regression
+of the portfolio's return history on factor returns.
+
+To forecast portfolio risk, I also need a factor covariance matrix $$\Omega_f$$
+and a residual covariance matrix $$D$$. Under the model's assumption that factor
+and residual shocks are uncorrelated,
+
+$$
+\begin{aligned}
+\Sigma&=B\Omega_f B^\top+D,\\
+\sigma_p&=\sqrt{w^\top\Sigma w}.
+\end{aligned}
+$$
+
+The implementation estimates these from return history, gives more weight to
+recent observations and uses only information available before the forecast.
+It assumes $$D$$ is diagonal: residual shocks in different stocks are uncorrelated.
+That assumption can miss risk if the model leaves a shared driver unexplained.
+The ordinary P&L split above uses realized factor returns; the covariance
+estimates answer the additional question of how risky the positions were.
+
+*Elements*, §14.1, also stresses that holdings must match the return interval.
+If the portfolio trades within it, a single snapshot cannot explain all P&L.
+The difference can include trading gains and losses as well as costs.
+
+</div>
+</details>
+
+Applying this calculation to the drawdown attributes **−3.271
 points to beta**, **−3.064 to volatility** and **−1.923 to momentum**.
-The model includes the displayed styles and sector terms, but omits other
-potential common drivers, including value and quality. Some of those effects
-could end up in the residual. I need to keep that in mind before treating
-the unexplained part as evidence of stock-picking skill.
+Figure 4 puts those contributions alongside their contribution to realized risk.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/episode-factors-risk" mobile="/_draft_assets/portfolio-attribution/episode-factors-risk_mobile" version="1" alt="Episode factor contributions to P&L and realized portfolio volatility. Beta and volatility are the largest modeled losses; residual is the largest contributor to realized volatility." %}
@@ -184,6 +272,58 @@ volatility 1.191. Here **risk contribution** measures how each daily component
 moves with total daily P&L. This tells me what moved together during the loss.
 To know whether the risk model saw it coming, I'd need its forecasts from
 before the episode.
+
+### How much should I trust that split?
+
+The total loss is an accounting result. **The factor–residual split is an
+estimate.** If the fit assigns too much of a stock's return to factors, its
+residual falls by the same amount. Everything still adds up. That is the
+attribution-error problem in *Elements*, §14.2: reconciliation checks the
+arithmetic, but cannot establish that the model has found the right explanation.
+
+The choice of model matters too. Mine omits value, quality and finer industry
+effects, so some common returns can end up in the residual. I'd want to know
+whether an apparent stock-selection problem survives another reasonable factor
+specification before changing the strategy's forecasts. The bars here are point
+estimates from one model; they don't establish that the explanation holds
+across different models.
+
+<details>
+<summary>Why attribution errors cancel, and what an uncertainty interval needs</summary>
+<div markdown="1">
+
+In the fixed-loading setup of *Elements*, §14.2.2, write estimated factor
+returns as $$\widehat f_t=f_t+\eta_t$$. Holding the observed stock return fixed gives
+
+$$
+\widehat\varepsilon_t=\varepsilon_t-B\eta_t.
+$$
+
+Estimated factor P&L gains $$w_t^\top B\eta_t$$ while estimated residual P&L
+loses the same amount. The total is unchanged, even though either component
+can move substantially.
+
+The chapter derives uncertainty intervals under a specified model for the
+errors. In a full-rank generalized least-squares fit with known residual
+covariance $$D$$, the factor-estimation error covariance is
+
+$$
+V_\eta=(B^\top D^{-1}B)^{-1}.
+$$
+
+With portfolio exposure $$e=B^\top w$$, the factor-attribution error variance
+is $$e^\top V_\eta e$$. This concerns uncertainty about the attribution,
+not the portfolio's forecast return variance. Turning it into an interval
+requires distributional assumptions; combining days also requires assumptions
+about dependence over time.
+
+My market-cap-weighted fit is not that known-$$D$$ estimator. Its weighting,
+sector constraint and estimated residual risks must be accounted for before
+using such intervals. They would still be conditional on the chosen model;
+they would not cover every omitted factor or mistaken loading.
+
+</div>
+</details>
 
 <details>
 <summary>Why standalone volatility does not answer the risk question</summary>
@@ -266,43 +406,35 @@ worth testing, but reducing an exposure could also give up gains in other
 periods. I'd need to build the alternative portfolio and account for its
 trading costs to find out.
 
+There is another catch: **zero direct exposure does not mean protection from
+a factor move**. If momentum moves with other factors I still hold, their
+contributions can carry the loss. *Elements*, §14.3, makes this distinction
+between a factor loading and sensitivity through correlations. I would check
+both before treating an exposure limit as a hedge.
+
 <details>
-<summary>The factor calculation and where it can mislead</summary>
+<summary>What changes when factors move together?</summary>
 <div markdown="1">
 
-In a linear factor attribution, I write the stock return as
+For a fixed portfolio with factor exposures $$e$$ and factor covariance
+$$\Omega_f$$, its factor-P&L sensitivity to factor $$k$$ is
 
 $$
-r_{i,t}=\sum_k b_{i,k,t^-}f_{k,t}+\varepsilon_{i,t}.
+\beta_{p,k}^{\mathrm{factor}}
+=\frac{(\Omega_f e)_k}{(\Omega_f)_{kk}}.
 $$
 
-The loadings $$b$$ describe the stock's exposures before the return;
-$$f$$ contains the period's factor returns. Multiplying by signed starting
-weights and adding across holdings produces each factor's portfolio P&L.
-The residual collects the part of modeled stock returns left unexplained by
-that specification. A common intercept, when present, can be represented as
-a factor with loading 1; it needs its own interpretation rather than being
-automatically labelled market beta.
+When that factor has positive variance, this can be nonzero even if $$e_k=0$$.
+The other exposures enter through their covariance with it. It is a linear
+sensitivity, not evidence that the factor caused every associated move.
 
-
-Reading: *Advanced Portfolio Management*, §8.1.1.
-
-There are two different checks here. The components must add to the ledger.
-Then I need to judge how well the model allocates P&L between factors and
-residuals. *Elements*, §14.2.2, makes that second problem explicit. In its
-fixed-loading setup, write estimated factor returns as
-$$\widehat f_t=f_t+\eta_t$$. Holding the observed stock return fixed gives
-
-$$
-\widehat\varepsilon_t=\varepsilon_t-B\eta_t.
-$$
-
-At portfolio level the estimated factor component gains $$w_t^\top B\eta_t$$
-and the estimated residual component loses the same amount. **The two errors
-cancel in total P&L.** A perfectly reconciled chart can therefore contain an
-uncertain factor/residual split. This is a model identity, not an estimate of
-the error in my portfolio. See *The Elements of Quantitative Investing*,
-§14.2.2.
+The chapter's **maximal attribution** uses these correlations to collect the
+modeled P&L associated with a chosen factor or group, including the part carried
+through other factors. It offers another way to examine the same loss; the
+figures here use ordinary attribution. Individual factor totals can also change
+when the model's factors are re-expressed, even while total modeled P&L and
+forecast risk stay the same. That is why a factor label alone cannot settle
+what economic bet was responsible.
 
 </div>
 </details>
