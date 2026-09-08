@@ -71,9 +71,9 @@ ways. Did its positions change, or did similar bets start paying off differently
 ## Have the exposures changed?
 
 **Exposure** tells me how much of a bet the portfolio is taking, and in which
-direction. Start with the dollars: average marked long exposure was 107% of
-notional in 2021, against 89% short. In 2025 those figures were 105% and 79%:
-net dollar exposure had risen from about 18% to 25%. These weights include
+direction. Start with the dollars: average marked long exposure was 107.2% of
+notional in 2021, against 89.1% short. In 2025 those figures were 104.6% and 79.1%:
+net dollar exposure had risen from about 18.1% to 25.5%. These weights include
 the effect of prices moving between trades.
 
 The types of stocks matter too. I can have more dollars invested long while
@@ -170,7 +170,7 @@ This is the starting point in *Advanced Portfolio Management*, §8.1.1.
 
 There are three steps behind the factor breakdown:
 
-1. **Describe the stocks before the price move.** In this example I use size,
+1. **Describe the stocks' characteristics.** In this example I use size,
    momentum, volatility, beta, short-term reversal and sector membership.
    The style scores are standardized so their scale is consistent across stocks.
    These are the model's **loadings**: how much of each characteristic a stock has.
@@ -207,9 +207,10 @@ $$
 
 Now imagine a grid: one row per stock, one column per factor, plus a residual
 column. **Adding across a row gives that stock's P&L. Adding down a factor
-column gives that factor's portfolio contribution.** Grouping stock rows by
-sector gives sector P&L instead. These are different ways to add up the same
-underlying contributions.
+column gives that factor's portfolio contribution.** Grouping the rows by
+sector gives the modeled stocks' sector P&L. Full sector totals also include
+uncovered stocks and any return-basis differences, as the reconciliation below
+shows.
 
 For the beta bar, I add every stock's signed beta exposure each day, multiply
 by that day's beta return, then add the daily contributions over the period:
@@ -235,14 +236,16 @@ The fitted decomposition is
 $$
 \begin{aligned}
 r&=B\widehat f+\widehat\varepsilon,\\
-\widehat f&=\arg\min_f(r-Bf)^\top W(r-Bf).
+\widehat f&=\arg\min_{f\in\mathcal F}(r-Bf)^\top W(r-Bf).
 \end{aligned}
 $$
 
 Here $$W$$ controls how much each stock matters in the fit. This example uses
 square-root market-cap weights. The fit includes a common intercept and sector
-effects constrained to have a weighted mean of zero, avoiding a duplicate
-intercept. The intercept is the model's common baseline; it is not the return
+effects constrained to have a weighted mean of zero; $$\mathcal F$$ denotes
+that constraint. Without it, the intercept and the full set of sector indicators
+would not give a unique set of coefficients. The intercept is the model's common
+baseline; it is not the return
 of a traded market index. Different universes, regression weights or factor
 definitions can change the attribution.
 
@@ -263,9 +266,10 @@ $$
 \end{aligned}
 $$
 
-The implementation estimates these from return history, gives more weight to
-recent observations and uses only information available before the forecast.
-It assumes $$D$$ is diagonal: residual shocks in different stocks are uncorrelated.
+The covariance estimates give more weight to recent returns and use return
+history through the previous session. But the sector classifications are
+retrospective, so this is not a fully point-in-time test of risk forecasts.
+The model assumes $$D$$ is diagonal: residual shocks in different stocks are uncorrelated.
 That assumption can miss risk if the model leaves a shared driver unexplained.
 The ordinary P&L split above uses realized factor returns; the covariance
 estimates answer the additional question of how risky the positions were.
@@ -331,8 +335,8 @@ was due to common factors, and how much was specific to the stocks? That split
 is estimated. This is the uncertainty that *Elements*, §14.2, asks us to take
 seriously.
 
-Think about how we estimated momentum's return. Stocks with high momentum
-also had earnings announcements, company news and other individual price moves.
+Think about how we estimated momentum's return. Stocks with high momentum can
+also move on earnings announcements, company news and other individual events.
 Across a finite set of stocks, those effects won't cancel perfectly. Some can
 be picked up by the regression as momentum return. **Even a correctly specified
 factor model has estimation noise.**
@@ -473,9 +477,9 @@ return gives about −3.131 points; adding the actual daily products gives
 
 Volatility combines both changes: the negative exposure grew, and its factor
 return switched from −0.394 to +2.665 points. Momentum exposure also grew
-while its factor return became negative. These are conditional returns from
-the joint model, whose correlated factors share the explanation; they are
-not returns on independently tradable factor portfolios.
+while its factor return became negative. These are jointly estimated factor
+returns. They need not match the returns of a separately constructed momentum
+or low-volatility investment strategy.
 
 Could I keep the stock views I want with less of these shared bets? That's
 worth testing, but reducing an exposure could also give up gains in other
@@ -582,9 +586,10 @@ Reading: *The Elements of Quantitative Investing*, §14.1.
 
 ### What did the model say?
 
-As Rocket rose, did the model change its mind while the portfolio kept the
-short? A positive patch in the predictor heatmap might give that impression.
-Let's check the full prediction.
+The attribution model explains realized returns. To understand why the portfolio
+held Rocket short, I now look at the strategy's **prediction model**. Its
+predictor contributions explain a score used to rank stocks, so they answer a
+different question from the factor P&L above.
 
 The five predictors in Figure 5 went from a combined **−0.0266 to +0.0196**
 between the start and end of the period.
@@ -598,11 +603,10 @@ The remaining terms and intercept offset the positive subtotal at the end.
 <p class="figure-caption"><strong>Figure 5: Some predictors improved, but the overall score stayed negative.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Values are model scores.</p>
 
 
-The full prediction was negative throughout the 24 sessions, so the positive
-patch doesn't mean the model had turned positive on Rocket. The score is an
-input to ranking and sizing, not a calibrated
-expected return or a complete explanation of the trade. Candidate ranks,
-existing holdings and trading constraints also affect the position.
+The full prediction was negative throughout the 24 sessions. But its sign alone
+doesn't tell me where Rocket ranked against other stocks, or whether that rank
+improved. The score is not a calibrated expected return. Candidate ranks,
+existing holdings and trading constraints together determine the position.
 
 Now I want to understand **what kept the score negative as the stock rose,
 and how that score translated into the position**. For that, I'll need the
@@ -650,7 +654,10 @@ helpful. I can compare
 **actual and equal-risk idiosyncratic contributions**, using the same dates,
 positions and a common risk budget. If the larger positions systematically
 receive worse signed outcomes, sizing deserves attention; if the equal-risk
-comparison also performs poorly, selection remains a concern. *Advanced
+comparison also performs poorly, selection remains a concern. Equalizing risk
+also changes concentration and diversification, so the performance difference
+isn't a pure measure of sizing skill. The decomposition below separates these
+effects. *Advanced
 Portfolio Management*, §8.2.1, develops comparisons with equal-sized positions;
 *Elements*, §14.4, separates signed outcomes from risk allocations.
 
