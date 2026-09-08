@@ -326,18 +326,38 @@ before the episode.
 
 ### How much should I trust that split?
 
-The total loss is an accounting result. **The factor–residual split is an
-estimate.** If the fit assigns too much of a stock's return to factors, its
-residual falls by the same amount. Everything still adds up. That is the
-attribution-error problem in *Elements*, §14.2: reconciliation checks the
-arithmetic, but cannot establish that the model has found the right explanation.
+The portfolio lost **9.17 P&L points**. That number is known. But how much
+was due to common factors, and how much was specific to the stocks? That split
+is estimated. This is the uncertainty that *Elements*, §14.2, asks us to take
+seriously.
 
-The choice of model matters too. Mine omits value, quality and finer industry
-effects, so some common returns can end up in the residual. I'd want to know
-whether an apparent stock-selection problem survives another reasonable factor
-specification before changing the strategy's forecasts. The bars here are point
-estimates from one model; they don't establish that the explanation holds
-across different models.
+Think about how we estimated momentum's return. Stocks with high momentum
+also had earnings announcements, company news and other individual price moves.
+Across a finite set of stocks, those effects won't cancel perfectly. Some can
+be picked up by the regression as momentum return. **Even a correctly specified
+factor model has estimation noise.**
+
+The residual is whatever remains after subtracting the estimated factor effects
+from the observed stock return. If the fit assigns too much return to factors,
+it assigns too little to the residual. Think of moving a divider inside a fixed
+total: the two pieces change in opposite directions, while their sum stays the
+same. That is why getting the attribution to add up cannot tell me whether the
+split is precise.
+
+In this drawdown, the estimated residual contribution was **−1.87 points**.
+Before reading that as a stock-selection problem, I'd want to know how much
+factor-estimation noise could move that number. An uncertainty interval that
+includes zero would mean the estimate is also compatible with zero stock-specific
+P&L under the model. An interval entirely below zero would give stronger evidence
+of a negative stock-specific contribution, but would still not establish a
+persistent weakness in stock selection. The figures here show point estimates;
+attribution-error intervals have not been calculated for this example.
+
+There is a second uncertainty: **did I choose a suitable model?** Mine omits
+value, quality and finer industry effects, so some common returns can end up
+in the residual. An interval for estimation noise within this model would not
+automatically cover those omissions. I'd also check whether the apparent
+stock-selection problem survives another reasonable factor specification.
 
 <details>
 <summary>Why attribution errors cancel, and what an uncertainty interval needs</summary>

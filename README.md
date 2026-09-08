@@ -125,7 +125,7 @@ The book sections guide the derivations; the equal-risk sizing comparison remain
 | --- | --- | --- |
 | *Advanced Portfolio Management*, 2021, §8.1.1 | 136–138 (124–126) | From the book-level bridge to a reconciled factor breakdown. |
 | *Elements*, 9 September 2024 draft, §14.1 | 453–454 (427–428) | Which holdings apply to each return, and what does trading P&L contain? |
-| *Elements*, §14.2 | 455–458 (429–432) | How can factor/residual estimation errors cancel while total P&L reconciles? What assumptions do attribution-error intervals require? |
+| *Elements*, §14.2 | 455–460 (429–434) | Why do noisy factor-return estimates shift P&L into or out of the residual? Error cancellation, uncertainty intervals and their assumptions. |
 | *Advanced Portfolio Management*, §8.2.1 | 140–145 (128–133) | Define actual versus equal-sized positions, the included holdings, and feasibility limits. |
 | *Elements*, §14.4 | 469–475 (443–449) | Derive selection, risk-weighted sizing and effective diversification; then specify a real-data comparison. |
 | *Elements*, §14.3 | 460–466 (434–440) | Why can zero direct exposure leave correlated sensitivity? Ordinary versus maximal attribution and factor representation. |
