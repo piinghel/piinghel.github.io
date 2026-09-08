@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Combining Stock Predictors with Linear Regression"
+title: "Combining Multiple Predictors: The Linear Case"
 description: "Learning a joint stock ranking from overlapping predictors, and what Ridge regularization adds."
 date: 2025-02-09
 last_modified_at: 2026-09-06
