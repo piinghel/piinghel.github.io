@@ -101,6 +101,20 @@ since 2022; the size, momentum and volatility tilts have persisted. A larger
 net dollar position therefore doesn't, by itself, tell me how exposure to
 market movements changed.
 
+I checked that distinction against the Russell 1000 price-return benchmark.
+Over September 1998–May 2026, beginning net dollar exposure averages **+22.0%**
+of notional, but the slope from regressing daily net P&L on the benchmark,
+including a constant, is only **+0.068**. The intercept component alone has a slope of +0.249; the remaining
+components contribute −0.181, leaving +0.068 overall. These slopes use the same
+6,962 dates and fixed-notional denominator, so they add up. The other components
+offset much of the intercept's market sensitivity. Reading its bar alone would
+give the wrong impression of the whole portfolio.
+
+This is low historical sensitivity, rather than exact neutrality. The five-year
+blocks from 2000 through 2024 have slopes between +0.039 and +0.078. These are
+realized relationships for a changing portfolio; they do not establish that
+each day's positions were beta-neutral before trading.
+
 There's a gap here that I can't ignore. The model covers roughly 92–98%
 of gross exposure on average across these years, but the holdings it misses
 lost **8.76 P&L points in 2024**. That is a lot to leave out when explaining
@@ -258,6 +272,14 @@ would not give a unique set of coefficients. The intercept is the model's common
 baseline; it is not the return
 of a traded market index. Different universes, regression weights or factor
 definitions can change the attribution.
+
+Because each covered stock has intercept loading one, portfolio intercept
+exposure is $$\sum_i w_i$$ on that covered set. Raw holdings beta instead is
+$$\sum_i w_i\beta_i$$, using stock betas to the same named benchmark. Unequal
+long and short dollars can therefore offset in beta. The standardized beta
+loading used in this fit is different again. I keep the intercept contribution
+in the factor split: moving it into residuals would change what "residual"
+means, without improving the explanation of market sensitivity.
 
 The factor returns are estimated **after** observing that day's stock returns.
 Using today's return as the outcome is appropriate for explaining today's P&L;
@@ -714,6 +736,25 @@ constraint also requires working in an independent factor basis, with matching
 portfolio exposures. And $$D$$ describes the underlying stock-specific noise;
 it cannot simply be assumed equal to the covariance of fitted residuals, from
 which the regression has already removed some noise.
+
+One practical estimate is the **HC3 sandwich covariance**. With regression
+leverage $$h_i=(BA)_{ii}$$, it uses
+
+$$
+\widehat V_{\eta,\mathrm{HC3}}
+=A\,\operatorname{diag}\!\left(
+\frac{\widehat\varepsilon_i^2}{(1-h_i)^2}
+\right)A^\top.
+$$
+
+The leverage adjustment allows for the way fitting reduces residuals,
+especially for influential observations. It permits different noise variances
+across stocks, but assumes their errors are uncorrelated. Correlated omitted
+drivers can still make the interval too narrow. Because this covariance is
+estimated, normal intervals based on it are approximate; the exact
+known-variance calculation above is a reference case. The interval also says
+nothing by itself about persistent stock-selection skill. HC3 needs residual
+degrees of freedom and $$h_i<1$$; otherwise the interval is unavailable.
 
 Across days, the attribution error is $$\Delta_T=\sum_t\delta_t$$. Treating
 the loadings and portfolio weights as fixed, its variance is
