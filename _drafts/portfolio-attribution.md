@@ -10,63 +10,120 @@ published: false
 navigation: false
 ---
 
-<p class="article-summary">I want to understand what my strategy is actually doing: which exposures it takes, how they change over time, and what produces its gains and drawdowns. Performance attribution lets me connect the portfolio's overall behaviour to sectors, industries, factors and individual positions.</p>
+<p class="article-summary">A strategy can make money for years and still be difficult to understand. I use performance attribution to connect its changing positions to what it earns and loses. In this portfolio, persistent style exposures help explain an early-2023 drawdown, while the remaining losses raise questions about stock selection and sizing.</p>
 
-The investigation starts with the whole strategy. I then select periods when
-its behaviour changes and work down to the holdings behind that change.
-The loss from **29 December 2022–2 February 2023** provides a worked example;
-Rocket provides a closer look at one position within it.
+When I look at a strategy, I want to know what I am relying on. Does it earn
+money from selecting stocks, from carrying common exposures, or from changing
+those exposures at useful times? Has that mix changed? And when it loses,
+is the loss consistent with the risks it was taking?
 
-This is a personal study alongside Giuseppe Paleologo's *Advanced Portfolio
-Management* (2021), Chapter 8, and *The Elements of Quantitative Investing*,
-Chapter 14. The figures use saved backtest observations based on real market
-data. The portfolio is the constrained Ridge strategy with trading controls
+I work through those questions using the constrained Ridge strategy with trading controls
 from the [optimizer article](/quants/2026/08/29/portfolio-optimization.html),
 allocated equally across [three starting weeks](/quants/2025/05/10/rebalancing-luck.html).
-This history has already been used in model selection.
+It ranks stocks using a linear prediction model, then sizes long and short
+positions jointly under risk and exposure limits. A rank buffer and a trade
+penalty discourage unnecessary replacements. Each schedule rebalances every
+three weeks, so the combined portfolio spreads those decisions through time.
+
+The figures are saved backtest results using real market data. This history
+has already informed model selection. Trading costs are five basis points on
+traded notional; borrow, financing and market impact are absent. Throughout,
+one **P&L point** means 1% of the same fixed strategy notional.
+Paleologo's *Advanced Portfolio Management*, Chapter 8, and *The Elements of
+Quantitative Investing*, Chapter 14, guide the questions and the interpretation.
 
 ## What is the strategy doing over time?
 
-Before explaining a good or bad month, I want to see how the portfolio itself
-has evolved. Has the balance between long and short exposure changed? Have
-particular sectors become larger? Are the same factors driving risk throughout
-the history, or does that concentration move?
+Figure 1 starts with the whole available history. The cumulative path shows
+what the strategy has earned; the drawdown below it shows how far it fell
+from an earlier peak. Calendar-period P&L makes weaker stretches easier to see
+than the slope of a long cumulative line alone.
 
-The useful comparison places the return and drawdown path alongside exposure and risk
-contributions on the same date axis. **Exposure** tells me the size and
-direction of a bet. **Risk contribution** tells me how it interacts with
-the rest of the portfolio. **P&L contribution** tells me what it earned or
-lost. Seeing all three helps distinguish taking a larger bet from experiencing
-a different outcome on a similar bet.
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/strategy-history" mobile="/_draft_assets/portfolio-attribution/strategy-history_mobile" version="1" alt="Aligned cumulative net P&L, additive drawdown and calendar-period P&L for the saved strategy from September 1998 to May 2026." %}
+</div>
+<p class="figure-caption"><strong>Figure 1: Put the difficult period in the strategy's history.</strong> 23 September 1998–27 May 2026. All panels use additive P&amp;L on fixed notional. The first and last calendar years are partial. The shaded band marks 29 December 2022–2 February 2023, examined below.</p>
 
-The comparison through time matters. If a factor's P&L deteriorates, did its
-return turn against the strategy, did the strategy increase its exposure, or
-did both happen? If an industry becomes a larger holding, did that result from
-new trades or from the prices of existing positions moving? These questions
-give the portfolio overview a purpose before I zoom into any one episode.
+The more recent years show why a single performance number is insufficient.
+In 2022 the shorts earned enough to offset losing longs. In 2023 and 2024,
+longs carried the result while shorts lost money. Both sides contributed in
+2025; the short side is again the source of the loss through May 2026.
 
-The episode below shows how to investigate a period within that broader
-history: locate the loss, identify the shared exposures, then inspect the
-positions behind them.
+<div markdown="1">
+<p class="table-caption"><strong>Table 1: Which book is carrying the result?</strong> P&amp;L points on fixed notional. Longs and shorts are gross; costs are recorded for the whole portfolio. ¹Through 27 May 2026.</p>
+
+| Period | Longs | Shorts | Costs | Net |
+| :--- | ---: | ---: | ---: | ---: |
+| 2021 | +31.87 | −0.21 | −1.21 | +30.45 |
+| 2022 | −11.90 | +20.31 | −1.18 | +7.23 |
+| 2023 | +21.50 | −16.10 | −1.32 | +4.07 |
+| 2024 | +22.23 | −11.75 | −1.30 | +9.17 |
+| 2025 | +10.73 | +8.59 | −1.16 | +18.16 |
+| 2026¹ | +6.75 | −9.47 | −0.45 | −3.17 |
+{: .research-table .comparison-table .risk-performance-table }
+
+</div>
+
+This is uneven performance, with a strong 2025 between weaker stretches.
+It does not establish a steady decline in the strategy's ability to earn.
+The more useful question is whether the portfolio changed, or whether
+similar positions encountered different returns.
+
+## Have the exposures changed?
+
+**Exposure** measures the size and direction of a position or a shared
+characteristic. The portfolio's average marked long exposure was 107% of
+notional in 2021, against 89% short. In 2025 those figures were 105% and 79%:
+net dollar exposure had risen from about 18% to 25%. Those are observed
+positions, including price drift between trades.
+
+Dollars alone hide another layer. A portfolio can have more long dollars
+while holding lower-beta stocks long and higher-beta stocks short.
+Figure 2 looks at the common characteristics of the holdings that the
+attribution model covers. Positive exposure means a net tilt towards higher
+values of that standardized characteristic; negative exposure means the reverse.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/style-exposures" mobile="/_draft_assets/portfolio-attribution/style-exposures_mobile" version="1" alt="Monthly mean modeled exposures from 2021 to May 2026: positive size and momentum, negative volatility, and a beta tilt that became negative after 2021 and later moderated." %}
+</div>
+<p class="figure-caption"><strong>Figure 2: Persistent tilts, with a changing beta exposure.</strong> Monthly means of signed weight × standardized descriptor for holdings with fitted factor P&amp;L. The two panels have different vertical ranges. Missing holdings are omitted without scaling up the covered positions. The shaded band is the selected loss episode.</p>
+
+The size tilt stays positive, momentum is predominantly positive, and
+volatility exposure stays negative. These are persistent features of the portfolio.
+The beta tilt changes more: its annual average moves from about +0.02 in
+2021 to −0.41 in 2022, then moderates to −0.22 in 2025 and −0.15 in partial
+2026. Here beta is a standardized characteristic in a joint factor model;
+that number is not the portfolio's regression beta to a benchmark.
+
+Coverage matters when reading the changes. The model covers roughly 92–98%
+of gross exposure on average across these years. It leaves **−8.76 P&L
+points uncovered in 2024**, large enough to affect any conclusion about that
+year's sources of return. I keep those holdings separate from the fitted
+residual, which is the return left unexplained for stocks the model did cover.
+
+With that distinction in place, I can ask a more precise question about a loss:
+did one of these established exposures become larger, or did its payoff reverse?
 
 ## Where did this period's P&L come from?
 
-In the dashboard, I select the episode and open the P&L breakdown. The first
+I select **29 December 2022–2 February 2023**, a loss spanning 24 trading
+sessions. These dates capture the decline following the 28 December peak;
+they are chosen retrospectively to understand the episode. The first
 question is whether the loss sits in the long book, the short book, or recorded
-costs. Figure 1 answers it: longs earned **7.306 points**, shorts lost
+costs. Figure 3 answers it: longs earned **7.306 points**, shorts lost
 **16.356 points**, and costs subtracted another **0.120 points**.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/episode-bridge" mobile="/_draft_assets/portfolio-attribution/episode-bridge_mobile" version="1" alt="Real portfolio P&L bridge: longs add 7.306 percentage points, shorts subtract 16.356 and costs subtract 0.120, leaving a net loss of 9.170 points." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Following the loss through the two books.</strong> Saved three-schedule portfolio, 29 December 2022–2 February 2023. Longs, shorts and costs build the additive net P&amp;L, all on the same fixed notional.</p>
+<p class="figure-caption"><strong>Figure 3: Following the loss through the two books.</strong> Saved three-schedule portfolio, 29 December 2022–2 February 2023. Longs, shorts and costs build the additive net P&amp;L, all on the same fixed notional.</p>
 
 
-The short loss was more than twice the long gain. That gives me a reason to
-inspect the short side more closely. Next I want to know whether the loss was
-spread across unrelated holdings or concentrated in common industries and
-factor exposures.
+The short loss was more than twice the long gain. The five worst stocks lost
+4.037 points in total, only **24.7% of the short-book loss**. This is broader
+than a few bad names. It also reverses the preceding 24 sessions, when the
+shorts earned 4.778 points and the whole portfolio earned 1.412 points.
 
 The bars add to the net loss because both books use the **same fixed
 notional**, with recorded trading costs kept separate. That lets me move from
@@ -76,10 +133,7 @@ the portfolio total to individual stocks without changing the scale.
 <summary>Why the dashboard adds daily P&L</summary>
 <div markdown="1">
 
-The backtest charges five basis points on traded notional; borrow, financing
-and market impact are absent. Net means after that recorded charge.
-
-For each date, $r_{p,t}=c_{L,t}+c_{S,t}+c_{C,t}$$ is net P&L divided by fixed
+For each date, $$r_{p,t}=c_{L,t}+c_{S,t}+c_{C,t}$$ is net P&L divided by fixed
 notional. The dashboard accumulates it as
 
 $$
@@ -90,26 +144,9 @@ $$
 The drawdown measures the distance below the earlier peak of that additive
 path. This is why all comparisons here keep the same dates and notional.
 
-Adding daily P&L answers how much the strategy earned per unit of its fixed
-notional. It does not reproduce a compounded drawdown. To reconcile the latter,
-let $$V_t=V_{t-1}(1+r_{p,t})$$ with $$V_0=1$$. The linked contribution of
-component $$k$$ over the window is
-
-$$
-C_k=\sum_t V_{t-1}c_{k,t},
-\qquad
-\sum_k C_k=V_T-1.
-$$
-
-Every component on a date receives the same prior net index level. For an
-episode beginning after a peak, I reset the index to 1 at that peak and start
-with the following session's P&L. This makes the linked contributions add to
-the compounded change over that episode.
-
-The changing multiplier $$V_{t-1}$$ is the reason a component's linked
-contribution differs from its additive P&L. The dashboard uses the additive
-convention. The linked convention below describes a separately constructed
-compounded index; it requires the actual daily series, not just the period totals.
+The −9.170-point episode loss is measured on this additive path. A compounded
+return index would require linking every component with the same prior index
+value; I keep one convention throughout this article.
 
 </div>
 </details>
@@ -121,24 +158,130 @@ groupings** collect the complete P&L of stocks belonging to each group.
 **Factor attribution** divides stock returns into modeled common effects
 and residuals. These are alternative explanations of the same portfolio P&L.
 
-For an industry with a large loss, I want to see the stocks inside it:
-was one name responsible, or did most holdings move together? For a losing
-factor, I want to see which stocks contributed to that particular factor term.
-Ranking stocks by their total P&L would not answer the second question.
+Health Care has the largest sector loss, **−3.074 points**, followed by
+Consumer Discretionary (−1.516), Materials (−1.330) and Financials (−1.292).
+Within Health Care, Sotera and Dentsply account for −1.070 and −0.764 points.
+Together they explain about 60% of that sector's gross loss after offsetting
+gains. In Financials, Rocket contributes −1.104 points. The classification
+breakdown gives me specific holdings to examine rather than a sector label
+as an explanation.
 
-For example, a stock's contribution to a particular factor comes from its
-signed position weight multiplied by its loading on that factor and the
-factor's return. A stock can lose through that exposure while earning money
-overall through other effects. Following the factor term down to its stocks
-keeps that distinction visible.
+The industry view refines that location: Financial Services loses −1.324
+points, while the whole Financials sector loses −1.292. Other industries in
+the sector partly offset it. These classifications are retrospective, so
+they describe the historical holdings using a later classification snapshot.
 
-The practical comparison is then with the period before the drawdown:
-were these exposures already present, and did the same stocks carry them?
-This helps separate a change in portfolio construction from a change in the
-returns experienced by existing exposures.
+The factor model asks a different question: how much of those stock returns
+is associated with shared characteristics? Figure 4 attributes **−3.271
+points to beta**, **−3.064 to volatility** and **−1.923 to momentum**.
+The fitted intercept contributes +3.035 points, partly offsetting the losses.
+It is the model's common baseline multiplied by net covered dollars.
+The model includes the displayed styles and sector terms, but omits other
+potential common drivers, including value and quality. Its residual is
+therefore a starting point for examining stock selection, rather than a
+direct measure of selection skill.
 
-The factor bridge must retain residual, uncovered and unreconciled P&L so
-that every part of the loss remains accounted for.
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/episode-factors-risk" mobile="/_draft_assets/portfolio-attribution/episode-factors-risk_mobile" version="1" alt="Episode factor contributions to P&L and realized portfolio volatility. Beta and volatility are the largest modeled losses; residual is the largest contributor to realized volatility." %}
+</div>
+<p class="figure-caption"><strong>Figure 4: The largest loss and the largest risk contribution need not coincide.</strong> Same 24 sessions as Figure 3. P&amp;L components sum to −9.170 points; signed contributions to annualized realized volatility sum to 11.116 points. The panels use different scales. Sector effects collect the model's sector terms; residual, uncovered holdings, reconciliation and costs remain separate.</p>
+
+Notice the difference between Health Care's **−3.074-point stock P&L** and
+its **+0.157-point modeled sector effect** within the −0.429-point total
+for sector effects. There is no contradiction. Health Care stocks also have
+beta, volatility and other exposures, and their own residual returns. Adding
+the sector-group loss to the factor losses would count the same P&L twice.
+
+The risk panel adds something the loss ranking misses. Residual P&L loses
+1.872 points, but contributes **4.604 points of realized volatility**, more
+than any single factor. Beta contributes 1.991 volatility points and
+volatility 1.191. Here **risk contribution** measures how each daily component
+moves with total daily P&L. It describes variation during the episode; it
+does not establish what the model forecast before the loss.
+
+<details>
+<summary>Why standalone volatility does not answer the risk question</summary>
+<div markdown="1">
+
+A book's own volatility does not say how much risk it contributes alongside
+the rest of the portfolio. For the realized daily component series, define
+
+$$
+RC_k=\sqrt{252}\,
+\frac{\widehat{\operatorname{Cov}}(c_k,r_p)}
+{\widehat\sigma(r_p)}.
+$$
+
+The numerator measures how the component's daily P&L moves with total daily
+P&L. The denominator converts that covariance into a contribution to
+volatility. The factor $$\sqrt{252}$$ applies the dashboard's current daily
+annualization convention.
+
+The signed contributions sum to annualized net portfolio volatility because
+$$\sum_k\operatorname{Cov}(c_k,r_p)=\operatorname{Var}(r_p)$$. Dividing each
+covariance by portfolio variance instead gives its share of variance. All
+components must use the same dates, including zero contributions on flat
+sessions and the separately recorded costs. If portfolio variance is zero,
+these shares are undefined.
+
+A component with negative covariance reduces observed portfolio variation.
+Its own volatility remains positive. Shares can also exceed 100% when other
+components offset some of that variation. This is why ranking stocks by
+their own volatility gives a different answer from ranking their contribution
+to portfolio risk.
+
+P&L and risk can disagree for a simple reason: P&L concerns the sum of the
+observations; covariance concerns their co-movement around their means. A
+position can lose money over the period while tending to help on the
+portfolio's worse days. I therefore want the contribution to P&L and the
+contribution to risk side by side, on the same selected dates.
+
+
+This realized calculation uses holdings that changed during the window.
+Forecast risk instead applies the covariance model available at a decision
+time to that snapshot of holdings: $$\sqrt{w^\top\Sigma w}$$. A comparison
+needs consistent horizons and explicit model coverage. Missing forecasts
+remain missing; they are not zero risk.
+
+</div>
+</details>
+
+## A larger exposure, or a different payoff?
+
+For a factor, daily contribution is the portfolio's signed exposure multiplied
+by that day's factor return. Comparing the episode with the preceding 24
+sessions separates two possibilities: the strategy took a different bet,
+or an existing bet started losing.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 2: What changed across the turn of the year?</strong> Prior period: 23 November–28 December 2022. Loss period: 29 December 2022–2 February 2023. Exposure is the average signed standardized exposure on matched model-covered holdings; P&amp;L is in points.</p>
+
+| Factor | Exposure before | During loss | P&L before | During loss |
+| :--- | ---: | ---: | ---: | ---: |
+| Beta | −0.437 | −0.419 | +0.876 | −3.271 |
+| Volatility | −0.834 | −1.075 | +0.349 | −3.064 |
+| Momentum | +0.433 | +0.594 | +0.026 | −1.923 |
+{: .research-table .comparison-table .risk-performance-table }
+
+</div>
+
+The beta exposure was slightly less negative during the loss. Its fitted
+factor return changed sign, from a summed −1.943 points to +7.472 points.
+The loss therefore did not require a larger negative beta bet. The payoff
+to the characteristic reversed while the exposure remained negative.
+The table summarizes average exposures; each P&L total still sums the actual
+daily exposure times the matching daily factor return.
+
+Volatility combines both changes: the negative exposure grew, and its factor
+return switched from −0.394 to +2.665 points. Momentum exposure also grew
+while its factor return became negative. These are conditional returns from
+the joint model, whose correlated factors share the explanation; they are
+not returns on independently tradable factor portfolios.
+
+That narrows the construction question. Is this a tolerable cost of carrying
+the strategy's persistent tilts, or could the portfolio express its stock
+views with less of that shared exposure? The attribution locates the trade-off.
+It does not tell me what a constrained, costed alternative would have earned.
 
 <details>
 <summary>Derive the factor contribution, then check its limits</summary>
@@ -146,12 +289,12 @@ that every part of the loss remains accounted for.
 
 In a linear factor attribution, I write the stock return as
 
-$
+$$
 r_{i,t}=\sum_k b_{i,k,t^-}f_{k,t}+\varepsilon_{i,t}.
-$
+$$
 
-The loadings $b$ describe the stock's exposures before the return;
-$f$ contains the period's factor returns. Multiplying by signed starting
+The loadings $$b$$ describe the stock's exposures before the return;
+$$f$$ contains the period's factor returns. Multiplying by signed starting
 weights and adding across holdings produces each factor's portfolio P&L.
 The residual collects the part of modeled stock returns left unexplained by
 that specification. A common intercept, when present, can be represented as
@@ -165,13 +308,13 @@ There are two different checks here. The components must add to the ledger.
 Then I need to judge how well the model allocates P&L between factors and
 residuals. *Elements*, §14.2.2, makes that second problem explicit. In its
 fixed-loading setup, write estimated factor returns as
-$\widehat f_t=f_t+\eta_t$. Holding the observed stock return fixed gives
+$$\widehat f_t=f_t+\eta_t$$. Holding the observed stock return fixed gives
 
-$
+$$
 \widehat\varepsilon_t=\varepsilon_t-B\eta_t.
-$
+$$
 
-At portfolio level the estimated factor component gains $w_t^\top B\eta_t$
+At portfolio level the estimated factor component gains $$w_t^\top B\eta_t$$
 and the estimated residual component loses the same amount. **The two errors
 cancel in total P&L.** A perfectly reconciled chart can therefore contain an
 uncertain factor/residual split. This is a model identity, not an estimate of
@@ -180,6 +323,30 @@ the error in my portfolio. See *The Elements of Quantitative Investing*,
 
 </div>
 </details>
+
+## Which stocks carried the losing factor?
+
+I follow the beta contribution down to its holdings, keeping the same dates.
+Rocket, NCR and BJ's are its three largest losing contributors. Table 3 shows
+why this ranking differs from a list of the worst stock trades.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 3: A factor loss inside a winning stock.</strong> Contributions in P&amp;L points, 29 December 2022–2 February 2023. Stock totals are gross.</p>
+
+| Stock | Beta component | Total stock P&L |
+| :--- | ---: | ---: |
+| Rocket | −0.225 | −1.104 |
+| NCR | −0.220 | −0.584 |
+| BJ's | −0.181 | +0.217 |
+{: .research-table .comparison-table .risk-performance-table }
+
+</div>
+
+BJ's lost through the beta term while its other components more than offset
+that loss. Rocket lost through beta too, but that term accounts for only
+about a fifth of its total loss. A factor breakdown helps locate a shared
+exposure; understanding the whole position needs the other components and
+the holding path.
 
 ## What happened inside one position?
 
@@ -242,7 +409,7 @@ A loss while holding a short raises a practical question: had the model changed
 its view while the position remained? A positive patch in a predictor heatmap
 could suggest that, but I need to check the full prediction.
 
-Figure 2 compares the same five displayed predictor contributions at the first
+Figure 5 compares the same five displayed predictor contributions at the first
 and last saved dates. Their subtotal changed from **−0.0266 to +0.0196**.
 The full prediction stayed negative, changing from **−0.0793 to −0.0869**.
 The remaining terms and intercept offset the positive subtotal at the end.
@@ -251,12 +418,14 @@ The remaining terms and intercept offset the positive subtotal at the end.
   {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/rocket-prediction" mobile="/_draft_assets/portfolio-attribution/rocket-prediction_mobile" version="1" alt="Rocket's five displayed predictors change from a negative to a positive subtotal, but remaining terms plus intercept keep the full prediction negative at both observed endpoints." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: A partial explanation can point the other way.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Lines compare endpoints. The first two rows add to the full prediction on each date. Values are model scores, not portfolio returns.</p>
+<p class="figure-caption"><strong>Figure 5: A partial explanation can point the other way.</strong> Rocket, 29 December 2022 (circles) and 2 February 2023 (diamonds). Lines compare endpoints. The first two rows add to the full prediction on each date. Values are model scores, not portfolio returns.</p>
 
 
 The full prediction was negative throughout the 24 sessions. The positive
 subtotal therefore gives me no reason to conclude that the model had changed
-its overall view.
+its overall view. The score is an input to ranking and sizing, not a calibrated
+expected return or a complete explanation of the trade. Candidate ranks,
+existing holdings and trading constraints also affect the position.
 
 The useful follow-up is **what kept the score negative as the stock rose,
 and how did that score translate into the position?** That takes me from
@@ -276,7 +445,7 @@ Each predictor contributes its saved coefficient times its transformed input,
 $$\theta_{j,t}x_{i,j,t}$$. A change can come from the input or from a coefficient
 refit. These are model-score units, distinct from realized factor P&L.
 
-In Figure 2, the remaining terms plus intercept are calculated as the saved
+In Figure 5, the remaining terms plus intercept are calculated as the saved
 full score minus the subtotal of the same five predictors. The first two rows
 therefore add to the last on each date. Missing predictions on trading
 sessions should stay blank rather than being interpreted as zero scores.
@@ -284,91 +453,30 @@ sessions should stay blank rather than being interpreted as zero scores.
 </div>
 </details>
 
-## Did the strategy take the risks I expected?
-
-One position helps explain a specific outcome; the strategy-level question is
-whether such positions add up to the intended portfolio. I want to compare
-which stocks and factors contributed most to risk before the drawdown with
-which contributed most to the subsequent loss.
-
-That comparison also belongs in stronger periods. Are gains repeatedly coming
-from the same intended exposures, or from occasional bets elsewhere? Are
-residual gains broad across stocks, or dependent on a handful of names?
-Looking at both gains and losses keeps one memorable episode from defining
-the entire strategy.
-
-
-
-Placing P&L and risk contributions side by side answers another question:
-did the biggest losing stocks also contribute most to portfolio variation
-during the episode?
-
-<details>
-<summary>Why standalone volatility does not answer the risk question</summary>
-<div markdown="1">
-
-A book's own volatility does not say how much risk it contributes alongside
-the rest of the portfolio. For the realized daily component series, define
-
-$$
-RC_k=\sqrt{252}\,
-\frac{\widehat{\operatorname{Cov}}(c_k,r_p)}
-{\widehat\sigma(r_p)}.
-$$
-
-The numerator measures how the component's daily P&L moves with total daily
-P&L. The denominator converts that covariance into a contribution to
-volatility. The factor $$\sqrt{252}$$ applies the dashboard's current daily
-annualization convention.
-
-The signed contributions sum to annualized net portfolio volatility because
-$$\sum_k\operatorname{Cov}(c_k,r_p)=\operatorname{Var}(r_p)$$. Dividing each
-covariance by portfolio variance instead gives its share of variance. All
-components must use the same dates, including zero contributions on flat
-sessions and the separately recorded costs. If portfolio variance is zero,
-these shares are undefined.
-
-A component with negative covariance reduces observed portfolio variation.
-Its own volatility remains positive. Shares can also exceed 100% when other
-components offset some of that variation. This is why ranking stocks by
-their own volatility gives a different answer from ranking their contribution
-to portfolio risk.
-
-P&L and risk can disagree for a simple reason: P&L concerns the sum of the
-observations; covariance concerns their co-movement around their means. A
-position can lose money over the period while tending to help on the
-portfolio's worse days. I therefore want the contribution to P&L and the
-contribution to risk side by side, on the same selected dates.
-
-
-This realized calculation uses holdings that changed during the window.
-Forecast risk instead applies the covariance model available at a decision
-time to that snapshot of holdings: $$\sqrt{w^\top\Sigma w}$$. A comparison
-needs consistent horizons and explicit model coverage. Missing forecasts
-remain missing; they are not zero risk.
-
-</div>
-</details>
-
 ## From understanding to a research decision
 
-The purpose of these views is to identify which part of the strategy needs
-closer examination. Persistent factor concentration raises a construction
-question. Poor residual outcomes raise questions about forecasts and stock
-selection. Larger allocations to worse outcomes raise a sizing question.
-The evidence needed for each is different.
+The history and the episode point to two different decisions. The portfolio
+carries persistent style tilts, and several of their payoffs turned against
+it together in early 2023. That motivates a construction test: hold the
+forecasts and risk model fixed, change one exposure limit, and compare the
+resulting holdings, turnover and net P&L across favorable and adverse periods.
+A limit that softens this loss may also remove gains elsewhere.
 
-Paleologo's selection/sizing distinction gives the next investigation a
-purpose: did the strategy choose losing stocks, or allocate more risk to
-its worse choices? *Advanced Portfolio Management*, §8.2.1, approaches this
-by comparing actual positions with equal-sized positions, examining their
-idiosyncratic P&L.
+There is also a stock-selection and sizing question. The fitted residual
+contributed +7.411 points in 2025 but −4.595 through May 2026, even though
+momentum contributed +6.052 in that partial year. Total performance can hide
+that change in composition. Before calling it weaker stock selection, I need
+to see whether the residual losses are broad and whether larger positions
+received worse outcomes. Coverage and the factor specification need to stay
+comparable in that comparison.
 
-For my portfolio, I want to establish whether larger risk allocations
-coincided with worse stock-specific outcomes. The relevant comparison puts
-**actual and equal-risk idiosyncratic contributions side by side**, on the
-same dates and with the same included positions. That would test an allocation
-question that the observed stock P&L alone cannot answer.
+Paleologo's selection/sizing distinction makes that test concrete. Compare
+**actual and equal-risk idiosyncratic contributions**, using the same dates,
+positions and a common risk budget. If the larger positions systematically
+receive worse signed outcomes, sizing deserves attention; if the equal-risk
+comparison also performs poorly, selection remains a concern. *Advanced
+Portfolio Management*, §8.2.1, develops comparisons with equal-sized positions;
+*Elements*, §14.4, separates signed outcomes from risk allocations.
 
 <details>
 <summary>Work through the selection and sizing identity</summary>
@@ -411,12 +519,12 @@ Quantitative Investing*, §14.4.
 </div>
 </details>
 
-For the episode examined here, the evidence locates the loss on the short
-side and shows one short held through a large price rise while its full
-prediction remained negative. The open question is whether this reflects
-common exposures across the book, stock-specific forecast errors, or the way
-those views were sized. Resolving that question determines which strategy
-decision deserves testing.
+I would start by resolving the material uncovered P&L, then make the matched
+selection-versus-sizing comparison. Those checks determine whether an exposure
+limit, a sizing rule or the forecasts themselves deserve attention. The
+article's evidence explains where to look; any proposed change still has to
+survive a feasible replay with trading costs and a broader evaluation than
+the drawdown that suggested it.
 
 ## References
 

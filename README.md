@@ -50,25 +50,19 @@ Write for a portfolio manager, quant researcher or allocator. Keep source-copy
 metadata, unfinished-work notes and revision history here, out of the article.
 Only retain explanations that help interpret a display or answer a practical
 question; collapse useful derivations, and delete unrelated material.
-The real-data figures currently cover the book P&L bridge and Rocket's prediction.
-Next visuals: strategy-wide exposure/risk history, matched sector/industry/factor
-episode contributions, and stocks within a selected factor term. These remain
-uncompleted work; the article must not imply results from those comparisons.
+The draft now uses verified saved-ledger aggregates for full strategy history,
+annual long/short contributions, changing covered style exposures, matched
+factor payoffs, sector/industry stock groupings and within-factor stock drivers.
+The five figures pair history with period P&L, exposures through time, the book
+bridge, factor P&L with realized covariance risk, and the existing Rocket score
+comparison. The article keeps attribution coverage and model dependence visible.
+No refits, trading-rule changes or counterfactual portfolios were run.
 
-The attribution plan, one question at a time:
-
-1. **Accounting:** work through one holding and one period until signed P&L,
-   costs, fixed notional, additive drawdowns and linked contributions are clear.
-2. **Risk:** compare P&L with covariance contributions on identical dates; explain
-   negative shares, horizon choice and forecast coverage with a small example.
-3. **Factors:** distinguish stock classifications from factor effects; inspect
-   exposures, residuals and coverage before interpreting a historical loss.
-4. **Decisions:** follow one position through the five aligned panels, including
-   the full prediction and available sizing/constraint context.
-5. **Publication:** add only useful
-   figures from the real portfolio, and recheck the rendered article. Wait for
-   explicit approval before merging or pushing. No new empirical runs are part
-   of this editorial pass; agree the next diagnostic before running it.
+Next research steps are deliberately separate: resolve material uncovered P&L,
+then compare stock selection and risk-weighted sizing on matched support. An
+exposure-limit test needs its own controlled design and feasible costed replay.
+These are questions raised by the article, not completed strategy improvements.
+Publication still requires explicit user approval; keep this branch local.
 
 The workflow post can stay short; add one concrete source-to-decision example
 when refining it.
@@ -82,12 +76,28 @@ article because they distract from this episode and their original export has
 not been located. They remain recoverable from local commit `9ecc65f`; match
 their evidence before reusing them. They are not newly verified results.
 
-The two figures also use revision 1 of the verified observations artifact:
-Figure 1 uses lines 360–367; Figure 2 uses Rocket's saved predictor contributions
-and scores, lines 17–75. Its remainder is the saved full prediction minus the
-same five predictor contributions. The position paragraph uses lines 2–16.
-These are real-market-data backtest observations, not live performance.
-No simulated replacement series or interpolated daily histories are used.
+The original bridge and prediction figures use revision 1 of the verified
+stock-heatmap observations artifact: book totals at lines 360–367, Rocket's
+prediction at lines 17–75, and position observations at lines 2–16.
+
+New evidence belongs to `performance_attribution` experiment
+`performance-attribution:exp:article-strategy-evolution`. Use its verified run
+and `performance-attribution:article-evolution:artifact:aggregates`, revision 1.
+The artifact holds source hashes, definitions and complete aggregate inputs;
+current interpretations belong in the registry. Reproduction code is the
+adjacent private `article-evidence/analyze.py`, taking explicit `--source` and
+`--output` paths. It validates daily factor reconciliation, signed book totals,
+classification totals, fitted exposure × factor return, stock-driver totals,
+and covariance-risk reconciliation. It does not alter saved observations.
+
+Render the new exhibits from that registered aggregate (kept outside the site):
+
+```bash
+python3 scripts/render_attribution_history.py \
+  --source /path/to/verified/aggregates.json \
+  --source-sha256 bb75c2069952b34a00a55b76a980c28d92d9dec73bd0b70501c1f85d4b1572cb \
+  --output-dir _draft_assets/portfolio-attribution
+```
 
 Reproduce the figures from the registry artifact's local file:
 
@@ -109,7 +119,7 @@ build before any later publication decision.
 ### Attribution reading plan
 
 Read one section, derive its identity, then connect it to one real-data display.
-The remaining portfolio comparisons below are plans, not completed experiments.
+The book sections guide the derivations; the equal-risk sizing comparison remains unrun.
 
 | Reading | Physical PDF pages (printed pages) | Practical question and next display |
 | --- | --- | --- |
@@ -144,7 +154,7 @@ sizes before rebuilding the site.
 
 Drafts are excluded from the normal build. Use both `--drafts` and `--unpublished`
 to preview these explicitly unpublished articles. The attribution draft is an
-explanatory working article, not a completed sector/style or causal study.
+explanatory study of saved observations, with no causal or out-of-sample claim.
 
 Jekyll remains deliberate: the site needs static articles, equations, SVGs,
 stable permalinks, and RSS. The local build already serves those requirements;
