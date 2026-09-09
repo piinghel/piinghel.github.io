@@ -9,10 +9,15 @@
   const signed=(v,n=2)=>(v<0?'−':'+')+Math.abs(v).toFixed(n);
   const human=s=>new Date(s+'T00:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
   const month=s=>new Date(s+'T00:00:00Z').toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'});
-  const summaries={21:'shorts gained more in 9 / 11 episodes; median gap +2.73 points; net portfolio losses in 4 / 11.',
-    63:'shorts gained more in 9 / 11 episodes; median gap +2.89 points; net portfolio losses in 4 / 11.',
-    126:'shorts gained more in 3 / 11 episodes; median gap −2.49 points; net portfolio losses in 1 / 11.'};
   let data;
+  function recoverySummary(h){
+    if(!data)return `${h}-session stock gains and portfolio P&L.`;
+    const rows=data.recoveries.map(e=>e.path[h]).filter(r=>r&&[r[1],r[2],r[5]].every(Number.isFinite));
+    if(!rows.length)return 'No complete recovery windows for this horizon.';
+    const gaps=rows.map(r=>r[2]-r[1]).sort((a,b)=>a-b),middle=Math.floor(gaps.length/2);
+    const median=gaps.length%2?gaps[middle]:(gaps[middle-1]+gaps[middle])/2;
+    return `shorts gained more in ${gaps.filter(g=>g>0).length} / ${rows.length} episodes; median gap ${signed(median)} points; net portfolio losses in ${rows.filter(r=>r[5]<0).length} / ${rows.length}.`;
+  }
   function add(svg,tag,attrs,text){
     const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
     for(const [key,value] of Object.entries(attrs))el.setAttribute(key,value);
@@ -96,10 +101,10 @@
       for(const picture of overview.querySelectorAll('picture')){
         const dark=picture.classList.contains('theme-svg-figure--dark')?'_dark':'';
         picture.querySelector('img').src=`/assets/portfolio-attribution/recoveries${suffix}${dark}.svg?v=1`;
-        picture.querySelector('img').alt=`All 11 ${h}-session recoveries: ${summaries[h]}`;
+        picture.querySelector('img').alt=`${h}-session recoveries: ${recoverySummary(h)}`;
         picture.querySelector('source').srcset=`/assets/portfolio-attribution/recoveries${suffix}_mobile${dark}.svg?v=1`;
       }
-      byId('recovery-summary').textContent=`${h} sessions: ${summaries[h]}`;
+      byId('recovery-summary').textContent=`${h} sessions: ${recoverySummary(h)}`;
       byId('recovery-caption-view').textContent='Rows identify the market-low date; left shows stock gains and right shows actual net P&L.';
     }else if(data){
       const e=data.recoveries[Number(episode.value)];
@@ -113,7 +118,7 @@
     const s=data.stocks[Number(choice.value)],rows=s.path,index=Number(stockSession.value),r=rows[index];
     const color=s.side==='short'?'--ad-short':'--ad-long';
     stockSession.setAttribute('aria-valuetext',human(r[0]));
-    const options={low:s.low,peak:'2020-02-21',events:s.events};
+    const options={low:s.low,peak:s.peak,events:s.events};
     chart(stock.querySelector('.ae-price'),stock,rows,[[3,color]],rows.map(r=>r[3]),index,{...options,price:true});
     chart(stock.querySelector('.ae-weight'),stock,rows,[[1,color]],rows.map(r=>r[1]),index,{...options,steps:true});
     chart(stock.querySelector('.ae-stock-pnl'),stock,rows,[[2,color]],rows.map(r=>r[2]),index,options);
@@ -122,8 +127,8 @@
     byId('stock-readout').textContent=`${human(r[0])} · ${Number.isFinite(r[3])?`Price index ${r[3].toFixed(1)}.`:'Price unavailable.'} ${Math.abs(r[1])<1e-10?'Position flat.':`${r[1]>0?'Long':'Short'} ${Math.abs(r[1]).toFixed(2)}% of notional.`} Actual P&L since ${human(rows[0][0])}: ${signed(r[2],3)} points.`;
   }
   function chooseStock(){
-    const rows=data.stocks[Number(choice.value)].path;
-    stockSession.max=rows.length-1;stockSession.value=rows.findIndex(r=>r[0]==='2020-03-24');renderStock();
+    const s=data.stocks[Number(choice.value)],rows=s.path;
+    stockSession.max=rows.length-1;stockSession.value=Math.max(0,rows.findIndex(r=>r[0]>s.low));renderStock();
   }
   function inspectCharts(root,slider,render){
     for(const svg of root.querySelectorAll('svg')){
@@ -137,14 +142,14 @@
   }
   horizon.addEventListener('change',updateRecovery);
   episode.addEventListener('change',updateRecovery);
-  fetch('/assets/portfolio-attribution/explorer-paths.json?v=2').then(r=>{
+  fetch('/assets/portfolio-attribution/explorer-paths.json?v=3').then(r=>{
     if(!r.ok)throw new Error('Data unavailable');return r.json();
   }).then(d=>{
     data=d;
     d.recoveries.forEach((e,i)=>episode.add(new Option(human(e.low),String(i))));
     episode.disabled=false;
     d.stocks.forEach((s,i)=>choice.add(new Option(s.name,String(i))));
-    choice.value=String(d.stocks.findIndex(s=>s.name==='Zscaler'));
+    choice.value=String(Math.max(0,d.stocks.findIndex(s=>s.side==='short')));
     stock.querySelector('.ae-loading').hidden=true;stock.querySelector('.ae-content').hidden=false;
     session.addEventListener('input',renderRecovery);
     stockSession.addEventListener('input',renderStock);choice.addEventListener('change',chooseStock);

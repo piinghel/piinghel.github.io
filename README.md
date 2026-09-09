@@ -18,6 +18,14 @@ linked below.
 
 ## Checks and drafts
 
+The unpublished workflow draft is retained in `_drafts/research-workflow.md`.
+The normal build excludes it. Use `--drafts --unpublished` for a local preview.
+
+The recovery and stock explorer export is maintained in the private research
+project as `python -m performance_attribution.explorer_export`. Its input and
+output paths are explicit. The browser derives summaries and selected dates
+from the exported data.
+
 ```bash
 bundle exec jekyll build
 python3 scripts/check_site.py _site

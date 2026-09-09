@@ -18,7 +18,8 @@
   function extent(values){
     const min=Math.min(0,...values),max=Math.max(0,...values),raw=(max-min||1)/4;
     const magnitude=10**Math.floor(Math.log10(raw)),step=[1,2,5,10].find(n=>n*magnitude>=raw)*magnitude;
-    return [Math.floor(min/step)*step,Math.ceil(max/step)*step,step];
+    const lo=Math.floor(min/step)*step,hi=Math.ceil(max/step)*step;
+    return [lo===hi?lo-step:lo,lo===hi?hi+step:hi,step];
   }
   let data;
   const directions={beta:{sign:-1,name:'low beta',positive:'lower-beta stocks',negative:'higher-beta stocks'},
