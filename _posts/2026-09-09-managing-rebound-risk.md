@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Performance Attribution, Part 3: Managing Rebound Risk with Exposure Limits"
-description: "What happened when I capped the volatility tilt and scaled the portfolio using faster risk estimates."
+description: "Five volatility-tilt limits, daily sizing controls, and the next step: exposure limits from the attribution risk model."
 permalink: /quants/managing-rebound-risk.html
 toc: true
 show_date: false
@@ -12,12 +12,19 @@ series_previous: /quants/short-book-rebounds.html
 series_end: true
 ---
 
-<p class="article-summary">A moderate volatility-style limit reduced the worst historical drawdown with similar full-history Sharpe, but improved only 5 of 11 three-month recoveries. I would keep the original portfolio while testing a more targeted rule.</p>
+<p class="article-summary">Volatility-rank limits reduced historical drawdown, with a growing cost in P&amp;L as I tightened them. Recovery results remained mixed. The next step is to use the attribution risk model's factor exposures to set portfolio limits.</p>
 
 The [rebound study](/quants/short-book-rebounds.html) showed defensive longs
-facing more volatile, higher-beta shorts. I tested two ways to manage that
-exposure: change the mix of positions, or reduce the whole portfolio when
-recent volatility rises.
+facing more volatile, higher-beta shorts. I want to use the
+[risk model from part 1](/quants/portfolio-attribution.html#fit-the-common-returns)
+to manage those exposures inside the portfolio optimizer. The same model
+should connect the risks I constrain before trading with the P&L I explain
+afterwards.
+
+I started with two controls: limit the portfolio's volatility-rank tilt,
+or reduce the whole portfolio when recent volatility rises. These tests
+show what a simple restriction buys before introducing the model's factor
+exposure limits.
 
 I kept the stock predictions fixed. The comparison covers **23 September 1998
 to 27 May 2026**, combining the same three rebalancing calendars with equal
@@ -44,16 +51,17 @@ notional. Here the limit is in rank units per dollar of gross exposure;
 negative values represent the low-volatility tilt shown as positive in the
 attribution explorer.
 
-I replayed the optimizer with **$|V_t|\leq0.20$** and **$|V_t|\leq0.10$**,
-keeping its existing covariance model, stock forecasts and execution rules.
+I replayed the optimizer with five limits: **±0.30, ±0.25, ±0.20, ±0.15
+and ±0.10**, keeping its existing covariance model, stock forecasts and execution rules.
 The limits apply whenever each calendar rebalances, about every three weeks.
 Prices and ranks continue moving between those decisions.
 
-The moderate limit reached its boundary on **82.9% of rebalances**; the
-tighter one did so on **96.3%**. Both therefore change the portfolio regularly.
-Across the actual daily holdings, the mean tilt moved from **−0.286** to
-**−0.193** and **−0.121**. The measurements covered about 99.5% of gross
-holdings; reported P&L includes every position.
+The ±0.30 limit reached its boundary on **53.4% of rebalances**, compared with
+**82.9%** at ±0.20 and **96.3%** at ±0.10. Across the actual daily holdings,
+the corresponding mean tilts were **−0.248, −0.193 and −0.121**, against
+**−0.286** for the original. The measurements covered about 99.5% of gross
+holdings; reported P&L includes every position. I added ±0.30, ±0.25 and
+±0.15 after inspecting the first two limits, using the same market history.
 
 ## Reduce size when volatility rises
 
@@ -74,12 +82,15 @@ Scaling every position together reduces the dollars behind the bet while
 preserving its volatility tilt per dollar. To assess the value of changing
 size through time, I compare each overlay with a constant multiplier equal
 to its average size: **89.4%** for the fast rule and **89.2%** for the slower
-one. Those constant sizes are calculated from the complete history and serve
-as retrospective comparisons.
+one. For example, constant 89.4% sizing reduces a long position worth 100,000
+dollars to 89,400 dollars, and scales shorts by the same amount. This asks whether changing size
+through time helps more than simply running a smaller book. The average
+multipliers are calculated from the complete history, so these are
+retrospective comparisons.
 
 ## What the changes delivered
 
-Table 1 compares all seven portfolios. Gross and net P&L make the trading
+Table 1 compares all ten portfolios. Gross and net P&L make the trading
 cost visible alongside volatility and drawdown.
 
 <div markdown="1">
@@ -88,7 +99,10 @@ cost visible alongside volatility and drawdown.
 | Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Original | 12.71 | 11.33 | 7.90% | 1.43 | −16.32 | 27.6× |
+| Tilt limit ±0.30 | 12.58 | 11.16 | 7.67% | 1.45 | −14.12 | 28.4× |
+| Tilt limit ±0.25 | 12.40 | 10.97 | 7.57% | 1.45 | −13.83 | 28.7× |
 | Tilt limit ±0.20 | 12.10 | 10.65 | 7.44% | 1.43 | −12.76 | 29.0× |
+| Tilt limit ±0.15 | 11.76 | 10.29 | 7.29% | 1.41 | −12.00 | 29.3× |
 | Tilt limit ±0.10 | 11.15 | 9.68 | 7.16% | 1.35 | −11.48 | 29.4× |
 | Daily scaling · 5 sessions | 11.30 | 9.44 | 6.71% | 1.41 | −14.17 | 37.2× |
 | Constant 89.4% size | 11.36 | 10.12 | 7.06% | 1.43 | −14.59 | 24.7× |
@@ -97,10 +111,12 @@ cost visible alongside volatility and drawdown.
 {: .research-table .comparison-table .portfolio-card-table }
 </div>
 
-The **±0.20 limit** reduced the worst drawdown from **16.32 to 12.76 points**,
-with essentially the same Sharpe. Annual net P&L fell by **0.68 points**.
-Tightening the limit to ±0.10 reduced drawdown further while giving up more
-return and lowering full-history Sharpe.
+The **±0.30 limit** reduced the worst drawdown from **16.32 to 14.12 points**,
+giving up **0.16 points** of annual net P&L. At **±0.20**, drawdown fell to
+**12.76 points** for an annual sacrifice of **0.68 points**. At **±0.15**, the
+figures were **12.00** and **1.03 points**. Tightening the limit progressively
+bought more drawdown protection at a higher cost in earnings; full-history
+Sharpe also fell below the original at the two tightest limits.
 
 Fast scaling earned almost the same gross P&L as constant 89.4% sizing.
 Its extra trading reduced net P&L to **9.44 points a year**, against **10.12**.
@@ -110,52 +126,83 @@ drawdown than its constant-size comparison.
 
 I also checked January 2022–May 2026 separately. The original earned **8.10
 points a year**, with Sharpe **0.92** and worst drawdown **9.17 points**.
-The moderate cap earned **7.91**, with Sharpe **0.97** and drawdown **7.96**.
+The ±0.30 cap earned **8.11**, with Sharpe **0.96** and drawdown **8.32**.
+The ±0.15 cap earned **8.08**, with Sharpe **1.02** and drawdown **8.21**.
+Their Sharpe ranking therefore reversed in this later period.
 Both daily-scaling rules earned less than their constant-size comparisons.
 This later block had already informed earlier research choices.
 
 ## Did the limits help during rebounds?
 
-The moderate cap improved P&L in **6 of 11** first-21-session recoveries and
-**5 of 11** first-63-session recoveries. Table 2 shows why I would be cautious
-about choosing it solely from the full-history drawdown.
+The ±0.30 cap improved **8 of 11** first-21-session recoveries and **7 of 11**
+first-63-session recoveries. Tighter limits were less consistent. Table 2
+compares the counts with the average and median effect, so a few large
+improvements cannot stand in for the typical episode.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 2: Recovery gains vary by episode.</strong> Net P&amp;L points over the first 21 and 63 sessions after the market lows of 9 March 2009 and 23 March 2020.</p>
+<p class="table-caption"><strong>Table 2: Recovery results across all 11 lows.</strong> Counts show episodes with higher net P&amp;L than the original. Mean and median differences are net P&amp;L points over the first 63 sessions after each low.</p>
 
-| Window | Original | Limit ±0.20 | Limit ±0.10 |
-| :--- | ---: | ---: | ---: |
-| 2009 · 21 sessions | +0.01 | −0.12 | −0.45 |
-| 2009 · 63 sessions | −6.45 | −4.60 | −5.10 |
-| 2020 · 21 sessions | +1.78 | −0.23 | −0.77 |
-| 2020 · 63 sessions | +0.43 | −0.28 | −0.50 |
+| Tilt limit | Improved · 21 sessions | Improved · 63 sessions | Mean difference | Median difference |
+| :--- | ---: | ---: | ---: | ---: |
+| ±0.30 | 8/11 | 7/11 | +0.20 | +0.13 |
+| ±0.25 | 7/11 | 5/11 | +0.11 | −0.06 |
+| ±0.20 | 6/11 | 5/11 | −0.09 | −0.08 |
+| ±0.15 | 4/11 | 4/11 | −0.28 | −0.18 |
+| ±0.10 | 4/11 | 5/11 | −0.47 | −0.41 |
 {: .research-table .comparison-table .attribution-table }
 </div>
 
-The moderate cap helped over the first three months of the 2009 recovery.
-In 2020, both capped books lost money over the first 21 and 63 sessions,
-while the original made money.
+All five limits improved the first three months of the **2009** recovery.
+The original lost **6.45 points**; losses fell to **4.09** at ±0.30 and
+**5.05** at ±0.15. Every limit earned less than the original during the
+equivalent **2020** recovery. The original made **0.43 points**, against
+**0.09** at ±0.30 and a loss of **0.52** at ±0.15. More drawdown protection
+over the full history did not translate into better rebound performance.
 
 Some benefit arrived during the decline itself. From the market peak on
 **19 February 2020 through 23 March**, the original lost **8.27 points**;
-the moderate cap lost **1.73**. Across the 11 market-decline windows, the
-moderate cap also earned more in aggregate. Outside the declines and first
+the ±0.20 cap lost **1.73**. Across the 11 market-decline windows, this
+cap also earned more in aggregate. Outside the declines and first
 63-session recoveries, it earned less.
 
 The lows are identified retrospectively to evaluate the portfolios. The
 tested sizing rules use information available at their decision dates.
 
-## What I would test next
+## Use the risk model's factor exposures
+{: #what-i-would-test-next }
 
-One possible response is smaller weights for shorts where **large prior losses,
-high beta and high volatility overlap**, with a limit on their combined
-risk that accounts for correlations. Replacing part of those positions with
-a broad market hedge, matched on estimated market sensitivity, would provide
-another comparison.
+My next test is to put **factor-exposure limits from the attribution risk
+model** into the optimizer. I would use the model's stock descriptors and
+cross-sectional standardization, including its square-root-cap weights.
+For each proposed portfolio, the constraints would be
 
-For now, I would keep the original portfolio. The moderate limit reduced the
-worst historical drawdown, but its mixed recovery results leave me wanting a
-more targeted rule. My next test would be a **daily tolerance band** around
-the volatility-style limit: trade when the actual book crosses an outer
-boundary, then bring it back inside an inner one. That addresses exposure
-drift between rebalances while allowing small changes to pass without trading.
+$$
+E_k(w)=\sum_i w_i z_{i,k},
+\qquad \ell_k\leq E_k(w)\leq u_k.
+$$
+
+Here $z_{i,k}$ is stock $i$'s model loading on factor $k$, calculated from
+information available before trading. The signed weight $w_i$ is measured
+relative to fixed strategy notional, matching the exposure convention in
+part 1. The lower and upper bounds specify how much of each selected factor
+the portfolio may hold.
+
+Z-scoring sets the units. The useful connection is to use the **same factor
+definitions and exposures** in portfolio construction and attribution. A
+volatility constraint can then be assessed alongside the model's momentum,
+beta-style and reversal exposures, including where the optimizer moves its
+bets when one limit binds. The rank limits above provide an initial
+comparison; model-exposure bounds need their own settings in these units.
+
+I would keep the current covariance model and stock forecasts fixed for
+this test. That isolates the effect of the exposure constraints. The
+decision-time loadings must cover every candidate stock, with missing
+descriptors handled explicitly. Historical sector constraints would also
+need classifications available at the time; the attribution study uses
+retrospective labels.
+
+For now, the original portfolio remains in production. The rank-based
+results establish the cost of reducing one tilt. The next question is
+whether constraints expressed through the risk model can control the
+overlapping exposures behind rebound losses at an acceptable cost in P&L
+and trading.
