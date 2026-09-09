@@ -157,16 +157,21 @@ comparison.
 
 ## Site maintenance
 
-The attribution beta figure is reproduced from the included aggregate series:
+The attribution beta, book-size and cap trade-off figures are reproduced from
+the included aggregate series:
 
 ```sh
-python3 scripts/render_attribution_beta.py
+python3 scripts/render_attribution_series.py
 python3 scripts/check_site.py --update-dimensions
 ```
 
 Its renderer requires NumPy and Matplotlib and emits desktop/mobile SVGs for
 both themes. The underlying diagnostic and controlled beta replays live in the
 private `performance_attribution` research project and shared experiment registry.
+`scripts/export_attribution_series.py --diagnostics PATH --beta-history PATH`
+refreshes the public aggregates from the saved series diagnostic and original
+beta diagnostic. It also retains only recovery paths in the public explorer;
+the original stock examples remain in the private evidence.
 The public series contains portfolio aggregates only. Attribution-series homepage
 order is set by `series_id` and `series_order`, preserving publication dates.
 

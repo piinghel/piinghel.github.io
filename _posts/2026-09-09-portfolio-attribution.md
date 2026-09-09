@@ -25,6 +25,11 @@ I use the strategy from my
 stocks with a prediction model and sizes them within risk limits.
 The history runs from **23 September 1998 to 27 May 2026**.
 One **P&L point** means 1% of the same fixed strategy notional throughout.
+Trading costs are 5 basis points per dollar traded. Throughout the series,
+turnover means two-way traded notional divided by strategy capital. Sharpe
+divides annualized net P&L by annualized volatility, using a zero cash rate:
+these fixed-notional results exclude the return on collateral and its funding
+cost, which belong to the separate financing decision.
 
 ## Start with the positions
 
@@ -47,37 +52,53 @@ The two books had standalone annualized volatility of **16.7%** and
 costs, portfolio volatility was **7.9%**. The shorts provided a substantial
 daily offset while losing money over the history.
 
+The dollar sizes help explain the remaining exposure. The long book was
+usually larger, leaving average net exposure of about **22% of notional**.
+Its more defensive stocks partly offset that dollar imbalance; the beta
+estimates below measure the whole book's market sensitivity.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/book-sizes" mobile="/assets/portfolio-attribution/book-sizes_mobile" version="1" alt="Long gross, short gross and their net difference as percentages of fixed strategy notional. The long book is usually larger." %}
+</div>
+<p class="figure-caption"><strong>Figure 2: The two books have different dollar sizes.</strong> Beginning-of-session exposures, September 1998–May 2026. Both gross series are positive; net is long gross minus short gross. Shading marks the two deepest strategy drawdowns.</p>
+
 ## How much market beta?
 {: #portfolio-beta }
 
 The portfolio's full-history realized beta to the Russell 1000 was **+0.068**.
 I estimate it by regressing daily net P&L per unit of fixed strategy notional
 on the index's daily price return, with an intercept. This is a leveraged
-long–short portfolio with low average market sensitivity; its average net
-dollar exposure was positive, at about 22% of notional.
+long–short portfolio with low average market sensitivity.
 
-Figure 2 follows the trailing 252-session estimate alongside the beta-style
+Figure 3 follows trailing 126- and 252-session estimates alongside the beta-style
 exposure used in the attribution model below. That exposure adds signed
 positions multiplied by standardized stock betas. A negative value means
 the book favours lower-beta stocks relative to the model's universe.
 The two panels have different units: market-return sensitivity above,
-standardized exposure per strategy notional below.
+standardized exposure per strategy notional below. Their difference also
+reflects centering the stock betas and the book's net dollar position; it
+cannot be read directly as a forecast error.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/beta-history" mobile="/assets/portfolio-attribution/beta-history_mobile" version="1" alt="Trailing 252-session realized Russell 1000 beta above prior-session standardized beta exposure. Market beta is positive at both the 2009 and 2020 lows while beta-style exposure is negative." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/beta-history" mobile="/assets/portfolio-attribution/beta-history_mobile" version="2" alt="Trailing 126- and 252-session realized Russell 1000 beta above prior-session standardized beta exposure, with the 2008–09 and 2020–21 strategy drawdowns shaded." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Low average beta still leaves changing market sensitivity.</strong> September 1998–May 2026. Realized beta uses net fixed-notional P&amp;L and requires 252 sessions. Model exposure uses holdings entering each session and prior-session standardized beta loadings, available for 93.3% of gross exposure on an average day. Missing loadings contribute zero, the universe mean; dates with no coverage are gaps. Vertical lines mark the 2009 and 2020 market lows. Each panel retains its own units and scale.</p>
+<p class="figure-caption"><strong>Figure 3: Low average beta still leaves changing market sensitivity.</strong> Each regression requires a complete trailing window. Model exposure uses holdings entering each session and prior-session standardized beta loadings, available for 93.3% of gross exposure on an average day. Missing loadings contribute zero, the universe mean; dates with no coverage are gaps. Dots mark the two market lows; shading marks the strategy drawdowns. Each panel retains its own units and scale.</p>
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: Beta at the two market lows.</strong> The mean row averages available daily observations of each displayed series; it differs from fitting one regression over the full history. Model exposure uses the covered book and is available before the session; realized beta includes that session's return.</p>
+<p class="table-caption"><strong>Table 1: Whole-book beta and the fitted beta contribution.</strong> Realized beta is one regression over each period. Model exposure is its daily mean; beta P&amp;L sums the fitted contributions in points. The drawdown windows run from 30 July 2008 to 16 September 2009 and 21 February 2020 to 27 January 2021, excluding each peak day.</p>
 
-| Observation | Rolling realized beta | Model beta exposure |
-| :--- | ---: | ---: |
-| Historical daily mean | +0.069 | −0.309 |
-| 9 March 2009 | +0.069 | −0.361 |
-| 23 March 2020 | +0.230 | −0.178 |
+| Period | Realized beta | Mean model exposure | Beta P&L |
+| :--- | ---: | ---: | ---: |
+| Full history | +0.068 | −0.309 | −15.13 |
+| 2008–09 drawdown | +0.026 | −0.476 | −6.55 |
+| 2020–21 drawdown | +0.140 | −0.442 | −4.53 |
 {: .research-table .comparison-table .attribution-table }
 </div>
+
+At the 2009 and 2020 lows, the trailing 252-session market betas were
+**+0.069 and +0.230**, while entering-session model exposures were
+**−0.361 and −0.178**. A defensive style tilt coexisted with positive
+whole-book market sensitivity.
 
 The existing optimizer already limits its own estimated market beta to
 **±0.05 at rebalance**. Its estimate combines long-window correlation with
@@ -90,7 +111,7 @@ limit on the standardized beta exposure shown here.
 
 ## Locate earnings and risk
 
-I can group the stock contributions by sector, as in Figure 3. To allocate
+I can group the stock contributions by sector, as in Figure 4. To allocate
 risk, I measure how each sector's daily P&L moves with the whole portfolio:
 
 $$
@@ -101,19 +122,21 @@ $$
 Here $c_{j,t}$ is sector $j$'s daily contribution and $P_t$ is daily net
 portfolio P&L. The variance shares add to 100%, including costs. A component
 that offsets portfolio fluctuations can receive a negative share.
+That distinction matters in the 2020–21 drawdown: the shorts lost more than
+13 points despite receiving only 0.2% of portfolio variance.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by earnings." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: What each sector earned and the risk it contributed.</strong> September 1998–May 2026. Sector P&amp;L is gross across both books. Variance shares include covariance with the rest of the portfolio; costs contribute −0.01%.</p>
+<p class="figure-caption"><strong>Figure 4: What each sector earned and the risk it contributed.</strong> September 1998–May 2026. Sector P&amp;L is gross across both books. Variance shares include covariance with the rest of the portfolio; costs contribute −0.01%.</p>
 
 Every sector earned money before costs. Technology made the largest
 contribution. Energy's long gains were almost cancelled by short losses,
 leaving little earnings for its share of daily risk. That gives me a specific
 book to investigate.
 
-These totals reflect stock performance, position size and time held. Sector
-labels follow the classification snapshot described in the in-sample notes below. Stocks across sectors can also share
+These totals reflect stock performance, position size and time held.
+Stocks across sectors can also share
 characteristics such as high beta or low volatility; the factor model
 measures those common exposures.
 
@@ -150,8 +173,12 @@ of market capitalization. A loading of +1 is one weighted standard deviation
 above the descriptor's average. Ranked descriptors measure relative rank.
 
 Size, momentum and volatility use the strategy's existing descriptors.
-Volatility is a rank; beta uses up to 252 daily returns with 126 required;
-reversal is the negative preceding five-session return.
+Volatility is a rank; beta uses up to 252 daily returns with 126 required.
+I standardize raw estimated betas without first shrinking them towards one,
+so estimation noise remains in the descriptor. Reversal is the negative
+preceding five-session return: a positive loading denotes a recent loser,
+and a positive reversal payoff means those losers bounced, after accounting
+for the other fitted characteristics.
 
 I estimate that day's coefficients jointly by weighted least squares:
 
@@ -200,12 +227,12 @@ to each position's total.
 
 I apply the same signed weights to the residuals, common return and sector
 effects. Adding those pieces, uncovered holdings and costs reconstructs
-portfolio P&L. Figure 4 shows the full-history allocation.
+portfolio P&L. Figure 5 shows the full-history allocation.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="5" alt="Fitted components with P&L beside their signed variance shares, including residual, uncovered holdings and costs." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: The fitted allocation of earnings and risk.</strong> P&amp;L sums to +312.92 points net; variance shares sum to 100%. The sector terms measure returns associated with sector membership after accounting for the fitted styles.</p>
+<p class="figure-caption"><strong>Figure 5: The fitted allocation of earnings and risk.</strong> P&amp;L sums to +312.92 points net; variance shares sum to 100%. The sector terms measure returns associated with sector membership after accounting for the fitted styles.</p>
 
 Momentum, volatility and reversal earned money; beta and size detracted.
 The largest component was the **residual, +198.82 points**, with **45.2% of
@@ -213,17 +240,20 @@ realized variance**. It contains stock-specific outcomes and any common
 effects the chosen model leaves unexplained, such as omitted value, quality
 or industry characteristics.
 
-The **common return contributed +84.09 points**, weighted by the portfolio's
-net position in covered stocks. The model covered **93.1% of gross exposure**
-on average; uncovered positions contributed **22.49 points**.
+The **common return contributed +84.09 points** through the net long position
+in covered stocks. It is the fitted intercept under square-root-cap weighting.
+Other factor and residual contributions offset much of its market sensitivity;
+Figure 3 measures the resulting beta of the whole book.
 
-Other factor and residual contributions can offset the common-return
-component's market sensitivity. Figure 2 measures beta from the whole book.
+The fit covered **93.1% of gross exposure** on average. Uncovered holdings
+contributed **22.49 points**: a holding can lack a descriptor, sufficient price
+history or an eligible sector label. Part 3 records this coverage and assigns
+missing beta loadings the universe mean when imposing its beta limit.
 
 The split depends on the estimated coefficients and chosen factors.
 Assigning an extra point to factors takes a point from the residual while
-preserving total P&L. Before interpreting the residual as stock-picking skill,
-I would examine fitting uncertainty and alternative factor sets.
+preserving total P&L. This fit alone cannot distinguish stock-picking skill
+from omitted common effects in the residual.
 
 ## Follow exposure and payoff together
 
@@ -236,7 +266,7 @@ $$
 Positions, stock characteristics and factor returns all change. Each day's
 payoff therefore needs the exposure held on that day.
 
-Figure 5 lets you inspect that multiplication. The middle panel accumulates
+Figure 6 lets you inspect that multiplication. The middle panel accumulates
 returns for a constant +1 exposure. The bottom accumulates P&L from our actual
 changing exposure. The slider shows the calculation for one session.
 
@@ -247,7 +277,7 @@ low-volatility exposure **+0.5** and payoff **−1%**. Their product remains
 winners.
 
 {% include attribution-dynamics.html %}
-<p class="figure-caption"><strong>Figure 5: Exposure × return per unit = portfolio P&amp;L.</strong> Daily standardized exposure and cumulative contributions in the two deepest drawdowns. Shading ends at the market low.</p>
+<p class="figure-caption"><strong>Figure 6: Exposure × return per unit = portfolio P&amp;L.</strong> Daily standardized exposure and cumulative contributions in the two deepest drawdowns. Shading ends at the market low.</p>
 
 Positive exposure gains when the payoff line rises; negative exposure gains
 when it falls. In the 2009 momentum view, the exposure changes sign.

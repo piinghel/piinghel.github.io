@@ -41,11 +41,27 @@
   },
   "/assets/portfolio-attribution/beta-history": {
     "width": 691,
-    "height": 396
+    "height": 418
   },
   "/assets/portfolio-attribution/beta-history_mobile": {
     "width": 288,
-    "height": 403
+    "height": 432
+  },
+  "/assets/portfolio-attribution/book-sizes": {
+    "width": 691,
+    "height": 259
+  },
+  "/assets/portfolio-attribution/book-sizes_mobile": {
+    "width": 288,
+    "height": 259
+  },
+  "/assets/portfolio-attribution/cap-tradeoff": {
+    "width": 576,
+    "height": 288
+  },
+  "/assets/portfolio-attribution/cap-tradeoff_mobile": {
+    "width": 288,
+    "height": 281
   },
   "/assets/portfolio-attribution/drawdown-factors": {
     "width": 634,
