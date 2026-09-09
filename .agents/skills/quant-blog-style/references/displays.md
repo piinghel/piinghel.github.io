@@ -9,6 +9,11 @@ aim for roughly 12–14 CSS px ticks/legends and 14–16 px variable labels. Jud
 the rendered result, not the export's nominal point size. Use modest semibold
 panel labels; reserve larger type for article headings.
 
+Pieter-Jan prefers short horizontal panel headings to rotated y-axis titles.
+Put the variable and compact unit above the plotting area; if a y-axis title is
+needed, keep it very short. Keep headings and legends clear of data lines.
+On phones, allow text columns to wrap so names never run into numeric columns.
+
 Use a white canvas with slate text in light mode and the site's dark surface
 with light text in dark mode. References are cool gray. Comparisons use muted
 blue, teal, orange or red; pick only as many as the figure needs. Preserve a

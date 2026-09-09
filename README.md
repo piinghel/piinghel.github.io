@@ -42,7 +42,7 @@ independent review. Current findings belong in the registry.
 The decline/rebound extension is registered as
 `performance-attribution:exp:market-phase-diagnostics`. Its source, cohort check
 and renderer live in `../phase-evidence`. The `market-phases` figure replaces
-the older `largest-drawdowns` export from the whole-history renderer.
+the historical `largest-drawdowns` export; that obsolete builder is removed.
 
 The private sibling directory `../whole-history-evidence` holds the aggregation
 and rendering code. It reads the existing ledgers; it does not refit models or
