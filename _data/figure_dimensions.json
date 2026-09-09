@@ -39,6 +39,46 @@
     "width": 605,
     "height": 377
   },
+  "/assets/portfolio-attribution/episode-bridge": {
+    "width": 634,
+    "height": 324
+  },
+  "/assets/portfolio-attribution/episode-bridge_mobile": {
+    "width": 360,
+    "height": 324
+  },
+  "/assets/portfolio-attribution/episode-factors-risk": {
+    "width": 634,
+    "height": 410
+  },
+  "/assets/portfolio-attribution/episode-factors-risk_mobile": {
+    "width": 360,
+    "height": 835
+  },
+  "/assets/portfolio-attribution/rocket-prediction": {
+    "width": 634,
+    "height": 317
+  },
+  "/assets/portfolio-attribution/rocket-prediction_mobile": {
+    "width": 360,
+    "height": 374
+  },
+  "/assets/portfolio-attribution/strategy-history": {
+    "width": 634,
+    "height": 504
+  },
+  "/assets/portfolio-attribution/strategy-history_mobile": {
+    "width": 360,
+    "height": 504
+  },
+  "/assets/portfolio-attribution/style-exposures": {
+    "width": 634,
+    "height": 418
+  },
+  "/assets/portfolio-attribution/style-exposures_mobile": {
+    "width": 360,
+    "height": 418
+  },
   "/assets/portfolio-optimization/parameter-sensitivity": {
     "width": 1200,
     "height": 660

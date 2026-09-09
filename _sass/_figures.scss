@@ -15,6 +15,16 @@ html[data-theme="dark"] {
   .theme-svg-figure--dark { display: block; }
 }
 .post-content .decile-profile-figure { max-width: 662px; }
+.attribution-error-diagram { max-width: 600px; margin: 0 auto; text-align: center; }
+.attribution-error-parts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.attribution-error-part, .attribution-error-total { border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 0.5rem; background: var(--soft-accent); }
+.attribution-error-diagram strong { display: block; font: 600 0.85rem/1.4 var(--font-sans); }
+.attribution-error-diagram p { margin: 0.6rem 0 0; }
+.attribution-error-part p { color: var(--accent); }
+.attribution-error-join { display: block; width: 100%; height: 44px; }
+.attribution-error-join path { fill: none; stroke: var(--muted-ink); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.attribution-error-total { width: 80%; margin: 0 auto; background: var(--page-surface); }
+.attribution-error-cancel { display: block; margin-top: 0.5rem; color: var(--muted-ink); font-size: 0.85rem; }
 .walk-forward-drawing { color: var(--ink); }
 .walk-forward-svg { display: block; width: 100%; height: auto; }
 .walk-forward-hand { fill: currentColor; font-family: var(--font-sans); font-size: 18px; font-weight: 600; }
