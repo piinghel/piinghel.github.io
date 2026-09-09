@@ -22,19 +22,12 @@ stocks with a prediction model and sizes positions within risk limits.
 The history runs from **23 September 1998 to 27 May 2026**.
 One **P&L point** means 1% of the same fixed strategy notional throughout.
 
-<details>
-<summary>Backtest assumptions</summary>
-<div markdown="1">
-
-This history has already helped shape the model. The backtest charges five
-basis points on traded notional and excludes borrow, financing and market
-impact. Long and short contributions use the same notional, with costs
-recorded separately.
-
-</div>
-</details>
-
 ## The long and short books
+
+I start with each stock's daily P&L: its signed position at the start of the
+session multiplied by its return. A short position has a negative weight,
+so a price rise produces a loss. Adding these contributions across stocks
+and days gives the long and short totals; trading costs are kept separate.
 
 Across the full history, longs earned **444.27 points**, shorts lost **93.17**,
 and trading costs took another **38.18**. That leaves **312.92 points net**.
@@ -43,7 +36,7 @@ Figure 1 shows how much of the long book's gains the strategy kept.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="4" alt="Full-history cumulative long, short and net contributions above the daily net drawdown, with the 2008–09 and 2020–21 declines shaded." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Longs and shorts are gross; net includes trading costs. Shading marks the two deepest peak-to-trough declines.</p>
+<p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Net deducts 5 basis points on traded notional; borrow, financing and market impact are excluded. Shading marks the two deepest peak-to-trough declines.</p>
 
 The short book wasn't a constant drag. Table 1 shows that it added **5.12
 points in 2000–04**, but lost **54.89 in 2010–14**. Its role needs to be
@@ -81,6 +74,10 @@ Figure 2 groups the stock contributions by sector and puts earnings beside
 each sector's share of realized portfolio variance. That share measures how
 its daily P&L moves with the whole portfolio: covariance with portfolio P&L,
 divided by portfolio variance. It includes the offsets between positions.
+The shares add to 100% including costs; a component that offsets the rest of
+the portfolio can have a negative share. These are historical allocations.
+Risk forecasts would use the positions and covariance estimates available
+before each day's returns.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by full-history earnings." %}
@@ -105,9 +102,16 @@ the next question is whether different sectors contained similar bets.
 
 A factor model looks for those common bets. I fit each day's stock returns
 jointly to prior-day size, momentum, volatility, beta, reversal and sector
-characteristics. A factor's contribution combines the portfolio's exposure
-with that day's fitted factor return. The **residual** is the part of covered
-stocks' returns the model leaves unexplained.
+characteristics. This estimates what each characteristic earned that day,
+after accounting for the others. Multiplying each stock's characteristic by
+its signed portfolio weight and adding across stocks gives the portfolio's
+factor exposure.
+
+Daily factor P&L is **exposure × fitted factor return**. I sum those daily
+contributions over the period, just as I do for the individual stocks.
+The **residual** is the weighted return left unexplained on covered holdings.
+Together, the fitted contributions, residual, uncovered holdings and costs
+add back to the portfolio's net P&L.
 
 Figure 3 shows that momentum, volatility and reversal earned money over the
 full history, while beta and size detracted. The largest component was the
@@ -126,10 +130,19 @@ Neither label alone gives the portfolio's sensitivity to a market index.
 
 The model covered about **93.1% of gross exposure** on average. Uncovered
 holdings earned **22.49 points** and remain separate from the residual.
-I also wouldn't equate the residual with stock-picking skill: omitted value,
-quality and industry effects can land there, and the fitted split has
-estimation noise. I haven't calculated attribution uncertainty for these
-episodes.
+
+The factor split is an estimate. Stock-specific news won't cancel perfectly
+across the stocks used to fit a factor's return. If the fit assigns an extra
+P&L point to factors, it takes that point away from the residual: the total
+still reconciles, even though the explanation has changed. This is the
+attribution uncertainty discussed in *Elements*, §14.2. I haven't estimated
+its magnitude for these episodes, so the residual bars are leads for further
+investigation.
+
+Model choice adds another uncertainty. Omitted value, quality and industry
+effects can also land in the residual. Before calling it stock-picking skill,
+I'd want that interpretation to survive both estimation uncertainty and a
+reasonable change in the factor specification.
 
 Figure 4 shows how the exposures behind those earnings changed. The portfolio
 usually favoured larger stocks and maintained a negative volatility tilt.
@@ -138,6 +151,12 @@ usually favoured larger stocks and maintained a negative volatility tilt.
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-exposures" mobile="/assets/portfolio-attribution/whole-exposures_mobile" version="3" alt="Four full-history panels for standardized size, momentum, volatility and beta exposures." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: Persistent tilts, changing sizes.</strong> Monthly mean signed standardized exposures, September 1998–May 2026, on fitted holdings. Missing positions are not rescaled. Each panel has its own vertical scale.</p>
+
+For volatility, a negative exposure can come from lower-volatility longs,
+higher-volatility shorts, or both. When more volatile stocks outperform after
+accounting for the other factors, the fitted volatility return is positive
+and that negative exposure loses money. This connects the factor chart to
+the stocks on each side of the portfolio.
 
 Those exposures can be part of the prediction model's intended return.
 What matters is how they behave when the strategy struggles: did the bets
@@ -176,7 +195,7 @@ short losses exceeded long gains. Figure 5 shows when that protection reversed.
 </div>
 <p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the market low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
 
-The **2009 rebound caused more of that episode's loss**. In 2020, the initial
+The **2009 rebound accounted for more of that episode's loss**. In 2020, the initial
 decline was much sharper: **9.32 points in 21 sessions**, followed by another
 **6.74 over 214 sessions**. Rebound risk matters in both cases, but it doesn't
 explain the initial failure to protect the portfolio.
@@ -227,11 +246,22 @@ This comparison combines trades, price drift and changing stock characteristics;
 it doesn't isolate the quality of the sizing decisions.
 
 A closer look at the holdings supports the defensive-long/aggressive-short
-explanation. At the March 2020 low, the longs had lost **17% over the preceding
-126 sessions**, versus **35% for the shorts**, weighted by starting exposure.
-Their estimated market betas were **0.86 and 1.03**. The long book entered the
-recovery with smaller prior losses and lower estimated market sensitivity.
-The same ordering appeared in 2009.
+explanation. Figure 7 compares the stocks held on each side as the recoveries
+began. **In both episodes, the shorted stocks had higher estimated market
+betas, larger prior losses and higher volatility than the longs.**
+
+<div class="research-figure responsive-figure" id="rebound-holdings">
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/rebound-holdings" mobile="/assets/portfolio-attribution/rebound-holdings_mobile" version="1" alt="At the 2009 low, long versus short stock beta was 0.89 versus 1.11; at the 2020 low, 0.86 versus 1.03. Shorts also had larger prior losses and higher volatility in both episodes." %}
+</div>
+<p class="figure-caption"><strong>Figure 7: More defensive longs faced more aggressive shorts.</strong> Absolute-position-weighted stock characteristics entering the first rebound session, measured through 9 March 2009 and 23 March 2020. Beta uses up to 252 daily returns against the Russell 1000 (126 minimum); prior return uses 126 sessions; volatility uses 21 sessions, annualized. These are stock characteristics within each book, not signed portfolio beta contributions. The market lows are retrospective.</p>
+
+The distinction matters for the rebound: a rising market tends to lift
+higher-beta stocks more, so their recovery hurts the short book while the
+lower-beta longs participate less. In 2020, the estimated stock betas were
+**0.86 for longs and 1.03 for shorts**. Position sizes still determine the
+portfolio's overall sensitivity; these averages show the imbalance per unit
+invested in each side. Beta is only part of the explanation, alongside the
+volatility tilt and residual losses above.
 
 Momentum can reinforce that overlap: during a sell-off, the relative winners
 can be the defensive stocks that fell least. This resembles the rebound
@@ -239,6 +269,12 @@ mechanism in Daniel and Moskowitz's *Momentum Crashes*. But momentum isn't the
 whole explanation here. During the 2009 rebound, the portfolio's momentum
 orientation reversed and its fitted momentum contribution was positive,
 while the low-volatility tilt continued to hurt.
+
+The pattern also appeared beyond these two episodes. Across **11 market
+drawdowns of at least 10%**, the shorted stocks gained more per unit of gross
+exposure than the longs in **9 of the first 63-session recoveries**. The
+comparison follows the changing books and sums their daily exposure-normalized
+returns. It is repeated historical evidence, with lows identified in hindsight.
 
 ## What variance misses
 
@@ -269,28 +305,42 @@ positions were useful. I need the path of the losses alongside the risk totals.
 
 ## What I'd test next
 
+The short book has two jobs: express negative stock forecasts and offset
+common risks in the longs. The next comparison needs to show whether these
+particular shorts justify their place beyond the protection a simpler hedge
+could provide.
+
 I'd start with a permanent sizing rule for shorts where prior losses, high beta
 and high volatility overlap. That targets the shared vulnerability without
 requiring me to recognise a market bottom in real time. The prediction model
 would stay fixed so the comparison tests portfolio construction.
+Alongside smaller individual positions, I'd test a cap on these shorts'
+combined risk, accounting for their correlations.
 
 I'd also compare replacing part of those shorts with a broad market hedge,
 keeping comparable intended market sensitivity and checking the resulting
 sector and style risks. The objective is to preserve useful negative stock
 signals and decline protection while reducing the rebound losses.
 
-Both changes need a costed portfolio replay across ordinary periods and other
+The unit of that decision is the whole position. Annaly, for example, lost
+**0.20 points through the volatility component** during the complete 2020–21
+drawdown but earned **0.85 points overall**. Removing it would remove both.
+Likewise, a hedge changes several exposures at once; a losing factor bar
+is a reason to investigate the holdings, rather than a trade on its own.
+
+These alternatives need a costed portfolio replay across ordinary periods and other
 recoveries. I'd compare net returns, drawdowns, turnover and protection during
 declines, including borrow and financing. The sizing rule and hedge comparison
-haven't been tested here; the two major drawdowns have already shaped the
-hypothesis.
+haven't been tested here. This history has already helped shape the model,
+and the two major drawdowns have shaped the hypothesis.
 
 ## References
 
 Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
 2021 edition, Chapters 3–4 and 7–8;
 [*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
-9 September 2024 draft, Chapters 6 and 14.
+9 September 2024 draft, Chapters 6 and 14; attribution uncertainty in §14.2,
+physical PDF pp. 456–459.
 
 Kent Daniel and Tobias Moskowitz, [*Momentum Crashes*](https://www.kentdaniel.net/papers/published/jfe_16.pdf),
 *Journal of Financial Economics*, 2016, Sections 2–3.
