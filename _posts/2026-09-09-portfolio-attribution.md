@@ -65,10 +65,8 @@ longs carried the result while shorts lost money. Both sides contributed in
 
 </div>
 
-The recent weakness is concentrated on the short side, although 2025 shows
-that it hasn't lost money every year. That rules out a simple story of both
-books steadily deteriorating. To understand the change, I need to connect
-these returns to the positions that earned them.
+The recent weakness is concentrated on the short side, with a recovery in
+2025. What changed in the portfolio as these results unfolded?
 
 ## Have the exposures changed?
 
@@ -95,13 +93,11 @@ The beta tilt changes more: its annual average moves from about +0.02 in
 2026. Here beta is a standardized characteristic in a joint factor model;
 that number is not the portfolio's regression beta to a benchmark.
 
-So the strategy has changed, but it still carries a recognizable set of tilts.
-The short book has become smaller in dollars, and the beta tilt has moderated
-since 2022; the size, momentum and volatility tilts have persisted. A larger
-net dollar position therefore doesn't, by itself, tell me how exposure to
-market movements changed.
+The short book has become smaller in dollars, while several style tilts have
+persisted. To see how the portfolio responded to market movements, I also
+need to look at its returns against a benchmark.
 
-I checked that distinction against the Russell 1000 price-return benchmark.
+I used the Russell 1000 price-return benchmark.
 Over September 1998–May 2026, beginning net dollar exposure averages **+22.0%**
 of notional, but the slope from regressing daily net P&L on the benchmark,
 including a constant, is only **+0.068**. The intercept component alone has a slope of +0.249; the remaining
@@ -170,7 +166,7 @@ value; I keep one convention throughout this article.
 I keep the dates fixed and look at the loss in two ways. **Sector and industry
 groupings** collect the complete P&L of stocks belonging to each group.
 **Factor attribution** divides stock returns into modeled common effects
-and residuals. These are alternative explanations of the same portfolio P&L.
+and residuals. These are complementary views of the same portfolio P&L.
 
 Health Care has the largest sector loss, **−3.074 points**, followed by
 Consumer Discretionary (−1.516), Materials (−1.330) and Financials (−1.292).
@@ -408,12 +404,12 @@ remain missing; they are not zero risk.
 </div>
 </details>
 
-## A larger exposure, or a different payoff?
+## How did exposures and factor returns combine?
 
 For a factor, daily contribution is the portfolio's signed exposure multiplied
 by that day's factor return. Comparing the episode with the preceding 24
-sessions separates two possibilities: the strategy took a different bet,
-or an existing bet started losing.
+sessions helps me see how both pieces changed: the bets the strategy took
+and what those bets earned.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: What changed across the turn of the year?</strong> Prior period: 23 November–28 December 2022. Loss period: 29 December 2022–2 February 2023. Exposure is the average signed standardized exposure on matched model-covered holdings; P&amp;L is in points.</p>
@@ -443,15 +439,13 @@ while its factor return became negative. These are jointly estimated factor
 returns. They need not match the returns of a separately constructed momentum
 or low-volatility investment strategy.
 
-This answers the exposure-or-payoff question: **both mattered, in different
-ways**. Beta lost money despite a slightly smaller negative tilt. Volatility
-and momentum combined larger average tilts with factor returns that turned
-against them. Simply saying the strategy took more risk would miss the first
-mechanism; simply blaming changing markets would miss the second.
+So **both exposure changes and factor returns mattered**. The larger
+volatility and momentum tilts added to the losses, while beta lost money
+even with a slightly smaller tilt.
 
-An exposure limit is consequently a candidate to test, rather than a fix
-established by this drawdown. It would change the positions and could remove
-gains elsewhere. It also needs to account for correlations: **zero direct
+Would tighter exposure limits have helped? That's worth testing across the
+full history, since they could also remove gains in other periods. The limits
+would need to account for correlations too: **zero direct
 exposure does not mean protection from a factor move**. Other factors held by
 the portfolio can move with it, as *Elements*, §14.3, explains below.
 
@@ -575,15 +569,10 @@ doesn't tell me where Rocket ranked against other stocks, or whether that rank
 improved. The score is not a calibrated expected return. Candidate ranks,
 existing holdings and trading constraints together determine the position.
 
-The price, position and prediction now tell a consistent story: Rocket rose
-while the portfolio stayed short, and the full score remained negative even
-as the displayed predictors improved. Looking at just those five predictors
-would have given a misleading account of the model's view.
-
-This establishes why the short lost money and which part of the score kept it
-negative. It does not establish why the trading rules retained that position.
-That requires Rocket's rank in the eligible universe and the constraints at
-each trading decision; the two score endpoints cannot supply that answer.
+Rocket rose while the portfolio stayed short, and the full score remained
+negative even as the displayed predictors improved. To explain why the
+strategy kept the position, I'd need to follow Rocket's rank and the binding
+constraints at each trading decision. The score alone can't answer that.
 
 <details>
 <summary>How the predictors add up to the full score</summary>
@@ -782,31 +771,23 @@ loading.
 
 ## What does this tell me about the strategy?
 
-The strategy's recent performance depends on which book is carrying the
-result. Its exposures have also changed, while several style tilts have
-persisted. That combination explains why I need both the long–short history
-and the exposure history to understand it.
-
-The early-2023 drawdown makes the connection concrete. Long gains were
+The early-2023 drawdown brought several parts of the strategy into focus. Long gains were
 outweighed by a broad short-book loss. Within the factor model, beta,
 volatility and momentum were the main losing styles: existing bets met
 unfavourable payoffs, with larger average tilts adding to the volatility and
 momentum losses. At the position level, Rocket shows how a rising stock and a
 persistently negative model score can coexist with a costly short position.
 
-These results identify the bets and positions to examine. They don't yet
-choose a better portfolio. Of the possible changes, the one directly motivated
-by this episode is to test a tighter exposure limit while keeping the
-predictions fixed, including the resulting trades and costs. The comparison
-has to include the profitable periods too, because the same tilts can earn
-money there.
+My next test would be tighter exposure limits, keeping predictions fixed and
+including the resulting trades and costs. I'd compare the full history,
+including the periods when these tilts paid off, before deciding whether
+the change helped.
 
-Stock selection and sizing need a separate distinction. A residual loss can
-come from poor signed outcomes across the book, or from putting more risk on
-the stocks that did badly. The stock totals above cannot separate those two.
-The calculation below shows exactly how to do it; it has not been evaluated
-for this episode. I would also resolve model coverage and attribution
-uncertainty before using it to judge either skill.
+I'd also want to separate stock selection from sizing. Did the stocks generally
+do badly in the direction I held them, did I put more risk on the losers, or
+did both happen? The calculation below separates those effects, though I
+haven't evaluated it for this episode. Model coverage and attribution
+uncertainty would still matter when interpreting the result.
 
 <details>
 <summary>The calculation behind selection and sizing</summary>
@@ -849,11 +830,8 @@ Quantitative Investing*, §14.4.
 </div>
 </details>
 
-The useful result of this exercise is a more specific diagnosis: which book
-lost, which shared bets contributed, and which positions carried them. It
-also sets a boundary on the interpretation: the factor split explains the
-loss under a model; it does not, on its own, establish a failure of stock
-selection or a profitable change to the strategy.
+I now have a clearer picture of the loss and a specific change to investigate.
+Whether that change improves the strategy is the next test.
 
 ## References
 
