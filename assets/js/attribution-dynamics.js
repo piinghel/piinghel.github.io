@@ -73,23 +73,3 @@
     new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   }).catch(()=>{status.textContent='The daily explorer could not load. Please reload to try again; the surrounding figures show the episode totals.';});
 })();
-
-(() => {
-  const select=document.getElementById('recovery-horizon');
-  if(!select)return;
-  const figure=document.getElementById('all-recoveries');
-  const summaries={21:'shorts gained more in 9 / 11 episodes; median gap +2.73 points; net portfolio losses in 4 / 11.',
-    63:'shorts gained more in 9 / 11 episodes; median gap +2.89 points; net portfolio losses in 4 / 11.',
-    126:'shorts gained more in 3 / 11 episodes; median gap −2.49 points; net portfolio losses in 1 / 11.'};
-  select.addEventListener('change',()=>{
-    const horizon=select.value,suffix=horizon==='63'?'':'-'+horizon;
-    for(const picture of figure.querySelectorAll('picture')){
-      const dark=picture.classList.contains('theme-svg-figure--dark')?'_dark':'';
-      picture.querySelector('img').src=`/assets/portfolio-attribution/recoveries${suffix}${dark}.svg?v=1`;
-      picture.querySelector('img').alt=`All 11 ${horizon}-session recoveries: ${summaries[horizon]}`;
-      picture.querySelector('source').srcset=`/assets/portfolio-attribution/recoveries${suffix}_mobile${dark}.svg?v=1`;
-    }
-    document.getElementById('recovery-caption-horizon').textContent=horizon;
-    document.getElementById('recovery-summary').textContent=`${horizon} sessions: ${summaries[horizon]}`;
-  });
-})();

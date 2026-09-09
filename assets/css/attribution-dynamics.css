@@ -15,4 +15,12 @@
 .attribution-dynamics .ad-readout,.attribution-dynamics .ad-status{font-size:14px;line-height:1.6;margin:.5rem 0 0}
 .ad-readout strong{font-weight:700}
 .ad-content[hidden]{display:none}
+.recovery-explorer{--ad-long:#268b7b;--ad-short:#bd6559;--ad-net:#3a689c;--ad-grid:#d6dfe5}
+[data-theme="dark"] .recovery-explorer{--ad-long:#57bdab;--ad-short:#e69482;--ad-net:#8bb6ee;--ad-grid:#43505f}
+#recovery-detail[hidden],#all-recoveries[hidden],.ae-content[hidden]{display:none}
+.stock-examples{margin:1.5rem 0;border-top:1px solid #d6dfe5;border-bottom:1px solid #d6dfe5;padding:1rem 0}
+.stock-examples summary{cursor:pointer;font-family:Arial,sans-serif;font-size:15px;font-weight:600}
+.stock-examples .attribution-dynamics{margin:1rem 0}
+.recovery-explorer .ad-controls select{max-width:100%}
+.attribution-dynamics .ad-legend{flex-wrap:wrap}
 @media(max-width:600px){.attribution-dynamics{padding:.7rem}.ad-controls{gap:.6rem}.ad-controls label{gap:.3rem}.ad-panel p{max-width:100%}}

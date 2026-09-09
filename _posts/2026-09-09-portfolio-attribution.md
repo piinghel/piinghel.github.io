@@ -307,6 +307,8 @@ tripled between the market low and January 2021, but the strategy closed
 the short in early June. The position lost **0.12 P&L points during the rebound**;
 much of the stock's later rise happened after the strategy had left it.
 
+{% include attribution-stock-examples.html %}
+
 The beta and volatility tilts helped during both market declines, then hurt
 during both rebounds. Figure 6 shows their contributions over each complete
 drawdown, alongside the residual and other terms.
@@ -403,18 +405,14 @@ is short. The result is not the compounded return of a basket held unchanged
 from the market low. I compare $G_{\mathrm{short}}-G_{\mathrm{long}}$, then
 look separately at the actual portfolio P&L over exactly the same sessions.
 
-Figure 9 shows every recovery; use the selector to compare 21, 63 or 126
-sessions on the same scales. At 63 sessions, **shorted stocks gained more in 9 of 11
+Figure 9 starts with all 11 recoveries. Select an episode to follow the two
+books through time, then choose 21, 63 or 126 sessions and move the date slider.
+At 63 sessions, **shorted stocks gained more in 9 of 11
 episodes**, but the median gap was **2.89 percentage points**. The **41.19-point
 gap in 2009** was much larger than the usual episode; the mean gap of
 **6.42 points** gives that extreme event more influence.
 
-<div class="ad-controls"><label>Recovery window <select id="recovery-horizon"><option value="21">21 sessions · about 1 month</option><option value="63" selected>63 sessions · about 3 months</option><option value="126">126 sessions · about 6 months</option></select></label></div>
-<p id="recovery-summary" class="figure-caption" role="status">63 sessions: shorts gained more in 9 / 11 episodes; median gap +2.89 points; net portfolio losses in 4 / 11.</p>
-<div class="research-figure responsive-figure" id="all-recoveries">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/recoveries" mobile="/assets/portfolio-attribution/recoveries_mobile" version="1" alt="All 11 first-63-session recoveries: shorted stocks gain more per unit exposure in nine episodes, while actual net portfolio P&L is negative in four. The 2009 stock-return gap is much larger than the other episodes." %}
-</div>
-<p class="figure-caption"><strong>Figure 9: Faster-rising shorts don't always mean a losing portfolio.</strong> Rows identify the market-low date; both panels cover the next <span id="recovery-caption-horizon">63</span> sessions. Left: summed daily stock gains per unit of each book's gross exposure. Right: actual net fixed-notional P&amp;L, including saved trading costs. Borrow, financing and market impact are excluded. All 11 episodes are shown in date order, with common scales across horizons.</p>
+{% include attribution-recovery-explorer.html %}
 
 The portfolio lost money in **4 of the 11** 63-session windows. In the first 63 sessions
 of the 2020 recovery, for example, shorted stocks gained **48.15% per unit
