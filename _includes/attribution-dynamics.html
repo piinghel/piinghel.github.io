@@ -1,0 +1,18 @@
+<div class="attribution-dynamics" id="attribution-dynamics" data-source="/assets/portfolio-attribution/dynamics.json?v=1">
+  <div class="ad-controls">
+    <label>Episode <select class="ad-episode"><option value="0">2008–09</option><option value="1" selected>2020–21</option></select></label>
+    <label>Factor <select class="ad-factor"><option value="beta">Beta</option><option value="volatility" selected>Volatility</option><option value="momentum">Momentum</option></select></label>
+  </div>
+  <p class="ad-status" role="status">Loading the daily attribution…</p>
+  <div class="ad-content" hidden>
+    <p class="ad-legend"><span class="ad-long">Longs</span> <span class="ad-short">Shorts</span> <span class="ad-net">Net exposure</span></p>
+    <div class="ad-panel"><p>1. Signed exposure · position weight × loading</p><svg class="ad-exposure" role="img" aria-label="Daily long, short and net factor exposures"></svg></div>
+    <div class="ad-panel"><p>2. Factor payoff · cumulative percentage points</p><svg class="ad-payoff" role="img" aria-label="Cumulative fitted factor returns"></svg></div>
+    <div class="ad-panel"><p>3. Portfolio contribution · cumulative P&amp;L points</p><svg class="ad-pnl" role="img" aria-label="Cumulative factor P&L contribution"></svg></div>
+    <label class="ad-date">Inspect a session <input class="ad-slider" type="range" min="0" value="0" aria-label="Attribution session"></label>
+    <p class="ad-readout" aria-live="polite"></p>
+  </div>
+  <noscript><p>The time explorer needs JavaScript. The surrounding figures and tables show the episode totals and holdings comparisons.</p></noscript>
+</div>
+<link rel="stylesheet" href="/assets/css/attribution-dynamics.css?v=1">
+<script src="/assets/js/attribution-dynamics.js?v=1" defer></script>

@@ -100,18 +100,99 @@ risks, which is where the factor model helps.
 
 ## Shared exposures
 
-A factor model looks for those common bets. I fit each day's stock returns
-jointly to prior-day size, momentum, volatility, beta, reversal and sector
-characteristics. This estimates what each characteristic earned that day,
-after accounting for the others. Multiplying each stock's characteristic by
-its signed portfolio weight and adding across stocks gives the portfolio's
-factor exposure.
+A factor model looks for those common bets. Suppose higher-beta stocks rise
+more than lower-beta stocks on a particular day. Some of that difference may
+also reflect their sectors or momentum. I fit those characteristics together
+to estimate what each one earned after accounting for the others.
 
-Daily factor P&L is **exposure × fitted factor return**. I sum those daily
-contributions over the period, just as I do for the individual stocks.
-The **residual** is the weighted return left unexplained on covered holdings.
-Together, the fitted contributions, residual, uncovered holdings and costs
-add back to the portfolio's net P&L.
+**First, describe the stocks before the session.** The model uses size,
+momentum, volatility, beta and short-term reversal, plus sector indicators.
+Size, momentum and volatility come from the strategy's existing descriptors;
+the volatility descriptor is a rank. Beta uses up to 252 daily observations
+(126 minimum), and reversal is the negative preceding five-session return.
+Each style descriptor is centered and scaled across the eligible universe:
+
+$$
+z_{i,k,t-1}=\frac{x_{i,k,t-1}-\mu_{k,t-1}}{\sigma_{k,t-1}}.
+$$
+
+Here, $i$ identifies a stock and $k$ a style. The mean and standard deviation
+use weights proportional to the square root of market capitalization. A
+loading of $+1$ means one weighted standard deviation above the average of
+that descriptor. Standardizing a rank doesn't turn it back into raw
+volatility or raw momentum.
+
+**Then fit that day's returns across stocks.** For each eligible stock with
+a valid return, I write
+
+$$
+r_{i,t}=a_t+\sum_k z_{i,k,t-1}f_{k,t}
+       +g_{s(i),t}+\varepsilon_{i,t}.
+$$
+
+The common return is $a_t$, the style returns are $f_{k,t}$, and
+$g_{s(i),t}$ is the effect for the stock's sector. The residual
+$\varepsilon_{i,t}$ is what the model leaves unexplained. This is a new
+cross-sectional fit each day, using the eligible stock universe rather than
+only the stocks in the portfolio. The characteristics and market caps come
+from the prior session; the returns being explained come from the session
+that has just finished. Sector labels are retrospective, as noted above.
+
+I estimate all the coefficients jointly by weighted least squares over that
+day's fitting universe $U_t$:
+
+$$
+\underset{a_t,f_t,g_t}{\operatorname{minimize}}\;
+\sum_{i\in U_t}q_{i,t-1}\varepsilon_{i,t}^{\,2},
+$$
+
+where $$q_{i,t-1}=\sqrt{\mathrm{cap}_{i,t-1}}$$ and cap is market capitalization. These are positive
+**fitting weights**, distinct from the portfolio's signed position weights.
+A stock four times as large gets twice the weight in the fit. To separate
+the common return from the sector effects, their loss-weighted average is
+constrained to zero: $$\sum_s Q_{s,t}g_{s,t}=0$$, where
+$$Q_{s,t}=\sum_{i\in U_t:s(i)=s}q_{i,t-1}$$.
+
+The coefficients are estimated through a joint SVD least-squares solve,
+without a ridge penalty. Thus a positive fitted volatility return means
+higher-volatility descriptors were associated with better returns that day,
+conditional on the other terms. It is an explanation of realized returns;
+it does not tell me which predictor caused the strategy to choose its stocks.
+
+**Finally, apply the fit to the positions actually held.** Let $w_{i,t^-}$
+be the signed position just before the session, divided by the fixed strategy
+notional. The exposure and daily contribution for style $k$ are
+
+$$
+E_{k,t}=\sum_{i\in H_t}w_{i,t^-}z_{i,k,t-1},
+\qquad c_{k,t}=E_{k,t}\widehat f_{k,t}.
+$$
+
+$H_t$ contains the holdings covered by the fit. Long and short contributions
+use the same equation, with positive and negative position weights. I also
+multiply each covered stock's residual by its position weight. The common
+return uses the net weight of covered holdings, and each sector effect uses
+the net weight in that sector. Adding these pieces, uncovered holdings and
+costs reconstructs daily portfolio P&L; the saved reconciliation also retains
+a negligible price-basis difference between the fitting and P&L inputs.
+
+For example, a 2% long position with a volatility loading of $-1$ contributes
+$-0.02$ to that exposure. A 1% short with a loading of $+2$ also contributes
+$-0.02$. Together, their exposure is $-0.04$. If the fitted volatility return
+is $+1\%$ that day, their volatility contribution is $-0.0004$, or
+**−0.04 P&L points**. Both positions lose through the same factor despite
+being on opposite sides of the book. This is an arithmetic illustration;
+their other factor contributions and residuals still affect total P&L.
+
+Across days, I add the contributions, in P&L points:
+
+$$
+C_k(T)=100\sum_{t\leq T}E_{k,t}\widehat f_{k,t}.
+$$
+
+Both terms can change each day. A stock's characteristics move, positions are
+resized or replaced, and the factor payoff changes. Multiplying one average
+exposure by the whole period's factor return would miss that timing.
 
 Figure 3 shows that momentum, volatility and reversal earned money over the
 full history, while beta and size detracted. The largest component was the
@@ -244,6 +325,22 @@ the rebound** in 2008–09, and from **+1.27 to −5.80** in 2020–21. The stra
 was still positioned to benefit from lower-beta stocks doing better, just as
 higher-beta stocks began to outperform.
 
+Figure 7 makes that calculation visible through time. Choose beta, volatility
+or momentum, then move the date slider. The first panel adds the long and
+short books' signed exposures. The second adds the fitted factor returns;
+an upward slope means a positive factor payoff during those sessions. The
+third adds the portfolio's daily exposure × payoff contributions. The
+readout works through that multiplication for the selected day.
+
+{% include attribution-dynamics.html %}
+<p class="figure-caption"><strong>Figure 7: Follow the exposure, its payoff and the resulting P&amp;L.</strong> Daily observations through each complete strategy drawdown. Shading ends at the market low. Exposures use holdings covered by the daily fit, without rescaling missing positions. Factor payoffs are sums of fitted returns per standardized unit of exposure; portfolio contributions are fixed-notional P&amp;L points. Scales stay the same across episodes for a chosen factor. The slider inspects history; it does not simulate a trading rule.</p>
+
+For a negative exposure, a rising factor-payoff line works against the
+portfolio. The cumulative P&L can therefore fall even while the size of the
+exposure is shrinking. The curves also show why a factor's payoff over the
+whole period is insufficient: what matters is the exposure held on the days
+when that payoff arrived.
+
 The losses weren't made worse by the way these exposures changed during the
 rebounds. Holding each exposure at its average level for the phase would have
 produced larger beta and volatility losses. For example, volatility lost
@@ -252,7 +349,7 @@ exposure. The continuing low-volatility bet is therefore worth examining.
 Trading, price moves and changes in the stocks' characteristics all affect
 exposure, so this comparison alone can't tell me how well I timed the trades.
 
-A closer look at the holdings makes the imbalance easier to see. Figure 7
+A closer look at the holdings makes the imbalance easier to see. Figure 8
 compares the stocks held on each side as the recoveries
 began. **In both episodes, the shorted stocks had higher estimated market
 betas, larger prior losses and higher volatility than the longs.**
@@ -260,7 +357,7 @@ betas, larger prior losses and higher volatility than the longs.**
 <div class="research-figure responsive-figure" id="rebound-holdings">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/rebound-holdings" mobile="/assets/portfolio-attribution/rebound-holdings_mobile" version="1" alt="At the 2009 low, long versus short stock beta was 0.89 versus 1.11; at the 2020 low, 0.86 versus 1.03. Shorts also had larger prior losses and higher volatility in both episodes." %}
 </div>
-<p class="figure-caption"><strong>Figure 7: The shorts held riskier stocks than the longs.</strong> Average stock characteristics, weighted by position size within each book, entering the first rebound session. Measurements end at the market lows of 9 March 2009 and 23 March 2020. Beta uses up to 252 daily returns against the Russell 1000 (126 minimum); prior return uses 126 sessions; volatility uses 21 sessions, annualized. The lows are identified in hindsight.</p>
+<p class="figure-caption"><strong>Figure 8: The shorts held riskier stocks than the longs.</strong> Average stock characteristics, weighted by position size within each book, entering the first rebound session. Measurements end at the market lows of 9 March 2009 and 23 March 2020. Beta uses up to 252 daily returns against the Russell 1000 (126 minimum); prior return uses 126 sessions; volatility uses 21 sessions, annualized. The lows are identified in hindsight.</p>
 
 This helps explain the rebound losses. A rising market tends to lift
 higher-beta stocks more, so their recovery hurts the short book while the
@@ -280,22 +377,84 @@ whole explanation here. During the 2009 rebound, the portfolio's momentum
 exposure changed sign and its fitted momentum contribution was positive,
 while the low-volatility tilt continued to hurt.
 
-The pattern also appeared beyond these two episodes. Across **11 market
-drawdowns of at least 10%**, the shorted stocks gained more per unit of gross
-exposure than the longs in **9 of the 11 recoveries**, measured over the first
-63 sessions. This compares gains in the underlying stocks on either side,
-adding their daily returns per unit of exposure as the holdings change.
-A gain in a shorted stock is a loss for the portfolio. The lows are still
-identified in hindsight.
+## Across other recoveries
+
+The two largest strategy drawdowns helped form the hypothesis. To see how
+often the same imbalance appeared elsewhere, I identified **11 market
+drawdowns of at least 10%** in the available history and followed the first
+63 sessions after each low. A new drawdown episode starts only after the
+previous market peak has been regained; intervening sell-offs belong to the
+same episode. Every low is identified in hindsight.
+
+The long book is usually larger than the short book, so comparing their
+P&L totals alone mixes stock performance with position size. For this check,
+I first measure the return of the stocks on each side per unit of that
+side's gross exposure. For book $\ell$, with gross exposure
+$A_{\ell,t}=\sum_{i\in\ell}|w_{i,t^-}|$, the measure is
+
+$$
+G_\ell(H)=100\sum_{t=1}^{H}
+\frac{\sum_{i\in\ell}|w_{i,t^-}|r_{i,t}}{A_{\ell,t}}.
+$$
+
+This follows the changing positions and adds daily returns. A price rise
+counts as a stock gain on either side; it hurts the portfolio when the stock
+is short. The result is not the compounded return of a basket held unchanged
+from the market low. I compare $G_{\mathrm{short}}-G_{\mathrm{long}}$, then
+look separately at the actual portfolio P&L over exactly the same sessions.
+
+Figure 9 shows every recovery; use the selector to compare 21, 63 or 126
+sessions on the same scales. At 63 sessions, **shorted stocks gained more in 9 of 11
+episodes**, but the median gap was **2.89 percentage points**. The **41.19-point
+gap in 2009** was much larger than the usual episode; the mean gap of
+**6.42 points** gives that extreme event more influence.
+
+<div class="ad-controls"><label>Recovery window <select id="recovery-horizon"><option value="21">21 sessions · about 1 month</option><option value="63" selected>63 sessions · about 3 months</option><option value="126">126 sessions · about 6 months</option></select></label></div>
+<p id="recovery-summary" class="figure-caption" role="status">63 sessions: shorts gained more in 9 / 11 episodes; median gap +2.89 points; net portfolio losses in 4 / 11.</p>
+<div class="research-figure responsive-figure" id="all-recoveries">
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/recoveries" mobile="/assets/portfolio-attribution/recoveries_mobile" version="1" alt="All 11 first-63-session recoveries: shorted stocks gain more per unit exposure in nine episodes, while actual net portfolio P&L is negative in four. The 2009 stock-return gap is much larger than the other episodes." %}
+</div>
+<p class="figure-caption"><strong>Figure 9: Faster-rising shorts don't always mean a losing portfolio.</strong> Rows identify the market-low date; both panels cover the next <span id="recovery-caption-horizon">63</span> sessions. Left: summed daily stock gains per unit of each book's gross exposure. Right: actual net fixed-notional P&amp;L, including saved trading costs. Borrow, financing and market impact are excluded. All 11 episodes are shown in date order, with common scales across horizons.</p>
+
+The portfolio lost money in **4 of the 11** 63-session windows. In the first 63 sessions
+of the 2020 recovery, for example, shorted stocks gained **48.15% per unit
+of exposure**, versus **31.80%** for the longs. But the larger long book
+earned **17.18 P&L points**, while shorts lost **16.54**. After costs, the
+portfolio was still up **0.43 points**. The **6.74-point loss** reported
+earlier covers the much longer 214-session recovery through January 2021.
+The portfolio's path matters as well as the stocks' relative rebound.
+
+I also checked shorter and longer windows around the same lows (Table 4).
+At 21 sessions, shorts were ahead in **9 of 11** episodes. By 126 sessions,
+that fell to **3 of 11**, and the median gap had turned negative.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 4: The imbalance is more common early in the recovery.</strong> The same 11 lows at each horizon. Gap = short-stock gains minus long-stock gains per unit of exposure, in percentage points. Net losses use actual portfolio P&amp;L after saved trading costs.</p>
+
+| Sessions after low | Shorts gained more | Median gap | Net portfolio losses |
+| ---: | ---: | ---: | ---: |
+| 21 | 9 / 11 | +2.73 | 4 / 11 |
+| 63 | 9 / 11 | +2.89 | 4 / 11 |
+| 126 | 3 / 11 | −2.49 | 1 / 11 |
+{: .research-table .comparison-table .attribution-table }
+
+</div>
+
+This points towards an **early-recovery vulnerability**, with a few severe
+episodes, rather than a loss that persists through every recovery. Because
+the positions change throughout these windows, the longer-horizon improvement
+could reflect different stocks as well as a change in market behaviour.
+These are overlapping horizons around reused, hindsight-selected lows—not
+independent tests or evidence that a rebound can be recognized in real time.
 
 ## What variance misses
 
 Portfolio volatility rose from **7.9%** over the full history to **9.3%** in
-the 2008–09 drawdown and **13.1%** in 2020–21. Yet Table 4 shows why a variance
+the 2008–09 drawdown and **13.1%** in 2020–21. Yet Table 5 shows why a variance
 allocation alone would miss an important part of the problem.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 4: A losing short book can have a small variance share.</strong> Realized variance shares (%) over the full history and each complete drawdown. Costs account for the small difference from 100%.</p>
+<p class="table-caption"><strong>Table 5: A losing short book can have a small variance share.</strong> Realized variance shares (%) over the full history and each complete drawdown. Costs account for the small difference from 100%.</p>
 
 | Period | Longs | Shorts |
 | :--- | ---: | ---: |
@@ -351,7 +510,8 @@ and the two major drawdowns have shaped the hypothesis.
 Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
 2021 edition, Chapters 3–4 and 7–8;
 [*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
-9 September 2024 draft, Chapters 6 and 14; attribution uncertainty in §14.2,
+9 September 2024 draft, cross-sectional fitting in §7.2, physical PDF
+pp. 216–218; attribution uncertainty in §14.2,
 physical PDF pp. 456–459.
 
 Kent Daniel and Tobias Moskowitz, [*Momentum Crashes*](https://www.kentdaniel.net/papers/published/jfe_16.pdf),
