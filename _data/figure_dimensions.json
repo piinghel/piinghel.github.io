@@ -39,45 +39,53 @@
     "width": 605,
     "height": 377
   },
-  "/assets/portfolio-attribution/episode-bridge": {
+  "/assets/portfolio-attribution/drawdown-factors": {
+    "width": 634,
+    "height": 461
+  },
+  "/assets/portfolio-attribution/drawdown-factors_mobile": {
+    "width": 360,
+    "height": 922
+  },
+  "/assets/portfolio-attribution/factor-pnl": {
+    "width": 634,
+    "height": 461
+  },
+  "/assets/portfolio-attribution/factor-pnl_mobile": {
+    "width": 360,
+    "height": 461
+  },
+  "/assets/portfolio-attribution/largest-drawdowns": {
     "width": 634,
     "height": 324
   },
-  "/assets/portfolio-attribution/episode-bridge_mobile": {
+  "/assets/portfolio-attribution/largest-drawdowns_mobile": {
     "width": 360,
-    "height": 324
+    "height": 590
   },
-  "/assets/portfolio-attribution/episode-factors-risk": {
+  "/assets/portfolio-attribution/sector-pnl": {
     "width": 634,
-    "height": 410
+    "height": 461
   },
-  "/assets/portfolio-attribution/episode-factors-risk_mobile": {
+  "/assets/portfolio-attribution/sector-pnl_mobile": {
     "width": 360,
-    "height": 835
+    "height": 461
   },
-  "/assets/portfolio-attribution/rocket-prediction": {
+  "/assets/portfolio-attribution/whole-exposures": {
     "width": 634,
-    "height": 317
+    "height": 396
   },
-  "/assets/portfolio-attribution/rocket-prediction_mobile": {
+  "/assets/portfolio-attribution/whole-exposures_mobile": {
     "width": 360,
-    "height": 374
+    "height": 605
   },
-  "/assets/portfolio-attribution/strategy-history": {
+  "/assets/portfolio-attribution/whole-history": {
     "width": 634,
-    "height": 504
+    "height": 475
   },
-  "/assets/portfolio-attribution/strategy-history_mobile": {
+  "/assets/portfolio-attribution/whole-history_mobile": {
     "width": 360,
-    "height": 504
-  },
-  "/assets/portfolio-attribution/style-exposures": {
-    "width": 634,
-    "height": 418
-  },
-  "/assets/portfolio-attribution/style-exposures_mobile": {
-    "width": 360,
-    "height": 418
+    "height": 475
   },
   "/assets/portfolio-optimization/parameter-sensitivity": {
     "width": 1200,

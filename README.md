@@ -35,7 +35,10 @@ Drafts are excluded from the normal build. The portfolio-attribution article
 is published at `/quants/portfolio-attribution.html`; its light/dark and mobile
 figures live in `assets/portfolio-attribution`. Source research inputs remain
 outside this website repository. The article states the model coverage and
-uncertainty limits of its descriptive attribution.
+uncertainty limits of its descriptive attribution. It starts with full-history
+book, sector, stock and factor contributions, then examines the two deepest
+additive drawdowns. The chart inputs and reproducible aggregation/rendering
+scripts are retained in the private research workspace.
 
 Jekyll remains deliberate: the site needs static articles, equations, SVGs,
 stable permalinks, and RSS. The local build already serves those requirements;
