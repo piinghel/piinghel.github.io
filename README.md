@@ -39,6 +39,11 @@ The active descriptive study is registered in `performance_attribution` as
 aggregate artifact contain the source hashes, accounting conventions and
 independent review. Current findings belong in the registry.
 
+The decline/rebound extension is registered as
+`performance-attribution:exp:market-phase-diagnostics`. Its source, cohort check
+and renderer live in `../phase-evidence`. The `market-phases` figure replaces
+the older `largest-drawdowns` export from the whole-history renderer.
+
 The private sibling directory `../whole-history-evidence` holds the aggregation
 and rendering code. It reads the existing ledgers; it does not refit models or
 replay a modified strategy. Keep raw inputs and aggregate evidence outside the
@@ -47,6 +52,7 @@ website repository. To reproduce from the original input bundle:
 ```bash
 python ../whole-history-evidence/analyze.py --source /path/to/private/ledger --output ../whole-history-evidence
 python ../whole-history-evidence/render.py --source ../whole-history-evidence/aggregates.json --sha256 <verified-artifact-sha256> --output _draft_assets/portfolio-attribution
+python ../phase-evidence/render.py --source ../phase-evidence/aggregates.json --sha256 <verified-phase-artifact-sha256> --output _draft_assets/portfolio-attribution
 python3 scripts/check_site.py --update-dimensions
 ```
 

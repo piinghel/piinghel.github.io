@@ -396,31 +396,38 @@ just over **16 P&L points**.
 
 The first starts after the peak on **30 July 2008** and reaches its trough on
 **16 September 2009**. The second starts after **21 February 2020** and bottoms
-on **27 January 2021**. Table 3 adds up the contributions after each peak
-through its trough.
+on **27 January 2021**. But those dates don't tell me whether the damage
+happened while the market was falling or after it started recovering.
+
+To check that, I split each window at the low of the Russell 1000 price-return
+benchmark: **9 March 2009** and **23 March 2020**. Table 3 shows the P&L up to
+that low, then from the following session to the strategy's own trough.
 
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 3: The two deepest losses, by book.</strong> Fixed-notional P&amp;L points from peak to trough; the peak day itself is excluded.</p>
+<p class="table-caption"><strong>Table 3: Did the losses come during the decline or the rebound?</strong> Portfolio P&amp;L points on fixed notional. Longs and shorts are gross; net includes costs. Sessions show the different lengths of the phases.</p>
 
-| Episode | Longs | Shorts | Costs | Net |
+| Phase | Sessions | Longs | Shorts | Net |
 | :--- | ---: | ---: | ---: | ---: |
-| 2008–09 | +3.31 | −18.50 | −1.13 | −16.32 |
-| 2020–21 | −1.54 | −13.46 | −1.07 | −16.06 |
+| 2008–09 decline | 152 | −36.28 | +30.63 | −6.18 |
+| 2009 rebound | 133 | +39.59 | −49.14 | −10.14 |
+| 2020 decline | 21 | −39.95 | +30.74 | −9.32 |
+| 2020–21 rebound | 214 | +38.41 | −44.19 | −6.74 |
 {: .research-table .comparison-table .risk-performance-table }
 
 </div>
 
 
-Shorts account for most of both losses in Table 3. But Figure 5 shows something
-the totals hide: early in each decline, the short book was helping. Its
-contribution turned negative later, as the long book recovered.
+**The strategy lost in both phases, in both episodes.** Shorts helped during
+the declines, but didn't fully offset the long losses. During the rebounds,
+short losses exceeded the long gains. Figure 5 lines up the market path and
+portfolio contributions so I can see when that change happened.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/largest-drawdowns" mobile="/_draft_assets/portfolio-attribution/largest-drawdowns_mobile" version="2" alt="Long, short and net contributions through each drawdown and recovery, with trough markers in September 2009 and January 2021." %}
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/market-phases" mobile="/_draft_assets/portfolio-attribution/market-phases_mobile" version="1" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: The initial cushion from shorts did not last.</strong> Daily cumulative contributions since each peak, on equal vertical scales. Dotted lines mark the troughs. The former P&amp;L peaks were regained on 22 September 2010 and 30 April 2021. Holdings change along these paths.</p>
+<p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the benchmark low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
 
 
 <details>
@@ -438,49 +445,63 @@ $$
 
 An episode ends when the prior peak is regained. I rank those distinct episodes
 by their deepest $$D_t$$, so several bad days in the same decline don't occupy
-both places. The loss attribution starts after the peak and ends at the trough;
-the recovery is shown separately in the path.
+both places. The loss attribution starts after the peak and ends at the trough.
+The strategy eventually regained its prior P&L peak on 22 September 2010 and
+30 April 2021, respectively.
 
 These are additive P&L drawdowns on fixed notional. Compounding the daily
 series selects the same two episodes but reverses their order. I keep the
 additive convention so the book, stock and factor contributions add directly
 to the loss being explained.
 
+Within each window, the market low is the minimum compounded benchmark level.
+The decline includes that session; the rebound starts on the next one. These
+dates are selected with hindsight. The window starts at the strategy's peak,
+which need not be the market's peak, and a rebound need not regain the market's
+previous high.
+
+Moving the split five sessions earlier or later leaves both phases negative
+in both episodes. The 2008–09 rebound still loses more. In 2020–21, which phase
+has the larger total loss changes with that boundary, so I wouldn't make much
+of that ranking. These are two selected episodes, not a tested market-timing rule.
+
 </div>
 </details>
 
-### 2008–09: longs recovered, shorts gave back more
+### 2008–09: more damage during the rebound
 
-By **27 February 2009**, longs had lost **31.35 points** from the July peak,
-while shorts had earned **24.90**. The net loss was **6.97 points**.
+The benchmark fell **47.73%** from the strategy's July peak to 9 March 2009.
+Shorts earned **30.63 points**, covering much of the **36.28-point long loss**.
+The portfolio was still down **6.18 net**.
 
-By the September trough, the long book had recovered to **+3.31 points**, but
-shorts had fallen to **−18.50**. Look at April 2009:
-longs gained **3.27 points**, shorts lost **11.22**, and the portfolio lost
-**8.01 net**. Recovering longs weren't enough when shorts were losing even more.
+Then the market rose **59.69%** through 16 September. Longs earned **39.59
+points**, but shorts lost **49.14**. The portfolio lost another **10.14 net**
+during that rebound. Here, more of the drawdown accumulated after the market
+had bottomed.
 
-At sector level, **Industrials lost 7.66 points**, followed by Communications
+Over the whole peak-to-trough window, **Industrials lost 7.66 points**, followed by Communications
 (**2.47**) and Materials (**1.93**). Industrial losses came from both books:
 **−1.93 from longs** and **−5.73 from shorts**. TE Connectivity (**−0.78**),
 RR Donnelley (**−0.75**) and CSX (**−0.60**) were its three largest losing
 stock contributions.
 
-Technology, which led the full-history gains, also helped during this decline
+Technology, which led the full-history gains, also helped over this window
 with **+2.03 points**. Industrials did the opposite: a large long-run contributor
 became the biggest losing sector in this episode.
 
-### 2020–21: a similar book-level reversal, different stocks
+### 2020–21: a sharp decline, followed by further losses
 
-By the end of March 2020, longs were down **33.10 points** and shorts were up
-**24.62**, leaving **−8.64 net** from the February peak.
+The benchmark fell **33.79%** through 23 March 2020. The strategy lost **9.32
+points in just 21 sessions**, even though shorts contributed **+30.74**.
+The long book's **39.95-point loss** was larger.
 
-Again, that cushion didn't last. In November, longs gained **11.22
-points**, but shorts lost **13.20**. From the start of January through the
-**27 January 2021** trough, the portfolio lost another **7.92 points**, including
-**6.08 from shorts**. By the trough, longs had almost recovered their initial
-loss, while shorts were down **13.46 points** overall.
+The market then rose **73.03%** through 27 January 2021. Over those **214
+sessions**, longs earned **38.41 points**, shorts lost **44.19**, and net P&L
+fell another **6.74**. The initial decline was much sharper; the rebound
+added a slower, prolonged loss. So I can't explain this episode simply as
+shorts getting caught by a recovery.
 
-This time **Financials lost 9.83 points**, with almost equal losses
+Across the full 2020–21 window, **Financials lost 9.83 points**, with almost equal losses
 from longs (**−4.93**) and shorts (**−4.89**). Real Estate lost **3.16** and
 Consumer Discretionary **2.20**. Within Financials, Rithm Capital (**−1.16**),
 KeyCorp (**−1.08**) and State Street (**−0.81**) were the largest losers,
@@ -489,6 +510,34 @@ all from long positions.
 Caesars was the largest individual stock loss in the whole episode at
 **−2.36 points**, also almost entirely from longs. So the fact that shorts
 lost more in aggregate doesn't mean the worst individual positions were shorts.
+
+## Was I just holding on to the old shorts?
+
+One explanation would be that the stocks I shorted during the decline bounced
+back and I stayed short too long. I can test part of that story by separating
+rebound P&L into names that were short at the market low and names that weren't
+(Table 4).
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 4: Where the rebound's short losses came from.</strong> Gross short P&amp;L points after the market low through the strategy trough. Each group includes subsequent changes in size, exits and reentries.</p>
+
+| Short-book names | 2009 rebound | 2020–21 rebound |
+| :--- | ---: | ---: |
+| Short at the market low | −20.90 | −23.12 |
+| Not short at the market low | −28.24 | −21.08 |
+| **Total** | **−49.14** | **−44.19** |
+{: .research-table .comparison-table .risk-performance-table }
+
+</div>
+
+Names absent from the short book at the low accounted for **57.5%** of its
+2009 rebound loss and **47.7%** in 2020–21. Holding on to the original shorts
+therefore can't explain the whole loss. I also need to understand the positions
+the strategy entered or reentered during the rebound.
+
+Was it just a handful of bad stocks? The five worst short contributors explain
+only **12.4%** and **8.8%** of the respective aggregate short-book losses, before costs. The damage
+was spread much more broadly. That makes shared exposures worth examining.
 
 ## Did the same factors hurt in both periods?
 
@@ -513,20 +562,32 @@ positively over the whole sample, but was costly in the second drawdown.
 Beta detracted over the full history and in both drawdowns. Size lost money
 in the first episode and contributed slightly positively in the second.
 
-Was I simply taking a bigger volatility bet? Average volatility exposure
-in 2020–21 was **−0.971**, compared with **−1.103** over the preceding equal-length
-window. The negative tilt had become smaller, yet its contribution over the
-loss period was **−8.10 points**. Daily exposure and daily factor return together
-produce that result; their period averages alone don't reconstruct it.
+Splitting those contributions at the market low reveals a common pattern:
+**beta and volatility helped during both declines and lost money during both
+rebounds**. The beta component went from **+3.32 to −9.87 points** in 2008–09
+and **+1.27 to −5.80** in 2020–21.
+
+I also checked the exposures and fitted factor returns. In 2020, average
+volatility exposure became more negative, from **−0.75 during the decline to
+−0.99 during the rebound**. The fitted volatility return changed from negative
+over the decline to positive over the rebound, while its P&L contribution
+changed from **+0.61 to −8.71 points**. Both the exposure and the factor's payoff
+changed. The calculation uses their daily products, rather than multiplying
+the period averages.
+
+That supports a more specific explanation: the portfolio's negative beta and
+volatility tilts helped on the way down, then hurt during the rebound. These
+are contributions under the joint factor model; they don't establish that a
+particular exposure limit would have improved the strategy.
 
 The stock and factor views can also disagree within a single position.
-Table 4 shows two examples. Protective Life lost through beta and overall.
+Table 5 shows two examples. Protective Life lost through beta and overall.
 Annaly lost through the volatility factor but made money overall, because
 its other components more than offset that loss.
 
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 4: A stock can lose through one factor and still contribute positively.</strong> P&amp;L points over the indicated drawdown. Stock totals are gross.</p>
+<p class="table-caption"><strong>Table 5: A stock can lose through one factor and still contribute positively.</strong> P&amp;L points over the indicated drawdown. Stock totals are gross.</p>
 
 | Stock / episode | Factor P&L | Stock P&L |
 | :--- | ---: | ---: |
@@ -713,10 +774,23 @@ loading.
 
 ## What would I investigate next?
 
-I'd start with the short book during those recoveries. Which positions did I
-keep? Which did I replace? How did their weights change? That would separate
-losses on continuing positions from losses introduced by new trades, and give
-me something concrete to examine in the trading rules.
+The first question now has an answer: **the strategy lost during the market
+declines and kept losing during the rebounds**. The short book provided
+some protection, but the changing short book later lost more than the longs
+earned. The cohort and factor checks narrow the explanation beyond that total.
+
+Next I'd test whether changing position sizes made those rebound losses worse.
+A rising short position grows in dollar weight even without another trade.
+I'd separate that price drift from changes in effective share quantities,
+then measure the P&L associated with the quantity changes. That calculation
+hasn't been done here; the name-level split doesn't answer it.
+
+I'd also inspect the predictions and ranks at entry for the rebound's losing
+shorts. Were the same signals repeatedly selecting stocks with the exposures
+that were hurting the book? If so, I'd compare those entries with the existing
+shorts, including their subsequent factor and residual P&L. That would help
+locate the problem in selection, sizing or the trading rules before testing a
+change across the wider history.
 
 I'd focus first on Industrials in 2008–09 and Financials in 2020–21. Then I'd
 look at the residual losses: after checking coverage and uncertainty, were
@@ -765,8 +839,9 @@ Quantitative Investing*, §14.4.
 </div>
 </details>
 
-The short book's negative total is where I started. How it gave back its early
-gains during these two drawdowns is the part I now want to understand better.
+The test of a proposed change would include other declines, rebounds and
+ordinary periods, with costs. Knowing the turning points after the fact is
+useful for diagnosing a loss; it doesn't tell me when I could have traded differently.
 
 ## References
 
