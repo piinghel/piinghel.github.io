@@ -164,7 +164,7 @@ Technology led with **63.45 points**, followed by Consumer Discretionary
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="4" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by full-history earnings." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by full-history earnings." %}
 </div>
 <p class="figure-caption"><strong>Figure 2: Compare what each sector earned with the risk it contributed.</strong> September 1998–May 2026. P&amp;L is gross across both books; variance shares use covariance with net portfolio P&amp;L. Unallocated portfolio costs contribute −0.01% of variance and are omitted from the sector rows.</p>
 
@@ -248,7 +248,7 @@ the part of covered stocks' returns left after fitting the model.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="4" alt="Full-history fitted components with P&L beside signed variance share, including residual, uncovered holdings and costs." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="5" alt="Full-history fitted components with P&L beside signed variance share, including residual, uncovered holdings and costs." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Earnings and risk tell different parts of the story.</strong> P&amp;L sums to +312.92 points net; realized variance shares sum to 100%. Sector effects are model terms, distinct from grouping complete stock P&amp;L by sector. All rows use the same dates.</p>
 
