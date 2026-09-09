@@ -19,17 +19,18 @@
     if(text!==undefined)el.textContent=text;
     svg.append(el);
   }
-  function bounds(values){
-    const min=Math.min(0,...values),max=Math.max(0,...values);
+  function bounds(values,zero=true){
+    const finite=values.filter(Number.isFinite);
+    const min=Math.min(...(zero?[0,...finite]:finite)),max=Math.max(...(zero?[0,...finite]:finite));
     const raw=(max-min||1)/4, magnitude=10**Math.floor(Math.log10(raw));
     const step=[1,2,5,10].find(x=>x*magnitude>=raw)*magnitude;
     const lo=Math.floor(min/step)*step,hi=Math.ceil(max/step)*step;
     return {lo:lo===hi?lo-step:lo,hi:lo===hi?hi+step:hi,step};
   }
-  function chart(svg,root,rows,series,values,index,{low,steps=false,recoveryDays=false}={}){
+  function chart(svg,root,rows,series,values,index,{low,peak,steps=false,recoveryDays=false,events=[],price=false}={}){
     if(!svg.clientWidth)return;
     const width=svg.clientWidth,height=168,left=44,right=12,top=9,bottom=29;
-    const b=bounds(values),pad=(b.hi-b.lo)*.04;
+    const b=bounds(values,!price),pad=(b.hi-b.lo)*.04;
     const x=i=>left+i/(rows.length-1)*(width-left-right);
     const y=v=>height-bottom-(v-b.lo+pad)/(b.hi-b.lo+2*pad)*(height-top-bottom);
     const style=getComputedStyle(root),color=key=>style.getPropertyValue(key).trim();
@@ -37,20 +38,38 @@
     if(low){
       const at=rows.findIndex(r=>r[0]===low);
       if(at>=0){
-        add(svg,'rect',{x:left,y:top,width:x(at)-left,height:height-top-bottom,fill:color('--ad-grid'),opacity:.22});
+        const from=peak?Math.max(0,rows.findIndex(r=>r[0]===peak)):0;
+        add(svg,'rect',{x:x(from),y:top,width:x(at)-x(from),height:height-top-bottom,fill:color('--ad-grid'),opacity:.22});
         add(svg,'line',{x1:x(at),x2:x(at),y1:top,y2:height-bottom,stroke:'currentColor',opacity:.4,'stroke-dasharray':'2 3'});
       }
     }
     const digits=b.step<1?Math.max(0,-Math.floor(Math.log10(b.step))):0;
     for(let v=b.lo;v<=b.hi+b.step*.01;v+=b.step){
       add(svg,'line',{x1:left,x2:width-right,y1:y(v),y2:y(v),stroke:color('--ad-grid'),'stroke-width':.5});
-      add(svg,'text',{x:left-7,y:y(v)+4,'text-anchor':'end'},v.toFixed(digits).replace('-','−'));
+      add(svg,'text',{x:left-7,y:y(v)+4,'text-anchor':'end'},(Math.abs(v)<b.step*.001?0:v).toFixed(digits).replace('-','−'));
     }
-    add(svg,'line',{x1:left,x2:width-right,y1:y(0),y2:y(0),stroke:'currentColor',opacity:.35,'stroke-width':.7});
+    if(!price)add(svg,'line',{x1:left,x2:width-right,y1:y(0),y2:y(0),stroke:'currentColor',opacity:.35,'stroke-width':.7});
     for(const [col,key,dash] of series){
-      const d=rows.map((r,i)=>i===0?`M${x(i)},${y(r[col])}`:steps?`H${x(i)} V${y(r[col])}`:`L${x(i)},${y(r[col])}`).join(' ');
+      let active=false;
+      const d=rows.map((r,i)=>{
+        if(!Number.isFinite(r[col])){active=false;return '';}
+        const part=!active?`M${x(i)},${y(r[col])}`:steps?`H${x(i)} V${y(r[col])}`:`L${x(i)},${y(r[col])}`;
+        active=true;return part;
+      }).join(' ');
       add(svg,'path',{d,fill:'none',stroke:color(key),'stroke-width':1.6,'stroke-dasharray':dash||''});
-      add(svg,'circle',{cx:x(index),cy:y(rows[index][col]),r:3,fill:color(key)});
+      if(Number.isFinite(rows[index][col]))add(svg,'circle',{cx:x(index),cy:y(rows[index][col]),r:3,fill:color(key)});
+    }
+    for(const event of events){
+      const at=rows.findIndex(r=>r[0]===event.date);
+      if(at<0)continue;
+      add(svg,'line',{x1:x(at),x2:x(at),y1:top,y2:height-bottom,stroke:'currentColor',opacity:.5,'stroke-dasharray':'4 3'});
+      if(price){
+        add(svg,'text',{x:x(at)+5,y:top+12},event.event);
+        if(Number.isFinite(rows[at][3])){
+          const cy=y(rows[at][3]),cx=x(at),up=event.event==='Entry'?-1:1;
+          add(svg,'path',{d:`M${cx},${cy+up*6} L${cx-5},${cy-up*4} L${cx+5},${cy-up*4} Z`,fill:color(series[0][1]),stroke:'currentColor','stroke-width':.5});
+        }
+      }
     }
     add(svg,'line',{x1:x(index),x2:x(index),y1:top,y2:height-bottom,stroke:'currentColor',opacity:.5,'stroke-dasharray':'3 3'});
     for(const [i,anchor] of [[0,'start'],[Math.floor((rows.length-1)/2),'middle'],[rows.length-1,'end']]){
@@ -66,7 +85,7 @@
     chart(detail.querySelector('.ae-gains'),detail,rows,[[1,'--ad-long'],[2,'--ad-short','5 3']],all.flatMap(r=>[r[1],r[2]]),index,{recoveryDays:true});
     chart(detail.querySelector('.ae-books'),detail,rows,[[3,'--ad-long'],[4,'--ad-short','5 3'],[5,'--ad-net']],all.flatMap(r=>[r[3],r[4],r[5]]),index,{recoveryDays:true});
     byId('recovery-readout').textContent=index===0?`${human(row[0])} · Market low. All cumulative paths start at zero; the next session begins the measured recovery.`:
-      `${human(row[0])} · Session ${index}. Stock gains: longs ${signed(row[1])}%, shorts ${signed(row[2])}% (gap ${signed(row[2]-row[1])} points). Actual P&L: longs ${signed(row[3])}, shorts ${signed(row[4])}, net ${signed(row[5])} points. Market since low: ${signed(row[6])}%. Beginning gross exposure today: longs ${row[7].toFixed(1)}%, shorts ${row[8].toFixed(1)}% of notional.`;
+      `${human(row[0])} · Session ${index}. Stock gains: longs ${signed(row[1])}%, shorts ${signed(row[2])}% (gap ${signed(row[2]-row[1])} points). Portfolio P&L: longs ${signed(row[3])}, shorts ${signed(row[4])}, net ${signed(row[5])} points.`;
   }
   function updateRecovery(){
     const h=Number(horizon.value),isAll=episode.value==='all';
@@ -94,27 +113,42 @@
     const s=data.stocks[Number(choice.value)],rows=s.path,index=Number(stockSession.value),r=rows[index];
     const color=s.side==='short'?'--ad-short':'--ad-long';
     stockSession.setAttribute('aria-valuetext',human(r[0]));
-    chart(stock.querySelector('.ae-weight'),stock,rows,[[1,color]],data.stocks.flatMap(s=>s.path.map(r=>r[1])),index,{low:s.low,steps:true});
-    chart(stock.querySelector('.ae-stock-pnl'),stock,rows,[[2,color]],data.stocks.flatMap(s=>s.path.map(r=>r[2])),index,{low:s.low});
-    byId('stock-readout').textContent=`${human(r[0])} · ${s.name}. ${Math.abs(r[1])<1e-10?'No position entering the session.':`${r[1]>0?'Long':'Short'} ${Math.abs(r[1]).toFixed(2)}% of notional entering the session.`} Cumulative actual P&L: ${signed(r[2],3)} points.`;
+    const options={low:s.low,peak:'2020-02-21',events:s.events};
+    chart(stock.querySelector('.ae-price'),stock,rows,[[3,color]],rows.map(r=>r[3]),index,{...options,price:true});
+    chart(stock.querySelector('.ae-weight'),stock,rows,[[1,color]],rows.map(r=>r[1]),index,{...options,steps:true});
+    chart(stock.querySelector('.ae-stock-pnl'),stock,rows,[[2,color]],rows.map(r=>r[2]),index,options);
+    const lastPrice=rows.filter(r=>Number.isFinite(r[3])).at(-1);
+    byId('stock-context').textContent=`${s.side==='short'?'Short':'Long'} from ${human(s.events[0].date)}; exited ${human(s.events[1].date)}.${lastPrice[0]<rows.at(-1)[0]?` Price coverage ends ${human(lastPrice[0])}; the holdings record continues through the exit.`:''}`;
+    byId('stock-readout').textContent=`${human(r[0])} · ${Number.isFinite(r[3])?`Price index ${r[3].toFixed(1)}.`:'Price unavailable.'} ${Math.abs(r[1])<1e-10?'Position flat.':`${r[1]>0?'Long':'Short'} ${Math.abs(r[1]).toFixed(2)}% of notional.`} Actual P&L since ${human(rows[0][0])}: ${signed(r[2],3)} points.`;
   }
   function chooseStock(){
     const rows=data.stocks[Number(choice.value)].path;
     stockSession.max=rows.length-1;stockSession.value=rows.findIndex(r=>r[0]==='2020-03-24');renderStock();
   }
+  function inspectCharts(root,slider,render){
+    for(const svg of root.querySelectorAll('svg')){
+      const inspect=e=>{
+        const box=svg.getBoundingClientRect(),fraction=(e.clientX-box.left-44)/(box.width-56);
+        slider.value=Math.round(Math.max(0,Math.min(1,fraction))*Number(slider.max));render();
+      };
+      svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);inspect(e);});
+      svg.addEventListener('pointermove',e=>{if(svg.hasPointerCapture(e.pointerId))inspect(e);});
+    }
+  }
   horizon.addEventListener('change',updateRecovery);
   episode.addEventListener('change',updateRecovery);
-  fetch('/assets/portfolio-attribution/explorer-paths.json?v=1').then(r=>{
+  fetch('/assets/portfolio-attribution/explorer-paths.json?v=2').then(r=>{
     if(!r.ok)throw new Error('Data unavailable');return r.json();
   }).then(d=>{
     data=d;
     d.recoveries.forEach((e,i)=>episode.add(new Option(human(e.low),String(i))));
     episode.disabled=false;
-    d.stocks.forEach((s,i)=>choice.add(new Option(`${s.name} · ${s.side} at the low`,String(i))));
+    d.stocks.forEach((s,i)=>choice.add(new Option(s.name,String(i))));
     choice.value=String(d.stocks.findIndex(s=>s.name==='Zscaler'));
     stock.querySelector('.ae-loading').hidden=true;stock.querySelector('.ae-content').hidden=false;
     session.addEventListener('input',renderRecovery);
     stockSession.addEventListener('input',renderStock);choice.addEventListener('change',chooseStock);
+    inspectCharts(detail,session,renderRecovery);inspectCharts(stock,stockSession,renderStock);
     byId('stock-examples').addEventListener('toggle',renderStock);
     const redraw=()=>{renderRecovery();renderStock();};
     new ResizeObserver(redraw).observe(recovery);new ResizeObserver(renderStock).observe(stock);

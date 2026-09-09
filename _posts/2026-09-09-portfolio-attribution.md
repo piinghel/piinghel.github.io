@@ -327,21 +327,29 @@ the rebound** in 2008–09, and from **+1.27 to −5.80** in 2020–21. The stra
 was still positioned to benefit from lower-beta stocks doing better, just as
 higher-beta stocks began to outperform.
 
-Figure 7 makes that calculation visible through time. Choose beta, volatility
-or momentum, then move the date slider. The first panel adds the long and
-short books' signed exposures. The second adds the fitted factor returns;
-an upward slope means a positive factor payoff during those sessions. The
-third adds the portfolio's daily exposure × payoff contributions. The
-readout works through that multiplication for the selected day.
+A low-volatility strategy buys quieter stocks and shorts more volatile ones.
+That gives it **negative exposure to volatility** in the fitted model. It earns
+money from this tilt when lower-volatility stocks outperform, after accounting
+for the other fitted characteristics. During a sharp rebound, higher-volatility
+stocks can lead instead: the volatile shorts rise faster, and the same tilt
+loses money. Seeking the low-volatility premium means accepting that it can
+reverse over particular periods.
+
+Figure 7 shows this in the direction of the strategy's bet: **low volatility**.
+I reverse the signs of both the model's volatility exposure and its payoff.
+For example, model exposure −0.5 and volatility payoff +1% become low-volatility
+exposure **+0.5** and low-volatility payoff **−1%**. Both give the same
+**−0.5 P&L points**. Low beta uses the same convention; momentum follows past
+winners. Choose a direction and move the slider to see the daily multiplication.
 
 {% include attribution-dynamics.html %}
-<p class="figure-caption"><strong>Figure 7: Follow the exposure, its payoff and the resulting P&amp;L.</strong> Daily observations through each complete strategy drawdown. Shading ends at the market low. Exposures use holdings covered by the daily fit, without rescaling missing positions. Factor payoffs are sums of fitted returns per standardized unit of exposure; portfolio contributions are fixed-notional P&amp;L points. Scales stay the same across episodes for a chosen factor. The slider inspects history; it does not simulate a trading rule.</p>
+<p class="figure-caption"><strong>Figure 7: How the defensive bet earns and loses money.</strong> Exposure uses holdings covered by the daily fit. Payoffs sum fitted returns per standardized unit; contributions sum daily exposure × payoff in fixed-notional P&amp;L points. Shading ends at the market low.</p>
 
-For a negative exposure, a rising factor-payoff line works against the
-portfolio. The cumulative P&L can therefore fall even while the size of the
-exposure is shrinking. The curves also show why a factor's payoff over the
-whole period is insufficient: what matters is the exposure held on the days
-when that payoff arrived.
+Read the panels together: positive low-volatility exposure benefits when the
+payoff line rises and loses when it falls. The payoff line adds up each day's
+result, so it can remain above zero while falling through a losing rebound.
+The portfolio's contribution also depends on how much exposure it held each
+day. A larger bet on losing days can outweigh smaller bets on winning days.
 
 The losses weren't made worse by the way these exposures changed during the
 rebounds. Holding each exposure at its average level for the phase would have

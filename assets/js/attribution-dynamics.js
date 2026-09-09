@@ -16,17 +16,26 @@
     svg.append(el);return el;
   }
   function extent(values){
-    let lo=Math.min(0,...values),hi=Math.max(0,...values),pad=(hi-lo||1)*.10;
-    return [lo-pad,hi+pad];
+    const min=Math.min(0,...values),max=Math.max(0,...values),raw=(max-min||1)/4;
+    const magnitude=10**Math.floor(Math.log10(raw)),step=[1,2,5,10].find(n=>n*magnitude>=raw)*magnitude;
+    return [Math.floor(min/step)*step,Math.ceil(max/step)*step,step];
   }
   let data;
+  const directions={beta:{sign:-1,name:'low-beta',meaning:'lower-beta stocks outperforming higher-beta stocks'},
+    volatility:{sign:-1,name:'low-volatility',meaning:'lower-volatility stocks outperforming higher-volatility stocks'},
+    momentum:{sign:1,name:'momentum',meaning:'past winners outperforming past losers'}};
+  function oriented(rows,sign){return rows.map(row=>row.map((v,i)=>[1,2,3,4,6].includes(i)?sign*v:v));}
   function render(){
     if(!data)return;
-    const e=data.episodes[Number(episode.value)],rows=e.factors[factor.value];
+    const direction=directions[factor.value];
+    const e=data.episodes[Number(episode.value)],rows=oriented(e.factors[factor.value],direction.sign);
     const index=Math.min(Number(slider.value),rows.length-1), selected=rows[index];
     slider.max=rows.length-1;
     slider.setAttribute('aria-valuetext',human(selected[0]));
-    const all=data.episodes.flatMap(ep=>ep.factors[factor.value]);
+    const all=data.episodes.flatMap(ep=>oriented(ep.factors[factor.value],direction.sign));
+    root.querySelector('.ad-direction').textContent=`Positive exposure benefits from ${direction.meaning}, holding the other fitted characteristics constant.`;
+    root.querySelector('.ad-exposure-title').textContent=`1. Exposure to ${direction.name} · longs + shorts = net`;
+    root.querySelector('.ad-payoff-title').textContent=`2. Payoff to one unit of ${direction.name} · cumulative points`;
     const series=[[[1,'--ad-long',''],[2,'--ad-short','5 3'],[3,'--ad-net','']],[[6,'--ad-net','']],[[7,'--ad-net','']]];
     const style=getComputedStyle(root);
     panels.forEach((svg,p)=>{
@@ -36,12 +45,13 @@
       const minDate=date(e.peak),maxDate=date(e.end);
       const x=d=>l+(date(d)-minDate)/(maxDate-minDate)*(width-l-r);
       const limits=extent(all.flatMap(row=>series[p].map(([col])=>row[col])));
-      const y=v=>height-b-(v-limits[0])/(limits[1]-limits[0])*(height-t-b);
+      const pad=(limits[1]-limits[0])*.04;
+      const y=v=>height-b-(v-limits[0]+pad)/(limits[1]-limits[0]+2*pad)*(height-t-b);
       add(svg,'rect',{x:l,y:t,width:x(e.low)-l,height:height-t-b,fill:style.getPropertyValue('--ad-grid'),opacity:.22});
-      for(let n=0;n<3;n++){
-        const v=limits[0]+(limits[1]-limits[0])*n/2;
+      for(let v=limits[0];v<=limits[1]+limits[2]*.01;v+=limits[2]){
         add(svg,'line',{x1:l,x2:width-r,y1:y(v),y2:y(v),stroke:style.getPropertyValue('--ad-grid'),'stroke-width':.5});
-        add(svg,'text',{x:l-7,y:y(v)+4,'text-anchor':'end'},v.toFixed(p===0?1:0).replace('-','−'));
+        const digits=Math.max(0,-Math.floor(Math.log10(limits[2])));
+        add(svg,'text',{x:l-7,y:y(v)+4,'text-anchor':'end'},(Math.abs(v)<limits[2]*.001?0:v).toFixed(digits).replace('-','−'));
       }
       add(svg,'line',{x1:l,x2:width-r,y1:y(0),y2:y(0),stroke:'currentColor',opacity:.35,'stroke-width':.7});
       for(const [col,color,dash] of series[p]){
@@ -59,7 +69,7 @@
       const middle=rows[Math.floor(rows.length/2)][0];
       add(svg,'text',{x:x(middle),y:height-6,'text-anchor':'middle'},new Date(date(middle)).toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'}));
     });
-    root.querySelector('.ad-readout').textContent=`${human(selected[0])} · ${selected[0]<=e.low?'Market-decline phase':'Market-recovery phase'}. Net exposure ${signed(selected[3],3)} × factor return ${signed(selected[4],3)}% = ${signed(selected[5],3)} P&L points today. Cumulative contribution: ${signed(selected[7])} points.`;
+    root.querySelector('.ad-readout').textContent=`${human(selected[0])} · Today: ${direction.name} ${selected[4]>=0?'paid':'lost'} ${Math.abs(selected[4]).toFixed(3)}% per unit. Portfolio exposure ${signed(selected[3],3)} × payoff ${signed(selected[4],3)}% = ${signed(selected[5],3)} P&L points. Contribution since ${human(e.peak)}: ${signed(selected[7])} points.`;
   }
   function choose(){
     const e=data.episodes[Number(episode.value)],rows=e.factors[factor.value];
@@ -69,6 +79,16 @@
     data=d;root.querySelector('.ad-content').hidden=false;status.hidden=true;choose();
     episode.addEventListener('change',choose);factor.addEventListener('change',choose);
     slider.addEventListener('input',render);
+    for(const svg of panels){
+      const inspect=event=>{
+        const e=data.episodes[Number(episode.value)],rows=e.factors[factor.value];
+        const box=svg.getBoundingClientRect(),fraction=Math.max(0,Math.min(1,(event.clientX-box.left-42)/(box.width-56)));
+        const target=date(e.peak)+fraction*(date(e.end)-date(e.peak));
+        slider.value=rows.reduce((best,row,i)=>Math.abs(date(row[0])-target)<Math.abs(date(rows[best][0])-target)?i:best,0);render();
+      };
+      svg.addEventListener('pointerdown',event=>{svg.setPointerCapture(event.pointerId);inspect(event);});
+      svg.addEventListener('pointermove',event=>{if(svg.hasPointerCapture(event.pointerId))inspect(event);});
+    }
     new ResizeObserver(render).observe(root);
     new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   }).catch(()=>{status.textContent='The daily explorer could not load. Please reload to try again; the surrounding figures show the episode totals.';});

@@ -9,11 +9,13 @@
 .ad-long{color:var(--ad-long)}.ad-short{color:var(--ad-short)}.ad-net{color:var(--ad-net)}
 .ad-panel p{font-size:13px!important;font-weight:600;margin:1rem 0 .25rem!important;line-height:1.4!important}
 .ad-panel svg{display:block;width:100%;height:168px;overflow:visible}
+.attribution-dynamics .ad-panel svg{cursor:crosshair;touch-action:pan-y}
 .ad-panel svg text{fill:currentColor;font-family:Arial,sans-serif;font-size:12px}
 .ad-date{display:block;font-size:13px;margin-top:1rem}
 .ad-slider{display:block;width:100%;margin:.7rem 0;accent-color:var(--ad-net)}
 .attribution-dynamics .ad-readout,.attribution-dynamics .ad-status{font-size:14px;line-height:1.6;margin:.5rem 0 0}
 .ad-readout strong{font-weight:700}
+.attribution-dynamics .ad-direction{font-size:14px;line-height:1.5;margin:.8rem 0}
 .ad-content[hidden]{display:none}
 .recovery-explorer{--ad-long:#268b7b;--ad-short:#bd6559;--ad-net:#3a689c;--ad-grid:#d6dfe5}
 [data-theme="dark"] .recovery-explorer{--ad-long:#57bdab;--ad-short:#e69482;--ad-net:#8bb6ee;--ad-grid:#43505f}
