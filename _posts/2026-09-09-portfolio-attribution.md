@@ -10,7 +10,7 @@ categories: ["Portfolio management"]
 ---
 
 
-<p class="article-summary">I work through my strategy's P&L, from the long and short books down to individual stocks, then take a closer look at its two worst drawdowns.</p>
+<p class="article-summary">I work through where my strategy made money, where it took risk, and what happened during its two worst drawdowns.</p>
 
 A profitable backtest leaves me with plenty of questions. Which positions
 made the money? What were the shorts doing? And when the strategy struggled,
@@ -71,9 +71,63 @@ shorts added 5.12 points in 2000–04, but lost 54.89 in 2010–14.
 </div>
 
 
-I'd want to understand that drag before changing the strategy. The shorts also
-change its exposures and can help when markets fall. I'll look at what that
-protection amounted to during the drawdowns.
+I'd want to understand that drag before changing the strategy. Over this history,
+the long and short books had standalone annualized volatility of **16.7%** and
+**16.4%**, but their daily P&L had a correlation of **−0.89**. Together, after costs,
+portfolio volatility was **7.9%**. The shorts lost money, but also offset a lot
+of the longs' fluctuations. Both facts matter when judging their usefulness.
+
+## Where did we take risk?
+
+Paleologo makes a useful distinction in both books: how much a position moves
+on its own, and how much it contributes to the whole portfolio's risk.
+The long and short books are a good example of why those differ.
+
+I'll measure risk here as the variance of daily P&L on the same fixed notional.
+For each component, its **share of portfolio variance** is
+
+$$
+p_k=\frac{\widehat{\operatorname{Cov}}(c_k,r_p)}
+{\widehat{\operatorname{Var}}(r_p)},
+\qquad r_p=\sum_k c_k.
+$$
+
+In plain language: how much does this component move with the portfolio?
+These signed shares add to 100%, including costs. Longs account for **59.6%**
+and shorts for **40.4%** over the full history; costs contribute almost zero.
+The shorts still have a positive share of the combined portfolio's variance,
+even though holding them alongside the longs reduced total volatility.
+
+I'll put this measure beside P&L in the next two charts. It describes
+**realized risk over the period**. Forecasting the risk of today's positions
+requires another calculation, which I'll come to below. And variance counts
+both upward and downward moves: it won't tell us on its own when losses hurt.
+
+<details>
+<summary>Why covariance, rather than each component's variance?</summary>
+<div markdown="1">
+
+For two books, total variance is
+
+$$
+\sigma_p^2=\sigma_L^2+\sigma_S^2+2\operatorname{Cov}(L,S).
+$$
+
+Allocating half the cross term to each book gives
+$$\operatorname{Cov}(L,L+S)$$ and $$\operatorname{Cov}(S,L+S)$$.
+The same rule works for many components. Simply adding their standalone
+variances would miss their offsets.
+
+A share can be negative, or exceed 100%, when components hedge one another.
+The contribution to annualized volatility is
+$$RC_k=p_k\widehat\sigma_p\sqrt{252}$$; these contributions add to portfolio
+volatility. Standalone volatilities do not. I use sample covariances on
+identical trading dates; a zero portfolio variance makes the shares undefined.
+The square-root-of-252 scaling is a reporting convention, not an estimate of
+annual holding-period risk allowing for serial dependence.
+
+</div>
+</details>
 
 <details>
 <summary>How a position becomes P&L</summary>
@@ -110,9 +164,15 @@ Technology led with **63.45 points**, followed by Consumer Discretionary
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="3" alt="All eleven full-history sector contributions, ranked from Technology at plus 63.45 points to Energy at plus 2.32 points." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="4" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by full-history earnings." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Where the stock P&L came from.</strong> Gross contributions across both books, September 1998–May 2026, on the same fixed notional. Costs remain at portfolio level.</p>
+<p class="figure-caption"><strong>Figure 2: Compare what each sector earned with the risk it contributed.</strong> September 1998–May 2026. P&amp;L is gross across both books; variance shares use covariance with net portfolio P&amp;L. Unallocated portfolio costs contribute −0.01% of variance and are omitted from the sector rows.</p>
+
+Health Care and Technology each account for about **15% of variance**, although
+Technology earned considerably more. Energy earned just **2.32 points** while
+contributing **6.1% of variance**. That puts Energy on my list to investigate:
+which positions used that risk, and did they offer protection when I needed it?
+It doesn't establish that deleting the sector would improve the strategy.
 
 
 The totals are positive largely because long gains outweighed short losses.
@@ -188,9 +248,14 @@ the part of covered stocks' returns left after fitting the model.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="3" alt="Full-history attribution with common intercept, five style factors, sector effects, residual, uncovered holdings, reconciliation and trading costs." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="4" alt="Full-history fitted components with P&L beside signed variance share, including residual, uncovered holdings and costs." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: A factor view of the same full-history P&L.</strong> All contributions sum to +312.92 points net. Sector effects are the model terms, distinct from grouping complete stock P&amp;L by sector. Uncovered holdings and costs remain explicit.</p>
+<p class="figure-caption"><strong>Figure 3: Earnings and risk tell different parts of the story.</strong> P&amp;L sums to +312.92 points net; realized variance shares sum to 100%. Sector effects are model terms, distinct from grouping complete stock P&amp;L by sector. All rows use the same dates.</p>
+
+The residual earned the most and contributed **45.2% of realized variance**.
+Momentum contributed **9.7%**, while beta and size each contributed roughly
+**6–7%** despite losing money. Uncovered holdings account for another **7.9%**:
+I can't quietly treat their risk as explained by the model.
 
 
 The model's common intercept contributed **84.09 points**. Every covered stock
@@ -274,24 +339,8 @@ using it to build yesterday's exposure or risk forecast would introduce look-ahe
 This is a cross-sectional fit across stocks each day, rather than a regression
 of the portfolio's return history on factor returns.
 
-To forecast portfolio risk, I also need a factor covariance matrix $$\Omega_f$$
-and a residual covariance matrix $$D$$. Under the model's assumption that factor
-and residual shocks are uncorrelated,
-
-$$
-\begin{aligned}
-\Sigma&=B\Omega_f B^\top+D,\\
-\sigma_p&=\sqrt{w^\top\Sigma w}.
-\end{aligned}
-$$
-
-The covariance estimates give more weight to recent returns and use return
-history through the previous session. But the sector classifications are
-retrospective, so this is not a fully point-in-time test of risk forecasts.
-The model assumes $$D$$ is diagonal: residual shocks in different stocks are uncorrelated.
-That assumption can miss risk if the model leaves a shared driver unexplained.
-The ordinary P&L split above uses realized factor returns; the covariance
-estimates answer the additional question of how risky the positions were.
+The P&L split uses those realized factor returns. The separate covariance
+calculation for risk is explained [below](#what-risk-would-the-model-have-shown).
 
 *Elements*, §14.1, also stresses that holdings must match the return interval.
 If the portfolio trades within it, a single snapshot cannot explain all P&L.
@@ -336,27 +385,57 @@ tilt. During a drawdown, I want to know whether those bets became larger or
 their returns turned against me. Figure 4 gives me the exposure side of that
 comparison; the factor P&L tells me what those exposures earned.
 
+## What risk would the model have shown?
+
+An exposure chart is only part of that answer. The same exposure becomes
+riskier when its factor becomes more volatile; correlations can also turn
+seemingly separate bets into one large bet.
+
+For positions with signed weights $$w$$ and factor exposures $$b=B^\top w$$,
+the model's portfolio variance is
+
+$$
+\sigma_p^2=
+\underbrace{b^\top\Omega_f b}_{\text{factor risk}}
++\underbrace{w^\top\Omega_\varepsilon w}_{\text{residual risk}}.
+$$
+
+Here $$\Omega_f$$ contains factor variances and covariances, and
+$$\Omega_\varepsilon$$ describes residual risk. This assumes factor and
+residual returns are uncorrelated. A diagonal residual matrix also assumes
+different stocks' residuals are uncorrelated—an assumption that can miss a
+shared risk the factors leave out.
+
+I'd first ask how much risk comes from factors versus residuals, then drill
+into the factors and stocks contributing most. For a factor $$k$$, its
+variance contribution is $$b_k(\Omega_f b)_k$$. Dividing by total portfolio
+variance gives its share, with correlations included. Large exposure alone
+doesn't determine that ranking.
+
+This is the forward-looking comparison I still need to establish for this
+strategy: use the holdings, loadings and covariance estimates available
+**before** each return interval. The figures here establish historical
+covariance allocations, not those forecasts. In particular, the residual's
+45.2% historical share is not an estimate of the model's forecast idiosyncratic
+share: fitted factor and residual P&L can covary over time.
+
 <details>
-<summary>Comparing P&L with contribution to risk</summary>
+<summary>Which position would I resize to reduce risk?</summary>
 <div markdown="1">
 
-A component can earn money over a period while making day-to-day portfolio
-P&L more variable. To measure its contribution to realized volatility, I use
+For a fixed covariance estimate $$\Sigma=B\Omega_fB^\top+\Omega_\varepsilon$$,
 
 $$
-RC_k=\sqrt{252}\,
-\frac{\widehat{\operatorname{Cov}}(c_k,r_p)}{\widehat\sigma(r_p)}.
+\frac{\partial\sigma_p}{\partial w_i}
+=\frac{(\Sigma w)_i}{\sigma_p}.
 $$
 
-The covariance measures how its daily contribution moves with total daily
-P&L. Signed contributions sum to annualized portfolio volatility when all
-components, including costs, use the same dates. A negative contribution
-means the component offset some observed variation. The expression is
-undefined when portfolio volatility is zero.
-
-This describes the realized path with changing holdings. Forecast risk applies
-the covariance model available at a decision date to the holdings then in
-place, using $$\sqrt{w^\top\Sigma w}$$.
+This is the local change in volatility per unit of signed weight, holding
+other weights fixed. Multiplying by $$w_i$$ gives the position's contribution
+to volatility. A practical trade also changes expected return, costs and
+constraints, so a large contribution is a place to investigate, not an
+automatic sell instruction. Replacing a position requires evaluating the
+whole proposed trade, including what funds it.
 
 </div>
 </details>
@@ -574,6 +653,44 @@ but earned **0.85 points overall, before costs**. Its other components more
 than offset that loss.
 
 
+
+## Did the risk change too?
+
+Yes. Portfolio volatility rose from **7.9%** over the full history to **9.3%**
+in the 2008–09 drawdown and **13.1%** in 2020–21. The composition changed too.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 5: The same strategy, different sources of fluctuation.</strong> Realized variance shares (%), using each complete peak-to-trough window. Costs account for the small difference from 100%.</p>
+
+| Period | Longs | Shorts |
+| :--- | ---: | ---: |
+| Full history | 59.6 | 40.4 |
+| 2008–09 drawdown | 36.1 | 63.9 |
+| 2020–21 drawdown | 99.9 | 0.2 |
+{: .research-table .comparison-table .attribution-table }
+
+</div>
+
+That last row looks surprising. Shorts lost **13.46 P&L points** in 2020–21,
+yet contributed only **0.2% of the window's daily variance**. The short book
+was volatile on its own (**23.4%** annualized), but its negative covariance
+with the longs almost cancelled its standalone variance in this allocation.
+Covariance measures how the daily fluctuations line up;
+cumulative P&L measures where we end up. A low variance share doesn't make
+those short losses harmless, or mean that the short book was quiet on its own.
+
+At the factor level, beta's variance share rose from **6.2%** over the full
+history to **21.9%** in 2008–09. In 2020–21, the common intercept contributed
+**20.0% of variance**, despite earning **2.86 points**. The residual remained
+large in both episodes, at **39.9%** and **30.4%**. These are useful leads for
+examining the underlying positions, alongside the loss contributions in
+Figure 6.
+
+The next risk question is whether those concentrations were visible before
+the losses. To answer it, I'd compare decision-time exposures, factor
+volatilities and correlations—not infer a warning signal from these
+after-the-event shares. Variance also leaves out the ordering of returns,
+which is why the decline-versus-rebound analysis still matters.
 
 ## How much should I trust that split?
 
@@ -817,8 +934,9 @@ useful for diagnosing a loss; it doesn't tell me when I could have traded differ
 ## References
 
 Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
-Chapter 8; [*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
-Chapter 14.
+2021 edition, Chapters 7–8 and Appendix 11.1.3;
+[*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
+9 September 2024 draft, §4.5.2 and Chapter 14.
 
 The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
 is available if you'd like to explore your own portfolio.
