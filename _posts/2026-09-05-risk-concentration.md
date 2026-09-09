@@ -120,7 +120,7 @@ eligible-universe control exceeds it on only 0.69% of rebalances over the full
 sample. At 10%, the frequency rises to 13.55%;
 at 7.5%, it is 30.20%. These frequencies count breaches in the uncapped
 portfolio over the full sample. Table 1 counts corrections in the capped
-portfolio after 2021, so the percentages answer different questions.
+portfolio after 2021.
 
 I check all principal components. The portfolio's largest contribution comes
 from a component after PC10 on 26.05% of observations, and can come from as far
@@ -136,9 +136,8 @@ Figure 1 compares how often each tested limit requires an adjustment.
 
 <p class="figure-caption"><strong>Figure 1: How often do risk caps require an adjustment?</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Solver warnings for Sector 15%, Stock 4% and Stock 6%; checks cover targets only for PCA 7.5% and Stock 3%.</p>
 
-PCA caps intervene more often in the later period. But a cap that requires
-frequent small adjustments is different from one that reshapes the holdings.
-Table 1 helps separate the two.
+PCA caps intervene more often in the later period. Table 1 puts that frequency
+beside the amount of capital the cap reallocates.
 
 The caps apply to target weights using the covariance estimated at that
 rebalance. Rounding, execution, and subsequent price moves can take the actual
@@ -268,6 +267,6 @@ model with little change in performance or trading. Before adopting it, I want t
 whether it limits the risks that concern me. Lower concentration under the
 model leaves that question open.
 
-That's why I want to work on portfolio attribution next. Tracing forecast risk
-and realized P&L to stocks, sectors and styles would help identify the themes
-driving the portfolio.
+In the [attribution series](/quants/portfolio-attribution.html), I trace P&L
+and risk to stocks, sectors and styles, then test limits on the volatility tilt
+that appears during market rebounds.

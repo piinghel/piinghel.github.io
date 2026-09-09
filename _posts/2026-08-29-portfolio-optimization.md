@@ -119,8 +119,8 @@ gross return while removing much of the extra trading.
 
 Figure 1 gives the path behind the averages. The optimizer finishes above the
 volatility-scaled rule. Adding the trading controls finishes highest and loses
-less in its worst drawdown. Its lead opens mainly around 2000 and 2021 rather
-than building at a steady rate. These are portfolios at their actual risk
+less in its worst drawdown. Its lead opens mainly around 2000 and 2021.
+These are portfolios at their actual risk
 levels: annualized volatility is 7.92% for volatility scaling, 8.41% for the
 optimizer and 8.40% with trading controls. The higher paths therefore need to
 be read alongside volatility and Sharpe in Table 1.
@@ -328,9 +328,9 @@ allocation decision too, including which constraints bind and how much I trade.
 
 ## Forecast beta versus realized beta
 
-The beta limit also applies to an estimate at each rebalance. Figure 4 measures
-something different: the beta of the portfolio's realized returns over a
-trailing year. It reflects holdings and market moves throughout that year,
+The beta limit applies to an estimate at each rebalance. Figure 4 follows
+the beta of the portfolio's realized returns over a trailing year.
+It reflects holdings and market moves throughout that year,
 so it can remain far from zero even when new target weights satisfy the
 point-in-time constraint.
 

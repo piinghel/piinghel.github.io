@@ -164,7 +164,7 @@ all five combined portfolios fluctuate less than any of the standalone calendars
   {% include theme-svg-figure.html base="/assets/tranching/calendar-return-risk" mobile="/assets/tranching/calendar-return-risk_mobile" version="3" alt="Full-period mean and range across fifteen standalone calendars versus five three-tranche portfolios. Mean net return is 11.37% versus 11.43%; mean volatility is 8.53% versus 7.88%." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: Similar return, less calendar dependence and lower volatility.</strong> September 1998–May 2026. Each dot is the mean; each line spans the minimum and maximum across fifteen standalone calendars or five three-tranche portfolios. The two panels use different numerical scales.</p>
+<p class="figure-caption"><strong>Figure 3: Similar return, less calendar dependence and lower volatility.</strong> September 1998–May 2026. Each dot is the mean; each line spans the minimum and maximum across fifteen standalone calendars or five three-tranche portfolios.</p>
 
 Across the full history, average net return moves from 11.37% to 11.43%.
 Average volatility falls from 8.53% to 7.88%, a reduction of 0.65 percentage
@@ -229,7 +229,7 @@ At the existing 5 bp cost rate, annual arithmetic cost drag is therefore
 unchanged at 1.24 percentage points for that comparison; it is 1.41 points in
 development. The return and risk benefits above already include these costs.
 Each tranche is charged for its own trades before any cross-tranche netting.
-Fixed-ticket charges, borrow and financing are outside the model. The practical
+Fixed-ticket charges, borrow and financing would require additional estimates. The practical
 change here is tracking three books and sending smaller orders more often.
 
 I would fund all three tranches. The volatility reduction is the main reason: from

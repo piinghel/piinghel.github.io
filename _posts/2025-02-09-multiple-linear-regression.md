@@ -40,9 +40,8 @@ horizons, so the model has to combine many overlapping inputs.
 On each date, I rank stocks cross-sectionally on each predictor and rescale
 those ranks to roughly −1 to 1. Each stock is compared with the other stocks
 available on that date. This limits the influence of raw outliers and
-makes inputs measured in different units comparable. It also discards the
-distance between raw values: the model learns from relative positions in the
-cross-section.
+makes inputs measured in different units comparable. The model learns from
+each stock's relative position in the cross-section.
 
 The target ranks each stock's average daily return over the next 20 sessions
 divided by its volatility over those sessions. For positive forward returns,
@@ -80,7 +79,7 @@ I orient the predictor ranks as shown, average within each theme, then average
 the three themes. Each theme keeps an equal share across its variants. The
 directions and equal weights
 come from the investment ideas and were fixed before inspecting the revised
-benchmark's results. Size stays out of this fixed rule.
+benchmark's results.
 
 The fixed rule uses twelve predictors, while OLS and Ridge use 144.
 Their comparison asks what the broader learned approach delivers over a

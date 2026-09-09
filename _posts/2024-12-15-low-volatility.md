@@ -144,7 +144,7 @@ the return in the long and short books.
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="17" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: Short-book losses in two market rallies.</strong> Before-cost indexed growth above linked cumulative book contributions in percentage points. Corresponding panels share scales. The dot-com episode comes first, followed by April 2025–May 2026.</p>
+<p class="figure-caption"><strong>Figure 3: Short-book losses in two market rallies.</strong> Before-cost indexed growth above linked cumulative book contributions in percentage points. The dot-com episode comes first, followed by April 2025–May 2026.</p>
 
 From 8 October 1998 to 9 March 2000, the market gains about 52% while the portfolio loses
 38% after costs. The short book contributes −27.1 percentage points before
