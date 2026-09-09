@@ -29,7 +29,10 @@ meaningful zero/starting-value references; remove unrelated visual structure.
 
 ## Time paths and drawdowns
 
-Use clear lines and one compact legend or collision-free direct labels.
+Prefer names directly beside time-series lines, usually at their endpoints,
+so readers do not need to match colors to a separate legend. Leave room outside
+the data, separate nearby labels and use short connectors if needed. Use a
+compact legend only when direct labels would be harder to read.
 Comparable models receive similar prominence; a designated reference may be
 thinner but remains readable. Use solid/dashed lines when two models nearly
 overlap. Keep the time axis common across vertically aligned panels.

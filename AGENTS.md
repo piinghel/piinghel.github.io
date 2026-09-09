@@ -42,6 +42,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Prefer short horizontal panel headings to rotated y-axis titles. Keep any
   remaining axis title very short; preserve units. Keep labels clear of lines
   and allow table text to wrap on phones without overlapping adjacent columns.
+- Prefer series names directly beside time-series lines over a separate legend;
+  separate close labels and keep them outside the data where possible.
 - Use captions for interpretation; do not embed figure titles in images.
 - Use captions above tables and below figures. Keep numeric columns aligned,
   define units and periods, and avoid repeating the same title inside an image.
