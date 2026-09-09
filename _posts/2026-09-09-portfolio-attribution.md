@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Understanding Your P&L"
-description: "Understanding a strategy through its changing exposures, sources of return, drawdowns and individual positions."
+description: "What the long and short books earned, and why their protection broke down during market recoveries."
 permalink: /quants/portfolio-attribution.html
 toc: true
 show_date: false
@@ -9,53 +9,48 @@ date: 2026-09-09
 categories: ["Portfolio management"]
 ---
 
+<p class="article-summary">The shorts reduced the portfolio's daily fluctuations, but their protection reversed during market recoveries. I use attribution to understand that trade-off.</p>
 
-<p class="article-summary">I work through where my strategy made money, where it took risk, and what happened during its two worst drawdowns.</p>
+A profitable backtest leaves me with a practical question: which risks were
+worth taking? My long–short strategy made money overall, but the short book
+lost money across the full history. Before changing it, I want to understand
+both the protection it provided and the losses it created.
 
-A profitable backtest leaves me with plenty of questions. Which positions
-made the money? What were the shorts doing? And when the strategy struggled,
-were its usual bets letting it down?
-
-I'll use the long–short equity strategy from my
-[optimizer article](/quants/2026/08/29/portfolio-optimization.html).
-It ranks stocks with a prediction model and sizes positions within risk limits.
-The history runs from **23 September 1998 to 27 May 2026**. One **P&L point**
-means 1% of the same fixed strategy notional throughout.
+I'll use the strategy from my
+[optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
+stocks with a prediction model and sizes positions within risk limits.
+The history runs from **23 September 1998 to 27 May 2026**.
+One **P&L point** means 1% of the same fixed strategy notional throughout.
 
 <details>
 <summary>Backtest assumptions</summary>
 <div markdown="1">
 
-The backtest uses real market data and history already used to help choose
-the model. It charges five basis points on traded notional and excludes
-borrow, financing and market impact. Long and short contributions use the same
-notional, with costs recorded separately for the portfolio.
+This history has already helped shape the model. The backtest charges five
+basis points on traded notional and excludes borrow, financing and market
+impact. Long and short contributions use the same notional, with costs
+recorded separately.
 
 </div>
 </details>
 
-## Start with the long and short books
+## The long and short books
 
-Let's start with something simple: add up the P&L from each side. Across the
-full history, longs earned **444.27 points**, shorts lost **93.17**, and trading
-costs took another **38.18**. That leaves **312.92 points net**.
-
-The gap between the long and net lines in Figure 1 is hard to miss. The long
-book made more than the portfolio kept after short losses and costs.
-
+Across the full history, longs earned **444.27 points**, shorts lost **93.17**,
+and trading costs took another **38.18**. That leaves **312.92 points net**.
+Figure 1 shows how much of the long book's gains the strategy kept.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="4" alt="Full-history cumulative long, short and net contributions above the daily net drawdown, with the 2008–09 and 2020–21 declines shaded." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Longs and shorts are gross; net includes trading costs. Shading marks the two deepest peak-to-trough declines.</p>
 
-
-Was the short book losing money all along? Table 1 gives a more mixed picture:
-shorts added 5.12 points in 2000–04, but lost 54.89 in 2010–14.
-
+The short book wasn't a constant drag. Table 1 shows that it added **5.12
+points in 2000–04**, but lost **54.89 in 2010–14**. Its role needs to be
+understood across different market conditions.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: How the two books contributed over time.</strong> P&amp;L points. ¹Partial blocks at the beginning and end of the sample; totals are not annualized.</p>
+<p class="table-caption"><strong>Table 1: How the two books contributed over time.</strong> P&amp;L points. ¹Partial blocks; totals are not annualized.</p>
 
 | Period | Longs | Shorts | Costs | Net |
 | :--- | ---: | ---: | ---: | ---: |
@@ -70,444 +65,97 @@ shorts added 5.12 points in 2000–04, but lost 54.89 in 2010–14.
 
 </div>
 
+The long and short books had standalone annualized volatility of **16.7%**
+and **16.4%**, but their daily P&L had a correlation of **−0.89**. Together,
+after costs, portfolio volatility was **7.9%**. The shorts lost money while
+offsetting a lot of the longs' fluctuations. Removing them would change both.
 
-I'd want to understand that drag before changing the strategy. Over this history,
-the long and short books had standalone annualized volatility of **16.7%** and
-**16.4%**, but their daily P&L had a correlation of **−0.89**. Together, after costs,
-portfolio volatility was **7.9%**. The shorts lost money, but also offset a lot
-of the longs' fluctuations. Both facts matter when judging their usefulness.
+The portfolio was net long **22.0% of notional on average**, yet its historical
+beta to the Russell 1000 price-return benchmark was only **0.068**. A larger
+book of lower-beta longs can offset a smaller book of higher-beta shorts.
+The drawdowns will show where that balance broke down.
 
-The portfolio was net long in dollars: **+22.0% of notional on average**.
-Yet its historical sensitivity to the Russell 1000 price-return benchmark was
-only **+0.068**. Dollars and beta measure different things: a larger book of
-lower-beta longs can offset a smaller book of higher-beta shorts. That low
-full-history sensitivity doesn't mean the portfolio was protected in every
-period—we'll see that in the drawdowns.
+## Where returns and risk came from
 
-## Where did we take risk?
-
-Paleologo makes a useful distinction in both books: how much a position moves
-on its own, and how much it contributes to the whole portfolio's risk.
-The long and short books are a good example of why those differ.
-
-I'll measure risk here as the variance of daily P&L on the same fixed notional.
-For each component, its **share of portfolio variance** is
-
-$$
-p_k=\frac{\widehat{\operatorname{Cov}}(c_k,r_p)}
-{\widehat{\operatorname{Var}}(r_p)},
-\qquad r_p=\sum_k c_k.
-$$
-
-In plain language: how much does this component move with the portfolio?
-These signed shares add to 100%, including costs. Longs account for **59.6%**
-and shorts for **40.4%** over the full history; costs contribute almost zero.
-The shorts still have a positive share of the combined portfolio's variance,
-even though holding them alongside the longs reduced total volatility.
-
-I'll put this measure beside P&L in the next two charts. It describes
-**realized risk over the period**. Forecasting the risk of today's positions
-requires another calculation, which I'll come to below. And variance counts
-both upward and downward moves: it won't tell us on its own when losses hurt.
-
-<details>
-<summary>Why covariance, rather than each component's variance?</summary>
-<div markdown="1">
-
-For two books, total variance is
-
-$$
-\sigma_p^2=\sigma_L^2+\sigma_S^2+2\operatorname{Cov}(L,S).
-$$
-
-Allocating half the cross term to each book gives
-$$\operatorname{Cov}(L,L+S)$$ and $$\operatorname{Cov}(S,L+S)$$.
-The same rule works for many components. Simply adding their standalone
-variances would miss their offsets.
-
-A share can be negative, or exceed 100%, when components hedge one another.
-The contribution to annualized volatility is
-$$RC_k=p_k\widehat\sigma_p\sqrt{252}$$; these contributions add to portfolio
-volatility. Standalone volatilities do not. I use sample covariances on
-identical trading dates; a zero portfolio variance makes the shares undefined.
-The square-root-of-252 scaling is a reporting convention, not an estimate of
-annual holding-period risk allowing for serial dependence.
-
-</div>
-</details>
-
-<details>
-<summary>How a position becomes P&L</summary>
-<div markdown="1">
-
-For a stock held over a return interval, its contribution is
-
-$$
-c_{i,t}=w_{i,t^-}r_{i,t},
-$$
-
-where $$w_{i,t^-}$$ is its signed starting dollar exposure divided by strategy
-notional. A short has a negative weight, so a rising stock produces a loss.
-Adding contributions across stocks and subtracting costs gives that day's
-portfolio P&L. I then add the daily values across the period.
-
-Holdings and returns must cover the same interval, with consistent treatment
-of corporate actions. Trading within an interval needs its own accounting;
-a final position multiplied by the whole period's return won't reconstruct
-what the portfolio earned along the way.
-
-</div>
-</details>
-
-## Which sectors made money?
-
-Now let's group the stocks by sector and add up their P&L across both books
-(Figure 2). No model is needed for this step.
-
-**Every sector contributed positively before costs over the full history.**
-Technology led with **63.45 points**, followed by Consumer Discretionary
-(**55.08**) and Industrials (**49.34**). Energy contributed the least at
-**2.32 points**, followed by Materials at **5.19**.
-
+Figure 2 groups the stock contributions by sector and puts earnings beside
+each sector's share of realized portfolio variance. That share measures how
+its daily P&L moves with the whole portfolio: covariance with portfolio P&L,
+divided by portfolio variance. It includes the offsets between positions.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by full-history earnings." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Compare what each sector earned with the risk it contributed.</strong> September 1998–May 2026. P&amp;L is gross across both books; variance shares use covariance with net portfolio P&amp;L. Unallocated portfolio costs contribute −0.01% of variance and are omitted from the sector rows.</p>
+<p class="figure-caption"><strong>Figure 2: Compare what each sector earned with the risk it contributed.</strong> September 1998–May 2026. P&amp;L is gross across both books. Variance shares include covariance with the rest of the portfolio; unallocated costs contribute −0.01% and are omitted.</p>
 
-Health Care and Technology each account for about **15% of variance**, although
-Technology earned considerably more. Energy earned just **2.32 points** while
-contributing **6.1% of variance**. That puts Energy on my list to investigate:
-which positions used that risk, and did they offer protection when I needed it?
-It doesn't establish that deleting the sector would improve the strategy.
+**Every sector contributed positively before costs.** Technology led with
+**63.45 points**, followed by Consumer Discretionary and Industrials.
+Health Care and Technology each accounted for about **15% of variance**,
+although Technology earned considerably more.
 
+Energy earned only **2.32 points** while contributing **6.1% of variance**.
+Its longs earned **17.64 points**, almost cancelled by **15.33 points of short
+losses**. That is a useful place to investigate whether the shorts provided
+enough protection to justify their cost.
 
-The totals are positive largely because long gains outweighed short losses.
-In Energy, for example, longs earned **17.64 points** and shorts lost **15.33**.
-Only Communications and Consumer Staples had positive short-book contributions
-over the full history.
+These totals reflect position size and time held as well as stock performance.
+The sector labels are retrospective. They help locate the earnings and losses;
+the next question is whether different sectors contained similar bets.
 
-Position size and time held both affect these totals. A sector can contribute
-more simply because I held more of it. I'm also using retrospective
-classifications to group the history; the labels may differ from those used
-at the time.
+## Shared exposures
 
-## Which stocks stand out?
+A factor model looks for those common bets. I fit each day's stock returns
+jointly to prior-day size, momentum, volatility, beta, reversal and sector
+characteristics. A factor's contribution combines the portfolio's exposure
+with that day's fitted factor return. The **residual** is the part of covered
+stocks' returns the model leaves unexplained.
 
-Let's put names to those totals. Table 2 lists the five biggest winners
-and losers across the full history.
-
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 2: The five best and five worst stock contributions.</strong> Gross P&amp;L points across both books. Names identify the securities in the reference data and may reflect later corporate changes.</p>
-
-| Stock | Sector | P&L |
-| :--- | :--- | ---: |
-| Apple | Technology | +5.59 |
-| Computer Sciences | Technology | +4.34 |
-| Amazon.com | Consumer Discretionary | +3.48 |
-| Microsoft | Technology | +3.27 |
-| VMware | Technology | +3.02 |
-| United States Steel | Materials | −3.99 |
-| Continental Resources | Energy | −3.21 |
-| Tesla | Consumer Discretionary | −2.95 |
-| Match Group (old listing) | Communications | −2.85 |
-| Brocade Communications Systems | Technology | −2.66 |
-{: .research-table .comparison-table .attribution-table  .stock-table }
-
-</div>
-
-
-Apple contributed **5.59 points**, almost entirely from the long side.
-For VMware, **2.68 of its 3.02 points** came from shorts.
-Among the losers, Tesla's **−2.95 points** also came almost entirely from
-short positions.
-
-Four of the five largest winners were Technology stocks. So was Brocade,
-one of the biggest losers. The stock table exposes weak spots inside an
-otherwise profitable sector.
-
-## What did the shared exposures contribute?
-
-Several stocks can lose money for similar reasons. Were my positions tilted
-towards larger companies, recent winners or lower-volatility stocks, and what
-did those tilts earn? This is where I bring in a **factor model**.
-
-Here's how I calculate the split:
-
-1. Describe each stock using its prior-day characteristics, or **loadings**.
-2. Fit that day's stock returns across the eligible universe, with all factors
-   in the regression together. The fitted coefficients are the day's
-   **factor returns**; what remains for each covered stock is its **residual**.
-3. Multiply each stock's signed starting weight by its loading and the factor
-   return, then add across stocks and days.
-
-$$
-c_{i,k,t}=w_{i,t^-}b_{i,k,t^-}\widehat f_{k,t},
-\qquad
-C_k=\sum_t\sum_i c_{i,k,t}.
-$$
-
-Figure 3 applies this to the full history. Momentum contributed **23.10 points**,
-volatility **20.26** and reversal **17.94**. Beta (**−15.13**) and size
-(**−5.99**) detracted. The largest component was the **residual, +198.82 points**:
-the part of covered stocks' returns left after fitting the model.
-
+Figure 3 shows that momentum, volatility and reversal earned money over the
+full history, while beta and size detracted. The largest component was the
+**residual, +198.82 points**, which also contributed **45.2% of realized
+variance**.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="5" alt="Full-history fitted components with P&L beside signed variance share, including residual, uncovered holdings and costs." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: Earnings and risk tell different parts of the story.</strong> P&amp;L sums to +312.92 points net; realized variance shares sum to 100%. Sector effects are model terms, distinct from grouping complete stock P&amp;L by sector. All rows use the same dates.</p>
+<p class="figure-caption"><strong>Figure 3: Earnings and risk tell different parts of the story.</strong> P&amp;L sums to +312.92 points net; realized variance shares sum to 100%. Sector effects are fitted model terms, distinct from the complete sector P&amp;L in Figure 2.</p>
 
-The residual earned the most and contributed **45.2% of realized variance**.
-Momentum contributed **9.7%**, while beta and size each contributed roughly
-**6–7%** despite losing money. Uncovered holdings account for another **7.9%**:
-I can't quietly treat their risk as explained by the model.
+The common intercept earned **84.09 points**. It represents the fitted
+baseline shared by covered stocks; its exposure is their net dollar weight.
+The standardized beta term measures a separate tilt within the stock universe.
+Neither label alone gives the portfolio's sensitivity to a market index.
 
+The model covered about **93.1% of gross exposure** on average. Uncovered
+holdings earned **22.49 points** and remain separate from the residual.
+I also wouldn't equate the residual with stock-picking skill: omitted value,
+quality and industry effects can land there, and the fitted split has
+estimation noise. I haven't calculated attribution uncertainty for these
+episodes.
 
-The model's common intercept contributed **84.09 points**. Every covered stock
-has a loading of one on that term, so its portfolio exposure is the net dollar
-weight of those stocks. A positive net dollar weight gives positive intercept
-*exposure*; the sign of its P&L still depends on the fitted daily return.
-
-This is where I need to be careful with the labels. Intercept exposure, a
-standardized beta tilt and beta to a market index describe different things.
-The other factor components can offset the intercept's market sensitivity.
-I keep the intercept in the factor split and assess the portfolio's benchmark
-sensitivity separately.
-
-The model covered about **93.1%** of gross exposure on average; holdings outside
-that coverage earned another **22.49 points**. The residual needs closer scrutiny
-before I credit it to stock picking.
-
-For a systematic strategy, factor earnings aren't automatically unwanted,
-either. A predictor can deliberately select characteristics that the risk model
-also describes. The useful question is whether I expected to be paid for that
-exposure, and whether its losses fit that expectation. Trying to maximize the
-residual share would confuse a cleaner-looking attribution with a better strategy.
-
-<details>
-<summary>How the pieces add back to the portfolio</summary>
-<div markdown="1">
-
-For a covered stock, the fitted decomposition is
-$$r_{i,t}=\sum_k b_{i,k,t^-}\widehat f_{k,t}+\widehat\varepsilon_{i,t}$$.
-Multiplying by its signed weight gives
-
-$$
-w_{i,t^-}r_{i,t}
-=\sum_k c_{i,k,t}+w_{i,t^-}\widehat\varepsilon_{i,t}.
-$$
-
-Think of a grid with one row per stock, one column per factor, and a final
-residual column. Adding across a row gives that stock's contribution. Adding
-down a factor column gives that factor's portfolio contribution. Grouping rows
-by sector gives another view of the same money; adding the sector totals to
-the factor totals would count it twice.
-
-For the whole portfolio I also retain uncovered stocks, costs and any difference
-between the model's return basis and the accounting P&L. The reconciliation
-difference here is negligible. Keeping it visible prevents a price or timing
-mismatch from being mistaken for a stock-selection result.
-
-</div>
-</details>
-
-<details>
-<summary>What is fitted, and where does the risk model enter?</summary>
-<div markdown="1">
-
-For one day, stack stock returns in $$r$$ and prior-day loadings in $$B$$.
-The fitted decomposition is
-
-$$
-\begin{aligned}
-r&=B\widehat f+\widehat\varepsilon,\\
-\widehat f&=\arg\min_{f\in\mathcal F}(r-Bf)^\top W(r-Bf).
-\end{aligned}
-$$
-
-Here $$W$$ controls how much each stock matters in the fit. This example uses
-square-root market-cap weights. The fit includes a common intercept and sector
-effects constrained to have a weighted mean of zero; $$\mathcal F$$ denotes
-that constraint. Without it, the intercept and the full set of sector indicators
-would not give a unique set of coefficients. The intercept is the model's common
-baseline; it is not the return
-of a traded market index. Different universes, regression weights or factor
-definitions can change the attribution.
-
-Because each covered stock has intercept loading one, portfolio intercept
-exposure is $$\sum_i w_i$$ on that covered set. Raw holdings beta instead is
-$$\sum_i w_i\beta_i$$, using stock betas to the same named benchmark. Unequal
-long and short dollars can therefore offset in beta. The standardized beta
-loading used in this fit is different again. I keep the intercept contribution
-in the factor split: moving it into residuals would change what "residual"
-means, without improving the explanation of market sensitivity.
-
-The factor returns are estimated **after** observing that day's stock returns.
-Using today's return as the outcome is appropriate for explaining today's P&L;
-using it to build yesterday's exposure or risk forecast would introduce look-ahead.
-This is a cross-sectional fit across stocks each day, rather than a regression
-of the portfolio's return history on factor returns.
-
-The P&L split uses those realized factor returns. The separate covariance
-calculation for risk is explained [below](#what-risk-would-the-model-have-shown).
-
-*Elements*, §14.1, also stresses that holdings must match the return interval.
-If the portfolio trades within it, a single snapshot cannot explain all P&L.
-The difference can include trading gains and losses as well as costs.
-
-</div>
-</details>
-
-
-<details>
-<summary>Net dollars and historical market sensitivity</summary>
-<div markdown="1">
-
-The benchmark slope above comes from regressing daily net fixed-notional P&L
-on the Russell 1000 price return, with a constant. The intercept component's
-slope is **+0.249**, offset by **−0.181** from the
-remaining components. The regressions use the same 6,962 dates and denominator,
-so those slopes add up.
-
-The five-year blocks from 2000 through 2024 have net slopes between **+0.039
-and +0.078**. This is low historical sensitivity for changing holdings; it
-doesn't establish the beta of each day's positions before trading.
-
-</div>
-</details>
-
-## How have the exposures changed?
-
-Before looking at the losses, I want to see how much of each bet I was taking.
-Figure 4 tracks monthly average standardized exposures across the full history.
-
+Figure 4 shows how the exposures behind those earnings changed. The portfolio
+usually favoured larger stocks and maintained a negative volatility tilt.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-exposures" mobile="/assets/portfolio-attribution/whole-exposures_mobile" version="3" alt="Four full-history panels for standardized size, momentum, volatility and beta exposures." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: The portfolio has persistent tilts, with changing sizes.</strong> Monthly mean signed exposures, September 1998–May 2026, on fitted holdings without rescaling missing positions. Zero means no net loading on that characteristic; each panel has its own vertical scale.</p>
+<p class="figure-caption"><strong>Figure 4: Persistent tilts, changing sizes.</strong> Monthly mean signed standardized exposures, September 1998–May 2026, on fitted holdings. Missing positions are not rescaled. Each panel has its own vertical scale.</p>
 
+Those exposures can be part of the prediction model's intended return.
+What matters is how they behave when the strategy struggles: did the bets
+become larger, or did their payoffs reverse?
 
-The strategy usually favours larger stocks and takes a negative volatility
-tilt. During a drawdown, I want to know whether those bets became larger or
-their returns turned against me. Figure 4 gives me the exposure side of that
-comparison; the factor P&L tells me what those exposures earned.
+## When protection reversed
 
-## What risk would the model have shown?
+The two deepest drawdowns were **2008–09** and **2020–21**, both just over
+**16 P&L points**. I split each at the market low to distinguish losses during
+the decline from losses during the recovery.
 
-An exposure chart is only part of that answer. The same exposure becomes
-riskier when its factor becomes more volatile; correlations can also turn
-seemingly separate bets into one large bet.
-
-For positions with signed weights $$w$$ and factor exposures $$b=B^\top w$$,
-the model's portfolio variance is
-
-$$
-\sigma_p^2=
-\underbrace{b^\top\Omega_f b}_{\text{factor risk}}
-+\underbrace{w^\top\Omega_\varepsilon w}_{\text{residual risk}}.
-$$
-
-Here $$\Omega_f$$ contains factor variances and covariances, and
-$$\Omega_\varepsilon$$ describes residual risk. This assumes factor and
-residual returns are uncorrelated. A diagonal residual matrix also assumes
-different stocks' residuals are uncorrelated—an assumption that can miss a
-shared risk the factors leave out.
-
-I'd first ask how much risk comes from factors versus residuals, then drill
-into the factors and stocks contributing most. For a factor $$k$$, its
-variance contribution is $$b_k(\Omega_f b)_k$$. Dividing by total portfolio
-variance gives its share, with correlations included. Large exposure alone
-doesn't determine that ranking.
-
-This is the forward-looking comparison I still need to establish for this
-strategy: use the holdings, loadings and covariance estimates available
-**before** each return interval. The figures here establish historical
-covariance allocations, not those forecasts. In particular, the residual's
-45.2% historical share is not an estimate of the model's forecast idiosyncratic
-share: fitted factor and residual P&L can covary over time.
-
-*Elements*, Chapter 6, makes the next step practical: judge the risk model by
-the decisions it supports. I'd compare its prior forecasts with subsequent
-portfolio fluctuations, then check whether the main exposures behaved as
-predicted during declines and rebounds. A model that consistently understates
-overall volatility has a different problem from one that misses a particular
-source of risk. A higher regression fit alone wouldn't settle either question.
-
-If I change the risk model used for sizing, I'd also have to rebuild the
-portfolios under it. Scoring new risk estimates against the old holdings tests
-a forecast; it doesn't show how the new model would change positions, turnover
-and net P&L.
-
-<details>
-<summary>Which position would I resize to reduce risk?</summary>
-<div markdown="1">
-
-For a fixed covariance estimate $$\Sigma=B\Omega_fB^\top+\Omega_\varepsilon$$,
-
-$$
-\frac{\partial\sigma_p}{\partial w_i}
-=\frac{(\Sigma w)_i}{\sigma_p}.
-$$
-
-This is the local change in volatility per unit of signed weight, holding
-other weights fixed. Multiplying by $$w_i$$ gives the position's contribution
-to volatility. A practical trade also changes expected return, costs and
-constraints, so a large contribution is a place to investigate, not an
-automatic sell instruction. Replacing a position requires evaluating the
-whole proposed trade, including what funds it.
-
-</div>
-</details>
-
-<details>
-<summary>What changes when factors move together?</summary>
-<div markdown="1">
-
-For a fixed portfolio with factor exposures $$e$$ and factor covariance
-$$\Omega_f$$, its factor-P&L sensitivity to factor $$k$$ is
-
-$$
-\beta_{p,k}^{\mathrm{factor}}
-=\frac{(\Omega_f e)_k}{(\Omega_f)_{kk}}.
-$$
-
-When that factor has positive variance, this can be nonzero even if $$e_k=0$$.
-The other exposures enter through their covariance with it. It is a linear
-sensitivity, not evidence that the factor caused every associated move.
-
-The chapter's **maximal attribution** uses these correlations to collect the
-modeled P&L associated with a chosen factor or group, including the part carried
-through other factors. It offers another way to examine the same loss; the
-figures here use ordinary attribution. Individual factor totals can also change
-when the model's factors are re-expressed, even while total modeled P&L and
-forecast risk stay the same. That is why a factor label alone cannot settle
-what economic bet was responsible.
-
-</div>
-</details>
-
-
-## Now look at the two deepest drawdowns
-
-Where did things go most wrong? I take the two deepest declines from a P&L
-peak to the lowest point before recovery: **2008–09** and **2020–21**, both
-just over **16 P&L points**.
-
-The first starts after the peak on **30 July 2008** and reaches its trough on
-**16 September 2009**. The second starts after **21 February 2020** and bottoms
-on **27 January 2021**. But those dates don't tell me whether the damage
-happened while the market was falling or after it started recovering.
-
-To check that, I split each window at the low of the Russell 1000 price-return
-benchmark: **9 March 2009** and **23 March 2020**. Table 3 shows the P&L up to
-that low, then from the following session to the strategy's own trough.
-
+Table 2 covers the strategy's peak-to-trough windows: 30 July 2008 to
+16 September 2009, and 21 February 2020 to 27 January 2021. The market lows
+were **9 March 2009** and **23 March 2020**. These dates are identified with
+hindsight and describe the episodes; they weren't trading signals.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 3: Did the losses come during the decline or the rebound?</strong> Portfolio P&amp;L points on fixed notional. Longs and shorts are gross; net includes costs. Sessions show the different lengths of the phases.</p>
+<p class="table-caption"><strong>Table 2: Losses continued after the market bottomed.</strong> Fixed-notional P&amp;L points, excluding the strategy's peak day. The decline includes the market-low session; the rebound follows it. Longs and shorts are gross; net includes costs.</p>
 
 | Phase | Sessions | Longs | Shorts | Net |
 | :--- | ---: | ---: | ---: | ---: |
@@ -519,103 +167,25 @@ that low, then from the following session to the strategy's own trough.
 
 </div>
 
-
 **The strategy lost in both phases, in both episodes.** Shorts helped during
 the declines, but didn't fully offset the long losses. During the rebounds,
-short losses exceeded the long gains. Figure 5 lines up the market path and
-portfolio contributions so I can see when that change happened.
-
+short losses exceeded long gains. Figure 5 shows when that protection reversed.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/market-phases" mobile="/assets/portfolio-attribution/market-phases_mobile" version="3" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the benchmark low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
+<p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the market low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
 
+The **2009 rebound caused more of that episode's loss**. In 2020, the initial
+decline was much sharper: **9.32 points in 21 sessions**, followed by another
+**6.74 over 214 sessions**. Rebound risk matters in both cases, but it doesn't
+explain the initial failure to protect the portfolio.
 
-<details>
-<summary>How I choose and measure the drawdowns</summary>
-<div markdown="1">
-
-Let $$r_{p,t}$$ be daily net P&L divided by fixed notional. Its cumulative
-path and drawdown are
-
-$$
-A_t=\sum_{s\le t}r_{p,s},
-\qquad
-D_t=A_t-\max(0,A_1,\ldots,A_t).
-$$
-
-An episode ends when the prior peak is regained. I rank those distinct episodes
-by their deepest $$D_t$$, so several bad days in the same decline don't occupy
-both places. The loss attribution starts after the peak and ends at the trough.
-The strategy eventually regained its prior P&L peak on 22 September 2010 and
-30 April 2021, respectively.
-
-These are additive P&L drawdowns on fixed notional. Compounding the daily
-series selects the same two episodes but reverses their order. I keep the
-additive convention so the book, stock and factor contributions add directly
-to the loss being explained.
-
-Within each window, the market low is the minimum compounded benchmark level.
-The decline includes that session; the rebound starts on the next one. These
-dates are selected with hindsight. The window starts at the strategy's peak,
-which need not be the market's peak, and a rebound need not regain the market's
-previous high.
-
-Moving the split five sessions earlier or later leaves both phases negative
-in both episodes. The 2008–09 rebound still loses more. In 2020–21, which phase
-has the larger total loss changes with that boundary, so I wouldn't make much
-of that ranking. These are two selected episodes, not a tested market-timing rule.
-
-</div>
-</details>
-
-### 2008–09: more damage during the rebound
-
-The benchmark fell **47.73%** from the strategy's July peak to 9 March 2009,
-then rose **59.69%** through 16 September. The shorts cushioned the fall,
-but gave back more than the longs earned during the rebound. The strategy
-lost **6.18 points before the market low and another 10.14 afterwards**.
-Here, more of the damage accumulated after the market had bottomed.
-
-Over the whole peak-to-trough window, **Industrials lost 7.66 points**:
-**−1.93 from longs** and **−5.73 from shorts**. TE Connectivity (**−0.78**),
-RR Donnelley (**−0.75**) and CSX (**−0.60**) were its largest losing positions.
-
-Technology, which led the full-history gains, also helped over this window
-with **+2.03 points**. Industrials did the opposite: a large long-run contributor
-became the biggest losing sector in this episode.
-
-### 2020–21: a sharp decline, followed by further losses
-
-The benchmark fell **33.79%** through 23 March 2020. The strategy lost **9.32
-points in just 21 sessions**: the short gains weren't enough to offset the
-long losses.
-
-The market then rose **73.03%** through 27 January 2021, while the strategy
-lost another **6.74 points over 214 sessions**. The initial decline was much
-sharper; the rebound added a slower, prolonged loss. So I can't explain this
-episode simply as shorts getting caught by a recovery.
-
-Across the full 2020–21 window, **Financials lost 9.83 points**, with almost equal losses
-from longs (**−4.93**) and shorts (**−4.89**). Real Estate lost **3.16** and
-Consumer Discretionary **2.20**. Within Financials, Rithm Capital (**−1.16**),
-KeyCorp (**−1.08**) and State Street (**−0.81**) were the largest losers,
-all from long positions.
-
-Caesars was the largest individual stock loss in the whole episode at
-**−2.36 points**, also almost entirely from longs. So the fact that shorts
-lost more in aggregate doesn't mean the worst individual positions were shorts.
-
-## Was I just holding on to the old shorts?
-
-One explanation would be that the stocks I shorted during the decline bounced
-back and I stayed short too long. I can test part of that story by separating
-rebound P&L into names that were short at the market low and names that weren't
-(Table 4).
+Was I simply holding on to the old shorts? Table 3 separates names that were
+short at the market low from names that weren't.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 4: Where the rebound's short losses came from.</strong> Gross short P&amp;L points after the market low through the strategy trough. Each group includes subsequent changes in size, exits and reentries.</p>
+<p class="table-caption"><strong>Table 3: New names also contributed to the rebound losses.</strong> Gross short P&amp;L points from after the market low through the strategy trough. Groups include subsequent resizing, exits and reentries.</p>
 
 | Short-book names | 2009 rebound | 2020–21 rebound |
 | :--- | ---: | ---: |
@@ -627,116 +197,57 @@ rebound P&L into names that were short at the market low and names that weren't
 </div>
 
 Names absent from the short book at the low accounted for **57.5%** of its
-2009 rebound loss and **47.7%** in 2020–21. Holding on to the original shorts
-therefore can't explain the whole loss. I also need to understand the positions
-the strategy entered or reentered during the rebound.
+2009 rebound loss and **47.7%** in 2020–21. The five worst short contributors
+explained only **12.4%** and **8.8%** of the respective losses.
+The damage was broad and involved changing positions, which points back
+towards shared characteristics.
 
-Was it just a handful of bad stocks? The five worst short contributors explain
-only **12.4%** and **8.8%** of the respective aggregate short-book losses, before costs. The damage
-was spread much more broadly. That makes shared exposures worth examining.
-
-## Did the same factors hurt in both periods?
-
-On average, the strategy tilted away from higher-beta and more volatile stocks.
-Those tilts helped while the market fell, then hurt as it rebounded in both
-episodes. But they don't explain the whole loss. Figure 6 adds up each factor
-over the complete drawdown, including the residual left by the model.
-
+The beta and volatility tilts helped during both market declines, then hurt
+during both rebounds. Figure 6 shows their contributions over each complete
+drawdown, alongside the residual and other terms.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/drawdown-factors" mobile="/assets/portfolio-attribution/drawdown-factors_mobile" version="3" alt="The 2008–09 and 2020–21 attribution side by side: beta and residual lead the first loss; residual and volatility lead the second." %}
 </div>
-<p class="figure-caption"><strong>Figure 6: Similar total losses, different factor contributions.</strong> Peak-to-trough P&amp;L points on equal scales. Each panel includes all factor terms, residual, uncovered holdings and costs, and reconciles to its net loss.</p>
+<p class="figure-caption"><strong>Figure 6: Similar total losses, different factor contributions.</strong> Peak-to-trough P&amp;L points on equal scales. Each panel includes factor terms, residual, uncovered holdings and costs.</p>
 
+In **2008–09**, beta was the largest losing style at **−6.55 points**, and the
+residual lost **6.14**. In **2020–21**, volatility lost **8.10 points** and the
+residual **11.41**. Other contributions partly offset those losses.
 
-In **2008–09**, beta was the largest losing style at **−6.55 points**, followed
-by size (**−3.66**). The residual lost **6.14**. In **2020–21**, volatility was
-the main losing style (**−8.10**), beta lost **4.53**, and the residual was
-larger still at **−11.41**. Positive contributions from other terms partly
-offset these losses.
+Inside those totals, beta went from **+3.32 during the decline to −9.87 during
+the rebound** in 2008–09, and from **+1.27 to −5.80** in 2020–21. The strategy
+kept a negative tilt as the fitted payoff changed sign.
 
-To see the reversal inside those totals, take beta: its contribution went
-from **+3.32 during the decline to −9.87 points during the rebound** in 2008–09,
-and from **+1.27 to −5.80** in 2020–21.
+Exposure variation within the rebounds actually softened the beta and
+volatility losses relative to each phase's average exposure. For example,
+2020–21 volatility lost **8.71 points**, compared with **9.68** at the phase's
+average exposure. That directs my attention towards the persistent bet.
+This comparison combines trades, price drift and changing stock characteristics;
+it doesn't isolate the quality of the sizing decisions.
 
-Volatility tells a similar story in 2020–21. Its contribution swung from
-**+0.61 to −8.71 points**, while average exposure became more negative,
-from **−0.75 to −0.99**. The fitted factor return also changed sign.
-Both the size of the bet and its payoff changed. But a more negative average
-exposure doesn't tell me whether its day-to-day changes made the loss worse.
+A closer look at the holdings supports the defensive-long/aggressive-short
+explanation. At the March 2020 low, the longs had lost **17% over the preceding
+126 sessions**, versus **35% for the shorts**, weighted by starting exposure.
+Their estimated market betas were **0.86 and 1.03**. The long book entered the
+recovery with smaller prior losses and lower estimated market sensitivity.
+The same ordering appeared in 2009.
 
-I can separate those effects. During the 2020–21 rebound, applying its average
-volatility exposure on every day gives **−9.68 points** of factor P&L.
-The actual changing exposure lost **8.71 points**: variation around that average
-offset **0.98 points** of loss. The same variation term was positive for beta
-and volatility in both rebounds.
+Momentum can reinforce that overlap: during a sell-off, the relative winners
+can be the defensive stocks that fell least. This resembles the rebound
+mechanism in Daniel and Moskowitz's *Momentum Crashes*. But momentum isn't the
+whole explanation here. During the 2009 rebound, the portfolio's momentum
+orientation reversed and its fitted momentum contribution was positive,
+while the low-volatility tilt continued to hurt.
 
-For these two factors, the losses mainly reflect maintaining negative tilts
-while the fitted factor returns turned positive. Within each
-rebound, exposure variation softened those particular losses. It doesn't
-establish good trading or sizing decisions: exposure also changes with prices,
-stock characteristics and model coverage.
+## What variance misses
 
-<details>
-<summary>Separating the average bet from its variation</summary>
-<div markdown="1">
-
-For one factor over the selected phase, let $$e_t$$ be its portfolio exposure,
-$$\widehat f_t$$ its fitted return and $$\overline e$$ its average exposure.
-Then the exact identity is
-
-$$
-\sum_t e_t\widehat f_t
-=\overline e\sum_t\widehat f_t
-+\sum_t(e_t-\overline e)\widehat f_t.
-$$
-
-The first term is the contribution of the phase's average exposure. The second
-measures how exposure variation lined up with factor returns. Both use the same
-daily fitted holdings and dates. This is a retrospective accounting comparison:
-the phase average wasn't known in advance, and it doesn't describe a tradable
-portfolio with frozen holdings.
-
-</div>
-</details>
-
-## Would a hedge have helped?
-
-The shorts did provide protection during the declines. The harder question is
-whether I needed these particular stocks to get it. Their two possible jobs
-are to express negative stock forecasts and to offset unwanted common risks.
-A losing short book can do the second job well while doing the first badly.
-
-An informative comparison would keep the long book fixed and replace the shorts
-with a simple market hedge sized to the same intended benchmark sensitivity.
-I'd then compare net earnings, drawdowns and the remaining factor exposures.
-This would test the value of the selected shorts beyond broad market protection;
-it wouldn't reproduce all their sector and style exposures. I haven't run that
-comparison here. Borrow, financing and hedge trading costs would matter to it,
-particularly because the current results omit the first two.
-
-Nor can I estimate a factor hedge by deleting a losing bar from Figure 6.
-An actual hedge changes several exposures, has its own stock-specific risk
-and costs, and may give up expected return. Even within one stock, Annaly's
-**−0.20 points through volatility** in 2020–21 coexisted with **+0.85 points
-overall**. Removing that position would remove all its contributions.
-
-The hedging chapters in both books focus on the resulting *whole portfolio*.
-An uncertain hedge ratio can add risk, and zero exposure to one factor can
-still leave sensitivity through correlated factors. For this strategy, I'd
-first decide which exposures belong to the prediction thesis and which are
-incidental. The hedge should address the latter, rather than whichever bar
-looked worst after a crisis.
-
-
-
-## Did the risk change too?
-
-Yes. Portfolio volatility rose from **7.9%** over the full history to **9.3%**
-in the 2008–09 drawdown and **13.1%** in 2020–21. The composition changed too.
+Portfolio volatility rose from **7.9%** over the full history to **9.3%** in
+the 2008–09 drawdown and **13.1%** in 2020–21. Yet Table 4 shows why a variance
+allocation alone would miss an important part of the problem.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 5: The same strategy, different sources of fluctuation.</strong> Realized variance shares (%), using each complete peak-to-trough window. Costs account for the small difference from 100%.</p>
+<p class="table-caption"><strong>Table 4: A losing short book can have a small variance share.</strong> Realized variance shares (%) over the full history and each complete drawdown. Costs account for the small difference from 100%.</p>
 
 | Period | Longs | Shorts |
 | :--- | ---: | ---: |
@@ -747,246 +258,42 @@ in the 2008–09 drawdown and **13.1%** in 2020–21. The composition changed to
 
 </div>
 
-That last row looks surprising. Shorts lost **13.46 P&L points** in 2020–21,
-yet contributed only **0.2% of the window's daily variance**. The short book
-was volatile on its own (**23.4%** annualized), but its negative covariance
-with the longs almost cancelled its standalone variance in this allocation.
-Covariance measures how the daily fluctuations line up;
-cumulative P&L measures where we end up. A low variance share doesn't make
-those short losses harmless, or mean that the short book was quiet on its own.
+Shorts lost **13.46 P&L points** over the complete 2020–21 drawdown, yet
+contributed only **0.2% of its daily variance**. Their standalone volatility
+was **23.4%**, but their negative covariance with the longs almost cancelled
+that variance in the allocation.
 
-At the factor level, beta's variance share rose from **6.2%** over the full
-history to **21.9%** in 2008–09. In 2020–21, the common intercept contributed
-**20.0% of variance**, despite earning **2.86 points**. The residual remained
-large in both episodes, at **39.9%** and **30.4%**. These are useful leads for
-examining the underlying positions, alongside the loss contributions in
-Figure 6.
+The short book could offset daily fluctuations while still losing money over
+the recovery. Its small variance share therefore doesn't settle whether those
+positions were useful. I need the path of the losses alongside the risk totals.
 
-The next risk question is whether those concentrations were visible before
-the losses. To answer it, I'd compare decision-time exposures, factor
-volatilities and correlations—not infer a warning signal from these
-after-the-event shares. Variance also leaves out the ordering of returns,
-which is why the decline-versus-rebound analysis still matters.
+## What I'd test next
 
-## How much should I trust that split?
+I'd start with a permanent sizing rule for shorts where prior losses, high beta
+and high volatility overlap. That targets the shared vulnerability without
+requiring me to recognise a market bottom in real time. The prediction model
+would stay fixed so the comparison tests portfolio construction.
 
-I can add up what a stock earned from the portfolio accounting. Deciding how
-much came from common factors is harder: I have to estimate that split.
-*Elements*, §14.2, explains why even a sensible model leaves uncertainty here.
+I'd also compare replacing part of those shorts with a broad market hedge,
+keeping comparable intended market sensitivity and checking the resulting
+sector and style risks. The objective is to preserve useful negative stock
+signals and decline protection while reducing the rebound losses.
 
-Think about how we estimated momentum's return. Stocks with high momentum can
-also move on earnings announcements, company news and other individual events.
-Across a finite set of stocks, those effects won't cancel perfectly. Some can
-be picked up by the regression as momentum return. **Even a correctly specified
-factor model has estimation noise.**
-
-For the covered positions, call the underlying factor contribution $$F$$ and
-the stock-specific contribution $$I$$. A hat marks an estimate. If the model
-assigns an extra $$\delta$$ of P&L to factors, it removes exactly that amount
-from the residual. Figure 7 shows the consequence: these are **not two
-independent errors**.
-
-<div class="research-figure">
-  {% include attribution-error-diagram.html %}
-</div>
-<p class="figure-caption"><strong>Figure 7: The split moves; its sum stays fixed.</strong> Within the assumed model, estimation adds the same amount to factor P&amp;L that it subtracts from residual P&amp;L. The error can have either sign.</p>
-
-Getting the attribution to add up therefore cannot tell me whether either
-piece is precise. For one day, let $$e=B^\top w$$ be the portfolio's factor
-exposures and $$V_\eta$$ the covariance of factor-return estimation error.
-The standard error of either portfolio attribution is
-
-$$
-s=\sqrt{e^\top V_\eta e}.
-$$
-
-This measures uncertainty in the **explanation of the P&L**. It is different
-from the volatility of the portfolio's returns. Factor errors can move together,
-so the off-diagonal entries of $$V_\eta$$ matter too.
-
-For the whole period, write the residual estimate as $$\widehat I_T$$ and its
-attribution standard error as $$s_T$$. With zero-mean Gaussian estimation errors
-and known error variance, a 95% interval takes the form
-
-$$
-\widehat I_T\;\pm\;1.96\,s_T.
-$$
-
-The same width applies to the total factor attribution under these assumptions.
-The figures here show point estimates; $$s_T$$ has not been calculated for
-these episodes. I can describe how the model allocates each loss, but I can't
-say whether its residual estimate is distinguishable from estimation noise.
-An interval entirely below zero would support a negative stock-specific
-contribution under that model. A claim about persistent stock-selection skill
-would need evidence across periods too.
-
-There is a second uncertainty: **did I choose a suitable model?** Mine omits
-value, quality and finer industry effects, so some common returns can end up
-in the residual. An interval for estimation noise within this model would not
-automatically cover those omissions. To attribute the residual loss to stock
-selection, the interpretation would also have to survive a reasonable change
-in factor specification. Otherwise the conclusion concerns this particular
-model's unexplained return.
-
-<details>
-<summary>Computing the standard error, including across days</summary>
-<div markdown="1">
-
-Start with $$r=Bf+\varepsilon$$ and $$\widehat f=f+\eta$$. Subtracting the
-fitted factor return gives
-
-$$
-\widehat\varepsilon=r-B\widehat f=\varepsilon-B\eta.
-$$
-
-Multiplying by the signed position weights $$w$$ gives opposite attribution
-errors $$\delta=w^\top B\eta=e^\top\eta$$ for factor and residual P&L.
-Thus $$\operatorname{Var}(\delta)=e^\top V_\eta e$$.
-
-To obtain $$V_\eta$$ for weighted least squares in an
-identified, full-rank factor basis, write the estimator as
-
-$$
-\begin{aligned}
-A&=(B^\top WB)^{-1}B^\top W,\\
-\widehat f&=Ar=f+A\varepsilon.
-\end{aligned}
-$$
-
-Since $$\eta=A\varepsilon$$, residual-noise covariance $$D$$ implies
-
-$$
-V_\eta=ADA^\top.
-$$
-
-*Elements*, §14.2.2, uses generalized least squares with known $$D$$.
-Setting $$W=D^{-1}$$ simplifies this to
-
-$$
-V_\eta=(B^\top D^{-1}B)^{-1}.
-$$
-
-My market-cap weighting requires the more general expression. The sector
-constraint also requires working in an independent factor basis, with matching
-portfolio exposures. And $$D$$ describes the underlying stock-specific noise;
-it cannot simply be assumed equal to the covariance of fitted residuals, from
-which the regression has already removed some noise.
-
-One practical estimate is the **HC3 sandwich covariance**. With regression
-leverage $$h_i=(BA)_{ii}$$, it uses
-
-$$
-\widehat V_{\eta,\mathrm{HC3}}
-=A\,\operatorname{diag}\!\left(
-\frac{\widehat\varepsilon_i^2}{(1-h_i)^2}
-\right)A^\top.
-$$
-
-The leverage adjustment allows for the way fitting reduces residuals. It permits
-different noise variances across stocks but assumes uncorrelated errors;
-shared omitted drivers can make the interval too narrow. Normal intervals using
-this estimated covariance are approximate. HC3 needs residual degrees of freedom
-and $$h_i<1$$.
-
-Across days, the attribution error is $$\Delta_T=\sum_t\delta_t$$. Treating
-the loadings and portfolio weights as fixed, its variance is
-
-$$
-s_T^2=\sum_t\operatorname{Var}(\delta_t)
-+2\sum_{t<u}\operatorname{Cov}(\delta_t,\delta_u).
-$$
-
-If the daily estimation errors are uncorrelated, the cross-day terms vanish:
-
-$$
-s_T^2=\sum_t e_t^\top V_{\eta,t}e_t.
-$$
-
-So I add daily **error variances**, then take the square root. I don't add
-standard errors or annualize the result: the interval concerns this particular
-period's P&L. Dependence across days, estimated residual risks and changing
-model parameters require more care. Even a well-calculated interval remains
-conditional on the model and does not cover every omitted factor or mistaken
-loading.
-
-</div>
-</details>
-
-
-
-## What would I investigate next?
-
-The rebound losses were broad, involved new as well as existing shorts, and
-included substantial residual losses. The beta and volatility calculation points
-to persistent tilts more than adverse variation within each rebound. That gives
-me a more focused starting point than simply tightening every exposure limit.
-
-First I'd examine the predictions behind the shorts entered during the rebounds:
-were they repeatedly selecting the same losing characteristics, and what happened
-to their residual returns? That connects the losses back to the reason for owning
-the positions.
-
-Then I'd separate selection from sizing on those positions. A rising short grows
-in dollar size without another trade; I need to distinguish that drift from
-changes in share quantities. The factor-level comparison above doesn't isolate
-either effect. Once residual-risk estimates and attribution uncertainty are
-credible, a reference with equal risk per position can help ask whether the
-stock choices were poor or the largest risks were placed on the losers.
-
-<details>
-<summary>The calculation behind selection and sizing</summary>
-<div markdown="1">
-
-This is the selection/sizing identity from *Elements*, §14.4. I have not
-evaluated it for these episodes.
-For one date, let $$\varepsilon_i$$ be a stock's idiosyncratic return,
-$$\sigma_i>0$$ its matching idiosyncratic volatility, and $$w_i$$ its signed
-position weight. Define
-
-$$
-u_i=\frac{\varepsilon_i}{\sigma_i}\operatorname{sign}(w_i),
-\qquad a_i=\sigma_i|w_i|.
-$$
-
-The first quantity measures the signed outcome in volatility units; the second
-measures the size of the risk taken. Their product is exactly
-$$u_i a_i=w_i\varepsilon_i$$. Averaging across the $$n$$ included positions,
-with cross-sectional covariance defined using divisor $$n$$, gives
-
-$$
-\sum_i w_i\varepsilon_i
-=\overline u\sum_i a_i
-+n\operatorname{Cov}_{i}(u_i,a_i).
-$$
-
-This identity makes the question concrete. The first term uses the average
-signed outcome. The second is positive when larger risk positions coincide
-with better signed outcomes on that date. A hit rate discards the magnitude
-of those standardized outcomes, so it answers a different question.
-
-If idiosyncratic returns are uncorrelated under the model, the corresponding
-portfolio volatility is $$\sqrt{\sum_i a_i^2}$$. Dividing the identity by it
-gives a selection term multiplied by diversification,
-$$\sum_i a_i/\sqrt{\sum_i a_i^2}$$, plus a sizing term. This is a
-single-period risk-normalized result; a reported time-series information
-ratio requires its own aggregation convention. See *The Elements of
-Quantitative Investing*, §14.4.
-
-</div>
-</details>
-
-Any proposed hedge or sizing change would then face the same test: does it
-improve the whole strategy after costs across ordinary periods as well as
-crises? Following *Elements*, Chapter 5, I'd define the rule and comparison
-before evaluating them. These episodes have already shaped the hypothesis;
-improving them would be development evidence, not independent confirmation.
+Both changes need a costed portfolio replay across ordinary periods and other
+recoveries. I'd compare net returns, drawdowns, turnover and protection during
+declines, including borrow and financing. The sizing rule and hedge comparison
+haven't been tested here; the two major drawdowns have already shaped the
+hypothesis.
 
 ## References
 
 Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
-2021 edition, Chapters 3–4 and 7–8, Appendices 11.1.3 and 11.8;
+2021 edition, Chapters 3–4 and 7–8;
 [*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
-9 September 2024 draft, Introduction and Chapters 4–6, 12 and 14.
+9 September 2024 draft, Chapters 6 and 14.
+
+Kent Daniel and Tobias Moskowitz, [*Momentum Crashes*](https://www.kentdaniel.net/papers/published/jfe_16.pdf),
+*Journal of Financial Economics*, 2016, Sections 2–3.
 
 The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
 is available if you'd like to explore your own portfolio.
