@@ -10,11 +10,11 @@ categories: ["Portfolio management"]
 ---
 
 
-<p class="article-summary">Where does my strategy make money, and what happens when it loses? I start with the long and short books, then look at sectors, stocks and factors across the full history. Finally, I work through the two deepest drawdowns.</p>
+<p class="article-summary">I work through my strategy's P&L, from the long and short books down to individual stocks, then take a closer look at its two worst drawdowns.</p>
 
-A return curve tells me how the portfolio did. I want to understand what sits
-behind it: which positions contributed, which exposures kept showing up, and
-whether the losses came from the same places as the gains.
+A profitable backtest leaves me with plenty of questions. Which positions
+made the money? What were the shorts doing? And when the strategy struggled,
+were its usual bets letting it down?
 
 I'll use the long–short equity strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html).
@@ -38,11 +38,10 @@ notional, with costs recorded separately for the portfolio.
 
 Let's start with something simple: add up the P&L from each side. Across the
 full history, longs earned **444.27 points**, shorts lost **93.17**, and trading
-costs used another **38.18**. That leaves **312.92 points net**.
+costs took another **38.18**. That leaves **312.92 points net**.
 
-Figure 1 shows how those contributions built up. Most of the accumulated gain
-came from the long book. The shorts sometimes cushioned losses, but their
-contribution over the full history was negative.
+The gap between the long and net lines in Figure 1 is hard to miss. The long
+book made more than the portfolio kept after short losses and costs.
 
 
 <div class="research-figure responsive-figure">
@@ -51,9 +50,8 @@ contribution over the full history was negative.
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Longs and shorts are gross; net includes trading costs. Shading marks the two deepest peak-to-trough declines.</p>
 
 
-The short book's behaviour also changed over time. Table 1 breaks the history
-into calendar blocks: shorts added 5.12 points in 2000–04, but lost 54.89 in
-2010–14. The full-period total hides that variation.
+Was the short book losing money all along? Table 1 gives a more mixed picture:
+shorts added 5.12 points in 2000–04, but lost 54.89 in 2010–14.
 
 
 <div markdown="1">
@@ -73,9 +71,9 @@ into calendar blocks: shorts added 5.12 points in 2000–04, but lost 54.89 in
 </div>
 
 
-That makes the short book an obvious place to investigate. Removing it would
-also change the portfolio's exposures and its behaviour in falling markets,
-so its negative total alone doesn't tell me what a better portfolio would be.
+I'd want to understand that drag before changing the strategy. The shorts also
+change its exposures and can help when markets fall. I'll look at what that
+protection amounted to during the drawdowns.
 
 <details>
 <summary>How a position becomes P&L</summary>
@@ -102,8 +100,8 @@ what the portfolio earned along the way.
 
 ## Which sectors made money?
 
-Next, I group each stock's P&L by sector. Figure 2 is simply the sum of what
-the portfolio earned from those stocks, across both books.
+Now let's group the stocks by sector and add up their P&L across both books
+(Figure 2). No model is needed for this step.
 
 **Every sector contributed positively before costs over the full history.**
 Technology led with **63.45 points**, followed by Consumer Discretionary
@@ -122,15 +120,15 @@ In Energy, for example, longs earned **17.64 points** and shorts lost **15.33**.
 Only Communications and Consumer Staples had positive short-book contributions
 over the full history.
 
-These are contributions to this portfolio: the amount invested and time held
-both matter. They aren't sector index returns or a ranking of returns on equal
-capital. The classifications are retrospective, so they provide a consistent
-way to group the history rather than the labels necessarily used at each date.
+Position size and time held both affect these totals. A sector can contribute
+more simply because I held more of it. I'm also using retrospective
+classifications to group the history; the labels may differ from those used
+at the time.
 
 ## Which stocks stand out?
 
-The next step is to put names to the gains and losses. Table 2 shows the five
-largest positive and negative stock contributions across the full history.
+Let's put names to those totals. Table 2 lists the five biggest winners
+and losers across the full history.
 
 
 <div markdown="1">
@@ -154,21 +152,21 @@ largest positive and negative stock contributions across the full history.
 
 
 Apple contributed **5.59 points**, almost entirely from the long side.
-VMware is a useful contrast: **2.68 of its 3.02 points** came from shorts.
+For VMware, **2.68 of its 3.02 points** came from shorts.
 Among the losers, Tesla's **−2.95 points** also came almost entirely from
 short positions.
 
-Four of the five largest winners were Technology stocks. Yet Technology also
-contained Brocade, one of the five largest losers. That is why I want both
-views: a successful sector can still contain positions worth investigating.
+Four of the five largest winners were Technology stocks. So was Brocade,
+one of the biggest losers. The stock table exposes weak spots inside an
+otherwise profitable sector.
 
 ## What did the shared exposures contribute?
 
-Sectors group companies by what they do. A **factor model** lets me ask a
-different question: how much of the P&L was associated with characteristics
-shared across stocks, such as size, momentum or volatility?
+Several stocks can lose money for similar reasons. Were my positions tilted
+towards larger companies, recent winners or lower-volatility stocks, and what
+did those tilts earn? This is where I bring in a **factor model**.
 
-The calculation has three steps:
+Here's how I calculate the split:
 
 1. Describe each stock using its prior-day characteristics, or **loadings**.
 2. Fit that day's stock returns across the eligible universe, with all factors
@@ -206,11 +204,11 @@ The other factor components can offset the intercept's market sensitivity.
 I keep the intercept in the factor split and assess the portfolio's benchmark
 sensitivity separately.
 
-The residual also needs care. **A positive residual is the model's unexplained
-return, not automatically evidence of stock-picking skill.** Its size makes
-model coverage and specification important: the model covered about **93.1%**
-of gross exposure on average, and uncovered holdings contributed another
-**22.49 points**. I'll return to uncertainty after the drawdowns.
+The large residual is encouraging, but I'd want to know what the model missed
+before crediting it to stock picking. The model covered about **93.1%** of gross
+exposure on average; holdings outside that coverage earned another **22.49
+points**, shown separately. I'll come back to how much confidence I can put in
+the split after looking at the losses.
 
 <details>
 <summary>How the pieces add back to the portfolio</summary>
@@ -323,9 +321,8 @@ doesn't establish the beta of each day's positions before trading.
 
 ## How have the exposures changed?
 
-A factor contribution combines the size of the bet with what it earned.
-Figure 4 shows the exposure side across the full history. These are monthly
-average standardized exposures on the holdings covered by the fit.
+Before looking at the losses, I want to see how much of each bet I was taking.
+Figure 4 tracks monthly average standardized exposures across the full history.
 
 
 <div class="research-figure responsive-figure">
@@ -335,9 +332,8 @@ average standardized exposures on the holdings covered by the fit.
 
 
 The portfolio usually tilts towards larger stocks and away from volatility.
-The size of those tilts changes, and momentum and beta exposures move too.
-That gives me two things to check during a loss: how the positions changed,
-and how the fitted factor returns behaved. Both can matter at once.
+The tilts vary in size, while momentum and beta exposures move too. During a
+loss, I'll need to check both the positions and what their factors earned.
 
 <details>
 <summary>Comparing P&L with contribution to risk</summary>
@@ -394,10 +390,9 @@ what economic bet was responsible.
 
 ## Now look at the two deepest drawdowns
 
-The full-history totals tell me where the strategy earned money. To understand
-where it struggled most, I rank the separate declines from a running P&L peak
-to the lowest point before recovery. The two deepest are **2008–09** and
-**2020–21**, both just over **16 P&L points**.
+Where did things go most wrong? I take the two deepest declines from a P&L
+peak to the lowest point before recovery: **2008–09** and **2020–21**, both
+just over **16 P&L points**.
 
 The first starts after the peak on **30 July 2008** and reaches its trough on
 **16 September 2009**. The second starts after **21 February 2020** and bottoms
@@ -417,10 +412,9 @@ through its trough.
 </div>
 
 
-Both losses were dominated by shorts, but the paths matter. Figure 5 follows
-each book from the peak through the eventual recovery. Shorts initially
-cushioned long losses. Later, the long book recovered while the short book's
-accumulated contribution turned negative.
+Shorts account for most of both losses in Table 3. But Figure 5 shows something
+the totals hide: early in each decline, the short book was helping. Its
+contribution turned negative later, as the long book recovered.
 
 
 <div class="research-figure responsive-figure">
@@ -458,14 +452,12 @@ to the loss being explained.
 ### 2008–09: longs recovered, shorts gave back more
 
 By **27 February 2009**, longs had lost **31.35 points** from the July peak,
-while shorts had earned **24.90**. The net loss was **6.97 points**. Shorts
-were providing a substantial cushion at that stage.
+while shorts had earned **24.90**. The net loss was **6.97 points**.
 
 By the September trough, the long book had recovered to **+3.31 points**, but
-shorts had fallen to **−18.50**. April 2009 alone illustrates the change:
+shorts had fallen to **−18.50**. Look at April 2009:
 longs gained **3.27 points**, shorts lost **11.22**, and the portfolio lost
-**8.01 net**. The deepest loss therefore came well after the initial damage
-to the long book.
+**8.01 net**. Recovering longs weren't enough when shorts were losing even more.
 
 At sector level, **Industrials lost 7.66 points**, followed by Communications
 (**2.47**) and Materials (**1.93**). Industrial losses came from both books:
@@ -480,16 +472,15 @@ became the biggest losing sector in this episode.
 ### 2020–21: a similar book-level reversal, different stocks
 
 By the end of March 2020, longs were down **33.10 points** and shorts were up
-**24.62**, leaving **−8.64 net** from the February peak. Once again, the short
-book absorbed much of the early long loss.
+**24.62**, leaving **−8.64 net** from the February peak.
 
-That cushion subsequently disappeared. In November, longs gained **11.22
+Again, that cushion didn't last. In November, longs gained **11.22
 points**, but shorts lost **13.20**. From the start of January through the
 **27 January 2021** trough, the portfolio lost another **7.92 points**, including
 **6.08 from shorts**. By the trough, longs had almost recovered their initial
 loss, while shorts were down **13.46 points** overall.
 
-This time **Financials accounted for −9.83 points**, with almost equal losses
+This time **Financials lost 9.83 points**, with almost equal losses
 from longs (**−4.93**) and shorts (**−4.89**). Real Estate lost **3.16** and
 Consumer Discretionary **2.20**. Within Financials, Rithm Capital (**−1.16**),
 KeyCorp (**−1.08**) and State Street (**−0.81**) were the largest losers,
@@ -501,8 +492,8 @@ lost more in aggregate doesn't mean the worst individual positions were shorts.
 
 ## Did the same factors hurt in both periods?
 
-Now I apply the same factor split used for the full history to these two loss
-windows. Figure 6 puts them side by side.
+The book-level paths look similar. Do the factor contributions tell the same
+story? Figure 6 compares the two loss windows using the same model as before.
 
 
 <div class="research-figure responsive-figure">
@@ -521,9 +512,8 @@ This changes how I read the full-history factor chart. Volatility contributed
 positively over the whole sample, but was costly in the second drawdown.
 Beta detracted over the full history and in both drawdowns. Size lost money
 in the first episode and contributed slightly positively in the second.
-The two periods share some exposures, but they aren't the same loss repeated.
 
-Nor can I explain every loss by a larger position. Average volatility exposure
+Was I simply taking a bigger volatility bet? Average volatility exposure
 in 2020–21 was **−0.971**, compared with **−1.103** over the preceding equal-length
 window. The negative tilt had become smaller, yet its contribution over the
 loss period was **−8.10 points**. Daily exposure and daily factor return together
@@ -547,16 +537,12 @@ its other components more than offset that loss.
 </div>
 
 
-That's the useful drilldown: identify the losing book, locate the sectors and
-positions, then use the factor model to examine their shared exposures. Each
-view answers a different part of the question without adding the same loss twice.
-
 
 ## How much should I trust that split?
 
-The book and stock contributions come from the portfolio accounting. The
-split between common factors and stock-specific returns is estimated. This is the uncertainty that *Elements*, §14.2, asks us to take
-seriously.
+I can add up what a stock earned from the portfolio accounting. Deciding how
+much came from common factors is harder: I have to estimate that split.
+*Elements*, §14.2, explains why even a sensible model leaves uncertainty here.
 
 Think about how we estimated momentum's return. Stocks with high momentum can
 also move on earnings announcements, company news and other individual events.
@@ -727,22 +713,15 @@ loading.
 
 ## What would I investigate next?
 
-The broad picture is now clearer. Longs supplied the accumulated gains, every
-sector contributed positively over the full history, and the largest modeled
-component was the residual. The two deepest drawdowns reveal the harder part:
-shorts cushioned the early long losses, then lost money as the long book recovered.
+I'd start with the short book during those recoveries. Which positions did I
+keep? Which did I replace? How did their weights change? That would separate
+losses on continuing positions from losses introduced by new trades, and give
+me something concrete to examine in the trading rules.
 
-I would start by examining how the short book changed through those transitions:
-which positions stayed, which were replaced, and how their weights and exposures
-moved. That would help separate losses on continuing positions from losses
-introduced by new trades. The contributions above describe the changing book;
-they don't establish which trading decision should have been different.
-
-The sector comparison also gives me specific places to look: Industrials in
-2008–09 and Financials in 2020–21. In the factor model, beta deserves attention
-in both, with volatility and a larger residual especially relevant to the second.
-Before calling those residual losses poor selection, I'd check the model's
-coverage and attribution uncertainty, then separate selection from sizing.
+I'd focus first on Industrials in 2008–09 and Financials in 2020–21. Then I'd
+look at the residual losses: after checking coverage and uncertainty, were
+the stock choices poor, did I put too much risk on the losers, or did both happen?
+The selection/sizing calculation below is how I'd begin separating those effects.
 
 <details>
 <summary>The calculation behind selection and sizing</summary>
@@ -786,9 +765,8 @@ Quantitative Investing*, §14.4.
 </div>
 </details>
 
-That is a more useful starting point for improving the strategy: specific
-positions, exposures and decisions to investigate, grounded in the full history
-and its two worst declines.
+The short book's negative total is where I started. How it gave back its early
+gains during these two drawdowns is the part I now want to understand better.
 
 ## References
 
