@@ -1,43 +1,51 @@
 {
-  "/_draft_assets/portfolio-attribution/episode-bridge": {
+  "/_draft_assets/portfolio-attribution/drawdown-factors": {
+    "width": 634,
+    "height": 461
+  },
+  "/_draft_assets/portfolio-attribution/drawdown-factors_mobile": {
+    "width": 360,
+    "height": 922
+  },
+  "/_draft_assets/portfolio-attribution/factor-pnl": {
+    "width": 634,
+    "height": 461
+  },
+  "/_draft_assets/portfolio-attribution/factor-pnl_mobile": {
+    "width": 360,
+    "height": 461
+  },
+  "/_draft_assets/portfolio-attribution/largest-drawdowns": {
     "width": 634,
     "height": 324
   },
-  "/_draft_assets/portfolio-attribution/episode-bridge_mobile": {
+  "/_draft_assets/portfolio-attribution/largest-drawdowns_mobile": {
     "width": 360,
-    "height": 324
+    "height": 590
   },
-  "/_draft_assets/portfolio-attribution/episode-factors-risk": {
+  "/_draft_assets/portfolio-attribution/sector-pnl": {
     "width": 634,
-    "height": 410
+    "height": 461
   },
-  "/_draft_assets/portfolio-attribution/episode-factors-risk_mobile": {
+  "/_draft_assets/portfolio-attribution/sector-pnl_mobile": {
     "width": 360,
-    "height": 835
+    "height": 461
   },
-  "/_draft_assets/portfolio-attribution/rocket-prediction": {
+  "/_draft_assets/portfolio-attribution/whole-exposures": {
     "width": 634,
-    "height": 317
+    "height": 396
   },
-  "/_draft_assets/portfolio-attribution/rocket-prediction_mobile": {
+  "/_draft_assets/portfolio-attribution/whole-exposures_mobile": {
     "width": 360,
-    "height": 374
+    "height": 605
   },
-  "/_draft_assets/portfolio-attribution/strategy-history": {
+  "/_draft_assets/portfolio-attribution/whole-history": {
     "width": 634,
-    "height": 504
+    "height": 475
   },
-  "/_draft_assets/portfolio-attribution/strategy-history_mobile": {
+  "/_draft_assets/portfolio-attribution/whole-history_mobile": {
     "width": 360,
-    "height": 504
-  },
-  "/_draft_assets/portfolio-attribution/style-exposures": {
-    "width": 634,
-    "height": 418
-  },
-  "/_draft_assets/portfolio-attribution/style-exposures_mobile": {
-    "width": 360,
-    "height": 418
+    "height": 475
   },
   "/assets/2024-12-15-low-volatility-factor/naive_leg_risk": {
     "width": 629,

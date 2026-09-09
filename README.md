@@ -18,140 +18,49 @@ linked below.
 
 ## Checks and drafts
 
-### Drafts in progress
+### Local articles
 
-This local branch prepares two posts. Neither is approved for publication.
-Both live in `_drafts/` with `published: false` and are excluded from normal builds.
+The research-workflow article remains an unpublished draft. The attribution
+article is published as **Understanding Your P&L** at
+`/quants/portfolio-attribution.html`. This branch keeps a matching private
+preview, with real-data figures under `_draft_assets/portfolio-attribution`.
+Do not publish this branch wholesale.
 
-- `_drafts/research-workflow.md`: how the document library, experiment registry
-  and blog connect sources, tests and decisions.
-- `_drafts/portfolio-attribution.md`: the combined attribution article and
-  dashboard walkthrough. It develops the accounting, additive/linked conventions,
-  covariance risk, factor interpretation and prediction explanations in one place,
-  as a personal study grounded in Paleologo's two books and real portfolio data.
-  The former short dashboard introduction has been merged into this article.
-
-Preview them with the site's existing layout and themes:
+Build the local drafts with:
 
 ```bash
-bundle exec jekyll serve --config _config.yml,_config.preview.yml --drafts --unpublished --host 127.0.0.1 --port 4001
+bundle exec jekyll build --config _config.yml,_config.preview.yml --drafts --unpublished
 ```
 
-Open `/drafts/research-workflow/` or `/quants/portfolio-attribution.html`.
+### Attribution reproduction
 
-The article's controlling question is: understand what the whole strategy is
-doing over time, which exposures and positions drive its returns and risks,
-and what changes deserve investigation. The route is strategy history →
-sectors/industries/factors → stocks within each contribution → position and
-prediction histories → a relevant research decision. The short drawdown is
-one worked example, not the thesis of the article.
+The active descriptive study is registered in `performance_attribution` as
+`performance-attribution:exp:whole-history-drawdowns`. Its verified run and
+aggregate artifact contain the source hashes, accounting conventions and
+independent review. Current findings belong in the registry.
 
-Write for a portfolio manager, quant researcher or allocator. Keep source-copy
-metadata, unfinished-work notes and revision history here, out of the article.
-Only retain explanations that help interpret a display or answer a practical
-question; collapse useful derivations, and delete unrelated material.
-The draft now uses verified saved-ledger aggregates for full strategy history,
-annual long/short contributions, changing covered style exposures, matched
-factor payoffs, sector/industry stock groupings and within-factor stock drivers.
-The five empirical figures pair history with period P&L, exposures through time, the book
-bridge, factor P&L with realized covariance risk, and the existing Rocket score
-comparison. The article keeps attribution coverage and model dependence visible.
-The symbolic uncertainty diagram uses `_includes/attribution-error-diagram.html`
-and scoped rules in `_sass/_figures.scss`; it needs no empirical inputs and
-adapts to both themes. The uncertainty derivation shows the general WLS
-covariance propagation separately from the book's GLS special case.
-No refits, trading-rule changes or counterfactual portfolios were run.
-
-Next research steps are deliberately separate: resolve material uncovered P&L,
-then compare stock selection and risk-weighted sizing on matched support. An
-exposure-limit test needs its own controlled design and feasible costed replay.
-These are questions raised by the article, not completed strategy improvements.
-Publication still requires explicit user approval; keep this branch local.
-
-The workflow post can stay short; add one concrete source-to-decision example
-when refining it.
-
-For attribution evidence, start in the existing `performance_attribution`
-registry project. The book totals reference revision 1 of
-`performance-attribution:stock-heatmap:finding:short-drawdown`, its verified run,
-and `performance-attribution:stock-heatmap:artifact:observations` (lines 360–367).
-The older linked-drawdown and whole-period risk tables were removed from the
-article because they distract from this episode and their original export has
-not been located. They remain recoverable from local commit `9ecc65f`; match
-their evidence before reusing them. They are not newly verified results.
-
-The original bridge and prediction figures use revision 1 of the verified
-stock-heatmap observations artifact: book totals at lines 360–367, Rocket's
-prediction at lines 17–75, and position observations at lines 2–16.
-
-New evidence belongs to `performance_attribution` experiment
-`performance-attribution:exp:article-strategy-evolution`. Use its verified run
-and `performance-attribution:article-evolution:artifact:aggregates`, revision 1.
-The artifact holds source hashes, definitions and complete aggregate inputs;
-current interpretations belong in the registry. Reproduction code is the
-adjacent private `article-evidence/analyze.py`, taking explicit `--source` and
-`--output` paths. It validates daily factor reconciliation, signed book totals,
-classification totals, fitted exposure × factor return, stock-driver totals,
-and covariance-risk reconciliation. It does not alter saved observations.
-
-Render the new exhibits from that registered aggregate (kept outside the site):
+The private sibling directory `../whole-history-evidence` holds the aggregation
+and rendering code. It reads the existing ledgers; it does not refit models or
+replay a modified strategy. Keep raw inputs and aggregate evidence outside the
+website repository. To reproduce from the original input bundle:
 
 ```bash
-python3 scripts/render_attribution_history.py \
-  --source /path/to/verified/aggregates.json \
-  --source-sha256 bb75c2069952b34a00a55b76a980c28d92d9dec73bd0b70501c1f85d4b1572cb \
-  --output-dir _draft_assets/portfolio-attribution
-```
-
-Reproduce the figures from the registry artifact's local file:
-
-```bash
-python3 scripts/render_attribution_figures.py \
-  --source /path/to/verified/explore_stock_histories.json \
-  --source-sha256 9589895774cd7a5f75c8cba4af80a0c3cd2ba6dea070a14d949201e3bc956950 \
-  --output-dir _draft_assets/portfolio-attribution
+python ../whole-history-evidence/analyze.py --source /path/to/private/ledger --output ../whole-history-evidence
+python ../whole-history-evidence/render.py --source ../whole-history-evidence/aggregates.json --sha256 <verified-artifact-sha256> --output _draft_assets/portfolio-attribution
 python3 scripts/check_site.py --update-dimensions
 ```
 
-The source artifact stays outside this repository. Normal builds exclude
-`_draft_assets`; the local preview configuration includes it. Keep these outside
-the theme's `assets` directory because Jekyll's theme asset reader bypasses
-normal source exclusions.
-Check that both the article and its real-data figures are absent from a normal
-build before any later publication decision.
+Use the private dashboard Python for aggregation and the figure environment
+for rendering. Preserve the registered aggregate's original hash or register
+an intentional new run before replacing evidence. The older 2023 study remains
+in the registry and Git history; its figures and renderers are no longer active.
 
-### Attribution reading plan
-
-Read one section, derive its identity, then connect it to one real-data display.
-The book sections guide the derivations; the equal-risk sizing comparison remains unrun.
-
-| Reading | Physical PDF pages (printed pages) | Practical question and next display |
-| --- | --- | --- |
-| *Advanced Portfolio Management*, 2021, §8.1.1 | 136–138 (124–126) | From the book-level bridge to a reconciled factor breakdown. |
-| *Elements*, 9 September 2024 draft, §14.1 | 453–454 (427–428) | Which holdings apply to each return, and what does trading P&L contain? |
-| *Elements*, §14.2 | 455–460 (429–434) | Why do noisy factor-return estimates shift P&L into or out of the residual? Error cancellation, uncertainty intervals and their assumptions. |
-| *Advanced Portfolio Management*, §8.2.1 | 140–145 (128–133) | Define actual versus equal-sized positions, the included holdings, and feasibility limits. |
-| *Elements*, §14.4 | 469–475 (443–449) | Derive selection, risk-weighted sizing and effective diversification; then specify a real-data comparison. |
-| *Elements*, §14.3 | 460–466 (434–440) | Why can zero direct exposure leave correlated sensitivity? Ordinary versus maximal attribution and factor representation. |
-| Later: *Advanced Portfolio Management*, timing discussion in §8.2.1 | Locate and read the complete relevant subsection before drafting | Allocation through time. |
-
-Exact library editions: `paleologo_2021_advanced_portfolio_management.pdf`
-(document `da1e85e5a83a0af7`) and
-`paleologo_elements_of_quantitative_investing_draft_2024-09-09.pdf`
-(document `1be2bc901895cf0b`). The latter is a private author draft, not the
-published 2025 edition; do not redistribute the PDF or its page images.
-The article's algebra is explanatory, and its figures are our own renderings
-of the saved research observations. Factor/sizing counterfactuals need a
-separately agreed diagnostic design before computation.
-
-For the computation explanation, trace the registered aggregate artifact's
-factor-manifest hash to the private input bundle, then check its `method`,
-`model` and `code_sha256` fields against `joint_model.py` and `factor_ledger.py`.
-This identifies the actual cross-sectional estimator and accounting bridge;
-the book's known-residual-covariance GLS uncertainty formula is a separate
-theoretical case, not an uncertainty estimate for the article's WLS fit.
-Library page images checked for equations: *Elements* physical PDF pages 457
-and 463. Keep original pages and private manifests outside the site.
+The article's mathematical references are *Advanced Portfolio Management*
+(2021), Chapter 8, and the 9 September 2024 draft of *The Elements of
+Quantitative Investing*, Chapter 14. Library document IDs are
+`da1e85e5a83a0af7` and `1be2bc901895cf0b`. Relevant physical PDF pages are
+136–145 in APM and 453–475 in Elements. Keep the original PDFs and page images
+private. The article's equations and figures are our own explanations.
 
 ```bash
 bundle exec jekyll build
