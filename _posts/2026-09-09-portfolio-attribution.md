@@ -271,7 +271,7 @@ the declines, but didn't fully offset the long losses. During the rebounds,
 short losses exceeded long gains. Figure 5 shows when that protection reversed.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/market-phases" mobile="/assets/portfolio-attribution/market-phases_mobile" version="3" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/market-phases" mobile="/assets/portfolio-attribution/market-phases_mobile" version="4" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
 </div>
 <p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the market low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
 
@@ -449,9 +449,10 @@ independent tests or evidence that a rebound can be recognized in real time.
 
 ## What variance misses
 
-Portfolio volatility rose from **7.9%** over the full history to **9.3%** in
-the 2008–09 drawdown and **13.1%** in 2020–21. Yet Table 5 shows why a variance
-allocation alone would miss an important part of the problem.
+The 2020–21 episode produces a seemingly contradictory result: the shorts
+lost **13.46 P&L points**, yet Table 5 assigns them only **0.2% of the
+portfolio's daily variance**. To decide what to change, I need to understand
+how a book can look so small in the risk allocation while losing that much.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 5: A losing short book can have a small variance share.</strong> Realized variance shares (%) over the full history and each complete drawdown. Costs account for the small difference from 100%.</p>
@@ -465,14 +466,39 @@ allocation alone would miss an important part of the problem.
 
 </div>
 
-Shorts lost **13.46 P&L points** over the complete 2020–21 drawdown, yet
-contributed only **0.2% of its daily variance**. Their standalone volatility
-was **23.4%**, but their negative covariance with the longs almost cancelled
-that variance in the allocation.
+The allocation gives the shorts credit for offsetting the rest of the
+portfolio. Let $S_t$ be daily short-book P&L and $P_t$ total daily net P&L.
+Their variance share is
 
-The short book could offset daily fluctuations while still losing money over
-the recovery. Its small variance share therefore doesn't settle whether those
-positions were useful. I need the path of the losses alongside the risk totals.
+$$
+v_S=\frac{\operatorname{Cov}(S_t,P_t)}{\operatorname{Var}(P_t)}.
+$$
+
+The numerator combines the shorts' own variance with their covariance with
+the rest of the portfolio. In 2020–21, the short book had **23.4% standalone
+volatility**. But its daily fluctuations tended to offset those of the longs,
+so the negative covariance almost cancelled its own variance in this
+allocation. The combined portfolio's volatility was **13.1%**.
+
+That offset says little about the shorts' accumulated earnings. Variance and
+covariance measure deviations from average daily P&L; a negative average
+can still add up to a large loss. They also discard the order of the days:
+reordering the days leaves Table 5 unchanged,
+even though it can change the portfolio's drawdown.
+
+Figure 5 shows why this matters here. During the 2020 decline, shorts earned
+**30.74 points**, cushioning the long losses. During the recovery, they lost
+**44.19 points**, more than the longs gained. The **0.2% variance share**
+doesn't capture that reversal of protection. It also doesn't mean removing
+the shorts would leave risk unchanged, because their offset against the
+longs would disappear too.
+
+I therefore need both measures when judging a short position: how much it
+diversifies daily P&L, and what it earns or loses during the declines and
+recoveries I care about. A small variance share alone is not a reason to keep
+a costly hedge; a cumulative loss alone is not a reason to discard its
+protection. The next test is whether I can retain that protection with less
+damage during rebounds.
 
 ## What I'd test next
 
