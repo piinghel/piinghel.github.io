@@ -231,7 +231,7 @@ usually favoured larger stocks and maintained a negative volatility tilt.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-exposures" mobile="/assets/portfolio-attribution/whole-exposures_mobile" version="3" alt="Four full-history panels for standardized size, momentum, volatility and beta exposures." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Persistent tilts, changing sizes.</strong> Monthly mean signed standardized exposures, September 1998–May 2026, on fitted holdings. Missing positions are not rescaled. Each panel has its own vertical scale.</p>
+<p class="figure-caption"><strong>Figure 4: Persistent tilts, changing sizes.</strong> Monthly mean signed standardized exposures, September 1998–May 2026, on fitted holdings. Missing positions are not rescaled.</p>
 
 For volatility, a negative exposure can come from lower-volatility longs,
 higher-volatility shorts, or both. When more volatile stocks outperform after
