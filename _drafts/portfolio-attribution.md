@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Understanding portfolio performance attribution"
+title: "Understanding Your P&L"
 description: "Understanding a strategy through its changing exposures, sources of return, drawdowns and individual positions."
 article_label: Portfolio attribution
 permalink: /quants/portfolio-attribution.html
