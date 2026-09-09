@@ -208,15 +208,16 @@ Positive exposure gains when the payoff line rises; negative exposure gains
 when it falls. In the 2009 momentum view, the exposure changes sign.
 That allows portfolio P&L to recover while the momentum payoff keeps falling.
 
-## Judge protection over the path
+## Daily risk and accumulated losses
+{: #judge-protection-over-the-path }
 
 The 2020–21 drawdown illustrates why I need both earnings and variance
 attribution. Shorts lost **13.46 points** while receiving just **0.2% of
-portfolio variance**. Their standalone volatility was **23.4%**, but their
-negative covariance with the longs almost cancelled it in the allocation.
+portfolio variance**. Their standalone volatility was **23.4%**.
+Their daily fluctuations largely offset those of the longs, so the covariance
+allocation credits that offset even while the shorts accumulate losses.
 
-Variance measures deviations around average daily P&L. A book can offset
-those fluctuations while accumulating losses. Here the shorts earned
+Variance measures deviations around average daily P&L. Here the shorts earned
 **30.74 points** during the market decline, then lost **44.19** during the
 recovery.
 

@@ -14,7 +14,7 @@ github_repositories:
     url: https://github.com/piinghel/rebalance-tranching
 ---
 
-<p class="article-summary">I split the strategy into three equal parts, called tranches, each with its own rebalance schedule. Across September 1998–May 2026, combining them leaves average annualized return almost unchanged: 11.37% becomes 11.43%. Average portfolio volatility falls from 8.53% to 7.88%, while the return spread across calendars narrows from 2.06 to 0.40 percentage points.</p>
+<p class="article-summary">Splitting the strategy into three equal parts, each rebalancing in a different week, reduces calendar dependence and portfolio volatility with almost no change in average return. The benefit appears in both development and later history, although weekday differences remain.</p>
 
 ## The starting-week problem
 
@@ -114,15 +114,10 @@ and 3. A descriptive offset–weekday decomposition assigns most of the variatio
 to their interaction, over the full history and within both periods. The
 particular combination matters. The fifteen calendars share overlapping returns.
 
-Combining the offsets still makes a large difference. Table 2 compares all
-fifteen standalone outcomes with the five combined outcomes. Across the full
-history, the range shrinks by **81%**, from 2.06 to 0.40 percentage points,
-while the standard deviation falls by **72%**. Mean return changes by just
-**6 bp**. Later, the return range
-shrinks by **79%**, from 5.13 to 1.06 percentage points. The standard deviation
-across calendars falls by **77%**, from 1.58 to 0.37 points. The average return
-changes by just **4 bp**. Both measures of dispersion also fall substantially
-in development.
+Combining the three starting weeks reduces the full-history return spread
+from **2.06 to 0.40 percentage points**, with almost no change in average
+return. Table 2 compares the fifteen standalone calendars with the five
+combined portfolios, including development and later history separately.
 
 <table class="research-table comparison-table risk-performance-table">
   <caption><strong>Table 2: Less dependence on the calendar.</strong> Annualized net geometric return, its best-to-worst range, and population standard deviation across the stated calendars. Return is in percent; range and SD are in percentage points.</caption>
@@ -166,11 +161,9 @@ all five combined portfolios fluctuate less than any of the standalone calendars
 
 <p class="figure-caption"><strong>Figure 3: Similar return, less calendar dependence and lower volatility.</strong> September 1998–May 2026. Each dot is the mean; each line spans the minimum and maximum across fifteen standalone calendars or five three-tranche portfolios.</p>
 
-Across the full history, average net return moves from 11.37% to 11.43%.
-Average volatility falls from 8.53% to 7.88%, a reduction of 0.65 percentage
-points, or 7.6%. Lower volatility explains the rise in average Sharpe from
-1.30 to 1.41. I get almost the same mean return from a less volatile portfolio.
-Table 3 puts those averages beside the range of outcomes.
+Average volatility falls from **8.53% to 7.88%** across the full history.
+With mean return almost unchanged, that reduction explains the higher Sharpe.
+Table 3 puts the averages beside the range of outcomes.
 
 This pattern holds within each weekday. The later volatility reductions range
 from 5.3% to 5.7%, with return differences of just 3–5 bp. In development,
@@ -232,10 +225,7 @@ Each tranche is charged for its own trades before any cross-tranche netting.
 Fixed-ticket charges, borrow and financing would require additional estimates. The practical
 change here is tracking three books and sending smaller orders more often.
 
-I would fund all three tranches. The volatility reduction is the main reason: from
-8.53% to 7.88% across the full calendar comparison, with almost unchanged
-average return. This is a useful, incremental reduction in risk. That benefit
-appears in both periods, though its size changes,
-and the results already include the existing 5 bp costs. For me, that is enough
-to justify maintaining three books and sending smaller orders more often.
-Less dependence on the calendar comes alongside that reduction in portfolio risk.
+I would fund all three tranches. The lower portfolio volatility is worth the
+extra operational work, and I depend less on which starting week I happened
+to choose. The remaining weekday differences give me a reason to keep
+comparing calendars rather than pick the historical winner.

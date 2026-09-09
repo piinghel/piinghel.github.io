@@ -25,8 +25,7 @@ The ranking comes from the [low-volatility
 effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865): stable stocks
 have tended to earn better risk-adjusted returns than volatile stocks.
 [Frazzini and Pedersen](https://www.nber.org/papers/w16601) connect this pattern
-to investors' leverage constraints. The allocation question is how much
-capital to put behind each side.
+to investors' leverage constraints.
 
 I compare equal weighting and inverse-volatility sizing on the same stocks.
 Both use point-in-time Russell 1000 membership, a price above five dollars,

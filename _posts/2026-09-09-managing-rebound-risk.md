@@ -12,7 +12,7 @@ series_previous: /quants/short-book-rebounds.html
 series_end: true
 ---
 
-<p class="article-summary">A moderate volatility-style limit reduced the worst historical drawdown while preserving full-history Sharpe. A tighter limit gave up more return. Fast daily volatility scaling added enough trading costs to make constant smaller sizing a useful competitor.</p>
+<p class="article-summary">A moderate volatility-style limit reduced the worst historical drawdown with similar full-history Sharpe, but improved only 5 of 11 three-month recoveries. I would keep the original portfolio while testing a more targeted rule.</p>
 
 The [rebound study](/quants/short-book-rebounds.html) showed defensive longs
 facing more volatile, higher-beta shorts. I tested two ways to manage that
@@ -37,6 +37,12 @@ $$
 where $u_{i,t}$ is the volatility rank and $w_{i,t}$ the signed position weight.
 Buying quiet stocks and shorting volatile stocks both make $V_t$ negative.
 Dividing by gross exposure expresses the average tilt per dollar invested.
+
+This uses the raw volatility ranks. In [part 1](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio),
+I standardize those ranks and measure exposure relative to fixed strategy
+notional. Here the limit is in rank units per dollar of gross exposure;
+negative values represent the low-volatility tilt shown as positive in the
+attribution explorer.
 
 I replayed the optimizer with **$|V_t|\leq0.20$** and **$|V_t|\leq0.10$**,
 keeping its existing covariance model, stock forecasts and execution rules.
@@ -134,31 +140,22 @@ Some benefit arrived during the decline itself. From the market peak on
 **19 February 2020 through 23 March**, the original lost **8.27 points**;
 the moderate cap lost **1.73**. Across the 11 market-decline windows, the
 moderate cap also earned more in aggregate. Outside the declines and first
-63-session recoveries, it earned less. The trade-off extends across market
-conditions.
+63-session recoveries, it earned less.
 
 The lows are identified retrospectively to evaluate the portfolios. The
 tested sizing rules use information available at their decision dates.
 
 ## What I would test next
 
-The moderate cap is a useful candidate: it changes the shared exposure and
-improves drawdown at a modest cost to earnings. The mixed recovery results
-make me want a more targeted test before adopting it.
-
-I would first test a **daily tolerance band** around the volatility-style
-limit. It would trigger a trade when the actual book moves beyond an outer
-boundary, then bring it back inside an inner boundary. That directly
-addresses drift between scheduled rebalances and lets small daily changes
-pass without trading.
-
-I would also test smaller weights for shorts where **large prior losses,
+One possible response is smaller weights for shorts where **large prior losses,
 high beta and high volatility overlap**, with a limit on their combined
 risk that accounts for correlations. Replacing part of those positions with
 a broad market hedge, matched on estimated market sensitivity, would provide
 another comparison.
 
-These next tests would keep the predictions fixed and measure net P&L,
-turnover, drawdowns and decline protection alongside the resulting exposures.
-The original portfolio remains the reference implementation; the completed
-historical tests make the trade-offs concrete.
+For now, I would keep the original portfolio. The moderate limit reduced the
+worst historical drawdown, but its mixed recovery results leave me wanting a
+more targeted rule. My next test would be a **daily tolerance band** around
+the volatility-style limit: trade when the actual book crosses an outer
+boundary, then bring it back inside an inner one. That addresses exposure
+drift between rebalances while allowing small changes to pass without trading.

@@ -14,7 +14,7 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-<p class="article-summary">The joint allocation rule raises this Ridge portfolio's development-period Sharpe from 1.12 to 1.35, but adds turnover. Letting the optimizer keep acceptable holdings and penalizing replacements cuts turnover by about a third while preserving gross return. I use both controls, though the advantage is smaller and less consistent after 2021. Risk forecasts also understate realized volatility.</p>
+<p class="article-summary">Joint sizing improves this portfolio's development results, but the extra trading consumes part of the gain. A rank buffer and trading penalty preserve most of the gross return with fewer trades; their advantage is less consistent after 2021.</p>
 
 A stock ranking tells me which names I prefer. It leaves another decision:
 how much of each should I hold? Scaling by individual volatility is a useful
