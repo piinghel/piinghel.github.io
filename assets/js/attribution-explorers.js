@@ -69,7 +69,8 @@
       if(at<0)continue;
       add(svg,'line',{x1:x(at),x2:x(at),y1:top,y2:height-bottom,stroke:'currentColor',opacity:.5,'stroke-dasharray':'4 3'});
       if(price){
-        add(svg,'text',{x:x(at)+5,y:top+12},event.event);
+        const nearEdge=x(at)>width-65;
+        add(svg,'text',{x:x(at)+(nearEdge?-5:5),y:top+12,'text-anchor':nearEdge?'end':'start'},event.event);
         if(Number.isFinite(rows[at][3])){
           const cy=y(rows[at][3]),cx=x(at),up=event.event==='Entry'?-1:1;
           add(svg,'path',{d:`M${cx},${cy+up*6} L${cx-5},${cy-up*4} L${cx+5},${cy-up*4} Z`,fill:color(series[0][1]),stroke:'currentColor','stroke-width':.5});
@@ -85,10 +86,9 @@
     if(!data||episode.value==='all')return;
     const e=data.recoveries[Number(episode.value)],h=Number(horizon.value),rows=e.path.slice(0,h+1);
     const index=Math.min(Number(session.value),h),row=rows[index];
-    const all=data.recoveries.flatMap(e=>e.path.slice(0,h+1));
     session.setAttribute('aria-valuetext',`Session ${index}, ${human(row[0])}`);
-    chart(detail.querySelector('.ae-gains'),detail,rows,[[1,'--ad-long'],[2,'--ad-short','5 3']],all.flatMap(r=>[r[1],r[2]]),index,{recoveryDays:true});
-    chart(detail.querySelector('.ae-books'),detail,rows,[[3,'--ad-long'],[4,'--ad-short','5 3'],[5,'--ad-net']],all.flatMap(r=>[r[3],r[4],r[5]]),index,{recoveryDays:true});
+    chart(detail.querySelector('.ae-gains'),detail,rows,[[1,'--ad-long'],[2,'--ad-short','5 3']],rows.flatMap(r=>[r[1],r[2]]),index,{recoveryDays:true});
+    chart(detail.querySelector('.ae-books'),detail,rows,[[3,'--ad-long'],[4,'--ad-short','5 3'],[5,'--ad-net']],rows.flatMap(r=>[r[3],r[4],r[5]]),index,{recoveryDays:true});
     byId('recovery-readout').textContent=index===0?`${human(row[0])} · Market low. All cumulative paths start at zero; the next session begins the measured recovery.`:
       `${human(row[0])} · Session ${index}. Stock gains: longs ${signed(row[1])}%, shorts ${signed(row[2])}% (gap ${signed(row[2]-row[1])} points). Portfolio P&L: longs ${signed(row[3])}, shorts ${signed(row[4])}, net ${signed(row[5])} points.`;
   }
@@ -123,7 +123,8 @@
     chart(stock.querySelector('.ae-weight'),stock,rows,[[1,color]],rows.map(r=>r[1]),index,{...options,steps:true});
     chart(stock.querySelector('.ae-stock-pnl'),stock,rows,[[2,color]],rows.map(r=>r[2]),index,options);
     const lastPrice=rows.filter(r=>Number.isFinite(r[3])).at(-1);
-    byId('stock-context').textContent=`${s.side==='short'?'Short':'Long'} from ${human(s.events[0].date)}; exited ${human(s.events[1].date)}.${lastPrice[0]<rows.at(-1)[0]?` Price coverage ends ${human(lastPrice[0])}; the holdings record continues through the exit.`:''}`;
+    const later=s.events.slice(2).map(e=>`${e.event==='Entry'?'Reentered':'Exited'} ${human(e.date)}.`).join(' ');
+    byId('stock-context').textContent=`${s.side==='short'?'Short':'Long'} from ${human(s.events[0].date)}; exited ${human(s.events[1].date)}.${later?' '+later:''}${lastPrice[0]<rows.at(-1)[0]?` Price coverage ends ${human(lastPrice[0])}; the holdings record continues through the exit.`:''}`;
     byId('stock-readout').textContent=`${human(r[0])} · ${Number.isFinite(r[3])?`Price index ${r[3].toFixed(1)}.`:'Price unavailable.'} ${Math.abs(r[1])<1e-10?'Position flat.':`${r[1]>0?'Long':'Short'} ${Math.abs(r[1]).toFixed(2)}% of notional.`} Actual P&L since ${human(rows[0][0])}: ${signed(r[2],3)} points.`;
   }
   function chooseStock(){
@@ -142,13 +143,13 @@
   }
   horizon.addEventListener('change',updateRecovery);
   episode.addEventListener('change',updateRecovery);
-  fetch('/assets/portfolio-attribution/explorer-paths.json?v=3').then(r=>{
+  fetch('/assets/portfolio-attribution/explorer-paths.json?v=4').then(r=>{
     if(!r.ok)throw new Error('Data unavailable');return r.json();
   }).then(d=>{
     data=d;
     d.recoveries.forEach((e,i)=>episode.add(new Option(human(e.low),String(i))));
     episode.disabled=false;
-    d.stocks.forEach((s,i)=>choice.add(new Option(s.name,String(i))));
+    d.stocks.forEach((s,i)=>choice.add(new Option(`${s.name} · ${s.side}`,String(i))));
     choice.value=String(Math.max(0,d.stocks.findIndex(s=>s.side==='short')));
     stock.querySelector('.ae-loading').hidden=true;stock.querySelector('.ae-content').hidden=false;
     session.addEventListener('input',renderRecovery);

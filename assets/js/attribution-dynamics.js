@@ -33,7 +33,6 @@
     const index=Math.min(Number(slider.value),rows.length-1), selected=rows[index];
     slider.max=rows.length-1;
     slider.setAttribute('aria-valuetext',human(selected[0]));
-    const all=data.episodes.flatMap(ep=>oriented(ep.factors[factor.value],direction.sign));
     root.querySelector('.ad-direction').textContent=`Positive ${direction.name} exposure favors ${direction.positive}; negative exposure favors ${direction.negative}.`;
     root.querySelector('.ad-exposure-title').textContent=`1. Our exposure to ${direction.name} · units`;
     root.querySelector('.ad-pnl-title').textContent=`3. Portfolio P&L from ${direction.name} · cumulative points`;
@@ -45,7 +44,7 @@
       svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
       const minDate=date(e.peak),maxDate=date(e.end);
       const x=d=>l+(date(d)-minDate)/(maxDate-minDate)*(width-l-r);
-      const limits=extent(all.flatMap(row=>series[p].map(([col])=>row[col])));
+      const limits=extent(rows.flatMap(row=>series[p].map(([col])=>row[col])));
       const pad=(limits[1]-limits[0])*.04;
       const y=v=>height-b-(v-limits[0]+pad)/(limits[1]-limits[0]+2*pad)*(height-t-b);
       add(svg,'rect',{x:l,y:t,width:x(e.low)-l,height:height-t-b,fill:style.getPropertyValue('--ad-grid'),opacity:.22});
