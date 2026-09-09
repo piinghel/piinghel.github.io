@@ -33,6 +33,12 @@ Prefer names directly beside time-series lines, usually at their endpoints,
 so readers do not need to match colors to a separate legend. Leave room outside
 the data, separate nearby labels and use short connectors if needed. Use a
 compact legend only when direct labels would be harder to read.
+For grouped panels, use one shared legend when the series are the same; do not
+repeat it in each panel. Repeat direct labels only when they help identify lines
+without searching elsewhere. Arrange panels around the relationship the reader
+needs to compare, align shared dates, and keep colors and comparable scales
+consistent. Remove repeated titles, units and annotations when shared context
+already makes them clear. Judge the whole composition, not each panel alone.
 Comparable models receive similar prominence; a designated reference may be
 thinner but remains readable. Use solid/dashed lines when two models nearly
 overlap. Keep the time axis common across vertically aligned panels.
