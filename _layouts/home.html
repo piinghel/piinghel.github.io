@@ -14,7 +14,14 @@ layout: base
   {%- if posts.size > 0 -%}
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
     <ul class="post-list">
-      {%- for post in posts -%}
+      {%- for item in posts -%}
+      {%- if item.series_id -%}
+        {%- unless item.series_order == 1 -%}{%- continue -%}{%- endunless -%}
+        {%- assign entries = posts | where: "series_id", item.series_id | sort: "series_order" -%}
+      {%- else -%}
+        {%- assign entries = posts | where: "url", item.url -%}
+      {%- endif -%}
+      {%- for post in entries -%}
       <li>
         <h2>
           <a class="post-link" href="{{ post.url | relative_url }}">
@@ -34,6 +41,7 @@ layout: base
           {{ post.excerpt }}
         {%- endif -%}
       </li>
+      {%- endfor -%}
       {%- endfor -%}
     </ul>
 

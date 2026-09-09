@@ -158,6 +158,15 @@ button { font: inherit; }
 .site-footer { border-top: 1px solid var(--rule); color: var(--muted-ink); }
 .site-footer .wrapper { max-width: 828px; display: flex; justify-content: space-between; gap: 2rem; padding-top: 1.6rem; padding-bottom: 2rem; font-size: 0.8rem; }
 .footer-note { margin: 0; }
+.research-note {
+  margin: 2rem 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--rule);
+  color: var(--muted-ink);
+  font-size: 0.92rem;
+}
+.research-note p:first-child { margin-top: 0; }
+.research-note p:last-child { margin-bottom: 0; }
 .footer-note span { display: block; margin-top: 0.3rem; }
 .site-footer a { color: var(--muted-ink); text-decoration: none; }
 code, pre { font-family: var(--font-mono); font-size: 0.85em; background: var(--soft-accent); }

@@ -1,18 +1,20 @@
 ---
 layout: post
 title: "Performance Attribution, Part 1: Understanding Your P&L"
-description: "How positions and fitted factor returns add up to portfolio earnings and risk."
+description: "The portfolio's market beta, factor exposures, and the positions behind its earnings and realized risk."
 permalink: /quants/portfolio-attribution.html
 toc: true
 show_date: false
 date: 2026-09-09
 categories: ["Portfolio management"]
 article_label: Performance attribution · Part 1 of 3
+series_id: performance-attribution
+series_order: 1
 series_previous: /quants/2026/09/05/risk-concentration.html
 series_next: /quants/short-book-rebounds.html
 ---
 
-<p class="article-summary">Attribution connects the positions I held to the money they earned and the risk they contributed. The useful explanation follows both earnings and daily fluctuations.</p>
+<p class="article-summary">The shorts offset daily fluctuations, but the portfolio retained a small positive market beta and suffered large losses in some recoveries. Attribution connects those outcomes to the positions and exposures I held.</p>
 
 My long–short strategy made money overall, while its shorts lost money.
 Before changing the book, I want to understand what those positions
@@ -45,9 +47,50 @@ The two books had standalone annualized volatility of **16.7%** and
 costs, portfolio volatility was **7.9%**. The shorts provided a substantial
 daily offset while losing money over the history.
 
+## How much market beta?
+{: #portfolio-beta }
+
+The portfolio's full-history realized beta to the Russell 1000 was **+0.068**.
+I estimate it by regressing daily net P&L per unit of fixed strategy notional
+on the index's daily price return, with an intercept. This is a leveraged
+long–short portfolio with low average market sensitivity; its average net
+dollar exposure was positive, at about 22% of notional.
+
+Figure 2 follows the trailing 252-session estimate alongside the beta-style
+exposure used in the attribution model below. That exposure adds signed
+positions multiplied by standardized stock betas. A negative value means
+the book favours lower-beta stocks relative to the model's universe.
+The two panels have different units: market-return sensitivity above,
+standardized exposure per strategy notional below.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/beta-history" mobile="/assets/portfolio-attribution/beta-history_mobile" version="1" alt="Trailing 252-session realized Russell 1000 beta above prior-session standardized beta exposure. Market beta is positive at both the 2009 and 2020 lows while beta-style exposure is negative." %}
+</div>
+<p class="figure-caption"><strong>Figure 2: Low average beta still leaves changing market sensitivity.</strong> September 1998–May 2026. Realized beta uses net fixed-notional P&amp;L and requires 252 sessions. Model exposure uses holdings entering each session and prior-session standardized beta loadings, available for 93.3% of gross exposure on an average day. Missing loadings contribute zero, the universe mean; dates with no coverage are gaps. Vertical lines mark the 2009 and 2020 market lows. Each panel retains its own units and scale.</p>
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 1: Beta at the two market lows.</strong> The mean row averages available daily observations of each displayed series; it differs from fitting one regression over the full history. Model exposure uses the covered book and is available before the session; realized beta includes that session's return.</p>
+
+| Observation | Rolling realized beta | Model beta exposure |
+| :--- | ---: | ---: |
+| Historical daily mean | +0.069 | −0.309 |
+| 9 March 2009 | +0.069 | −0.361 |
+| 23 March 2020 | +0.230 | −0.178 |
+{: .research-table .comparison-table .attribution-table }
+</div>
+
+The existing optimizer already limits its own estimated market beta to
+**±0.05 at rebalance**. Its estimate combines long-window correlation with
+short-window volatility; the attribution descriptor uses a 252-session
+regression. Rebalance target beta averaged +0.018, but price moves,
+changing holdings and estimation error can separate that target from
+subsequent realized beta. The [optimizer study](/quants/2026/08/29/portfolio-optimization.html#forecast-beta-versus-realized-beta)
+examines that gap and a shorter-window estimator. Part 3 tests an additional
+limit on the standardized beta exposure shown here.
+
 ## Locate earnings and risk
 
-I can group the stock contributions by sector, as in Figure 2. To allocate
+I can group the stock contributions by sector, as in Figure 3. To allocate
 risk, I measure how each sector's daily P&L moves with the whole portfolio:
 
 $$
@@ -62,15 +105,15 @@ that offsets portfolio fluctuations can receive a negative share.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by earnings." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: What each sector earned and the risk it contributed.</strong> September 1998–May 2026. Sector P&amp;L is gross across both books. Variance shares include covariance with the rest of the portfolio; costs contribute −0.01%.</p>
+<p class="figure-caption"><strong>Figure 3: What each sector earned and the risk it contributed.</strong> September 1998–May 2026. Sector P&amp;L is gross across both books. Variance shares include covariance with the rest of the portfolio; costs contribute −0.01%.</p>
 
-Every sector earned money before costs. Technology contributed **63.45
-points** and about **15% of variance**. Energy earned **2.32 points** with
-**6.1% of variance**: its long gains were almost cancelled by short losses.
-That gives me a specific book to investigate.
+Every sector earned money before costs. Technology made the largest
+contribution. Energy's long gains were almost cancelled by short losses,
+leaving little earnings for its share of daily risk. That gives me a specific
+book to investigate.
 
 These totals reflect stock performance, position size and time held. Sector
-labels are assigned retrospectively. Stocks across sectors can also share
+labels follow the classification snapshot described in the in-sample notes below. Stocks across sectors can also share
 characteristics such as high beta or low volatility; the factor model
 measures those common exposures.
 
@@ -132,7 +175,6 @@ $$
 $$
 
 The coefficients use unpenalized least squares, solved jointly by SVD.
-Sector classifications are retrospective.
 
 </div>
 </details>
@@ -158,12 +200,12 @@ to each position's total.
 
 I apply the same signed weights to the residuals, common return and sector
 effects. Adding those pieces, uncovered holdings and costs reconstructs
-portfolio P&L. Figure 3 shows the full-history allocation.
+portfolio P&L. Figure 4 shows the full-history allocation.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="5" alt="Fitted components with P&L beside their signed variance shares, including residual, uncovered holdings and costs." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: The fitted allocation of earnings and risk.</strong> P&amp;L sums to +312.92 points net; variance shares sum to 100%. The sector terms measure returns associated with sector membership after accounting for the fitted styles.</p>
+<p class="figure-caption"><strong>Figure 4: The fitted allocation of earnings and risk.</strong> P&amp;L sums to +312.92 points net; variance shares sum to 100%. The sector terms measure returns associated with sector membership after accounting for the fitted styles.</p>
 
 Momentum, volatility and reversal earned money; beta and size detracted.
 The largest component was the **residual, +198.82 points**, with **45.2% of
@@ -174,6 +216,11 @@ or industry characteristics.
 The **common return contributed +84.09 points**, weighted by the portfolio's
 net position in covered stocks. The model covered **93.1% of gross exposure**
 on average; uncovered positions contributed **22.49 points**.
+
+The common-return contribution combines the fitted daily intercept with
+net dollars in covered stocks. Other factor and residual contributions can
+offset its market sensitivity. Portfolio beta comes from the whole book,
+as measured in Figure 2; the common-return earnings alone cannot supply it.
 
 The split depends on the estimated coefficients and chosen factors.
 Assigning an extra point to factors takes a point from the residual while
@@ -191,7 +238,7 @@ $$
 Positions, stock characteristics and factor returns all change. Each day's
 payoff therefore needs the exposure held on that day.
 
-Figure 4 lets you inspect that multiplication. The middle panel accumulates
+Figure 5 lets you inspect that multiplication. The middle panel accumulates
 returns for a constant +1 exposure. The bottom accumulates P&L from our actual
 changing exposure. The slider shows the calculation for one session.
 
@@ -202,7 +249,7 @@ low-volatility exposure **+0.5** and payoff **−1%**. Their product remains
 winners.
 
 {% include attribution-dynamics.html %}
-<p class="figure-caption"><strong>Figure 4: Exposure × return per unit = portfolio P&amp;L.</strong> Daily standardized exposure and cumulative contributions in the two deepest drawdowns. Shading ends at the market low.</p>
+<p class="figure-caption"><strong>Figure 5: Exposure × return per unit = portfolio P&amp;L.</strong> Daily standardized exposure and cumulative contributions in the two deepest drawdowns. Shading ends at the market low.</p>
 
 Positive exposure gains when the payoff line rises; negative exposure gains
 when it falls. In the 2009 momentum view, the exposure changes sign.
@@ -226,6 +273,16 @@ lost money, their shared exposures, and their contribution to daily risk.
 The next question is why protection reversed. In
 [part 2](/quants/short-book-rebounds.html), I follow the long and short holdings
 through those recoveries.
+
+<aside class="research-note" markdown="1">
+**In-sample notes.** This is an explanation of inspected historical returns.
+Sector labels use an August 2026 snapshot; the illustrated drawdowns and market
+lows are selected retrospectively. Model coverage is incomplete, and the later
+2022–26 history has also informed strategy research. The variance shares
+allocate realized fluctuations, including covariance with the portfolio.
+Forecasting future risk would additionally require factor covariance and
+stock-specific risk estimates, calibrated at the intended horizon.
+</aside>
 
 ## References
 

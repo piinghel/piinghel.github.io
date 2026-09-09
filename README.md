@@ -157,6 +157,19 @@ comparison.
 
 ## Site maintenance
 
+The attribution beta figure is reproduced from the included aggregate series:
+
+```sh
+python3 scripts/render_attribution_beta.py
+python3 scripts/check_site.py --update-dimensions
+```
+
+Its renderer requires NumPy and Matplotlib and emits desktop/mobile SVGs for
+both themes. The underlying diagnostic and controlled beta replays live in the
+private `performance_attribution` research project and shared experiment registry.
+The public series contains portfolio aggregates only. Attribution-series homepage
+order is set by `series_id` and `series_order`, preserving publication dates.
+
 The reusable [Quant Blog Style skill](.agents/skills/quant-blog-style/SKILL.md)
 records the house conventions for prose, figures, captions, tables and mobile
 presentation. Invoke it as `$quant-blog-style` when preparing future posts.

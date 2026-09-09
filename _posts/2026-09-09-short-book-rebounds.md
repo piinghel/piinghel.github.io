@@ -1,23 +1,30 @@
 ---
 layout: post
 title: "Performance Attribution, Part 2: Why the Short Book Struggles in Rebounds"
-description: "Higher-beta, harder-hit shorts rebound faster than the longs across many market recoveries."
+description: "Higher-beta shorts create an early-recovery vulnerability. The imbalance fades at longer horizons, but severe losses can persist."
 permalink: /quants/short-book-rebounds.html
 toc: true
 show_date: false
 date: 2026-09-09
 categories: ["Portfolio management"]
 article_label: Performance attribution · Part 2 of 3
+series_id: performance-attribution
+series_order: 2
 series_previous: /quants/portfolio-attribution.html
 series_next: /quants/managing-rebound-risk.html
 ---
 
-<p class="article-summary">The shorts held higher-beta, more volatile stocks than the longs at the 2009 and 2020 lows. That helped during declines and hurt during rebounds. The imbalance also appears across other recoveries.</p>
+<p class="article-summary">Higher-beta, more volatile shorts often rebound faster than the longs early in a recovery. The imbalance is much less common after six months, although the two deepest strategy drawdowns show how costly the intervening path can be.</p>
 
 In [part 1](/quants/portfolio-attribution.html), the shorts reduced daily
 portfolio fluctuations while losing money overall. Here I want to understand
 where their protection failed. Did the two sides hold stocks with very
-different rebound potential?
+different rebound potential, and how long did that difference last?
+
+[Part 1's beta chart](/quants/portfolio-attribution.html#portfolio-beta)
+separates the portfolio's realized market beta from its standardized
+beta-style exposure. The book had low positive average market beta and a
+negative beta-style tilt. Here I examine the holdings behind that tilt.
 
 I follow the same portfolio from September 1998 to May 2026. Contributions
 use fixed-notional P&L points; one point is 1% of strategy notional.
@@ -32,8 +39,7 @@ the decline from losses during the recovery.
 
 Table 1 covers the strategy's peak-to-trough windows: 30 July 2008 to
 16 September 2009, and 21 February 2020 to 27 January 2021. The market lows
-were **9 March 2009** and **23 March 2020**. These dates are identified with
-hindsight to divide each episode into decline and recovery.
+were **9 March 2009** and **23 March 2020**.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 1: Losses continued after the market bottomed.</strong> Fixed-notional P&amp;L points, excluding the strategy's peak day. The decline includes the market-low session; the rebound follows it. Longs and shorts are gross; net includes costs.</p>
@@ -57,10 +63,10 @@ short losses exceeded long gains. Figure 1 shows when that protection reversed.
 </div>
 <p class="figure-caption"><strong>Figure 1: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the market low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes.</p>
 
-The **2009 rebound accounted for more of that episode's loss**. In 2020, the initial
-decline was much sharper: **9.32 points in 21 sessions**, followed by another
-**6.74 over 214 sessions**. Both the initial decline and the rebound contributed
-to the losses.
+The 2009 rebound accounted for more of that episode's loss. In 2020, the
+initial decline was much sharper, but the strategy kept losing over the
+longer recovery. The windows end at the strategy's trough, so they deliberately
+describe its worst paths.
 
 Was I simply holding on to the old shorts? Table 2 separates names that were
 short at the market low from additions during the rebound.
@@ -77,11 +83,10 @@ short at the market low from additions during the rebound.
 
 </div>
 
-Names absent from the short book at the low accounted for **57.5%** of its
-2009 rebound loss and **47.7%** in 2020–21. The five worst short contributors
-explained only **12.4%** and **8.8%** of the respective losses.
-The losses were spread across many stocks, including names added during the
-recovery. That makes a shared exposure worth investigating.
+Around half the short-book losses came from names added during the recovery.
+The five worst contributors explained only a small share in either episode.
+The losses were spread across many stocks, making a shared exposure worth
+investigating.
 
 The positions also matter when looking at an individual stock's price chart.
 Zscaler was the largest short entering the 2020 rebound. Its price more than
@@ -100,12 +105,12 @@ drawdown, alongside the residual and other terms.
 </div>
 <p class="figure-caption"><strong>Figure 2: Similar total losses, different factor contributions.</strong> Peak-to-trough P&amp;L points. Each panel includes factor terms, residual, uncovered holdings and costs.</p>
 
-In **2008–09**, beta was the largest losing style at **−6.55 points**, and the
-residual lost **6.14**. In **2020–21**, volatility lost **8.10 points** and the
-residual **11.41**. Other contributions partly offset those losses.
-
-Inside those totals, beta went from **+3.32 during the decline to −9.87 during
-the rebound** in 2008–09, and from **+1.27 to −5.80** in 2020–21. The negative beta exposure favoured lower-beta stocks as higher-beta stocks began to outperform. [Part 1](/quants/portfolio-attribution.html#follow-exposure-and-payoff-together) shows the daily exposure × payoff calculation.
+Beta was the largest losing style in 2008–09; volatility led the style losses
+in 2020–21. The residual was material in both. Within each episode, the beta
+contribution switched from positive during the decline to negative during the
+rebound: a tilt towards lower-beta stocks lost when higher-beta stocks began
+to outperform. [Part 1](/quants/portfolio-attribution.html#follow-exposure-and-payoff-together)
+shows the daily exposure × payoff calculation.
 
 ## The stocks on each side
 
@@ -121,8 +126,7 @@ betas, larger prior losses and higher volatility than the longs.**
 
 This helps explain the rebound losses. A rising market tends to lift
 higher-beta stocks more, so their recovery hurts the short book while the
-lower-beta longs participate less. In 2020, the estimated stock betas were
-**0.86 for longs and 1.03 for shorts**. Position sizes still determine the
+lower-beta longs participate less. Position sizes still determine the
 portfolio's overall sensitivity: the chart compares the stocks within each
 book, before allowing for the books' different sizes and opposite signs.
 Beta is only part of the explanation, alongside the
@@ -144,7 +148,7 @@ often the same imbalance appeared elsewhere, I identified **11 market
 drawdowns of at least 10%** in the available history and followed the first
 63 sessions after each low. A new drawdown episode starts only after the
 previous market peak has been regained; intervening sell-offs belong to the
-same episode. Every low is identified in hindsight.
+same episode.
 
 The long book is usually larger than the short book, so comparing their
 P&L totals alone mixes stock performance with position size. For this check,
@@ -165,23 +169,19 @@ look separately at the actual portfolio P&L over exactly the same sessions.
 Figure 4 starts with all 11 recoveries. Select an episode to follow the two
 books through time, then choose 21, 63 or 126 sessions and move the date slider.
 At 63 sessions, **shorted stocks gained more in 9 of 11
-episodes**, but the median gap was **2.89 percentage points**. The **41.19-point
-gap in 2009** was much larger than the usual episode; the mean gap of
-**6.42 points** gives that extreme event more influence.
+episodes**, with a median gap of **2.89 percentage points**. The 2009 gap was
+far larger than the typical episode, which makes both frequency and magnitude
+worth inspecting.
 
 {% include attribution-recovery-explorer.html figure="4" %}
 
-The portfolio lost money in **4 of the 11** 63-session windows. In the first 63 sessions
-of the 2020 recovery, for example, shorted stocks gained **48.15% per unit
-of exposure**, versus **31.80%** for the longs. But the larger long book
-earned **17.18 P&L points**, while shorts lost **16.54**. After costs, the
-portfolio was still up **0.43 points**. The **6.74-point loss** reported
-earlier covers the much longer 214-session recovery through January 2021.
-The portfolio's path matters as well as the stocks' relative rebound.
+Faster-rising shorted stocks need not produce a portfolio loss: the long book
+is larger. In the first 63 sessions of the 2020 recovery, for example, the
+portfolio still earned **0.43 points** after costs. Its loss in Table 1 covers
+the much longer recovery through January 2021. The portfolio's path matters
+as well as the stocks' relative rebound.
 
-I also checked shorter and longer windows around the same lows (Table 3).
-At 21 sessions, shorts were ahead in **9 of 11** episodes. By 126 sessions,
-that fell to **3 of 11**, and the median gap had turned negative.
+Table 3 checks shorter and longer windows around the same lows.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: The imbalance is more common early in the recovery.</strong> The same 11 lows at each horizon. Gap = short-stock gains minus long-stock gains per unit of exposure, in percentage points. Net losses use actual portfolio P&amp;L after saved trading costs.</p>
@@ -195,10 +195,13 @@ that fell to **3 of 11**, and the median gap had turned negative.
 
 </div>
 
-This points towards an **early-recovery vulnerability**, with a few severe
-episodes. Because the positions change throughout these windows, the longer-horizon improvement
-could reflect different stocks as well as a change in market behaviour.
-The horizons overlap.
+By 126 sessions, the median imbalance has reversed: shorted stocks gained
+more in only **3 of 11** episodes, and the portfolio lost in only **1 of 11**
+windows. The common pattern is an **early-recovery path problem** that often
+fades as the recovery develops. Holdings change throughout, so this can reflect
+new positions as well as changing market behaviour. The two long losses in
+Table 1 also show why six-month endpoints cannot establish that every severe
+episode quickly repairs itself.
 
 
 ## What this changes
@@ -208,10 +211,21 @@ defensive longs face higher-beta, more volatile shorts when the market
 rebounds. Momentum can reinforce that positioning during a sell-off, although
 its exposure changed direction in 2009 while the low-volatility tilt persisted.
 
-I want to preserve useful short signals and decline protection while reducing
-that concentration. In [part 3](/quants/managing-rebound-risk.html), I compare
-the exposure limits and daily volatility-scaling rules I tested, including
-their costs and results across these recoveries.
+That makes the timing and cost of protection central. A permanent cap must
+earn its keep during a relatively short vulnerability without sacrificing too
+much outside it. In [part 3](/quants/managing-rebound-risk.html), I test that
+trade-off with volatility-tilt limits, direct beta-style limits and daily
+portfolio scaling.
+
+<aside class="research-note" markdown="1">
+**In-sample notes.** The two deepest strategy drawdowns helped form the
+hypothesis; all 11 market lows are identified in hindsight. The 21-, 63- and
+126-session windows overlap and follow changing holdings. The later 2022–26
+block has informed other research choices. Attribution inherits Part 1's
+retrospective sector labels and incomplete model coverage. These comparisons
+describe the observed vulnerability; the holdings and fitted contributions
+alone do not identify a short squeeze or a causal effect of any predictor.
+</aside>
 
 ## References
 
