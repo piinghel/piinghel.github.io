@@ -72,6 +72,12 @@ Use these to judge the kind of edit, not as sentences to paste into every post.
 
 ## Final read
 
+Read every negative definition as a deletion candidate. Replace “This is not an
+independent test” with “The schedules share the same market history.” Replace
+“It does not tell us which predictor selected the stocks” with “It attributes
+realized returns to the stocks' exposures.” Keep the useful definition once,
+near the measure; delete an empty qualification outright.
+
 Finish with the author's current decision and the specific unresolved question,
 if there is one. Then read the paragraphs as continuous speech. Does every
 paragraph advance the explanation? Cut repeated setup, repeated caveats and a

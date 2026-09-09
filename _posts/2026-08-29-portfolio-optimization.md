@@ -62,18 +62,16 @@ separating the benefit of covariance would need another comparison.
 
 ## Development results
 
-The volatility-scaled rule is easy to inspect. But it sizes the long and short
-books separately and never sees covariance. Several modest positions can
-therefore carry the same market or sector risk without the rule recognizing the
-overlap.
+The volatility-scaled rule sizes each position from its own volatility, within
+separate long and short books. Several modest positions can still carry the
+same market or sector risk. Joint sizing accounts for that covariance.
 
 The optimizer sizes the selected stocks together under a forecast-risk budget,
 with limits on gross and net exposure, individual names, market beta, and
 sectors. Let $$w_t$$ be the signed portfolio weights. For each stock, I form
 a sizing score $$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$ from its Ridge
 prediction $$s_{i,t}$$ and estimated daily volatility
-$$\widehat\sigma_{i,t}$$. These scores guide relative allocation; I have not
-calibrated them as expected returns.
+$$\widehat\sigma_{i,t}$$. These scores guide relative allocation.
 
 The regression target ranks forward returns divided by volatility. Multiplying
 its prediction by stock volatility gives me a sizing convention on the stock's
@@ -131,12 +129,12 @@ be read alongside volatility and Sharpe in Table 1.
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for the volatility-scaled rule, optimizer, and optimizer with trading controls" version="14" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Development-period results.</strong> Net growth index (log scale) and drawdown after trading costs, September 1998–December 2021. Paths average three separately compounded schedules and retain each rule's own risk level; cumulative performance alone is not a risk-adjusted comparison.</p>
+<p class="figure-caption"><strong>Figure 1: Development-period results.</strong> Net growth index (log scale) and drawdown after trading costs, September 1998–December 2021. Paths average three separately compounded schedules at each rule's own risk level. Table 1 compares volatility and Sharpe.</p>
 
 ## Keeping existing holdings
 
-At each rebalance, the optimizer chooses weights for the newly selected stocks
-without giving any credit for already owning them. A small change in
+At each rebalance, the basic optimizer starts from the newly selected stocks.
+A small change in
 rank or covariance can then trigger a replacement whose benefit is smaller
 than its trading cost. A slightly better portfolio on paper can be a worse
 trade in practice.
@@ -151,7 +149,7 @@ controls may retain it while it remains inside the wider top 175. It starts from
 the existing weights after intervening price moves.
 
 An incumbent outside the wider holding range must still close, and the
-backtest charges for that exit. The penalty cannot keep an ineligible stock.
+backtest charges for that exit.
 
 The sizing scores and risk budget stay the same. If
 $$w_t^{\mathrm{pre}}$$ contains the weights just before rebalancing and
@@ -170,22 +168,21 @@ that reluctance.
 The score scale matters once I add this penalty. Multiplying all sizing scores
 by a positive constant leaves the basic optimizer's preferred weights unchanged.
 With the penalty, multiplying scores by $$a$$ is equivalent to dividing $$c$$
-by $$a$$. My choice of $$c=2.5\times10^{-4}$$ belongs to this score convention;
-it is not a calibrated 2.5 bp trading cost.
+by $$a$$. My choice of $$c=2.5\times10^{-4}$$ is a tuning coefficient in
+these score units.
 
 The L1 term counts both sides of a replacement. Selling a 1% position and buying
 another 1% position changes $$\lVert w_t-w_t^{\mathrm{pre}}\rVert_1$$ by 2%.
 The optimizer keeps the incumbent unless the new score-and-risk combination
 clears that hurdle. Constraints can still force a trade when the old position
-no longer fits. I tune this coefficient to control how readily the optimizer
+breaches a limit. I tune this coefficient to control how readily the optimizer
 trades; the backtest separately charges 5 bp on executed trades.
 
 Table 2 separates the two controls. A *rank buffer* lets an existing long
 remain eligible down to rank 175, while new positions still enter through the
 top 75; the short book uses the corresponding bottom ranks. The buffer alone
 saves little turnover. With a penalty on changing weights, it becomes much
-more useful: the optimizer can retain an acceptable incumbent instead of
-paying to replace it.
+more useful: retaining an acceptable incumbent saves the cost of replacing it.
 
 <table class="research-table comparison-table control-table">
   <caption><strong>Table 2: What the trading controls contribute.</strong> Development-period means across three schedules, September 1998–December 2021. Returns are geometric and annualized, with net results charging 5 bp per dollar traded. The buffer uses rank 175 and the penalty uses <i>c</i> = 2.5 × 10<sup>−4</sup>; other allocation settings are the same.</caption>
@@ -198,8 +195,8 @@ paying to replace it.
   </tbody>
 </table>
 
-The buffer saves about three times capital in annual trading without the
-penalty, and seven times with it.
+The buffer alone saves about three times capital in annual trading. Adding it
+alongside the penalty saves seven times capital.
 That is why I use the two controls together. They change which stocks remain
 eligible and how much I hold, so the difference includes changes in positions
 as well as trading costs.
@@ -251,8 +248,8 @@ points for the volatility-scaled rule. Two schedules favor the optimizer and
 one is much weaker. Trading more slowly still helps on average, but the
 result is much less consistent than during development.
 
-The difficult December 2022–February 2023 episode also shows what the controls
-leave unresolved. Across schedules, the long book contributes about +7.2
+Short-book losses remain substantial in December 2022–February 2023.
+Across schedules, the long book contributes about +7.2
 percentage points and the short book −16.4, measured as sums of daily
 after-cost contributions. A market-only decomposition explains little of the
 loss. That locates the problem in the short book, but identifying a shared
@@ -294,20 +291,19 @@ $$
 
 where $$D_t$$ contains annualized stock-volatility estimates. Volatility uses
 21 days and correlations use 756 days of volatility-standardized returns,
-with 252 observations required. This lets the risk level respond without
-re-estimating every stock relationship on a short window. The multiplier
+with 252 observations required. This combines responsive stock volatility with
+longer estimates of the relationships between stocks. The multiplier
 $$\kappa=1.18$$ scales forecast volatility.
 
 Before shrinkage, daily returns are capped at ±30% for correlation estimation.
 Missing pairs use a 0.50 fallback. I symmetrize the pairwise matrix, clip
-negative eigenvalues, and restore its unit diagonal. The fallback is not
-uniformly conservative in a long–short portfolio: its effect depends on the
-signs of the positions.
+negative eigenvalues, and restore its unit diagonal. The fallback's effect on
+portfolio risk depends on the signs of the positions.
 
 Figure 3 shows why I keep some estimated correlation. I rebuild both joint
 rules at each shrinkage value using development data. From 0.3 to 0.6,
 forecast calibration, beta error, turnover, and Sharpe move relatively little.
-With no shrinkage, realized risk exceeds forecast by more. Full shrinkage
+At zero shrinkage, realized risk exceeds forecast by more. Full shrinkage
 discards shared-risk information and misses by more again. The broad middle
 matters more than the exact point inside it.
 
@@ -351,8 +347,8 @@ of a trailing measure remembering earlier positions. Both the measurement
 window and the stock-beta estimate matter.
 
 I tested a 63-day beta window in matched portfolios. It removes the flagged
-persistent episodes, but with trading controls it does not improve the later
-tail-error measure and loses 0.6 percentage points of annualized net return,
+persistent episodes, but with trading controls the later tail-error measure
+remains at least as large and annualized net return falls by 0.6 percentage points,
 beyond the 0.5-point tolerance I used. I keep the existing estimate. That
 rejection is also one reason the later period counts as reused research data.
 

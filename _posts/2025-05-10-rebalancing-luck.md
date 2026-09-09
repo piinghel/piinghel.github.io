@@ -35,8 +35,8 @@ allowance for transaction costs and market impact. The calendar grid and
 return–volatility comparison cover the full matched history. I also split the
 tables into development (September
 1998–December 2021) and later history (January 2022–May 2026), so the much longer
-development period cannot hide a change in the more recent results. The later
-period has already informed research choices; it is not an untouched test.
+development period and recent results can be compared directly. The later
+period has already informed research choices.
 
 The original three Friday calendars have a fairly modest full-history spread
 of 0.67 percentage points. Their combined return is 11.67%, close to the 11.61%
@@ -47,21 +47,20 @@ Figure 1 uses January 2022–May 2026 to make the more recent divergence easier 
 see. Over that period, the three Friday calendars return **5.42% to 9.91%**,
 a **4.49-point spread**. The shaded band joins the best and worst fixed
 calendars, with the three-tranche portfolio in blue. Its 8.02% return is close
-to the 7.99% average across all three Friday calendars. This is a larger calendar effect than over the full
-history; tranching does not capture that entire best-to-worst gap as extra return.
+to the 7.99% average across all three Friday calendars. The calendar effect is
+larger here than over the full history.
 
 <div class="research-figure rebalancing-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/tranching/schedule-performance" mobile="/assets/tranching/schedule-performance_mobile" version="6" alt="January 2022–May 2026 Friday calendars: shaded band between fixed Week 2 and Week 3 paths, returning 9.91% and 5.42% annually. The three-tranche portfolio returns 8.02%." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: A larger divergence in the later period.</strong> 3 January 2022–27 May 2026. Shading joins the fixed Friday calendars with the highest and lowest returns over this period; these need not be the highest and lowest paths at every date. The blue portfolio combines all three offsets. The index compounds daily net P&amp;L per unit of fixed notional; endpoint labels give annualized geometric returns.</p>
+<p class="figure-caption"><strong>Figure 1: A larger divergence in the later period.</strong> 3 January 2022–27 May 2026. Shading joins the fixed Friday calendars selected by their highest and lowest full-period returns. The blue portfolio combines all three offsets. The index compounds daily net P&amp;L per unit of fixed notional; endpoint labels give annualized geometric returns.</p>
 
 ## Three tranches
 
 Each tranche receives one third of strategy notional, holds its own portfolio
 and continues to rebalance every three weeks. One tranche trades each week,
-as Table 1 shows. I participate in all three starting weeks without replacing
-the whole portfolio weekly.
+as Table 1 shows. This spreads the portfolio's trading across all three weeks.
 
 <table class="research-table sleeve-schedule">
   <caption><strong>Table 1: Two rotations over six weeks.</strong> W1–W6 denote weeks; ● marks a rebalance and — means hold.</caption>
@@ -83,13 +82,12 @@ I scale each standalone book's positions and P&L to one third of the total
 notional. Its arithmetic mean return therefore equals the average across the
 three calendars, including proportional costs. Geometric return can differ
 slightly through compounding. Volatility, Sharpe and drawdown must be calculated
-from the combined daily returns. I leave the resulting reduction in risk in
-place, with no increase in leverage to restore standalone volatility.
+from the combined daily returns. Each tranche keeps its one-third allocation,
+preserving the resulting reduction in risk.
 
 ## Does the weekday matter?
 
-Once I hold all three offsets, I no longer have to choose a starting week.
-I still have to choose a weekday. To see how much that remaining choice matters,
+Holding all three offsets leaves the weekday choice. To see how much it matters,
 I ran the same comparison for Monday through Friday: fifteen standalone calendars
 and five portfolios combining three offsets each. They implement the same
 strategy and share much of the same return history.
@@ -100,9 +98,8 @@ the three offsets select every third target. All fifteen calendars are evaluated
 on the same dates, beginning 22 September 1998 once every calendar is active.
 
 I expected the starting week to matter more than the weekday. Figure 2 shows
-why I can't separate them so neatly. Over the full period, Week 3 is the best
-offset on Monday and the worst on Friday. There isn't a starting week that
-works best regardless of the weekday.
+that their combination matters: over the full period, Week 3 is the best
+offset on Monday and the worst on Friday.
 
 <div class="research-figure rebalancing-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/tranching/calendar-grid" mobile="/assets/tranching/calendar-grid_mobile" version="2" alt="Full-period annualized returns for three starting-week offsets and five signal weekdays, with five three-tranche portfolios below. Standalone returns range from 10.21% to 12.27%." %}
@@ -115,8 +112,7 @@ Monday signals and 5.42% with Friday signals. Changing the weekday while keeping
 the offset fixed produces spreads of 2.79, 3.75 and 5.13 points for Weeks 1, 2
 and 3. A descriptive offset–weekday decomposition assigns most of the variation
 to their interaction, over the full history and within both periods. The
-particular combination matters. These overlapping returns do not provide
-fifteen independent observations.
+particular combination matters. The fifteen calendars share overlapping returns.
 
 Combining the offsets still makes a large difference. Table 2 compares all
 fifteen standalone outcomes with the five combined outcomes. Across the full
@@ -154,7 +150,7 @@ are compared.
 Over individual years the remaining weekday differences can be larger:
 the combined portfolios' annual return spread is 1.74–4.91 points across
 2022–2025. I would expect tranching to reduce the importance of the calendar,
-without expecting these particular reduction percentages to repeat exactly.
+with the size of that benefit varying over time.
 
 ## Similar return, lower volatility
 
@@ -232,13 +228,11 @@ where two-way turnover sums absolute purchases and sales.
 At the existing 5 bp cost rate, annual arithmetic cost drag is therefore
 unchanged at 1.24 percentage points for that comparison; it is 1.41 points in
 development. The return and risk benefits above already include these costs.
-Trades are accounted for separately across tranches, with no netting savings.
+Each tranche is charged for its own trades before any cross-tranche netting.
 Fixed-ticket charges, borrow and financing are outside the model. The practical
 change here is tracking three books and sending smaller orders more often.
 
-I would fund all three tranches. The full-history Friday spread is fairly
-modest, so I wouldn't base the decision on the striking later-period chart
-alone. The volatility reduction is the more useful takeaway for me: from
+I would fund all three tranches. The volatility reduction is the main reason: from
 8.53% to 7.88% across the full calendar comparison, with almost unchanged
 average return. This is a useful, incremental reduction in risk. That benefit
 appears in both periods, though its size changes,

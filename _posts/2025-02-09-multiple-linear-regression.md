@@ -21,8 +21,8 @@ weight should I give to each, especially when several describe much the same
 thing?
 
 Linear regression appeals to me here because I can let the data choose the
-weights and still inspect the combination. That doesn't make the overlap go
-away: the model can give large, opposing weights to very similar predictors.
+weights and still inspect the combination. The model can give large, opposing
+weights to very similar predictors.
 I compare ordinary least squares with Ridge, which penalizes large
 coefficients, and follow both through to the stocks they select and the
 portfolios they produce outside their training windows.
@@ -77,8 +77,8 @@ representative measures.
 </table>
 
 I orient the predictor ranks as shown, average within each theme, then average
-the three themes. This covers several horizons without giving a theme more
-weight just because it has more variants. The directions and equal weights
+the three themes. Each theme keeps an equal share across its variants. The
+directions and equal weights
 come from the investment ideas and were fixed before inspecting the revised
 benchmark's results. Size stays out of this fixed rule.
 
@@ -108,8 +108,7 @@ what they share and a large weight on the gap between them.
 That gap might contain useful information about the shape of a price trend.
 It might also be mostly measurement noise. The large weight on the gap makes
 the score sensitive to changes in how the two signals move together. Opposite
-signs give me a reason to inspect that relationship; they do not, by themselves,
-establish overfitting. A good portfolio backtest also leaves that question open.
+signs give me a reason to inspect how that relationship holds up in later data.
 
 Ridge discourages large coefficients by adding a penalty:
 
@@ -123,8 +122,7 @@ $$
 Here $n$ counts training stock-date observations. The intercept is unpenalized;
 $c=0$ gives OLS. With positive $c$, a large coefficient has to earn its place
 by reducing prediction error enough to offset the penalty. This makes it harder
-to rely on large offsetting weights, though Ridge does not force coefficients
-to follow the signs I would choose for standalone factors.
+to rely on large offsetting weights. Coefficient signs remain freely estimated.
 
 The recorded fitting rule starts with 900 trading dates from January 1995,
 leaves a 21-date gap, then predicts the next 600 trading dates. I refit from
@@ -141,7 +139,7 @@ then rank that average. For a linear model, this is equivalent to averaging
 their intercepts and coefficient vectors; those averaged coefficients are
 what the heatmap and movement diagnostics describe. The 20-session targets
 still overlap within these samples, and stocks on the same date share market
-and sector shocks. Three fits therefore do not provide three independent tests.
+and sector shocks, making the three fits dependent.
 
 Keeping the older data gives the model more observations to estimate a common
 combination, which can slow adaptation when relationships change. Development
@@ -150,8 +148,7 @@ including the benchmark revision, so it is a later historical check.
 
 I retain $c=0.01$, chosen during development to reduce coefficient size and
 movement while keeping the portfolio close to OLS. I made that trade-off by
-judgment, without setting a numerical acceptance threshold in advance. The
-comparison below evaluates that choice with the revised fixed rule.
+judgment. The comparison below evaluates that choice with the revised fixed rule.
 
 I keep portfolio construction fixed so the comparison follows differences in
 the rankings. Inverse-volatility sizing gives less weight to volatile stocks;
@@ -189,7 +186,7 @@ development gain from Ridge disappears in the later period.
 
 The fixed score has the highest later-period mean IC, with more variable daily
 IC. On this measure, the small fixed rule is still a useful competitor.
-But I do not trade the entire ranking. The portfolio holds its tails, sizes
+The portfolio holds the ranking's tails, sizes
 those positions and pays to change them, so I also need to follow the scores
 through to returns.
 
@@ -252,8 +249,7 @@ The similar portfolios leave a useful question: how much has Ridge changed
 the fitted combination? At the selected penalty, coefficient size and absolute
 movement between refits fall by roughly one third. After normalizing each
 coefficient vector to unit length, though, OLS and Ridge show similar changes
-in direction. Smaller vectors can move less in absolute terms without making
-the predictor relationships more stable.
+in direction. Absolute movement depends on both coefficient size and direction.
 
 The full ranking has a 0.991 correlation with OLS, and about 14–15 of the 150
 daily candidates differ. Related inputs give the model room to redistribute
@@ -293,7 +289,7 @@ while keeping the portfolio close to OLS, so the similar performance partly
 reflects that choice. I prefer Ridge as a simple baseline because I am less
 comfortable relying on large weights that nearly cancel each other: small
 changes in the relationship between those inputs can then matter too much.
-The later results give me no clear performance reason to prefer it to OLS.
+Later performance is similar under OLS and Ridge.
 For this portfolio, the extra trading introduced by the learned ranking matters
 far more than the choice between the two regressions.
 

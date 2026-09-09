@@ -16,6 +16,11 @@
 .attribution-dynamics .ad-readout,.attribution-dynamics .ad-status{font-size:14px;line-height:1.6;margin:.5rem 0 0}
 .ad-readout strong{font-weight:700}
 .attribution-dynamics .ad-direction{font-size:14px;line-height:1.5;margin:.8rem 0}
+.ad-panel .ad-explanation{font-weight:400;margin:0 0 .4rem!important;color:inherit}
+.ad-readout .ad-selected-date{font-size:13px;line-height:1.5;margin:.5rem 0}
+.ad-calculation{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:.5rem;font-size:12px;max-width:32rem}
+.ad-calculation span{display:flex;flex-direction:column;min-width:0}
+.ad-calculation strong{font-size:14px;font-variant-numeric:tabular-nums}
 .ad-content[hidden]{display:none}
 .recovery-explorer{--ad-long:#268b7b;--ad-short:#bd6559;--ad-net:#3a689c;--ad-grid:#d6dfe5}
 [data-theme="dark"] .recovery-explorer{--ad-long:#57bdab;--ad-short:#e69482;--ad-net:#8bb6ee;--ad-grid:#43505f}

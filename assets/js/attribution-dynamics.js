@@ -21,9 +21,9 @@
     return [Math.floor(min/step)*step,Math.ceil(max/step)*step,step];
   }
   let data;
-  const directions={beta:{sign:-1,name:'low-beta',meaning:'lower-beta stocks outperforming higher-beta stocks'},
-    volatility:{sign:-1,name:'low-volatility',meaning:'lower-volatility stocks outperforming higher-volatility stocks'},
-    momentum:{sign:1,name:'momentum',meaning:'past winners outperforming past losers'}};
+  const directions={beta:{sign:-1,name:'low beta',positive:'lower-beta stocks',negative:'higher-beta stocks'},
+    volatility:{sign:-1,name:'low volatility',positive:'lower-volatility stocks',negative:'higher-volatility stocks'},
+    momentum:{sign:1,name:'momentum',positive:'past winners',negative:'past losers'}};
   function oriented(rows,sign){return rows.map(row=>row.map((v,i)=>[1,2,3,4,6].includes(i)?sign*v:v));}
   function render(){
     if(!data)return;
@@ -33,9 +33,9 @@
     slider.max=rows.length-1;
     slider.setAttribute('aria-valuetext',human(selected[0]));
     const all=data.episodes.flatMap(ep=>oriented(ep.factors[factor.value],direction.sign));
-    root.querySelector('.ad-direction').textContent=`Positive exposure benefits from ${direction.meaning}, holding the other fitted characteristics constant.`;
-    root.querySelector('.ad-exposure-title').textContent=`1. Exposure to ${direction.name} · longs + shorts = net`;
-    root.querySelector('.ad-payoff-title').textContent=`2. Payoff to one unit of ${direction.name} · cumulative points`;
+    root.querySelector('.ad-direction').textContent=`Positive ${direction.name} exposure favors ${direction.positive}; negative exposure favors ${direction.negative}.`;
+    root.querySelector('.ad-exposure-title').textContent=`1. Our exposure to ${direction.name} · units`;
+    root.querySelector('.ad-pnl-title').textContent=`3. Portfolio P&L from ${direction.name} · cumulative points`;
     const series=[[[1,'--ad-long',''],[2,'--ad-short','5 3'],[3,'--ad-net','']],[[6,'--ad-net','']],[[7,'--ad-net','']]];
     const style=getComputedStyle(root);
     panels.forEach((svg,p)=>{
@@ -69,7 +69,10 @@
       const middle=rows[Math.floor(rows.length/2)][0];
       add(svg,'text',{x:x(middle),y:height-6,'text-anchor':'middle'},new Date(date(middle)).toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'}));
     });
-    root.querySelector('.ad-readout').textContent=`${human(selected[0])} · Today: ${direction.name} ${selected[4]>=0?'paid':'lost'} ${Math.abs(selected[4]).toFixed(3)}% per unit. Portfolio exposure ${signed(selected[3],3)} × payoff ${signed(selected[4],3)}% = ${signed(selected[5],3)} P&L points. Contribution since ${human(e.peak)}: ${signed(selected[7])} points.`;
+    root.querySelector('.ad-selected-date').textContent=`${human(selected[0])} · This day's ${direction.name} contribution`;
+    root.querySelector('.ad-day-exposure').textContent=signed(selected[3],3);
+    root.querySelector('.ad-day-return').textContent=signed(selected[4],3)+'%';
+    root.querySelector('.ad-day-pnl').textContent=signed(selected[5],3)+' points';
   }
   function choose(){
     const e=data.episodes[Number(episode.value)],rows=e.factors[factor.value];

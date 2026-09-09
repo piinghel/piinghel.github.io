@@ -38,12 +38,12 @@ Figure 1 shows how much of the long book's gains the strategy kept.
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Net deducts 5 basis points on traded notional; borrow, financing and market impact are excluded. Shading marks the two deepest peak-to-trough declines.</p>
 
-The short book wasn't a constant drag. Table 1 shows that it added **5.12
+The short book added **5.12
 points in 2000–04**, but lost **54.89 in 2010–14**. Its role needs to be
 understood across different market conditions.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: How the two books contributed over time.</strong> P&amp;L points. ¹Partial blocks; totals are not annualized.</p>
+<p class="table-caption"><strong>Table 1: How the two books contributed over time.</strong> Total P&amp;L points in each block. ¹Partial blocks.</p>
 
 | Period | Longs | Shorts | Costs | Net |
 | :--- | ---: | ---: | ---: | ---: |
@@ -119,8 +119,7 @@ $$
 Here, $i$ identifies a stock and $k$ a style. The mean and standard deviation
 use weights proportional to the square root of market capitalization. A
 loading of $+1$ means one weighted standard deviation above the average of
-that descriptor. Standardizing a rank doesn't turn it back into raw
-volatility or raw momentum.
+that descriptor. For ranked inputs, the loading measures relative rank.
 
 **Then fit that day's returns across stocks.** For each eligible stock with
 a valid return, I write
@@ -132,9 +131,9 @@ $$
 
 The common return is $a_t$, the style returns are $f_{k,t}$, and
 $g_{s(i),t}$ is the effect for the stock's sector. The residual
-$\varepsilon_{i,t}$ is what the model leaves unexplained. This is a new
-cross-sectional fit each day, using the eligible stock universe rather than
-only the stocks in the portfolio. The characteristics and market caps come
+$\varepsilon_{i,t}$ is the stock's realized return minus its fitted return. This is a new
+cross-sectional fit each day, using the eligible stock universe. The
+characteristics and market caps come
 from the prior session; the returns being explained come from the session
 that has just finished. Sector labels are retrospective, as noted above.
 
@@ -153,11 +152,11 @@ the common return from the sector effects, their loss-weighted average is
 constrained to zero: $$\sum_s Q_{s,t}g_{s,t}=0$$, where
 $$Q_{s,t}=\sum_{i\in U_t:s(i)=s}q_{i,t-1}$$.
 
-The coefficients are estimated through a joint SVD least-squares solve,
-without a ridge penalty. Thus a positive fitted volatility return means
+The coefficients use unpenalized least squares, solved jointly by SVD.
+A positive fitted volatility return means
 higher-volatility descriptors were associated with better returns that day,
-conditional on the other terms. It is an explanation of realized returns;
-it does not tell me which predictor caused the strategy to choose its stocks.
+conditional on the other terms. The model attributes realized returns to the
+stocks' exposures.
 
 **Finally, apply the fit to the positions actually held.** Let $w_{i,t^-}$
 be the signed position just before the session, divided by the fixed strategy
@@ -191,8 +190,8 @@ C_k(T)=100\sum_{t\leq T}E_{k,t}\widehat f_{k,t}.
 $$
 
 Both terms can change each day. A stock's characteristics move, positions are
-resized or replaced, and the factor payoff changes. Multiplying one average
-exposure by the whole period's factor return would miss that timing.
+resized or replaced, and the factor payoff changes. The daily calculation
+matches each payoff to the exposure held when it arrived.
 
 Figure 3 shows that momentum, volatility and reversal earned money over the
 full history, while beta and size detracted. The largest component was the
@@ -218,7 +217,7 @@ The factor split is an estimate. News about individual stocks can influence
 the fitted factor returns. If the fit assigns an extra P&L point to factors,
 it takes that point away from the residual. The total still adds up, even
 though the explanation has changed. This is the attribution uncertainty
-discussed in *Elements*, §14.2. I haven't measured how large it is here.
+discussed in *Elements*, §14.2. The attribution below uses point estimates.
 
 The factors I choose also matter. Value, quality and industry effects can
 land in the residual when the model leaves them out. Before calling the
@@ -231,7 +230,7 @@ usually favoured larger stocks and maintained a negative volatility tilt.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-exposures" mobile="/assets/portfolio-attribution/whole-exposures_mobile" version="3" alt="Four full-history panels for standardized size, momentum, volatility and beta exposures." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Persistent tilts, changing sizes.</strong> Monthly mean signed standardized exposures, September 1998–May 2026, on fitted holdings. Missing positions are not rescaled.</p>
+<p class="figure-caption"><strong>Figure 4: Persistent tilts, changing sizes.</strong> Monthly mean signed standardized exposures, September 1998–May 2026, using the original weights of holdings covered by the fit.</p>
 
 For volatility, a negative exposure can come from lower-volatility longs,
 higher-volatility shorts, or both. When more volatile stocks outperform after
@@ -251,7 +250,7 @@ the decline from losses during the recovery.
 Table 2 covers the strategy's peak-to-trough windows: 30 July 2008 to
 16 September 2009, and 21 February 2020 to 27 January 2021. The market lows
 were **9 March 2009** and **23 March 2020**. These dates are identified with
-hindsight and describe the episodes; they weren't trading signals.
+hindsight to divide each episode into decline and recovery.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 2: Losses continued after the market bottomed.</strong> Fixed-notional P&amp;L points, excluding the strategy's peak day. The decline includes the market-low session; the rebound follows it. Longs and shorts are gross; net includes costs.</p>
@@ -267,7 +266,7 @@ hindsight and describe the episodes; they weren't trading signals.
 </div>
 
 **The strategy lost in both phases, in both episodes.** Shorts helped during
-the declines, but didn't fully offset the long losses. During the rebounds,
+the declines, offsetting part of the long losses. During the rebounds,
 short losses exceeded long gains. Figure 5 shows when that protection reversed.
 
 <div class="research-figure responsive-figure">
@@ -277,11 +276,11 @@ short losses exceeded long gains. Figure 5 shows when that protection reversed.
 
 The **2009 rebound accounted for more of that episode's loss**. In 2020, the initial
 decline was much sharper: **9.32 points in 21 sessions**, followed by another
-**6.74 over 214 sessions**. Rebound risk matters in both cases, but it doesn't
-explain the initial failure to protect the portfolio.
+**6.74 over 214 sessions**. Both the initial decline and the rebound contributed
+to the losses.
 
 Was I simply holding on to the old shorts? Table 3 separates names that were
-short at the market low from names that weren't.
+short at the market low from additions during the rebound.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: New names also contributed to the rebound losses.</strong> Gross short P&amp;L points from after the market low through the strategy trough. Groups include subsequent resizing, exits and reentries.</p>
@@ -289,7 +288,7 @@ short at the market low from names that weren't.
 | Short-book names | 2009 rebound | 2020–21 rebound |
 | :--- | ---: | ---: |
 | Short at the market low | −20.90 | −23.12 |
-| Not short at the market low | −28.24 | −21.08 |
+| Rebound additions | −28.24 | −21.08 |
 | **Total** | **−49.14** | **−44.19** |
 {: .research-table .comparison-table .attribution-table }
 
@@ -340,24 +339,32 @@ I reverse the signs of both the model's volatility exposure and its payoff.
 For example, model exposure −0.5 and volatility payoff +1% become low-volatility
 exposure **+0.5** and low-volatility payoff **−1%**. Both give the same
 **−0.5 P&L points**. Low beta uses the same convention; momentum follows past
-winners. Choose a direction and move the slider to see the daily multiplication.
+winners.
+
+The **factor payoff** is the model's estimated return for one unit of exposure
+on a given day, accounting for the other fitted characteristics. The
+**portfolio contribution** multiplies that return by the exposure we actually
+held.
+
+Figure 7 puts these together. The middle panel adds the daily payoffs for a
+constant +1 exposure. The bottom panel adds the P&L from our changing exposure.
+Move the slider or click a chart to inspect the multiplication for one day.
 
 {% include attribution-dynamics.html %}
-<p class="figure-caption"><strong>Figure 7: How the defensive bet earns and loses money.</strong> Exposure uses holdings covered by the daily fit. Payoffs sum fitted returns per standardized unit; contributions sum daily exposure × payoff in fixed-notional P&amp;L points. Shading ends at the market low.</p>
+<p class="figure-caption"><strong>Figure 7: Exposure × return per unit = portfolio P&amp;L.</strong> Exposures use standardized loadings and the original weights of holdings covered by the fit. Portfolio P&amp;L is measured in points of strategy notional. Shading ends at the market low.</p>
 
-Read the panels together: positive low-volatility exposure benefits when the
-payoff line rises and loses when it falls. The payoff line adds up each day's
-result, so it can remain above zero while falling through a losing rebound.
-The portfolio's contribution also depends on how much exposure it held each
-day. A larger bet on losing days can outweigh smaller bets on winning days.
+Positive exposure gains when the factor-payoff line rises and loses when it
+falls. Negative exposure reverses that relationship: a falling factor payoff
+produces gains. That is how the momentum contribution can recover while the
+momentum payoff keeps falling in the 2009 view. Each cumulative line adds up
+daily results, so its slope shows when gains or losses occurred.
 
-The losses weren't made worse by the way these exposures changed during the
-rebounds. Holding each exposure at its average level for the phase would have
+Holding each exposure at its average level for the rebound would have
 produced larger beta and volatility losses. For example, volatility lost
 **8.71 points** in the 2020–21 rebound, compared with **9.68** at its average
 exposure. The continuing low-volatility bet is therefore worth examining.
-Trading, price moves and changes in the stocks' characteristics all affect
-exposure, so this comparison alone can't tell me how well I timed the trades.
+The observed exposure changes combine trading, price moves and changes in the
+stocks' characteristics.
 
 A closer look at the holdings makes the imbalance easier to see. Figure 8
 compares the stocks held on each side as the recoveries
@@ -382,8 +389,8 @@ Momentum can add to the same bet. During a sell-off, a stock can rank as a
 winner simply because it fell less than the others. A momentum signal may
 therefore favour the defensive stocks the low-volatility tilt already favours,
 while both point away from the harder-hit stocks. This resembles the rebound
-mechanism in Daniel and Moskowitz's *Momentum Crashes*. But momentum isn't the
-whole explanation here. During the 2009 rebound, the portfolio's momentum
+mechanism in Daniel and Moskowitz's *Momentum Crashes*. During the 2009 rebound,
+the portfolio's momentum
 exposure changed sign and its fitted momentum contribution was positive,
 while the low-volatility tilt continued to hurt.
 
@@ -409,8 +416,7 @@ $$
 
 This follows the changing positions and adds daily returns. A price rise
 counts as a stock gain on either side; it hurts the portfolio when the stock
-is short. The result is not the compounded return of a basket held unchanged
-from the market low. I compare $G_{\mathrm{short}}-G_{\mathrm{long}}$, then
+is short. I compare $G_{\mathrm{short}}-G_{\mathrm{long}}$, then
 look separately at the actual portfolio P&L over exactly the same sessions.
 
 Figure 9 starts with all 11 recoveries. Select an episode to follow the two
@@ -447,13 +453,11 @@ that fell to **3 of 11**, and the median gap had turned negative.
 </div>
 
 This points towards an **early-recovery vulnerability**, with a few severe
-episodes, rather than a loss that persists through every recovery. Because
-the positions change throughout these windows, the longer-horizon improvement
+episodes. Because the positions change throughout these windows, the longer-horizon improvement
 could reflect different stocks as well as a change in market behaviour.
-These are overlapping horizons around reused, hindsight-selected lows—not
-independent tests or evidence that a rebound can be recognized in real time.
+The horizons overlap and use market lows identified in hindsight.
 
-## What variance misses
+## Daily risk and cumulative losses
 
 The 2020–21 episode produces a seemingly contradictory result: the shorts
 lost **13.46 P&L points**, yet Table 5 assigns them only **0.2% of the
@@ -495,16 +499,15 @@ even though it can change the portfolio's drawdown.
 Figure 5 shows why this matters here. During the 2020 decline, shorts earned
 **30.74 points**, cushioning the long losses. During the recovery, they lost
 **44.19 points**, more than the longs gained. The **0.2% variance share**
-doesn't capture that reversal of protection. It also doesn't mean removing
-the shorts would leave risk unchanged, because their offset against the
-longs would disappear too.
+reflects how shorts offset daily long-book fluctuations across the whole
+episode. The cumulative P&L shows the protection during the decline and its
+cost during the rebound. Removing the shorts would also remove their daily
+offset against the longs.
 
 I therefore need both measures when judging a short position: how much it
 diversifies daily P&L, and what it earns or loses during the declines and
-recoveries I care about. A small variance share alone is not a reason to keep
-a costly hedge; a cumulative loss alone is not a reason to discard its
-protection. The next test is whether I can retain that protection with less
-damage during rebounds.
+recoveries I care about. The next test is whether I can retain that protection
+with less damage during rebounds.
 
 ## What I'd test next
 
@@ -533,8 +536,8 @@ bar tells me where to look; I still need to check what the whole trade gives up.
 
 I'd rerun the portfolio with these changes across ordinary periods and other
 recoveries, allowing for trading costs, borrow and financing. I'd compare net
-returns, drawdowns, turnover and protection during declines. These alternatives
-haven't been tested here. This history has already helped shape the model,
+returns, drawdowns, turnover and protection during declines. These are proposed
+tests. This history has already helped shape the model,
 and the two major drawdowns have shaped the hypothesis.
 
 ## References

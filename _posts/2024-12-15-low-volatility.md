@@ -19,7 +19,7 @@ The strategy buys stable stocks and shorts volatile ones. I then have to decide
 how much capital to put behind each side. Equal dollar amounts seem like a
 reasonable place to start, but I've chosen the two books for very different
 levels of risk. The volatile shorts can dominate the portfolio even when I
-give them no more capital than the longs.
+give both books equal capital.
 
 The ranking comes from the [low-volatility
 effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865): stable stocks
@@ -39,9 +39,8 @@ In this sample, the ranking separates risk more clearly than return. Across
 the ten deciles, realized volatility rises from 11.9% for the stable stocks
 to 37.9% for the volatile stocks, while Sharpe falls from 0.90 to 0.20.
 The highest-volatility decile still earns a positive arithmetic return before
-costs, but compounds at only 0.35% a year. Poor risk-adjusted returns don't
-make these stocks an easy short: their large swings are precisely what the
-portfolio has to absorb.
+costs, but compounds at only 0.35% a year. Shorting these stocks means absorbing
+their large price swings.
 
 ## Equal capital, unequal risk
 
@@ -87,15 +86,15 @@ would put capital straight back into the volatile shorts. With the rule above,
 the stable long book averages 97% gross exposure,
 while the volatile short book averages 34%. At those actual book sizes, each
 has standalone volatility of about 10%; equal weighting had left the short
-book above 37%. Similar standalone volatilities do not imply equal contributions
-to total portfolio risk, which also depend on covariance.
+book above 37%. Their contributions to total portfolio risk also depend on
+covariance between the books.
 
 The capital difference leaves about 63% net stock exposure. Because the smaller
 short book contains higher-beta stocks, it still offsets much of the long
 book's market sensitivity. Full-sample realized beta moves from −1.12 to
 −0.001, but holdings-based and rolling realized estimates vary through time.
-I haven't asked the sizing rule to target that beta. It is an outcome of these
-weights, and the near-zero average hides variation through time.
+That beta is an outcome of the sizing rule, and the near-zero average hides
+variation through time.
 
 The amount of capital committed changes too. Equal weighting commits 200% of
 strategy capital across the two books. Inverse-volatility sizing averages about
@@ -134,7 +133,7 @@ drawdown still leaves plenty to improve.
 
 <p class="figure-caption"><strong>Figure 2: Sizing changes both risk and compounding.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. The rules retain their different exposures and volatilities; Table 1 supplies the risk comparison.</p>
 
-## What individual sizing misses
+## Shared losses during market rallies
 
 The remaining drawdowns show the limit of treating positions individually.
 Figure 3 examines two market rallies when the short book lost heavily:
@@ -154,16 +153,15 @@ back toward its starting value.
 
 From 3 April 2025 to 27 May 2026, the market gains about 39% while the portfolio
 loses 13%. Longs contribute +4.2 points and shorts −16.3 before costs.
-The shorts drive the loss again, and the portfolio hasn't recovered by the end
-of the available sample. Both comparisons measure returns from the first date's close.
+The shorts drive the loss again, and the portfolio ends the sample below its
+starting value. Both comparisons measure returns from the first date's close.
 
-The two episodes show what individual sizing misses. During the dot-com rally,
-both books lose money, so the longs provide no offset to the short-book losses.
+The two episodes show how losses combine across the books. During the dot-com rally,
+both books lose money, so the long and short losses add together.
 In the later rally, the longs gain 4.2 points but offset only about a quarter
 of the shorts' 16.3-point loss. Inverse-volatility sizing reduces the capital
-behind each volatile position; it does not account for how several positions
-can move together. Positive net stock exposure does not prevent that shared
-risk from dominating the portfolio.
+behind each volatile position. Coordinated moves across the short book can
+still dominate portfolio risk.
 
 ## From individual weights to joint construction
 
@@ -176,4 +174,4 @@ The two rallies show where I would go next. Smaller positions help, but the
 short book can still overwhelm the longs when its holdings rise together.
 Sizing the holdings jointly, using covariance and explicit portfolio limits,
 would let me account for those relationships. The next test is whether that
-reduces drawdowns without giving away the return after costs.
+reduces drawdowns while preserving the return after costs.

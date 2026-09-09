@@ -11,6 +11,13 @@ not reasons to redesign an effective display or override the user's choices.
 
 ## Establish the argument
 
+For this author's blog, define each object by what it is, in the shortest clear
+sentence. Remove sentences whose only purpose is saying what something is not.
+Express consequential limits through the actual sample, calculation, assumptions
+or required next test. Apply this to prose, headings, captions and interactive
+labels. For example: “The model attributes realized returns to stock exposures.”
+State failed outcomes directly and preserve their evidence.
+
 For drafting or prose edits, read [the voice guide](references/voice.md).
 It draws on Sander Dieleman, Max Halford, Chip Huyen and Rob Carver as examples
 of personal technical writing, without prescribing an imitation or template.
