@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "Managing Rebound Risk with Exposure Limits"
+title: "Performance Attribution, Part 3: Managing Rebound Risk with Exposure Limits"
 description: "What happened when I capped the volatility tilt and scaled the portfolio using faster risk estimates."
 permalink: /quants/managing-rebound-risk.html
 toc: true
 show_date: false
 date: 2026-09-09
 categories: ["Portfolio management"]
-article_label: Portfolio attribution · Part 3
+article_label: Performance attribution · Part 3 of 3
 series_previous: /quants/short-book-rebounds.html
 series_end: true
 ---

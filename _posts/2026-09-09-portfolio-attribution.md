@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "Understanding Your P&L"
+title: "Performance Attribution, Part 1: Understanding Your P&L"
 description: "How positions and fitted factor returns add up to portfolio earnings and risk."
 permalink: /quants/portfolio-attribution.html
 toc: true
 show_date: false
 date: 2026-09-09
 categories: ["Portfolio management"]
-article_label: Portfolio attribution · Part 1
+article_label: Performance attribution · Part 1 of 3
 series_previous: /quants/2026/09/05/risk-concentration.html
 series_next: /quants/short-book-rebounds.html
 ---

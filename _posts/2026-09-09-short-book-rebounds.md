@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "Why the Short Book Struggles in Rebounds"
+title: "Performance Attribution, Part 2: Why the Short Book Struggles in Rebounds"
 description: "Higher-beta, harder-hit shorts rebound faster than the longs across many market recoveries."
 permalink: /quants/short-book-rebounds.html
 toc: true
 show_date: false
 date: 2026-09-09
 categories: ["Portfolio management"]
-article_label: Portfolio attribution · Part 2
+article_label: Performance attribution · Part 2 of 3
 series_previous: /quants/portfolio-attribution.html
 series_next: /quants/managing-rebound-risk.html
 ---
