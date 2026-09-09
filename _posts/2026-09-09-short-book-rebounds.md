@@ -17,14 +17,14 @@ series_next: /quants/managing-rebound-risk.html
 <p class="article-summary">Higher-beta, more volatile shorts often rebound faster than the longs early in a recovery. The imbalance is much less common after six months, although the two deepest strategy drawdowns show how costly the intervening path can be.</p>
 
 In [part 1](/quants/portfolio-attribution.html), the shorts reduced daily
-portfolio fluctuations while losing money overall. Here I want to understand
-where their protection failed. Did the two sides hold stocks with very
-different rebound potential, and how long did that difference last?
+portfolio fluctuations while losing money overall. I want to understand why
+their protection failed during recoveries, starting with the stocks held on
+each side and how their returns differed after the market low.
 
 [Part 1's beta chart](/quants/portfolio-attribution.html#portfolio-beta)
 separates the portfolio's realized market beta from its standardized
 beta-style exposure. The book had low positive average market beta and a
-negative beta-style tilt. Here I examine the holdings behind that tilt.
+negative beta-style tilt.
 
 I follow the same portfolio from September 1998 to May 2026. Contributions
 use fixed-notional P&L points; one point is 1% of strategy notional.
@@ -114,8 +114,7 @@ shows the daily exposure × payoff calculation.
 
 ## The stocks on each side
 
-The holdings make the imbalance easier to see. Figure 3
-compares the stocks held on each side as the recoveries
+Figure 3 compares the stocks held on each side as the recoveries
 began. **In both episodes, the shorted stocks had higher estimated market
 betas, larger prior losses and higher volatility than the longs.**
 
@@ -124,7 +123,7 @@ betas, larger prior losses and higher volatility than the longs.**
 </div>
 <p class="figure-caption"><strong>Figure 3: The shorts held riskier stocks than the longs.</strong> Average stock characteristics, weighted by position size within each book, entering the first rebound session. Measurements end at the market lows of 9 March 2009 and 23 March 2020. Beta uses up to 252 daily returns against the Russell 1000 (126 minimum); prior return uses 126 sessions; volatility uses 21 sessions, annualized.</p>
 
-This helps explain the rebound losses. A rising market tends to lift
+A rising market tends to lift
 higher-beta stocks more, so their recovery hurts the short book while the
 lower-beta longs participate less. Position sizes still determine the
 portfolio's overall sensitivity: the chart compares the stocks within each
@@ -170,16 +169,14 @@ Figure 4 starts with all 11 recoveries. Select an episode to follow the two
 books through time, then choose 21, 63 or 126 sessions and move the date slider.
 At 63 sessions, **shorted stocks gained more in 9 of 11
 episodes**, with a median gap of **2.89 percentage points**. The 2009 gap was
-far larger than the typical episode, which makes both frequency and magnitude
-worth inspecting.
+far larger than the typical episode.
 
 {% include attribution-recovery-explorer.html figure="4" %}
 
 Faster-rising shorted stocks need not produce a portfolio loss: the long book
 is larger. In the first 63 sessions of the 2020 recovery, for example, the
 portfolio still earned **0.43 points** after costs. Its loss in Table 1 covers
-the much longer recovery through January 2021. The portfolio's path matters
-as well as the stocks' relative rebound.
+the much longer recovery through January 2021.
 
 Table 3 checks shorter and longer windows around the same lows.
 
@@ -200,22 +197,17 @@ more in only **3 of 11** episodes, and the portfolio lost in only **1 of 11**
 windows. The common pattern is an **early-recovery path problem** that often
 fades as the recovery develops. Holdings change throughout, so this can reflect
 new positions as well as changing market behaviour. The two long losses in
-Table 1 also show why six-month endpoints cannot establish that every severe
-episode quickly repairs itself.
+Table 1 show that severe losses can last beyond six months.
 
 
 ## What this changes
 
-The holdings and fitted contributions point to a shared vulnerability:
-defensive longs face higher-beta, more volatile shorts when the market
-rebounds. Momentum can reinforce that positioning during a sell-off, although
-its exposure changed direction in 2009 while the low-volatility tilt persisted.
-
-That makes the timing and cost of protection central. A permanent cap must
-earn its keep during a relatively short vulnerability without sacrificing too
-much outside it. In [part 3](/quants/managing-rebound-risk.html), I test that
-trade-off with volatility-tilt limits, direct beta-style limits and daily
-portfolio scaling.
+I want to reduce the early losses when higher-beta shorts rebound faster than
+the longs. A permanent restriction also changes the book during declines,
+when those same shorts provide protection. In
+[part 3](/quants/managing-rebound-risk.html), I compare that cost with the
+rebound improvement from volatility-tilt limits, direct beta-style limits
+and daily portfolio scaling.
 
 <aside class="research-note" markdown="1">
 **In-sample notes.** The two deepest strategy drawdowns helped form the

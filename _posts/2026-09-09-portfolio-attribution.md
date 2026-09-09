@@ -217,10 +217,8 @@ The **common return contributed +84.09 points**, weighted by the portfolio's
 net position in covered stocks. The model covered **93.1% of gross exposure**
 on average; uncovered positions contributed **22.49 points**.
 
-The common-return contribution combines the fitted daily intercept with
-net dollars in covered stocks. Other factor and residual contributions can
-offset its market sensitivity. Portfolio beta comes from the whole book,
-as measured in Figure 2; the common-return earnings alone cannot supply it.
+Other factor and residual contributions can offset the common-return
+component's market sensitivity. Figure 2 measures beta from the whole book.
 
 The split depends on the estimated coefficients and chosen factors.
 Assigning an extra point to factors takes a point from the residual while
@@ -268,11 +266,9 @@ Variance measures deviations around average daily P&L. Here the shorts earned
 **30.74 points** during the market decline, then lost **44.19** during the
 recovery.
 
-Attribution gives me three connected views: the positions that earned or
-lost money, their shared exposures, and their contribution to daily risk.
-The next question is why protection reversed. In
-[part 2](/quants/short-book-rebounds.html), I follow the long and short holdings
-through those recoveries.
+The shorts reduced daily fluctuations, yet lost heavily once the market
+recovered. In [part 2](/quants/short-book-rebounds.html), I examine the stocks
+held on each side to understand why that protection reversed.
 
 <aside class="research-note" markdown="1">
 **In-sample notes.** This is an explanation of inspected historical returns.
