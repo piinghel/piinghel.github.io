@@ -45,7 +45,7 @@ book made more than the portfolio kept after short losses and costs.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/whole-history" mobile="/_draft_assets/portfolio-attribution/whole-history_mobile" version="3" alt="Full-history cumulative long, short and net contributions above the daily net drawdown, with the 2008–09 and 2020–21 declines shaded." %}
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/whole-history" mobile="/_draft_assets/portfolio-attribution/whole-history_mobile" version="4" alt="Full-history cumulative long, short and net contributions above the daily net drawdown, with the 2008–09 and 2020–21 declines shaded." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Longs and shorts are gross; net includes trading costs. Shading marks the two deepest peak-to-trough declines.</p>
 
@@ -426,7 +426,7 @@ portfolio contributions so I can see when that change happened.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/market-phases" mobile="/_draft_assets/portfolio-attribution/market-phases_mobile" version="2" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
+  {% include theme-svg-figure.html base="/_draft_assets/portfolio-attribution/market-phases" mobile="/_draft_assets/portfolio-attribution/market-phases_mobile" version="3" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
 </div>
 <p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the benchmark low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
 
@@ -568,22 +568,10 @@ full history could still be painful during a recovery. These are contributions
 under the joint factor model; they don't establish that an exposure limit
 would have improved the strategy.
 
-The stock and factor views can also disagree within a single position.
-Table 5 shows two examples. Protective Life lost through beta and overall.
-Annaly lost through the volatility factor but made money overall, because
-its other components more than offset that loss.
-
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 5: A stock can lose through one factor and still contribute positively.</strong> P&amp;L points over the indicated drawdown. Stock totals are gross.</p>
-
-| Stock / episode | Factor P&L | Stock P&L |
-| :--- | ---: | ---: |
-| Protective Life / 2008–09 | Beta: −0.40 | −1.29 |
-| Annaly / 2020–21 | Volatility: −0.20 | +0.85 |
-{: .research-table .comparison-table .attribution-table }
-
-</div>
+Even within one stock, a losing factor doesn't mean a losing position.
+During the 2020–21 drawdown, Annaly lost **0.20 points through volatility**
+but earned **0.85 points overall, before costs**. Its other components more
+than offset that loss.
 
 
 
