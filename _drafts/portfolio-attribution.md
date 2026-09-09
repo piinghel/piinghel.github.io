@@ -77,6 +77,13 @@ the long and short books had standalone annualized volatility of **16.7%** and
 portfolio volatility was **7.9%**. The shorts lost money, but also offset a lot
 of the longs' fluctuations. Both facts matter when judging their usefulness.
 
+The portfolio was net long in dollars: **+22.0% of notional on average**.
+Yet its historical sensitivity to the Russell 1000 price-return benchmark was
+only **+0.068**. Dollars and beta measure different things: a larger book of
+lower-beta longs can offset a smaller book of higher-beta shorts. That low
+full-history sensitivity doesn't mean the portfolio was protected in every
+period—we'll see that in the drawdowns.
+
 ## Where did we take risk?
 
 Paleologo makes a useful distinction in both books: how much a position moves
@@ -269,11 +276,15 @@ The other factor components can offset the intercept's market sensitivity.
 I keep the intercept in the factor split and assess the portfolio's benchmark
 sensitivity separately.
 
-The large residual is encouraging, but I'd want to know what the model missed
-before crediting it to stock picking. The model covered about **93.1%** of gross
-exposure on average; holdings outside that coverage earned another **22.49
-points**, shown separately. I'll come back to how much confidence I can put in
-the split after looking at the losses.
+The model covered about **93.1%** of gross exposure on average; holdings outside
+that coverage earned another **22.49 points**. The residual needs closer scrutiny
+before I credit it to stock picking.
+
+For a systematic strategy, factor earnings aren't automatically unwanted,
+either. A predictor can deliberately select characteristics that the risk model
+also describes. The useful question is whether I expected to be paid for that
+exposure, and whether its losses fit that expectation. Trying to maximize the
+residual share would confuse a cleaner-looking attribution with a better strategy.
 
 <details>
 <summary>How the pieces add back to the portfolio</summary>
@@ -354,10 +365,9 @@ The difference can include trading gains and losses as well as costs.
 <summary>Net dollars and historical market sensitivity</summary>
 <div markdown="1">
 
-Over September 1998–May 2026, beginning net dollar exposure averaged **+22.0%**
-of notional. Regressing daily net fixed-notional P&L on the Russell 1000
-price-return benchmark, with a constant, gives a slope of **+0.068**.
-The intercept component's slope is **+0.249**, offset by **−0.181** from the
+The benchmark slope above comes from regressing daily net fixed-notional P&L
+on the Russell 1000 price return, with a constant. The intercept component's
+slope is **+0.249**, offset by **−0.181** from the
 remaining components. The regressions use the same 6,962 dates and denominator,
 so those slopes add up.
 
@@ -418,6 +428,18 @@ strategy: use the holdings, loadings and covariance estimates available
 covariance allocations, not those forecasts. In particular, the residual's
 45.2% historical share is not an estimate of the model's forecast idiosyncratic
 share: fitted factor and residual P&L can covary over time.
+
+*Elements*, Chapter 6, makes the next step practical: judge the risk model by
+the decisions it supports. I'd compare its prior forecasts with subsequent
+portfolio fluctuations, then check whether the main exposures behaved as
+predicted during declines and rebounds. A model that consistently understates
+overall volatility has a different problem from one that misses a particular
+source of risk. A higher regression fit alone wouldn't settle either question.
+
+If I change the risk model used for sizing, I'd also have to rebuild the
+portfolios under it. Scoring new risk estimates against the old holdings tests
+a forecast; it doesn't show how the new model would change positions, turnover
+and net P&L.
 
 <details>
 <summary>Which position would I resize to reduce risk?</summary>
@@ -556,11 +578,9 @@ but gave back more than the longs earned during the rebound. The strategy
 lost **6.18 points before the market low and another 10.14 afterwards**.
 Here, more of the damage accumulated after the market had bottomed.
 
-Over the whole peak-to-trough window, **Industrials lost 7.66 points**, followed by Communications
-(**2.47**) and Materials (**1.93**). Industrial losses came from both books:
+Over the whole peak-to-trough window, **Industrials lost 7.66 points**:
 **−1.93 from longs** and **−5.73 from shorts**. TE Connectivity (**−0.78**),
-RR Donnelley (**−0.75**) and CSX (**−0.60**) were its three largest losing
-stock contributions.
+RR Donnelley (**−0.75**) and CSX (**−0.60**) were its largest losing positions.
 
 Technology, which led the full-history gains, also helped over this window
 with **+2.03 points**. Industrials did the opposite: a large long-run contributor
@@ -642,15 +662,71 @@ and from **+1.27 to −5.80** in 2020–21.
 Volatility tells a similar story in 2020–21. Its contribution swung from
 **+0.61 to −8.71 points**, while average exposure became more negative,
 from **−0.75 to −0.99**. The fitted factor return also changed sign.
-Both the size of the bet and its payoff changed. A tilt that helped over the
-full history could still be painful during a recovery. These are contributions
-under the joint factor model; they don't establish that an exposure limit
-would have improved the strategy.
+Both the size of the bet and its payoff changed. But a more negative average
+exposure doesn't tell me whether its day-to-day changes made the loss worse.
 
-Even within one stock, a losing factor doesn't mean a losing position.
-During the 2020–21 drawdown, Annaly lost **0.20 points through volatility**
-but earned **0.85 points overall, before costs**. Its other components more
-than offset that loss.
+I can separate those effects. During the 2020–21 rebound, applying its average
+volatility exposure on every day gives **−9.68 points** of factor P&L.
+The actual changing exposure lost **8.71 points**: variation around that average
+offset **0.98 points** of loss. The same variation term was positive for beta
+and volatility in both rebounds.
+
+For these two factors, the losses mainly reflect maintaining negative tilts
+while the fitted factor returns turned positive. Within each
+rebound, exposure variation softened those particular losses. It doesn't
+establish good trading or sizing decisions: exposure also changes with prices,
+stock characteristics and model coverage.
+
+<details>
+<summary>Separating the average bet from its variation</summary>
+<div markdown="1">
+
+For one factor over the selected phase, let $$e_t$$ be its portfolio exposure,
+$$\widehat f_t$$ its fitted return and $$\overline e$$ its average exposure.
+Then the exact identity is
+
+$$
+\sum_t e_t\widehat f_t
+=\overline e\sum_t\widehat f_t
++\sum_t(e_t-\overline e)\widehat f_t.
+$$
+
+The first term is the contribution of the phase's average exposure. The second
+measures how exposure variation lined up with factor returns. Both use the same
+daily fitted holdings and dates. This is a retrospective accounting comparison:
+the phase average wasn't known in advance, and it doesn't describe a tradable
+portfolio with frozen holdings.
+
+</div>
+</details>
+
+## Would a hedge have helped?
+
+The shorts did provide protection during the declines. The harder question is
+whether I needed these particular stocks to get it. Their two possible jobs
+are to express negative stock forecasts and to offset unwanted common risks.
+A losing short book can do the second job well while doing the first badly.
+
+An informative comparison would keep the long book fixed and replace the shorts
+with a simple market hedge sized to the same intended benchmark sensitivity.
+I'd then compare net earnings, drawdowns and the remaining factor exposures.
+This would test the value of the selected shorts beyond broad market protection;
+it wouldn't reproduce all their sector and style exposures. I haven't run that
+comparison here. Borrow, financing and hedge trading costs would matter to it,
+particularly because the current results omit the first two.
+
+Nor can I estimate a factor hedge by deleting a losing bar from Figure 6.
+An actual hedge changes several exposures, has its own stock-specific risk
+and costs, and may give up expected return. Even within one stock, Annaly's
+**−0.20 points through volatility** in 2020–21 coexisted with **+0.85 points
+overall**. Removing that position would remove all its contributions.
+
+The hedging chapters in both books focus on the resulting *whole portfolio*.
+An uncertain hedge ratio can add risk, and zero exposure to one factor can
+still leave sensitivity through correlated factors. For this strategy, I'd
+first decide which exposures belong to the prediction thesis and which are
+incidental. The hedge should address the latter, rather than whichever bar
+looked worst after a crisis.
 
 
 
@@ -704,42 +780,10 @@ Across a finite set of stocks, those effects won't cancel perfectly. Some can
 be picked up by the regression as momentum return. **Even a correctly specified
 factor model has estimation noise.**
 
-Here is the math for one day. Let $$r$$ be the vector of stock returns and
-$$B$$ the matrix of loadings. Within the assumed model, $$f$$ is the underlying
-factor return and $$\varepsilon$$ the stock-specific return. A hat marks an
-estimate, and $$\eta$$ is the factor-return estimation error:
-
-$$
-\begin{aligned}
-r&=Bf+\varepsilon,\\
-\widehat f&=f+\eta.
-\end{aligned}
-$$
-
-The estimated residual is whatever remains after subtracting the fitted factor
-effects. Substituting the second equation into that subtraction gives
-
-$$
-\begin{aligned}
-\widehat\varepsilon
-&=r-B\widehat f\\
-&=(Bf+\varepsilon)-B(f+\eta)\\
-&=\varepsilon-B\eta.
-\end{aligned}
-$$
-
-That last term is the important one: the error picked up by the factors is
-removed from the residual. To translate it into portfolio P&L, multiply by
-the signed position weights $$w$$. Call this attribution error $$\delta$$:
-
-$$
-\delta=w^\top B\eta=e^\top\eta,
-\qquad e=B^\top w.
-$$
-
-For the covered positions, call the underlying factor contribution $$F=w^\top Bf$$
-and the stock-specific contribution $$I=w^\top\varepsilon$$. Figure 7 shows what estimation does to
-them. The same error appears twice, with opposite signs; these are **not two
+For the covered positions, call the underlying factor contribution $$F$$ and
+the stock-specific contribution $$I$$. A hat marks an estimate. If the model
+assigns an extra $$\delta$$ of P&L to factors, it removes exactly that amount
+from the residual. Figure 7 shows the consequence: these are **not two
 independent errors**.
 
 <div class="research-figure">
@@ -748,8 +792,9 @@ independent errors**.
 <p class="figure-caption"><strong>Figure 7: The split moves; its sum stays fixed.</strong> Within the assumed model, estimation adds the same amount to factor P&amp;L that it subtracts from residual P&amp;L. The error can have either sign.</p>
 
 Getting the attribution to add up therefore cannot tell me whether either
-piece is precise. If the factor-return error has covariance $$V_\eta$$, the
-standard error of each portfolio attribution is
+piece is precise. For one day, let $$e=B^\top w$$ be the portfolio's factor
+exposures and $$V_\eta$$ the covariance of factor-return estimation error.
+The standard error of either portfolio attribution is
 
 $$
 s=\sqrt{e^\top V_\eta e}.
@@ -758,10 +803,6 @@ $$
 This measures uncertainty in the **explanation of the P&L**. It is different
 from the volatility of the portfolio's returns. Factor errors can move together,
 so the off-diagonal entries of $$V_\eta$$ matter too.
-
-The residual losses of **6.14 points in 2008–09** and **11.41 in 2020–21**
-therefore need an uncertainty estimate before I judge how precisely the
-model has separated them from common factors.
 
 For the whole period, write the residual estimate as $$\widehat I_T$$ and its
 attribution standard error as $$s_T$$. With zero-mean Gaussian estimation errors
@@ -791,7 +832,18 @@ model's unexplained return.
 <summary>Computing the standard error, including across days</summary>
 <div markdown="1">
 
-The remaining ingredient is $$V_\eta$$. For weighted least squares in an
+Start with $$r=Bf+\varepsilon$$ and $$\widehat f=f+\eta$$. Subtracting the
+fitted factor return gives
+
+$$
+\widehat\varepsilon=r-B\widehat f=\varepsilon-B\eta.
+$$
+
+Multiplying by the signed position weights $$w$$ gives opposite attribution
+errors $$\delta=w^\top B\eta=e^\top\eta$$ for factor and residual P&L.
+Thus $$\operatorname{Var}(\delta)=e^\top V_\eta e$$.
+
+To obtain $$V_\eta$$ for weighted least squares in an
 identified, full-rank factor basis, write the estimator as
 
 $$
@@ -830,14 +882,11 @@ $$
 \right)A^\top.
 $$
 
-The leverage adjustment allows for the way fitting reduces residuals,
-especially for influential observations. It permits different noise variances
-across stocks, but assumes their errors are uncorrelated. Correlated omitted
-drivers can still make the interval too narrow. Because this covariance is
-estimated, normal intervals based on it are approximate; the exact
-known-variance calculation above is a reference case. The interval also says
-nothing by itself about persistent stock-selection skill. HC3 needs residual
-degrees of freedom and $$h_i<1$$; otherwise the interval is unavailable.
+The leverage adjustment allows for the way fitting reduces residuals. It permits
+different noise variances across stocks but assumes uncorrelated errors;
+shared omitted drivers can make the interval too narrow. Normal intervals using
+this estimated covariance are approximate. HC3 needs residual degrees of freedom
+and $$h_i<1$$.
 
 Across days, the attribution error is $$\Delta_T=\sum_t\delta_t$$. Treating
 the loadings and portfolio weights as fixed, its variance is
@@ -867,23 +916,22 @@ loading.
 
 ## What would I investigate next?
 
-I'd start with two questions. First, **did changing short sizes amplify the
-rebound losses?**
-When a shorted stock rises, its dollar exposure grows in magnitude even without
-another trade.
-I'd separate that price drift from changes in effective share quantities,
-then measure the P&L associated with the quantity changes. That calculation
-hasn't been done here; the name-level split doesn't answer it.
+The rebound losses were broad, involved new as well as existing shorts, and
+included substantial residual losses. The beta and volatility calculation points
+to persistent tilts more than adverse variation within each rebound. That gives
+me a more focused starting point than simply tightening every exposure limit.
 
-Second, **were new predictions repeatedly selecting the exposures that were
-hurting?** I'd inspect the predictions and ranks when those losing shorts
-entered the book, then compare their factor and residual P&L with the existing
-shorts. That would help me decide whether to work on the predictions, position
-sizes or trading rules.
+First I'd examine the predictions behind the shorts entered during the rebounds:
+were they repeatedly selecting the same losing characteristics, and what happened
+to their residual returns? That connects the losses back to the reason for owning
+the positions.
 
-The residual deserves the same care. Once I've checked model coverage and
-uncertainty, I can ask whether the stock choices were poor or I put too much
-risk on the losers. The calculation below separates those two effects.
+Then I'd separate selection from sizing on those positions. A rising short grows
+in dollar size without another trade; I need to distinguish that drift from
+changes in share quantities. The factor-level comparison above doesn't isolate
+either effect. Once residual-risk estimates and attribution uncertainty are
+credible, a reference with equal risk per position can help ask whether the
+stock choices were poor or the largest risks were placed on the losers.
 
 <details>
 <summary>The calculation behind selection and sizing</summary>
@@ -927,16 +975,18 @@ Quantitative Investing*, §14.4.
 </div>
 </details>
 
-The test of a proposed change would include other declines, rebounds and
-ordinary periods, with costs. Knowing the turning points after the fact is
-useful for diagnosing a loss; it doesn't tell me when I could have traded differently.
+Any proposed hedge or sizing change would then face the same test: does it
+improve the whole strategy after costs across ordinary periods as well as
+crises? Following *Elements*, Chapter 5, I'd define the rule and comparison
+before evaluating them. These episodes have already shaped the hypothesis;
+improving them would be development evidence, not independent confirmation.
 
 ## References
 
 Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
-2021 edition, Chapters 7–8 and Appendix 11.1.3;
+2021 edition, Chapters 3–4 and 7–8, Appendices 11.1.3 and 11.8;
 [*The Elements of Quantitative Investing*](https://linktr.ee/paleologo),
-9 September 2024 draft, §4.5.2 and Chapter 14.
+9 September 2024 draft, Introduction and Chapters 4–6, 12 and 14.
 
 The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
 is available if you'd like to explore your own portfolio.
