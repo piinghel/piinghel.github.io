@@ -45,7 +45,7 @@ book made more than the portfolio kept after short losses and costs.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="2" alt="Full-history cumulative long, short and net contributions above the daily net drawdown, with the 2008–09 and 2020–21 declines shaded." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="3" alt="Full-history cumulative long, short and net contributions above the daily net drawdown, with the 2008–09 and 2020–21 declines shaded." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative fixed-notional P&amp;L and its drawdown, September 1998–May 2026. Longs and shorts are gross; net includes trading costs. Shading marks the two deepest peak-to-trough declines.</p>
 
@@ -66,7 +66,7 @@ shorts added 5.12 points in 2000–04, but lost 54.89 in 2010–14.
 | 2015–19 | +87.54 | −5.35 | −6.36 | +75.83 |
 | 2020–24 | +69.39 | −13.74 | −6.15 | +49.51 |
 | 2025–26¹ | +17.48 | −0.87 | −1.61 | +15.00 |
-{: .research-table .comparison-table .risk-performance-table }
+{: .research-table .comparison-table .attribution-table }
 
 </div>
 
@@ -110,7 +110,7 @@ Technology led with **63.45 points**, followed by Consumer Discretionary
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="2" alt="All eleven full-history sector contributions, ranked from Technology at plus 63.45 points to Energy at plus 2.32 points." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="3" alt="All eleven full-history sector contributions, ranked from Technology at plus 63.45 points to Energy at plus 2.32 points." %}
 </div>
 <p class="figure-caption"><strong>Figure 2: Where the stock P&L came from.</strong> Gross contributions across both books, September 1998–May 2026, on the same fixed notional. Costs remain at portfolio level.</p>
 
@@ -146,7 +146,7 @@ and losers across the full history.
 | Tesla | Consumer Discretionary | −2.95 |
 | Match Group (old listing) | Communications | −2.85 |
 | Brocade Communications Systems | Technology | −2.66 |
-{: .research-table .comparison-table .risk-performance-table }
+{: .research-table .comparison-table .attribution-table  .stock-table }
 
 </div>
 
@@ -188,7 +188,7 @@ the part of covered stocks' returns left after fitting the model.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="2" alt="Full-history attribution with common intercept, five style factors, sector effects, residual, uncovered holdings, reconciliation and trading costs." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="3" alt="Full-history attribution with common intercept, five style factors, sector effects, residual, uncovered holdings, reconciliation and trading costs." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: A factor view of the same full-history P&L.</strong> All contributions sum to +312.92 points net. Sector effects are the model terms, distinct from grouping complete stock P&amp;L by sector. Uncovered holdings and costs remain explicit.</p>
 
@@ -326,14 +326,15 @@ Figure 4 tracks monthly average standardized exposures across the full history.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-exposures" mobile="/assets/portfolio-attribution/whole-exposures_mobile" version="2" alt="Four full-history panels for standardized size, momentum, volatility and beta exposures." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-exposures" mobile="/assets/portfolio-attribution/whole-exposures_mobile" version="3" alt="Four full-history panels for standardized size, momentum, volatility and beta exposures." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: The portfolio has persistent tilts, with changing sizes.</strong> Monthly mean signed exposures, September 1998–May 2026, on fitted holdings without rescaling missing positions. Zero means no net loading on that characteristic; each panel has its own vertical scale.</p>
 
 
-The portfolio usually tilts towards larger stocks and away from volatility.
-The tilts vary in size, while momentum and beta exposures move too. During a
-loss, I'll need to check both the positions and what their factors earned.
+The strategy usually favours larger stocks and takes a negative volatility
+tilt. During a drawdown, I want to know whether those bets became larger or
+their returns turned against me. Figure 4 gives me the exposure side of that
+comparison; the factor P&L tells me what those exposures earned.
 
 <details>
 <summary>Comparing P&L with contribution to risk</summary>
@@ -413,7 +414,7 @@ that low, then from the following session to the strategy's own trough.
 | 2009 rebound | 133 | +39.59 | −49.14 | −10.14 |
 | 2020 decline | 21 | −39.95 | +30.74 | −9.32 |
 | 2020–21 rebound | 214 | +38.41 | −44.19 | −6.74 |
-{: .research-table .comparison-table .risk-performance-table }
+{: .research-table .comparison-table .attribution-table }
 
 </div>
 
@@ -425,7 +426,7 @@ portfolio contributions so I can see when that change happened.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/market-phases" mobile="/assets/portfolio-attribution/market-phases_mobile" version="1" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/market-phases" mobile="/assets/portfolio-attribution/market-phases_mobile" version="2" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
 </div>
 <p class="figure-caption"><strong>Figure 5: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the benchmark low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes. Corresponding panels share scales.</p>
 
@@ -470,14 +471,11 @@ of that ranking. These are two selected episodes, not a tested market-timing rul
 
 ### 2008–09: more damage during the rebound
 
-The benchmark fell **47.73%** from the strategy's July peak to 9 March 2009.
-Shorts earned **30.63 points**, covering much of the **36.28-point long loss**.
-The portfolio was still down **6.18 net**.
-
-Then the market rose **59.69%** through 16 September. Longs earned **39.59
-points**, but shorts lost **49.14**. The portfolio lost another **10.14 net**
-during that rebound. Here, more of the drawdown accumulated after the market
-had bottomed.
+The benchmark fell **47.73%** from the strategy's July peak to 9 March 2009,
+then rose **59.69%** through 16 September. The shorts cushioned the fall,
+but gave back more than the longs earned during the rebound. The strategy
+lost **6.18 points before the market low and another 10.14 afterwards**.
+Here, more of the damage accumulated after the market had bottomed.
 
 Over the whole peak-to-trough window, **Industrials lost 7.66 points**, followed by Communications
 (**2.47**) and Materials (**1.93**). Industrial losses came from both books:
@@ -492,14 +490,13 @@ became the biggest losing sector in this episode.
 ### 2020–21: a sharp decline, followed by further losses
 
 The benchmark fell **33.79%** through 23 March 2020. The strategy lost **9.32
-points in just 21 sessions**, even though shorts contributed **+30.74**.
-The long book's **39.95-point loss** was larger.
+points in just 21 sessions**: the short gains weren't enough to offset the
+long losses.
 
-The market then rose **73.03%** through 27 January 2021. Over those **214
-sessions**, longs earned **38.41 points**, shorts lost **44.19**, and net P&L
-fell another **6.74**. The initial decline was much sharper; the rebound
-added a slower, prolonged loss. So I can't explain this episode simply as
-shorts getting caught by a recovery.
+The market then rose **73.03%** through 27 January 2021, while the strategy
+lost another **6.74 points over 214 sessions**. The initial decline was much
+sharper; the rebound added a slower, prolonged loss. So I can't explain this
+episode simply as shorts getting caught by a recovery.
 
 Across the full 2020–21 window, **Financials lost 9.83 points**, with almost equal losses
 from longs (**−4.93**) and shorts (**−4.89**). Real Estate lost **3.16** and
@@ -526,7 +523,7 @@ rebound P&L into names that were short at the market low and names that weren't
 | Short at the market low | −20.90 | −23.12 |
 | Not short at the market low | −28.24 | −21.08 |
 | **Total** | **−49.14** | **−44.19** |
-{: .research-table .comparison-table .risk-performance-table }
+{: .research-table .comparison-table .attribution-table }
 
 </div>
 
@@ -541,12 +538,14 @@ was spread much more broadly. That makes shared exposures worth examining.
 
 ## Did the same factors hurt in both periods?
 
-The book-level paths look similar. Do the factor contributions tell the same
-story? Figure 6 compares the two loss windows using the same model as before.
+On average, the strategy tilted away from higher-beta and more volatile stocks.
+Those tilts helped while the market fell, then hurt as it rebounded in both
+episodes. But they don't explain the whole loss. Figure 6 adds up each factor
+over the complete drawdown, including the residual left by the model.
 
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/drawdown-factors" mobile="/assets/portfolio-attribution/drawdown-factors_mobile" version="2" alt="The 2008–09 and 2020–21 attribution side by side: beta and residual lead the first loss; residual and volatility lead the second." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/drawdown-factors" mobile="/assets/portfolio-attribution/drawdown-factors_mobile" version="3" alt="The 2008–09 and 2020–21 attribution side by side: beta and residual lead the first loss; residual and volatility lead the second." %}
 </div>
 <p class="figure-caption"><strong>Figure 6: Similar total losses, different factor contributions.</strong> Peak-to-trough P&amp;L points on equal scales. Each panel includes all factor terms, residual, uncovered holdings and costs, and reconciles to its net loss.</p>
 
@@ -557,28 +556,17 @@ the main losing style (**−8.10**), beta lost **4.53**, and the residual was
 larger still at **−11.41**. Positive contributions from other terms partly
 offset these losses.
 
-This changes how I read the full-history factor chart. Volatility contributed
-positively over the whole sample, but was costly in the second drawdown.
-Beta detracted over the full history and in both drawdowns. Size lost money
-in the first episode and contributed slightly positively in the second.
+To see the reversal inside those totals, take beta: its contribution went
+from **+3.32 during the decline to −9.87 points during the rebound** in 2008–09,
+and from **+1.27 to −5.80** in 2020–21.
 
-Splitting those contributions at the market low reveals a common pattern:
-**beta and volatility helped during both declines and lost money during both
-rebounds**. The beta component went from **+3.32 to −9.87 points** in 2008–09
-and **+1.27 to −5.80** in 2020–21.
-
-I also checked the exposures and fitted factor returns. In 2020, average
-volatility exposure became more negative, from **−0.75 during the decline to
-−0.99 during the rebound**. The fitted volatility return changed from negative
-over the decline to positive over the rebound, while its P&L contribution
-changed from **+0.61 to −8.71 points**. Both the exposure and the factor's payoff
-changed. The calculation uses their daily products, rather than multiplying
-the period averages.
-
-That supports a more specific explanation: the portfolio's negative beta and
-volatility tilts helped on the way down, then hurt during the rebound. These
-are contributions under the joint factor model; they don't establish that a
-particular exposure limit would have improved the strategy.
+Volatility tells a similar story in 2020–21. Its contribution swung from
+**+0.61 to −8.71 points**, while average exposure became more negative,
+from **−0.75 to −0.99**. The fitted factor return also changed sign.
+Both the size of the bet and its payoff changed. A tilt that helped over the
+full history could still be painful during a recovery. These are contributions
+under the joint factor model; they don't establish that an exposure limit
+would have improved the strategy.
 
 The stock and factor views can also disagree within a single position.
 Table 5 shows two examples. Protective Life lost through beta and overall.
@@ -593,7 +581,7 @@ its other components more than offset that loss.
 | :--- | ---: | ---: |
 | Protective Life / 2008–09 | Beta: −0.40 | −1.29 |
 | Annaly / 2020–21 | Volatility: −0.20 | +0.85 |
-{: .research-table .comparison-table .risk-performance-table }
+{: .research-table .comparison-table .attribution-table }
 
 </div>
 
@@ -774,28 +762,23 @@ loading.
 
 ## What would I investigate next?
 
-The first question now has an answer: **the strategy lost during the market
-declines and kept losing during the rebounds**. The short book provided
-some protection, but the changing short book later lost more than the longs
-earned. The cohort and factor checks narrow the explanation beyond that total.
-
-Next I'd test whether changing position sizes made those rebound losses worse.
-A rising short position grows in dollar weight even without another trade.
+I'd start with two questions. First, **did changing short sizes amplify the
+rebound losses?**
+When a shorted stock rises, its dollar exposure grows in magnitude even without
+another trade.
 I'd separate that price drift from changes in effective share quantities,
 then measure the P&L associated with the quantity changes. That calculation
 hasn't been done here; the name-level split doesn't answer it.
 
-I'd also inspect the predictions and ranks at entry for the rebound's losing
-shorts. Were the same signals repeatedly selecting stocks with the exposures
-that were hurting the book? If so, I'd compare those entries with the existing
-shorts, including their subsequent factor and residual P&L. That would help
-locate the problem in selection, sizing or the trading rules before testing a
-change across the wider history.
+Second, **were new predictions repeatedly selecting the exposures that were
+hurting?** I'd inspect the predictions and ranks when those losing shorts
+entered the book, then compare their factor and residual P&L with the existing
+shorts. That would help me decide whether to work on the predictions, position
+sizes or trading rules.
 
-I'd focus first on Industrials in 2008–09 and Financials in 2020–21. Then I'd
-look at the residual losses: after checking coverage and uncertainty, were
-the stock choices poor, did I put too much risk on the losers, or did both happen?
-The selection/sizing calculation below is how I'd begin separating those effects.
+The residual deserves the same care. Once I've checked model coverage and
+uncertainty, I can ask whether the stock choices were poor or I put too much
+risk on the losers. The calculation below separates those two effects.
 
 <details>
 <summary>The calculation behind selection and sizing</summary>

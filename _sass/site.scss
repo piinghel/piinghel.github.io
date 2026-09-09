@@ -200,6 +200,18 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .research-table.risk-performance-table { font-size: 0.84rem; }
 }
 .research-table-scroll .standalone-factor-table, .research-table-scroll .settings-table { min-width: 0; }
+.research-table-scroll .attribution-table { min-width: 0; table-layout: auto; margin-bottom: 0; }
+.research-table.attribution-table { font-size: 0.88rem; }
+.research-table.attribution-table th, .research-table.attribution-table td { padding: 0.65rem 0.4rem; }
+.research-table.attribution-table th:first-child { width: auto; }
+.research-table.attribution-table td:first-child { text-align: left; white-space: normal; }
+.research-table.attribution-table.stock-table td:nth-child(2) { text-align: left; white-space: normal; }
+.research-table-scroll:has(.attribution-table) { margin: 0 0 1.6rem; }
+@media (max-width: 600px) {
+  .research-table.attribution-table { font-size: 0.82rem; }
+  .research-table.attribution-table th, .research-table.attribution-table td { padding: 0.6rem 0.25rem; }
+  .research-table.attribution-table.stock-table th:first-child { width: 45%; }
+}
 @media (min-width: 1160px) {
   // Header and body start on the same reading edge; the contents occupy a rail.
   .post:has(.article-toc) { max-width: 1034px; margin: 0 auto; }
