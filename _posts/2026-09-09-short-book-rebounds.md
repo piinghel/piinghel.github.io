@@ -16,9 +16,11 @@ series_next: /quants/managing-rebound-risk.html
 
 <p class="article-summary">Higher-beta, more volatile shorts often rebound faster than the longs early in a rebound. The imbalance is much less common after six months, although the two deepest strategy drawdowns show how costly the intervening path can be.</p>
 
-Why did the short book's protection fail after market lows? I start with the
-stocks held on each side. [Part 1's beta chart](/quants/portfolio-attribution.html#portfolio-beta)
-showed low positive market beta alongside negative standardized beta exposure.
+The shorts helped during the market falls, then gave back more than they
+earned. To understand why, I start with the stocks held on each side.
+[Part 1's beta chart](/quants/portfolio-attribution.html#portfolio-beta)
+showed low positive market beta alongside negative standardized beta exposure;
+the holdings help explain how those two can coexist.
 
 I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
@@ -54,8 +56,9 @@ long and short contributions through those losses.
 </div>
 <p class="figure-caption"><strong>Figure 1: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the market low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes.</p>
 
-Was I simply holding on to the old shorts? Table 2 separates names that were
-short at the market low from additions during the rebound.
+I first checked whether the losses came from holding on to the old shorts.
+Table 2 separates names that were short at the market low from additions
+during the rebound.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 2: New names also contributed to the rebound losses.</strong> Gross short P&amp;L points from after the market low through the strategy trough. Groups include subsequent resizing, exits and reentries.</p>
@@ -75,8 +78,8 @@ pointing towards an imbalance spread across the book.
 
 Zscaler, the largest short entering the 2020 rebound, closed in early June
 and lost **0.1 P&L points** during the rebound.
-Its later price rise happened after the exit, illustrating why I need the
-holdings history alongside a stock chart.
+I'd already exited by the time of its later price rise. Looking at the stock
+chart alone would make that position look much more costly than it was.
 
 Figure 2 separates beta and volatility contributions from the residual and
 other terms over each complete drawdown.
@@ -199,20 +202,20 @@ These selected episodes and overlapping horizon checks do not provide an
 independent significance test.
 
 By 126 sessions, the median imbalance has reversed and only one portfolio
-window remains negative. The **early-rebound path problem** often fades as
-holdings and market conditions change, although the severe losses in Table 1
-last longer. Positive P&L after a low can still leave the strategy below its
+window remains negative. That changes what I'd try to fix: the difficulty is
+usually in the first few months, and often fades as holdings and market
+conditions change. The severe losses in Table 1 last longer, though.
+Making money after a low also doesn't mean the strategy has regained its
 preceding peak.
 
 
 ## What this changes
 
-The shorts protect during declines and lose when their stocks rebound faster
-than the longs. A permanent limit changes both phases, so I want better
-first-63-session P&L without sacrificing aggregate decline-window P&L. In
-[part 3](/quants/managing-rebound-risk.html), I compare that cost with the
-rebound improvement from tilt limits, standardized beta limits
-and daily portfolio scaling.
+Any permanent limit will also change the protection the shorts provide on
+the way down. That's the trade-off I care about: better first-63-session P&L
+without giving up aggregate decline-window P&L. In
+[part 3](/quants/managing-rebound-risk.html), I test tilt limits, standardized
+beta limits and daily portfolio scaling against that requirement.
 
 <aside class="research-note" markdown="1">
 **In-sample notes.** The two deepest strategy drawdowns helped form the

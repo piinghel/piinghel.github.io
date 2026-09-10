@@ -16,8 +16,9 @@ series_end: true
 
 <p class="article-summary">Tilt limits buy lower historical drawdown at a cost to P&amp;L. Tighter limits worsen the median rebound result. Direct standardized beta limits give modest, uneven improvement; daily volatility scaling adds costs without beating constant sizing on gross P&amp;L.</p>
 
-Can portfolio limits reduce the [early-rebound imbalance](/quants/short-book-rebounds.html)
-at an acceptable cost during the rest of the history?
+I want to reduce the [losses early in a rebound](/quants/short-book-rebounds.html)
+while keeping the protection the shorts provide during declines. A limit
+has to earn its place across the rest of the history too.
 
 I tested tilt limits, daily portfolio scaling and limits on the
 standardized beta exposure from
@@ -81,8 +82,8 @@ close changes positions at the following close and affects the next session's
 P&L. Each overlay follows the original scheduled stock book and charges for
 both its scheduled trades and additional resizing trades.
 
-The illustrative 7% target sits below the original's 7.9% realized volatility.
-The multiplier stays at or below one, reducing both gains and losses.
+I use an illustrative 7% target, below the original's 7.9% realized volatility.
+Since the multiplier stays at or below one, this reduces both gains and losses.
 
 Scaling preserves the tilt per dollar. For Table 1, I multiply each overlay's
 positions, P&L and costs by about 1.114 to match the original's average gross
@@ -130,10 +131,10 @@ That period-specific trade-off differs from the full-history result.
 
 ## Did the limits help during rebounds?
 
-Lower full-history drawdown did not translate into consistent rebound
-improvement. Table 2 shows a small positive median difference at ±0.30 and
-negative medians at every tighter limit. Eleven inspected episodes give
-little basis for treating the small gain as reliable.
+The smaller drawdowns don't solve the problem I started with. Table 2 shows
+a small positive median rebound difference at ±0.30 and negative medians at
+every tighter limit. With eleven inspected episodes, I wouldn't put much
+weight on that small gain.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 2: Rebound results across all 11 lows.</strong> Counts show episodes with higher net P&amp;L than the original. Mean and median differences are net P&amp;L points over the first 63 sessions after each low.</p>
@@ -168,9 +169,11 @@ loses more elsewhere, including the early rebounds.
 ## Test beta exposure directly
 {: #what-i-would-test-next }
 
-The existing market-beta limit leaves the negative standardized beta exposure
-shown in [part 1](/quants/portfolio-attribution.html#portfolio-beta).
-I added a limit on that exposure:
+Beta deserves a direct test too: the shorts held higher-beta stocks in both
+major rebounds. The existing market-beta limit still leaves the negative
+standardized beta exposure shown in
+[part 1](/quants/portfolio-attribution.html#portfolio-beta), so I added a limit
+on that exposure:
 
 $$
 E_{\beta}(w)=\sum_i w_i z_{i,\beta},
@@ -229,18 +232,18 @@ limit was ineffective on those dates.
 ## Keep the original portfolio
 {: #what-the-experiment-settles }
 
-I keep the original portfolio. Tighter tilt limits cost P&L and worsen
+For now, I'm keeping the original portfolio. Tighter tilt limits cost P&L and worsen
 typical rebounds; fast scaling loses to constant sizing after trading costs.
 
 The beta limit's small typical gain comes with a worse 2020 rebound and less
-decline protection. The improvement is too uneven to adopt.
+decline protection. That's too uneven an improvement for me to adopt it.
 
-Joint limits on persistent factor exposures remain an open question.
-A further test needs better median and aggregate first-63-session P&L,
-preserved decline-window P&L, and an acceptable full-history P&L cost set
-before running it. That budget and test remain undefined. Replacing the
-covariance also requires stock-specific risk forecasts and calibration at
-21 and 63 sessions.
+I still want to know whether joint limits on persistent factor exposures can
+do better. Before testing them, I'd set a full-history P&L budget and require
+better median and aggregate first-63-session P&L with decline-window P&L
+preserved. I haven't defined that budget or run that test. A replacement
+covariance model would also need stock-specific risk forecasts and calibration
+at 21 and 63 sessions.
 
 <aside class="research-note" markdown="1">
 **In-sample notes.** All comparisons use inspected history. The ±0.30, ±0.25

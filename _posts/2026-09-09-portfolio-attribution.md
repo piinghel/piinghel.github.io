@@ -16,8 +16,9 @@ series_next: /quants/short-book-rebounds.html
 
 <p class="article-summary">The shorts offset daily fluctuations, but the portfolio retained a small positive market beta and suffered large losses in some rebounds. Attribution connects those outcomes to the positions and exposures I held.</p>
 
-Before changing a losing short book, I need to know what protection it
-provided and which exposures accounted for the losses.
+The short book lost money over the full history. Before cutting it back,
+I want to know how much protection I'd give up and what drove those losses.
+That means following the positions through both the falls and the rebounds.
 
 I use the strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
@@ -131,8 +132,9 @@ Every sector made money before costs. Technology made the largest
 contribution. Energy's long gains were almost cancelled by short losses,
 leaving little P&L for its share of daily risk.
 
-Stocks across sectors can share characteristics such as high beta or low
-volatility. The factor model measures those common exposures.
+The sector breakdown only gets me so far. Stocks in different sectors can
+share high beta or low volatility, so I also fit a factor model to see how
+those shared characteristics contributed.
 
 ## Fit the factor returns
 {: #fit-the-common-returns }
@@ -201,9 +203,9 @@ The coefficients use unpenalized least squares, solved jointly by SVD.
 
 ## Apply the fit to the portfolio
 
-The portfolio's exposure combines each stock's loading with the signed
-position actually held. Its daily factor contribution is that exposure
-multiplied by the payoff:
+To use the fit, I multiply each stock's loading by the signed position I
+held and add them up. That gives the portfolio's exposure. Multiplying it
+by the day's payoff gives the factor contribution:
 
 $$
 E_{k,t}=\sum_{i\in H_t}w_{i,t^-}z_{i,k,t-1},
@@ -256,9 +258,9 @@ $$
 Positions, stock characteristics and payoffs all change. Each day's
 payoff therefore needs the exposure held on that day.
 
-Figure 6 lets you inspect that multiplication. The middle panel accumulates
-payoffs for a constant +1 exposure. The bottom accumulates P&L from my actual
-changing exposure. The slider shows the calculation for one session.
+You can follow that calculation in Figure 6. The middle panel accumulates
+payoffs for a constant +1 exposure; the bottom uses my actual changing
+exposure. Move the slider to see how the two combine on a single day.
 
 For readability, the volatility view follows the **low-volatility** bet.
 I reverse both signs: model exposure −0.5 and volatility payoff +1% become
@@ -286,9 +288,10 @@ Variance measures deviations around average daily P&L. Here the shorts earned
 **30.7 points** during the market decline, then lost **44.2** during the
 rebound.
 
-The shorts reduced daily fluctuations, yet lost heavily once the market
-rebounded. In [part 2](/quants/short-book-rebounds.html), I examine the stocks
-held on each side to understand why that protection reversed.
+So the shorts did provide protection, but the losses once the market
+rebounded were substantial. Before changing the portfolio, I want to
+understand why. In [part 2](/quants/short-book-rebounds.html), I look at the
+stocks held on each side of the book.
 
 <aside class="research-note" markdown="1">
 **In-sample notes.** This is an explanation of inspected historical returns.
