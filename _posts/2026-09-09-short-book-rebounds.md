@@ -74,12 +74,12 @@ during the rebound.
 
 Around half the short-book losses came from names added during the rebound.
 The five worst contributors explained only a small share in either episode,
-pointing towards an imbalance spread across the book.
+so looking only at old shorts or the worst few names would miss much of the
+loss. I next look at what the stocks across the book had in common.
 
-Zscaler, the largest short entering the 2020 rebound, closed in early June
-and lost **0.1 P&L points** during the rebound.
-I'd already exited by the time of its later price rise. Looking at the stock
-chart alone would make that position look much more costly than it was.
+(Zscaler, the largest short entering the 2020 rebound, lost about **0.1 P&L
+points** before the position closed in early June. Its later price rise came
+after the exit, so the stock chart alone overstates what that position cost.)
 
 Figure 2 separates beta and volatility contributions from the residual and
 other terms over each complete drawdown.

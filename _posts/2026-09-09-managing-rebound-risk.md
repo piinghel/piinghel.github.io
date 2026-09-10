@@ -69,7 +69,9 @@ covered about 99.5% of gross holdings; reported P&L includes every position.
 
 ## Reduce size when volatility rises
 
-For daily portfolio scaling, I estimate volatility from an
+I also tried reducing the whole book when recent P&L became more volatile.
+This keeps the same stock mix while changing the amount at risk. I estimate
+volatility from an
 exponentially weighted average of squared daily gross P&L, annualized using
 252 sessions, with half-lives of **5** and **21 sessions**. The size multiplier is
 
@@ -153,7 +155,9 @@ All five limits improved the first three months of the 2009 rebound;
 every limit earned less during the equivalent 2020 window.
 
 Table 3 locates the benefit in declines. The ±0.20 limit gains there but
-loses more elsewhere, including the early rebounds.
+loses more elsewhere, including the early rebounds. That's useful if I'm
+willing to give up P&L for more decline protection, but it gives me no reason
+to adopt the limit as a rebound fix.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: Where the ±0.20 limit gains and loses.</strong> Aggregate net P&amp;L points. Declines run from each preceding market peak to the low, excluding the peak day; the first begins at the available history boundary. Rebounds cover the next 63 sessions after each of the 11 lows. These sets do not overlap, and the three rows reconcile to full-history P&amp;L.</p>

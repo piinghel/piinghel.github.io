@@ -18,7 +18,9 @@ series_next: /quants/short-book-rebounds.html
 
 The short book lost money over the full history. Before cutting it back,
 I want to know how much protection I'd give up and what drove those losses.
-That means following the positions through both the falls and the rebounds.
+I start by tracing how positions and factor returns add up to P&L and daily
+risk. Parts 2 and 3 use that accounting to investigate the rebound losses
+and test changes to the portfolio.
 
 I use the strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
@@ -244,8 +246,10 @@ contributed **22.5 points**: a holding can lack a descriptor, sufficient price
 history or an eligible sector label. Part 3 records this coverage and assigns
 missing beta loadings the universe mean when imposing its beta limit.
 
-Changing the factors reallocates P&L between fitted contributions and the
-residual. Stock-picking skill and omitted common effects remain mixed there.
+With almost half the variance in the residual, I'd be cautious about calling
+it stock-picking skill. Changing the factor set could move some of that P&L
+back into named exposures; stock-specific outcomes and omitted common effects
+are still mixed together here.
 
 ## Follow exposure and payoff together
 
