@@ -1,4 +1,4 @@
-/* Explore the same saved observations behind the article's recovery totals. */
+/* Explore the same saved observations behind the article's rebound totals. */
 (() => {
   const byId=id=>document.getElementById(id);
   const recovery=byId('recovery-explorer');
@@ -12,10 +12,10 @@
   function recoverySummary(h){
     if(!data)return `${h}-session stock gains and portfolio P&L.`;
     const rows=data.recoveries.map(e=>e.path[h]).filter(r=>r&&[r[1],r[2],r[5]].every(Number.isFinite));
-    if(!rows.length)return 'No complete recovery windows for this horizon.';
+    if(!rows.length)return 'No complete rebound windows for this horizon.';
     const gaps=rows.map(r=>r[2]-r[1]).sort((a,b)=>a-b),middle=Math.floor(gaps.length/2);
     const median=gaps.length%2?gaps[middle]:(gaps[middle-1]+gaps[middle])/2;
-    return `shorts gained more in ${gaps.filter(g=>g>0).length} / ${rows.length} episodes; median gap ${signed(median)} points; net portfolio losses in ${rows.filter(r=>r[5]<0).length} / ${rows.length}.`;
+    return `shorts gained more in ${gaps.filter(g=>g>0).length} / ${rows.length} episodes; median gap ${signed(median)} percentage points; net portfolio losses in ${rows.filter(r=>r[5]<0).length} / ${rows.length}.`;
   }
   function add(svg,tag,attrs,text){
     const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
@@ -67,8 +67,8 @@
     session.setAttribute('aria-valuetext',`Session ${index}, ${human(row[0])}`);
     chart(detail.querySelector('.ae-gains'),detail,rows,[[1,'--ad-long'],[2,'--ad-short','5 3']],rows.flatMap(r=>[r[1],r[2]]),index);
     chart(detail.querySelector('.ae-books'),detail,rows,[[3,'--ad-long'],[4,'--ad-short','5 3'],[5,'--ad-net']],rows.flatMap(r=>[r[3],r[4],r[5]]),index);
-    byId('recovery-readout').textContent=index===0?`${human(row[0])} · Market low. All cumulative paths start at zero; the next session begins the measured recovery.`:
-      `${human(row[0])} · Session ${index}. Stock gains: longs ${signed(row[1])}%, shorts ${signed(row[2])}% (gap ${signed(row[2]-row[1])} points). Portfolio P&L: longs ${signed(row[3])}, shorts ${signed(row[4])}, net ${signed(row[5])} points.`;
+    byId('recovery-readout').textContent=index===0?`${human(row[0])} · Market low. All cumulative paths start at zero; the next session begins the measured rebound.`:
+      `${human(row[0])} · Session ${index}. Stock gains: longs ${signed(row[1])}%, shorts ${signed(row[2])}% (gap ${signed(row[2]-row[1])} percentage points). Portfolio P&L: longs ${signed(row[3])}, shorts ${signed(row[4])}, net ${signed(row[5])} points.`;
   }
   function updateRecovery(){
     const h=Number(horizon.value),isAll=episode.value==='all';
@@ -79,7 +79,7 @@
       for(const picture of overview.querySelectorAll('picture')){
         const dark=picture.classList.contains('theme-svg-figure--dark')?'_dark':'';
         picture.querySelector('img').src=`/assets/portfolio-attribution/recoveries${suffix}${dark}.svg?v=1`;
-        picture.querySelector('img').alt=`${h}-session recoveries: ${recoverySummary(h)}`;
+        picture.querySelector('img').alt=`${h}-session rebounds: ${recoverySummary(h)}`;
         picture.querySelector('source').srcset=`/assets/portfolio-attribution/recoveries${suffix}_mobile${dark}.svg?v=1`;
       }
       byId('recovery-summary').textContent=`${h} sessions: ${recoverySummary(h)}`;

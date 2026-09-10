@@ -8,15 +8,15 @@
     <p class="ad-direction"></p>
     <p class="ad-legend"><span class="ad-long">Longs</span> <span class="ad-short">Shorts</span> <span class="ad-net">Net exposure</span></p>
     <div class="ad-panel"><p class="ad-exposure-title"></p><svg class="ad-exposure" role="img" aria-label="Daily long, short and net exposure to the selected direction"></svg></div>
-    <div class="ad-panel"><p>2. Return for a constant +1 unit of exposure · cumulative %</p><p class="ad-explanation">Adds the model's daily return per unit of exposure.</p><svg class="ad-payoff" role="img" aria-label="Daily fitted factor returns added through time for a constant positive one-unit exposure"></svg></div>
-    <div class="ad-panel"><p class="ad-pnl-title"></p><p class="ad-explanation">Adds each day's exposure × return per unit.</p><svg class="ad-pnl" role="img" aria-label="Daily factor returns multiplied by actual portfolio exposures and added through time"></svg></div>
+    <div class="ad-panel"><p>2. Payoff for +1 exposure · cumulative %</p><p class="ad-explanation">Adds the model's daily payoffs.</p><svg class="ad-payoff" role="img" aria-label="Daily factor payoffs added through time for constant positive one-unit exposure"></svg></div>
+    <div class="ad-panel"><p class="ad-pnl-title"></p><p class="ad-explanation">Adds each day's exposure × payoff.</p><svg class="ad-pnl" role="img" aria-label="Daily factor payoffs multiplied by portfolio exposures and added through time"></svg></div>
     <label class="ad-date">Inspect a session <input class="ad-slider" type="range" min="0" value="0" aria-label="Attribution session"></label>
     <div class="ad-readout" aria-live="polite">
       <p class="ad-selected-date"></p>
-      <div class="ad-calculation"><span>Exposure held<strong class="ad-day-exposure"></strong></span><b aria-hidden="true">×</b><span>Return per unit<strong class="ad-day-return"></strong></span><b aria-hidden="true">=</b><span>Portfolio P&amp;L<strong class="ad-day-pnl"></strong></span></div>
+      <div class="ad-calculation"><span>Exposure held<strong class="ad-day-exposure"></strong></span><b aria-hidden="true">×</b><span>Payoff<strong class="ad-day-return"></strong></span><b aria-hidden="true">=</b><span>Portfolio P&amp;L<strong class="ad-day-pnl"></strong></span></div>
     </div>
   </div>
   <noscript><p>The time explorer needs JavaScript. The surrounding figures and tables show the episode totals and holdings comparisons.</p></noscript>
 </div>
 <link rel="stylesheet" href="/assets/css/attribution-dynamics.css?v=4">
-<script src="/assets/js/attribution-dynamics.js?v=6" defer></script>
+<script src="/assets/js/attribution-dynamics.js?v=7" defer></script>

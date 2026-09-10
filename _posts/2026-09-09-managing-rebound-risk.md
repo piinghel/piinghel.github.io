@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Performance Attribution, Part 3: What Volatility-Tilt Limits Cost, and What They Don't Fix"
-description: "Volatility-tilt caps buy lower drawdown but worsen typical rebounds as they tighten. Direct beta limits offer modest, uneven improvement."
+description: "Tilt limits buy lower drawdown but worsen typical rebounds as they tighten. Direct beta limits offer modest, uneven improvement."
 permalink: /quants/managing-rebound-risk.html
 toc: true
 show_date: false
@@ -14,25 +14,20 @@ series_previous: /quants/short-book-rebounds.html
 series_end: true
 ---
 
-<p class="article-summary">Volatility-rank caps buy lower historical drawdown at a cost to P&amp;L. Tighter caps worsen the median rebound result. Direct beta-style limits give modest, uneven improvement; daily volatility scaling adds costs without beating constant sizing on gross P&amp;L.</p>
+<p class="article-summary">Tilt limits buy lower historical drawdown at a cost to P&amp;L. Tighter limits worsen the median rebound result. Direct standardized beta limits give modest, uneven improvement; daily volatility scaling adds costs without beating constant sizing on gross P&amp;L.</p>
 
-The [rebound study](/quants/short-book-rebounds.html) found an early-recovery
-vulnerability: higher-beta, more volatile shorts often rose faster than the
-longs. By six months the typical imbalance had reversed, although a few severe
-recoveries remained costly. I wanted to see whether a portfolio limit could
-reduce those losses at an acceptable cost during the rest of the history.
+Can portfolio limits reduce the [early-rebound imbalance](/quants/short-book-rebounds.html)
+at an acceptable cost during the rest of the history?
 
-I tested volatility-rank caps, daily portfolio scaling and limits on the
+I tested tilt limits, daily portfolio scaling and limits on the
 standardized beta exposure from
 [part 1](/quants/portfolio-attribution.html#portfolio-beta), keeping the
-existing covariance model fixed.
+forecasts, covariance model and execution rules unchanged. Three rebalancing
+calendars receive equal capital. The original portfolio is labelled
+**Original** in the comparisons below.
 
-I kept the stock predictions fixed. The comparison covers **23 September 1998
-to 27 May 2026**, combining the same three rebalancing calendars with equal
-capital. Results use fixed-notional P&L; one point is 1% of strategy notional.
-I use [Part 1's cost, turnover and Sharpe conventions](/quants/portfolio-attribution.html#start-with-the-positions),
-including 5 basis points per dollar traded and no borrow, financing or impact
-charge.
+I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
+fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
 
 ## Limit the volatility tilt
 
@@ -47,11 +42,8 @@ where $u_{i,t}$ is the volatility rank and $w_{i,t}$ the signed position weight.
 Buying quiet stocks and shorting volatile stocks both make $V_t$ negative.
 Dividing by gross exposure expresses the average tilt per dollar invested.
 
-This uses the raw volatility ranks. In [part 1](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio),
-I standardize those ranks and measure exposure relative to fixed strategy
-notional. Here the limit is in rank units per dollar of gross exposure;
-negative values represent the low-volatility tilt shown as positive in the
-attribution explorer. On the same covered holdings, the conversion is
+To connect the tilt limit to [Part 1's standardized exposure](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio),
+use the same covered holdings:
 
 $$
 E_{\mathrm{vol},t}=\frac{A_t V_t-\mu_t N_t}{\sigma_t},
@@ -59,25 +51,24 @@ E_{\mathrm{vol},t}=\frac{A_t V_t-\mu_t N_t}{\sigma_t},
 $$
 
 Here $\mu_t$ and $\sigma_t$ are the model's weighted rank mean and standard
-deviation. A rank cap therefore has no fixed standardized equivalent: it
-also depends on gross and net exposure. With the holdings entering the 2009
-rebound held fixed, ±0.30 maps to roughly **[−0.515, +0.678]** standardized
-units; at the 2020 low it maps to **[−0.425, +0.515]**. Those are coordinate
-conversions of the original book, not the reoptimized portfolios.
+deviation. The conversion depends on gross and net exposure. Holding the
+original positions constant, ±0.30 maps to roughly **[−0.515, +0.678]**
+standardized units entering the 2009 rebound and **[−0.425, +0.515]** in 2020.
+Reoptimization changes those positions and therefore the conversion.
 
 I replayed the optimizer with five limits: **±0.30, ±0.25, ±0.20, ±0.15
-and ±0.10**, keeping its existing covariance model, stock forecasts and execution rules.
+and ±0.10**.
 The limits apply whenever each calendar rebalances, about every three weeks.
 Prices and ranks continue moving between those decisions.
 
-Even the loosest cap reached its boundary on **53.4% of rebalances**.
+Even the loosest limit reached its boundary on **53.4% of rebalances**.
 Its average daily tilt moved only modestly, from −0.286 to −0.248;
-tighter caps bound more often and reduced the tilt further. The measurements
+tighter limits were binding more often and reduced the tilt further. The measurements
 covered about 99.5% of gross holdings; reported P&L includes every position.
 
 ## Reduce size when volatility rises
 
-I also tested daily portfolio scaling. I estimate volatility from an
+For daily portfolio scaling, I estimate volatility from an
 exponentially weighted average of squared daily gross P&L, annualized using
 252 sessions, with half-lives of **5** and **21 sessions**. The size multiplier is
 
@@ -90,16 +81,13 @@ close changes positions at the following close and affects the next session's
 P&L. Each overlay follows the original scheduled stock book and charges for
 both its scheduled trades and additional resizing trades.
 
-The 7% target is an illustrative level below the original's 7.9% realized
-volatility. The cap at one makes the trading rule reduce size only; whether
-that helps depends on which gains and losses it scales down.
+The illustrative 7% target sits below the original's 7.9% realized volatility.
+The multiplier stays at or below one, reducing both gains and losses.
 
-Scaling every position together reduces the dollars behind the bet while
-preserving its volatility tilt per dollar. For Table 1, I rescale each saved
-overlay by a constant so its average gross exposure matches the original's
-183.6% of notional, scaling its P&L and trading costs together. This comparison
-requires multipliers of about 1.114 for both rules and can exceed the original
-rule's size ceiling; it is a retrospective leverage comparison.
+Scaling preserves the tilt per dollar. For Table 1, I multiply each overlay's
+positions, P&L and costs by about 1.114 to match the original's average gross
+exposure of 183.6% of notional. The rescaled comparison can exceed full size;
+the trading rule itself cannot.
 
 ## P&L and drawdown
 {: #what-the-changes-delivered }
@@ -107,7 +95,7 @@ rule's size ceiling; it is a retrospective leverage comparison.
 Table 1 compares the P&L given up with the reduction in volatility and drawdown.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: Full-history results.</strong> Annual gross/net P&amp;L and worst drawdown are points of fixed notional; volatility is annualized. The two scaling rows match the original's full-history mean end-of-session gross exposure. Rank-cap rows retain their own gross exposure.</p>
+<p class="table-caption"><strong>Table 1: Full-history results.</strong> Annual gross/net P&amp;L and worst drawdown are points of fixed notional; volatility is annualized. The two scaling rows match the original's full-history mean end-of-session gross exposure. Tilt-limit rows retain their own gross exposure.</p>
 
 | Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -120,13 +108,13 @@ Table 1 compares the P&L given up with the reduction in volatility and drawdown.
 {: .research-table .comparison-table .portfolio-card-table }
 </div>
 
-Tightening the cap trades earnings for a smaller worst drawdown. The trade-off
-has diminishing drawdown gains at the tight end, where Sharpe also falls.
+Figure 1 traces the cost of tighter limits: lower net P&L for a smaller worst
+drawdown, with diminishing drawdown gains at the tight end, where Sharpe falls.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/cap-tradeoff" mobile="/assets/portfolio-attribution/cap-tradeoff_mobile" version="1" alt="The original and five volatility-rank caps: tighter caps move towards smaller worst drawdowns and lower annual net P&L." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/cap-tradeoff" mobile="/assets/portfolio-attribution/cap-tradeoff_mobile" version="1" alt="The original and five tilt limits: tighter limits move towards smaller worst drawdowns and lower annual net P&L." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: Smaller drawdowns come with lower earnings.</strong> Full-history net P&amp;L per year against worst fixed-notional drawdown. Higher and further right are preferable. Labels give the symmetric rank bound; the connecting line follows the tested caps.</p>
+<p class="figure-caption"><strong>Figure 1: Smaller drawdowns come with lower P&amp;L.</strong> Full-history net P&amp;L per year against worst drawdown. Higher and further right are preferable. Labels give the symmetric tilt limit.</p>
 
 **Fast scaling added no gross P&L advantage over constant sizing, and finished
 about 0.7 points a year behind after costs, mostly because of extra trading.**
@@ -134,21 +122,21 @@ That comparison uses the fast rule's original average multiplier of 89.4%.
 At equal average gross in Table 1, both overlays still earn less net P&L
 than the original. Slow scaling improves Sharpe but has a worse worst drawdown.
 
-In January 2022–May 2026, the tighter ±0.15 cap had a higher Sharpe than the
-±0.30 cap, reversing their full-history ranking. The original and both caps
-earned similar annual net P&L in that block. With little earnings sacrificed,
-the tighter cap's lower daily volatility improves its Sharpe ranking.
+In January 2022–May 2026, the tighter ±0.15 limit had a higher Sharpe than the
+±0.30 limit, reversing their full-history ranking. The original and both limits
+earned similar annual net P&L in that block. With little P&L sacrificed,
+the tighter limit's lower daily volatility improves its Sharpe ranking.
 That period-specific trade-off differs from the full-history result.
 
 ## Did the limits help during rebounds?
 
-The caps do not deliver a convincing rebound improvement. In Table 2, the
-loosest cap adds **0.13 points** to the median 63-session rebound; every
-tighter cap has a negative median difference. Eleven inspected episodes
-give little basis for treating that small gain as a reliable improvement.
+Lower full-history drawdown did not translate into consistent rebound
+improvement. Table 2 shows a small positive median difference at ±0.30 and
+negative medians at every tighter limit. Eleven inspected episodes give
+little basis for treating the small gain as reliable.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 2: Recovery results across all 11 lows.</strong> Counts show episodes with higher net P&amp;L than the original. Mean and median differences are net P&amp;L points over the first 63 sessions after each low.</p>
+<p class="table-caption"><strong>Table 2: Rebound results across all 11 lows.</strong> Counts show episodes with higher net P&amp;L than the original. Mean and median differences are net P&amp;L points over the first 63 sessions after each low.</p>
 
 | Tilt limit | Improved · 21 sessions | Improved · 63 sessions | Mean difference | Median difference |
 | :--- | ---: | ---: | ---: | ---: |
@@ -160,22 +148,19 @@ give little basis for treating that small gain as a reliable improvement.
 {: .research-table .comparison-table .attribution-table }
 </div>
 
-All five limits improved the first three months of the 2009 recovery;
-every limit earned less during the equivalent 2020 window. More drawdown
-protection over the full history did not translate into consistent rebound
-protection.
+All five limits improved the first three months of the 2009 rebound;
+every limit earned less during the equivalent 2020 window.
 
-The benefit arrived during declines. Table 3 partitions the whole history:
-the ±0.20 cap earns more during the market sell-offs, but gives up more in
-the remaining sessions than it gains there. The early recoveries also worsen.
+Table 3 locates the benefit in declines. The ±0.20 limit gains there but
+loses more elsewhere, including the early rebounds.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 3: Where the ±0.20 cap gains and loses.</strong> Aggregate net P&amp;L points. Declines run from each preceding market peak to the low, excluding the peak day; the first begins at the available history boundary. Recoveries cover the next 63 sessions after each of the 11 lows. These sets do not overlap, and the three rows reconcile to full-history P&amp;L.</p>
+<p class="table-caption"><strong>Table 3: Where the ±0.20 limit gains and loses.</strong> Aggregate net P&amp;L points. Declines run from each preceding market peak to the low, excluding the peak day; the first begins at the available history boundary. Rebounds cover the next 63 sessions after each of the 11 lows. These sets do not overlap, and the three rows reconcile to full-history P&amp;L.</p>
 
 | Sessions | Days | Original | Tilt limit ±0.20 | Difference |
 | :--- | ---: | ---: | ---: | ---: |
 | Market declines | 1,480 | +53.90 | +59.84 | +5.94 |
-| First 63-session recoveries | 693 | +15.37 | +14.38 | −0.99 |
+| First 63-session rebounds | 693 | +15.37 | +14.38 | −0.99 |
 | All other sessions | 4,789 | +243.64 | +219.88 | −23.76 |
 {: .research-table .comparison-table .attribution-table }
 </div>
@@ -183,30 +168,26 @@ the remaining sessions than it gains there. The early recoveries also worsen.
 ## Test beta exposure directly
 {: #what-i-would-test-next }
 
-The baseline already bounds its estimated market beta at rebalance, yet it
-retains the negative beta-style tilt shown in
-[part 1](/quants/portfolio-attribution.html#portfolio-beta). I added a limit
-on that exposure, using the same standardized stock-beta descriptor as the
-attribution model.
+The existing market-beta limit leaves the negative standardized beta exposure
+shown in [part 1](/quants/portfolio-attribution.html#portfolio-beta).
+I added a limit on that exposure:
 
 $$
 E_{\beta}(w)=\sum_i w_i z_{i,\beta},
 \qquad -b\leq E_{\beta}(w)\leq b.
 $$
 
-I fixed three bounds before running this comparison: **±0.50, ±0.30 and
-±0.10**. Stock beta uses up to 252 daily observations, with 126 required;
-the model centers and scales it using square-root-cap weights. The signed
-portfolio weights use fixed strategy notional. An unavailable standardized
-loading is set to the universe mean, zero, and its share of gross exposure
-is measured explicitly.
+I set three limits before running the comparison: **±0.50, ±0.30 and ±0.10**,
+using Part 1's standardized stock-beta descriptor and weights per strategy
+notional. Missing loadings receive the universe mean, zero; I measure their
+share of gross exposure.
 
 All existing portfolio settings remain, including the separate ±0.05 market-beta
-limit. Each new cap applies at scheduled rebalance, with loadings observed
+limit. Each new limit applies at scheduled rebalance, with loadings observed
 before execution. Table 4 compares their full-history P&L and drawdown.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 4: Direct beta-style limits over the full history.</strong> Same portfolio, dates, costs and definitions as Table 1. These bounds are standardized exposure per strategy notional, not market-return beta.</p>
+<p class="table-caption"><strong>Table 4: Direct standardized beta limits over the full history.</strong> Same portfolio, dates, costs and definitions as Table 1. The limits use standardized exposure per strategy notional.</p>
 
 | Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -217,9 +198,9 @@ before execution. Table 4 compares their full-history P&L and drawdown.
 {: .research-table .comparison-table .portfolio-card-table }
 </div>
 
-The tightest beta cap gives up about **0.16 points of annual net P&L** while
-reducing the worst drawdown. Table 5 shows a small positive median rebound
-difference at ±0.10, with a much larger gain in 2009 lifting the mean.
+The tightest beta limit gives up about **0.2 points of annual net P&L** while
+reducing the worst drawdown. Its median rebound gain in Table 5 is small;
+a much larger gain in 2009 lifts the mean.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 5: Beta limits across the same 11 lows.</strong> Counts show higher net P&amp;L than the original. Mean and median differences are fixed-notional points over the first 63 sessions, matching Table 2.</p>
@@ -232,59 +213,53 @@ difference at ±0.10, with a much larger gain in 2009 lifting the mean.
 {: .research-table .comparison-table .attribution-table }
 </div>
 
-Every beta cap still worsens the first three months of the 2020 recovery.
-The tightest cap also earns less across the market-decline windows and lowers
+Every beta limit still worsens the first three months of the 2020 rebound.
+The tightest limit also earns less across the market-decline windows and lowers
 Sharpe in the reused 2022–26 block. Its median improvement remains positive
 at 126 sessions.
 
 Realized market beta rises from **+0.068 to
-+0.091** under the tightest cap. Reducing a negative standardized-beta tilt
++0.091** under the tightest limit. Reducing a negative standardized-beta tilt
 changes which stocks the optimizer holds and slightly reduces gross exposure.
-All solved targets respected both their new cap and the original
+All solved targets respected both their new limit and the original
 market-beta limit. Available loadings covered about 93% of gross target
 exposure; two rebalances in September 2001 had no coverage, so the added
-restriction was ineffective on those dates.
+limit was ineffective on those dates.
 
-## Would I use these limits?
+## Keep the original portfolio
 {: #what-the-experiment-settles }
 
-I would keep the original portfolio for now. The volatility caps cost P&L
-and worsen typical rebounds as they tighten. Fast volatility scaling loses
-to constant sizing after trading costs.
+I keep the original portfolio. Tighter tilt limits cost P&L and worsen
+typical rebounds; fast scaling loses to constant sizing after trading costs.
 
-The direct beta cap is more promising, but its small typical rebound gain
-comes with a worse 2020 recovery and less protection during market declines.
-That is too uneven for me to adopt it as a rebound limit.
+The beta limit's small typical gain comes with a worse 2020 rebound and less
+decline protection. The improvement is too uneven to adopt.
 
-The open question is whether limiting several persistent factor exposures
-together can reduce the early-recovery losses while preserving the shorts'
-protection during declines. The limits tested here have not achieved that
-consistently.
-
-I would judge a further test on median and aggregate first-63-session P&L,
-preserved aggregate decline-window P&L, and a full-history earnings budget
-fixed before running it. I have not set that budget or tested a joint-factor
-limit. Replacing the covariance is a separate question: it would also need
-stock-specific risk forecasts and calibration checks at 21 and 63 sessions.
+Joint limits on persistent factor exposures remain an open question.
+A further test needs better median and aggregate first-63-session P&L,
+preserved decline-window P&L, and an acceptable full-history P&L cost set
+before running it. That budget and test remain undefined. Replacing the
+covariance also requires stock-specific risk forecasts and calibration at
+21 and 63 sessions.
 
 <aside class="research-note" markdown="1">
 **In-sample notes.** All comparisons use inspected history. The ±0.30, ±0.25
-and ±0.15 rank caps were added after inspecting the first two; the beta caps
+and ±0.15 tilt limits were added after inspecting the first two; the beta limits
 were fixed after reviewing those results. The 2022–26 block has already
-informed research choices. Market lows are identified retrospectively, and
+informed research choices. Market lows are selected in hindsight, and
 constant sizing and equal-gross rescaling use full-history averages. The
-attribution model's normalization inherits retrospective sector availability.
+factor model's normalization inherits Part 1's sector labels.
 The trading rules use decision-time prices and descriptors, but these results
 remain exploratory comparisons rather than an untouched validation.
 </aside>
 
 <details markdown="1">
-<summary>Appendix: intermediate caps and original sizing comparisons</summary>
+<summary>Appendix: intermediate limits and original sizing comparisons</summary>
 
-Table 6 retains intermediate caps and the original, unrescaled sizing rules.
+Table 6 retains intermediate limits and the original, unrescaled sizing rules.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 6: Additional full-history comparisons.</strong> Annual gross/net P&amp;L and worst drawdown are fixed-notional points; volatility is annualized. Scaling rows retain the original cap at full size; each constant-size row uses its overlay's historical average multiplier.</p>
+<p class="table-caption"><strong>Table 6: Additional full-history comparisons.</strong> Annual gross/net P&amp;L and worst drawdown are fixed-notional points; volatility is annualized. Scaling rows retain the original limit at full size; each constant-size row uses its overlay's historical average multiplier.</p>
 
 | Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |

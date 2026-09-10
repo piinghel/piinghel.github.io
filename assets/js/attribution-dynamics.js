@@ -34,7 +34,7 @@
     slider.max=rows.length-1;
     slider.setAttribute('aria-valuetext',human(selected[0]));
     root.querySelector('.ad-direction').textContent=`Positive ${direction.name} exposure favors ${direction.positive}; negative exposure favors ${direction.negative}.`;
-    root.querySelector('.ad-exposure-title').textContent=`1. Our exposure to ${direction.name} · units`;
+    root.querySelector('.ad-exposure-title').textContent=`1. My exposure to ${direction.name} · units`;
     root.querySelector('.ad-pnl-title').textContent=`3. Portfolio P&L from ${direction.name} · cumulative points`;
     const series=[[[1,'--ad-long',''],[2,'--ad-short','5 3'],[3,'--ad-net','']],[[6,'--ad-net','']],[[7,'--ad-net','']]];
     const style=getComputedStyle(root);
