@@ -20,14 +20,7 @@ $$\Sigma=BFB^\top+D.$$
 
 Here $F$ is the covariance matrix of factor returns and $D$ contains stock-specific variances on its diagonal. This form assumes the remaining stock-specific shocks are mutually uncorrelated and uncorrelated with the factors. With $N$ stocks and $K$ factors, the dimensions are $(N\times K)(K\times K)(K\times N)$, producing an $N\times N$ stock covariance matrix.
 
-Figure 1 works through three stocks and two factors. In each multiplication, an output cell is the dot product of a row on the left and a column on the right. The off-diagonal cells tell the optimizer how pairs of stocks move together; the diagonal gives each stock’s variance.
-
-<div class="research-figure responsive-figure" markdown="0">
-{% include theme-svg-figure.html base="/assets/hybrid-risk-model/matrix-multiplication" mobile="/assets/hybrid-risk-model/matrix-multiplication_mobile" version="1" alt="Three-step numerical example: multiply the three-by-two exposure matrix B by two-by-two factor covariance F, then by B transpose, then add diagonal specific variance D. Highlighted rows and columns show each dot product." %}
-</div>
-<p class="figure-caption"><strong>Figure 1: Turning factor risk into stock risk.</strong> An illustrative example, with dimensionless exposures and daily covariances in squared percentage points. Blue cells trace a row–column multiplication in the first two steps and the variance additions in the third.</p>
-
-For portfolio weights $w$, forecast volatility is $\sqrt{w^\top\Sigma w}$. Equivalently, $B^\top w$ gives portfolio factor exposures first, so portfolio variance is $(B^\top w)^\top F(B^\top w)+w^\top Dw$. In the example, a half-and-half position in stocks 1 and 2 has variance $0.25(9)+0.5(5)+0.25(5)=6$, or daily volatility of about 2.45%.
+For portfolio weights $w$, forecast volatility is $\sqrt{w^\top\Sigma w}$. Equivalently, $B^\top w$ gives portfolio factor exposures first, so portfolio variance is $(B^\top w)^\top F(B^\top w)+w^\top Dw$.
 
 ## Where the factors come from
 
@@ -35,9 +28,12 @@ For portfolio weights $w$, forecast volatility is $\sqrt{w^\top\Sigma w}$. Equiv
 
 **Statistical.** A PCA factor model estimates its loadings from return co-movement. In a simple covariance-PCA construction, the leading eigenvectors form $P$, their eigenvalues form $\Lambda$, and $\Sigma\approx P\Lambda P^\top+D$. The retained components explain broad common variation, though their economic meaning may be less stable. Purely return-based estimation can also keep the full stock matrix. My current model takes that route: short-window stock volatilities surround a longer-window correlation estimate shrunk toward the identity. It uses no named factor exposures and no PCA reduction.
 
-**Hybrid.** I first fit named factors, then extract statistical components from standardized residual returns. Let $P$ now denote these residual loadings, restored to stock-return units. The combined exposure matrix is $L=[B\;P]$, and its factor covariance keeps both within-block and between-block relationships:
+**Hybrid.** I first fit named factors, then extract statistical components from standardized residual returns. Let $P$ now denote these residual loadings, restored to stock-return units. With $K$ named factors and $J$ residual factors, the combined exposure matrix is $L=[B\;P]$. Figure 1 shows how the two blocks enter the same covariance calculation.[^blocks]
 
-$$F_H=\begin{bmatrix}F_{BB}&F_{BP}\\F_{PB}&F_{PP}\end{bmatrix},\qquad \Sigma_H=L F_H L^\top+D.$$
+<div class="research-figure responsive-figure" markdown="0">
+{% include theme-svg-figure.html base="/assets/hybrid-risk-model/matrix-multiplication" mobile="/assets/hybrid-risk-model/matrix-multiplication_mobile" version="2" alt="Symbolic hybrid covariance: loadings L combine named block B and residual statistical block P. The factor covariance has BB, BP, PB and PP blocks. Multiplication by L and its transpose gives common stock covariance C; adding diagonal specific variance D gives total covariance Sigma H." %}
+</div>
+<p class="figure-caption"><strong>Figure 1: The hybrid as a block-matrix product.</strong> Blue marks named-factor blocks, ochre statistical blocks, and green their cross-covariances. Multiplication maps the factor covariance into the stock space; diagonal specific risk completes the model. Dimensions are symbolic and block sizes schematic.</p>
 
 The off-diagonal blocks matter. Expanding the product gives named-factor risk $BF_{BB}B^\top$, statistical risk $PF_{PP}P^\top$, and the two cross terms $BF_{BP}P^\top+PF_{PB}B^\top$. Projecting loadings away from named exposures does not guarantee that the factor-return histories are uncorrelated. I estimate those cross-covariances in the hybrid.
 
@@ -79,4 +75,6 @@ The blend reduces annual volatility from 7.72% to 6.72%, but return falls from 1
 
 I’m keeping the current model. The 50:50 blend improves average calibration, but I want evidence of better allocation decisions before switching. There is no matched-volatility blend test here to establish how it would compare at the current model’s risk level. These results use already-inspected history; they are a comparison of the tested constructions, with accounting-based extensions left for later.
 
-[^model]: For characteristic-based estimation and the covariance identity, see Giuseppe A. Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6), first edition (2021), §4.3 and §11.1, pp. 40–41 and 168–169 (physical PDF pages 52–53 and 180–181). The numerical illustration and research results here are my own.
+[^model]: For characteristic-based estimation and the covariance identity, see Giuseppe A. Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6), first edition (2021), §4.3 and §11.1, pp. 40–41 and 168–169 (physical PDF pages 52–53 and 180–181).
+
+[^blocks]: Giuseppe A. Paleologo, *The Elements of Quantitative Investing*, draft of 9 September 2024, §7.6.1, Figure 7.2, p. 211 (physical PDF page 237). The diagram here is an original application to named and residual statistical factors; the book’s example links asset classes and geographies.
