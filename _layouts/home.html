@@ -12,7 +12,9 @@ layout: base
   {% endif %}
 
   {% include ordered-posts.html posts=posts %}
-  {% assign posts = ordered_posts %}
+  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" | reverse %}
+  {% assign reference_posts = curated_posts | where: "navigation", false %}
+  {% assign posts = unplaced_posts | concat: research_posts | concat: reference_posts %}
 
   {%- if posts.size > 0 -%}
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}

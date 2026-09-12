@@ -37,7 +37,7 @@ For LightGBM, mean IC moves from 0.060 to 0.062 while its standard deviation ris
 
 ## What reaches the portfolio
 
-Table 1 puts return and volatility beside Sharpe. All models use the same [portfolio construction](/quants/2026/08/29/portfolio-optimization.html), with 5 basis points of realized costs on traded notional. Metrics average three staggered rebalance calendars.
+Table 1 puts return and volatility beside Sharpe. All models use the same [portfolio construction](/quants/2026/08/29/portfolio-optimization.html), with 5 basis points of realized costs on traded notional. The table averages results from three versions of the strategy, each rebalancing in a different week.
 
 <p class="table-caption"><strong>Table 1: Net portfolio return, volatility and Sharpe.</strong> Return is annual arithmetic P&amp;L on fixed notional; volatility is the annualized standard deviation of daily returns. Each column averages the corresponding calendar metric, so Sharpe can differ from the ratio of the displayed averages.</p>
 <table class="research-table comparison-table horizon-comparison">

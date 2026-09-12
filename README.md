@@ -13,10 +13,12 @@ bundle exec jekyll serve
 
 ## Article reading order
 
-`_data/reading_order.yml` controls both the homepage and Previous/Next links:
+`_data/reading_order.yml` defines the research sequence used by Previous/Next links:
 low-volatility sizing → regression → portfolio construction and risk concentration
 → tranching → P&L attribution 1–3 → tree models → risk-model comparison → resources.
-Place new articles beside their prerequisites and follow-ups;
+The homepage reverses the research sequence, with the latest instalments at the
+top and Resources below the articles. Previous/Next links follow the sequence
+from its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
 Unlisted posts appear first in their existing date order so they cannot disappear;
