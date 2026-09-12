@@ -10,8 +10,6 @@ categories: ["Portfolio management"]
 article_label: Performance attribution · Part 3 of 3
 series_id: performance-attribution
 series_order: 3
-series_previous: /quants/short-book-rebounds.html
-series_end: true
 ---
 
 <p class="article-summary">Tilt limits buy lower historical drawdown at a cost to P&amp;L. Tighter limits worsen the median rebound result. Direct standardized beta limits give modest, uneven improvement; daily volatility scaling adds costs without beating constant sizing on gross P&amp;L.</p>

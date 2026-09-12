@@ -10,8 +10,6 @@ categories: ["Portfolio management"]
 article_label: Performance attribution · Part 2 of 3
 series_id: performance-attribution
 series_order: 2
-series_previous: /quants/portfolio-attribution.html
-series_next: /quants/managing-rebound-risk.html
 ---
 
 <p class="article-summary">Higher-beta, more volatile shorts often rebound faster than the longs early in a rebound. The imbalance is much less common after six months, although the two deepest strategy drawdowns show how costly the intervening path can be.</p>

@@ -11,21 +11,13 @@ layout: base
     {% assign posts = site.posts %}
   {% endif %}
 
-  {% assign attribution_series = posts | where: "series_id", "performance-attribution" | sort: "series_order" %}
-  {% assign other_posts = posts | where_exp: "post", "post.series_id != 'performance-attribution'" %}
-  {% assign posts = other_posts | concat: attribution_series %}
+  {% include ordered-posts.html posts=posts %}
+  {% assign posts = ordered_posts %}
 
   {%- if posts.size > 0 -%}
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
     <ul class="post-list">
-      {%- for item in posts -%}
-      {%- if item.series_id -%}
-        {%- unless item.series_order == 1 -%}{%- continue -%}{%- endunless -%}
-        {%- assign entries = posts | where: "series_id", item.series_id | sort: "series_order" -%}
-      {%- else -%}
-        {%- assign entries = posts | where: "url", item.url -%}
-      {%- endif -%}
-      {%- for post in entries -%}
+      {%- for post in posts -%}
       <li>
         <h2>
           <a class="post-link" href="{{ post.url | relative_url }}">
@@ -45,7 +37,6 @@ layout: base
           {{ post.excerpt }}
         {%- endif -%}
       </li>
-      {%- endfor -%}
       {%- endfor -%}
     </ul>
 

@@ -11,6 +11,17 @@ bundle install
 bundle exec jekyll serve
 ```
 
+## Article reading order
+
+`_data/reading_order.yml` controls both the homepage and Previous/Next links:
+forecasts → portfolio sizing → P&L attribution → risk controls and rebalancing
+→ resources. Place new articles beside their prerequisites and follow-ups;
+keep numbered series consecutive, in part order. Publication dates and RSS
+remain chronological. Draft URLs reserve a future place without publishing them.
+Unlisted posts appear first in their existing date order so they cannot disappear;
+assign their editorial position before publishing. Both layouts use the shared
+`_includes/ordered-posts.html` ordering logic.
+
 Research figures use matching light/dark SVG variants. Ordinary line charts
 have phone-specific layouts where needed; dense figures remain scrollable.
 Their generating code lives in `scripts/` or the corresponding study repository
@@ -181,8 +192,9 @@ private `performance_attribution` research project and shared experiment registr
 refreshes the public aggregates from the saved series diagnostic and original
 beta diagnostic. It also retains only recovery paths in the public explorer;
 the original stock examples remain in the private evidence.
-The public series contains portfolio aggregates only. Attribution-series homepage
-order is set by `series_id` and `series_order`, preserving publication dates.
+The public series contains portfolio aggregates only. Its parts stay together
+in `_data/reading_order.yml`; `series_id` and `series_order` identify the series
+without changing publication dates.
 
 The reusable [Quant Blog Style skill](.agents/skills/quant-blog-style/SKILL.md)
 records the house conventions for prose, figures, captions, tables and mobile

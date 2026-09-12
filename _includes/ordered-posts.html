@@ -1,0 +1,14 @@
+{%- assign available_posts = include.posts | default: site.posts -%}
+{%- assign curated_posts = "" | split: "," -%}
+{%- for article_url in site.data.reading_order -%}
+  {%- assign matching_posts = available_posts | where: "url", article_url -%}
+  {%- assign curated_posts = curated_posts | concat: matching_posts -%}
+{%- endfor -%}
+{%- assign unplaced_posts = "" | split: "," -%}
+{%- for article in available_posts -%}
+  {%- unless site.data.reading_order contains article.url -%}
+    {%- assign matching_posts = available_posts | where: "url", article.url -%}
+    {%- assign unplaced_posts = unplaced_posts | concat: matching_posts -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign ordered_posts = unplaced_posts | concat: curated_posts -%}

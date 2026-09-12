@@ -10,8 +10,6 @@ categories: ["Portfolio management"]
 article_label: Performance attribution · Part 1 of 3
 series_id: performance-attribution
 series_order: 1
-series_previous: /quants/2026/09/05/risk-concentration.html
-series_next: /quants/short-book-rebounds.html
 ---
 
 <p class="article-summary">The shorts offset daily fluctuations, but the portfolio retained a small positive market beta and suffered large losses in some rebounds. Attribution connects those outcomes to the positions and exposures I held.</p>
