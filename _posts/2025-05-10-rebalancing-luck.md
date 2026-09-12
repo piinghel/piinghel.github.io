@@ -31,7 +31,7 @@ I use the [same stock strategy](/quants/2026/08/29/portfolio-optimization.html)
 throughout: the forecasts, point-in-time universe, selection and sizing rules,
 and gross exposure cap stay fixed. Friday refers to the signal date; execution
 is at the next trading-session close. All returns include the existing 5 bp
-allowance for transaction costs and market impact. The calendar grid and
+trading-cost allowance. The calendar grid and
 return–volatility comparison cover the full matched history. I also split the
 tables into development (September
 1998–December 2021) and later history (January 2022–May 2026), so the much longer

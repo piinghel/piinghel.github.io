@@ -179,9 +179,11 @@ for the other fitted characteristics.
 I estimate that day's coefficients jointly by weighted least squares:
 
 $$
+\begin{gathered}
 \underset{a_t,f_t,g_t}{\operatorname{minimize}}\;
-\sum_{i\in U_t}q_{i,t-1}\varepsilon_{i,t}^{\,2},
-\qquad q_{i,t-1}=\sqrt{\mathrm{cap}_{i,t-1}}.
+\sum_{i\in U_t}q_{i,t-1}\varepsilon_{i,t}^{\,2},\\[6pt]
+q_{i,t-1}=\sqrt{\mathrm{cap}_{i,t-1}}.
+\end{gathered}
 $$
 
 $U_t$ is the eligible universe with valid returns. A stock four times as large

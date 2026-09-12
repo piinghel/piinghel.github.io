@@ -108,7 +108,7 @@ begins with the comparison and scope, followed by essential conventions.
 
 ## Mechanisms and mobile layout
 
-For a staggered rebalance schedule, three sleeve rows over six weeks can show
+For portfolios rebalancing in different weeks, three sleeve rows over six weeks can show
 two rotations. Label each row “⅓ notional”; mark each rebalance with a symbol
 as well as restrained color. Place the schedule before accounting detail.
 Use the same sleeve identities in related performance displays.

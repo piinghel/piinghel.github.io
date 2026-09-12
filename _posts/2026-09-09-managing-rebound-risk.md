@@ -45,8 +45,10 @@ To connect the tilt limit to [Part 1's standardized exposure](/quants/portfolio-
 use the same covered holdings:
 
 $$
-E_{\mathrm{vol},t}=\frac{A_t V_t-\mu_t N_t}{\sigma_t},
-\qquad A_t=\sum_i|w_{i,t}|,\quad N_t=\sum_i w_{i,t}.
+\begin{gathered}
+E_{\mathrm{vol},t}=\frac{A_t V_t-\mu_t N_t}{\sigma_t},\\[6pt]
+A_t=\sum_i|w_{i,t}|,\quad N_t=\sum_i w_{i,t}.
+\end{gathered}
 $$
 
 Here $\mu_t$ and $\sigma_t$ are the model's weighted rank mean and standard
@@ -257,24 +259,3 @@ factor model's normalization inherits Part 1's sector labels.
 The trading rules use decision-time prices and descriptors, but these results
 remain exploratory comparisons rather than an untouched validation.
 </aside>
-
-<details markdown="1">
-<summary>Appendix: intermediate limits and original sizing comparisons</summary>
-
-Table 6 retains intermediate limits and the original, unrescaled sizing rules.
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 6: Additional full-history comparisons.</strong> Annual gross/net P&amp;L and worst drawdown are fixed-notional points; volatility is annualized. Scaling rows retain the original limit at full size; each constant-size row uses its overlay's historical average multiplier.</p>
-
-| Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Tilt limit ±0.25 | 12.40 | 10.97 | 7.57% | 1.45 | −13.83 | 28.7× |
-| Tilt limit ±0.15 | 11.76 | 10.29 | 7.29% | 1.41 | −12.00 | 29.3× |
-| Daily scaling · 5 sessions | 11.30 | 9.44 | 6.71% | 1.41 | −14.17 | 37.2× |
-| Constant 89.4% size | 11.36 | 10.12 | 7.06% | 1.43 | −14.59 | 24.7× |
-| Daily scaling · 21 sessions | 11.39 | 9.95 | 6.79% | 1.47 | −15.51 | 28.9× |
-| Constant 89.2% size | 11.34 | 10.11 | 7.05% | 1.43 | −14.56 | 24.7× |
-{: .research-table .comparison-table .portfolio-card-table }
-</div>
-
-</details>

@@ -27,8 +27,8 @@ concentration with limited trading?
 
 Just as in my other articles, I keep the Ridge predictions, selected stocks,
 trading controls, execution, and 5 bp charge on traded notional fixed. The
-comparison is about allocation. I use three staggered rebalance schedules from
-September 1998 through May 2026, reporting results before and after 2021
+comparison is about allocation. I use three rebalance schedules, each starting
+in a different week, from September 1998 through May 2026, reporting results before and after 2021
 separately. I had already looked at the later period in earlier work, and added
 some tighter thresholds after seeing the first results. This is an exploratory
 comparison. The three schedules let me check

@@ -31,9 +31,8 @@ January 2022–May 2026 provides the later comparison, but that history has sinc
 informed feature, allocation, and beta-estimator choices.
 
 I use the Ridge ranking from the [preceding study](/quants/2025/02/09/multiple-linear-regression.html).
-Every allocation rule starts from that same ranking and trades the same three
-staggered schedules. A staggered schedule runs the full strategy
-from a different starting week. Each schedule rebalances every three weeks,
+Every allocation rule starts from that same ranking and follows three rebalance
+schedules, each beginning in a different week. Each schedule rebalances every three weeks,
 uses the same next-close execution, and pays 5 basis points on traded notional.
 
 - **Volatility-scaled** maps prediction scores to signal weights, scales each stock
@@ -146,7 +145,7 @@ because only the top 75 enter the new selection. The optimizer with trading
 controls may retain it while it remains inside the wider top 175. It starts from
 the existing weights after intervening price moves.
 
-An incumbent outside the wider holding range must still close, and the
+An existing holding outside the wider holding range must still close, and the
 backtest charges for that exit.
 
 The sizing scores and risk budget stay the same. If
@@ -159,7 +158,7 @@ $$
 $$
 
 under the same portfolio constraints. The wider holding range gives the
-optimizer more incumbents to choose from. The second term makes every change
+optimizer more existing holdings to choose from. The second term makes every change
 pay for moving away from the current weights. The trade coefficient controls
 that reluctance.
 
@@ -171,7 +170,7 @@ these score units.
 
 The L1 term counts both sides of a replacement. Selling a 1% position and buying
 another 1% position changes $$\lVert w_t-w_t^{\mathrm{pre}}\rVert_1$$ by 2%.
-The optimizer keeps the incumbent unless the new score-and-risk combination
+The optimizer keeps the existing holding unless the new score-and-risk combination
 clears that hurdle. Constraints can still force a trade when the old position
 breaches a limit. I tune this coefficient to control how readily the optimizer
 trades; the backtest separately charges 5 bp on executed trades.
@@ -180,7 +179,7 @@ Table 2 separates the two controls. A *rank buffer* lets an existing long
 remain eligible down to rank 175, while new positions still enter through the
 top 75; the short book uses the corresponding bottom ranks. The buffer alone
 saves little turnover. With a penalty on changing weights, it becomes much
-more useful: retaining an acceptable incumbent saves the cost of replacing it.
+more useful: retaining an acceptable holding saves the cost of replacing it.
 
 <table class="research-table comparison-table control-table">
   <caption><strong>Table 2: What the trading controls contribute.</strong> Development-period means across three schedules, September 1998–December 2021. Returns are geometric and annualized, with net results charging 5 bp per dollar traded. The buffer uses rank 175 and the penalty uses <i>c</i> = 2.5 × 10<sup>−4</sup>; other allocation settings are the same.</caption>
