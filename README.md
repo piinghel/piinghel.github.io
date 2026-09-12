@@ -67,7 +67,7 @@ a framework migration would not strengthen the research.
 
 The tree-model comparison uses audited aggregate metrics in
 `assets/tree-model-comparison/metrics.json`. Regenerate its paired-period
-Sharpe and ICIR plots with `python3 scripts/render_tree_comparison.py`.
+mean-IC, IC-standard-deviation and ICIR panels with `python3 scripts/render_tree_comparison.py`.
 
 The hybrid risk-model draft is `_drafts/hybrid-risk-model.md`. Its retained
 aggregate inputs are `assets/hybrid-risk-model/metrics.json`; regenerate the

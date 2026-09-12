@@ -225,18 +225,10 @@
   },
   "/assets/tree-model-comparison/forecast-quality": {
     "width": 702,
-    "height": 418
+    "height": 281
   },
   "/assets/tree-model-comparison/forecast-quality_mobile": {
     "width": 324,
-    "height": 367
-  },
-  "/assets/tree-model-comparison/portfolio-sharpe": {
-    "width": 702,
-    "height": 418
-  },
-  "/assets/tree-model-comparison/portfolio-sharpe_mobile": {
-    "width": 324,
-    "height": 367
+    "height": 590
   }
 }
