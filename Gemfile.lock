@@ -166,7 +166,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  jekyll (~> 4.3)
+  jekyll (>= 3.5, < 5.0)
   jekyll-feed (~> 0.17)
   jekyll-seo-tag (~> 2.8)
 
