@@ -201,11 +201,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table-scroll .research-table { min-width: 620px; }
 .research-table-scroll .horizon-comparison { min-width: 0; table-layout: fixed; }
 .horizon-comparison th:first-child { width: 34%; }
-.horizon-comparison .forecast-group-start > * { padding-top: 1.2rem; }
 @media (max-width: 600px) {
   .post-content .horizon-comparison { font-size: 0.8rem; }
   .horizon-comparison th, .horizon-comparison td { padding: 0.55rem 0.2rem; }
-  .horizon-comparison .forecast-group-start > * { padding-top: 1rem; }
 }
 .research-caption-content { display: block; position: sticky; left: 0; }
 .research-table-scroll .sleeve-schedule { min-width: 0; }
