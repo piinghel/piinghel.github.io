@@ -22,8 +22,8 @@ The backtest input covers 1995–2021. After the original training warmup, the f
 <div markdown="1">
 <p class="table-caption"><strong>Table 1: Full-history portfolio performance.</strong> Annual arithmetic return and volatility in percent; maximum drawdown shown as a positive loss percentage.</p>
 
-<table class="research-table comparison-table">
-<thead><tr><th>Model / forecast</th><th>Return</th><th>Sharpe</th><th>Vol.</th><th>Max DD</th></tr></thead>
+<table class="research-table comparison-table horizon-comparison">
+<thead><tr><th>Model / forecast</th><th>Return (%)</th><th>Sharpe</th><th>Vol. (%)</th><th>Max DD (%)</th></tr></thead>
 <tbody>
 <tr><th scope="row">XGBoost 50:50</th><td>15.55</td><td>1.98</td><td>7.85</td><td>14.19</td></tr>
 <tr><th scope="row">Shared XGBoost 50:50</th><td>15.42</td><td>1.98</td><td>7.79</td><td>15.08</td></tr>
@@ -31,9 +31,9 @@ The backtest input covers 1995–2021. After the original training warmup, the f
 <tr><th scope="row">Ridge 50:50</th><td>11.53</td><td>1.43</td><td>8.09</td><td>17.67</td></tr>
 <tr class="period-break"><th scope="row">XGBoost 20 days</th><td>16.38</td><td>2.04</td><td>8.02</td><td>14.71</td></tr>
 <tr><th scope="row">XGBoost 60 days</th><td>14.01</td><td>1.82</td><td>7.69</td><td>14.97</td></tr>
-<tr><th scope="row">LightGBM 20 days</th><td>16.87</td><td>2.11</td><td>8.00</td><td>12.67</td></tr>
+<tr class="forecast-group-start"><th scope="row">LightGBM 20 days</th><td>16.87</td><td>2.11</td><td>8.00</td><td>12.67</td></tr>
 <tr><th scope="row">LightGBM 60 days</th><td>13.93</td><td>1.81</td><td>7.68</td><td>15.52</td></tr>
-<tr><th scope="row">Ridge 20 days</th><td>11.48</td><td>1.39</td><td>8.25</td><td>18.19</td></tr>
+<tr class="forecast-group-start"><th scope="row">Ridge 20 days</th><td>11.48</td><td>1.39</td><td>8.25</td><td>18.19</td></tr>
 <tr><th scope="row">Ridge 60 days</th><td>11.05</td><td>1.40</td><td>7.90</td><td>17.97</td></tr>
 </tbody>
 </table>
@@ -49,8 +49,8 @@ The individual horizons make a larger difference than the choice between tree im
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 2: Recent-window performance.</strong> Net annual arithmetic return in percent and Sharpe. The ten-year window begins on 3 January 2012; the five-year window begins on 3 January 2017. Both end on 31 December 2021.</p>
-<table class="research-table comparison-table">
-<thead><tr><th>Model / forecast</th><th>10y return</th><th>10y Sharpe</th><th>5y return</th><th>5y Sharpe</th></tr></thead>
+<table class="research-table comparison-table horizon-comparison">
+<thead><tr><th>Model / forecast</th><th>10y return (%)</th><th>10y Sharpe</th><th>5y return (%)</th><th>5y Sharpe</th></tr></thead>
 <tbody>
 <tr><th scope="row">XGBoost 50:50</th><td>14.76</td><td>1.76</td><td>13.50</td><td>1.47</td></tr>
 <tr><th scope="row">Shared XGBoost 50:50</th><td>14.87</td><td>1.78</td><td>13.63</td><td>1.48</td></tr>
@@ -58,9 +58,9 @@ The individual horizons make a larger difference than the choice between tree im
 <tr><th scope="row">Ridge 50:50</th><td>12.29</td><td>1.42</td><td>12.59</td><td>1.31</td></tr>
 <tr class="period-break"><th scope="row">XGBoost 20 days</th><td>15.01</td><td>1.76</td><td>13.03</td><td>1.38</td></tr>
 <tr><th scope="row">XGBoost 60 days</th><td>13.71</td><td>1.68</td><td>12.88</td><td>1.44</td></tr>
-<tr><th scope="row">LightGBM 20 days</th><td>15.02</td><td>1.77</td><td>13.30</td><td>1.43</td></tr>
+<tr class="forecast-group-start"><th scope="row">LightGBM 20 days</th><td>15.02</td><td>1.77</td><td>13.30</td><td>1.43</td></tr>
 <tr><th scope="row">LightGBM 60 days</th><td>13.56</td><td>1.65</td><td>12.91</td><td>1.44</td></tr>
-<tr><th scope="row">Ridge 20 days</th><td>12.58</td><td>1.41</td><td>12.14</td><td>1.23</td></tr>
+<tr class="forecast-group-start"><th scope="row">Ridge 20 days</th><td>12.58</td><td>1.41</td><td>12.14</td><td>1.23</td></tr>
 <tr><th scope="row">Ridge 60 days</th><td>11.71</td><td>1.41</td><td>11.65</td><td>1.25</td></tr>
 </tbody>
 </table>
@@ -76,7 +76,7 @@ Table 3 checks the forecasts directly. IC is the daily cross-sectional Spearman 
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: Forecast ranking quality.</strong> Mean IC over the full active history and unannualized ICIR over the three reporting windows. Horizon changes alter the target being evaluated.</p>
-<table class="research-table comparison-table">
+<table class="research-table comparison-table horizon-comparison">
 <thead><tr><th>Model / forecast</th><th>Mean IC</th><th>Full ICIR</th><th>10y ICIR</th><th>5y ICIR</th></tr></thead>
 <tbody>
 <tr><th scope="row">XGBoost 50:50</th><td>0.0593</td><td>0.788</td><td>0.707</td><td>0.555</td></tr>
@@ -85,9 +85,9 @@ Table 3 checks the forecasts directly. IC is the daily cross-sectional Spearman 
 <tr><th scope="row">Ridge 50:50</th><td>0.0512</td><td>0.644</td><td>0.640</td><td>0.515</td></tr>
 <tr class="period-break"><th scope="row">XGBoost 20 days</th><td>0.0541</td><td>0.712</td><td>0.589</td><td>0.491</td></tr>
 <tr><th scope="row">XGBoost 60 days</th><td>0.0538</td><td>0.717</td><td>0.678</td><td>0.493</td></tr>
-<tr><th scope="row">LightGBM 20 days</th><td>0.0544</td><td>0.718</td><td>0.596</td><td>0.502</td></tr>
+<tr class="forecast-group-start"><th scope="row">LightGBM 20 days</th><td>0.0544</td><td>0.718</td><td>0.596</td><td>0.502</td></tr>
 <tr><th scope="row">LightGBM 60 days</th><td>0.0543</td><td>0.728</td><td>0.679</td><td>0.491</td></tr>
-<tr><th scope="row">Ridge 20 days</th><td>0.0458</td><td>0.562</td><td>0.529</td><td>0.464</td></tr>
+<tr class="forecast-group-start"><th scope="row">Ridge 20 days</th><td>0.0458</td><td>0.562</td><td>0.529</td><td>0.464</td></tr>
 <tr><th scope="row">Ridge 60 days</th><td>0.0482</td><td>0.621</td><td>0.632</td><td>0.474</td></tr>
 </tbody>
 </table>
