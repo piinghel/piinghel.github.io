@@ -23,6 +23,22 @@
     "width": 384,
     "height": 791
   },
+  "/assets/hybrid-risk-model/calibration": {
+    "width": 702,
+    "height": 252
+  },
+  "/assets/hybrid-risk-model/calibration_mobile": {
+    "width": 324,
+    "height": 238
+  },
+  "/assets/hybrid-risk-model/portfolio-tradeoff": {
+    "width": 702,
+    "height": 252
+  },
+  "/assets/hybrid-risk-model/portfolio-tradeoff_mobile": {
+    "width": 324,
+    "height": 238
+  },
   "/assets/multiple-linear-regression/factor-correlation": {
     "width": 561,
     "height": 313
@@ -206,5 +222,21 @@
   "/assets/tranching/schedule-performance_mobile": {
     "width": 374,
     "height": 403
+  },
+  "/assets/tree-model-comparison/forecast-quality": {
+    "width": 702,
+    "height": 418
+  },
+  "/assets/tree-model-comparison/forecast-quality_mobile": {
+    "width": 324,
+    "height": 367
+  },
+  "/assets/tree-model-comparison/portfolio-sharpe": {
+    "width": 702,
+    "height": 418
+  },
+  "/assets/tree-model-comparison/portfolio-sharpe_mobile": {
+    "width": 324,
+    "height": 367
   }
 }

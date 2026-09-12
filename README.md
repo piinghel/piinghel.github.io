@@ -54,6 +54,15 @@ a framework migration would not strengthen the research.
 
 ## Figure sources
 
+The tree-model comparison uses audited aggregate metrics in
+`assets/tree-model-comparison/metrics.json`. Regenerate its paired-period
+Sharpe and IC/ICIR plots with `python3 scripts/render_tree_comparison.py`.
+
+The hybrid risk-model draft is `_drafts/hybrid-risk-model.md`. Its retained
+aggregate inputs are `assets/hybrid-risk-model/metrics.json`; regenerate both
+figures with `python3 scripts/render_hybrid_risk.py`. Preview drafts with
+`bundle exec jekyll build --drafts --destination _site_drafts`.
+
 The regression article figures are regenerated from the included aggregate evidence:
 
 ```bash

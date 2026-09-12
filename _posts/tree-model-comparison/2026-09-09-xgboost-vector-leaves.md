@@ -9,15 +9,38 @@ date: 2026-09-09
 categories: ["Machine learning"]
 ---
 
-XGBoost’s [vector-leaf model](https://xgboost.ai/2026/08/25/introducing-the-xgboost-vector-leaf-model) made me curious: would sharing tree splits help predict two related return horizons? A shared tree uses the same splits for both targets and stores two predictions in each leaf. That could be useful if the two horizons benefit from similar partitions of the feature space.
+XGBoost’s [vector-leaf model](https://xgboost.ai/2026/08/25/introducing-the-xgboost-vector-leaf-model) made me curious: would sharing tree splits help predict two related return horizons? I compared it with ordinary XGBoost, LightGBM and Ridge in my existing backtester. The larger differences came from using trees at all and choosing the return horizon.
 
-I wanted to know whether that translated into a better portfolio. I compared ordinary XGBoost, shared XGBoost and LightGBM in my existing ML backtester, keeping the features, normalization and portfolio rules fixed. I included Ridge as a linear baseline: before choosing between tree implementations, I want to know what they add over a simple regularized regression. I also checked the individual horizons, because the choice of target can matter more than the choice of tree implementation.
+Each model predicts ranked forward Sharpe targets over 20 or 60 trading days. Ordinary XGBoost, LightGBM and Ridge fit the horizons separately; shared XGBoost learns both together. **50:50 averages the two forecasts before stock selection and portfolio optimization.** Features, normalization and portfolio rules stay fixed.
 
-Each target is the annualized ratio of future mean daily return to future daily volatility, measured over 20 or 60 trading days, then ranked within each date and sector onto [−1, 1]. The return hurdle is zero. Ordinary XGBoost, LightGBM and Ridge fit one model per horizon; shared XGBoost learns both targets together. **50:50 means averaging the two forecasts before stock selection and portfolio optimization.**
+## Portfolio results
 
-## Portfolio performance
+Figure 1 compares net portfolio Sharpe over the full history and its final five years. The input covers 1995–2021; the first portfolio begins on 3 November 1998. Results include 5 basis points of realized costs on traded notional and average the metrics of three staggered rebalance calendars.
 
-The backtest input covers 1995–2021. After the original training warmup, the first portfolio starts on 3 November 1998; all results end on 31 December 2021. Table 1 uses the backtester’s net long–short financial metrics, with realized trading costs of 5 basis points on traded notional.
+<div class="research-figure responsive-figure" markdown="0">
+{% include theme-svg-figure.html base="/assets/tree-model-comparison/portfolio-sharpe" mobile="/assets/tree-model-comparison/portfolio-sharpe_mobile" version="1" alt="Portfolio Sharpe for ten model and horizon combinations. Tree blends are near 2 over the full history versus Ridge at 1.43; all are lower during 2017–2021." %}
+</div>
+<p class="figure-caption"><strong>Figure 1: Tree choice matters less than the linear baseline and the horizon.</strong> Circles show full-history Sharpe; diamonds show 2017–2021. Lines connect the two estimates within each forecast; the samples overlap. XGB abbreviates XGBoost.</p>
+
+The three tree blends are close: Sharpe ranges from 1.98 to 2.02, against Ridge’s 1.43. Their annual arithmetic net returns are about 15.4–15.8%, versus 11.5% for Ridge, at similar volatility. Sharing splits gives me little extra here.
+
+Both ordinary tree models prefer the 20-day forecast over the full history; LightGBM reaches a Sharpe of 2.11. Over 2017–2021, however, each model’s blend beats its individual horizons on Sharpe. I’d keep the longer forecast in the comparison. The gap over Ridge also narrows: the tree blends have five-year Sharpe ratios of 1.47–1.48, against 1.31.
+
+## Forecast quality
+
+Figure 2 asks whether the forecasts themselves rank stocks better. **IC** is the daily cross-sectional Spearman correlation between forecast and target. Its information ratio, **ICIR**, is mean daily IC divided by its sample standard deviation, unannualized. It measures the consistency of the ranking signal.
+
+<div class="research-figure responsive-figure" markdown="0">
+{% include theme-svg-figure.html base="/assets/tree-model-comparison/forecast-quality" mobile="/assets/tree-model-comparison/forecast-quality_mobile" version="1" alt="Full-history mean IC and full-history versus 2017–2021 ICIR. Tree blends have similar ranking quality and exceed Ridge; individual horizons are evaluated against their respective targets." %}
+</div>
+<p class="figure-caption"><strong>Figure 2: Ranking strength and consistency.</strong> Mean IC uses the full history; ICIR compares full history with 2017–2021. Blends are evaluated against the mean of the two ranked targets; individual forecasts against their own horizon. Finite target coverage differs by horizon, so compare models within the same forecast.</p>
+
+The tree blends are close here too, with full-history ICIR around 0.79 against Ridge’s 0.64. Shared trees sit slightly below ordinary XGBoost. The 60-day forecasts can have steadier IC while their portfolios earn less, which is why I wanted both prediction metrics and complete portfolio results.
+
+For this comparison, LightGBM remains a reasonable choice: it matches the other tree blends and took about 24 minutes for training and prediction, versus roughly 50–54 minutes for XGBoost. Ridge took about a minute per horizon. These are observed timings at the tested settings. The same historical sample has already been inspected, so I’m keeping production unchanged; this study gives me little reason to pursue shared trees further.
+
+<details markdown="1" class="research-details">
+<summary>Exact figures and comparison setup</summary>
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 1: Full-history portfolio performance.</strong> Annual arithmetic return and volatility in percent; maximum drawdown shown as a positive loss percentage.</p>
@@ -39,14 +62,6 @@ The backtest input covers 1995–2021. After the original training warmup, the f
 </table>
 </div>
 
-The reported numbers average the metrics of three staggered rebalance calendars, following the existing package convention. Each calendar uses fixed notional; drawdown is calculated from its compounded daily return index. The [portfolio construction](https://piinghel.github.io/quants/2026/08/29/portfolio-optimization.html) and its risk, exposure and trading rules are common to every model.
-
-The three tree-model blends are close: annual returns span 15.42–15.77%, Sharpe ratios 1.98–2.02, and volatility stays around 7.8%. Shared trees give me no visible portfolio upgrade here. LightGBM has a small full-history advantage at these settings, which is consistent with keeping the simpler existing choice.
-
-The larger gap is between the trees and Ridge. Ridge's blend earns 11.53% a year with a Sharpe of 1.43 and a maximum drawdown of 17.67%. Its volatility is similar to the tree blends, so their higher returns also translate into higher Sharpe ratios. The trees add value over this linear baseline in the historical sample, although this comparison alone does not tell me which nonlinear relationships account for it.
-
-The individual horizons make a larger difference than the choice between tree implementations. Both ordinary tree models earn more with the 20-day forecast over the full history. LightGBM’s 20-day portfolio has a full-history Sharpe of 2.11. But the preference for the shorter horizon does not hold uniformly in the recent windows.
-
 <div markdown="1">
 <p class="table-caption"><strong>Table 2: Recent-window performance.</strong> Net annual arithmetic return in percent and Sharpe. The ten-year window begins on 3 January 2012; the five-year window begins on 3 January 2017. Both end on 31 December 2021.</p>
 <table class="research-table comparison-table horizon-comparison">
@@ -65,14 +80,6 @@ The individual horizons make a larger difference than the choice between tree im
 </tbody>
 </table>
 </div>
-
-In Table 2, the tree-model blends again sit close together. Over the last five years, the XGBoost and LightGBM blends each have a higher Sharpe than either of their individual horizons. The full-history preference for 20 days therefore gives me no reason to discard the longer forecast. Portfolio optimization also makes the blend a distinct strategy: averaging forecasts can change which stocks are selected and how they are weighted.
-
-Ridge's blend also has a higher five-year Sharpe than either individual horizon. The tree blends still lead, but the gap has narrowed: their five-year Sharpe ratios are 1.47–1.48 against Ridge's 1.31, compared with 1.98–2.02 against 1.43 over the full history.
-
-## Ranking quality
-
-Table 3 checks the forecasts directly. IC is the daily cross-sectional Spearman correlation between forecast and target. ICIR is its mean divided by its sample standard deviation, unannualized. A blend is evaluated against the equal-weight mean of the two ranked targets; an individual forecast is evaluated against its own horizon. Only finite forecast–target pairs and defined daily correlations enter the calculation. Changing the horizon changes both the target and the available pairs; the shorter target also has more evaluation dates.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: Forecast ranking quality.</strong> Mean IC over the full active history and unannualized ICIR over the three reporting windows. Horizon changes alter the target being evaluated.</p>
@@ -93,14 +100,10 @@ Table 3 checks the forecasts directly. IC is the daily cross-sectional Spearman 
 </table>
 </div>
 
-The tree-model blends are close here too, with shared trees slightly below ordinary XGBoost on ICIR in each window. Ridge has a lower blend ICIR in all three windows, consistent with its weaker portfolio results. The horizon comparison answers a different question: the 60-day target can have a steadier IC while its portfolio earns less. That is why I wanted the complete portfolio backtest alongside the prediction metrics.
+All models use 144 predictors. Targets are the annualized ratio of future mean daily return to future daily volatility, with a zero hurdle, ranked within date and sector onto [−1, 1]. The walk-forward design starts with 900 training sessions, advances in 600-session blocks and retains a 61-session gap. Predictions average three date-phase models. Each horizon keeps the common training sample and prediction rows, including the 60-day eligibility convention.
 
-## What was held fixed
+The tree settings are 350 rounds, depth 5, learning rate 0.05, feature subsampling 0.25 and 255 bins; LightGBM allows 32 leaves. These provide comparable settings while the algorithms differ in growth and regularization. Individual tree portfolios reuse the original saved estimators; Ridge’s blend averages its saved horizon forecasts.
 
-All models use the same 144 predictors. The tree models use 350 boosting rounds, maximum depth 5, learning rate 0.05, feature subsampling of 0.25 and maximum bin count of 255. LightGBM allows 32 leaves. These are comparable settings; the algorithms still differ in how they grow trees and regularize them. Two separate models also have more independently chosen splits than one shared model at the same number of rounds.
+Financial figures average calendar metrics. Each calendar uses fixed notional; drawdown comes from its compounded daily return index. The [portfolio construction](https://piinghel.github.io/quants/2026/08/29/portfolio-optimization.html) is common to all models. IC includes only finite forecast–target pairs with defined daily correlation.
 
-The expanding walk-forward design starts with 900 training sessions, advances in 600-session blocks and retains a 61-session gap. Each prediction averages three models fitted on different date phases. Every individual-horizon comparison keeps the same common training sample and eligible prediction rows as its blend. The 20-day models therefore retain the 60-day training-eligibility and gap convention. The individual tree-horizon portfolios reuse estimators saved by the original blend runs; Ridge's blend averages its saved individual-horizon forecasts.
-
-Training and prediction took about 54 minutes for ordinary XGBoost, 50 minutes for shared XGBoost and 24 minutes for LightGBM. Ridge took about a minute per horizon. These are observed pipeline timings from sequential, two-worker runs. The LightGBM comparator uses the matched research settings; production retains its existing configuration.
-
-Ridge gives me a useful reference: the tree models improve on this linear baseline, while changing the tree implementation adds little. These windows share one historical sample and have already been inspected. The small differences between the tree-model blends give me no reason to change production or keep searching settings until shared trees look better. The remaining question is whether these advantages survive new data.
+</details>

@@ -11,6 +11,10 @@ layout: base
     {% assign posts = site.posts %}
   {% endif %}
 
+  {% assign attribution_series = posts | where: "series_id", "performance-attribution" | sort: "series_order" %}
+  {% assign other_posts = posts | where_exp: "post", "post.series_id != 'performance-attribution'" %}
+  {% assign posts = other_posts | concat: attribution_series %}
+
   {%- if posts.size > 0 -%}
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
     <ul class="post-list">

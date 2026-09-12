@@ -1,0 +1,69 @@
+{
+  "conventions": {
+    "financial": "Annual arithmetic net fixed-notional P&L;5bp per traded dollar;5774 common sessions1999-01-26\u20132021-12-31; drawdowns are additive percentage points.",
+    "calibration": "1195 pooled overlapping21-session windows per arm, each model own frozen target book; mean realized/forecast volatility ratio, reference1.",
+    "blend": "Equal raw hybrid and raw incumbent covariance, then own causal calibration."
+  },
+  "source_hashes": {
+    "evaluation-01/periods.parquet": "827525058f4dc31b1a451970577c749ae7985bd215ae14162e5d7ab530e30f19",
+    "target-calibration-02/summary.parquet": "845bc55980d7b8a117dae9638af924de1158a70bf7503bdb45db35ca139a4300"
+  },
+  "rows": [
+    {
+      "arm": "baseline_fixed",
+      "start": "1999-01-26",
+      "end": "2021-12-31",
+      "sessions": 5774,
+      "annual_net_pct": 11.874439855415156,
+      "annual_vol_pct": 7.717616736501108,
+      "sharpe": 1.5386148678845386,
+      "max_drawdown_pct": -16.114967171027672,
+      "label": "Incumbent",
+      "n": 1195,
+      "mean_volatility_ratio": 1.1348563119918114,
+      "mean_variance_qlike": 0.3270545581051746
+    },
+    {
+      "arm": "baseline",
+      "start": "1999-01-26",
+      "end": "2021-12-31",
+      "sessions": 5774,
+      "annual_net_pct": 11.428481401985104,
+      "annual_vol_pct": 7.277880628122537,
+      "sharpe": 1.5703034971230758,
+      "max_drawdown_pct": -15.517722812374712,
+      "label": "Incumbent, adaptive",
+      "n": 1195,
+      "mean_volatility_ratio": 1.0748499938266016,
+      "mean_variance_qlike": 0.2903936158916588
+    },
+    {
+      "arm": "B",
+      "start": "1999-01-26",
+      "end": "2021-12-31",
+      "sessions": 5774,
+      "annual_net_pct": 9.907814360368855,
+      "annual_vol_pct": 6.6818377893578695,
+      "sharpe": 1.4827977979574698,
+      "max_drawdown_pct": -18.741787040745717,
+      "label": "Hybrid",
+      "n": 1195,
+      "mean_volatility_ratio": 1.033777984640548,
+      "mean_variance_qlike": 0.27882191748977375
+    },
+    {
+      "arm": "C",
+      "start": "1999-01-26",
+      "end": "2021-12-31",
+      "sessions": 5774,
+      "annual_net_pct": 10.177965733461146,
+      "annual_vol_pct": 6.7174549029653186,
+      "sharpe": 1.5151520747788334,
+      "max_drawdown_pct": -19.08776463651174,
+      "label": "50:50 covariance blend",
+      "n": 1195,
+      "mean_volatility_ratio": 1.0195620791148865,
+      "mean_variance_qlike": 0.2379908098562009
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "conventions": {
+    "financial": "Mean of three staggered calendar metrics; fixed notional; net of5bp traded-notional costs; annual arithmetic return/volatility in percent; drawdown from compounded daily-return index.",
+    "forecast": "Daily cross-sectional Spearman IC; ICIR = mean IC / sample SD, unannualized; available target pairs differ by horizon.",
+    "periods": {
+      "full_period": "1998-11-03 to2021-12-31 (first portfolio)",
+      "last_10y": "2012-01-03 to2021-12-31",
+      "last_5y": "2017-01-03 to2021-12-31"
+    }
+  },
+  "source_hashes": {
+    "financial_metrics.csv": "b7c3451b4be042121642b8b7529ed828eaf30b875d41851828efd388f148ffa9",
+    "information_coefficients.csv": "b1899bf81db4f09dc72e86ba5b7c64db6de65a50fabbfc96fdcac852b1428824"
+  },
+  "rows": [
+    {
+      "model": "XGBoost",
+      "forecast": "50:50",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 15.553333333333333,
+          "volatility": 7.853333333333333,
+          "sharpe_ratio": 1.9833333333333334,
+          "maximum_drawdown": 14.193333333333333,
+          "mean_ic": 0.05930839305836576,
+          "icir": 0.7876527492935177,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 14.763333333333334,
+          "volatility": 8.4,
+          "sharpe_ratio": 1.7566666666666668,
+          "maximum_drawdown": 14.193333333333333,
+          "mean_ic": 0.06434021646972904,
+          "icir": 0.7068142569940438,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 13.496666666666668,
+          "volatility": 9.196666666666667,
+          "sharpe_ratio": 1.4666666666666668,
+          "maximum_drawdown": 14.193333333333333,
+          "mean_ic": 0.06170276059948038,
+          "icir": 0.554597354280463,
+          "dates": 1199
+        }
+      }
+    },
+    {
+      "model": "Shared XGBoost",
+      "forecast": "50:50",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 15.416666666666666,
+          "volatility": 7.79,
+          "sharpe_ratio": 1.9799999999999998,
+          "maximum_drawdown": 15.083333333333334,
+          "mean_ic": 0.058718440270416096,
+          "icir": 0.7833844857619956,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 14.873333333333335,
+          "volatility": 8.346666666666666,
+          "sharpe_ratio": 1.78,
+          "maximum_drawdown": 15.083333333333334,
+          "mean_ic": 0.06328839017561863,
+          "icir": 0.6982526630223438,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 13.626666666666667,
+          "volatility": 9.200000000000001,
+          "sharpe_ratio": 1.4799999999999998,
+          "maximum_drawdown": 15.083333333333334,
+          "mean_ic": 0.05987834603292504,
+          "icir": 0.5396119025296463,
+          "dates": 1199
+        }
+      }
+    },
+    {
+      "model": "LightGBM",
+      "forecast": "50:50",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 15.773333333333333,
+          "volatility": 7.823333333333333,
+          "sharpe_ratio": 2.0166666666666666,
+          "maximum_drawdown": 13.979999999999999,
+          "mean_ic": 0.05983742815801889,
+          "icir": 0.7976083143651045,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 14.76,
+          "volatility": 8.356666666666667,
+          "sharpe_ratio": 1.7666666666666668,
+          "maximum_drawdown": 13.979999999999999,
+          "mean_ic": 0.06441338547494474,
+          "icir": 0.7088185451645541,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 13.523333333333333,
+          "volatility": 9.15,
+          "sharpe_ratio": 1.4733333333333334,
+          "maximum_drawdown": 13.979999999999999,
+          "mean_ic": 0.06166159597028387,
+          "icir": 0.5562713166657306,
+          "dates": 1199
+        }
+      }
+    },
+    {
+      "model": "Ridge",
+      "forecast": "50:50",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 11.526666666666666,
+          "volatility": 8.086666666666666,
+          "sharpe_ratio": 1.4266666666666667,
+          "maximum_drawdown": 17.673333333333336,
+          "mean_ic": 0.05123392762806772,
+          "icir": 0.6438965595858358,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 12.293333333333335,
+          "volatility": 8.646666666666667,
+          "sharpe_ratio": 1.42,
+          "maximum_drawdown": 16.849999999999998,
+          "mean_ic": 0.061179710856334,
+          "icir": 0.6396820422085706,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 12.593333333333334,
+          "volatility": 9.626666666666667,
+          "sharpe_ratio": 1.3066666666666666,
+          "maximum_drawdown": 16.849999999999998,
+          "mean_ic": 0.05823069152284067,
+          "icir": 0.5145325537014317,
+          "dates": 1199
+        }
+      }
+    },
+    {
+      "model": "XGBoost",
+      "forecast": "20 days",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 16.383333333333333,
+          "volatility": 8.023333333333333,
+          "sharpe_ratio": 2.0433333333333334,
+          "maximum_drawdown": 14.709999999999999,
+          "mean_ic": 0.054088062228777274,
+          "icir": 0.7117935898824271,
+          "dates": 5789
+        },
+        "last_10y": {
+          "arithmetic_return": 15.013333333333334,
+          "volatility": 8.549999999999999,
+          "sharpe_ratio": 1.7566666666666668,
+          "maximum_drawdown": 14.709999999999999,
+          "mean_ic": 0.054702861383003454,
+          "icir": 0.5885800539364086,
+          "dates": 2497
+        },
+        "last_5y": {
+          "arithmetic_return": 13.030000000000001,
+          "volatility": 9.423333333333334,
+          "sharpe_ratio": 1.3766666666666667,
+          "maximum_drawdown": 14.709999999999999,
+          "mean_ic": 0.05566187246804651,
+          "icir": 0.4914395090412066,
+          "dates": 1239
+        }
+      }
+    },
+    {
+      "model": "XGBoost",
+      "forecast": "60 days",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 14.006666666666666,
+          "volatility": 7.686666666666667,
+          "sharpe_ratio": 1.8233333333333335,
+          "maximum_drawdown": 14.966666666666667,
+          "mean_ic": 0.05381729458677074,
+          "icir": 0.7172764299378688,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 13.71,
+          "volatility": 8.173333333333334,
+          "sharpe_ratio": 1.6766666666666667,
+          "maximum_drawdown": 14.966666666666667,
+          "mean_ic": 0.06279463450253078,
+          "icir": 0.677913552355443,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 12.876666666666665,
+          "volatility": 8.916666666666666,
+          "sharpe_ratio": 1.4433333333333334,
+          "maximum_drawdown": 14.966666666666667,
+          "mean_ic": 0.056849344652968724,
+          "icir": 0.49315050533967586,
+          "dates": 1199
+        }
+      }
+    },
+    {
+      "model": "LightGBM",
+      "forecast": "20 days",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 16.873333333333335,
+          "volatility": 8.0,
+          "sharpe_ratio": 2.106666666666667,
+          "maximum_drawdown": 12.673333333333332,
+          "mean_ic": 0.05441919925832854,
+          "icir": 0.7180327128132288,
+          "dates": 5789
+        },
+        "last_10y": {
+          "arithmetic_return": 15.020000000000001,
+          "volatility": 8.5,
+          "sharpe_ratio": 1.7666666666666666,
+          "maximum_drawdown": 12.673333333333332,
+          "mean_ic": 0.05516511270980705,
+          "icir": 0.5956724085626126,
+          "dates": 2497
+        },
+        "last_5y": {
+          "arithmetic_return": 13.299999999999999,
+          "volatility": 9.299999999999999,
+          "sharpe_ratio": 1.4266666666666665,
+          "maximum_drawdown": 12.673333333333332,
+          "mean_ic": 0.056650073458782715,
+          "icir": 0.5017310183674237,
+          "dates": 1239
+        }
+      }
+    },
+    {
+      "model": "LightGBM",
+      "forecast": "60 days",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 13.93,
+          "volatility": 7.683333333333334,
+          "sharpe_ratio": 1.8133333333333332,
+          "maximum_drawdown": 15.523333333333333,
+          "mean_ic": 0.05425617930411584,
+          "icir": 0.7281813256153606,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 13.56,
+          "volatility": 8.22,
+          "sharpe_ratio": 1.6466666666666665,
+          "maximum_drawdown": 15.523333333333333,
+          "mean_ic": 0.06253471748603809,
+          "icir": 0.6793084517743201,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 12.913333333333332,
+          "volatility": 8.98,
+          "sharpe_ratio": 1.4366666666666668,
+          "maximum_drawdown": 15.523333333333333,
+          "mean_ic": 0.055953680209578784,
+          "icir": 0.49141019907060013,
+          "dates": 1199
+        }
+      }
+    },
+    {
+      "model": "Ridge",
+      "forecast": "20 days",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 11.479999999999999,
+          "volatility": 8.25,
+          "sharpe_ratio": 1.3933333333333333,
+          "maximum_drawdown": 18.19333333333333,
+          "mean_ic": 0.04584561945665664,
+          "icir": 0.5622475962614835,
+          "dates": 5789
+        },
+        "last_10y": {
+          "arithmetic_return": 12.583333333333334,
+          "volatility": 8.896666666666667,
+          "sharpe_ratio": 1.4133333333333333,
+          "maximum_drawdown": 16.74,
+          "mean_ic": 0.05169051957403729,
+          "icir": 0.528669769517463,
+          "dates": 2497
+        },
+        "last_5y": {
+          "arithmetic_return": 12.143333333333333,
+          "volatility": 9.836666666666666,
+          "sharpe_ratio": 1.2333333333333334,
+          "maximum_drawdown": 16.74,
+          "mean_ic": 0.05460428505285681,
+          "icir": 0.4635708558828495,
+          "dates": 1239
+        }
+      }
+    },
+    {
+      "model": "Ridge",
+      "forecast": "60 days",
+      "periods": {
+        "full_period": {
+          "arithmetic_return": 11.046666666666667,
+          "volatility": 7.903333333333333,
+          "sharpe_ratio": 1.4000000000000001,
+          "maximum_drawdown": 17.966666666666665,
+          "mean_ic": 0.048172684388226604,
+          "icir": 0.6206316873258027,
+          "dates": 5709
+        },
+        "last_10y": {
+          "arithmetic_return": 11.709999999999999,
+          "volatility": 8.326666666666666,
+          "sharpe_ratio": 1.4066666666666665,
+          "maximum_drawdown": 17.7,
+          "mean_ic": 0.060545789115258715,
+          "icir": 0.6316766994970067,
+          "dates": 2457
+        },
+        "last_5y": {
+          "arithmetic_return": 11.653333333333334,
+          "volatility": 9.32,
+          "sharpe_ratio": 1.2533333333333332,
+          "maximum_drawdown": 17.7,
+          "mean_ic": 0.053631950223136486,
+          "icir": 0.47391892980141354,
+          "dates": 1199
+        }
+      }
+    }
+  ]
+}
