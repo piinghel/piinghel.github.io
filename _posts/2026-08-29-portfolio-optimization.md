@@ -268,7 +268,7 @@ $$
 
 Here $$\widetilde R_t$$ is the repaired correlation estimate and $$I$$ has
 ones on the diagonal and zeros elsewhere. At $$\rho=0$$ I retain the estimated
-correlations; at $$\rho=1$$ I discard them. The implemented value,
+correlations; at $$\rho=1$$ I discard them. The value used in this comparison,
 $$\rho=0.5$$, halves the off-diagonal correlations while keeping each stock's
 own variance.
 
@@ -308,12 +308,12 @@ matters more than the exact point inside it.
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" alt="Four panels showing risk calibration, holding-period beta error, annual turnover, and net Sharpe across correlation shrinkage for both optimizers, with the 0.3 to 0.6 region shaded" version="14" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: A broad middle region for correlation shrinkage.</strong> Both joint rules are rebuilt at each shrinkage value on development data. The four panels show risk calibration, mean absolute holding-period beta error, annual two-way turnover, and net Sharpe. The shaded band marks 0.3–0.6; the implemented setting is 0.5. These historical comparisons informed the choice.</p>
+<p class="figure-caption"><strong>Figure 3: A broad middle region for correlation shrinkage.</strong> Both joint rules are rebuilt at each shrinkage value on development data. The four panels show risk calibration, mean absolute holding-period beta error, annual two-way turnover, and net Sharpe. The shaded band marks 0.3–0.6; the selected setting is 0.5. These historical comparisons informed the choice.</p>
 
 Risk calibration takes the square root of mean realized holding-period
 variance divided by mean variance forecast at execution. It uses complete
 holding periods ending by December 2021; a ratio of one indicates agreement
-in level. At the implemented shrinkage, realized volatility on this measure
+in level. At the selected shrinkage, realized volatility on this measure
 is about 21% above forecast for the optimizer and 18% above for the version
 with trading controls.
 

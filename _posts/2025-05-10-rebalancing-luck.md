@@ -209,7 +209,8 @@ dispersion across schedules.
 Here too, preserving average return while reducing calendar dependence is the
 main result. The volatility reduction provides an additional benefit.
 
-## What it takes to implement
+## What changes for trading costs?
+{: #what-it-takes-to-implement }
 
 Trading each week means more orders, but each tranche trades less capital.
 At the same USD 5 million reference notional, the later Friday comparison moves

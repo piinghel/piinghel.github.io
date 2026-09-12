@@ -7,7 +7,10 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 ## Editing rules
 
 - Frame the blog as personal research and exploration. Never describe the
-  author's models as production models or imply these are models used at work.
+  author's models as production models, live strategies, deployed systems or
+  models used at work. Avoid related wording that implies actual trading,
+  funded portfolios or operational use. Describe tests, backtests and research
+  preferences naturally, preserving the author's curiosity and opinions.
   Apply this quietly; do not add disclaimers or announce the framing in the prose.
 - Recover the article's practical research question before rewriting. Keep
   follow-up questions when a result motivates the next decision within that

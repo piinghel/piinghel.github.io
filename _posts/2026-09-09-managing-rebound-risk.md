@@ -157,7 +157,7 @@ every limit earned less during the equivalent 2020 window.
 Table 3 locates the benefit in declines. The ±0.20 limit gains there but
 loses more elsewhere, including the early rebounds. That's useful if I'm
 willing to give up P&L for more decline protection, but it gives me no reason
-to adopt the limit as a rebound fix.
+to prefer the limit as a rebound fix.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 3: Where the ±0.20 limit gains and loses.</strong> Aggregate net P&amp;L points. Declines run from each preceding market peak to the low, excluding the peak day; the first begins at the available history boundary. Rebounds cover the next 63 sessions after each of the 11 lows. These sets do not overlap, and the three rows reconcile to full-history P&amp;L.</p>
@@ -240,7 +240,7 @@ For now, I still prefer the original portfolio as a baseline. Tighter tilt limit
 typical rebounds; fast scaling loses to constant sizing after trading costs.
 
 The beta limit's small typical gain comes with a worse 2020 rebound and less
-decline protection. That's too uneven an improvement for me to adopt it.
+decline protection. That's too uneven an improvement for me to include it in the baseline.
 
 I still want to know whether joint limits on persistent factor exposures can
 do better. Before testing them, I'd set a full-history P&L budget and require
