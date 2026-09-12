@@ -10,7 +10,10 @@
   },
   "source_hashes": {
     "financial_metrics.csv": "b7c3451b4be042121642b8b7529ed828eaf30b875d41851828efd388f148ffa9",
-    "information_coefficients.csv": "b1899bf81db4f09dc72e86ba5b7c64db6de65a50fabbfc96fdcac852b1428824"
+    "information_coefficients.csv": "b1899bf81db4f09dc72e86ba5b7c64db6de65a50fabbfc96fdcac852b1428824",
+    "training_timings.json": "19366da368a666c56f72de2edeca98c02593a66cb15545b228fae323ff25ddec",
+    "ridge_20_execution.log": "1b918d64bb8b9a7a8ed74c86c913a00ab2f9474f835aab087ba9fed925d41a49",
+    "ridge_60_execution.log": "1c80a61c804cd4d991331898f546cf6b7e77238a7a7775fa388d773adbd5a9b4"
   },
   "rows": [
     {
@@ -343,5 +346,30 @@
         }
       }
     }
-  ]
+  ],
+  "computation_time": {
+    "scope": "Observed ML walk-forward stages including training and prediction for both horizons; Ridge sums separate runs. Excludes feature preparation and portfolio optimization. Not a controlled timing benchmark.",
+    "rows": [
+      {
+        "model": "XGBoost",
+        "seconds": 3240.8
+      },
+      {
+        "model": "Shared XGBoost",
+        "seconds": 3020.3
+      },
+      {
+        "model": "LightGBM",
+        "seconds": 1422.1
+      },
+      {
+        "model": "Ridge",
+        "seconds": 113.4,
+        "horizon_seconds": [
+          57.1,
+          56.3
+        ]
+      }
+    ]
+  }
 }

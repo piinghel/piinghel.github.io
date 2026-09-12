@@ -200,8 +200,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; margin: 1.6rem 0 0.5rem; }
 .research-table-scroll .research-table { min-width: 620px; }
 .research-table-scroll .horizon-comparison { min-width: 0; table-layout: fixed; }
-.research-details { margin-top: 2rem; border-top: 1px solid var(--rule); padding-top: 1rem; }
-.research-details > summary { cursor: pointer; font: 600 0.9rem var(--font-sans); color: var(--ink); }
+.research-table-scroll .timing-table { min-width: 0; table-layout: fixed; }
+.timing-table th:first-child { width: 70%; }
 .horizon-comparison th:first-child { width: 34%; }
 .horizon-comparison .forecast-group-start > * { padding-top: 1.2rem; }
 @media (max-width: 600px) {

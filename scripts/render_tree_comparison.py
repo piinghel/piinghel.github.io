@@ -29,7 +29,7 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
                          "svg.fonttype": "none", "svg.hashsalt": "tree-comparison"}):
         for name in ["portfolio-sharpe", "forecast-quality"]:
             quality = name == "forecast-quality"
-            fig, axes = plt.subplots(1, 2 if quality else 1,
+            fig, axes = plt.subplots(1, 1,
                                      figsize=(4.5, 5.1) if mobile else (9.75, 5.8),
                                      squeeze=False)
             fig.patch.set_facecolor(colors["bg"])
@@ -42,10 +42,8 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
                 ax.grid(axis="x", color=colors["grid"], lw=0.55)
                 ax.set_axisbelow(True)
                 ax.axhline(3.75, color=colors["grid"], lw=0.65)
-                metric = "mean_ic" if quality and j == 0 else "icir" if quality else "sharpe_ratio"
-                if metric == "mean_ic":
-                    limits, ticks, title = (0.039, 0.063), [0.04, 0.05, 0.06], "Mean IC"
-                elif metric == "icir":
+                metric = "icir" if quality else "sharpe_ratio"
+                if quality:
                     limits, ticks, title = (0.40, 0.85), [0.4, 0.6, 0.8], "ICIR"
                 else:
                     limits, ticks, title = (1.1, 2.2), [1.2, 1.5, 1.8, 2.1], "Net portfolio Sharpe"
@@ -56,11 +54,10 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
                 for y, row in zip(ys, rows, strict=True):
                     full = row["periods"]["full_period"][metric]
                     assert limits[0] < full < limits[1], (name, full)
-                    if metric != "mean_ic":
-                        recent = row["periods"]["last_5y"][metric]
-                        assert limits[0] < recent < limits[1], (name, recent)
-                        ax.plot([full, recent], [y, y], color=colors["grid"], lw=1.4, zorder=2)
-                        ax.plot(recent, y, marker="D", ms=4.8, color=colors["recent"], zorder=4)
+                    recent = row["periods"]["last_5y"][metric]
+                    assert limits[0] < recent < limits[1], (name, recent)
+                    ax.plot([full, recent], [y, y], color=colors["grid"], lw=1.4, zorder=2)
+                    ax.plot(recent, y, marker="D", ms=4.8, color=colors["recent"], zorder=4)
                     ax.plot(full, y, marker="o", ms=5.5, color=colors["full"], zorder=3)
             handles = [mlines.Line2D([], [], color=colors["full"], marker="o", ls="", label="Full history"),
                        mlines.Line2D([], [], color=colors["recent"], marker="D", ls="", label="2017–2021")]
