@@ -9,7 +9,7 @@ date: 2026-09-09
 categories: ["Machine learning"]
 ---
 
-So far, I've used Ridge as my starting point for forecasting stock returns. Then I came across XGBoost's [post about vector leaves](https://xgboost.ai/2026/08/25/introducing-the-xgboost-vector-leaf-model) on X. The idea caught my attention: one tree can share its splits across several outputs, with a separate prediction for each output in every leaf. I wanted to see whether that helped with two related return horizons.
+So far, I've used [Ridge](/quants/2025/02/09/multiple-linear-regression.html) as my starting point for forecasting stock returns. The [attribution articles](/quants/portfolio-attribution.html) looked at the portfolio it produces; here I return to the forecasts themselves. I came across XGBoost's [post about vector leaves](https://xgboost.ai/2026/08/25/introducing-the-xgboost-vector-leaf-model) on X, and the idea caught my attention: one tree can share its splits across several outputs, with a separate prediction for each output in every leaf. I wanted to see whether that helped with two related return horizons.
 
 I kept Ridge as the linear baseline and added ordinary XGBoost and LightGBM, so I could distinguish the benefit of trees from the benefit of sharing their structure. Each model predicts forward Sharpe—the ratio of future mean daily return to volatility—ranked within date and sector, over 20 or 60 trading days. Ordinary XGBoost, LightGBM and Ridge fit the horizons separately; shared XGBoost learns both together.
 
@@ -41,7 +41,7 @@ Table 1 puts return and volatility beside Sharpe. All models use the same [portf
 
 <p class="table-caption"><strong>Table 1: Net portfolio return, volatility and Sharpe.</strong> Return is annual arithmetic P&amp;L on fixed notional; volatility is the annualized standard deviation of daily returns. Each column averages the corresponding calendar metric, so Sharpe can differ from the ratio of the displayed averages.</p>
 <table class="research-table comparison-table horizon-comparison">
-<thead><tr><th>Forecast</th><th>Return<br>(%/yr)</th><th>Vol.<br>(%/yr)</th><th>Sharpe</th></tr></thead>
+<thead><tr><th>Forecast</th><th>Return<br>(%/yr)</th><th>Vol.<br>(%)</th><th>Sharpe</th></tr></thead>
 <tbody>
 <tr class="period-heading"><th colspan="4">Full history · November 1998–December 2021</th></tr>
 <tr><th scope="row">XGB 50:50</th><td>15.6</td><td>7.9</td><td>1.98</td></tr>

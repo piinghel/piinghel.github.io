@@ -16,9 +16,9 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
     """Show calibration spread and tails; exact portfolio metrics belong in a table."""
     colors = dict(bg="#0b1117" if dark else "#ffffff", ink="#c6cdd5" if dark else "#263747",
                   grid="#39434e" if dark else "#d9e0e7", point="#88b4de" if dark else "#356b9a")
-    labels = ["Current model", "Current model, adaptive", "Hybrid", "50:50 covariance blend"]
+    labels = [row["label"] for row in rows]
     if mobile:
-        labels = ["Current model", "Current model,\nadaptive", "Hybrid", "50:50 covariance\nblend"]
+        labels = [label.replace(", ", ",\n") for label in labels]
     suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["Arial", "DejaVu Sans"],
                          "svg.fonttype": "none", "svg.hashsalt": "hybrid-risk"}):

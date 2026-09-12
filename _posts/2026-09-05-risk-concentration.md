@@ -6,8 +6,6 @@ date: 2026-09-05
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Risk concentration
 permalink: /quants/2026/09/05/risk-concentration.html
-series_previous: /quants/2026/08/29/portfolio-optimization.html
-series_next: /quants/2025/05/10/rebalancing-luck.html
 published: true
 github_repositories:
   - label: Research materials

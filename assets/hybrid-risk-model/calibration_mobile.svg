@@ -86,14 +86,14 @@ L 284.225706 50.4
     <g id="ytick_1">
      <g id="line2d_9"/>
      <g id="text_5">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="117.12" y="79.455915" transform="rotate(-0 117.12 79.455915)">Current model</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="117.12" y="79.455915" transform="rotate(-0 117.12 79.455915)">Direct covariance</text>
      </g>
     </g>
     <g id="ytick_2">
      <g id="line2d_10"/>
      <g id="text_6">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; fill: #263747" transform="translate(44.373906 112.423239)">Current model,</text>
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; fill: #263747" transform="translate(75.534844 124.395407)">adaptive</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; fill: #263747" transform="translate(85.340313 112.423239)">Direct,</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; fill: #263747" transform="translate(59.648438 124.395407)">recalibrated</text>
      </g>
     </g>
     <g id="ytick_3">
@@ -105,8 +105,7 @@ L 284.225706 50.4
     <g id="ytick_4">
      <g id="line2d_12"/>
      <g id="text_8">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; fill: #263747" transform="translate(33.348125 189.505592)">50:50 covariance</text>
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; fill: #263747" transform="translate(90.207813 201.47776)">blend</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="117.12" y="195.079445" transform="rotate(-0 117.12 195.079445)">50:50 blend</text>
      </g>
     </g>
    </g>

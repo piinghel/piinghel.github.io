@@ -7,8 +7,6 @@ last_modified_at: 2026-09-06
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
-series_previous: /quants/2025/02/09/multiple-linear-regression.html
-series_next: /quants/2026/09/05/risk-concentration.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/portfolio-optimization-study
@@ -16,7 +14,7 @@ github_repositories:
 
 <p class="article-summary">Joint sizing improves this portfolio's development results, but the extra trading consumes part of the gain. A rank buffer and trading penalty preserve most of the gross return with fewer trades; their advantage is less consistent after 2021.</p>
 
-A stock ranking tells me which names I prefer. It leaves another decision:
+The [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html) tells me which names I prefer. It leaves another decision:
 how much of each should I hold? Scaling by individual volatility is a useful
 start, but several apparently modest positions can share the same risk.
 

@@ -7,8 +7,6 @@ last_modified_at: 2026-09-06
 categories: ["Rebalancing"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
-series_previous: /quants/2026/09/05/risk-concentration.html
-series_end: true
 github_repositories:
   - label: Research code
     url: https://github.com/piinghel/rebalance-tranching
@@ -17,6 +15,8 @@ github_repositories:
 <p class="article-summary">Splitting the strategy into three equal parts, each rebalancing in a different week, reduces calendar dependence and portfolio volatility with almost no change in average return. The benefit appears in both development and later history, although weekday differences remain.</p>
 
 ## The starting-week problem
+
+With the [ranking and sizing rules](/quants/2026/08/29/portfolio-optimization.html) in place, I still have to decide when to trade.
 
 “Rebalance every three weeks” sounds like a complete rule. It still leaves me
 with a choice of three starting weeks. Each one sees a different sequence of

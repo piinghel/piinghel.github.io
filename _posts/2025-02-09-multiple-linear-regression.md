@@ -7,13 +7,14 @@ last_modified_at: 2026-09-06
 categories: ["Regression"]
 article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
-series_next: /quants/2026/08/29/portfolio-optimization.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
 <p class="article-summary">Ridge substantially shrinks the regression coefficients but barely changes the stock ranking or the resulting portfolio. Both learned scores deliver lower volatility than a small fixed-weight benchmark, with broadly similar net returns and roughly twice the trading. For this portfolio, trading costs matter much more than the choice between OLS and Ridge.</p>
+
+The [low-volatility article](/quant/2024/12/15/low-volatility-factor.html) looked at sizing individual stocks. Here I turn to the ranking that decides which stocks to hold.
 
 Several versions of momentum, volatility, liquidity and size can each look
 reasonable on their own. Combining them is less straightforward. How much

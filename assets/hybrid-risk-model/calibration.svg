@@ -86,13 +86,13 @@ L 607.808897 54.72
     <g id="ytick_1">
      <g id="line2d_9"/>
      <g id="text_5">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="204.6" y="86.287223" transform="rotate(-0 204.6 86.287223)">Current model</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="204.6" y="86.287223" transform="rotate(-0 204.6 86.287223)">Direct covariance</text>
      </g>
     </g>
     <g id="ytick_2">
      <g id="line2d_10"/>
      <g id="text_6">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="204.6" y="128.131929" transform="rotate(-0 204.6 128.131929)">Current model, adaptive</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="204.6" y="128.131929" transform="rotate(-0 204.6 128.131929)">Direct, recalibrated</text>
      </g>
     </g>
     <g id="ytick_3">
@@ -104,7 +104,7 @@ L 607.808897 54.72
     <g id="ytick_4">
      <g id="line2d_12"/>
      <g id="text_8">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="204.6" y="211.821341" transform="rotate(-0 204.6 211.821341)">50:50 covariance blend</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #263747" x="204.6" y="211.821341" transform="rotate(-0 204.6 211.821341)">50:50 blend</text>
      </g>
     </g>
    </g>

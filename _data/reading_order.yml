@@ -1,18 +1,18 @@
 # A reading sequence, independent of publication dates. Keep series together.
-# Forecasts: linear baseline, then trees and multiple horizons.
-- /quants/2025/02/09/multiple-linear-regression.html
-- /quants/xgboost-vector-leaves.html
-# Portfolio construction: individual sizing, then joint allocation.
+# Start with individual sizing, then learn a stock ranking.
 - /quant/2024/12/15/low-volatility-factor.html
+- /quants/2025/02/09/multiple-linear-regression.html
+# Build and implement the portfolio; risk concentration is a construction extension.
 - /quants/2026/08/29/portfolio-optimization.html
+- /quants/2026/09/05/risk-concentration.html
+- /quants/2025/05/10/rebalancing-luck.html
 # Diagnose the resulting portfolio: P&L, rebounds, and tested responses.
 - /quants/portfolio-attribution.html
 - /quants/short-book-rebounds.html
 - /quants/managing-rebound-risk.html
-# Refine risk estimates, constraints, and implementation.
+# Revisit the return model, then the risk model.
+- /quants/xgboost-vector-leaves.html
 # The hybrid draft appears here only when included in a draft build or published.
 - /quants/hybrid-risk-model.html
-- /quants/2026/09/05/risk-concentration.html
-- /quants/2025/05/10/rebalancing-luck.html
 # Reference material closes the sequence.
 - /quants/2025/04/20/reading-and-tools.html
