@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Can Two Return Horizons Share a Tree?"
+title: "Do Two Return Horizons Work Better Together?"
 description: "Comparing multi-output XGBoost, ordinary XGBoost, LightGBM and Ridge across two return horizons and their 50:50 blends."
 permalink: /quants/xgboost-vector-leaves.html
 toc: false
@@ -15,7 +15,7 @@ So far, I've used [Ridge](/quants/2025/02/09/multiple-linear-regression.html) as
 
 For a stock, the two outputs are forecasts over 20 and 60 trading days. Ordinary XGBoost builds separate trees for each horizon. Multi-output XGBoost uses the same splits for both, with two predictions in each leaf. Sharing could help if the same feature thresholds are useful at both horizons; separate trees give each horizon more freedom. Related targets make this worth trying, but the useful splits still have to align.
 
-I kept Ridge as the linear baseline and added LightGBM as another tree model. Each predicts forward Sharpe—the ratio of future mean daily return to volatility—ranked within date and sector. All four use the same 144 predictors, training windows and eligible stocks, with forecasts evaluated after their training windows.[^setup] I kept the model settings fixed, including one Ridge specification, and used history I'd already inspected. Matching settings also leaves different tree structures with different amounts of flexibility.
+I kept Ridge as the linear baseline and added LightGBM as another tree model. Each predicts forward Sharpe—the ratio of future mean daily return to volatility—ranked within date and sector. All four use the same 144 predictors, training windows and eligible stocks, with forecasts evaluated after their training windows.[^setup] The Ridge penalty is fixed here; my earlier Ridge study used a penalty that scaled with the number of training observations. I kept all model settings fixed and used history I'd already inspected. Matching settings also leaves different tree structures with different amounts of flexibility.
 
 For each model, I take a **50:50 average of the two forecasts** before stock selection and portfolio optimization. Comparing ordinary and shared XGBoost blends asks whether learning the horizons together helps. I also evaluate the individual 20-day and 60-day forecasts from ordinary XGBoost, LightGBM and Ridge, bringing the comparison to ten portfolios. These ask a separate question: does averaging horizons improve on using either one alone?
 
@@ -91,10 +91,10 @@ The common weakness across models makes a changing market environment worth inve
 
 ## What I take from the comparison
 
-I tried shared trees because learning two related horizons together seemed worth exploring. Under these settings, they produce much the same portfolio performance as ordinary trees. The larger historical gain is from the tree models over the fixed Ridge baseline. For now, I'm keeping production unchanged; a switch to shared trees would need a clearer benefit in a comparison with settings fixed before evaluation.
+I tried shared trees because learning two related horizons together seemed worth exploring. Under these settings, they produce much the same portfolio performance as ordinary trees. The larger historical gain is from the tree models over the fixed Ridge baseline. For the next comparison, I'd keep ordinary trees as the starting point.
 
 I still like the simple 50:50 blend of the 20-day and 60-day forecasts. Part of that preference is methodological: I'd rather spread the choice across two horizons than rely entirely on one. Here, the full-history performance trade-off is modest, and the blend does better in the final period. If it lagged the 20-day forecast by a lot, I'd find that preference much harder to defend. My hunch is that combining horizons could also help as the economic environment changes. That depends on their mistakes differing enough to offset each other; they still share predictors, training history and overlapping targets. Greater robustness is something I'd like to test, rather than a benefit I can already claim.
 
-The declining performance is something I'd like to investigate further. I'd start by checking whether the weaker rankings and portfolio losses are concentrated in the same sectors or on the same side of the book, then compare their exposures and realized payoffs across periods. That would help separate a change in what the signals predict from a change in the risks the portfolio takes. It also gives the next model comparison a more useful question: does the new forecast improve the part of the strategy that has actually weakened?
+I did get a bit sidetracked by the declining performance, but I still find that detour interesting. It leaves me with a separate question to come back to: where has the strategy weakened? I'd start by checking whether the weaker rankings and portfolio losses are concentrated in the same sectors or on the same side of the book, then compare their exposures and realized payoffs across periods. That would help separate a change in what the signals predict from a change in the risks the portfolio takes.
 
 [^setup]: Walk-forward training uses a 900-session warmup, 600-session steps and a 61-session gap. Predictions average three date-phase models; both horizons require complete 60-day targets. Trees use 350 rounds, depth 5, learning rate 0.05, feature subsampling 0.25 and 255 bins; LightGBM allows 32 leaves.

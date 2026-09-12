@@ -5,6 +5,10 @@ description: Apply Pieter-Jan Inghelbrecht's personal, direct research-blog voic
 
 # Quant blog style
 
+Frame public articles as Pieter-Jan's personal research and exploration. Never
+refer to his models as production models or imply that the experiments describe
+models used at work. Express preferences as research judgments and comparisons.
+
 Use “current model” or “baseline” rather than “incumbent” in this author's
 articles. Name the actual model family when that distinction matters.
 

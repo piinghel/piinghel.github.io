@@ -6,6 +6,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 
 ## Editing rules
 
+- Frame the blog as personal research and exploration. Never describe the
+  author's models as production models or imply these are models used at work.
 - Recover the article's practical research question before rewriting. Keep
   follow-up questions when a result motivates the next decision within that
   same argument. Delete unsupported branches rather than filling an appendix.
