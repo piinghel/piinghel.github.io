@@ -14,8 +14,9 @@ bundle exec jekyll serve
 ## Article reading order
 
 `_data/reading_order.yml` controls both the homepage and Previous/Next links:
-forecasts → portfolio sizing → P&L attribution → risk controls and rebalancing
-→ resources. Place new articles beside their prerequisites and follow-ups;
+low-volatility sizing → regression → portfolio construction and risk concentration
+→ tranching → P&L attribution 1–3 → tree models → risk-model comparison → resources.
+Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
 Unlisted posts appear first in their existing date order so they cannot disappear;
