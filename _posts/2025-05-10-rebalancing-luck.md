@@ -225,7 +225,7 @@ Each tranche is charged for its own trades before any cross-tranche netting.
 Fixed-ticket charges, borrow and financing would require additional estimates. The practical
 change here is tracking three books and sending smaller orders more often.
 
-I would fund all three tranches. The lower portfolio volatility is worth the
-extra operational work, and I depend less on which starting week I happened
-to choose. The remaining weekday differences give me a reason to keep
+I prefer combining all three tranches. The lower portfolio volatility
+seems worth the added complexity of tracking three books, and the results depend
+less on the starting week. The remaining weekday differences give me a reason to keep
 comparing calendars rather than pick the historical winner.

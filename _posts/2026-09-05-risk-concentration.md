@@ -12,7 +12,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">My portfolio already limits stock and sector weights. Here I check whether it still takes too much risk in one direction, and what happens when I limit risk contributions directly. Moderate caps reduce the concentrations I find with small changes to holdings and performance; tighter caps reshape the portfolio, with less obvious benefits.</p>
+<p class="article-summary">The optimizer already limits stock and sector weights. Here I check whether the portfolios it produces still take too much risk in one direction, and what happens when I limit risk contributions directly. Moderate caps reduce the concentrations I find with small changes to holdings and performance; tighter caps reshape the portfolio, with less obvious benefits.</p>
 
 In the [previous article](/quants/2026/08/29/portfolio-optimization.html),
 I built an optimizer with limits on volatility, gross exposure, beta, sector
@@ -22,7 +22,7 @@ its volatility and covariance with the rest of the portfolio.
 The AI rally made me want to check this more closely. Several technology and
 semiconductor positions can each meet a weight limit while depending on the
 same underlying move. Before adding more constraints, though, I wanted to know:
-does my portfolio actually have this problem? And if it does, can I reduce the
+does the backtest show this problem? And if it does, can I reduce the
 concentration with limited trading?
 
 Just as in my other articles, I keep the Ridge predictions, selected stocks,
@@ -259,9 +259,9 @@ that tilt would require factor attribution.
 
 ## Would I add these limits?
 
-For now, I'd monitor these concentrations. PCA
+For the next tests, I'd keep tracking these concentrations. PCA
 10% looks like a reasonable backstop: it cuts the concentration tail under the
-model with little change in performance or trading. Before adopting it, I want to know
+model with little change in performance or trading. Before including it in the baseline, I want to know
 whether it limits the risks that concern me. Lower concentration under the
 model leaves that question open.
 

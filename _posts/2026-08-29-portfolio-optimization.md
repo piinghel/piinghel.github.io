@@ -195,7 +195,7 @@ more useful: retaining an acceptable holding saves the cost of replacing it.
 The buffer alone saves about three times capital in annual trading. Adding it
 alongside the penalty saves seven times capital.
 That is why I use the two controls together. They change which stocks remain
-eligible and how much I hold, so the difference includes changes in positions
+eligible and their position sizes, so the difference includes changes in positions
 as well as trading costs.
 
 Figure 2 checks nearby settings in development, varying one control at a time
@@ -321,7 +321,7 @@ The full development results tell the same story: I asked for 7% forecast
 volatility and got about 8.4% realized volatility. Shrinkage helps, but I still
 need to recalibrate the risk level. I would estimate a new multiplier on
 development data and rerun the portfolios. Changing covariance changes the
-allocation decision too, including which constraints bind and how much I trade.
+allocation decision too, including which constraints bind and how much the portfolio trades.
 
 ## Forecast beta versus realized beta
 

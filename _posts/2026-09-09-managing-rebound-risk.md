@@ -236,7 +236,7 @@ limit was ineffective on those dates.
 ## Keep the original portfolio
 {: #what-the-experiment-settles }
 
-For now, I'm keeping the original portfolio. Tighter tilt limits cost P&L and worsen
+For now, I still prefer the original portfolio as a baseline. Tighter tilt limits cost P&L and worsen
 typical rebounds; fast scaling loses to constant sizing after trading costs.
 
 The beta limit's small typical gain comes with a worse 2020 rebound and less

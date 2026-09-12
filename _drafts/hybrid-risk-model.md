@@ -94,7 +94,7 @@ The hybrid and blend both give up return, and neither improves observed Sharpe o
 
 ## Where that leaves me
 
-I'm keeping the direct covariance model. Adding a 52-week-high characteristic did not establish an improvement over its matched hybrid control, and increasing the PC count gave results that depended on individual portfolios and dates. I don't see a good reason to keep adding factors to this version.
+I still prefer the direct covariance model as a starting point. Adding a 52-week-high characteristic did not establish an improvement over its matched hybrid control, and increasing the PC count gave results that depended on individual portfolios and dates. I don't see a good reason to keep adding factors to this version.
 
 Before revisiting the hybrid, I'd complete the missing fundamental/PCA/hybrid comparison with common data, estimation dates and calibration rules. I'd check forecasts on the same portfolios as well as each model's own portfolios. A minimum-variance test with common budget and trading constraints would also help assess the inverse covariance, following *Elements*. Those are proposed tests.
 

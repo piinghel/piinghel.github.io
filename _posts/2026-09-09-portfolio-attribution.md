@@ -12,7 +12,7 @@ series_id: performance-attribution
 series_order: 1
 ---
 
-<p class="article-summary">The shorts offset daily fluctuations, but the portfolio retained a small positive market beta and suffered large losses in some rebounds. Attribution connects those outcomes to the positions and exposures I held.</p>
+<p class="article-summary">The shorts offset daily fluctuations, but the portfolio retained a small positive market beta and suffered large losses in some rebounds. Attribution connects those outcomes to the backtest's positions and exposures.</p>
 
 The short book lost money over the full history. Before cutting it back,
 I want to know how much protection I'd give up and what drove those losses.
@@ -205,8 +205,8 @@ The coefficients use unpenalized least squares, solved jointly by SVD.
 
 ## Apply the fit to the portfolio
 
-To use the fit, I multiply each stock's loading by the signed position I
-held and add them up. That gives the portfolio's exposure. Multiplying it
+To use the fit, I multiply each stock's loading by its signed portfolio
+weight and add them up. That gives the portfolio's exposure. Multiplying it
 by the day's payoff gives the factor contribution:
 
 $$
@@ -263,7 +263,7 @@ Positions, stock characteristics and payoffs all change. Each day's
 payoff therefore needs the exposure held on that day.
 
 You can follow that calculation in Figure 6. The middle panel accumulates
-payoffs for a constant +1 exposure; the bottom uses my actual changing
+payoffs for a constant +1 exposure; the bottom uses the portfolio's changing
 exposure. Move the slider to see how the two combine on a single day.
 
 For readability, the volatility view follows the **low-volatility** bet.
