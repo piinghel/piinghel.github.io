@@ -13,7 +13,7 @@ import matplotlib.lines as mlines
 
 MODELS = ["XGBoost", "Shared XGBoost", "LightGBM", "Ridge"]
 PERIODS = ["2002–2006", "2007–2011", "2012–2016", "2017–2021"]
-LABELS = ["2002–06", "2007–11", "2012–16", "2017–21*"]
+LABELS = ["2002–2006", "2007–2011", "2012–2016", "2017–2021*"]
 
 
 def load_rows(path: Path) -> list[dict]:
@@ -74,30 +74,38 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
         finish(fig, "forecast-quality")
 
         fig, axes = plt.subplots(4 if mobile else 2, 1 if mobile else 2,
-                                 figsize=(4.5, 11.6) if mobile else (9.75, 6.3))
-        panels = [("sharpe", "icir", "ICIR", "Portfolio Sharpe (annualized)", (.55, 2.45), (.35, 1.3)),
-                  ("annual_return_pct", "ic_sd", "SD of daily IC", "Mean daily net return (bp)", (1.5, 7.1), (.02, .13))]
+                                 figsize=(4.5, 12.4) if mobile else (9.75, 6.7))
+        panels = [("sharpe", "icir", "ICIR", "Portfolio Sharpe (annualized)", (.45, 2.6), (.35, 1.3)),
+                  ("annual_return_pct", "ic_sd", "SD of daily IC", "Annual net return (%)", (3.5, 18.5), (.02, .13))]
         for k, model in enumerate(["LightGBM", "Ridge"]):
             for j, (xkey, ykey, ytitle, xtitle, xlim, ylim) in enumerate(panels):
                 ax = axes.flat[k * 2 + j]
-                style(ax, f"{model} · {ytitle}")
+                style(ax, model + " · 50:50 blend")
                 ax.set_xlim(*xlim); ax.set_ylim(*ylim)
-                ax.set_xlabel(xtitle, color=ink, fontsize=12, labelpad=10)
+                ax.set_xlabel(xtitle, color=ink, fontsize=13, labelpad=10)
+                ax.set_ylabel(ytitle, color=ink, fontsize=13, labelpad=8)
                 if j == 0:
-                    ax.set_xticks([.75, 1.25, 1.75, 2.25]); ax.set_yticks([.5, .75, 1, 1.25])
+                    ax.set_xticks([.5, 1, 1.5, 2, 2.5]); ax.set_yticks([.5, .75, 1, 1.25])
                 else:
-                    ax.set_xticks([2, 3.5, 5, 6.5]); ax.set_yticks([.03, .06, .09, .12])
+                    ax.set_xticks([5, 10, 15]); ax.set_yticks([.03, .06, .09, .12])
+                model_rows = [next(r for r in rows if r["model"] == model and r["period"] == p) for p in PERIODS]
                 for i, period in enumerate(PERIODS):
-                    row = next(r for r in rows if r["model"] == model and r["period"] == period)
-                    x, y = row[xkey] * (100 / 252 if j == 1 else 1), row[ykey]
+                    row = model_rows[i]
+                    x, y = row[xkey], row[ykey]
                     if not (xlim[0] < x < xlim[1] and ylim[0] < y < ylim[1]):
                         raise ValueError("Association point outside scale")
-                    ax.plot(x, y, marker=["o", "s", "D", "^"][i], color=palette[MODELS.index(model)], ms=6, ls="")
+                    color = palette[MODELS.index(model)]
+                    ax.plot(x, y, marker="^" if i == 3 else "o", color=color,
+                            markerfacecolor=color if i == 3 else bg, markeredgewidth=1.3,
+                            ms=8 if i == 3 else 6, ls="")
                     dy = -16 if i == 1 or (i == 0 and j == 1) else 12
-                    ax.annotate(LABELS[i], (x, y), xytext=(0, dy), textcoords="offset points",
-                                ha="center", va="center", fontsize=11, color=ink)
-        fig.subplots_adjust(left=.16 if mobile else .075, right=.97, top=.96 if mobile else .92,
-                            bottom=.055 if mobile else .1, hspace=.69, wspace=.3)
+                    dx = 12 if model == "Ridge" and i == 1 else 0
+                    ax.annotate(LABELS[i], (x, y), xytext=(dx, dy), textcoords="offset points",
+                                ha="center", va="center", fontsize=12,
+                                fontweight="bold" if i == 3 else "normal", color=ink,
+                                bbox={"facecolor": bg, "edgecolor": "none", "pad": .3})
+        fig.subplots_adjust(left=.20 if mobile else .085, right=.97, top=.965 if mobile else .93,
+                            bottom=.05 if mobile else .1, hspace=.75, wspace=.4)
         finish(fig, "forecast-outcomes")
 
 
