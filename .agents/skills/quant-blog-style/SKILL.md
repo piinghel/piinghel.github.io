@@ -5,6 +5,9 @@ description: Apply Pieter-Jan Inghelbrecht's personal, direct research-blog voic
 
 # Quant blog style
 
+Use “current model” or “baseline” rather than “incumbent” in this author's
+articles. Name the actual model family when that distinction matters.
+
 Make the research comparison easy to understand at normal article width.
 Preserve the author's question, evidence and judgment. These are house defaults,
 not reasons to redesign an effective display or override the user's choices.
@@ -19,8 +22,9 @@ labels. For example: “The model attributes realized returns to stock exposures
 State failed outcomes directly and preserve their evidence.
 
 For drafting or prose edits, read [the voice guide](references/voice.md).
-It draws on Sander Dieleman, Max Halford, Chip Huyen and Rob Carver as examples
-of personal technical writing, without prescribing an imitation or template.
+It draws on Sander Dieleman, Max Halford, Chip Huyen and Rob Carver, together
+with the user's preference for Cliff Asness's selective arguments and footnotes,
+without prescribing an imitation or template.
 
 Read the current post, its rendered page and repository guidance. For a new
 post, identify the practical question and the evidence that answers it. Use

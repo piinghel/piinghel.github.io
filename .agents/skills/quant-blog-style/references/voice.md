@@ -28,10 +28,37 @@ fixed formulas. Borrow the qualities, not their phrases or personas.
 
 ## Applying this voice
 
+The user's preferred register is a hands-on practitioner explaining the work
+to allocators and quant peers. Keep the technical content rigorous; let the
+framing sentences sound conversational. Make the author's reasoning visible:
+the problem, the genuine prior or expectation when known, what happened, and
+what the author now thinks or would do. Merely reporting results misses that
+personal connection. This is a preference, not a story arc to fabricate.
+
+The user's additional reference is Cliff Asness: choose the strongest one or
+two arguments rather than explaining a point several ways, and use footnotes
+for secondary qualifications that interrupt the flow. Avoid his combative tone
+or sarcasm. Across the references, avoid borrowed personas, forced humour,
+emoji, listicle structures or extra length added for personality.
+
 Start from the author's actual question or decision. Preserve useful language
 already in the draft. Use first person where it reveals a choice, motivation,
 doubt or interpretation supported by the conversation or research. Don't invent
 surprise, frustration, expectations, anecdotes or live trading experience.
+
+Open with why the question matters to the author, and include a prior before
+a test when the record supports one. React to the evidence with an actual
+judgment about its practical value. If the prior is unknown, explain why the
+comparison is useful instead of inventing what the author expected. Treat
+user-supplied sample wording as editorial illustrations: verify its research
+status and factual claims before reuse, especially claims that a test is still
+unrun or that a portfolio is traded live.
+
+Prefer a concrete example before an unfamiliar formula when it helps the
+reader. Round prose numbers sensibly with “about” or “roughly”; retain useful
+precision in tables and preserve thresholds and definitions. Brief parentheses
+can carry a natural aside. Explain scope through concrete choices such as
+holding predictions fixed, without adding repeated negative definitions.
 
 Connect facts through reasoning, not ceremonial transitions. A number should
 help the reader understand what changed or why a choice follows. Familiar
@@ -50,6 +77,15 @@ state how much completed, what failed and why the author stopped. Don't promise
 future updates or call results “awaiting” when no further work is planned.
 Retain actual solver warnings and missing checks; don't replace them with vague
 status labels or erase them to make the story smoother.
+
+Prefer numbered footnotes for secondary methodological caveats, consolidating
+repeated hindsight or sample-reuse disclosures. Keep limitations that change
+the headline interpretation visible beside the claim; a concise existing
+in-sample box can still serve that purpose. Footnotes should improve flow
+without hiding material information. Close on the supported decision, what
+the author would change, or what remains unknown. Link existing shareable code
+when useful; an invitation for feedback should be specific and natural, and
+never implies permission to publish private data.
 
 ## Examples, not reusable templates
 
