@@ -73,21 +73,23 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
                             bottom=.045 if mobile else .14, hspace=.65, wspace=.36)
         finish(fig, "forecast-quality")
 
-        fig, axes = plt.subplots(4 if mobile else 2, 1 if mobile else 2,
-                                 figsize=(4.5, 12.4) if mobile else (9.75, 6.7))
-        panels = [("sharpe", "icir", "ICIR", "Portfolio Sharpe (annualized)", (.45, 2.6), (.35, 1.3)),
-                  ("annual_return_pct", "ic_sd", "SD of daily IC", "Annual net return (%)", (3.5, 18.5), (.02, .13))]
+        fig, axes = plt.subplots(6 if mobile else 3, 1 if mobile else 2,
+                                 figsize=(4.5, 18.3) if mobile else (9.75, 10.1))
+        panels = [("icir", "sharpe", "Sharpe (annualized)", "ICIR", (.35, 1.4), (.4, 2.5)),
+                  ("ic_sd", "annual_return_pct", "Annual net return (%)", "SD of daily IC", (.02, .14), (3.5, 18.5)),
+                  ("ic_sd", "sharpe", "Sharpe (annualized)", "SD of daily IC", (.02, .14), (.4, 2.5))]
         for k, model in enumerate(["LightGBM", "Ridge"]):
             for j, (xkey, ykey, ytitle, xtitle, xlim, ylim) in enumerate(panels):
-                ax = axes.flat[k * 2 + j]
+                ax = axes.flat[j * 2 + k]
                 style(ax, model + " · 50:50 blend")
                 ax.set_xlim(*xlim); ax.set_ylim(*ylim)
                 ax.set_xlabel(xtitle, color=ink, fontsize=13, labelpad=10)
                 ax.set_ylabel(ytitle, color=ink, fontsize=13, labelpad=8)
                 if j == 0:
-                    ax.set_xticks([.5, 1, 1.5, 2, 2.5]); ax.set_yticks([.5, .75, 1, 1.25])
+                    ax.set_xticks([.5, .75, 1, 1.25]); ax.set_yticks([.5, 1, 1.5, 2, 2.5])
                 else:
-                    ax.set_xticks([5, 10, 15]); ax.set_yticks([.03, .06, .09, .12])
+                    ax.set_xticks([.03, .06, .09, .12])
+                    ax.set_yticks([5, 10, 15] if j == 1 else [.5, 1, 1.5, 2, 2.5])
                 model_rows = [next(r for r in rows if r["model"] == model and r["period"] == p) for p in PERIODS]
                 for i, period in enumerate(PERIODS):
                     row = model_rows[i]
@@ -98,14 +100,17 @@ def render(rows: list[dict], output: Path, *, dark: bool, mobile: bool) -> None:
                     ax.plot(x, y, marker="^" if i == 3 else "o", color=color,
                             markerfacecolor=color if i == 3 else bg, markeredgewidth=1.3,
                             ms=8 if i == 3 else 6, ls="")
-                    dy = -16 if i == 1 or (i == 0 and j == 1) else 12
-                    dx = 12 if model == "Ridge" and i == 1 else 0
+                    if model == "LightGBM":
+                        offsets = [(0, -16), (-25, 14), (25, 14 if j == 0 else -16), (0, 14)]
+                    else:
+                        offsets = [(0, 14), (0, -16), (0, 14), (0, 14)]
+                    dx, dy = offsets[i]
                     ax.annotate(LABELS[i], (x, y), xytext=(dx, dy), textcoords="offset points",
                                 ha="center", va="center", fontsize=12,
                                 fontweight="bold" if i == 3 else "normal", color=ink,
                                 bbox={"facecolor": bg, "edgecolor": "none", "pad": .3})
-        fig.subplots_adjust(left=.20 if mobile else .085, right=.97, top=.965 if mobile else .93,
-                            bottom=.05 if mobile else .1, hspace=.75, wspace=.4)
+        fig.subplots_adjust(left=.20 if mobile else .085, right=.97, top=.978 if mobile else .955,
+                            bottom=.035 if mobile else .065, hspace=.75, wspace=.4)
         finish(fig, "forecast-outcomes")
 
 
