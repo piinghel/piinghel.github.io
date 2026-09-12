@@ -3,8 +3,6 @@ url: https://piinghel.github.io
 description: >
   Research notes on systematic strategies, machine learning, and portfolio construction.
 
-theme: minima
-
 # Preview unfinished articles only with `jekyll serve --drafts`.
 show_drafts: false
 
@@ -12,10 +10,8 @@ exclude:
   - AGENTS.md
   - README.md
   - scripts
-  - script
   - Gemfile
   - Gemfile.lock
-  - minima.gemspec
   - tests
   - requirements-figures.txt
   - LICENSE.txt

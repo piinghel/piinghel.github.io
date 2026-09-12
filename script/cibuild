@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -e
-
-script/build
-
-python3 scripts/check_site.py _site

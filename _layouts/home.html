@@ -5,11 +5,7 @@ layout: base
 <div class="home">
   <h1 class="home-title">Systematic equity research</h1>
   <p class="home-intro">From sizing individual stocks to building a portfolio, understanding its P&amp;L and comparing its return and risk models.</p>
-  {% if site.paginate %}
-    {% assign posts = paginator.posts %}
-  {% else %}
-    {% assign posts = site.posts %}
-  {% endif %}
+  {% assign posts = site.posts %}
 
   {% include ordered-posts.html posts=posts %}
   {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" | reverse %}
@@ -17,7 +13,7 @@ layout: base
   {% assign posts = unplaced_posts | concat: research_posts | concat: reference_posts %}
 
   {%- if posts.size > 0 -%}
-    {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+    {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
     <ul class="post-list">
       {%- for post in posts -%}
       <li>
@@ -41,24 +37,6 @@ layout: base
       </li>
       {%- endfor -%}
     </ul>
-
-    {% if site.paginate %}
-      <div class="pager">
-        <ul class="pagination">
-        {%- if paginator.previous_page %}
-          <li><a href="{{ paginator.previous_page_path | relative_url }}" class="previous-page">{{ paginator.previous_page }}</a></li>
-        {%- else %}
-          <li><div class="pager-edge">•</div></li>
-        {%- endif %}
-          <li><div class="current-page">{{ paginator.page }}</div></li>
-        {%- if paginator.next_page %}
-          <li><a href="{{ paginator.next_page_path | relative_url }}" class="next-page">{{ paginator.next_page }}</a></li>
-        {%- else %}
-          <li><div class="pager-edge">•</div></li>
-        {%- endif %}
-        </ul>
-      </div>
-    {%- endif %}
 
   {%- endif -%}
 

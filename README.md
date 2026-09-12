@@ -4,6 +4,9 @@ Source for [piinghel.github.io](https://piinghel.github.io/), a Jekyll site for
 research notes on systematic strategies, machine learning, and portfolio
 construction.
 
+Layouts, includes and styles are maintained directly in this repository.
+The Gemfile declares Jekyll and the feed/SEO plugins; no theme gem is needed.
+
 ## Local preview
 
 ```bash
