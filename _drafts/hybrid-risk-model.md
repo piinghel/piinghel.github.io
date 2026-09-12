@@ -1,14 +1,16 @@
 ---
 layout: post
 title: "Fundamental, Statistical and Hybrid Risk Models"
-description: "How factor exposures become a covariance matrix, how a hybrid combines named and statistical factors, and what my completed portfolio comparisons show."
+description: "Combining named factors with residual PCA improves some risk forecasts in my tests, but has not improved the portfolios. I separate forecast accuracy from allocation quality."
 permalink: /quants/hybrid-risk-model.html
 toc: false
 show_date: false
 categories: ["Portfolio risk"]
 ---
 
-After looking at [performance attribution](/quants/portfolio-attribution.html), I wanted to return to the risk model used to size the portfolio. A fundamental model starts with named exposures. A statistical model learns common movement from returns. A hybrid combines the two. What changes inside the covariance matrix, and does that help the portfolio?
+My current risk model estimates stock volatility and correlation directly from returns. I wanted to see whether adding some economic structure would help: start with named factors, then let statistical factors capture common movement left in the residuals. The attraction is straightforward—give the model both a specified structure and a way to learn what that structure misses.
+
+I’m evaluating the covariance model here, with return forecasts and portfolio rules held fixed within each comparison. The tests gave me two different answers: some risk forecasts improved, but the portfolios did not establish an improvement. The distinction in *Elements* between evaluating covariance forecasts and evaluating their use in optimization is a useful way to understand that result.[^evaluation]
 
 ## From factors to stock risk
 
@@ -20,7 +22,7 @@ $$\Sigma=BFB^\top+D.$$
 
 Here $F$ is the covariance matrix of factor returns and $D$ contains stock-specific variances on its diagonal. This form assumes the remaining stock-specific shocks are mutually uncorrelated and uncorrelated with the factors. With $N$ stocks and $K$ factors, the dimensions are $(N\times K)(K\times K)(K\times N)$, producing an $N\times N$ stock covariance matrix.
 
-For portfolio weights $w$, forecast volatility is $\sqrt{w^\top\Sigma w}$. Equivalently, $B^\top w$ gives portfolio factor exposures first, so portfolio variance is $(B^\top w)^\top F(B^\top w)+w^\top Dw$.
+For portfolio weights $w$, forecast volatility is $\sqrt{w^\top\Sigma w}$. The factor exposures of the portfolio are $B^\top w$.
 
 ## Where the factors come from
 
@@ -35,7 +37,9 @@ For portfolio weights $w$, forecast volatility is $\sqrt{w^\top\Sigma w}$. Equiv
 </div>
 <p class="figure-caption"><strong>Figure 1: The hybrid as a block-matrix product.</strong> Blue marks named-factor blocks, ochre statistical blocks, and green their cross-covariances. Multiplication maps the factor covariance into the stock space; diagonal specific risk completes the model. Dimensions are symbolic and block sizes schematic.</p>
 
-The off-diagonal blocks matter. Expanding the product gives named-factor risk $BF_{BB}B^\top$, statistical risk $PF_{PP}P^\top$, and the two cross terms $BF_{BP}P^\top+PF_{PB}B^\top$. Projecting loadings away from named exposures does not guarantee that the factor-return histories are uncorrelated. I estimate those cross-covariances in the hybrid.
+I retain the off-diagonal blocks. Expanding the product gives named-factor risk $BF_{BB}B^\top$, statistical risk $PF_{PP}P^\top$, and the two cross terms $BF_{BP}P^\top+PF_{PB}B^\top$. Orthogonal loadings do not guarantee uncorrelated factor returns. The hybrid estimates their joint covariance, including the cross blocks, without correlation shrinkage.
+
+In a later diagnostic, the PCs’ strongest links to the named factors were generally sector links, with weaker full-period correlations to the beta factor. That is a clue about what the statistical block adds; the components rotate over time, so a single full-period correlation gives an incomplete description.
 
 A **50:50 covariance blend** combines completed covariance estimates instead: $\Sigma_{\mathrm{blend}}=0.5\Sigma_{\mathrm{current}}+0.5\Sigma_H$, before its own calibration. This averages variance estimates for any fixed portfolio; taking the square root means it does not average volatility directly. It also differs from splitting capital equally between two optimized portfolios.
 
@@ -43,11 +47,20 @@ A **50:50 covariance blend** combines completed covariance estimates instead: $\
 
 The earlier fundamental-only test used size, momentum and volatility, plus a common intercept. Over September 1998–December 2021 it earned 13.67% a year at 9.83% volatility, against 11.97% at 7.72% for the current model. Adding two residual PCs reduced volatility to 9.04% and return to 12.97%; neither improved the observed Sharpe. This was a narrow factor specification, and the return and Sharpe differences were statistically inconclusive.
 
-The expanded comparison below adds beta, sectors, reversals and liquidity, with ten residual PCs. Its four completed constructions are the current model, the current model with adaptive calibration, the hybrid, and their 50:50 covariance blend. All three adaptive versions scale forecasts using previously completed outcomes of their own target portfolios. Predictions and the other portfolio rules stay fixed within this comparison.
+The expanded comparison adds beta, sectors, reversals and liquidity, with ten residual PCs. It compares the current model, an adaptively recalibrated version of it, the hybrid, and their 50:50 covariance blend. The last three use the same calibration procedure, learning a multiplier from previously completed outcomes of their own target portfolios. The recalibrated current model is the relevant control for that procedure; the original current model anchors the operational comparison.
 
-These are separate studies with different specifications and common periods. A standalone PCA-only portfolio is not among their completed runs. The expanded beta/sector variant with dense residual covariance also stopped because some eligible stocks lacked residual history; it supplies no completed financial result.
+These studies have different specifications and sample periods. **A matched fundamental-only, standalone PCA and hybrid comparison is still missing.** The earlier “PCA” arm adds PCs to named factors. The expanded variant with dense residual covariance stopped at its history-coverage guard and supplies no completed financial result.
 
-## Calibration and allocation
+## Does it forecast risk better?
+
+Following *Elements*, I look beyond average bias. For each fixed target portfolio, let $q_t$ be realized variance over the next 21 sessions divided by the forecast variance:
+
+$$\begin{gathered}
+q_t=\frac{\widetilde{\sigma}_{t,21}^{\,2}}{\widehat{\sigma}_t^{\,2}},\\[6pt]
+\mathrm{QLIKE}=\frac{1}{T}\sum_t\bigl(q_t-\log q_t-1\bigr).
+\end{gathered}$$
+
+Lower QLIKE is better; zero means agreement in every window. Here realized variance is the sample variance of the frozen portfolio’s following daily returns. I also check underprediction tails, since offsetting misses can leave the average looking reasonable.
 
 Figure 2 compares realized volatility with the forecast over the following 21 sessions, holding each decision’s target portfolio fixed. One means agreement; values above one indicate underprediction. There are 1,195 overlapping windows per model, with outcomes through 2021.
 
@@ -56,7 +69,11 @@ Figure 2 compares realized volatility with the forecast over the following 21 se
 </div>
 <p class="figure-caption"><strong>Figure 2: Better average calibration still leaves large misses.</strong> Boxes contain the middle 50% of windows; the internal line is the median. Whiskers extend to observations within 1.5 interquartile ranges of the box, with all remaining observations plotted as dots. The logarithmic axis retains the full upper tail. Portfolios differ across models, so the comparison includes both estimation and allocation choices.</p>
 
-The mean realized-to-forecast volatility ratio falls from 1.135 for the current model to 1.075 with adaptive calibration, 1.034 for the hybrid and 1.020 for the blend. The frequency of volatility exceeding its forecast by more than 30% falls from 24% to 18%, 14% and 12%, respectively. The blend’s mean variance ratio remains 1.18: average volatility near one leaves room for large misses.
+Mean QLIKE is 0.327 for the current model, 0.290 for its recalibrated version, 0.279 for the hybrid and 0.238 for the blend. The frequency of volatility exceeding its forecast by more than 30% falls from 24% to 18%, 14% and 12%, respectively. Those are improvements on the portfolios each model selects. Since both their holdings and their calibration feedback differ, they do not establish which covariance estimate forecasts an identical portfolio best. The blend’s mean variance ratio remains 1.18, despite mean volatility being close to forecast.
+
+## Does it build a better portfolio?
+
+Optimization depends on the inverse covariance matrix, also called the precision matrix. In unconstrained mean–variance optimization, weights are proportional to $\Sigma^{-1}\alpha$, where $\alpha$ is the expected-return vector. That makes errors in estimated low-risk directions especially consequential. The practical test here feeds each covariance estimate through the same constrained optimizer and evaluates the resulting net returns.[^evaluation]
 
 Lower volatility matters when judging the return the portfolio gives up. Table 1 puts both beside Sharpe and drawdown over 5,774 common sessions from 26 January 1999 through 31 December 2021, with 5 basis points of costs per traded dollar, as in the earlier comparison.
 
@@ -71,10 +88,18 @@ Lower volatility matters when judging the return the portfolio gives up. Table 1
 </tbody>
 </table>
 
-The blend reduces annual volatility from 7.72% to 6.72%, but return falls from 11.87% to 10.18% and drawdown deepens from −16.11 to −19.09 percentage points. Lower daily volatility therefore does not translate into a smaller peak-to-trough loss. The adaptive current model has the highest observed Sharpe, 1.57, although the Sharpe differences remain statistically inconclusive.
+The hybrid and blend give up return as well as volatility, and their drawdowns deepen. Both also trail the recalibrated current model. The paired bootstrap intervals for their Sharpe differences include zero, so these tests establish no Sharpe improvement. The result is also weaker in 2017–2021: hybrid and blend Sharpe are 1.06 and 1.11, against about 1.43 for either current-model control. Lower QLIKE has not translated into a better allocation.
 
-I’m keeping the current model. The 50:50 blend improves average calibration, but I want evidence of better allocation decisions before switching. There is no matched-volatility blend test here to establish how it would compare at the current model’s risk level. These results use already-inspected history; they are a comparison of the tested constructions, with accounting-based extensions left for later.
+## What I would improve next
+
+Adding a 52-week-high descriptor at ten PCs did not establish an improvement over its matched hybrid control. Increasing the PC count also gave no stable answer: gains in a small frozen-portfolio screen depended on the portfolio and individual dates. These results give me little reason to keep adding factors to the tested specification.
+
+The next useful comparison is the missing three-way test, with a common universe, estimation dates and calibration rule. I would score each model on the same prespecified portfolios, then on portfolios it constructs itself. A minimum-variance portfolio test, as proposed in *Elements*, would help assess the precision matrix, with the same budget and trading constraints for every model. Portfolio return, volatility, turnover and costs would remain the economic check. These are proposed tests, rather than completed evidence.
+
+For now, I’m keeping the current covariance model. The completed hybrids improved some forecast scores but have not earned a change in portfolio construction. All these results use previously inspected history, and there is no matched-volatility hybrid or blend replay here. Accounting-based factors remain a later extension.
 
 [^model]: For characteristic-based estimation and the covariance identity, see Giuseppe A. Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6), first edition (2021), §4.3 and §11.1, pp. 40–41 and 168–169 (physical PDF pages 52–53 and 180–181).
 
 [^blocks]: Giuseppe A. Paleologo, *The Elements of Quantitative Investing*, draft of 9 September 2024, §7.6.1, Figure 7.2, p. 211 (physical PDF page 237). The diagram here is an original application to named and residual statistical factors; the book’s example links asset classes and geographies.
+
+[^evaluation]: Giuseppe A. Paleologo, *The Elements of Quantitative Investing*, “Evaluating Risk”: chapter 5 in the published edition; chapter 6 in the 9 September 2024 draft used here. See §§6.1–6.2, pp. 164–172 (physical PDF pages 190–198), for forecast losses, portfolio-dependent tests and precision-matrix evaluation; §6.3.1, pp. 173–174 (physical PDF pages 199–200), for model-induced turnover.
