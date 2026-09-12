@@ -1,6 +1,6 @@
 {
   "conventions": {
-    "financial": "Mean of three staggered calendar metrics; fixed notional; net of5bp traded-notional costs; annual arithmetic return/volatility in percent; drawdown from compounded daily-return index.",
+    "financial": "Mean of metrics from three rebalance calendars starting in different weeks; fixed notional; net of5bp traded-notional costs; annual arithmetic return/volatility in percent; drawdown from compounded daily-return index.",
     "forecast": "Daily cross-sectional Spearman IC; ICIR = mean IC / sample SD, unannualized; available target pairs differ by horizon.",
     "periods": {
       "full_period": "1998-11-03 to2021-12-31 (first portfolio)",

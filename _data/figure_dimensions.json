@@ -223,12 +223,20 @@
     "width": 374,
     "height": 403
   },
+  "/assets/tree-model-comparison/forecast-outcomes": {
+    "width": 702,
+    "height": 454
+  },
+  "/assets/tree-model-comparison/forecast-outcomes_mobile": {
+    "width": 324,
+    "height": 835
+  },
   "/assets/tree-model-comparison/forecast-quality": {
     "width": 702,
-    "height": 281
+    "height": 266
   },
   "/assets/tree-model-comparison/forecast-quality_mobile": {
     "width": 324,
-    "height": 590
+    "height": 605
   }
 }

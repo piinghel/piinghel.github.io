@@ -24,16 +24,16 @@ $$\begin{gathered}
 s_{IC}=\sqrt{\frac{\sum_{t=1}^{T}(IC_t-\overline{IC})^2}{T-1}}.
 \end{gathered}$$
 
-Here $T$ counts dates with a defined correlation, using stocks with finite forecast–target pairs. I leave ICIR unannualized. Figure 1 separates its mean and sample standard deviation for the four blends, which share the same target and dates.
+Here $T$ counts dates with a defined correlation, using stocks with finite forecast–target pairs. I leave ICIR unannualized. To see when the signal changed, Figure 1 compares four separate five-year periods. The four blends share the same target and dates; the last period ends on 6 October 2021 so the 60-day targets can be observed within the data.[^periods]
 
 <div class="research-figure responsive-figure" markdown="0">
-{% include theme-svg-figure.html base="/assets/tree-model-comparison/forecast-quality" mobile="/assets/tree-model-comparison/forecast-quality_mobile" version="3" alt="Mean IC, sample standard deviation of daily IC and ICIR for four 50:50 blends. Mean IC is slightly higher in 2017–2021, but standard deviation rises much more and ICIR falls for every model." %}
+{% include theme-svg-figure.html base="/assets/tree-model-comparison/forecast-quality" mobile="/assets/tree-model-comparison/forecast-quality_mobile" version="4" alt="Mean IC, SD of daily IC and ICIR across 2002–2006, 2007–2011, 2012–2016 and 2017–2021. The three tree blends follow similar paths. In the final period, all four models have slightly lower mean IC and substantially higher IC variability than in 2012–2016." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: Average ranking holds up; its variability rises.</strong> All forecasts are 50:50 blends, evaluated against the mean of the two ranked targets. Circles show full history; diamonds show 2017–2021. The samples overlap. Each metric has its own scale. XGB abbreviates XGBoost.</p>
+<p class="figure-caption"><strong>Figure 1: The signal becomes less consistent in 2017–2021.</strong> Daily Spearman IC against the mean of the two ranked targets, for the four 50:50 blends. Each metric has its own scale. Lines connect period summaries; the near-overlap of the tree models is part of the result. XGB abbreviates XGBoost. *Final forecast date: 6 October 2021.</p>
 
-The tree blends have full-history ICIR around 0.79, against Ridge's 0.64, with little difference between the three tree models. Their lower ICIR in 2017–2021 initially looks like a weaker signal. But the mean IC is slightly higher for every blend; its standard deviation rises by roughly 42–48%.
+For LightGBM, mean IC falls from 0.067 in 2012–2016 to 0.062 in 2017–2021, while its standard deviation rises from 0.066 to 0.111. ICIR falls from 1.01 to 0.56. Average ranking quality weakens a little; the much larger change is its variability. Across all four models, IC standard deviation rises by roughly 51–69%.[^uncertainty]
 
-For LightGBM, mean IC moves from 0.060 to 0.062 while its standard deviation rises from 0.075 to 0.111. ICIR falls from 0.80 to 0.56: the average ranking holds up, but varies more from day to day. The individual 20- and 60-day forecasts show the same direction. These overlapping-period summaries describe that change; they leave its economic cause open.
+That wider spread includes more occasions when the ranking goes the wrong way: LightGBM's share of dates with negative IC rises from 17% to 25%. These are forecast dates evaluated against forward targets, so they cannot be read as the portfolio's share of losing days.
 
 ## What reaches the portfolio
 
@@ -70,10 +70,27 @@ Table 1 puts return and volatility beside Sharpe. All models use the same [portf
 
 For the LightGBM blend, annual return falls from 15.8% over the full history to 13.5% in 2017–2021, while volatility rises from 7.8% to 9.2%. Both contribute to the lower Sharpe, from 2.02 to 1.47. The other tree portfolios show the same combination. Ridge is different: its blend's return rises from 11.5% to 12.6%, but volatility rises more proportionally, from 8.1% to 9.6%, and Sharpe slips from 1.43 to 1.31.
 
-IC variability and portfolio volatility describe different parts of the process. The former measures how much ranking quality changes across dates; the latter measures how much the portfolio's daily return changes. Their increase helps describe the deterioration, but connecting the two requires looking at which stocks the forecasts selected and how they were sized.
-
 Both ordinary tree models prefer the 20-day forecast over the full history; LightGBM reaches Sharpe 2.11. In 2017–2021, each model's blend beats its individual horizons on Sharpe. That gives me a reason to keep both horizons in the comparison. The bigger historical difference is between trees and Ridge; sharing splits adds little here.
 
-I'm keeping production unchanged. This history has already been inspected, and shared trees haven't given me a clear improvement. The more useful follow-up is to understand how a similar average ranking signal translates into lower tree-portfolio returns and higher risk.
+## What changed over time?
+
+Figure 2 connects the forecast statistics to portfolio outcomes over the same four periods. I show LightGBM and Ridge here because the three tree blends behave so similarly. Both axes use matching dates, ending on 6 October in the final period. That gives LightGBM a recent Sharpe of 1.27; including the final quarter, as Table 1 does, raises it to about 1.5.
+
+<div class="research-figure responsive-figure" markdown="0">
+{% include theme-svg-figure.html base="/assets/tree-model-comparison/forecast-outcomes" mobile="/assets/tree-model-comparison/forecast-outcomes_mobile" version="1" alt="Four period comparisons for LightGBM and Ridge. Left panels show ICIR against portfolio Sharpe; right panels show SD of daily IC against mean daily net return. LightGBM's latest period has lower ICIR and Sharpe and higher IC variability. Ridge's lowest return occurs in 2007–2011, despite lower IC variability than in the later periods." %}
+</div>
+<p class="figure-caption"><strong>Figure 2: Forecast consistency and portfolio performance move together, imperfectly.</strong> Each point represents one five-year period. Right panels use arithmetic mean daily net return in basis points; 1 bp is 0.01%. Portfolio statistics average the three rebalance calendars separately. *Both axes end on 6 October 2021 in the final period. These are historical point estimates.</p>
+
+The change between periods is much larger than the difference between tree implementations. Their Sharpes cluster around 2.14–2.18 in 2012–2016, then 1.24–1.27 on the matching dates in 2017–2021. LightGBM's annualized return falls from 16.0% to 11.5%, while portfolio volatility rises from 7.5% to 9.0%. The direction survives including the final quarter. Switching tree libraries hasn't avoided the shared deterioration.
+
+Still, ICIR isn't a direct conversion into Sharpe. LightGBM's ICIR falls from 1.16 in 2002–2006 to 0.94 in 2007–2011, while Sharpe stays near 2.1. Ridge gives another useful counterexample: its IC variability is lower in 2007–2011 than in 2012–2016, yet its return is much worse. Its mean IC is also lower. Which stocks receive weight, their correlations and the size of their gains and losses matter alongside ranking quality.
+
+A changing market environment is one possible explanation. But simply scaling every stock's target by the same positive amount preserves ranks and leaves rank IC unchanged. We would need to understand changes in which stocks outperform and how those changes interact with our signals. The shared inputs and portfolio construction are other places to look.
+
+I started by comparing tree implementations. What I take from this is how similarly they struggle in the same period: the average signal remains positive, but it becomes less reliable while portfolio risk rises. I'm keeping production unchanged; this inspected history gives me no clear reason to adopt shared trees.
 
 [^setup]: The input covers 1995–2021 with 144 common predictors; the first portfolio starts on 3 November 1998. Walk-forward training starts with 900 sessions, advances in 600-session blocks and keeps a 61-session gap. Predictions average three date-phase models, and both horizons use the common 60-day eligibility convention. Trees use 350 rounds, depth 5, learning rate 0.05, feature subsampling 0.25 and 255 bins; LightGBM allows 32 leaves. Individual-horizon IC uses its own target and available pairs, so model comparisons should hold the forecast horizon fixed.
+
+[^periods]: The figures use 2002–2006, 2007–2011, 2012–2016 and 2017–2021, omitting the initial partial block. The groups share no forecast dates. Removing the final 60 forecast dates from each earlier block also keeps their forward target windows within the block; the increase in recent IC variability remains. Table 1 retains full-calendar portfolio returns.
+
+[^uncertainty]: The increase in IC standard deviation survives 60- and 120-session moving-block bootstrap checks and the boundary adjustment. The change in mean IC is less certain: its intervals include zero. Nearby IC observations share forward returns, and all four models use the same market history. These checks describe the inspected sample.

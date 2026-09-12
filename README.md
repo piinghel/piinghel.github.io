@@ -68,9 +68,15 @@ a framework migration would not strengthen the research.
 
 ## Figure sources
 
-The tree-model comparison uses audited aggregate metrics in
-`assets/tree-model-comparison/metrics.json`. Regenerate its paired-period
-mean-IC, IC-standard-deviation and ICIR panels with `python3 scripts/render_tree_comparison.py`.
+The tree-model comparison keeps the original horizon-table aggregates in
+`assets/tree-model-comparison/metrics.json` and its disjoint-period figure inputs
+in `assets/tree-model-comparison/period-metrics.json`. Regenerate both figures
+(forecast mean/SD/ICIR and forecast–portfolio associations), including light/dark
+and phone variants, with `python3 scripts/render_tree_comparison.py`.
+The period inputs are the 16 `matched_dates` rows from the retained research
+diagnostic `tree_model_comparison/outputs/ranked-xgboost/review/ic-portfolio-periods-20260912/summary.json`.
+They contain only aggregate results. The source diagnostic, including endpoint
+sensitivities, is reproduced with `review/ic_portfolio_periods.py` in that study.
 
 The hybrid risk-model draft is `_drafts/hybrid-risk-model.md`. Its retained
 aggregate inputs are `assets/hybrid-risk-model/metrics.json`; regenerate the
