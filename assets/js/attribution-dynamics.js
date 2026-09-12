@@ -76,6 +76,7 @@
   }
   function choose(){
     const e=data.episodes[Number(episode.value)],rows=e.factors[factor.value];
+    slider.max=rows.length-1;
     slider.value=Math.max(0,rows.findIndex(r=>r[0]>e.low));render();
   }
   fetch(root.dataset.source).then(r=>{if(!r.ok)throw new Error('unavailable');return r.json();}).then(d=>{

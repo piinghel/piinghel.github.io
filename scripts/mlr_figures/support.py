@@ -61,7 +61,6 @@ class FigureSpec:
     model_order: tuple[str, ...]
     model_labels: Mapping[str, str]
     model_colors: Mapping[str, str]
-    split_date: date
     feature_labels: Mapping[str, str]
 
 
@@ -84,7 +83,6 @@ def default_figure_spec(style: FigureStyle) -> FigureSpec:
             "ols_c0": style.ols,
             "selected_c0p01": style.ridge,
         },
-        split_date=date(2022, 1, 1),
         feature_labels={
             "X_feature_price_macd_10_21": "MACD · 10 / 21d",
             "X_feature_price_price_to_ma126": "Price / moving average · 126d",
@@ -274,30 +272,6 @@ def add_panel_title(
         fontweight=fontweight,
         annotation_clip=False,
     )
-
-
-def add_split_marker(
-    ax: plt.Axes,
-    style: FigureStyle,
-    split_date: date,
-    *,
-    label: bool = False,
-    label_fontsize: float = 8.0,
-    label_text: str = "Later period starts",
-    label_at_top: bool = False,
-) -> None:
-    ax.axvline(split_date, color=style.muted, linewidth=0.9, linestyle=(0, (2, 3)))
-    if label:
-        ax.text(
-            split_date + timedelta(days=-100 if label_at_top else 100),
-            1.015 if label_at_top else 0.05,
-            label_text,
-            transform=ax.get_xaxis_transform(),
-            color=style.muted,
-            fontsize=label_fontsize,
-            ha="right" if label_at_top else "left",
-            va="bottom",
-        )
 
 
 def save_figure(

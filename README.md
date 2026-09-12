@@ -35,7 +35,7 @@ linked below.
 The unpublished workflow draft is retained in `_drafts/research-workflow.md`.
 The normal build excludes it. Use `--drafts --unpublished` for a local preview.
 
-The recovery and stock explorer export is maintained in the private research
+The aggregate recovery explorer export is maintained in the private research
 project as `python -m performance_attribution.explorer_export`. Its input and
 output paths are explicit. The browser derives summaries and selected dates
 from the exported data.
@@ -46,6 +46,11 @@ python3 scripts/check_site.py _site
 python3 -m pip install -r requirements-figures.txt
 python3 -m unittest discover -s tests -v
 ```
+
+For changes to the attribution explorer, run the browser regression with Node.js
+and Playwright installed: `node --test tests/test_article_interactions.cjs`.
+It uses Playwright's Chromium, or an existing Chrome executable supplied through
+`CHROME_PATH`, and loads only local aggregate inputs.
 
 The checker validates local links and fragments, SVG XML references, matching
 theme dimensions, image descriptions, and exclusion of development
