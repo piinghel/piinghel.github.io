@@ -82,7 +82,9 @@ q_t&=\frac{v_t^{\mathrm{real}}}{\widehat v_t},\\[6pt]
 \end{aligned}
 $$
 
-Both variances are on a daily scale; the 21 sessions provide the observations for the realized estimate. QLIKE is lower when the forecast is closer to that estimate. Figure 2 plots $\sqrt{q_t}$, the ratio of realized to forecast volatility. A ratio above one means the model underestimated volatility.
+Both variances are on a daily scale; the 21 sessions provide the observations for the realized estimate. QLIKE is zero when the two agree and increases as they diverge. Because it uses their ratio, the same proportional miss receives the same loss in a quiet period and a volatile one. It also treats underprediction and overprediction differently: forecasting half the realized variance gives a loss of about 0.31; forecasting twice as much gives about 0.19.
+
+That is one useful view of forecast error. I also want to know whether risk is systematically too low, how often the model misses badly, and whether those misses arrive together. Figure 2 starts with $\sqrt{q_t}$, the ratio of realized to forecast volatility. A ratio of 1.3 means volatility came in 30% above forecast; the corresponding variance ratio is $1.3^2=1.69$.
 
 <div class="research-figure responsive-figure" markdown="0">
 {% include theme-svg-figure.html base="/assets/hybrid-risk-model/calibration" mobile="/assets/hybrid-risk-model/calibration_mobile" version="4" alt="Realized divided by forecast volatility for Direct covariance, Direct recalibrated, Hybrid and 50:50 blend. A ratio of one is agreement. All models retain large underprediction outliers, including ratios above four." %}
@@ -91,13 +93,25 @@ Both variances are on a daily scale; the 21 sessions provide the observations fo
 
 Mean QLIKE is 0.327 for direct covariance, 0.290 after recalibration, 0.279 for the hybrid and 0.238 for the blend. Volatility exceeds its forecast by more than 30% in 24%, 18%, 14% and 12% of windows, respectively.
 
+The average level still matters. Mean variance ratios are 1.47, 1.33, 1.24 and 1.18 in the same order. Even the blend therefore has realized variance averaging about 18% above its own forecast when each window receives equal weight. Its mean **volatility** ratio is only 1.02. Those statements can coexist because averaging after taking a square root gives large misses less weight. A volatility ratio close to one on average is too weak a check on its own.
+
+I read the centre and tails together. A model can reduce the frequency of underprediction simply by forecasting more risk everywhere, which may leave capital unused. I would check the opposite tail too, then split the errors by forecast-risk level and calendar period. That would show whether an apparently good average hides poor calibration in the periods when risk is highest. The 30% threshold here is a descriptive tolerance; it has no associated confidence level or guaranteed exceedance rate.
+
 Those are smaller observed errors, but each model is forecasting **its own holdings**. Changing the covariance changes the portfolio, and the scale adjustment also depends on that portfolio's past forecast errors. The comparison therefore combines the risk estimator with the portfolios it selects.
 
-A 21-session variance estimate is noisy, and overlapping windows share returns. These scores describe the errors in this sample; they do not establish a statistically significant ranking of the covariance estimators. To make that comparison, I'd want all four forecasts evaluated on the same holdings, with uncertainty estimates that account for the shared dates.
+A 21-session variance estimate is noisy, and overlapping windows share returns. These scores describe the errors in this sample; they do not establish a statistically significant ranking of the covariance estimators. Comparing forecasts on common holdings would help separate those effects. I return to that test below.
 
 ## Does that help the portfolio?
 
-Covariance errors also affect where the optimizer puts capital. In unconstrained mean–variance optimization, $w^\star\propto\Sigma^{-1}\alpha$, where $\alpha$ is expected return. An underestimated variance in some direction can attract too much weight. The constrained optimizer used here has additional limits and trading penalties, so I assess it by comparing the resulting portfolios.[^evaluation]
+Covariance errors also affect where the optimizer puts capital. Consider a long position in one stock and an equally sized short position in another, with weights $a$ and $-a$. Their combined variance is
+
+$$
+a^2\left(\sigma_1^2+\sigma_2^2-2\rho\sigma_1\sigma_2\right).
+$$
+
+Here $\rho$ is their correlation. If the model overstates that correlation, the two positions look like a better hedge than they really are. Accurate forecasts of each stock's volatility would not catch this error.
+
+In unconstrained mean–variance optimization, $w^\star\propto\Sigma^{-1}\alpha$, where $\alpha$ is expected return. The inverse covariance, or **precision matrix**, determines which combinations of positions look attractive relative to their risk. Underestimated risk in one of those combinations can attract too much capital. The constrained optimizer used here also has position limits and trading penalties, so the relevant check is what happens to its chosen portfolios.[^evaluation]
 
 Table 1 uses 5,774 common sessions, from 26 January 1999 to 31 December 2021, including 5 basis points of costs per traded dollar. These are the combined portfolios with their actual changing weights, whereas Figure 2 holds each target portfolio fixed for its forecast check.
 
@@ -116,11 +130,47 @@ The hybrid and blend both give up return, and neither has a higher Sharpe ratio 
 
 Relative to the recalibrated direct model, the hybrid's Sharpe difference is −0.09, with a 95% block-bootstrap interval of [−0.34, 0.14]. The blend's difference is −0.06, with an interval of [−0.21, 0.10]. These intervals include both improvement and deterioration; the point estimates don't establish a reliable Sharpe advantage for either approach.[^uncertainty]
 
+### Losses, exposure and trading costs
+
+Sharpe treats positive and negative variation symmetrically. I also look at **historical expected shortfall**: the average daily net P&amp;L among the worst 5% of days. It describes how severe those bad days were in this backtest. Maximum drawdown answers a different question: how far cumulative P&amp;L fell from a previous peak. The order of returns matters for drawdown, so a long sequence of moderate losses can be more damaging than a single large loss followed by a recovery.
+
+<p class="table-caption"><strong>Table 2: Daily tail losses improve, while trading costs stay similar.</strong> Same combined portfolios and 5,774 sessions as Table 1. Tail P&amp;L is the average of the worst 5% of daily net observations, as a percentage of fixed notional. Two-way turnover counts purchases plus sales, in multiples of capital per year. Cost is the annual modeled trading charge, in percentage points.</p>
+<table class="research-table comparison-table horizon-comparison">
+<thead><tr><th>Model</th><th>Tail P&amp;L<br>(%/day)</th><th>Turnover<br>(×/yr)</th><th>Cost<br>(pp/yr)</th></tr></thead>
+<tbody>
+<tr><th scope="row">Direct covariance</th><td>−1.04</td><td>28.19</td><td>1.41</td></tr>
+<tr><th scope="row">Direct, recalibrated</th><td>−0.99</td><td>27.46</td><td>1.37</td></tr>
+<tr><th scope="row">Hybrid</th><td>−0.89</td><td>28.70</td><td>1.44</td></tr>
+<tr><th scope="row">50:50 blend</th><td>−0.89</td><td>27.47</td><td>1.37</td></tr>
+</tbody>
+</table>
+
+The hybrid and blend have smaller daily tail losses, even though their maximum drawdowns are deeper. These portfolios also have different overall volatilities, so the comparison leaves open whether the hybrid offers better tail protection at equal risk. Historical expected shortfall has sampling uncertainty and says little about losses beyond those observed here.
+
+The cost comparison helps explain the return gap. The hybrid earns 11.34% a year before modeled costs, against 12.80% for the recalibrated direct model. Its cost is only about 0.06 percentage points higher. Most of the net-return gap therefore comes from gross portfolio P&amp;L. The blend's trading cost is almost identical to that direct model's.[^costs]
+
+The portfolios also carry different exposures. Gross exposure adds the absolute sizes of the long and short positions. It averages about 1.68 times capital for the hybrid and 1.73 for the blend, versus 1.81 for recalibrated direct covariance. Their full-period realized market betas—the regression slopes of daily net P&amp;L on the study's market return—are about 0.01, 0.03 and 0.08, respectively. The covariance choice has changed position sizes and market sensitivity. Identifying which holdings or factor tilts caused the lost return would require a matched attribution.
+
+## What I would test next
+
+I would keep the full portfolio comparison and add two focused tests. They answer different questions about the same risk model.
+
+First, I would evaluate every model on the same dated portfolios, including holdings selected by each model. Each candidate would forecast risk for every portfolio, so choosing one model's holdings would not determine the whole comparison. Alongside QLIKE and the calibration ratios, I would add **mean squared error of variance**:
+
+$$
+\mathrm{MSE}=\frac{1}{T}\sum_{t=1}^{T}
+\left(v_t^{\mathrm{real}}-\widehat v_t\right)^2.
+$$
+
+MSE measures the absolute size of variance errors. Large errors in high-volatility periods carry more weight than they do under QLIKE. That makes the two losses useful companions. For common holdings, QLIKE and variance MSE also have a useful theoretical property: under the required conditional-unbiasedness assumptions, using a noisy variance proxy preserves their expected forecast ranking. That result does not guarantee a reliable ranking in this finite sample, or establish that our 21-session proxy satisfies those assumptions.[^losses]
+
+I would report paired loss differences by calendar period and forecast-risk level, with confidence intervals that resample blocks of common dates. All models and schedules would stay together within each sampled block, preserving their shared shocks. This would show whether an improvement is broad or concentrated in a few episodes, while accounting for overlapping outcomes.
+
+Second, I would construct **minimum-variance portfolios** under identical investment constraints, with no alpha forecast in the objective. A simple version fixes total investment to one, requires long-only weights and applies the same name cap to every model. Each covariance estimate then chooses the portfolio it considers least risky. Comparing subsequent realized variance, concentration and turnover would test the diversification choices more directly. Fixing investment prevents the zero portfolio from winning; this test addresses a different use case from the long–short Ridge strategy.[^evaluation]
+
 ## Where that leaves me
 
-For this comparison, I still prefer direct covariance. The hybrid and blend make smaller forecast errors on their own portfolios, but that hasn't translated into a better return–risk trade-off. It also doesn't tell me which factor group caused the difference: the hybrid changes several parts of the risk estimate together.
-
-The next comparison I'd find useful is to forecast risk for the same portfolios with all four models. That would separate forecasting differences from the optimizer's choice of holdings. It would give me a clearer reason to change the risk model than adding another factor to these backtests.
+For this comparison, I still prefer direct covariance. The hybrid and blend improve their own-portfolio forecast scores and have smaller daily tail losses, but they also give up return and experience deeper drawdowns. The Sharpe differences remain uncertain. I would want the common-portfolio forecast test and the minimum-variance comparison to explain where the extra structure helps before changing the risk model on that basis.
 
 [^setup]: The hybrid uses an intercept, beta, sector exposures, size, momentum, short- and long-term reversals, volatility and dollar volume, plus ten residual PCs. All four completed versions share the historical study's additional L2 weight penalty of 0.000625, alongside the 2.5bp optimization trading penalty. This differs from the earlier portfolio-construction article's zero-L2 setup. The 5bp P&amp;L trading cost is separate. Sector classifications are retrospective; return marking and delisting coverage were not independently verified for this comparison. A separate attempt with a dense residual covariance could not complete because of missing residual history.
 
@@ -133,3 +183,7 @@ The next comparison I'd find useful is to forecast risk for the same portfolios 
 [^evaluation]: Paleologo, *The Elements of Quantitative Investing*, “Evaluating Risk”: chapter 5 in the published edition; chapter 6 in the September 2024 draft used here. §§6.1–6.2, pp. 164–172 (physical PDF pages 190–198), discuss forecast losses and precision-matrix evaluation.
 
 [^uncertainty]: Paired circular block bootstrap of the combined daily portfolio series: 1,000 resamples with 63-session blocks. The same sampled dates are used for each model in a comparison, and differences use unrounded estimates. The intervals describe uncertainty within this development history; they are not adjusted for multiple comparisons.
+
+[^costs]: Two-way turnover is recovered from the modeled trading charge divided by 5bp per traded dollar, with no division by two. Costs are charged within each schedule before aggregation. Borrow fees, financing and market impact are not included.
+
+[^losses]: Andrew J. Patton, [“Volatility forecast comparison using imperfect volatility proxies”](https://public.econ.duke.edu/~ap172/Patton_vol_proxies_JoE_2011.pdf), *Journal of Econometrics* 160 (2011), pp. 246–256, especially §3. MSE here is squared error in variance units, not squared error in the variance ratio. The common-portfolio MSE and minimum-variance comparisons above are proposed tests, with no results reported here.
