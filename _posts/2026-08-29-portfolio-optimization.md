@@ -12,25 +12,25 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-Portfolio optimization can amplify estimation error. Combinations with
-underestimated variance look attractive to the optimizer, and small changes
-in scores or covariance can generate substantial turnover. Volatility and
-beta limits apply to forecasts: satisfying them at a rebalance doesn't ensure
-that realized volatility and beta stay within those bounds.
+The [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html)
+gives me a way to choose stocks. The next question is how to size them.
+Giving less weight to more volatile stocks is a useful starting point, but
+it leaves out how those stocks move together. I wanted to see what an
+optimizer could add by considering the whole portfolio.
 
-Here I compare stock-level volatility scaling with joint optimization using
-the same [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html).
-I use correlation shrinkage to reduce reliance on the strongest estimated
-diversification benefits, then add a rank buffer and an L1 trading penalty
-to control turnover. I assess net returns and turnover alongside volatility
-calibration and realized beta.
+Of course, the optimizer only has estimates to work with. It can put too much
+weight on a combination that looks safer than it really is, or trade too much
+in response to small changes in the inputs. I use correlation shrinkage to
+temper those risk estimates, then try a rank buffer and a trading penalty to
+reduce turnover. What interests me is how much of the benefit survives
+trading costs, and how closely the resulting risk matches the forecasts.
 
 ## Three allocation rules
 
 The comparison starts in September 1998, after the signals and risk estimates
 have enough history. I choose settings using data through December 2021.
-January 2022–May 2026 provides the later comparison, but that history has since
-informed feature, allocation, and beta-estimator choices.
+I also show January 2022–May 2026 separately to see how the rules behave more
+recently. Both periods have helped shape the strategy.
 
 Every allocation rule starts from the same Ridge ranking and follows three rebalance
 schedules, each beginning in a different week. Each schedule rebalances every three weeks,
