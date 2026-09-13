@@ -19,20 +19,17 @@ to give it is harder, especially when it looks a lot like the ones already
 there. Six- and twelve-month momentum, for example, share much of their
 history. How much does the second really add once I have the first?
 
-Here I use multiple linear regression to predict stocks' relative risk-adjusted
-performance over the next 20 sessions. It gives me a simple starting point:
-learn a weighted combination of the predictors, then inspect what the weights
-are doing. Ordinary least squares (OLS) chooses those weights by minimizing
-historical prediction error. With correlated inputs, though, it can fit small
-differences between signals using large, opposing coefficients. Ridge regression
-adds a penalty on coefficient size to reduce that reliance.
+Linear regression appeals to me because I can learn the weights and still
+see how the inputs combine. I'll start with ordinary least squares (OLS),
+then try Ridge regression to keep large, opposing coefficients in check.
+The question is whether that changes the stocks selected, or mainly changes
+how the model describes much the same ranking.
 
-I compare both regressions with a small fixed-weight benchmark and follow their
-predictions through to portfolio returns. I want to know whether learning a
-broader combination is useful, and whether regularizing it changes the
-investment decision. The [low-volatility article](/quant/2024/12/15/low-volatility-factor.html)
-focused on position sizing; this one asks what information should drive stock
-selection in the first place.
+I also want a simple point of comparison: a smaller set of predictors with
+fixed weights. I'll follow all three scores through to portfolio returns,
+because a better prediction is only useful here if it survives sizing and
+trading costs. The [low-volatility article](/quant/2024/12/15/low-volatility-factor.html)
+looked at how to size stocks; here I turn to how to choose them.
 
 ## What I ask the model to predict
 
@@ -43,19 +40,17 @@ risk-adjusted performance than their sector peers. For a given positive return,
 lower volatility means a better outcome, so my risk preference starts in the
 prediction problem.
 
-The model predicts this target rank. Its output is a score for relative
-performance, which I use to order stocks for portfolio selection. Ranking the
-target preserves the ordering of outcomes while discarding their magnitudes;
-the forecast therefore needs to be interpreted on that relative scale.
+The model predicts this rank, giving me a score for stock selection. Ranking
+keeps the ordering of outcomes but discards their magnitudes, so the score
+measures relative performance rather than an expected return in percent.
 
 Both regressions use 144 predictors, mostly based on prices and trading
 activity: momentum and trend, volatility, liquidity, size and short positioning.
 Many measure the same idea at different horizons. On each date, I rank stocks
 on each predictor across the whole eligible universe and rescale the ranks to
 roughly −1 to 1. This makes different units comparable and limits the influence
-of raw outliers. The regression is linear in these transformed inputs, so its
-coefficients describe changes in relative standing rather than raw prices or
-trading volumes.
+of raw outliers. The regression coefficients then describe the effect of a
+stock's relative standing on each predictor.
 
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes. Predictor
@@ -80,10 +75,6 @@ so that a theme's weight doesn't depend on how many variants it contains.
     <tr><th scope="row">Short positioning</th><td>Lower short interest relative to daily volume, smoothed over 21 and 63 sessions</td></tr>
   </tbody>
 </table>
-
-I orient the predictor ranks as shown, average within each theme, then average
-the three themes. The directions and equal weights come from the investment
-ideas and were fixed before inspecting this revised benchmark's results.
 
 The fixed rule uses twelve predictors, while OLS and Ridge use 144.
 Comparing them tests the broader learned approach as a whole, changing both the
@@ -133,18 +124,16 @@ penalty. Ridge accepts a worse fit to the training sample in exchange for
 shrinking the coefficients, with the aim of making predictions less sensitive
 to estimation noise. Both positive and negative coefficients remain possible.
 
-I use $c=0.01$, chosen during development to reduce coefficient size and
-movement while keeping the portfolio close to OLS. That last part matters:
-I chose a compromise, so the comparison tests this particular use of Ridge.
+I use $c=0.01$: a compromise that reduces coefficient size and movement while
+keeping the portfolio close to OLS. I'm looking for a less fragile combination,
+so I'll check both the coefficients and the portfolios it produces.
 
 ## From predictions to portfolios
 
-I estimate the models on an expanding history beginning in January 1995 and
-predict forward in blocks, refitting every 600 trading dates. A 21-date gap
-between training and prediction lets the last training outcomes finish before
-the model is used. Predictions begin in September 1998.[^training] Keeping
-older observations helps estimate a common combination, but can slow
-adaptation when relationships change.
+I fit the models on an expanding history beginning in January 1995, then
+predict the next block of dates. A gap between training and prediction lets
+the last training outcomes finish before the forecasts begin. Predictions
+start in September 1998.[^training]
 
 I report results through December 2021 and for January 2022–May 2026 separately.
 
@@ -158,9 +147,9 @@ counts all purchases and sales relative to strategy capital, annualized.
 
 ## Prediction quality and portfolio results
 
-I first check whether the forecasts put better subsequent outcomes above worse
-ones. Table 2 reports daily information coefficients (IC): cross-sectional
-Spearman correlations between each score and the subsequently observed target.
+First, do the scores rank stocks well? Table 2 reports the daily information
+coefficient (IC), the cross-sectional Spearman correlation between each score
+and the target observed over the following 20 sessions.
 OLS and Ridge have almost identical mean IC in both periods. The small
 development gain from Ridge disappears in the later period.
 
@@ -237,11 +226,11 @@ trained on an unadjusted return target.
 
 ## What Ridge changes
 
-Ridge has changed the fitted model: coefficient size and absolute movement
-between refits fall by roughly one third. To distinguish shrinking the
-coefficients from stabilizing their relative weights, I normalize each vector
-to unit length and compare its movement between refits. OLS and Ridge then
-show similar changes in direction.
+So why do smaller coefficients produce such similar portfolios? Ridge reduces
+coefficient size and absolute movement between refits by roughly one third.
+But once I normalize the coefficient vectors to the same length, their
+directions change by similar amounts. Much of the apparent stability comes
+from shrinking the weights.
 
 Scale also matters when interpreting the predictions. Multiplying all
 coefficients by the same positive constant would leave the stock ordering
@@ -263,12 +252,10 @@ fixed, they favor relative longer-term strength with weaker recent momentum.
 
 <p class="figure-caption"><strong>Figure 2:</strong> The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit. Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
 
-The price-to-moving-average coefficient settles around 0.02–0.03 after its
-larger first estimate, while short-horizon MACD roughly halves in magnitude,
-from −0.032 to −0.016. I read this as persistent directions with changing
-emphasis. These are conditional weights among overlapping predictors, and
-the training windows themselves overlap. Selecting the largest weights over
-the full history also makes their persistence a descriptive finding.
+I read this as persistent directions with changing emphasis. The model keeps
+favoring similar patterns, but most weights become smaller. Each coefficient
+describes an effect alongside the other predictors, so I wouldn't read a large
+weight as a standalone signal's importance.
 
 ## Where this leaves me
 
@@ -284,12 +271,8 @@ the development return advantage. Before adding more predictors, I would next
 fit OLS and Ridge on the benchmark's same twelve inputs, keeping the portfolio
 rules fixed. That would tell me more directly what learning the weights adds.
 
-[^training]: The first fit uses 900 trading dates. Each subsequent refit expands
-    the training history by 600 dates, for twelve refits in total and a shorter
-    final prediction block. Targets require all 20 forward returns; rows with
-    missing targets are excluded from fitting. At each refit, I train three
-    regressions on dates 1, 4, 7, …; 2, 5, 8, …; and 3, 6, 9, …, respectively.
-    All three predict the next block, and I average their scores before ranking.
-    For linear models, this equals averaging their intercepts and coefficient
-    vectors; the coefficient diagnostics use those averages. Overlapping
-    outcomes and shared market and sector shocks make the three fits dependent.
+[^training]: The first fit uses 900 trading dates, followed by a 21-date gap.
+    I refit every 600 dates, expanding the training history, for twelve refits.
+    At each refit, three regressions use interleaved subsets of training dates;
+    I average their predictions before ranking stocks. The coefficient charts
+    show the corresponding average weights.
