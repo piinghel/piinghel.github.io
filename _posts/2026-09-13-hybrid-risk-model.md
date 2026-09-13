@@ -43,7 +43,27 @@ Here $r$ contains the returns of $N$ stocks. The $K$ named factor returns are $f
 
 ### Estimating the named factors
 
-The exposures and factor returns play different roles. A sector exposure is an indicator; a style exposure records where a stock sits on a characteristic such as size or momentum. I winsorize and standardize the style exposures across stocks, then use the **previous session's exposures** to explain each day's returns. The factor returns are the regression coefficients fitted across stocks on that day.
+The named block has an intercept, eleven sector indicators and seven styles. Here, “fundamental” means that I specify the characteristics in advance. The styles use prices, market capitalization and trading volume; this version has no accounting-based value, profitability or leverage exposures.
+
+<p class="table-caption"><strong>The named exposures.</strong> Definitions before cross-sectional winsorization and standardization. Windows count trading observations; the reversal, beta and volume calculations additionally require consecutive sessions.</p>
+<table class="research-table settings-table">
+<thead><tr><th>Exposure</th><th>Definition and interpretation</th></tr></thead>
+<tbody>
+<tr><th scope="row">Common return</th><td>An intercept equal to one for every stock. It captures the fitted common move.</td></tr>
+<tr><th scope="row">Sectors</th><td>One indicator per sector: Communications, Consumer Discretionary, Consumer Staples, Energy, Financials, Health Care, Industrials, Materials, Real Estate, Technology and Utilities.</td></tr>
+<tr><th scope="row">Beta</th><td>252-session covariance with the benchmark return divided by benchmark variance, clipped to [−4, 4]. Higher values mean greater historical market sensitivity.</td></tr>
+<tr><th scope="row">Size</th><td>Log market capitalization. Higher values mean larger companies.</td></tr>
+<tr><th scope="row">Momentum</th><td>Sum of the 20-, 60-, 125- and 252-observation price returns, including the most recent month. Higher values mean stronger past performance.</td></tr>
+<tr><th scope="row">Short reversal</th><td>Negative compounded return over the past 21 sessions. Recent losers have higher exposure.</td></tr>
+<tr><th scope="row">Long reversal</th><td>Negative compounded return over 504 sessions, ending 252 sessions ago: approximately years one to three in the past.</td></tr>
+<tr><th scope="row">Volatility</th><td>Standard deviation of the past 21 daily returns, using divisor 21. Higher values mean more volatile stocks.</td></tr>
+<tr><th scope="row">Trading activity</th><td>Log mean daily dollar volume over 21 sessions. This is the model's liquidity proxy; it does not directly measure spreads or market impact.</td></tr>
+</tbody>
+</table>
+
+These choices matter. Momentum includes the recent month, so it overlaps with short reversal. Size and dollar volume overlap too. Joint regression estimates each factor's contribution while controlling for the others, but correlated descriptors can make the individual coefficients less stable. A factor's inclusion says that its exposure may help describe shared risk; it does not assume a positive expected return for that factor.
+
+The exposures and factor returns play different roles. I winsorize and standardize the style exposures across stocks, then use the **previous session's exposures** to explain each day's returns. The factor returns are the regression coefficients fitted across stocks on that day. For example, a size exposure of +1 means one weighted cross-sectional standard deviation above the mean; a fitted size return of 0.2% contributes 0.2% to that stock's fitted return, holding its other exposures fixed.[^descriptors]
 
 Writing $u$ for a historical return date, the fit minimizes a weighted sum of squared errors, $\mathcal L_u$:
 
@@ -58,6 +78,8 @@ $$
 The vector $b_i$ contains stock $i$'s named exposures. The positive regression weights $\omega_i$ are proportional to square-root market capitalization, capped at their cross-sectional 95th percentile and normalized to sum to one. They determine each stock's influence on the fit; they are separate from the portfolio weights $w_i$ used later.
 
 The constraint set $\mathcal C$ makes the intercept and sector returns identifiable. With one intercept and all sector indicators, the columns otherwise repeat the same common move. I constrain the sector returns to have a weighted mean of zero, using each sector's share of regression weight. The intercept then captures the common component and sector coefficients describe departures from it. The residual $e_u$ is what the named factors leave unexplained; it still contains shared risk that PCA may find.
+
+The beta coefficient needs particular care. The **exposure** is a stock's historical regression beta; the **factor return** is today's cross-sectional payoff to standardized beta after controlling for the other characteristics. It is not the benchmark return itself. The intercept and beta column therefore serve different purposes. There are 19 named columns, with one sector-identification constraint; full identification also requires sufficient independent exposures in the day's estimation universe.
 
 ### Finding common movement in the residuals
 
@@ -84,7 +106,9 @@ g_u=P^\top W e_u,\qquad
 \varepsilon_u=e_u-Pg_u.
 $$
 
-This is also a useful implementation check: adding the fitted residual-factor component back to $\varepsilon_u$ must recover $e_u$. The eigenvector extraction is refreshed every 21 sessions; projection and score estimation use the current exposures and eligible universe. Stocks without complete PCA-window history stay outside that extraction and receive extra specific-risk protection.[^estimation]
+This is also a useful implementation check: adding the fitted residual-factor component back to $\varepsilon_u$ must recover $e_u$. The eigenvector extraction is refreshed every 21 sessions; projection and score estimation use the current exposures and eligible universe. The basis is aligned to its previous estimate by an orthogonal rotation where overlap permits. Stocks without complete PCA-window history stay outside that extraction and receive extra specific-risk protection.[^estimation]
+
+There is an estimation choice hidden in those steps. Extraction minimizes reconstruction error in standardized units, weighting stock $i$ by $\omega_i/S_{ii}^2$. The later projection and score fit use $\omega_i$ instead. Also, each historical $e_u$ was fitted against that date's $B_{u-1}$, while the final projection uses today's $B$. Consequently, “extract ten PCs, then project” generally differs from finding the best ten directions subject to the named-factor constraint. It is a valid way to construct loadings, but I would not describe it as an optimal joint fit. I return to a more consistent alternative after the results.
 
 ### From factors to stock covariance
 
@@ -235,7 +259,61 @@ The cost comparison helps explain the return gap. The hybrid earns 11.34% a year
 
 The portfolios also carry different exposures. Gross exposure adds the absolute sizes of the long and short positions. It averages about 1.68 times capital for the hybrid and 1.73 for the blend, versus 1.81 for recalibrated direct covariance. Their full-period realized market betas—the regression slopes of daily net P&amp;L on the study's market return—are about 0.01, 0.03 and 0.08, respectively. The covariance choice has changed position sizes and market sensitivity. Identifying which holdings or factor tilts caused the lost return would require a matched attribution.
 
-## What I would test next
+## Would I build the hybrid this way again?
+
+I would keep the idea of named factors plus residual structure as a candidate. Named exposures give the model an interpretable starting point, while residual factors can pick up common movements those exposures miss. *Elements* discusses this complementarity. Its treatment of weighted, two-stage PCA also makes clear that scaling, noise estimation and factor selection are part of the estimator, rather than incidental preparation.[^weighted-pca]
+
+The current results compare complete risk-model choices. They do not isolate the contribution of residual PCA: there is no named-factors-only portfolio in these tables, and the direct and hybrid models use different correlation shrinkage. Before adding more complexity, I would add that missing baseline with the same specific-risk and calibration rules. Otherwise, we cannot tell whether the named block helped and PCA hurt, the reverse happened, or their interaction mattered.
+
+### Use one fitting objective
+
+For a cleaner residual-PCA comparison, I would make the weighting and exclusion constraint consistent from extraction through scoring. Let $M$ be a chosen positive diagonal stock-weight matrix. On the eligible stocks, consider
+
+$$
+\begin{gathered}
+\min_{G,P}\;\left\|A^{1/2}(E_c-GP^\top)M^{1/2}\right\|_F^2,\\
+\text{subject to }P^\top MP=I_J,\\
+B^\top MP=0.
+\end{gathered}
+$$
+
+Here $G$ contains historical scores, and the squared Frobenius norm sums the squared entries of the weighted reconstruction error. The first constraint fixes factor units; the second reserves the current named-factor space for $B$. A direct solution projects the **data before extracting the retained directions**:
+
+$$
+\begin{aligned}
+Z&=M^{1/2}B,\qquad \Pi_Z=ZZ^\dagger,\\
+Y&=A^{1/2}E_cM^{1/2}(I-\Pi_Z),\\
+P&=M^{-1/2}V_J(Y).
+\end{aligned}
+$$
+
+$Z^\dagger$ is the Moore–Penrose pseudoinverse, which handles the redundant intercept/sector representation; $V_J(Y)$ contains the leading right singular vectors in the orthogonal complement of $Z$. There must be at least $J$ usable directions. The scores are $G=E_cMP$. This solves the stated constrained reconstruction problem, so extraction and scoring now have the same objective. It is an alternative specification, not the procedure behind the reported results.
+
+Choosing $M$ remains a statistical decision. Square-root-cap weights emphasize larger stocks. Inverse specific-variance weights emphasize observations thought to contain less unexplained noise; their efficiency argument requires the residual covariance assumptions to be appropriate. The two-stage approach in *Elements* first estimates residual scale, then refits PCA after reweighting. Applying that idea to the named-factor residuals would provide a useful challenger. I would regularize the scale estimates so an accidentally quiet stock cannot receive enormous influence. A consistent objective makes the construction easier to defend, but cannot establish better future risk forecasts by itself.[^weighted-pca]
+
+### Check whether the answer depends on factor coordinates
+
+For an exact covariance calculation, rotating the residual basis changes its coordinates while preserving stock risk. If $O^\top O=I$, then $P_{\star}=PO$ and $g_{\star}=O^\top g$ describe the same fitted returns. Their covariance transforms as $F_{gg,\star}=O^\top F_{gg}O$, giving
+
+$$
+P_{\star}F_{gg,\star}P_{\star}^\top=PF_{gg}P^\top.
+$$
+
+The named–residual cross block must transform too: $F_{fg,\star}=F_{fg}O$. With that change, the full shared covariance is unchanged.
+
+Our estimator adds a complication: it combines fast estimates of each factor's variance with slow correlations. Taking the diagonal is coordinate-dependent. For example, suppose the slow covariance is $I_2$ and the fast covariance is $\operatorname{diag}(4,1)$, in arbitrary variance units. The split estimator gives $\operatorname{diag}(4,1)$. Rotate both inputs by 45 degrees: the slow matrix stays $I_2$, while both fast diagonal entries become 2.5. Reapplying the split estimator and rotating back gives $2.5I_2$. The underlying factor space has not changed, yet the estimated risk has.
+
+That is a mathematical property of this estimation rule, not evidence that basis rotation caused the backtest's return gap. It does mean the alignment rule belongs in the model specification. A useful control would estimate the full joint factor covariance with one common time-weighting rule; orthogonal changes of the residual coordinates would then leave stock covariance unchanged. Comparing that control with the current fast/slow rule would test whether the extra responsiveness is worth the coordinate dependence.
+
+### Ask whether the remaining structure is broad or local
+
+Ten residual components may include noise, and a large sample eigenvalue does not guarantee a reliable factor direction. Kolm and Ritter's recent residual-PCA working paper distinguishes detecting an unusual eigenvalue from recovering a useful hidden-factor loading. Its finite-sample calibration is a relevant direction for selecting components, although our exponential weights and changing universe would need to be reflected in the calibration.[^hidden-factors]
+
+There is another possibility: some remaining dependence may concern a few related stocks rather than a broad factor. Adding PCs is then only one way to model it. The POET literature studies low-rank shared risk plus a sparse residual covariance, relaxing the assumption that every off-diagonal residual covariance is zero. That suggests a separate challenger to our diagonal $D$, with thresholding and positive-definiteness checks. Its assumptions and tuning would need testing here; it is not an automatic upgrade.[^poet]
+
+For the next comparison, I would prioritize the named-only baseline and the consistent residual-PCA fit. They address what the extra block contributes and how it is estimated. Factor-count calibration, a common-weight covariance control and sparse residuals address distinct questions that should follow from those diagnostics.
+
+## How I would evaluate those changes
 
 I would keep the full portfolio comparison and add two focused tests. They answer different questions about the same risk model.
 
@@ -284,6 +362,14 @@ For this comparison, I still prefer direct covariance. The hybrid and blend impr
 
 [^losses]: Andrew J. Patton, [“Volatility forecast comparison using imperfect volatility proxies”](https://public.econ.duke.edu/~ap172/Patton_vol_proxies_JoE_2011.pdf), *Journal of Econometrics* 160 (2011), pp. 246–256, especially §3. MSE here is squared error in variance units, not squared error in the variance ratio. The common-portfolio MSE and minimum-variance comparisons above are proposed tests, with no results reported here.
 
-[^estimation]: Styles are winsorized at the cross-sectional 1st and 99th percentiles and centred/scaled with the regression weights. PCA requires at least 252 sessions; its equations describe the complete-history eligible universe. Specific-risk shrinkage toward the structural variance estimate has weight $0.3+0.7\times60/(60+n_i)$, where $n_i$ counts observed residual sessions; fewer than 60 observations receive the full structural estimate. Daily variance floors and caps precede a 1.5 variance buffer for PCA-excluded stocks, whose specific variance is also bounded below by the buffered pre-PCA estimate. Prior observed exposures may be carried for at most 21 sessions. The separate stale-exposure buffer applies $Q\Sigma Q$, with diagonal $Q_{ii}=\sqrt{1.5}$ for stale names and one otherwise. This is equivalent to replacing $L$ by $QL$ and $D$ by $QDQ$, preserving the factor form. Missing residual observations retain their dates and receive zero estimation weight.
+[^descriptors]: Styles are winsorized at the cross-sectional 1st and 99th percentiles, then centred and scaled with the regression weights. Invalid numeric descriptors receive the same-date cross-sectional median before fitting. Momentum sums $p_t/p_{t-h}-1$ over $h\in\lbrace20,60,125,252\rbrace$; the inherited feature sums available horizons if some are missing, and its lags count stock observations. This is a coverage limitation to check for young or interrupted histories. The long-reversal return uses sessions $t-755$ through $t-252$. Sector gaps use a prior observed label where available, otherwise the current cross-sectional mode; sector vintage remains a limitation of the study.
+
+[^weighted-pca]: Paleologo, *The Elements of Quantitative Investing*, draft of 9 September 2024, chapter 8 introduction (physical PDF page 255) and §8.5.1, “Weighted and Two-Stage PCA,” pp. 267–271 (physical PDF pages 293–297), especially Procedure 8.1. This is the draft's general statistical-model estimation framework; the constrained residual fit above is an alternative derived for this article, not a claim that the book prescribes our hybrid implementation.
+
+[^hidden-factors]: Petter N. Kolm and Gordon Ritter, [“Hidden Factors in Portfolio Risk Models: A Finite-Sample Approach to Residual PCA”](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6913458), working paper dated 10 June 2026, posted 3 July 2026. The public abstract describes separate eigenvalue-detection and eigenvector-alignment calibration questions; I have not evaluated that procedure on this study.
+
+[^poet]: Jianqing Fan, Yuan Liao and Martina Mincheva, [“Large covariance estimation by thresholding principal orthogonal complements”](https://pmc.ncbi.nlm.nih.gov/articles/PMC3859166/), *Journal of the Royal Statistical Society: Series B* 75 (2013), §§2.1–2.2. Their approximate-factor model allows a sparse residual covariance; transferring its estimator to a dynamic hybrid requires additional design and validation.
+
+[^estimation]: PCA requires at least 252 sessions; its equations describe the complete-history eligible universe. Specific-risk shrinkage toward the structural variance estimate has weight $0.3+0.7\times60/(60+n_i)$, where $n_i$ counts observed residual sessions; fewer than 60 observations receive the full structural estimate. Daily variance floors and caps precede a 1.5 variance buffer for PCA-excluded stocks, whose specific variance is also bounded below by the buffered pre-PCA estimate. Prior observed exposures may be carried for at most 21 sessions. The separate stale-exposure buffer applies $Q\Sigma Q$, with diagonal $Q_{ii}=\sqrt{1.5}$ for stale names and one otherwise. This is equivalent to replacing $L$ by $QL$ and $D$ by $QDQ$, preserving the factor form. Missing residual observations retain their dates and receive zero estimation weight.
 
 [^horizon]: For a covariance-stationary vector return process with lag covariance $\Gamma_\ell=\operatorname{Cov}(r_u,r_{u-\ell})$, the covariance of an $H$-session arithmetic sum is $H\Gamma_0+\sum_{\ell=1}^{H-1}(H-\ell)(\Gamma_\ell+\Gamma_\ell^\top)$. The implementation also constructs a separate 21-session estimate with a two-lag Bartlett adjustment. That horizon matrix is not the daily covariance used by this allocation and forecast-score comparison; compounded returns and changing holdings require further care.
