@@ -294,21 +294,50 @@ $$\rho=0.5$$, halves the off-diagonal correlations while keeping each stock's
 own variance.
 
 In [*Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543),
-Pedersen, Babu, and Levine (2021) explain why this can help. An optimizer can
-take large positions in combinations with very low estimated risk, where
-errors in both risk and expected return matter disproportionately. Correlation
-shrinkage raises the smallest eigenvalues, reducing the attraction of these
-apparently safe combinations. I use that shrinkage idea inside this constrained
-allocation problem.
+Pedersen, Babu, and Levine (2021, pp. 129–130) explain this through principal
+components. Each component is a combination of volatility-standardized stock
+returns. Its unit-length eigenvector $$q_j$$ gives the combination, and its
+eigenvalue $$\lambda_j$$ measures the estimated variance. Suppressing time
+subscripts, positive shrinkage leaves these eigenvectors unchanged and gives
+
+$$
+\begin{aligned}
+\lambda_j(\rho)&=(1-\rho)\lambda_j+\rho,\\
+C(\rho)^{-1}q_j&=\frac{q_j}{\lambda_j(\rho)}.
+\end{aligned}
+$$
+
+Shrinkage moves the eigenvalues toward their average of one: small ones rise
+and large ones fall. The second line shows
+why that matters: the inverse divides each component by its estimated
+variance. A favorable score in a low-variance direction can attract a large
+allocation, but an underestimated variance amplifies errors in that score too.
+I give up some of the strongest apparent diversification benefits to make
+the allocation less sensitive to estimation error.
 
 The shrunk correlation matrix becomes a covariance matrix through
 
 $$
-\Sigma_t=\kappa^2D_tC_t(\rho)D_t,
+\begin{aligned}
+\Sigma_t&=\kappa^2D_tC_t(\rho)D_t,\\
+\Sigma_t^{-1}&=\kappa^{-2}D_t^{-1}C_t(\rho)^{-1}D_t^{-1}.
+\end{aligned}
 $$
 
-where $$D_t$$ contains annualized stock-volatility estimates. Volatility uses
-21 days and correlations use 756 days of volatility-standardized returns,
+Here $$D_t$$ contains annualized stock-volatility estimates. The second line
+is the *precision matrix* in the unconstrained direction
+$$w^\star\propto\Sigma^{-1}\alpha$$ introduced earlier: the rightmost
+$$D_t^{-1}$$ divides expected returns by stock volatility, the inverse
+correlation matrix adjusts their components, and the leftmost $$D_t^{-1}$$
+converts back to position weights.
+
+At full shrinkage, this gives expected return divided by stock variance.
+Using my sizing scores $$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$ in that same case, one volatility factor
+cancels, giving weights proportional to $$s_{i,t}/\widehat\sigma_{i,t}$$.
+These unconstrained relationships build intuition; the portfolio limits and
+trading penalty still require the joint solve.
+
+Volatility uses 21 days and correlations use 756 days of volatility-standardized returns,
 with 252 observations required. This combines responsive stock volatility with
 longer estimates of the relationships between stocks. The multiplier
 $$\kappa=1.18$$ scales forecast volatility.
