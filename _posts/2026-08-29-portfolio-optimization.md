@@ -317,6 +317,9 @@ shared factor risk with stock-specific risk. They can also be used with
 shrinkage in the same optimizer; the experiments here use empirical correlation
 shrinkage. For an introduction, I particularly liked HRT's
 [*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/).
+I also recommend Giuseppe Paleologo's
+[*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
+especially Chapter 4 on multi-factor models.
 
 Figure 3 shows why I keep some estimated correlation. I rebuild both joint
 rules at each shrinkage value using development data. From 0.3 to 0.6,

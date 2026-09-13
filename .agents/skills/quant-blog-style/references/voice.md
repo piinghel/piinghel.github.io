@@ -57,6 +57,13 @@ source the author likes for its exposition from the original contribution;
 leading with a source's name can give familiar material an unintended air of
 novelty or imply credit for inventing it.
 
+Let references carry the author's personal judgment when he has expressed it:
+what he liked, found useful or would recommend to a colleague. A brief, natural
+recommendation can make a technical article more personal without interrupting
+its argument. Mention why a source is useful when that reason is known; avoid
+turning every citation into a formulaic endorsement or inventing a reading
+experience. Keep formal attribution where it supports a specific claim.
+
 The user's additional reference is Cliff Asness: choose the strongest one or
 two arguments rather than explaining a point several ways, and use footnotes
 for secondary qualifications that interrupt the flow. Avoid his combative tone
