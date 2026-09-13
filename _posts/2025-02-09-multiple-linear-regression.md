@@ -85,10 +85,42 @@ vector of predictor ranks $$\mathbf X_{i,t}$$:
 $$\widehat y_{i,t}=\beta_0+\mathbf X_{i,t}^{\top}\boldsymbol\beta.$$
 
 The coefficients $$\boldsymbol\beta$$ determine how the inputs combine, and
-$$\beta_0$$ is an intercept. OLS minimizes squared error between these
-predictions and the observed target ranks. A positive coefficient rewards a
-high predictor rank, conditional on the other inputs; a negative coefficient
-reverses that preference.
+$$\beta_0$$ is an intercept. At each refit, I pool the training stock-date
+observations into a matrix $$X$$ with $$n$$ rows and 144 predictor columns,
+alongside a vector $$\mathbf y$$ of target ranks. The model estimates one set
+of coefficients from that history, shared across stocks and dates until the
+next refit. A positive coefficient associates a higher predictor rank with a
+higher target rank, conditional on the other inputs; a negative coefficient
+reverses that relationship.
+
+OLS chooses the coefficients that minimize the mean squared residual:
+
+$$
+\min_{\beta_0,\boldsymbol\beta}
+\frac{1}{n}\left\lVert
+\mathbf y-\beta_0\mathbf 1-X\boldsymbol\beta
+\right\rVert_2^2.
+$$
+
+To separate the intercept from the slope coefficients, subtract each column's
+training mean from $$X$$ and the training mean from $$\mathbf y$$. Call these
+centred quantities $$X_c$$ and $$\mathbf y_c$$. This is an algebraic step in
+fitting the intercept; the inputs are still the predictor ranks defined above.
+Setting the gradient of the loss to zero gives the *normal equations*:
+
+$$
+X_c^\top X_c\,\widehat{\boldsymbol\beta}_{\mathrm{OLS}}
+=X_c^\top\mathbf y_c.
+$$
+
+The left-hand matrix captures how the predictors vary together; the right-hand
+vector captures how each predictor varies with the target. Solving this system
+estimates their contributions jointly. If the columns are linearly independent,
+the solution is unique. The intercept then follows from
+$$\widehat\beta_0=\bar y-\bar{\mathbf x}^{\top}\widehat{\boldsymbol\beta}$$,
+where $$\bar{\mathbf x}$$ contains the predictor means. In practice, OLS is
+computed using a singular value decomposition (SVD), which avoids explicitly
+inverting $$X_c^\top X_c$$.[^least-squares]
 
 Correlated predictors can substitute for one another, making their individual
 coefficients hard to estimate reliably. This is the multicollinearity problem.
@@ -113,16 +145,39 @@ $$
 +c\lVert\boldsymbol\beta\rVert_2^2.
 $$
 
-Here $n$ counts training stock-date observations and $y_k$ is the observed
-target rank. The intercept is unpenalized; $c=0$ gives OLS. With positive $c$,
-a large coefficient has to reduce prediction error enough to offset its
-penalty. Ridge accepts a worse fit to the training sample in exchange for
-shrinking the coefficients, with the aim of making predictions less sensitive
-to estimation noise. Both positive and negative coefficients remain possible.
+Here $y_k$ is the target rank for training observation $k$. The intercept is
+unpenalized. After centring, the same differentiation gives:
+
+$$
+\left(\frac{X_c^\top X_c}{n}+cI\right)
+\widehat{\boldsymbol\beta}_{\mathrm{Ridge}}
+=\frac{X_c^\top\mathbf y_c}{n}.
+$$
+
+So Ridge adds $c$ to the diagonal of the predictor second-moment matrix before
+solving the system. For $c>0$, this makes the coefficient solution unique even
+when some predictors are exactly redundant. More generally, it reduces the
+sensitivity to combinations that have little variation in the training data,
+such as the difference between two nearly identical signals.
+
+The shrinkage is easiest to see along the eigenvectors of
+$$X_c^\top X_c/n$$. For a direction with positive eigenvalue $\lambda$, Ridge
+multiplies the OLS coefficient component by $$\lambda/(\lambda+c)$$.
+Directions with small eigenvalues receive the strongest shrinkage. This is
+why Ridge can substantially change opposing coefficients while leaving much
+of the fitted score intact. It does not simply scale every coefficient by
+the same amount, and both positive and negative coefficients remain possible.
 
 I use $c=0.01$: a compromise that reduces coefficient size and movement while
-keeping the portfolio close to OLS. I'm looking for a less fragile combination,
-so I'll check both the coefficients and the portfolios it produces.
+keeping the portfolio close to OLS. Dividing the squared-error term by $n$
+keeps the penalty's scale consistent as the training sample expands. In the
+equivalent formulation using the *sum* of squared errors, the penalty is
+$\alpha=nc$.[^least-squares] Regularization trades some training fit for less
+sensitivity to estimation noise; whether that improves forecasts still needs
+to be checked. I'll look at both the coefficients and the portfolios they
+produce.
+
+[^least-squares]: The [scikit-learn linear-model documentation](https://scikit-learn.org/stable/modules/linear_model.html#ordinary-least-squares) describes the OLS solver and Ridge's sum-of-squares objective. The equations here use mean squared error, hence the conversion $\alpha=nc$.
 
 ## From predictions to portfolios
 
