@@ -12,13 +12,22 @@ series_id: performance-attribution
 series_order: 1
 ---
 
-<p class="article-summary">The shorts offset daily fluctuations, but the portfolio retained a small positive market beta and suffered large losses in some rebounds. Attribution connects those outcomes to the backtest's positions and exposures.</p>
+<p class="article-summary">A return chart shows how the portfolio did. Attribution helps explain why. I break down P&amp;L and risk by positions, sectors and shared stock characteristics, then look at what those views reveal during drawdowns.</p>
 
-The short book lost money over the full history. Before cutting it back,
-I want to know how much protection I'd give up and what drove those losses.
-I start by tracing how positions and factor returns add up to P&L and daily
-risk. Parts 2 and 3 use that accounting to investigate the rebound losses
-and test changes to the portfolio.
+Once I've built a portfolio, I want to understand what is driving it.
+Are returns coming from a few stocks, a sector, or a broader preference for
+things like momentum and low volatility? And when the portfolio struggles,
+is that same preference behind the losses?
+
+Those questions matter before changing the strategy. A position that loses
+money can still offset risk elsewhere, while several apparently different
+stocks can depend on the same market move. Looking only at total returns
+makes it hard to tell which part deserves a closer look.
+
+I'll start with the positions, then group their contributions by sector and
+factor. Along the way, I'll compare accumulated profit and loss (P&L) with
+contributions to daily risk. That gives the rest of this series its starting
+point: Part 2 investigates the rebound losses, and Part 3 tests ways to reduce them.
 
 I use the strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
@@ -30,7 +39,7 @@ One **P&L point** means 1% of the same fixed strategy notional throughout.
 Trading costs are 5 basis points per dollar traded, excluding borrow, financing
 and market impact. Turnover is two-way traded notional divided by strategy
 capital. Sharpe divides annualized net P&L by annualized volatility, using a
-zero cash rate; collateral return and funding belong to the financing decision.
+zero cash rate.
 </div>
 
 ## Start with the positions
@@ -120,8 +129,6 @@ $$
 Here $c_{j,t}$ is sector $j$'s daily contribution and $P_t$ is daily net
 portfolio P&L. The variance shares add to 100%, including costs. A component
 that offsets portfolio fluctuations can receive a negative share.
-That distinction matters in the 2020–21 drawdown: the shorts lost more than
-13 points despite receiving only 0.2% of portfolio variance.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by P&L." %}
@@ -136,7 +143,7 @@ The sector breakdown only gets me so far. Stocks in different sectors can
 share high beta or low volatility, so I also fit a factor model to see how
 those shared characteristics contributed.
 
-## Fit the factor returns
+## What do the stocks have in common?
 {: #fit-the-common-returns }
 
 Each day, I explain stock returns using their **prior-session**
@@ -198,12 +205,11 @@ $$
 \qquad Q_{s,t}=\sum_{i\in U_t:s(i)=s}q_{i,t-1}.
 $$
 
-The coefficients use unpenalized least squares, solved jointly by SVD.
-
 </div>
 </details>
 
-## Apply the fit to the portfolio
+## From factor returns to portfolio P&L
+{: #apply-the-fit-to-the-portfolio }
 
 To use the fit, I multiply each stock's loading by its signed portfolio
 weight and add them up. That gives the portfolio's exposure. Multiplying it
@@ -243,8 +249,7 @@ Figure 3 measures the resulting beta of the whole book.
 
 The fit covered **93.1% of gross exposure** on average. Uncovered holdings
 contributed **22.5 points**: a holding can lack a descriptor, sufficient price
-history or an eligible sector label. Part 3 records this coverage and assigns
-missing beta loadings the universe mean when imposing its beta limit.
+history or an eligible sector label.
 
 With almost half the variance in the residual, I'd be cautious about calling
 it stock-picking skill. Changing the factor set could move some of that P&L
@@ -292,16 +297,15 @@ Variance measures deviations around average daily P&L. Here the shorts earned
 **30.7 points** during the market decline, then lost **44.2** during the
 rebound.
 
-So the shorts did provide protection, but the losses once the market
-rebounded were substantial. Before changing the portfolio, I want to
-understand why. In [part 2](/quants/short-book-rebounds.html), I look at the
-stocks held on each side of the book.
+This is what I find useful about attribution: it changes the question from
+whether the shorts made money overall to when they helped and when they hurt.
+Here, the rebound losses deserve a closer look. In
+[part 2](/quants/short-book-rebounds.html), I turn to the stocks on each side
+to understand why the recovery was so difficult for the portfolio.
 
 <aside class="research-note" markdown="1">
 **Calculation notes.** Sector labels use an August 2026 snapshot. Drawdowns
 and market lows are selected in hindsight.
-Forecast risk requires factor covariance and stock-specific risk estimates
-calibrated at the intended horizon.
 </aside>
 
 ## References

@@ -90,7 +90,8 @@ The hybrid risk-model article is `_posts/2026-09-13-hybrid-risk-model.md`. Its r
 aggregate inputs are `assets/hybrid-risk-model/metrics.json`; regenerate the
 calibration plot with `python3 scripts/render_hybrid_risk.py` and the symbolic
 block-matrix diagram with `python3 scripts/render_risk_matrices.py`. The article
-is published at `/quants/hybrid-risk-model.html`.
+is currently unpublished (`published: false`); its retained permalink is
+`/quants/hybrid-risk-model.html`.
 
 The regression article figures are regenerated from the included aggregate evidence:
 

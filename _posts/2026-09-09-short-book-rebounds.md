@@ -12,13 +12,18 @@ series_id: performance-attribution
 series_order: 2
 ---
 
-<p class="article-summary">Higher-beta, more volatile shorts often rebound faster than the longs early in a rebound. The imbalance is much less common after six months, although the two deepest strategy drawdowns show how costly the intervening path can be.</p>
+<p class="article-summary">A market recovery can be difficult for a portfolio that shorts volatile stocks. I look at the holdings behind two large drawdowns, then compare eleven rebounds to see how often the same imbalance appears and how long it lasts.</p>
 
-The shorts helped during the market falls, then gave back more than they
-earned. To understand why, I start with the stocks held on each side.
-[Part 1's beta chart](/quants/portfolio-attribution.html#portfolio-beta)
-showed low positive market beta alongside negative standardized beta exposure;
-the holdings help explain how those two can coexist.
+The market can recover well before a long–short portfolio does. That gap is
+what I want to understand here. In [Part 1](/quants/portfolio-attribution.html),
+the short book helped during declines but gave back more during the rebounds.
+The next step is to look at the positions behind that reversal.
+
+Were a few short positions responsible, or did the stocks across the book
+share characteristics that made them vulnerable to a recovery? I'll start
+with the 2009 and 2020 rebounds, compare the holdings and their factor
+contributions, then check eleven episodes. The aim is to see whether the
+problem repeats and whether it is concentrated in the first few months.
 
 I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
@@ -46,8 +51,8 @@ were **9 March 2009** and **23 March 2020**.
 
 </div>
 
-**The strategy lost in both phases, in both episodes.** Figure 1 follows the
-long and short contributions through those losses.
+In both episodes, gains on the long side during the rebound were smaller
+than the short-book losses. Figure 1 follows the two contributions through time.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/market-phases" mobile="/assets/portfolio-attribution/market-phases_mobile" version="4" alt="Benchmark levels above cumulative long, short and net P&L, split at the March 2009 and March 2020 market lows. The strategy continues losing during the rebounds." %}
@@ -74,10 +79,6 @@ Around half the short-book losses came from names added during the rebound.
 The five worst contributors explained only a small share in either episode,
 so looking only at old shorts or the worst few names would miss much of the
 loss. I next look at what the stocks across the book had in common.
-
-(Zscaler, the largest short entering the 2020 rebound, lost about **0.1 P&L
-points** before the position closed in early June. Its later price rise came
-after the exit, so the stock chart alone overstates what that position cost.)
 
 Figure 2 separates beta and volatility contributions from the residual and
 other terms over each complete drawdown.
@@ -194,11 +195,6 @@ Table 5 checks shorter and longer windows around the same lows.
 
 </div>
 
-Under an illustrative independent fair-coin model, 9 of 11 has a two-sided
-binomial p-value of 0.065 (0.033 one-sided); 3 of 11 gives 0.227 two-sided.
-These selected episodes and overlapping horizon checks do not provide an
-independent significance test.
-
 By 126 sessions, the median imbalance has reversed and only one portfolio
 window remains negative. That changes what I'd try to fix: the difficulty is
 usually in the first few months, and often fades as holdings and market
@@ -209,9 +205,10 @@ preceding peak.
 
 ## What this changes
 
-Any permanent limit will also change the protection the shorts provide on
-the way down. That's the trade-off I care about: better first-63-session P&L
-without giving up aggregate decline-window P&L. In
+I'd focus on the early rebound rather than try to remove the short book's
+defensive role altogether. Any permanent limit will also change the protection
+it provides on the way down. That's the trade-off I care about: improving the
+first three months of a recovery while preserving that decline protection. In
 [part 3](/quants/managing-rebound-risk.html), I test tilt limits, standardized
 beta limits and daily portfolio scaling against that requirement.
 

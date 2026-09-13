@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Performance Attribution, Part 3: What Volatility-Tilt Limits Cost, and What They Don't Fix"
+title: "Performance Attribution, Part 3: Can Risk Limits Improve Rebounds?"
 description: "Tilt limits buy lower drawdown but worsen typical rebounds as they tighten. Direct beta limits offer modest, uneven improvement."
 permalink: /quants/managing-rebound-risk.html
 toc: true
@@ -12,17 +12,19 @@ series_id: performance-attribution
 series_order: 3
 ---
 
-<p class="article-summary">Tilt limits buy lower historical drawdown at a cost to P&amp;L. Tighter limits worsen the median rebound result. Direct standardized beta limits give modest, uneven improvement; daily volatility scaling adds costs without beating constant sizing on gross P&amp;L.</p>
+<p class="article-summary">The rebound analysis points to a defensive tilt that can become costly when markets recover. I test limits on that tilt, daily volatility scaling and beta-exposure limits, looking for better rebounds without giving up too much elsewhere.</p>
 
-The shorts help when the market falls, then give back too much when it
-[bounces](/quants/short-book-rebounds.html). I'd like to soften those rebound
-losses without losing the protection on the way down. The tricky part is
-finding a change that helps across the rest of the history too.
+Once a pattern shows up in attribution, it's tempting to add a constraint
+and move on. But a limit changes the portfolio on every date it applies,
+including the periods when that exposure was useful. The question is whether
+it fixes enough of the problem to justify what it gives up elsewhere.
 
-I tested tilt limits, daily portfolio scaling and limits on the
-standardized beta exposure from
-[part 1](/quants/portfolio-attribution.html#portfolio-beta), keeping the
-forecasts, covariance model and execution rules unchanged. Three rebalancing
+For the [rebound losses](/quants/short-book-rebounds.html), I try three approaches:
+limit the low-volatility tilt, reduce portfolio size when recent volatility
+rises, and limit standardized beta exposure directly. I want to know which,
+if any, improves the early recovery while preserving protection during declines.
+
+I keep the forecasts, covariance model and execution rules unchanged. Three rebalancing
 calendars receive equal capital. The original portfolio is labelled
 **Original** in the comparisons below.
 
@@ -42,21 +44,10 @@ where $u_{i,t}$ is the volatility rank and $w_{i,t}$ the signed position weight.
 Buying quiet stocks and shorting volatile stocks both make $V_t$ negative.
 Dividing by gross exposure expresses the average tilt per dollar invested.
 
-To connect the tilt limit to [Part 1's standardized exposure](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio),
-use the same covered holdings:
-
-$$
-\begin{gathered}
-E_{\mathrm{vol},t}=\frac{A_t V_t-\mu_t N_t}{\sigma_t},\\[6pt]
-A_t=\sum_i|w_{i,t}|,\quad N_t=\sum_i w_{i,t}.
-\end{gathered}
-$$
-
-Here $\mu_t$ and $\sigma_t$ are the model's weighted rank mean and standard
-deviation. The conversion depends on gross and net exposure. Holding the
-original positions constant, ±0.30 maps to roughly **[−0.515, +0.678]**
-standardized units entering the 2009 rebound and **[−0.425, +0.515]** in 2020.
-Reoptimization changes those positions and therefore the conversion.
+This measure uses volatility ranks per dollar of gross exposure.
+[Part 1's factor exposure](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio)
+uses centered, standardized characteristics per unit of strategy notional,
+so the numerical limits are on different scales.
 
 I replayed the optimizer with five limits: **±0.30, ±0.25, ±0.20, ±0.15
 and ±0.10**.
@@ -80,17 +71,17 @@ $$
 m_t=\min\left(1,\frac{7\%}{\widehat{\sigma}_t}\right).
 $$
 
-The first 21 observations stay at full size. A signal calculated after one
-close changes positions at the following close and affects the next session's
+The scaling signal uses information available before execution at the following close.
+The resized positions then affect the next session's
 P&L. Each overlay follows the original scheduled stock book and charges for
 both its scheduled trades and additional resizing trades.
 
 I use an illustrative 7% target, below the original's 7.9% realized volatility.
 Since the multiplier stays at or below one, this reduces both gains and losses.
 
-Scaling preserves the tilt per dollar. For Table 1, I multiply each overlay's
-positions, P&L and costs by about 1.114 to match the original's average gross
-exposure of 183.6% of notional. The rescaled comparison can exceed full size;
+Scaling preserves the tilt per dollar. For Table 1, I rescale each overlay's
+positions, P&L and costs to match the original's average gross exposure of
+183.6% of notional. The rescaled comparison can exceed full size;
 the trading rule itself cannot.
 
 ## P&L and drawdown
@@ -234,7 +225,7 @@ market-beta limit. Available loadings covered about 93% of gross target
 exposure; two rebalances in September 2001 had no coverage, so the added
 limit was ineffective on those dates.
 
-## Keep the original portfolio
+## Would I change the baseline?
 {: #what-the-experiment-settles }
 
 For now, I still prefer the original portfolio as a baseline. Tighter tilt limits cost P&L and worsen
@@ -244,11 +235,11 @@ The beta limit's small typical gain comes with a worse 2020 rebound and less
 decline protection. That's too uneven an improvement for me to include it in the baseline.
 
 I still want to know whether joint limits on persistent factor exposures can
-do better. Before testing them, I'd set a full-history P&L budget and require
-better median and aggregate first-63-session P&L with decline-window P&L
-preserved. I haven't defined that budget or run that test. A replacement
-covariance model would also need stock-specific risk forecasts and calibration
-at 21 and 63 sessions.
+do better. Before another test, I'd decide how much full-history P&L I'm willing
+to give up for better rebounds, then check both the typical episode and the
+total gain across episodes while preserving decline protection. These results
+make me more selective about adding a constraint simply because an exposure
+looks uncomfortable in an attribution chart.
 
 <aside class="research-note" markdown="1">
 **Calculation notes.** Market lows are selected in hindsight, and
