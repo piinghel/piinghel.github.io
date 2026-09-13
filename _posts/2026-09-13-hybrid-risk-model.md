@@ -13,6 +13,8 @@ After [comparing Ridge with tree models](/quants/xgboost-vector-leaves.html), I 
 
 I use a similar model to the one described in the [portfolio construction article](/quants/2026/08/29/portfolio-optimization.html#covariance-and-risk-forecasts), estimating stock volatility and correlation directly from returns. I wanted to see whether a factor model could improve on it. There are two questions here: does it forecast portfolio risk more accurately, and does the optimizer build better portfolios with it?
 
+In this comparison, the hybrid and blend reduce forecast errors on their own portfolios and have smaller daily tail losses. They also earn less and experience deeper drawdowns, with uncertain Sharpe differences. Understanding that trade-off starts with what the risk matrix represents, how I estimate it, and where estimation choices enter the optimizer.
+
 ## What I compared
 
 I kept the Ridge ranking, sizing scores, trading rules and portfolio constraints the same. Each version uses a 7% annual forecast-volatility cap and three rebalance schedules with equal capital. This is a comparison on development history through 2021, which has already informed earlier research.[^setup]
@@ -29,17 +31,64 @@ For each of those three recalibrated versions, the covariance used by the optimi
 
 <h2 id="how-the-blocks-fit-together">How the hybrid estimates risk</h2>
 
-A **fundamental factor model** starts with named stock characteristics, such as beta, sector and size. Cross-sectional regressions estimate the daily factor returns. A **statistical factor model** uses patterns in returns to find common sources of risk, typically through principal component analysis (PCA).
+A **fundamental factor model** starts with named stock characteristics, such as beta, sector and size. Two stocks with similar exposures should respond similarly to a move in those factors. A **statistical factor model** looks for common movements directly in returns, typically through principal component analysis (PCA). The hybrid asks what shared movement remains after the named factors have been fitted. [HRT's introduction to factor models](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/) gives a useful starting point for this decomposition.
 
-The hybrid combines these ideas. I fit the named factors first, then apply PCA to their volatility-standardized residual returns. At a given estimation date, the daily return model is
+Fix a forecast date and treat the stock exposures as known at that date. Suppressing the date subscripts for a moment, the model for the next daily return is
 
 $$
 r=Bf+Pg+\varepsilon.
 $$
 
-Here $r$ contains the returns of $N$ stocks. The $K$ named factor returns are $f$, with exposures $B$; the $J$ residual-PC returns are $g$, with loadings $P$. Thus $B$ is $N\times K$ and $P$ is $N\times J$. The remaining stock-specific returns are $\varepsilon$.[^model]
+Here $r$ contains the returns of $N$ stocks. The $K$ named factor returns are $f$, with exposures $B$; the $J$ residual-factor returns are $g$, with loadings $P$. Thus $B$ is $N\times K$ and $P$ is $N\times J$. For stock $i$, the equation says that its return is the sum of its exposures times the corresponding factor moves, plus a remaining stock-specific return $\varepsilon_i$.[^model]
 
-I put the two sets of exposures together as $L=[\,B\;P\,]$, an $N\times(K+J)$ matrix, and estimate the **joint factor covariance**:
+### Estimating the named factors
+
+The exposures and factor returns play different roles. A sector exposure is an indicator; a style exposure records where a stock sits on a characteristic such as size or momentum. I winsorize and standardize the style exposures across stocks, then use the **previous session's exposures** to explain each day's returns. The factor returns are the regression coefficients fitted across stocks on that day.
+
+Writing $u$ for a historical return date, the fit minimizes a weighted sum of squared errors, $\mathcal L_u$:
+
+$$
+\begin{aligned}
+\widehat f_u&=\arg\min_{f\in\mathcal C_{u-1}}\mathcal L_u(f),\\[4pt]
+\mathcal L_u(f)&=\sum_i\omega_{i,u-1}\left(r_{i,u}-b_{i,u-1}^{\top}f\right)^2,\\[4pt]
+e_u&=r_u-B_{u-1}\widehat f_u.
+\end{aligned}
+$$
+
+The vector $b_i$ contains stock $i$'s named exposures. The positive regression weights $\omega_i$ are proportional to square-root market capitalization, capped at their cross-sectional 95th percentile and normalized to sum to one. They determine each stock's influence on the fit; they are separate from the portfolio weights $w_i$ used later.
+
+The constraint set $\mathcal C$ makes the intercept and sector returns identifiable. With one intercept and all sector indicators, the columns otherwise repeat the same common move. I constrain the sector returns to have a weighted mean of zero, using each sector's share of regression weight. The intercept then captures the common component and sector coefficients describe departures from it. The residual $e_u$ is what the named factors leave unexplained; it still contains shared risk that PCA may find.
+
+### Finding common movement in the residuals
+
+Applying PCA to raw residuals can let the most volatile stocks dominate. I first divide each stock's centred residual history by its estimated residual volatility. I also apply the stock regression weights and exponential time weights. The following PCA equations apply to the stocks with complete estimation-window history. If $E_c$ is that history centred using the time weights, with dates in rows and stocks in columns, the matrix used for extraction is
+
+$$
+X=A^{1/2}E_c S^{-1}W^{1/2}.
+$$
+
+$S$ is diagonal, containing residual volatilities estimated with a 42-session half-life; $W=\operatorname{diag}(\omega_i)$ contains stock weights; and diagonal $A$ contains normalized time weights with a 90-session half-life. $S$ and $W$ act on stock columns; $A$ acts on date rows. The leading right singular vectors of $X$ identify directions that explain the most weighted, standardized residual variation. I retain ten directions. This is a fixed research choice, not a count selected from these portfolio results.
+
+Those vectors live in transformed units. If $V_J$ contains the retained vectors, the initial loadings in stock-return coordinates are
+
+$$
+P_0=S W^{-1/2}V_J.
+$$
+
+I then remove the current named-factor exposure space from $P_0$ and normalize the remaining columns under $W$. The resulting $P$ satisfies $B^\top W P=0$ and $P^\top W P=I_J$ on the eligible stocks. This prevents the two loading blocks from representing the same cross-sectional direction. The projection can change the extracted eigenvectors, so the final residual factors need not have diagonal covariance.
+
+For each forecast, I score the historical residuals in that forecast's loading basis. With the normalization above, the weighted least-squares scores and remaining residuals are
+
+$$
+g_u=P^\top W e_u,\qquad
+\varepsilon_u=e_u-Pg_u.
+$$
+
+This is also a useful implementation check: adding the fitted residual-factor component back to $\varepsilon_u$ must recover $e_u$. The eigenvector extraction is refreshed every 21 sessions; projection and score estimation use the current exposures and eligible universe. Stocks without complete PCA-window history stay outside that extraction and receive extra specific-risk protection.[^estimation]
+
+### From factors to stock covariance
+
+I put the two sets of exposures together as $L=[\,B\;P\,]$, an $N\times(K+J)$ matrix. The model's **joint factor covariance** is
 
 $$
 F_H=
@@ -49,7 +98,7 @@ F_{fg}^{\top} & F_{gg}
 \end{pmatrix}.
 $$
 
-The diagonal blocks $F_{ff}=\operatorname{Cov}(f)$ and $F_{gg}=\operatorname{Cov}(g)$ describe covariance within each factor group. The cross block $F_{fg}=\operatorname{Cov}(f,g)$ is $K\times J$: it describes how the named and statistical factor returns move together. The lower block is its transpose, so the whole matrix is symmetric.
+The subscript $H$ means hybrid. All covariances in this construction are conditional on the information at the forecast date and refer to daily returns. The diagonal blocks $F_{ff}=\operatorname{Cov}(f)$ and $F_{gg}=\operatorname{Cov}(g)$ describe covariance within each factor group. The cross block $F_{fg}=\operatorname{Cov}(f,g)$ is $K\times J$: it describes how the named and residual-factor returns move together. The lower block is its transpose, so the whole matrix is symmetric.
 
 Mapping that factor covariance back to stocks gives shared covariance $C=L F_H L^\top$. Adding the remaining stock-specific variances gives
 
@@ -57,16 +106,51 @@ $$
 \Sigma_H=\underbrace{L F_H L^\top}_{\text{shared stock covariance}}+D.
 $$
 
-The diagonal matrix $D$ contains $\operatorname{Var}(\varepsilon_i)$ for each stock. It measures what remains after **both** factor groups. This model treats those remaining shocks as uncorrelated across stocks and with the factors. Both $C$ and $D$, and therefore $\Sigma_H$, are $N\times N$ daily covariance matrices.
+The diagonal matrix $D$ contains $d_i=\operatorname{Var}(\varepsilon_i)$ for each stock. It measures what remains after **both** factor groups. The equation assumes $\operatorname{Cov}((f^\top,g^\top)^\top,\varepsilon)=0$ and uncorrelated remaining shocks across stocks. These are modelling assumptions; regression fit alone does not establish them for future returns. If they fail, the omitted covariance terms can matter. Both $C$ and $D$, and therefore $\Sigma_H$, are $N\times N$ matrices.
 
 <div class="research-figure responsive-figure" markdown="0">
 {% include theme-svg-figure.html base="/assets/hybrid-risk-model/matrix-multiplication" mobile="/assets/hybrid-risk-model/matrix-multiplication_mobile" version="3" alt="Joint factor covariance F H contains named-factor, residual-PC and cross-covariance blocks. Applying the stock exposures L equals B P on both sides gives shared stock covariance C. Adding diagonal specific covariance D changes only the diagonal to produce total covariance Sigma H. Matrix blocks and diagonal tiles are schematic." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: From factor covariance to stock covariance.</strong> The first arrow applies the stock exposures: $C=L F_H L^\top$. The second adds $D$ to the diagonal. Green blocks retain covariance between the two factor groups. Colours and diagonal tiles show structure, not measured values.</p>
 
-Figure 1 makes the role of the cross terms explicit.[^blocks] Orthogonal loadings describe a relationship across stocks; $F_{fg}$ describes factor returns moving together over time. One does not force the other to zero. I therefore estimate the full joint covariance, after converting the residual-PC loadings back to stock-return units.
+Expanding the multiplication in Figure 1 makes the four shared-risk terms visible:[^blocks]
 
-For signed portfolio weights $w$, daily forecast variance is $w^\top\widehat\Sigma w$, where $\widehat\Sigma$ includes the scale adjustment used by the optimizer. Annual forecast volatility is $\sqrt{252\,w^\top\widehat\Sigma w}$. This is the quantity constrained by the 7% risk cap.
+$$
+\begin{aligned}
+C={}&B F_{ff}B^\top+P F_{gg}P^\top\\
+   &+B F_{fg}P^\top+P F_{fg}^\top B^\top.
+\end{aligned}
+$$
+
+The first line gives risk within each factor group. The second lets the two groups reinforce or offset each other. Dropping it would assume their returns are uncorrelated. The loading condition $B^\top W P=0$ concerns a weighted sum **across stocks**; $F_{fg}$ concerns co-movement **over time**. One does not force the other to zero. The named exposures also change through the historical fit, while residual scores are reconstructed in the current basis. I therefore estimate the full joint covariance.
+
+For a particular pair of stocks, shared covariance is $C_{ij}=\ell_i^\top F_H\ell_j$, where $\ell_i$ is stock $i$'s exposure vector across both groups. Specific risk adds $d_i$ only when $i=j$. This is the intuition behind the matrix: shared exposures create co-movement; the diagonal allows each stock to retain risk of its own.
+
+### Estimating risk levels and dependence
+
+The equations above describe the model. Its inputs still have to be estimated. For the hybrid, I estimate factor volatilities with a 42-session half-life and factor correlations with a 360-session half-life, using up to 756 past sessions. A half-life of $h$ assigns an observation $h$ sessions older half as much weight: weights at age $a$ are proportional to $2^{-a/h}$. This lets the size of factor moves respond faster than the estimated pattern of co-movement.
+
+Let $S_f$ contain the fast factor-volatility estimates and $\widehat R_f$ the slow correlation estimate of the **joint** factor history. The daily estimate is
+
+$$
+\widehat F_H=S_f\widehat R_f S_f.
+$$
+
+The hybrid uses no additional shrinkage of these factor correlations. The direct model, by contrast, shrinks stock correlations halfway toward the identity matrix. In either case, a positive semidefinite correlation matrix and nonnegative scales give a positive semidefinite covariance. Adding strictly positive specific variances makes the hybrid stock covariance positive definite, even when the factor covariance is singular. It follows that every nonzero portfolio has positive model variance; this is a mathematical validity check, not evidence of forecast accuracy.
+
+I estimate specific variances from the post-PCA residuals with a 42-session half-life, then shrink them toward a cross-sectional estimate based on size, volatility and sector. Short histories receive more shrinkage. This reduces the chance that an accidentally quiet residual history makes a stock look almost riskless.[^estimation]
+
+The coverage adjustments preserve this factor-plus-diagonal form.[^estimation] For portfolio weights $w$, first collect the portfolio's factor exposures as $x=L^\top w$, using the adjusted loadings where required. Its raw daily forecast variance is then
+
+$$
+v^{\mathrm{raw}}=x^\top\widehat F_H x+\sum_i w_i^2\widehat d_i.
+$$
+
+The first term depends on the portfolio's **net factor exposures**. Long and short positions can offset there. The specific term adds squared position sizes, so opposite signs do not cancel stock-specific risk under the diagonal assumption. This calculation gives exactly the same result as $w^\top\widehat\Sigma_H w$, while avoiding the full stock-by-stock matrix.
+
+Finally, the chronological multiplier adjusts the level: $\widehat v=s_t^2 v^{\mathrm{raw}}$. It scales every variance and covariance by the same amount, leaving correlations unchanged. It can correct overall underprediction, but cannot repair a wrong relative-risk estimate between two portfolios. The blend averages the two raw matrices first; its own multiplier then scales that average.
+
+Annual forecast volatility is reported as $\sqrt{252\widehat v}$ and constrained by the 7% cap. This is an annualization convention for daily risk. With serially correlated returns, the variance of a multi-session sum also includes lag covariances; it is generally not just the number of sessions times daily variance. The comparisons below use the daily matrix and a subsequent daily-variance estimate.[^horizon]
 
 ## Are the risk forecasts better?
 
@@ -168,6 +252,18 @@ I would report paired loss differences by calendar period and forecast-risk leve
 
 Second, I would construct **minimum-variance portfolios** under identical investment constraints, with no alpha forecast in the objective. A simple version fixes total investment to one, requires long-only weights and applies the same name cap to every model. Each covariance estimate then chooses the portfolio it considers least risky. Comparing subsequent realized variance, concentration and turnover would test the diversification choices more directly. Fixing investment prevents the zero portfolio from winning; this test addresses a different use case from the long–short Ridge strategy.[^evaluation]
 
+For an estimation extension, I would separate uncertainty in the cross block from uncertainty in the risk level. One way is to blend the joint factor estimate with its block-diagonal version:
+
+$$
+\begin{aligned}
+\widehat F_H(\eta)&=(1-\eta)\widehat F_H+\eta F_0,\\
+F_0&=\operatorname{blockdiag}(\widehat F_{ff},\widehat F_{gg}),\\
+&\quad 0\leq\eta\leq1.
+\end{aligned}
+$$
+
+This keeps the within-group blocks and attenuates only the cross-covariances. Both endpoint matrices are positive semidefinite, so every blend is too. The statistical question is whether reducing estimation noise helps more than the discarded dependence hurts. I would assess a small, predeclared set of shrinkage strengths with the same calibration rule and portfolio controls. The tabled hybrid keeps the full cross block; these equations describe an extension, not a revised result.
+
 ## Where that leaves me
 
 For this comparison, I still prefer direct covariance. The hybrid and blend improve their own-portfolio forecast scores and have smaller daily tail losses, but they also give up return and experience deeper drawdowns. The Sharpe differences remain uncertain. I would want the common-portfolio forecast test and the minimum-variance comparison to explain where the extra structure helps before changing the risk model on that basis.
@@ -187,3 +283,7 @@ For this comparison, I still prefer direct covariance. The hybrid and blend impr
 [^costs]: Two-way turnover is recovered from the modeled trading charge divided by 5bp per traded dollar, with no division by two. Costs are charged within each schedule before aggregation. Borrow fees, financing and market impact are not included.
 
 [^losses]: Andrew J. Patton, [“Volatility forecast comparison using imperfect volatility proxies”](https://public.econ.duke.edu/~ap172/Patton_vol_proxies_JoE_2011.pdf), *Journal of Econometrics* 160 (2011), pp. 246–256, especially §3. MSE here is squared error in variance units, not squared error in the variance ratio. The common-portfolio MSE and minimum-variance comparisons above are proposed tests, with no results reported here.
+
+[^estimation]: Styles are winsorized at the cross-sectional 1st and 99th percentiles and centred/scaled with the regression weights. PCA requires at least 252 sessions; its equations describe the complete-history eligible universe. Specific-risk shrinkage toward the structural variance estimate has weight $0.3+0.7\times60/(60+n_i)$, where $n_i$ counts observed residual sessions; fewer than 60 observations receive the full structural estimate. Daily variance floors and caps precede a 1.5 variance buffer for PCA-excluded stocks, whose specific variance is also bounded below by the buffered pre-PCA estimate. Prior observed exposures may be carried for at most 21 sessions. The separate stale-exposure buffer applies $Q\Sigma Q$, with diagonal $Q_{ii}=\sqrt{1.5}$ for stale names and one otherwise. This is equivalent to replacing $L$ by $QL$ and $D$ by $QDQ$, preserving the factor form. Missing residual observations retain their dates and receive zero estimation weight.
+
+[^horizon]: For a covariance-stationary vector return process with lag covariance $\Gamma_\ell=\operatorname{Cov}(r_u,r_{u-\ell})$, the covariance of an $H$-session arithmetic sum is $H\Gamma_0+\sum_{\ell=1}^{H-1}(H-\ell)(\Gamma_\ell+\Gamma_\ell^\top)$. The implementation also constructs a separate 21-session estimate with a two-lag Bartlett adjustment. That horizon matrix is not the daily covariance used by this allocation and forecast-score comparison; compounded returns and changing holdings require further care.
