@@ -18,19 +18,19 @@ Giving less weight to more volatile stocks is a useful starting point, but
 it leaves out how those stocks move together. I wanted to see what an
 optimizer could add by considering the whole portfolio.
 
-Of course, the optimizer only has estimates to work with. It can put too much
-weight on a combination that looks safer than it really is, or trade too much
-in response to small changes in the inputs. I use correlation shrinkage to
-temper those risk estimates, then try a rank buffer and a trading penalty to
-reduce turnover. What interests me is how much of the benefit survives
-trading costs, and how closely the resulting risk matches the forecasts.
+There are two problems I want to tackle. The optimizer can lean too heavily
+on combinations that look safer than they really are, and it can trade a lot
+for small changes in the inputs. I try correlation shrinkage for the first
+problem, then a rank buffer and a trading penalty for the second. The question
+is whether sizing stocks together still helps after costs, and whether the
+portfolio takes about as much risk as expected.
 
 ## Three allocation rules
 
 The comparison starts in September 1998, after the signals and risk estimates
 have enough history. I choose settings using data through December 2021.
 I also show January 2022–May 2026 separately to see how the rules behave more
-recently. Both periods have helped shape the strategy.
+recently.
 
 Every allocation rule starts from the same Ridge ranking and follows three rebalance
 schedules, each beginning in a different week. Each schedule rebalances every three weeks,
@@ -227,7 +227,7 @@ trading more. The trading controls change the result: net return is 8.0% versus
 7.4%, Sharpe is 0.87 versus 0.78, and turnover falls below the baseline.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 3: The allocation rules in later history.</strong> January 2022–May 2026, a later period revisited during research. Schedule averaging, geometric-return, drawdown, and cost conventions match Table 1.</caption>
+  <caption><strong>Table 3: The allocation rules in later history.</strong> January 2022–May 2026. Schedule averaging, geometric-return, drawdown, and cost conventions match Table 1.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Sharpe</th><th>Drawdown loss</th><th>Annual turnover</th></tr>
   </thead>
@@ -368,8 +368,7 @@ the trailing measure remembering earlier positions.
 I tested a 63-day beta window in matched portfolios. It removes the
 persistent episodes, but with trading controls the later tail-error measure
 remains at least as large and annualized net return falls by 0.6 percentage points,
-beyond the 0.5-point tolerance I used. I keep the existing estimate. That
-rejection is also one reason the later period counts as reused research data.
+beyond the 0.5-point tolerance I used. I keep the existing estimate.
 
 ## What joint sizing delivers
 

@@ -13,6 +13,13 @@ as research judgments and comparisons.
 Apply this quietly through the prose. Do not add disclaimers, explanations of
 what cannot be mentioned, or repeated announcements that this is personal research.
 
+Lead with the concrete problem in conversational language, then explain what
+the comparison will try to resolve. The author does not want recurring prose,
+caption or end-note disclaimers about having inspected or reused the later/test
+period. Do not reintroduce them through synonyms such as "both periods shaped
+the strategy." Preserve reporting dates and calculation conventions without
+describing the evidence as independent or untouched validation.
+
 Use “research baseline” or name the model being compared rather than “incumbent”
 in this author's articles. Avoid “current model” when it could suggest a model
 in operational use. Name the actual model family when that distinction matters.
@@ -75,7 +82,7 @@ asset and report that limitation. A diagram may be authored directly as SVG.
 
 Distinguish arithmetic and geometric annualization, standalone schedule means
 and combined daily returns, fixed-notional indices and funded wealth. State
-costs, turnover units and reused later-period history where needed to interpret
+costs, turnover units and reporting periods where needed to interpret
 results. Similar paths are an empirical result, not a reason for a dramatic zoom.
 
 Keep confidential reports and licensed security-level data out of public

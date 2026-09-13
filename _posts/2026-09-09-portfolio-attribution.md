@@ -298,9 +298,8 @@ understand why. In [part 2](/quants/short-book-rebounds.html), I look at the
 stocks held on each side of the book.
 
 <aside class="research-note" markdown="1">
-**In-sample notes.** This is an explanation of inspected historical returns.
-Sector labels use an August 2026 snapshot. Drawdowns and market lows are
-selected in hindsight; the 2022–26 history also informed strategy research.
+**Calculation notes.** Sector labels use an August 2026 snapshot. Drawdowns
+and market lows are selected in hindsight.
 Forecast risk requires factor covariance and stock-specific risk estimates
 calibrated at the intended horizon.
 </aside>

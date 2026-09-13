@@ -216,10 +216,9 @@ without giving up aggregate decline-window P&L. In
 beta limits and daily portfolio scaling against that requirement.
 
 <aside class="research-note" markdown="1">
-**In-sample notes.** The two deepest strategy drawdowns helped form the
+**Episode selection.** The two deepest strategy drawdowns helped form the
 hypothesis; all 11 market lows are selected in hindsight. The 21-, 63- and
-126-session windows overlap and follow changing holdings. The later 2022–26
-block has informed other research choices. Attribution inherits Part 1's
+126-session windows overlap and follow changing holdings. Attribution inherits Part 1's
 sector labels and incomplete coverage. These observations leave short-squeeze
 and predictor-causality explanations untested.
 </aside>

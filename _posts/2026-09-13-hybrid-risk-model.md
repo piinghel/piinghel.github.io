@@ -13,11 +13,11 @@ After [comparing Ridge with tree models](/quants/xgboost-vector-leaves.html), I 
 
 I use a similar model to the one described in the [portfolio construction article](/quants/2026/08/29/portfolio-optimization.html#covariance-and-risk-forecasts), estimating stock volatility and correlation directly from returns. I wanted to see whether a factor model could improve on it. There are two questions here: does it forecast portfolio risk more accurately, and does the optimizer build better portfolios with it?
 
-In this comparison, the hybrid and blend reduce forecast errors on their own portfolios and have smaller daily tail losses. They also earn less and experience deeper drawdowns, with uncertain Sharpe differences. Understanding that trade-off starts with what the risk matrix represents, how I estimate it, and where estimation choices enter the optimizer.
+The results pull in different directions. The hybrid and blend make smaller forecast errors on their own portfolios and have smaller daily tail losses, but they also earn less and have deeper drawdowns. The Sharpe differences are uncertain. That leaves me with the question I want to work through here: when does a better risk forecast actually help the portfolio?
 
 ## What I compared
 
-I kept the Ridge ranking, sizing scores, trading rules and portfolio constraints the same. Each version uses a 7% annual forecast-volatility cap and three rebalance schedules with equal capital. This is a comparison on development history through 2021, which has already informed earlier research.[^setup]
+I kept the Ridge ranking, sizing scores, trading rules and portfolio constraints the same. Each version uses a 7% annual forecast-volatility cap and three rebalance schedules with equal capital. The comparison covers development history through 2021.[^setup]
 
 The three covariance estimates are:
 

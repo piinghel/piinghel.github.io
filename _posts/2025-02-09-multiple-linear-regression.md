@@ -14,10 +14,10 @@ github_repositories:
 
 <p class="article-summary">Learning from a broad set of stock predictors produces lower-volatility portfolios than a small fixed-weight benchmark, with comparable net returns and roughly twice the trading. Regularizing the regression changes the coefficients much more than it changes the stocks selected.</p>
 
-Stock-return prediction gives me plenty of plausible inputs and much less
-certainty about how to combine them. Six- and twelve-month momentum, for
-example, share much of their history. Deciding how much each adds once the
-other is included is harder than finding another variation to put in the model.
+It's easy to come up with another stock predictor. Deciding how much weight
+to give it is harder, especially when it looks a lot like the ones already
+there. Six- and twelve-month momentum, for example, share much of their
+history. How much does the second really add once I have the first?
 
 Here I use multiple linear regression to predict stocks' relative risk-adjusted
 performance over the next 20 sessions. It gives me a simple starting point:
@@ -146,9 +146,7 @@ the model is used. Predictions begin in September 1998.[^training] Keeping
 older observations helps estimate a common combination, but can slow
 adaptation when relationships change.
 
-Development ends in December 2021. The January 2022–May 2026 period has also
-informed research choices, including the benchmark revision, so I treat it as
-a later historical check.
+I report results through December 2021 and for January 2022–May 2026 separately.
 
 All three scores enter the same portfolio rule: buy the top 75 stocks and
 short the bottom 75, size inversely to volatility with stock and book caps,

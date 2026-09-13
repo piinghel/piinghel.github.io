@@ -15,6 +15,11 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Recover the article's practical research question before rewriting. Keep
   follow-up questions when a result motivates the next decision within that
   same argument. Delete unsupported branches rather than filling an appendix.
+- Open conversationally with the concrete problem and what the article will
+  try to resolve. Do not add or reintroduce boilerplate about having inspected,
+  reused or learned from the later/test period, including paraphrases such as
+  "both periods shaped the strategy." Keep reporting dates and calculation
+  conventions clear without claiming independent or untouched validation.
 - Describe implementation only when it changes the research design, evidence
   or interpretation. Keep material limitations once, where they matter.
 - Do not publish confidential sell-side reports, citations to them, Bloomberg

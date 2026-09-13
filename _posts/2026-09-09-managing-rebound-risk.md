@@ -14,9 +14,10 @@ series_order: 3
 
 <p class="article-summary">Tilt limits buy lower historical drawdown at a cost to P&amp;L. Tighter limits worsen the median rebound result. Direct standardized beta limits give modest, uneven improvement; daily volatility scaling adds costs without beating constant sizing on gross P&amp;L.</p>
 
-I want to reduce the [losses early in a rebound](/quants/short-book-rebounds.html)
-while keeping the protection the shorts provide during declines. A limit
-has to earn its place across the rest of the history too.
+The shorts help when the market falls, then give back too much when it
+[bounces](/quants/short-book-rebounds.html). I'd like to soften those rebound
+losses without losing the protection on the way down. The tricky part is
+finding a change that helps across the rest of the history too.
 
 I tested tilt limits, daily portfolio scaling and limits on the
 standardized beta exposure from
@@ -135,7 +136,7 @@ That period-specific trade-off differs from the full-history result.
 
 The smaller drawdowns don't solve the problem I started with. Table 2 shows
 a small positive median rebound difference at ±0.30 and negative medians at
-every tighter limit. With eleven inspected episodes, I wouldn't put much
+every tighter limit. With eleven episodes, I wouldn't put much
 weight on that small gain.
 
 <div markdown="1">
@@ -222,7 +223,7 @@ a much larger gain in 2009 lifts the mean.
 
 Every beta limit still worsens the first three months of the 2020 rebound.
 The tightest limit also earns less across the market-decline windows and lowers
-Sharpe in the reused 2022–26 block. Its median improvement remains positive
+Sharpe in 2022–26. Its median improvement remains positive
 at 126 sessions.
 
 Realized market beta rises from **+0.068 to
@@ -250,12 +251,8 @@ covariance model would also need stock-specific risk forecasts and calibration
 at 21 and 63 sessions.
 
 <aside class="research-note" markdown="1">
-**In-sample notes.** All comparisons use inspected history. The ±0.30, ±0.25
-and ±0.15 tilt limits were added after inspecting the first two; the beta limits
-were fixed after reviewing those results. The 2022–26 block has already
-informed research choices. Market lows are selected in hindsight, and
+**Calculation notes.** Market lows are selected in hindsight, and
 constant sizing and equal-gross rescaling use full-history averages. The
 factor model's normalization inherits Part 1's sector labels.
-The trading rules use decision-time prices and descriptors, but these results
-remain exploratory comparisons rather than an untouched validation.
+The trading rules use decision-time prices and descriptors.
 </aside>

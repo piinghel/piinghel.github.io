@@ -14,10 +14,10 @@ github_repositories:
 
 <p class="article-summary">The optimizer already limits stock and sector weights. Here I check whether the portfolios it produces still take too much risk in one direction, and what happens when I limit risk contributions directly. Moderate caps reduce the concentrations I find with small changes to holdings and performance; tighter caps reshape the portfolio, with less obvious benefits.</p>
 
-In the [previous article](/quants/2026/08/29/portfolio-optimization.html),
-I built an optimizer with limits on volatility, gross exposure, beta, sector
-weights, and position size. A position's contribution to risk also depends on
-its volatility and covariance with the rest of the portfolio.
+The [optimizer](/quants/2026/08/29/portfolio-optimization.html) already
+limits stock and sector weights. But a small position can still carry a lot
+of risk, and several small positions can end up making much the same bet.
+I wanted to check how much of that the weight limits leave behind.
 
 The AI rally made me want to check this more closely. Several technology and
 semiconductor positions can each meet a weight limit while depending on the
@@ -29,9 +29,7 @@ Just as in my other articles, I keep the Ridge predictions, selected stocks,
 trading controls, execution, and 5 bp charge on traded notional fixed. The
 comparison is about allocation. I use three rebalance schedules, each starting
 in a different week, from September 1998 through May 2026, reporting results before and after 2021
-separately. I had already looked at the later period in earlier work, and added
-some tighter thresholds after seeing the first results. This is an exploratory
-comparison. The three schedules let me check
+separately. The three schedules let me check
 sensitivity to rebalance timing; they share the same market history.
 
 ## Measuring risk contributions

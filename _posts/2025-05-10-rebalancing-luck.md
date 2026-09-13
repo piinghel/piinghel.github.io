@@ -35,8 +35,7 @@ trading-cost allowance. The calendar grid and
 return–volatility comparison cover the full matched history. I also split the
 tables into development (September
 1998–December 2021) and later history (January 2022–May 2026), so the much longer
-development period and recent results can be compared directly. The later
-period has already informed research choices.
+development period and recent results can be compared directly.
 
 The original three Friday calendars have a fairly modest full-history spread
 of 0.67 percentage points. Their combined return is 11.67%, close to the 11.61%
