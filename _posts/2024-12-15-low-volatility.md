@@ -13,17 +13,18 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-<p class="article-summary">Giving volatile stocks smaller positions brings portfolio volatility down from 33% to 10% in this comparison. Most of the change comes from reducing the short book. That helps a lot, but the shorts can still lose together during market rallies.</p>
+<p class="article-summary">Inverse-volatility sizing reduces portfolio volatility from 33% to 10% in this comparison, mainly by reducing exposure to the volatile short book. Compounded returns improve and turnover falls, but common moves across the shorts still produce substantial drawdowns.</p>
 
-Buying stable stocks and shorting volatile ones sounds straightforward enough.
-The awkward part is deciding how much to put behind each side. Equal dollar
-amounts are a simple starting point, but the two books have very different
-levels of risk. The shorts can end up driving the whole portfolio.
+A low-volatility ranking creates an asymmetric portfolio-construction problem.
+The long book holds low-volatility stocks, while the short book holds stocks
+with substantially higher volatility and beta. Equal dollar allocations can
+therefore leave the short book dominating portfolio risk.
 
-I want to see how much a simple sizing rule can fix. I'll keep the same stocks
-and compare equal weighting with inverse-volatility sizing, giving smaller
-positions to stocks that move around more. Then I'll look at the drawdowns
-to see where that rule still falls short.
+Here I compare equal weighting with inverse-volatility sizing, holding stock
+selection fixed. I'm interested in how sizing changes the balance of risk
+between the books, the resulting market exposure, and performance after costs.
+The drawdowns then show where accounting for individual stock volatility
+still leaves important sources of portfolio risk.
 
 The ranking comes from the [low-volatility
 effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865): stable stocks
@@ -42,8 +43,8 @@ the most volatile. The ranking separates risk more clearly than return:
 realized volatility rises from 11.9% for the stable stocks
 to 37.9% for the volatile stocks, while Sharpe falls from 0.90 to 0.20.
 The highest-volatility decile still earns a positive arithmetic return before
-costs, but compounds at only 0.35% a year. Shorting these stocks means absorbing
-their large price swings.
+costs, but compounds at only 0.35% a year. Its low Sharpe comes with substantial
+risk for the short side of the portfolio.
 
 <div class="low-vol-figure decile-profile-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Bar plots of before-cost Sharpe ratio, annualized geometric return and annualized volatility across ten past-volatility deciles, from the most stable stocks in decile 1 to the most volatile in decile 10." version="12" %}
@@ -53,11 +54,11 @@ their large price swings.
 
 ## Equal capital, unequal risk
 
-The equal-weight rule puts one dollar into each book for every dollar of
-strategy capital. Figure 2 shows the consequence: the high-volatility stocks
+The equal-weight rule allocates 100% of strategy notional to each book.
+Figure 2 shows the consequence: the high-volatility stocks
 have more than three times the long book's standalone volatility and almost
-three times its beta. Shorting them reverses that market exposure, leaving
-the combined portfolio with realized beta of −1.12.
+three times its beta. At equal dollar allocations, the combined portfolio
+has realized beta of −1.12.
 
 <div class="low-vol-figure naive-leg-risk-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" mobile="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="11" %}
@@ -65,9 +66,9 @@ the combined portfolio with realized beta of −1.12.
 
 <p class="figure-caption"><strong>Figure 2: Equal capital gives the volatile book more risk.</strong> Annualized realized volatility and average point-in-time beta, July 1995–May 2026. The high-volatility book's beta is measured before applying the short sign.</p>
 
-Equal weighting is easy to explain, but I find it a poor starting point for
-this particular ranking: it gives the deliberately volatile stocks too much
-influence. The next step is to reduce their allocations.
+For this ranking, I prefer to scale positions by estimated volatility.
+The aim is to reduce the short book's influence on risk while retaining
+the same stock selection.
 
 ## Sizing the two books
 
@@ -82,12 +83,11 @@ $$
 
 Here $N$ is the number of stocks in the book, $\sigma_{\mathrm{ref}}=20\%$
 and $a_{\max}=4\%$. The volatility estimate uses 60 sessions with a 5% floor.
-If a book exceeds
-100% gross, its positions scale down proportionally. A smaller book keeps its
-lower capital allocation.
+If a book exceeds 100% gross, its positions scale down proportionally.
+Books below that cap retain their lower gross exposure.
 
-Leaving the smaller book alone does a lot of the work here. Scaling it back up
-would put capital straight back into the volatile shorts. With the rule above,
+Keeping that lower gross exposure is consequential: rescaling both books to
+100% would increase the allocation to the volatile shorts again. Under this rule,
 the long book averages 97% gross exposure and the short book 34%, bringing
 total gross exposure down from 200% to about 131%. At those sizes, each book
 has standalone volatility of about 10%; equal weighting had left the short
@@ -118,12 +118,11 @@ Turnover also falls.
   </tbody>
 </table>
 
-The equal-weight portfolio has a positive Sharpe because its average daily
-return is positive. But those returns come with large swings, which hurt
-compounding. Figure 3 shows what this means over the full period: 35 cents
+The equal-weight portfolio's positive arithmetic return produces a positive
+Sharpe, but volatility drag leaves its geometric return negative. Figure 3
+shows the compounded paths: 35 cents
 remain per starting dollar, compared with 7.54 dollars under inverse-volatility
-sizing. The change in sizing makes a large difference, although a 38% maximum
-drawdown still leaves plenty to improve.
+sizing. The improvement is substantial, although maximum drawdown remains 38%.
 
 <div class="low-vol-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="15" %}
@@ -154,20 +153,19 @@ loses 13%. Longs contribute +4.2 points and shorts −16.3 before costs.
 The shorts drive the loss again, and the portfolio ends the sample below its
 starting value. Both comparisons measure returns from the first date's close.
 
-In the dot-com rally, both books lose. In the later rally, the longs help,
-but cover only about a quarter of the short-book loss. Smaller positions
-reduce the damage from each volatile stock; they still leave the portfolio
-exposed when those stocks rise together.
+Both books contribute to the dot-com loss. In the later rally, long gains
+offset only about a quarter of the short-book loss. Inverse-volatility sizing
+reduces individual exposures, but common moves across the shorts remain a
+source of substantial portfolio losses.
 
 ## From individual weights to joint construction
 
-I prefer inverse-volatility sizing for this comparison. Putting less capital
-behind the volatile shorts makes sense to me, and here it improves both risk
-and compounded returns while reducing turnover. A 38% maximum drawdown still
-leaves a problem worth working on.
+I prefer inverse-volatility sizing as a baseline for this strategy. It addresses
+the risk imbalance created by the ranking, with better compounded returns and
+lower turnover in this comparison. The remaining drawdowns point to the limits
+of sizing positions individually.
 
-The two rallies show where I would go next. Smaller positions help, but the
-short book can still overwhelm the longs when its holdings rise together.
-Sizing the holdings jointly, using covariance and explicit portfolio limits,
-would let me account for those relationships. The next test is whether that
-reduces drawdowns while preserving the return after costs.
+The next step is joint portfolio construction, using covariance and explicit
+portfolio limits to account for relationships between positions. I'd assess
+that change on both drawdown reduction and returns after costs: reducing
+exposure alone is already part of what made this comparison work.

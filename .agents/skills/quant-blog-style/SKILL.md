@@ -6,9 +6,13 @@ description: Apply Pieter-Jan Inghelbrecht's personal, direct research-blog voic
 # Quant blog style
 
 Write as a researcher explaining the work naturally to a knowledgeable
-colleague in statistical modelling, machine learning and portfolio management.
+colleague with expertise in finance, statistical modelling, machine learning
+and portfolio management.
 Conversational prose should retain that technical level. Keep the modelling
-problem central, with portfolio outcomes showing the consequences of the choices.
+problem central in modelling articles. In portfolio-construction articles,
+centre the allocation problem, exposures and risk trade-offs. Use established
+financial terminology naturally; do not turn the article into an introductory
+lesson or replace precise terms with casual approximations.
 
 Frame public articles as Pieter-Jan's personal research and exploration. Never
 refer to his models as production models, live strategies or deployed systems,

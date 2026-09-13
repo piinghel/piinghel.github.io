@@ -29,8 +29,8 @@ fixed formulas. Borrow the qualities, not their phrases or personas.
 ## Applying this voice
 
 The user's preferred register is a researcher explaining the work naturally
-to a knowledgeable colleague in statistical modelling, machine learning and
-portfolio management. Assume that technical audience, rather than writing a
+to a knowledgeable, skilled colleague in finance, statistical modelling,
+machine learning and portfolio management. Assume that technical audience, rather than writing a
 beginner's tutorial or a business presentation. Keep the technical content
 rigorous and the prose conversational. Make the author's reasoning visible:
 the problem, the genuine prior or expectation when known, what happened, and
@@ -41,6 +41,13 @@ Conversational means a knowledgeable practitioner speaking naturally. Keep
 the correct technical terms and respect the reader's expertise; simplifying
 the prose should not make the author sound tentative or explain basics in a
 childlike way.
+
+This applies equally to finance and portfolio-construction articles. Assume
+familiarity with volatility, beta, exposure, long and short books, turnover and
+compounding. Explain study-specific definitions and consequential conventions,
+but avoid elementary scene-setting such as "sounds straightforward enough" or
+"stocks that move around more." The author's competence should come through
+in precise reasoning and terminology, without making the prose stiff.
 
 Keep modelling problems central in modelling articles: the target, predictors,
 estimation, dependence between inputs, regularization and evaluation. Follow
