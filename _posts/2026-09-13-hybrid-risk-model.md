@@ -2,22 +2,20 @@
 layout: post
 title: "Fundamental, Statistical and Hybrid Risk Models"
 date: 2026-09-13
-description: "Adding named factors and residual PCA improved some risk forecasts, but did not give me a better portfolio. What the comparison changed—and what it left open."
+description: "Adding named factors and residual PCA improved some risk forecasts, but did not give me a better portfolio."
 permalink: /quants/hybrid-risk-model.html
 toc: false
 show_date: false
 categories: ["Portfolio risk"]
 ---
 
-The earlier articles built up the portfolio: a stock ranking, position sizes and a rebalance schedule. [Performance attribution](/quants/portfolio-attribution.html) then helped me understand where its returns came from. After comparing [Ridge with tree models](/quants/xgboost-vector-leaves.html), I wanted to look at the other input to the optimizer: the risk model.
+After [comparing Ridge with tree models](/quants/xgboost-vector-leaves.html), I wanted to take a closer look at the risk model. It helps the optimizer decide how much to hold in each stock and which positions work well together.
 
-My starting point estimates stock volatility and correlation directly from returns. Could named factors, together with statistical factors learned from the residuals, give it a better picture of risk? I went back to the saved Ridge forecasts and kept the trading rules fixed within each comparison, so I could study the risk model separately.
-
-The hybrid improved some risk forecasts, but that hasn't given me a better portfolio. That distinction is the main lesson for me.
+I use a similar model to the one described in the [portfolio construction article](/quants/2026/08/29/portfolio-optimization.html#covariance-and-risk-forecasts), estimating stock volatility and correlation directly from returns. I wanted to see whether adding named factors and PCA could improve on it. Within each comparison, I kept the Ridge forecasts and trading rules the same, so the difference would come from the risk model.
 
 ## Why combine the two?
 
-A **fundamental model** starts with named characteristics: market beta, sectors and styles such as size, momentum and volatility. Daily cross-sectional regressions estimate the factor returns. The tests here use price-based characteristics; accounting variables remain a later extension.
+A **fundamental model** starts with named characteristics: market beta, sectors and styles such as size, momentum and volatility. Daily cross-sectional regressions estimate the factor returns. Here I use price-based characteristics; I haven't added accounting variables.
 
 A **statistical factor model** learns common movement from returns, typically through principal component analysis (PCA). It can pick up patterns that the named factors miss, although the components can change meaning over time.
 
@@ -38,32 +36,31 @@ In the hybrid, I join the named exposures $B$ and residual-PC loadings $P$ into 
 </div>
 <p class="figure-caption"><strong>Figure 1: From two factor blocks to stock covariance.</strong> Blue marks named factors, ochre residual PCs and green their cross-covariances. The upper product gives common stock covariance; adding diagonal specific variance completes the model. Block sizes are schematic.</p>
 
-The green blocks retain the covariance between named and statistical factor returns. Orthogonal loadings do not guarantee uncorrelated returns, so I estimate the joint covariance, including those cross blocks. The residual loadings are restored to stock-return units before this calculation.
+The green blocks capture covariance between named and statistical factor returns. Even with orthogonal loadings, those returns can be correlated, so I estimate their covariance together. I convert the residual loadings back to stock-return units first.
 
 ## What I compared
 
-An earlier, smaller test used three styles, with and without two residual PCs. Both earned more than the direct model over the full history, but took more risk and had lower observed Sharpe.[^earlier] I then expanded the named factors to include beta, sectors, reversals and liquidity, alongside ten residual PCs.
+I started with three styles, with and without two residual PCs. Both versions earned more than the direct model over the full history, but took more risk and had lower Sharpe ratios.[^earlier] I then added beta, sectors, reversals and liquidity, alongside ten residual PCs.
 
-The four labels below refer to that expanded comparison:
+That gave me three ways to estimate covariance:
 
 - **Direct covariance:** my starting model, combining short-window volatilities with a longer-window correlation estimate shrunk toward the identity.
-- **Direct, recalibrated:** the same model with a volatility multiplier learned from completed forecast outcomes.
-- **Hybrid:** named factors plus ten residual PCs, using that same calibration procedure.
-- **50:50 blend:** an equal average of the unscaled direct and hybrid covariance estimates, followed by its own calibration.
+- **Hybrid:** named factors plus ten residual PCs.
+- **50:50 blend:** average the direct and hybrid covariance estimates first, then calibrate the result.
 
-Before applying any calibration, the blend is $\Sigma_{\mathrm{blend}}=0.5\Sigma_{\mathrm{direct}}+0.5\Sigma_H$. The recalibrated direct model helps me check whether the hybrid adds anything beyond adjusting the overall risk forecast.
+Before calibration, the blend is $\Sigma_{\mathrm{blend}}=0.5\Sigma_{\mathrm{direct}}+0.5\Sigma_H$. I also tried rescaling the direct model's volatility forecasts, using the same calibration rule as the hybrid and blend. That helps me see whether the extra factors add anything beyond correcting the overall level of forecast risk.
 
-The direct model keeps the full stock covariance matrix; it uses no PCA reduction. A matched comparison of fundamental-only, standalone PCA and hybrid models is still missing. The expanded alternative with dense residual covariance stopped because of missing residual history.
+The direct model estimates the full stock covariance matrix. I haven't yet compared fundamental-only, standalone PCA and hybrid models under the same conditions. I also tried allowing correlations between the residuals, but couldn't complete that test because some residual histories were missing.
 
 ## Are the risk forecasts better?
 
-I follow the distinction in *Elements*: first check forecast accuracy, then check the portfolios the model produces.[^evaluation] For each target portfolio, I hold its weights fixed and compare forecast variance with the sample variance of its daily returns over the next 21 sessions.
+I found the distinction in *Elements* useful here: how accurate are the risk forecasts, and how good are the resulting portfolios?[^evaluation] To check the forecasts, I hold each target portfolio's weights fixed and compare forecast variance with the sample variance of its daily returns over the next 21 sessions.
 
 A useful score is **QLIKE**, which penalizes variance-forecast errors. Across $T$ windows, with $q_t$ equal to realized variance divided by forecast variance,
 
 $$\mathrm{QLIKE}=\frac{1}{T}\sum_t\bigl(q_t-\log q_t-1\bigr).$$
 
-Lower is better; zero means agreement in every window. I also want to see the large misses. Figure 2 shows the volatility ratios across 1,195 overlapping windows per model, with outcomes through 2021. A ratio above one means the model underestimated volatility.
+Lower is better; zero means agreement in every window. I also want to see the large misses. Figure 2 shows the volatility ratios across 1,195 overlapping windows per model, through the end of 2021. A ratio above one means the model underestimated volatility.
 
 <div class="research-figure responsive-figure" markdown="0">
 {% include theme-svg-figure.html base="/assets/hybrid-risk-model/calibration" mobile="/assets/hybrid-risk-model/calibration_mobile" version="4" alt="Realized divided by forecast volatility for Direct covariance, Direct recalibrated, Hybrid and 50:50 blend. A ratio of one is agreement. All models retain large underprediction outliers, including ratios above four." %}
@@ -72,7 +69,7 @@ Lower is better; zero means agreement in every window. I also want to see the la
 
 Mean QLIKE falls from 0.327 for direct covariance to 0.290 after recalibration, 0.279 for the hybrid and 0.238 for the blend. Volatility exceeds its forecast by more than 30% in 24%, 18%, 14% and 12% of windows, respectively.
 
-That is useful progress, but I wouldn't pick a model from these scores alone. Each model selects different holdings. The recalibrated models also learn their scales from their own portfolio outcomes. The scores tell me how each model forecasts its own portfolios; they leave the ranking on an identical portfolio open.
+I wouldn't pick a model from these scores alone. Each model selects different holdings. For the recalibrated versions, the adjustment also depends on their own past forecast errors. A lower score could reflect an easier portfolio to forecast. I'd also want to compare the forecasts for the same holdings.
 
 ## Does that help the portfolio?
 
@@ -91,15 +88,13 @@ Table 1 compares the resulting portfolios over 5,774 common sessions, from 26 Ja
 </tbody>
 </table>
 
-The hybrid and blend both give up return, and neither improves observed Sharpe over the recalibrated direct model. Their drawdowns are deeper too. Paired bootstrap intervals for the Sharpe differences include zero. In 2017–2021, hybrid and blend Sharpe fall to 1.06 and 1.11, against about 1.43 for either direct-model version. Better forecast scores haven't carried through to better portfolio results.
+The hybrid and blend both give up return, and neither has a higher Sharpe ratio than the recalibrated direct model. Their drawdowns are deeper too. The Sharpe differences remain uncertain: paired bootstrap intervals include zero. In 2017–2021, hybrid and blend Sharpe fall to 1.06 and 1.11, against about 1.43 for either direct-model version. The improved risk forecasts haven't given me a better portfolio.
 
 ## Where that leaves me
 
-I still prefer the direct covariance model as a starting point. Adding a 52-week-high characteristic did not establish an improvement over its matched hybrid control, and increasing the PC count gave results that depended on individual portfolios and dates. I don't see a good reason to keep adding factors to this version.
+I still prefer direct covariance as a starting point. Adding a 52-week-high characteristic didn't clearly improve on the same hybrid model without it. The results from adding more PCs varied across portfolios and dates. I don't see a good reason to keep adding factors to this version.
 
-Before revisiting the hybrid, I'd complete the missing fundamental/PCA/hybrid comparison with common data, estimation dates and calibration rules. I'd check forecasts on the same portfolios as well as each model's own portfolios. A minimum-variance test with common budget and trading constraints would also help assess the inverse covariance, following *Elements*. Those are proposed tests.
-
-These results come from previously inspected history, and there is no matched-volatility hybrid or blend replay here. They tell me what this implementation delivered, while leaving room for a better combination.
+I've already used this market history in earlier research, and I haven't compared the hybrid and blend with the direct model at a common volatility level. Before revisiting the hybrid, I'd compare fundamental, PCA and hybrid models using the same data, estimation dates and calibration rules, then check their forecasts on the same portfolios. Following *Elements*, I'd also compare minimum-variance portfolios under the same budget and trading constraints to see how well each model estimates the inverse covariance.
 
 [^earlier]: Separate test, September 1998–December 2021: intercept, size, momentum and volatility. Annual net return / volatility were 11.97% / 7.72% for direct covariance, 13.67% / 9.83% for named factors, and 12.97% / 9.04% after adding two residual PCs. Return and Sharpe differences were statistically inconclusive. Its specification and sample differ from the expanded comparison.
 
