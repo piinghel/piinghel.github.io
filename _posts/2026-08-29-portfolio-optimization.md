@@ -12,16 +12,16 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-<p class="article-summary">Joint sizing improves this portfolio's development results, but the extra trading consumes part of the gain. A rank buffer and trading penalty preserve most of the gross return with fewer trades; their advantage is less consistent after 2021.</p>
+I wanted to see whether choosing position sizes together would improve the
+portfolio built from my [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html).
+Sizing each stock by its own volatility treats the positions separately.
+An optimizer can also account for how they move together and fit within
+the portfolio limits.
 
-The [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html) tells me which names I prefer. It leaves another decision:
-how much of each should I hold? Scaling by individual volatility is a useful
-start, but several apparently modest positions can share the same risk.
-
-I want to know whether sizing the stocks jointly makes better use of the
-ranking, and whether that benefit survives trading costs. I compare joint
-sizing with individual volatility scaling, then let the optimizer consider
-what the portfolio already owns before replacing stocks.
+That helps in development, but it comes with more trading. I then let the
+optimizer keep existing holdings from a wider rank range and added a penalty
+for trading. Those two changes recover more of the return after costs,
+although the benefit is less consistent after 2021.
 
 ## Three allocation rules
 
