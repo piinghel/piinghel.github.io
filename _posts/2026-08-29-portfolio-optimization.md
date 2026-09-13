@@ -3,7 +3,7 @@ layout: post
 title: "Joint Sizing with Fewer Trades"
 description: "Joint sizing adds turnover. A rank buffer and trade penalty recover more of the gross return."
 date: 2026-08-29
-last_modified_at: 2026-09-06
+last_modified_at: 2026-09-13
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -74,7 +74,25 @@ The regression target ranks forward returns divided by volatility. Multiplying
 its prediction by stock volatility gives me a sizing convention on the stock's
 risk scale, but ranking the target has already discarded return magnitudes.
 
-The basic optimizer solves
+To see why the risk budget belongs inside the optimizer, start with unconstrained
+Sharpe maximization. With expected excess returns $$\alpha\ne0$$ and a positive-definite
+covariance matrix $$\Sigma$$,
+
+$$
+\max_{w\ne0}\frac{\alpha^\top w}{\sqrt{w^\top\Sigma w}},
+\qquad w^\star\propto\Sigma^{-1}\alpha.
+$$
+
+Multiplying every position by a positive constant leaves Sharpe unchanged:
+this determines composition but leaves scale open. Unit volatility is just a
+mathematical normalization; without other constraints, I can scale directly
+to the desired volatility.
+
+Portfolio limits make size and risk a joint decision. Scaling from 5% to 7%
+forecast volatility turns a 4% position into 5.6%, breaching the name cap.
+I therefore put the actual volatility budget inside the optimization. Using
+my relative sizing scores $$\mu_t$$, rather than calibrated expected returns
+$$\alpha$$, the basic optimizer solves
 
 $$
 \begin{aligned}
@@ -93,6 +111,9 @@ rest of the proposed portfolio. The set $$\mathcal W_t$$ imposes the remaining l
 in Table 4. Long candidates can receive positive or zero weights; short
 candidates negative or zero weights. The optimizer seeks the highest combined
 score within these limits and the 7% forecast-risk budget.
+Maximizing that score under a volatility ceiling and portfolio limits is not
+generally equivalent to constrained Sharpe maximization. Other limits can
+bind while forecast volatility remains below 7%.
 
 These limits apply to target weights at a rebalance. Next-close execution and
 subsequent price moves can take the actual holdings outside those bounds.
@@ -296,6 +317,22 @@ Before shrinkage, daily returns are capped at ±30% for correlation estimation.
 Missing pairs use a 0.50 fallback. I symmetrize the pairwise matrix, clip
 negative eigenvalues, and restore its unit diagonal. The fallback's effect on
 portfolio risk depends on the signs of the positions.
+
+An alternative is a factor covariance model, as described in HRT's
+[*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/):
+
+$$
+\Sigma=BFB^\top+\Psi.
+$$
+
+Here $$B$$ contains factor exposures, $$F$$ is factor covariance, and the diagonal
+$$\Psi$$ contains stock-specific variances, assuming residuals are uncorrelated
+with the factors and with one another. Factors can represent the market,
+sectors, styles, or statistical directions such as PCA. The same optimization
+can use either covariance estimate, and the approaches can be combined—for
+example, by shrinking factor covariance. The reported experiments use the
+empirical correlation shrinkage above; I have not tested this factor-model
+alternative here.
 
 Figure 3 shows why I keep some estimated correlation. I rebuild both joint
 rules at each shrinkage value using development data. From 0.3 to 0.6,
