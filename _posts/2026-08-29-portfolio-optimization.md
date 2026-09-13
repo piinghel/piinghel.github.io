@@ -312,12 +312,11 @@ cancels, giving weights proportional to $$s_{i,t}/\widehat\sigma_{i,t}$$.
 That's the unconstrained case; portfolio limits and the trading penalty
 still have to be handled together.
 
-HRT's
-[*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
-describes an alternative covariance estimate based on shared factors and
-stock-specific risk. The same optimizer can use it, with or without shrinkage;
-the experiments here use
-empirical correlation shrinkage.
+Factor models are another standard way to estimate covariance, combining
+shared factor risk with stock-specific risk. They can also be used with
+shrinkage in the same optimizer; the experiments here use empirical correlation
+shrinkage. For an introduction, I particularly liked HRT's
+[*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/).
 
 Figure 3 shows why I keep some estimated correlation. I rebuild both joint
 rules at each shrinkage value using development data. From 0.3 to 0.6,

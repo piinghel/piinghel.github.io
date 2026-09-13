@@ -51,6 +51,12 @@ Move incidental calibration constants and implementation recipes out of the
 narrative when they interrupt it. Treat the author's examples as evidence of
 the underlying editorial preference, not a list of literal fixes to exhaust.
 
+Present established methods as established methods. Introduce the idea on its
+own terms, then recommend a useful explanation when relevant. Distinguish a
+source the author likes for its exposition from the original contribution;
+leading with a source's name can give familiar material an unintended air of
+novelty or imply credit for inventing it.
+
 The user's additional reference is Cliff Asness: choose the strongest one or
 two arguments rather than explaining a point several ways, and use footnotes
 for secondary qualifications that interrupt the flow. Avoid his combative tone
