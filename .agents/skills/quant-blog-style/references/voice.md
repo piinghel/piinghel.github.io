@@ -35,6 +35,22 @@ the problem, the genuine prior or expectation when known, what happened, and
 what the author now thinks or would do. Merely reporting results misses that
 personal connection. This is a preference, not a story arc to fabricate.
 
+Conversational means a knowledgeable practitioner speaking naturally. Keep
+the correct technical terms and respect the reader's expertise; simplifying
+the prose should not make the author sound tentative or explain basics in a
+childlike way.
+
+Exercise editorial judgment about what matters. A detail needed to implement
+an algorithm does not automatically belong in the article's main argument.
+Read the finished article as a continuous explanation: does each concept
+arrive when the reader needs it, and does each detail advance the question,
+method, evidence or interpretation? Introduce notation and normalizations
+before using them. Prefer symbolic parameters when explaining a general
+formulation, with the chosen values in nearby prose or a settings table.
+Move incidental calibration constants and implementation recipes out of the
+narrative when they interrupt it. Treat the author's examples as evidence of
+the underlying editorial preference, not a list of literal fixes to exhaust.
+
 The user's additional reference is Cliff Asness: choose the strongest one or
 two arguments rather than explaining a point several ways, and use footnotes
 for secondary qualifications that interrupt the flow. Avoid his combative tone

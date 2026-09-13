@@ -62,19 +62,19 @@ The optimizer sizes the selected stocks together under a forecast-risk budget,
 with limits on gross and net exposure, individual names, market beta, and
 sectors.
 
-Start with unconstrained Sharpe maximization. With expected excess returns
-$$\alpha\ne0$$ and a positive-definite
-covariance matrix $$\Sigma$$,
+The unconstrained Sharpe problem is a useful starting point. With expected
+excess returns $$\alpha$$ and a positive-definite covariance matrix $$\Sigma$$,
 
 $$
 \max_{w\ne0}\frac{\alpha^\top w}{\sqrt{w^\top\Sigma w}},
 \qquad w^\star\propto\Sigma^{-1}\alpha.
 $$
 
-Multiplying every position by a positive constant leaves Sharpe unchanged.
-The solution tells me the relative weights, but leaves their scale open.
-Unit volatility is just a mathematical normalization; without other
-constraints, I can scale directly to the volatility I want.
+Multiplying all positions by a positive constant scales expected return and
+volatility equally, so Sharpe is unchanged. The solution fixes relative
+weights but leaves portfolio size open. Setting portfolio volatility to
+one—unit volatility—is a convenient normalization for the derivation.
+Without other limits, I can then rescale to the volatility I want.
 
 Portfolio limits make size and risk a joint decision. Scaling from 5% to 7%
 forecast volatility turns a 4% position into 5.6%, breaching the name cap.
@@ -86,19 +86,20 @@ volatility $$\widehat\sigma_{i,t}$$ to get
 $$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$. The target ranks forward returns
 divided by volatility. Multiplying by volatility puts those scores on each
 stock's risk scale, but can't recover the return magnitudes lost in ranking.
-With signed portfolio weights $$w_t$$, I solve
+With signed portfolio weights $$w_t$$ and volatility target
+$$\sigma_{\mathrm{target}}$$, I solve
 
 $$
 \begin{aligned}
 \max_{w_t}\quad & \mu_t^\top w_t \\
 \text{subject to}\quad
-& w_t^\top\Sigma_t w_t\leq 0.07^2,\\
+& w_t^\top\Sigma_t w_t\leq \sigma_{\mathrm{target}}^2,\\
 & w_t\in\mathcal W_t.
 \end{aligned}
 $$
 
-Here $$\Sigma_t$$ is the annualized forecast covariance matrix, so
-$$w_t^\top\Sigma_t w_t$$ is annual portfolio variance.
+I use a 7% annual volatility target. Here $$\Sigma_t$$ is the annualized
+forecast covariance matrix, so $$w_t^\top\Sigma_t w_t$$ is annual portfolio variance.
 The set $$\mathcal W_t$$ contains the other portfolio limits:
 200% gross, ±25% net, 4% per name, ±0.05 estimated beta, and the sector caps
 in Table 4. Long candidates can receive positive or zero weights; short
@@ -292,12 +293,13 @@ The shrunk correlation matrix becomes a covariance matrix through
 
 $$
 \begin{aligned}
-\Sigma_t&=\kappa^2D_tC_t(\rho)D_t,\\
-\Sigma_t^{-1}&=\kappa^{-2}D_t^{-1}C_t(\rho)^{-1}D_t^{-1}.
+\Sigma_t&=D_tC_t(\rho)D_t,\\
+\Sigma_t^{-1}&=D_t^{-1}C_t(\rho)^{-1}D_t^{-1}.
 \end{aligned}
 $$
 
-Here $$D_t$$ contains annualized stock-volatility estimates. The second line
+Here $$D_t$$ contains the annualized stock-volatility forecasts used in the
+allocation, including their calibration. The second line
 is the *precision matrix* in the unconstrained direction
 $$w^\star\propto\Sigma^{-1}\alpha$$ introduced earlier: the rightmost
 $$D_t^{-1}$$ divides expected returns by stock volatility, the inverse
@@ -309,15 +311,6 @@ Using my sizing scores $$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$ in that same ca
 cancels, giving weights proportional to $$s_{i,t}/\widehat\sigma_{i,t}$$.
 That's the unconstrained case; portfolio limits and the trading penalty
 still have to be handled together.
-
-Volatility uses 21 days and correlations use 756 days of volatility-standardized returns,
-with 252 observations required. The multiplier
-$$\kappa=1.18$$ scales forecast volatility.
-
-Before shrinkage, daily returns are capped at ±30% for correlation estimation.
-Missing pairs use a 0.50 fallback. I symmetrize the pairwise matrix, clip
-negative eigenvalues, and restore its unit diagonal. The fallback's effect on
-portfolio risk depends on the signs of the positions.
 
 HRT's
 [*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
@@ -348,8 +341,8 @@ with trading controls.
 
 The full development results tell the same story: I asked for 7% forecast
 volatility and got about 8.4% realized volatility. Shrinkage helps, but I still
-need to recalibrate the risk level. I would estimate a new multiplier on
-development data and rerun the portfolios. Changing covariance changes the
+need to recalibrate the risk level on development data and rerun the portfolios.
+Changing covariance changes the
 allocation decision too, including which constraints bind and how much the portfolio trades.
 
 ## Forecast beta versus realized beta
@@ -397,6 +390,7 @@ losses in the short book deserve a closer look.
     <tr><th scope="row">Volatility-scaled baseline</th><td>Logistic signal shares with slope 2; 60-day volatility, 20% reference and 5% floor; 4% name cap; each book scales down above 100% gross</td></tr>
     <tr><th scope="row">Joint portfolio limits</th><td>7% forecast volatility; 200% gross; 4% per name; ±25% net; ±0.05 estimated beta</td></tr>
     <tr><th scope="row">Covariance estimate</th><td>21-day volatility; 756-day correlations of volatility-standardized returns (252 observations minimum); 50% shrinkage toward identity; volatility multiplied by 1.18</td></tr>
+    <tr><th scope="row">Correlation preparation</th><td>Daily returns capped at ±30%; missing pairs use 0.50; matrix symmetrized, negative eigenvalues clipped and unit diagonal restored before shrinkage</td></tr>
     <tr><th scope="row">Sector limits</th><td>±20% net; 30% of either book</td></tr>
     <tr><th scope="row">Trading penalty</th><td><i>c</i> = 2.5 × 10<sup>−4</sup>, applied to the absolute change from drifted pre-trade weights</td></tr>
   </tbody>
