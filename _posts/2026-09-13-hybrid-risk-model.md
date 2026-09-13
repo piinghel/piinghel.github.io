@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Fundamental, Statistical and Hybrid Risk Models"
+date: 2026-09-13
 description: "Adding named factors and residual PCA improved some risk forecasts, but did not give me a better portfolio. What the comparison changed—and what it left open."
 permalink: /quants/hybrid-risk-model.html
 toc: false
