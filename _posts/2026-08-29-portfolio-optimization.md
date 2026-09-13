@@ -12,16 +12,17 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-I wanted to see whether choosing position sizes together would improve the
-portfolio built from my [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html).
-Sizing each stock by its own volatility treats the positions separately.
-An optimizer can also account for how they move together and fit within
-the portfolio limits.
+I compare stock-level volatility scaling with joint portfolio optimization,
+using the same [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html).
+The optimizer incorporates cross-stock covariance and portfolio constraints
+directly into the allocation, under a 7% annual forecast-volatility budget.
 
-That helps in development, but it comes with more trading. I then let the
-optimizer keep existing holdings from a wider rank range and added a penalty
-for trading. Those two changes recover more of the return after costs,
-although the benefit is less consistent after 2021.
+Joint optimization improves gross returns in development, but the higher
+turnover absorbs part of the gain. I add a rank buffer and an L1 trading
+penalty so rebalancing accounts for the existing portfolio. Together, these
+controls preserve most of the gross improvement while reducing turnover.
+Their advantage is smaller and more sensitive to the rebalance schedule
+after 2021.
 
 ## Three allocation rules
 
