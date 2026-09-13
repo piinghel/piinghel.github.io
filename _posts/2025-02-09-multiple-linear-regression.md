@@ -14,35 +14,31 @@ github_repositories:
 
 <p class="article-summary">Learning from a broad set of stock predictors produces lower-volatility portfolios than a small fixed-weight benchmark, with comparable net returns and roughly twice the trading. Regularizing the regression changes the coefficients much more than it changes the stocks selected.</p>
 
-It's easy to come up with another stock predictor. Deciding how much weight
-to give it is harder, especially when it looks a lot like the ones already
-there. Six- and twelve-month momentum, for example, share much of their
-history. How much does the second really add once I have the first?
+Here I use multiple linear regression to model stocks' relative risk-adjusted
+performance from momentum, volatility, liquidity, size and short-positioning
+predictors. I'm interested in how correlated inputs affect the fitted model,
+and what regularization changes in its coefficients and predictions.
 
-Linear regression appeals to me because I can learn the weights and still
-see how the inputs combine. I'll start with ordinary least squares (OLS),
-then try Ridge regression to keep large, opposing coefficients in check.
-The question is whether that changes the stocks selected, or mainly changes
-how the model describes much the same ranking.
+I start with ordinary least squares (OLS), then compare it with Ridge
+regression. OLS estimates the relationship with each predictor conditional
+on the others, but multicollinearity can produce large, opposing coefficients.
+Ridge penalizes coefficient size. That gives me a way to examine whether
+shrinking the coefficients also makes the forecasts more stable and useful.
 
-I also want a simple point of comparison: a smaller set of predictors with
-fixed weights. I'll follow all three scores through to portfolio returns,
-because a better prediction is only useful here if it survives sizing and
-trading costs. The [low-volatility article](/quant/2024/12/15/low-volatility-factor.html)
-looked at how to size stocks; here I turn to how to choose them.
+The portfolio comparison follows from that modelling question. I compare
+the stock rankings and returns after costs, using the same allocation rules
+for both models and a smaller fixed-weight benchmark. This builds on the
+[low-volatility article](/quant/2024/12/15/low-volatility-factor.html): the
+focus now is the model that selects stocks, before deciding how to size them.
 
-## What I ask the model to predict
+## Target and predictors
+{: #what-i-ask-the-model-to-predict }
 
-For each stock, I calculate its average daily return over the next 20 sessions
-divided by its volatility over those same sessions. I then rank this outcome
-within each date and sector. The target asks which stocks will deliver better
-risk-adjusted performance than their sector peers. For a given positive return,
-lower volatility means a better outcome, so my risk preference starts in the
-prediction problem.
-
-The model predicts this rank, giving me a score for stock selection. Ranking
-keeps the ordering of outcomes but discards their magnitudes, so the score
-measures relative performance rather than an expected return in percent.
+The prediction target is each stock's forward 20-session Sharpe ratio: mean
+daily return divided by daily return volatility over those sessions, ranked
+within date and sector. This builds a preference for risk-adjusted performance
+into stock selection. The forecasts are relative ranking scores; ranking
+discards the original return magnitudes.
 
 Both regressions use 144 predictors, mostly based on prices and trading
 activity: momentum and trend, volatility, liquidity, size and short positioning.
@@ -147,7 +143,7 @@ counts all purchases and sales relative to strategy capital, annualized.
 
 ## Prediction quality and portfolio results
 
-First, do the scores rank stocks well? Table 2 reports the daily information
+Table 2 compares ranking quality using the daily information
 coefficient (IC), the cross-sectional Spearman correlation between each score
 and the target observed over the following 20 sessions.
 OLS and Ridge have almost identical mean IC in both periods. The small
@@ -226,7 +222,7 @@ trained on an unadjusted return target.
 
 ## What Ridge changes
 
-So why do smaller coefficients produce such similar portfolios? Ridge reduces
+The coefficient diagnostics help explain the similar portfolios. Ridge reduces
 coefficient size and absolute movement between refits by roughly one third.
 But once I normalize the coefficient vectors to the same length, their
 directions change by similar amounts. Much of the apparent stability comes

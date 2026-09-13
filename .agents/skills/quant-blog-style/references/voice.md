@@ -28,9 +28,11 @@ fixed formulas. Borrow the qualities, not their phrases or personas.
 
 ## Applying this voice
 
-The user's preferred register is a hands-on practitioner explaining the work
-to allocators and quant peers. Keep the technical content rigorous; let the
-framing sentences sound conversational. Make the author's reasoning visible:
+The user's preferred register is a researcher explaining the work naturally
+to a knowledgeable colleague in statistical modelling, machine learning and
+portfolio management. Assume that technical audience, rather than writing a
+beginner's tutorial or a business presentation. Keep the technical content
+rigorous and the prose conversational. Make the author's reasoning visible:
 the problem, the genuine prior or expectation when known, what happened, and
 what the author now thinks or would do. Merely reporting results misses that
 personal connection. This is a preference, not a story arc to fabricate.
@@ -39,6 +41,18 @@ Conversational means a knowledgeable practitioner speaking naturally. Keep
 the correct technical terms and respect the reader's expertise; simplifying
 the prose should not make the author sound tentative or explain basics in a
 childlike way.
+
+Keep modelling problems central in modelling articles: the target, predictors,
+estimation, dependence between inputs, regularization and evaluation. Follow
+those choices through to portfolio outcomes as their application. Do not
+replace the modelling argument with a simplified investing explanation.
+
+Use direct technical headings such as "Target and predictors" or "Portfolio
+construction" when they identify the content clearly. Avoid elementary
+rhetorical questions and tutorial-style phrasing such as "What I ask the
+model to predict." Introduce the actual research comparison in professional,
+natural prose; conversational tone does not require staged questions or chatty
+examples before every concept.
 
 Exercise editorial judgment about what matters. A detail needed to implement
 an algorithm does not automatically belong in the article's main argument.
