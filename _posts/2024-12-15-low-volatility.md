@@ -37,17 +37,24 @@ The lowest-volatility decile is long and the highest is short, with roughly
 100 names per book. Rebalancing occurs every three weeks, execution at the
 next close, and trading costs are 5 bp per dollar traded.
 
-In this sample, the ranking separates risk more clearly than return. Across
-the ten deciles, realized volatility rises from 11.9% for the stable stocks
+Figure 1 follows all ten volatility deciles, from the most stable stocks to
+the most volatile. The ranking separates risk more clearly than return:
+realized volatility rises from 11.9% for the stable stocks
 to 37.9% for the volatile stocks, while Sharpe falls from 0.90 to 0.20.
 The highest-volatility decile still earns a positive arithmetic return before
 costs, but compounds at only 0.35% a year. Shorting these stocks means absorbing
 their large price swings.
 
+<div class="low-vol-figure decile-profile-figure">
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Bar plots of before-cost Sharpe ratio, annualized geometric return and annualized volatility across ten past-volatility deciles, from the most stable stocks in decile 1 to the most volatile in decile 10." version="12" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1: More volatile stocks earn less per unit of risk.</strong> Before-cost Sharpe ratio, annualized geometric return and annualized volatility, July 1995–May 2026. Decile 1 contains the most stable stocks; decile 10 contains the most volatile. Each decile is measured as a long portfolio.</p>
+
 ## Equal capital, unequal risk
 
 The equal-weight rule puts one dollar into each book for every dollar of
-strategy capital. Figure 1 shows the consequence: the high-volatility stocks
+strategy capital. Figure 2 shows the consequence: the high-volatility stocks
 have more than three times the long book's standalone volatility and almost
 three times its beta. Shorting them reverses that market exposure, leaving
 the combined portfolio with realized beta of −1.12.
@@ -56,7 +63,7 @@ the combined portfolio with realized beta of −1.12.
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" mobile="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="11" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Equal capital gives the volatile book more risk.</strong> Annualized realized volatility and average point-in-time beta, July 1995–May 2026. The high-volatility book's beta is measured before applying the short sign.</p>
+<p class="figure-caption"><strong>Figure 2: Equal capital gives the volatile book more risk.</strong> Annualized realized volatility and average point-in-time beta, July 1995–May 2026. The high-volatility book's beta is measured before applying the short sign.</p>
 
 Equal weighting is easy to explain, but I find it a poor starting point for
 this particular ranking: it gives the deliberately volatile stocks too much
@@ -113,7 +120,7 @@ Turnover also falls.
 
 The equal-weight portfolio has a positive Sharpe because its average daily
 return is positive. But those returns come with large swings, which hurt
-compounding. Figure 2 shows what this means over the full period: 35 cents
+compounding. Figure 3 shows what this means over the full period: 35 cents
 remain per starting dollar, compared with 7.54 dollars under inverse-volatility
 sizing. The change in sizing makes a large difference, although a 38% maximum
 drawdown still leaves plenty to improve.
@@ -122,12 +129,12 @@ drawdown still leaves plenty to improve.
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Sizing changes both risk and compounding.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. The rules retain their different exposures and volatilities; Table 1 supplies the risk comparison.</p>
+<p class="figure-caption"><strong>Figure 3: Sizing changes both risk and compounding.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. The rules retain their different exposures and volatilities; Table 1 supplies the risk comparison.</p>
 
 ## Shared losses during market rallies
 
 The remaining drawdowns show the limit of treating positions individually.
-Figure 3 examines two market rallies when the short book lost heavily:
+Figure 4 examines two market rallies when the short book lost heavily:
 the dot-com episode and April 2025–May 2026. The contribution panels locate
 the return in the long and short books.
 
@@ -135,7 +142,7 @@ the return in the long and short books.
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="17" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: Short-book losses in two market rallies.</strong> Before-cost indexed growth above linked cumulative book contributions in percentage points. The dot-com episode comes first, followed by April 2025–May 2026.</p>
+<p class="figure-caption"><strong>Figure 4: Short-book losses in two market rallies.</strong> Before-cost indexed growth above linked cumulative book contributions in percentage points. The dot-com episode comes first, followed by April 2025–May 2026.</p>
 
 From 8 October 1998 to 9 March 2000, the market gains about 52% while the portfolio loses
 38% after costs. The short book contributes −27.1 percentage points before

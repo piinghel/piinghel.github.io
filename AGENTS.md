@@ -15,6 +15,10 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Recover the article's practical research question before rewriting. Keep
   follow-up questions when a result motivates the next decision within that
   same argument. Delete unsupported branches rather than filling an appendix.
+- Preserve figures that substantiate a central claim or connect steps in the
+  story. Mentioning their endpoint values in prose does not replace showing
+  the comparison. In the low-volatility article, retain the decile bar plot
+  beside the discussion of return, volatility and Sharpe across deciles.
 - Open conversationally with the concrete problem and what the article will
   try to resolve. Do not add or reintroduce boilerplate about having inspected,
   reused or learned from the later/test period, including paraphrases such as
