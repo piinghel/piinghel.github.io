@@ -12,17 +12,18 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-I compare stock-level volatility scaling with joint portfolio optimization,
-using the same [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html).
-The optimizer incorporates cross-stock covariance and portfolio constraints
-directly into the allocation, under a 7% annual forecast-volatility budget.
+Portfolio optimization can amplify estimation error. Combinations with
+underestimated variance look attractive to the optimizer, and small changes
+in scores or covariance can generate substantial turnover. Volatility and
+beta limits apply to forecasts: satisfying them at a rebalance doesn't ensure
+that realized volatility and beta stay within those bounds.
 
-Joint optimization improves gross returns in development, but the higher
-turnover absorbs part of the gain. I add a rank buffer and an L1 trading
-penalty so rebalancing accounts for the existing portfolio. Together, these
-controls preserve most of the gross improvement while reducing turnover.
-Their advantage is smaller and more sensitive to the rebalance schedule
-after 2021.
+Here I compare stock-level volatility scaling with joint optimization using
+the same [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html).
+I use correlation shrinkage to reduce reliance on the strongest estimated
+diversification benefits, then add a rank buffer and an L1 trading penalty
+to control turnover. I assess net returns and turnover alongside volatility
+calibration and realized beta.
 
 ## Three allocation rules
 
