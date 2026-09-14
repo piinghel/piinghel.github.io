@@ -200,7 +200,7 @@ short-book loss. In both cases, the smaller short allocation still drives
 most of the loss. Shrinking the shorts reduces their everyday risk, while
 their shared moves can still overwhelm the longs.
 
-## Where this leaves me
+## A simpler baseline
 {: #from-individual-weights-to-joint-construction }
 
 I still like inverse-volatility sizing as a simple default here. I keep
