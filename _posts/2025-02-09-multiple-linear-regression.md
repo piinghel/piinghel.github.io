@@ -364,29 +364,20 @@ development drawdowns than the fixed score (Figure 3).
 Ridge reduces coefficient size and absolute movement between refits by
 roughly one third, while the rankings barely change. After normalizing each
 coefficient vector to unit length, the vectors move by similar amounts for
-OLS and Ridge. Much of the apparent stability comes from rescaling: a smaller
-vector can move less in absolute terms even when its change in direction
-stays the same.
+OLS and Ridge. Much of the apparent stability comes from rescaling.
 
 For stock selection, a positive rescaling of all coefficients leaves the
-ordering unchanged. The relevant empirical check is how much regularization
-changes the rankings: their daily correlation is 0.991, and only about 14–15
-of the 150 daily candidates differ between OLS and Ridge. The coefficient
-changes translate into limited changes in the portfolio's candidate set.
-These are daily candidate comparisons; the rebalance schedule determines
-when a changed selection leads to a trade.
+ordering unchanged. On the prediction blocks, OLS and Ridge have a daily
+ranking correlation of 0.991, with about 14–15 of the 150 daily candidates
+differing. The rebalance schedule determines when those differences lead
+to trades.
 
-If two momentum predictors move almost together, shifting weight from one
-to the other can change the coefficients substantially while barely changing
-their combined score. I check whether Ridge's weight changes have this
-property.
-
-At each refit, I take Ridge minus OLS using the coefficients averaged across
-the three training fits. I split this difference, $$\Delta\boldsymbol\beta$$,
-across the predictor combinations defined by the eigenvectors of the pooled
-training covariance $G$. The equation below weights each squared coefficient
-change by how much that combination varies in the training data,
-$$\lambda_j$$, to give the mean squared change in centred scores:
+Where do the weights change? At each refit, I take Ridge minus OLS using
+the coefficients averaged across the three training fits. I express this
+difference, $$\Delta\boldsymbol\beta$$, along the eigenvectors of the pooled
+training covariance $G$. Each represents a combination of predictors. The
+equation gives a simple rule: a coefficient change affects scores more when
+that combination varies more across the training observations ($\lambda_j$):
 
 $$
 \begin{aligned}
@@ -398,10 +389,8 @@ $$
 
 The 72 least-variable combinations contain **99.1% of the squared coefficient
 difference**, averaged across the twelve refits, but only **4.0% of predictor
-variance**. Most of the weight change therefore acts on combinations that
-vary little across the training observations. Large changes there have
-relatively little effect on scores. This helps explain the close rankings;
-their correlation of 0.991 is measured on the subsequent prediction blocks.
+variance**. Ridge therefore makes most of its weight adjustments where they
+have relatively little effect on scores.
 
 The ten largest mean absolute Ridge coefficients keep the same sign across
 all twelve refits (Figure 4). Price relative to its 126-day moving
