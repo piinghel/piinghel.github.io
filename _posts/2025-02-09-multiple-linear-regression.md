@@ -98,8 +98,7 @@ $$
 
 For example, a stock's momentum can rise from −2% to +10% while its rank
 stays unchanged. The marginal cross-sectional distributions stay approximately
-uniform over time, although ties and changing group sizes affect the exact
-grid.[^rank-convention] This keeps scales comparable when pooling history and
+uniform over time. This keeps scales comparable when pooling history[^rank-convention] and
 limits the influence of extreme predictor and target values. Correlations
 and predictive relationships can still change.
 
@@ -113,7 +112,7 @@ targets are ranked within sectors. A high momentum rank can therefore pair
 with middling subsequent performance among sector peers. Portfolio selection
 still spans sectors and can create sector exposures.
 
-[^rank-convention]: Without ties, the range is $[-1+2/N,1]$. Ties share a dense rank, divided by the largest rank in the group; flat groups and missing predictor ranks receive zero. Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), manuscript of 13 September 2019, physical PDF pages 9 and 24, describe pooling across stocks and time and ranking characteristics into $[-1,1]$. Here the target is also ranked, within each date and sector.
+[^rank-convention]: Gu, Kelly and Xiu also rank stock characteristics in [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), September 2019 manuscript, PDF page 24.
 
 ### Breadth and dependence
 {: #building-the-training-matrix }
@@ -385,17 +384,53 @@ difference, averaged across the twelve refits, but only 4.0% of predictor
 variance. Ridge therefore makes most of its weight adjustments where they
 have relatively little effect on scores.
 
-The ten largest mean absolute Ridge coefficients keep the same sign across
-all twelve refits (Figure 4). Price relative to its 126-day moving
-average stays positive, while 10/21-day MACD stays negative; both remain among
-the ten largest weights at every refit. Holding the other predictor ranks
-fixed, they favor relative longer-term strength with weaker recent momentum.
+## Reading the predictors
+
+Figure 4 shows the ten largest average absolute Ridge weights.
+A positive weight raises a stock's score as its rank on that predictor
+rises; a negative weight lowers it, holding the other ranks fixed.
 
 <div class="research-figure coefficient-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
 </div>
 
 <p class="figure-caption">Figure 4: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit. Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
+
+The clearest pattern is longer-term strength with a short-term reversal
+component. Price relative to its six-month moving average, historical
+six-month Sharpe and the past year's return all receive positive weights.
+So does the fraction of days spent above the 200-day moving average over
+the past two years. Together, these terms favour stronger, more persistent
+trends. The negative 10/21-day MACD weight then favours weaker recent
+momentum among otherwise similar stocks. I read this combination as looking
+for longer-term strength without chasing the latest upward move.
+
+The negative weight on the 90-day high relative to the window-start price
+adds another distinction between price paths. This predictor measures how
+far the price had run up within that earlier window, excluding the latest
+ten days. For similar values of the other trend measures, a larger earlier
+run-up lowers the score. The model is learning contrasts between horizons
+and aspects of the price path, rather than giving every momentum measure
+the same sign.
+
+Liquidity matters too. The negative illiquidity weight favours stocks with
+less absolute price movement per dollar traded. The market-cap variability
+terms contrast different horizons: the two-year measure has a positive
+weight, while the one-month measure has a negative weight. This pair favours
+more variation over the longer history and a quieter recent month. These
+features describe variation in log market capitalization over time.
+
+One-year upside volatility has a positive weight.
+Conditional on the other predictors, more variation in the positive part of
+daily returns raises the score. This is a different treatment of risk from
+the fixed rule's general preference for lower volatility.
+
+All ten signs persist across the twelve refits, which makes this a fairly
+consistent description of the fitted score. But these are ten terms in a
+144-predictor model, and several describe similar characteristics. A large
+coefficient can help offset another input. To establish which predictor
+families improve performance, I would need to remove them and refit; the
+heatmap alone cannot attribute the portfolio's returns to them.
 
 ## Where this leaves me
 
