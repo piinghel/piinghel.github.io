@@ -116,41 +116,42 @@ sensitivity to offset the longs. The balance varies through
 time. That is why a portfolio with more dollars in longs can still lose
 in a market rally, as Figure 4 will show.
 
-## Lower risk, with beta behind the return gain
+## Lower risk, with a check on market exposure
 {: #what-improves }
 
 The return improvement needs more care: shrinking the shorts also removes
-a large bet against the market. In a full-sample beta check, that change
-accounts for more than the entire gain in average annual return; after I
-remove the market component, equal weighting earns more, at much higher
-risk. Table 1 puts the original portfolios beside this check, which subtracts
-each rule's fitted market component from its daily returns.[^beta-check]
+a large bet against the market. Once I hedge both portfolios using beta
+estimates available before each trade, the average-return advantage
+disappears under my financing assumption. Table 1 puts the original
+portfolios beside this check. I keep their stock positions and add an index
+hedge, with trading costs and a 3% annual financing rate.[^beta-check]
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 1: The sizing comparison, with a check for market exposure.</strong> 12 July 1995–27 May 2026. Returns, volatility and stock turnover are annualized. Both return columns include the 5 bp stock-trading charge. The lower rows remove full-sample realized net-return beta, with zero financing and hedge costs; turnover counts the original stock trades only. Sharpe uses a zero cash rate.</caption>
-  <thead><tr><th>Rule</th><th>Arithmetic return</th><th>Geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Stock turnover</th></tr></thead>
+  <caption><strong>Table 1: Sizing with and without a point-in-time beta hedge.</strong> 12 July 1995–27 May 2026. Returns, volatility and two-way turnover are annualized. Trading costs are 5 bp per dollar traded. The lower rows include index trades and 3% annual hedge financing; turnover includes stocks and the hedge. Sharpe uses a zero cash benchmark.</caption>
+  <thead><tr><th>Rule</th><th>Arithmetic return</th><th>Geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="7">Original portfolios</th></tr>
     <tr><th scope="row">Equal-weight</th><td>2.2%</td><td>−3.3%</td><td>33.4%</td><td>0.07</td><td>−87.8%</td><td>18.8×</td></tr>
     <tr><th scope="row">Inverse-volatility</th><td>7.0%</td><td>6.8%</td><td>9.8%</td><td>0.72</td><td>−38.0%</td><td>12.4×</td></tr>
-    <tr class="period-heading"><th colspan="7">Realized beta removed · hindsight diagnostic</th></tr>
-    <tr><th scope="row">Equal-weight</th><td>13.8%</td><td>11.0%</td><td>25.7%</td><td>0.54</td><td>−67.9%</td><td>18.8×</td></tr>
-    <tr><th scope="row">Inverse-volatility</th><td>7.0%</td><td>6.8%</td><td>9.8%</td><td>0.72</td><td>−38.0%</td><td>12.4×</td></tr>
+    <tr class="period-heading"><th colspan="7">Point-in-time beta hedge · 3% financing</th></tr>
+    <tr><th scope="row">Equal-weight</th><td>7.5%</td><td>4.6%</td><td>24.5%</td><td>0.30</td><td>−69.9%</td><td>20.1×</td></tr>
+    <tr><th scope="row">Inverse-volatility</th><td>6.8%</td><td>6.6%</td><td>9.8%</td><td>0.70</td><td>−37.0%</td><td>13.0×</td></tr>
   </tbody>
 </table>
 
-The beta check makes me more cautious about claiming a return advantage
-for inverse-volatility sizing. Its raw arithmetic-return gain is about
-5 percentage points a year. The change in the fitted market component
-accounts for about 12 points, while the remaining difference costs about
-7 points. After removing beta, equal weighting compounds at about 11% a
-year, versus about 7% for inverse-volatility. The comparison still bundles
-different gross exposures, book sizes and stock weights, so I would need
-a matched portfolio test to isolate the stock-level sizing rule.
+The hedge brings realized beta close to zero for both rules: about 0.011
+for equal weighting and 0.005 for inverse volatility. Equal weighting now
+averages about 7.5% a year, versus 6.8%, but compounds at only 4.6% versus
+6.6%. Financing matters because equal weighting needs a much larger long
+index hedge. At zero financing, its arithmetic return is 10.7%; at 5%, it
+is 5.3%. Inverse volatility stays near 6.8–6.9% across those assumptions.
+The return ordering therefore depends on funding. Different gross
+exposures, book sizes and stock weights also remain, so this comparison
+does not isolate the stock-level sizing rule.
 
 What I do get is much lower risk: portfolio volatility falls from about 33%
 to 10%. I also get a higher Sharpe and a shallower worst drawdown, even in
-the beta-adjusted comparison. Compounding explains part
+the hedged comparison. Compounding explains part
 of the appeal: the original equal-weight portfolio averages about 2% a year
 arithmetically but compounds at roughly −3%, a gap of about five and a half
 percentage points. Under inverse-volatility sizing, both
@@ -172,7 +173,7 @@ suffers a worst drawdown of about 38%.
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar on a logarithmic scale and drawdowns for the equal-weight and volatility-scaled long-short portfolios" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: The raw performance gap includes the change in market exposure.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. Terminal indices are 0.35 and 7.54; full-sample realized gross-return betas are −1.12 and −0.001. These are the original portfolios at their different exposures and volatilities; Table 1 separates out a full-sample beta adjustment.</p>
+<p class="figure-caption"><strong>Figure 3: The raw performance gap includes the change in market exposure.</strong> Compounded daily P&amp;L per unit of strategy notional (log scale) and drawdown, July 1995–May 2026, after the 5 bp charge. Terminal indices are 0.35 and 7.54; full-sample realized gross-return betas are −1.12 and −0.001. These are the original portfolios at their different exposures and volatilities; Table 1 adds the point-in-time hedge comparison.</p>
 
 ## Shared losses during market rallies
 
@@ -227,4 +228,4 @@ the more elaborate approach has to earn its place.
 
 [^windows]: The ranking averages trailing volatility estimates over 21, 63 and 126 sessions. The separate sizing estimate uses 60 sessions, with a 5% annualized volatility floor.
 
-[^beta-check]: For each rule I fit an OLS regression with an intercept and calculate $r_t^*=r_t-\widehat\beta r_{m,t}$ using after-cost daily returns and the Russell 1000 return. The intercept stays in the adjusted return. Estimating beta over the entire sample makes this a hindsight diagnostic; a tradable hedge would require an estimate available before each trade, plus financing and hedge costs. The arithmetic-return gap splits into the change in beta times the market's average return and a remainder. Geometric returns also reflect compounding.
+[^beta-check]: At each signal close I sum target stock weights times their trailing market betas (252 sessions, at least 126 observations, each beta clipped to [−4, 4]). The index target is the negative of that sum. I trade at the next close, earn returns from the following session and hold quantities until the next three-week rebalance. Hedge trading costs are 5 bp per dollar traded. Financing accrues at an assumed 3% annually on signed prior-close index exposure, using calendar days/365 and daily P&L sweeps; short exposure receives the same rate. The 0% and 5% cases vary that assumption. This uses the Russell 1000 return proxy and retains the original stock accounting; historical funding rates, futures basis and roll costs are outside this comparison. The hedge targets estimated beta; realized beta can differ.
