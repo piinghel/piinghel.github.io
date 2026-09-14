@@ -140,19 +140,23 @@ equal weighting and 0.005 for inverse volatility. Those are full-period
 measurements of the resulting returns; the hedge itself uses trailing
 estimates at each rebalance. Beta can still drift between trades.
 With the hedge, equal weighting earns about 8% a year versus 6.6% for
-inverse volatility. Different gross exposures, book sizes and stock weights
-remain, so this comparison does not isolate the stock-level sizing rule.
+inverse volatility, with about two and a half times the volatility.
+The two rules therefore offer different return–risk trade-offs. Different
+gross exposures, book sizes and stock weights remain, so this comparison
+does not isolate the stock-level sizing rule.
 
 What I do get is much lower risk: portfolio volatility falls from about 33%
 to 10% without the hedge, and from about 25% to 10% with it. I also get a
 higher Sharpe and a shallower worst drawdown in both comparisons.
+Adding the hedge to inverse volatility barely changes its volatility or
+worst drawdown. A market hedge on its own does little to improve that portfolio.
 
 Turnover measures how much I trade relative to strategy capital, counting
 both purchases and sales. Volatility-decile membership churns quickly, so
 even a rebalance every three weeks produces about 12–19 times capital in
 annual stock turnover. The index hedge adds about 0.63 times capital for
-inverse volatility and 1.32 for equal weighting. Smaller short positions reduce the dollars I trade and
-the costs I pay.
+inverse volatility and 1.32 for equal weighting. Smaller short positions
+reduce the dollars I trade and the costs I pay.
 
 Figure 3 adds the hedged equal-weight portfolio to the original paths.
 The hedge lifts its ending value from about 35 cents to almost eleven
@@ -169,14 +173,11 @@ I remove the large market short; the risk gap remains.
 
 ## Shared losses during market rallies
 
-Figure 4 returns to the unhedged inverse-volatility portfolio and its
-apparently reassuring combination:
-about 63% net long and roughly zero beta over the full sample. Within both
-rallies in Figure 4, the short book's market sensitivity outweighs the
-longs', leaving the portfolio with negative realized beta.
-I size stocks from their individual volatility, leaving their sensitivity
-to shared moves free to build up. Figure 4 shows what each book contributes
-during the dot-com rally and the rally from April 2025 to May 2026.
+Figure 4 returns to the unhedged inverse-volatility portfolio to look inside
+two of its losses. The portfolio has modest negative realized beta in both
+market rallies, despite roughly zero beta over the full sample. That
+describes its market sensitivity during those windows; explaining the
+losses also requires looking at what the two books actually do.
 
 <div class="low-vol-figure regime-comparison-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="17" %}
@@ -198,21 +199,24 @@ The two episodes differ in what the long book contributes. It adds to the
 dot-com loss, whereas in the later rally it offsets about a quarter of the
 short-book loss. In both cases, the smaller short allocation still drives
 most of the loss. Shrinking the shorts reduces their everyday risk, while
-their shared moves can still overwhelm the longs.
+losses across those positions can still overwhelm the longs. In the dot-com
+episode, both books lose together. Balancing individual stock volatility
+leaves that possibility open.
 
 ## A simpler baseline
 {: #from-individual-weights-to-joint-construction }
 
-I still like inverse-volatility sizing as a simple default here. I keep
-the ranking, give the wild stocks less capital, and get much lower risk
-and turnover. The beta check narrows the case to those practical benefits
-and better risk-adjusted returns. That is enough to make it a useful baseline.
+I would keep inverse-volatility sizing as the baseline for this investigation.
+Hedged equal weighting earns more at the sizes tested, but inverse volatility
+offers much lower volatility, shallower drawdowns and less trading. Its
+advantage here is a more manageable portfolio with a better Sharpe.
 
-The remaining drawdowns give the next investigation a specific purpose:
-accounting for how positions move together. I'd compare this baseline with
-joint construction using covariance and portfolio exposure limits, and check
-whether the added complexity reduces drawdowns while keeping enough
-return after costs. Inverse-volatility sizing already gets us a long way;
+The next comparison should put both hedged rules at the same risk target,
+set using information available at each rebalance, with the same cost
+assumptions. That would make the sizing trade-off easier to judge.
+I would then test whether using covariance and portfolio exposure limits
+improves on that baseline, especially when several positions lose together.
+Inverse-volatility sizing already gets us a long way;
 the more elaborate approach has to earn its place.
 
 [^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, author draft dated 10 May 2013, physical PDF pages 2–3; published in the *Journal of Financial Economics* in 2014. Their mechanism concerns market beta; this article ranks total volatility. [Public author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2).
