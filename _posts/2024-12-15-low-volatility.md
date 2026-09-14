@@ -13,13 +13,10 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-I rank stocks by volatility, buy the calmest and short the wildest. Then I
-give each side the same capital. The catch is that the shorts are about
-three times as volatile as the longs: my low-volatility portfolio becomes
-a large bet against the wild stocks. I call these long and short groups
-the two books. Here I try inverse-volatility sizing: give smaller positions
-to stocks with higher estimated volatility, then check how risk and returns
-change.
+In this article, I take a closer look at the low-volatility factor and how
+to capture its signal in a portfolio. I focus on simple position-sizing
+techniques, starting with equal weights and then using volatility to decide
+how much capital each stock gets.
 
 ## The wild stocks earn less per unit of risk
 {: #what-the-ranking-selects }
@@ -37,15 +34,16 @@ return per unit of risk.[^bab]
 That matters for a long-short portfolio. A poor Sharpe differs from a
 negative return: volatile stocks can still go up, with a lot of noise along
 the way, and a short position pays for every up-move. Before sizing the
-short book, I want to see whether these stocks actually lose money or
+short positions, I want to see whether these stocks actually lose money or
 simply earn little for the risk they take.
 
 I use point-in-time Russell 1000 membership: each ranking uses the stocks
 that belonged to the index at that date. I keep stocks priced above five
 dollars and rank them by average volatility over one, three and six
 months.[^windows] I buy the lowest-volatility decile—the calmest tenth—and
-short the highest-volatility decile, the wildest tenth, with roughly 100
-names in each book. I rebalance every three weeks, trade at the next close,
+short the highest-volatility decile, the wildest tenth. I call these long
+and short groups the two books, with roughly 100 names in each.
+I rebalance every three weeks, trade at the next close,
 and charge 5 bp per dollar traded.
 
 Figure 1 shows all ten volatility deciles, each an equal-weighted long
