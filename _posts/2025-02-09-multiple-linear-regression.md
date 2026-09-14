@@ -79,105 +79,137 @@ isolates regularization. All three use the same eligible stocks.
 
 ## Learning the combination
 
-For stock $$i$$ on date $$t$$, the regression predicts the target from the
-vector of predictor ranks $$\mathbf X_{i,t}$$:
+With 144 overlapping predictors, the estimation problem is how much information
+the sample contains about their joint effects. Several momentum horizons can
+identify a common trend exposure quite well while providing much less
+information about the differences between those horizons. Those differences
+are where an unconstrained fit can become sensitive to noise.
 
-$$\widehat y_{i,t}=\beta_0+\mathbf X_{i,t}^{\top}\boldsymbol\beta.$$
-
-The coefficients $$\boldsymbol\beta$$ determine how the inputs combine, and
-$$\beta_0$$ is an intercept. At each refit, I pool the training stock-date
-observations into a matrix $$X$$ with $$n$$ rows and 144 predictor columns,
-alongside a vector $$\mathbf y$$ of target ranks. The model estimates one set
-of coefficients from that history, shared across stocks and dates until the
-next refit. A positive coefficient associates a higher predictor rank with a
-higher target rank, conditional on the other inputs; a negative coefficient
-reverses that relationship.
-
-OLS chooses the coefficients that minimize the mean squared residual:
+At each refit, I pool the training stock-date observations into
+$$X\in\mathbb R^{n\times144}$$ and the corresponding target ranks into
+$$\mathbf y$$. Let $$X_c$$ and $$\mathbf y_c$$ denote their training-centred
+versions, absorbing the unpenalized intercept. OLS and Ridge then solve the
+same family of problems:
 
 $$
-\min_{\beta_0,\boldsymbol\beta}
-\frac{1}{n}\left\lVert
-\mathbf y-\beta_0\mathbf 1-X\boldsymbol\beta
-\right\rVert_2^2.
+\widehat{\boldsymbol\beta}_c
+=\arg\min_{\boldsymbol\beta}
+\left\{
+\frac{\lVert\mathbf y_c-X_c\boldsymbol\beta\rVert_2^2}{n}
++c\lVert\boldsymbol\beta\rVert_2^2
+\right\}.
 $$
 
-To separate the intercept from the slope coefficients, subtract each column's
-training mean from $$X$$ and the training mean from $$\mathbf y$$. Call these
-centred quantities $$X_c$$ and $$\mathbf y_c$$. This is an algebraic step in
-fitting the intercept; the inputs are still the predictor ranks defined above.
-Setting the gradient of the loss to zero gives the *normal equations*:
+Here the subscript on $$\widehat{\boldsymbol\beta}_c$$ indexes the penalty;
+$c=0$ gives OLS. Define the empirical predictor covariance and predictor–target
+cross-moment as $$G=X_c^\top X_c/n$$ and
+$$\mathbf g=X_c^\top\mathbf y_c/n$$. The first-order condition is
+$$(G+cI)\widehat{\boldsymbol\beta}_c=\mathbf g$$. For $c>0$ the system is
+positive definite, including when $G$ is singular. For OLS, a singular value
+decomposition gives the minimum-norm solution if the coefficients are not
+uniquely identified.
+
+**Identification and shrinkage.** Write $$G=V\Lambda V^\top$$, with orthonormal
+eigenvectors $$\mathbf v_j$$ and eigenvalues $$\lambda_j$$. In this basis,
+estimation separates into individual directions:
 
 $$
-X_c^\top X_c\,\widehat{\boldsymbol\beta}_{\mathrm{OLS}}
-=X_c^\top\mathbf y_c.
+\begin{aligned}
+\widehat\theta_{j,c}
+&=\frac{\mathbf v_j^\top\mathbf g}{\lambda_j+c},\\
+\widehat\theta_{j,c}
+&=\frac{\lambda_j}{\lambda_j+c}\widehat\theta_{j,0},
+\qquad \lambda_j>0.
+\end{aligned}
 $$
 
-The left-hand matrix captures how the predictors vary together; the right-hand
-vector captures how each predictor varies with the target. Solving this system
-estimates their contributions jointly. If the columns are linearly independent,
-the solution is unique. The intercept then follows from
-$$\widehat\beta_0=\bar y-\bar{\mathbf x}^{\top}\widehat{\boldsymbol\beta}$$,
-where $$\bar{\mathbf x}$$ contains the predictor means. In practice, OLS is
-computed using a singular value decomposition (SVD), which avoids explicitly
-inverting $$X_c^\top X_c$$.[^least-squares]
+Here $$\widehat\theta_{j,c}=\mathbf v_j^\top\widehat{\boldsymbol\beta}_c$$.
+Small eigenvalues correspond to low-variance combinations of predictors.
+OLS amplifies perturbations in their estimated cross-moments through
+$1/\lambda_j$; Ridge limits that amplification through $1/(\lambda_j+c)$.
+The penalty acts most strongly on weakly identified directions.[^ridge-theory]
 
-Correlated predictors can substitute for one another, making their individual
-coefficients hard to estimate reliably. This is the multicollinearity problem.
-Take two versions of a trend signal. A score contribution of
-$2x_1-1.8x_2$ can be written as $0.2x_1+1.8(x_1-x_2)$. If the two inputs were
-identical, the difference term would vanish and only their combined weight
-would matter. When they are merely similar, this combination puts a small
-weight on what they share and a large weight on the gap between them.
+For example, $2x_1-1.8x_2=0.2x_1+1.8(x_1-x_2)$ puts considerable weight on
+the difference between two signals. With closely related momentum horizons,
+that difference may capture useful information about the shape of the trend,
+but its coefficient is estimated from much less variation than the common
+component. A numerically accurate OLS solution can therefore still be
+statistically fragile. Regularization changes how much of that estimation
+risk the model accepts.
 
-That gap might contain useful information about the shape of a price trend.
-It might also be mostly noise. The large weight on the gap makes the score
-sensitive to changes in how the two signals move together. I want to allow
-useful differences without relying too heavily on a relationship estimated
-from a particular sample.
-
-Ridge discourages large coefficients by adding a penalty:
+**The bias–variance trade-off.** Under the working model
+$$\mathbf y_c=X_c\boldsymbol\beta^\star+\boldsymbol\varepsilon$$, assume
+$$E[\boldsymbol\varepsilon\mid X_c]=0$$ and homoskedastic, uncorrelated errors
+with variance $$\sigma^2$$ before centring. For
+$$\theta_j^\star=\mathbf v_j^\top\boldsymbol\beta^\star$$:
 
 $$
-\min_{\beta_0,\boldsymbol\beta}
-\frac{1}{n}\sum_{k=1}^{n}
-\left(y_k-\beta_0-\mathbf X_k^\top\boldsymbol\beta\right)^2
-+c\lVert\boldsymbol\beta\rVert_2^2.
+\begin{aligned}
+\operatorname{Bias}(\widehat\theta_{j,c}\mid X_c)
+&=-\frac{c}{\lambda_j+c}\theta_j^\star,\\
+\operatorname{Var}(\widehat\theta_{j,c}\mid X_c)
+&=\frac{\sigma^2}{n}
+\frac{\lambda_j}{(\lambda_j+c)^2}.
+\end{aligned}
 $$
 
-Here $y_k$ is the target rank for training observation $k$. The intercept is
-unpenalized. After centring, the same differentiation gives:
+At $c=0$, the variance is $$\sigma^2/(n\lambda_j)$$ for positive
+$$\lambda_j$$. Ridge reduces it at the cost of bias toward zero. Whether
+squared bias plus variance falls depends on the signal in each direction;
+low predictor variance alone does not imply low predictive value.[^ridge-theory]
+
+For this panel, cross-sectional dependence and overlapping 20-session targets
+complicate that benchmark. With a general conditional residual covariance
+$$\Omega$$, the coefficient covariance becomes:
 
 $$
-\left(\frac{X_c^\top X_c}{n}+cI\right)
-\widehat{\boldsymbol\beta}_{\mathrm{Ridge}}
-=\frac{X_c^\top\mathbf y_c}{n}.
+\operatorname{Var}(\widehat{\boldsymbol\beta}_c\mid X_c)
+=(G+cI)^{-1}
+\frac{X_c^\top\Omega X_c}{n^2}
+(G+cI)^{-1}.
 $$
 
-So Ridge adds $c$ to the diagonal of the predictor second-moment matrix before
-solving the system. For $c>0$, this makes the coefficient solution unique even
-when some predictors are exactly redundant. More generally, it reduces the
-sensitivity to combinations that have little variation in the training data,
-such as the difference between two nearly identical signals.
+Here $$\Omega$$ refers to the residuals after centring. The information in
+the panel depends on this dependence structure as well as the stock-date row
+count. Shrinkage still changes the same estimating
+equations, but the independent-error variance formula is only a theoretical
+benchmark for interpreting this comparison.
 
-The shrinkage is easiest to see along the eigenvectors of
-$$X_c^\top X_c/n$$. For a direction with positive eigenvalue $\lambda$, Ridge
-multiplies the OLS coefficient component by $$\lambda/(\lambda+c)$$.
-Directions with small eigenvalues receive the strongest shrinkage. This is
-why Ridge can substantially change opposing coefficients while leaving much
-of the fitted score intact. It does not simply scale every coefficient by
-the same amount, and both positive and negative coefficients remain possible.
+**From coefficient risk to forecast risk.** A change in coefficients
+$$\Delta\boldsymbol\beta$$ changes centred training predictions by
+$$X_c\Delta\boldsymbol\beta$$. Their mean squared difference is exactly:
 
-I use $c=0.01$: a compromise that reduces coefficient size and movement while
-keeping the portfolio close to OLS. Dividing the squared-error term by $n$
-keeps the penalty's scale consistent as the training sample expands. In the
-equivalent formulation using the *sum* of squared errors, the penalty is
-$\alpha=nc$.[^least-squares] Regularization trades some training fit for less
-sensitivity to estimation noise; whether that improves forecasts still needs
-to be checked. I'll look at both the coefficients and the portfolios they
-produce.
+$$
+\begin{aligned}
+\frac{\lVert X_c\Delta\boldsymbol\beta\rVert_2^2}{n}
+&=\Delta\boldsymbol\beta^\top G\Delta\boldsymbol\beta\\
+&=\sum_j\lambda_j
+(\mathbf v_j^\top\Delta\boldsymbol\beta)^2.
+\end{aligned}
+$$
 
-[^least-squares]: The [scikit-learn linear-model documentation](https://scikit-learn.org/stable/modules/linear_model.html#ordinary-least-squares) describes the OLS solver and Ridge's sum-of-squares objective. The equations here use mean squared error, hence the conversion $\alpha=nc$.
+Large coefficient differences can have little effect on scores when they lie
+in directions with small eigenvalues. This is the distinction I care about
+when comparing OLS and Ridge: a smaller coefficient norm is useful evidence
+about the fit, but forecast stability depends on where those changes occur.
+On future observations, the relevant second-moment matrix may differ from
+$G$. A direction that barely varied in the training sample can matter more
+when the relationships between signals change.
+
+There is a further step from scores to portfolios. Squared-error training
+penalizes errors in target-rank levels, whereas stock selection depends on
+ordering and the portfolio cutoffs. Even a meaningful change in fitted scores
+can leave most selected stocks unchanged. That motivates examining
+coefficients, daily rankings and net portfolio outcomes separately.
+
+I use $c=0.01$ in the mean-squared-error objective. Equivalently, the penalty
+on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
+training sample expands. The common rank scaling also matters: an isotropic
+penalty depends on the units of the predictors. Here it acts on comparable
+rank scales. My preference is to limit reliance on poorly identified
+combinations, while checking how much useful ranking information that costs.
+
+[^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$.
 
 ## From predictions to portfolios
 
