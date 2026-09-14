@@ -22,8 +22,8 @@ into a long-short portfolio introduces an allocation problem. The stocks on
 the short side are riskier by construction, so equal capital in the two books
 can give the shorts much more influence over the result.
 
-I want to see how far a simple sizing rule gets us. I compare equal weighting
-with inverse-volatility sizing on the same selected stocks, then follow the
+I compare equal weighting with a simple inverse-volatility sizing rule on
+the same selected stocks, then follow the
 change through book exposures, returns after costs and drawdowns. The starting
 point is what the volatility ranking actually delivers.
 
