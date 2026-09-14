@@ -26,6 +26,18 @@ python3 scripts/render_multiple_linear_regression_figures.py \
 - `coefficient_size_and_movement.csv` reports Euclidean coefficient norms and
   changes. `coefficient_direction.csv` checks refit movement after normalizing
   each coefficient vector to unit length.
+- `exposure_by_schedule.csv` reports mean daily realized long, short, net and
+  gross notionals as percentages of each schedule's fixed capital, valued at
+  the close. `exposure_schedule_means.csv` averages those period statistics
+  equally across schedules. These are dollar exposures, not market betas.
+- `spectrum_by_fit.csv` reconstructs the centred predictor covariance for each
+  of twelve training windows and three date subsamples from the retained
+  normalized cache. Counts use eigenvalue thresholds 0.01 and 0.1; the
+  effective degrees of freedom exclude the intercept. Missing targets are
+  dropped before assigning date offsets, and covariance is computed in
+  float64 from the float32 inputs used by the recorded model configuration.
+  Training boundaries match the original OLS log. This diagnostic does not
+  recover original training-input hashes or constitute a new model fit.
 
 The fixed rule uses twelve ranked predictors in three equally weighted themes:
 momentum, defensive characteristics and short positioning. OLS and Ridge use
