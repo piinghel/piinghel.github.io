@@ -21,7 +21,7 @@ deciding both which stocks to hold and how much capital to give them.
 In this article, I compare equal weighting with inverse-volatility sizing
 and use a market hedge to check how much market exposure matters.
 
-## The wild stocks earn less per unit of risk
+## High-volatility stocks earn less per unit of risk
 {: #what-the-ranking-selects }
 
 Sharpe expresses return per unit of risk as average return divided by
@@ -42,21 +42,21 @@ I use point-in-time Russell 1000 membership: each ranking uses the stocks
 that belonged to the index at that date. I keep stocks priced above five
 dollars and rank them by average volatility over one, three and six
 months.[^windows] I buy the lowest-volatility decile—the calmest tenth—and
-short the highest-volatility decile, the wildest tenth. I call these long
+short the highest-volatility decile, the most volatile tenth. I call these long
 and short groups the two books, with roughly 100 names in each.
 I rebalance every three weeks, trade at the next close,
 and charge 5 bp per dollar traded.
 
 Figure 1 shows all ten volatility deciles, each an equal-weighted long
-portfolio of roughly 100 stocks, from the calmest in decile 1 to the wildest
+portfolio of roughly 100 stocks, from the least volatile in decile 1 to the most volatile
 in decile 10. The ranking separates risk much more cleanly than return:
 volatility rises from about 12% to 38%, while Sharpe falls by almost
-four-fifths. The wildest decile earns only about a third of a percent a
+four-fifths. The highest-volatility decile earns only about a third of a percent a
 year before costs. These stocks earn little per unit of risk, yet still go up
 over the sample. That makes the size of the short book matter.
 
 <div class="low-vol-figure decile-profile-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the calmest stocks to the wildest" version="13" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="13" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1: More volatile stocks earn less per unit of risk.</strong> Before-cost Sharpe, annual return and volatility, July 1995–May 2026. Annual return means compounded annual growth throughout this article. Each decile is an equal-weighted long portfolio of about 100 stocks, re-formed every three weeks; decile 1 is the calmest. Volatility rises from 11.9% to 37.9% and Sharpe falls from 0.90 to 0.20.</p>
@@ -99,7 +99,7 @@ a 5% floor.[^windows] If a book exceeds 100% gross, I scale its positions
 down proportionally. Below that cap, I keep the lower gross.
 
 Keeping the lower gross is the step that shrinks the short book. Scaling
-both books back to 100% would put the capital straight back into the wild
+both books back to 100% would put the capital straight back into the high-volatility
 stocks. The long book averages about 97% gross and the short book 34%,
 bringing total gross down from 200% to about 131%. Each book now has
 standalone volatility of about 10%; equal weighting had left the short
