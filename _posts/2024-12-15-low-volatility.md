@@ -17,20 +17,9 @@ I rank stocks by volatility, buy the calmest and short the wildest. Then I
 give each side the same capital. The catch is that the shorts are about
 three times as volatile as the longs: my low-volatility portfolio becomes
 a large bet against the wild stocks. I call these long and short groups
-the two books.
-
-A simple sizing change brings portfolio volatility down from about 33%
-to 10%, mostly by shrinking the short book to roughly a third of its size.
-I give volatile stocks smaller positions and keep the long book close to
-its original size. That is the practical appeal of inverse-volatility sizing.
-
-The return improvement needs more care. Shrinking the shorts also removes
-a large bet against the market. Beta measures how sensitively portfolio
-returns move with the market. In a full-sample beta check, that change accounts
-for more than the entire gain in average annual return; after I remove that
-market component, equal weighting earns more, at much higher risk. So I
-treat equal weighting as the naive first attempt and ask what the sizing
-rule improves beyond correcting that market bet.
+the two books. Here I try inverse-volatility sizing: give smaller positions
+to stocks with higher estimated volatility, then check how risk and returns
+change.
 
 ## The wild stocks earn less per unit of risk
 {: #what-the-ranking-selects }
@@ -39,6 +28,7 @@ The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=
 is the tendency for calm stocks to earn better returns per unit of risk
 than wild stocks. Sharpe expresses that trade-off as average return divided
 by volatility.[^sharpe] The appeal lies in risk-adjusted returns.
+Beta measures how sensitively a stock or portfolio's returns move with the market.
 [Frazzini and Pedersen](https://www.nber.org/papers/w16601) offer one explanation
 for why this can persist: investors with limited access to borrowing reach
 for high-beta stocks instead, bidding up their prices and accepting less
@@ -129,11 +119,12 @@ in a market rally, as Figure 4 will show.
 ## Lower risk, with beta behind the return gain
 {: #what-improves }
 
-Table 1 puts the raw comparison beside a check for market exposure. In the
-original portfolios, inverse-volatility sizing cuts risk and improves
-compounding. For the check, I estimate each rule's beta over the full sample
-and subtract its market component from each daily return.[^beta-check]
-This lets me see how much of the result comes from the market bet.
+The return improvement needs more care: shrinking the shorts also removes
+a large bet against the market. In a full-sample beta check, that change
+accounts for more than the entire gain in average annual return; after I
+remove the market component, equal weighting earns more, at much higher
+risk. Table 1 puts the original portfolios beside this check, which subtracts
+each rule's fitted market component from its daily returns.[^beta-check]
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 1: The sizing comparison, with a check for market exposure.</strong> 12 July 1995–27 May 2026. Returns, volatility and stock turnover are annualized. Both return columns include the 5 bp stock-trading charge. The lower rows remove full-sample realized net-return beta, with zero financing and hedge costs; turnover counts the original stock trades only. Sharpe uses a zero cash rate.</caption>
@@ -157,8 +148,9 @@ year, versus about 7% for inverse-volatility. The comparison still bundles
 different gross exposures, book sizes and stock weights, so I would need
 a matched portfolio test to isolate the stock-level sizing rule.
 
-What I do get is much lower risk, a higher Sharpe and a shallower worst
-drawdown, even in the beta-adjusted comparison. Compounding explains part
+What I do get is much lower risk: portfolio volatility falls from about 33%
+to 10%. I also get a higher Sharpe and a shallower worst drawdown, even in
+the beta-adjusted comparison. Compounding explains part
 of the appeal: the original equal-weight portfolio averages about 2% a year
 arithmetically but compounds at roughly −3%, a gap of about five and a half
 percentage points. Under inverse-volatility sizing, both
