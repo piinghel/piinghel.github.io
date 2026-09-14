@@ -38,6 +38,17 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   float64 from the float32 inputs used by the recorded model configuration.
   Training boundaries match the original OLS log. This diagnostic does not
   recover original training-input hashes or constitute a new model fit.
+- `projection_by_refit.csv` projects the saved ensemble-average Ridge minus
+  OLS coefficient vector into each refit's pooled valid-target training
+  covariance. The bottom half is the 72 smallest eigenvalue directions.
+  Coefficient shares use squared Euclidean distance; predictor-variance
+  shares use the covariance trace. Article summaries average refits equally.
+  This describes the actual ensemble score and does not assume that its
+  average weights solve one pooled Ridge objective.
+- `low_spectrum_variance_by_member.csv` gives the share of total predictor
+  variance in directions with eigenvalues below 0.1 for each of the 36
+  separate training fits. These member spectra are distinct from the pooled
+  spectrum used for the coefficient projection.
 
 The fixed rule uses twelve ranked predictors in three equally weighted themes:
 momentum, defensive characteristics and short positioning. OLS and Ridge use

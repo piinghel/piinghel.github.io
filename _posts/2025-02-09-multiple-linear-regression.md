@@ -57,18 +57,8 @@ use the same eligible stocks.
 
 ## Supervised learning
 
-Learning the weights starts with defining those historical examples.
-For a stock on date $t$, I compute its momentum, volatility and other
-predictors using the data available then. After the next 20 sessions,
-I compute its outcome and add it to the same row. Repeating this across
-stocks and dates builds a training set of
-predictors paired with labels. Fitting a relationship between them turns
-the combination problem into supervised learning.
-
-At a new forecast date, the fitted model maps the available characteristics
-into stock scores. What it learns depends on the outcome I choose, how I
-represent the predictors and which observations I pool. These choices define
-what the regression can learn from the data.
+The target, normalization and sampling choices determine what the regression
+learns from the historical stock-date observations.
 
 ### Choosing the target
 {: #what-i-ask-the-model-to-predict }
@@ -153,78 +143,9 @@ selection span sectors, sector exposures can remain in the portfolio.
 ### The feature matrix
 {: #building-the-training-matrix }
 
-I store the observations as a panel indexed by **date and asset ID**, with
-the predictors in columns and the target added once its outcome is available.
-Each row is one stock on one date. The same structure is used for training
-and testing; Table 2 shows an example with two predictors and observed targets.
-
-<table class="research-table comparison-table training-panel">
-  <caption><strong>Table 2: The date–asset panel.</strong> Illustrative ranked values for four stocks in one sector on two dates. Momentum and volatility stand in for two of the 144 predictor columns; the target is the forward 20-session Sharpe rank, shown here after its outcome is observed.</caption>
-  <thead>
-    <tr><th colspan="2">Index</th><th colspan="2">Predictors</th><th>Target</th></tr>
-    <tr><th>Date</th><th>Asset ID</th><th>Mom.</th><th>Vol.</th><th>y</th></tr>
-  </thead>
-  <tbody>
-    <tr><th rowspan="4" scope="rowgroup">t₁</th><th scope="row">A</th><td>−0.5</td><td>0.5</td><td>0.0</td></tr>
-    <tr><th scope="row">B</th><td>0.0</td><td>−0.5</td><td>0.5</td></tr>
-    <tr><th scope="row">C</th><td>0.5</td><td>1.0</td><td>−0.5</td></tr>
-    <tr><th scope="row">D</th><td>1.0</td><td>0.0</td><td>1.0</td></tr>
-    <tr class="period-break"><th rowspan="4" scope="rowgroup">t₂</th><th scope="row">A</th><td>0.0</td><td>0.5</td><td>0.5</td></tr>
-    <tr><th scope="row">B</th><td>−0.5</td><td>0.0</td><td>0.0</td></tr>
-    <tr><th scope="row">C</th><td>1.0</td><td>1.0</td><td>1.0</td></tr>
-    <tr><th scope="row">D</th><td>0.5</td><td>−0.5</td><td>−0.5</td></tr>
-  </tbody>
-</table>
-
-The predictor columns form the feature matrix $X$. The target column forms
-$\mathbf y$, aligned by the date–asset index. At prediction time, I pass $X$
-to the fitted model while $\mathbf y$ is still unknown; once observed, it can
-be used to evaluate the predictions. In matrix notation, let $z_{i,j,t}$
-be stock $i$'s normalized value for predictor $j$ on date $t$. With $p=144$
-predictors and $N_t$ usable stocks, that date contributes:
-
-$$
-X_t=
-\begin{bmatrix}
-z_{1,1,t} & \cdots & z_{1,p,t}\\
-\vdots & \ddots & \vdots\\
-z_{N_t,1,t} & \cdots & z_{N_t,p,t}
-\end{bmatrix}.
-$$
-
-Each row is one stock and each column is one predictor. The matching vector
-$$\mathbf y_t$$ contains those stocks' sector-relative forward Sharpe ranks
-in the same row order. Each block is normalized before stacking.
-
-To combine several dates, I stack their blocks vertically:
-
-$$
-X=
-\begin{bmatrix}
-X_{t_1}\\
-X_{t_2}\\
-\vdots\\
-X_{t_T}
-\end{bmatrix},
-\qquad
-\mathbf y=
-\begin{bmatrix}
-\mathbf y_{t_1}\\
-\mathbf y_{t_2}\\
-\vdots\\
-\mathbf y_{t_T}
-\end{bmatrix}.
-$$
-
-The result is a matrix with $$n=\sum_{k=1}^{T}N_{t_k}$$ stock-date rows and
-144 predictor columns. The same stock can appear on many dates, and the
-number of usable stocks can change. The corresponding $n$ target values
-become available after their forward windows finish.
-
-For training, I select only rows whose outcomes are available by the fitting
-cutoff and estimate coefficients shared across those stocks and dates. With
-equal weight per row, dates with more usable stocks contribute more terms
-to the loss.
+Indexed by date and asset ID, the feature matrix $X$ has $n$ stock-date rows
+and 144 ranked predictor columns; I give each training row equal weight,
+so dates with more usable stocks contribute more to the loss.
 
 ### Breadth and dependence
 
@@ -234,6 +155,11 @@ window, and consecutive forward 20-session targets share 19 daily returns.
 Daily observations give repeated views of a limited history of market
 conditions.
 
+For independent daily returns, $T$ overlapping 20-session means carry roughly
+$T/20$ independent-observation equivalents for estimating their mean: about
+45 for 900 dates.[^overlap] Our ranked Sharpe labels, persistent predictors
+and shared stock shocks require their own dependence calculation.
+
 Cross-sectional breadth adds variation: stocks on the same date differ in
 characteristics and subsequent outcomes. Pooling lets the model learn from
 those differences as well as changes through time, assuming the predictive
@@ -241,17 +167,19 @@ relationship is sufficiently shared across stocks and dates.[^panel-pooling]
 
 Stocks also share market and sector shocks, and firms with similar
 characteristics can move together. Ranking within sectors leaves dependence
-between their outcomes. The useful sample therefore depends on the variation
-across stocks and dates, as well as the number of rows.
+between their outcomes, so breadth adds less information than the same
+number of independent stocks would.
+
+[^overlap]: In the independent, equal-variance daily-return example, overlapping 20-session means have lag correlation $\rho_k=1-k/20$ for $1\leq k<20$ and zero thereafter. The large-$T$ effective sample size for their sample mean is $T/(1+2\sum_{k=1}^{19}\rho_k)=T/20$. This illustrative calculation concerns a time-series mean, not the ranked Sharpe regression.
 
 [^panel-pooling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=9), author manuscript of 13 September 2019, physical PDF page 9, describe learning a common predictive function across stocks and time. Here that pooling principle is applied to a ranked risk-adjusted target.
 
 ## Learning the weights
 {: #learning-the-combination }
 
-With the inputs and target defined, I fit the weights jointly to the historical
-predictor–target pairs. Each regression combines the predictor ranks with
-learned weights and an intercept to produce a score[^score-range]:
+I fit the weights jointly to the historical predictor–target pairs. With
+$z_{i,j,t}$ denoting stock $i$'s rank on predictor $j$ at date $t$, each
+regression produces a score[^score-range]:
 
 $$
 \widehat y_{i,t}
@@ -271,28 +199,12 @@ contains much less variation from which to estimate the effect of their
 difference. OLS can then assign large, opposing coefficients that are
 sensitive to noise.
 
-For the stacked sample, let $$X_c$$ and $$\mathbf y_c$$ denote versions of
-$$X$$ and $$\mathbf y$$ centred using their training means, absorbing the
-unpenalized intercept. This centring is part of fitting the regression;
-the cross-sectional rank transformations have already been applied.
-OLS and Ridge solve:
+I minimize $\mathrm{MSE}+c\lVert\boldsymbol\beta\rVert_2^2$, leaving the
+intercept unpenalized; $c=0$ gives OLS. Squared error fits target-rank levels
+across the whole cross-section, while the portfolio uses only the tails.
 
-$$
-\widehat{\boldsymbol\beta}_c
-=\arg\min_{\boldsymbol\beta}
-\left\{
-\frac{\lVert\mathbf y_c-X_c\boldsymbol\beta\rVert_2^2}{n}
-+c\lVert\boldsymbol\beta\rVert_2^2
-\right\}.
-$$
-
-Here $c=0$ gives OLS. The squared-error term rewards accurate predictions of
-target-rank levels across the training observations. Large errors receive
-more weight, and errors in the middle of the cross-section count too.
-The portfolio will use only the tails of the resulting ranking.
-
-Ridge adds a cost for large coefficients. Its effect is clearest in the
-eigenvectors $$\mathbf v_j$$ of the empirical predictor covariance
+Let $X_c$ denote $X$ centred using its training column means. Ridge's effect
+is clearest in the eigenvectors $$\mathbf v_j$$ of the predictor covariance
 $$G=X_c^\top X_c/n$$, with eigenvalues $$\lambda_j$$. Writing
 $$\widehat\theta_{j,c}=\mathbf v_j^\top\widehat{\boldsymbol\beta}_c$$ gives:
 
@@ -315,14 +227,15 @@ the common rank scaling also determines how this penalty treats the inputs.
 
 To put that choice in context, I reconstruct $G$ for each of the twelve
 training windows and its three date subsamples. Of the 144 eigenvalues,
-86–91 lie below $0.1$ and 15–17 below $0.01$. At $c=0.01$, a direction with
+86–91 lie below $0.1$, accounting for 6.3–7.9% of total predictor variance;
+15–17 lie below $0.01$. At $c=0.01$, a direction with
 $\lambda=0.1$ retains about 91% of its OLS coefficient; one with
 $\lambda=0.01$ retains 50%. The penalty therefore materially shrinks some
 directions, even though the final stock rankings remain close. These counts
 describe the strength of the chosen penalty; they do not establish that it
 is the best choice.[^spectrum-diagnostic]
 
-[^spectrum-diagnostic]: [Eigenvalue counts by fit](/assets/multiple-linear-regression/evidence/spectrum_by_fit.csv), reconstructed from the retained normalized inputs and recorded training windows, after dropping missing targets and selecting each date subsample. The covariance is centred separately within each fit. Original training-input hashes were not captured, so this checks the retained design rather than independently reproducing the original fits.
+[^spectrum-diagnostic]: [Eigenvalue counts by fit](/assets/multiple-linear-regression/evidence/spectrum_by_fit.csv) and [variance shares](/assets/multiple-linear-regression/evidence/low_spectrum_variance_by_member.csv), reconstructed from the retained normalized inputs and recorded training windows, after dropping missing targets and selecting each date subsample. The covariance is centred separately within each fit. Original training-input hashes were not captured, so this checks the retained design rather than independently reproducing the original fits.
 
 [^score-range]: The inputs and observed target lie within $[-1,1]$, but fitted linear scores can extend beyond that interval.
 
@@ -387,23 +300,18 @@ forecast date.
 
 <p class="figure-caption"><strong>Figure 2: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
 
-For linear models, averaging predictions equals averaging their intercepts
-and coefficient vectors, although it generally differs from fitting one
-regression on all rows. The OLS–Ridge comparison keeps the three-offset
-design fixed, so it gives no separate estimate of the gain from this averaging.
-
 ## Prediction quality
 {: #prediction-quality-and-portfolio-results }
 
 OLS and Ridge have almost identical mean daily information coefficients
-(IC) in both periods (Table 3).
+(IC) in both periods (Table 2).
 IC is the cross-sectional Spearman correlation between the score and the
 forward sector-relative Sharpe target. A positive value means higher scores
 tend to identify better subsequent outcomes. The small development gain
 from Ridge disappears later.
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
-  <caption><strong>Table 3: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
+  <caption><strong>Table 2: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
   <thead>
     <tr><th>Ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
@@ -449,7 +357,7 @@ weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. These schedules
 determine when to act on each score and show how the comparison depends on
 the starting week.
 
-Table 4 averages the statistics calculated separately for the three
+Table 3 averages the statistics calculated separately for the three
 schedules. Figure 3 averages their daily net P&L and compounds that series
 into an index. The mean of schedule-level Sharpes and the Sharpe of an
 averaged return series are different calculations.
@@ -461,12 +369,12 @@ its effect on timing risk in the
 ## Portfolio results
 
 During development, OLS earns slightly more net return than the fixed score,
-with lower volatility and a shallower maximum drawdown (Table 4). Extra trading
+with lower volatility and a shallower maximum drawdown (Table 3). Extra trading
 consumes 0.74 percentage points of its 1.08-point gross-return advantage. That
 leaves most of the Sharpe improvement coming from lower volatility.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4: Net performance, exposure and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Net exposure is the average daily long minus short notional, at closing prices, divided by strategy capital.</caption>
+  <caption><strong>Table 3: Net performance, exposure and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Net exposure is the average daily long minus short notional, at closing prices, divided by strategy capital.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Net exposure</th><th>Traded notional / year</th></tr>
   </thead>
@@ -517,7 +425,7 @@ comparison does not separate those contributions.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 4 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
+<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
 ## What Ridge changes
 {: #what-ridge-changes }
@@ -538,9 +446,11 @@ changes translate into limited changes in the portfolio's candidate set.
 These are daily candidate comparisons; the rebalance schedule determines
 when a changed selection leads to a trade.
 
-A useful link to the estimation problem is that a coefficient change
-$$\Delta\boldsymbol\beta$$ changes centred training predictions by
-$$X_c\Delta\boldsymbol\beta$$. The mean squared difference is:
+To locate the difference, I subtract the OLS coefficient vector from the
+Ridge vector at each refit, using the saved ensemble-average weights, and
+project $$\Delta\boldsymbol\beta$$ onto the eigenvectors of the pooled
+training covariance $G$. The resulting change in centred training scores is
+$$X_c\Delta\boldsymbol\beta$$, with mean squared difference:
 
 $$
 \begin{aligned}
@@ -550,13 +460,16 @@ $$
 \end{aligned}
 $$
 
-Large coefficient changes can have little effect on scores when they lie
-in low-variance directions. This explains why coefficient size and forecast
-similarity need separate checks. The ranking and candidate comparisons above
-establish their empirical similarity here; locating the changes within the
-predictor eigenspectrum would require an additional diagnostic. On future
-observations, changes in predictor relationships can also make previously
-low-variance directions more consequential.
+The lowest 72 eigenvalue directions contain **99.1% of the squared
+coefficient difference**, averaged across the twelve refits, while accounting
+for only **4.0% of predictor variance**.[^coefficient-projection] Ridge changes
+the weights mainly along contrasts that vary little in the training data.
+That helps explain how coefficients can change substantially while scores
+remain close. The observed ranking correlation checks what happens on the
+following prediction blocks; relationships can change beyond the training
+window.
+
+[^coefficient-projection]: [Projection by refit](/assets/multiple-linear-regression/evidence/projection_by_refit.csv). The bottom half contains the 72 smallest eigenvalues of each refit's pooled valid-target training covariance. Its coefficient share is $\sum_{j=1}^{72}(\mathbf v_j^\top\Delta\boldsymbol\beta)^2/\lVert\Delta\boldsymbol\beta\rVert_2^2$, ranging from 98.6% to 99.4%. The reported 99.1% is the equal mean across refits; 4.0% averages the corresponding predictor-variance shares. This uses the stored ensemble coefficients and the retained-input reconstruction described above.
 
 The ten largest mean absolute Ridge coefficients keep the same sign across
 all twelve refits (Figure 4). Price relative to its 126-day moving
@@ -603,49 +516,23 @@ is to higher costs.
 <details markdown="1">
 <summary>Technical note: Ridge estimation and coefficient movement</summary>
 
-With $$\mathbf g=X_c^\top\mathbf y_c/n$$, the first-order condition is
-$$(G+cI)\widehat{\boldsymbol\beta}_c=\mathbf g$$. For $c>0$ the system is
-positive definite, including when $G$ is singular. For OLS, a singular value
-decomposition gives the minimum-norm solution if the coefficients are not
-uniquely identified.
-
-**The bias–variance trade-off.** Under the working model
-$$\mathbf y_c=X_c\boldsymbol\beta^\star+\boldsymbol\varepsilon$$, assume
-$$E[\boldsymbol\varepsilon\mid X_c]=0$$ and homoskedastic, uncorrelated errors
-with variance $$\sigma^2$$ before centring. For
-$$\theta_j^\star=\mathbf v_j^\top\boldsymbol\beta^\star$$:
+**Dependence in the panel.** For the centred target vector $\mathbf y_c$,
+write the working model as
+$$\mathbf y_c=X_c\boldsymbol\beta^\star+\boldsymbol\varepsilon$$,
+$$\Omega=\operatorname{Var}(\boldsymbol\varepsilon\mid X_c)$$ captures
+cross-sectional dependence and overlapping outcomes after centring.
+For $c>0$, the coefficient covariance is:
 
 $$
-\begin{aligned}
-\operatorname{Bias}(\widehat\theta_{j,c}\mid X_c)
-&=-\frac{c}{\lambda_j+c}\theta_j^\star,\\
-\operatorname{Var}(\widehat\theta_{j,c}\mid X_c)
-&=\frac{\sigma^2}{n}
-\frac{\lambda_j}{(\lambda_j+c)^2}.
-\end{aligned}
+\begin{gathered}
+\operatorname{Var}(\widehat{\boldsymbol\beta}_c\mid X_c)\\
+=(G+cI)^{-1}\frac{X_c^\top\Omega X_c}{n^2}(G+cI)^{-1}.
+\end{gathered}
 $$
 
-At $c=0$, the variance is $$\sigma^2/(n\lambda_j)$$ for positive
-$$\lambda_j$$. Ridge reduces it at the cost of bias toward zero. Whether
-squared bias plus variance falls depends on the signal in each direction;
-low predictor variance alone does not imply low predictive value.[^ridge-theory]
-
-For this panel, cross-sectional dependence and overlapping 20-session targets
-complicate that benchmark. With a general conditional residual covariance
-$$\Omega$$, the coefficient covariance becomes:
-
-$$
-\operatorname{Var}(\widehat{\boldsymbol\beta}_c\mid X_c)
-=(G+cI)^{-1}
-\frac{X_c^\top\Omega X_c}{n^2}
-(G+cI)^{-1}.
-$$
-
-Here $$\Omega$$ refers to the residuals after centring. The information in
-the panel depends on this dependence structure as well as the stock-date row
-count. Shrinkage still changes the same estimating
-equations, but the independent-error variance formula is only a theoretical
-benchmark for interpreting this comparison.
+The term $$X_c^\top\Omega X_c$$ makes coefficient uncertainty depend on
+how residual dependence aligns with the predictors. A single effective row
+count cannot describe uncertainty in every coefficient direction.
 
 **Magnitude and direction.** Write the coefficient vector at refit $k$ as
 $$\boldsymbol\beta_k=a_k\mathbf u_k$$, where
