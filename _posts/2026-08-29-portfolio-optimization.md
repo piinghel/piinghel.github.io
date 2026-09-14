@@ -12,11 +12,12 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-The [Ridge ranking](/quants/2025/02/09/multiple-linear-regression.html)
-gives me a way to choose stocks. The next question is how to size them.
-Giving less weight to more volatile stocks is a useful starting point, but
-it leaves out how those stocks move together. I wanted to see what an
-optimizer could add by considering the whole portfolio.
+In the previous articles on [low-volatility sizing](/quant/2024/12/15/low-volatility-factor.html)
+and [Ridge regression](/quants/2025/02/09/multiple-linear-regression.html),
+I used a simple volatility-scaling rule to size positions. Giving less weight
+to more volatile stocks already worked well. Here, I want to take a closer
+look at whether I can improve on that by accounting for how the stocks move
+together and sizing the portfolio jointly.
 
 There are two problems I want to tackle. The optimizer can lean too heavily
 on combinations that look safer than they really are, and it can trade a lot
