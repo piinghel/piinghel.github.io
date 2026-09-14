@@ -13,18 +13,21 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-In this article, I take a closer look at the low-volatility factor and how
-to capture its signal in a portfolio. I focus on simple position-sizing
-techniques, starting with equal weights and then using volatility to decide
-how much capital each stock gets.
+The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
+is the tendency for calmer stocks to earn better returns per unit of risk
+than more volatile stocks. Turning that observation into a portfolio means
+deciding both which stocks to hold and how much capital to give them.
+Buying the calm stocks and shorting the wild ones is a start, but equal
+amounts of capital can leave the volatile shorts driving most of the risk.
+
+In this article, I compare equal weighting with inverse-volatility sizing
+and use a market hedge to check how much market exposure matters.
 
 ## The wild stocks earn less per unit of risk
 {: #what-the-ranking-selects }
 
-The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
-is the tendency for calm stocks to earn better returns per unit of risk
-than wild stocks. Sharpe expresses that trade-off as average return divided
-by volatility. The appeal lies in risk-adjusted returns.
+Sharpe expresses return per unit of risk as average return divided by
+volatility.
 Beta measures how sensitively a stock or portfolio's returns move with the market.
 [Frazzini and Pedersen](https://www.nber.org/papers/w16601) offer one explanation
 for why this can persist: investors with limited access to borrowing reach
