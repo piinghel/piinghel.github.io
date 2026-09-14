@@ -43,6 +43,22 @@
     "width": 358,
     "height": 780
   },
+  "/assets/multiple-linear-regression/date-sampling": {
+    "width": 702,
+    "height": 302
+  },
+  "/assets/multiple-linear-regression/date-sampling_mobile": {
+    "width": 358,
+    "height": 302
+  },
+  "/assets/multiple-linear-regression/expanding-walk-forward": {
+    "width": 702,
+    "height": 350
+  },
+  "/assets/multiple-linear-regression/expanding-walk-forward_mobile": {
+    "width": 358,
+    "height": 350
+  },
   "/assets/multiple-linear-regression/factor-correlation": {
     "width": 561,
     "height": 313

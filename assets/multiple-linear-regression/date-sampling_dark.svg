@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="702" height="302" viewBox="0 0 702 302">
+<g font-family="Arial, DejaVu Sans, sans-serif" fill="#e0e6ec">
+<text x="0" y="20" font-size="15" text-anchor="start" fill="#e0e6ec">Within one eligible training window</text>
+<text x="0" y="43" font-size="13" text-anchor="start" fill="#aab6c2">Each date contributes its full stock cross-section</text>
+<text x="0" y="91" font-size="14" text-anchor="start" fill="#e0e6ec">Model 1</text>
+<line x1="160" y1="86" x2="624" y2="86" stroke="#53616d"/>
+<circle cx="160" cy="86" r="13" fill="#294c69"/>
+<text x="160" y="91" font-size="14" text-anchor="middle" fill="#e0e6ec">1</text>
+<circle cx="218" cy="86" r="2" fill="#53616d"/>
+<circle cx="276" cy="86" r="2" fill="#53616d"/>
+<circle cx="334" cy="86" r="13" fill="#294c69"/>
+<text x="334" y="91" font-size="14" text-anchor="middle" fill="#e0e6ec">4</text>
+<circle cx="392" cy="86" r="2" fill="#53616d"/>
+<circle cx="450" cy="86" r="2" fill="#53616d"/>
+<circle cx="508" cy="86" r="13" fill="#294c69"/>
+<text x="508" y="91" font-size="14" text-anchor="middle" fill="#e0e6ec">7</text>
+<circle cx="566" cy="86" r="2" fill="#53616d"/>
+<circle cx="624" cy="86" r="2" fill="#53616d"/>
+<text x="652" y="91" font-size="14" text-anchor="middle" fill="#e0e6ec">…</text>
+<text x="0" y="150" font-size="14" text-anchor="start" fill="#e0e6ec">Model 2</text>
+<line x1="160" y1="145" x2="624" y2="145" stroke="#53616d"/>
+<circle cx="160" cy="145" r="2" fill="#53616d"/>
+<circle cx="218" cy="145" r="13" fill="#294c69"/>
+<text x="218" y="150" font-size="14" text-anchor="middle" fill="#e0e6ec">2</text>
+<circle cx="276" cy="145" r="2" fill="#53616d"/>
+<circle cx="334" cy="145" r="2" fill="#53616d"/>
+<circle cx="392" cy="145" r="13" fill="#294c69"/>
+<text x="392" y="150" font-size="14" text-anchor="middle" fill="#e0e6ec">5</text>
+<circle cx="450" cy="145" r="2" fill="#53616d"/>
+<circle cx="508" cy="145" r="2" fill="#53616d"/>
+<circle cx="566" cy="145" r="13" fill="#294c69"/>
+<text x="566" y="150" font-size="14" text-anchor="middle" fill="#e0e6ec">8</text>
+<circle cx="624" cy="145" r="2" fill="#53616d"/>
+<text x="652" y="150" font-size="14" text-anchor="middle" fill="#e0e6ec">…</text>
+<text x="0" y="209" font-size="14" text-anchor="start" fill="#e0e6ec">Model 3</text>
+<line x1="160" y1="204" x2="624" y2="204" stroke="#53616d"/>
+<circle cx="160" cy="204" r="2" fill="#53616d"/>
+<circle cx="218" cy="204" r="2" fill="#53616d"/>
+<circle cx="276" cy="204" r="13" fill="#294c69"/>
+<text x="276" y="209" font-size="14" text-anchor="middle" fill="#e0e6ec">3</text>
+<circle cx="334" cy="204" r="2" fill="#53616d"/>
+<circle cx="392" cy="204" r="2" fill="#53616d"/>
+<circle cx="450" cy="204" r="13" fill="#294c69"/>
+<text x="450" y="209" font-size="14" text-anchor="middle" fill="#e0e6ec">6</text>
+<circle cx="508" cy="204" r="2" fill="#53616d"/>
+<circle cx="566" cy="204" r="2" fill="#53616d"/>
+<circle cx="624" cy="204" r="13" fill="#294c69"/>
+<text x="624" y="209" font-size="14" text-anchor="middle" fill="#e0e6ec">9</text>
+<text x="652" y="209" font-size="14" text-anchor="middle" fill="#e0e6ec">…</text>
+<text x="351.0" y="254" font-size="14" text-anchor="middle" fill="#e0e6ec">Fit each model on its assigned dates</text>
+<text x="351.0" y="279" font-size="14" text-anchor="middle" fill="#e0e6ec">↓  Average their prediction scores</text>
+</g>
+</svg>

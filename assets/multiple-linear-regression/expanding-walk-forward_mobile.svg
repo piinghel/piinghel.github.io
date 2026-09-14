@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="358" height="350" viewBox="0 0 358 350">
+<g font-family="Arial, DejaVu Sans, sans-serif" fill="#24333f">
+<rect x="0" y="5" width="13" height="13" rx="2" fill="#dbeaf5"/>
+<text x="19" y="17" font-size="13" text-anchor="start" fill="#24333f">Training</text>
+<rect x="116" y="5" width="13" height="13" rx="2" fill="#f3e3cc"/>
+<text x="135" y="17" font-size="13" text-anchor="start" fill="#24333f">Gap</text>
+<rect x="232" y="5" width="13" height="13" rx="2" fill="#d8eee6"/>
+<text x="251" y="17" font-size="13" text-anchor="start" fill="#24333f">Prediction</text>
+<text x="9" y="49" font-size="13" text-anchor="start" fill="#52616e">January 1995 · fixed start</text>
+<line x1="9" y1="58" x2="9" y2="288" stroke="#c2ccd4" stroke-dasharray="3 4"/>
+<text x="9" y="76" font-size="13" text-anchor="start" fill="#52616e">Fit 1</text>
+<rect x="9" y="86" width="96" height="32" rx="2" fill="#dbeaf5"/>
+<rect x="105" y="86" width="10" height="32" rx="2" fill="#f3e3cc"/>
+<rect x="115" y="86" width="70" height="32" rx="2" fill="#d8eee6"/>
+<text x="57.0" y="107" font-size="13" text-anchor="middle" fill="#24333f">900 dates</text>
+<text x="150.0" y="107" font-size="13" text-anchor="middle" fill="#24333f">Predict</text>
+<text x="9" y="155" font-size="13" text-anchor="start" fill="#52616e">Fit 2</text>
+<rect x="9" y="165" width="166" height="32" rx="2" fill="#dbeaf5"/>
+<rect x="175" y="165" width="10" height="32" rx="2" fill="#f3e3cc"/>
+<rect x="185" y="165" width="70" height="32" rx="2" fill="#d8eee6"/>
+<text x="92.0" y="186" font-size="13" text-anchor="middle" fill="#24333f">1,500 dates</text>
+<text x="220.0" y="186" font-size="13" text-anchor="middle" fill="#24333f">Predict</text>
+<text x="9" y="234" font-size="13" text-anchor="start" fill="#52616e">Fit 3</text>
+<rect x="9" y="244" width="236" height="32" rx="2" fill="#dbeaf5"/>
+<rect x="245" y="244" width="10" height="32" rx="2" fill="#f3e3cc"/>
+<rect x="255" y="244" width="70" height="32" rx="2" fill="#d8eee6"/>
+<text x="127.0" y="265" font-size="13" text-anchor="middle" fill="#24333f">2,100 dates</text>
+<text x="290.0" y="265" font-size="13" text-anchor="middle" fill="#24333f">Predict</text>
+<text x="9" y="308" font-size="14" text-anchor="start" fill="#24333f">Training grows; earlier history stays</text>
+<text x="9" y="334" font-size="13" text-anchor="start" fill="#52616e">Time →</text>
+<text x="356" y="334" font-size="12" text-anchor="end" fill="#52616e">Schematic · not to scale</text>
+</g>
+</svg>

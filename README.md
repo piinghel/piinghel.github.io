@@ -196,6 +196,11 @@ comparison.
 
 ## Site maintenance
 
+The regression article's training-date and expanding walk-forward diagrams
+are schematics. Regenerate their desktop/mobile and light/dark variants with
+`python3 scripts/render_mlr_training_design.py`, followed by
+`python3 scripts/check_site.py --update-dimensions`.
+
 The attribution beta, book-size and cap trade-off figures are reproduced from
 the included aggregate series:
 

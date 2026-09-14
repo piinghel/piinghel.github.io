@@ -14,29 +14,37 @@ github_repositories:
 
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
-changed the portfolio. Here I want to broaden the stock-selection problem.
-Volatility is one piece of information; momentum, liquidity, size and short
-positioning may also help. How should I combine them, especially when several
-predictors measure closely related things?
+changed the portfolio. Here I want to bring more information into that
+selection. Alongside volatility, I can describe a stock by its momentum,
+liquidity, size and short positioning.
 
-Multiple linear regression is my starting point. I compare ordinary least
-squares (OLS) with Ridge, which adds a penalty on coefficient size, then
-evaluate their predictions and the portfolios they produce. A smaller
-fixed-weight combination provides a benchmark for what the broader learned
-approach adds.
+With one characteristic, the ranking gives me a selection rule directly.
+With several, I need to decide how to combine them. A stock might have strong
+momentum but high volatility, and several momentum horizons may repeat much
+of the same information. How much weight should each predictor receive,
+given what the others already tell me?
 
 ## Supervised learning
 
-For each stock and date, I pair the available predictors with a chosen
-outcome measured over the following sessions. Historical pairs whose
-outcomes have finished form the training sample. I fit a relationship between
-the two, then apply it to a new cross-section of predictor values to produce
-scores for outcomes that are still ahead.
+One approach is to choose the weights myself. Another is to learn them from
+historical examples: pair each stock's characteristics on a given date with
+its subsequent outcome, then fit a relationship between the two. That turns
+the combination problem into supervised learning. Once fitted, the model
+maps a new cross-section of characteristics into scores that I can use to
+rank stocks.
 
-That formulation involves several choices: what outcome to predict, how to
-normalize the inputs and target, and which stocks and dates to pool. Together
-they define the information the model can learn from. The model then learns
-the weights within that formulation.
+This makes the definition of the outcome central. The model needs a specific
+target: predicting future returns, risk-adjusted performance or relative
+standing are different tasks. I also need to choose how to represent the
+predictors and which historical observations to learn from. Those decisions
+define the problem within which the model learns its weights.
+
+I start with multiple linear regression and compare ordinary least squares
+(OLS) with Ridge, which penalizes large coefficients. Both learn the weights
+jointly, accounting for overlap between the predictors. A smaller fixed-weight
+combination provides a benchmark for what the broader learned approach adds.
+I evaluate the resulting scores first as predictions, then through the
+portfolios they produce.
 
 ### Choosing the target
 {: #what-i-ask-the-model-to-predict }
@@ -191,72 +199,75 @@ sampling and averaging are choices to assess within this setting.
 
 [^panel-pooling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=9), author manuscript of 13 September 2019, physical PDF page 9, describe learning a common predictive function across stocks and time. Here that pooling principle is applied to a ranked risk-adjusted target.
 
-### Training through time
-{: #from-predictions-to-portfolios }
-
-I fit the models on an expanding history beginning in January 1995, then
-predict the next block of dates. A gap between training and prediction lets
-the last training outcomes finish before the forecasts begin. Predictions
-start in September 1998.[^training]
-
-An expanding window retains the earlier observations as new dates become
-available. That gives the fit more history, while leaving older relationships
-in the estimation sample. A rolling window would make a different trade-off
-between retaining information and adapting to change. Here I keep the
-training design the same for OLS and Ridge.
-
 ### Sampling the training dates
 
-The dependence in the panel motivates a choice about how densely to sample
-that history.
+Within a given historical training window, I can choose how densely to
+sample the dates. This choice determines which cross-sections enter each
+model's training matrix.
 
 One option is to keep every fifth trading date, roughly a weekly sample,
 and stack those cross-sections. That spaces observations further apart and
-cuts the rows in each fit to roughly one fifth. It also omits four of the
-five date sequences, including changes in rankings and outcomes between
-the selected dates. Four fifths fewer rows need not mean four fifths less
-information: many of the omitted observations are partly redundant, while
-others capture changes the sparse sample misses. Longer-window predictors
-and targets still overlap at this spacing: even five sessions apart, the
-20-session target windows share 15 returns.
+cuts the rows in each fit to roughly one fifth. Four fifths fewer rows need
+not mean four fifths less information: many of the omitted observations are
+partly redundant, while others capture changes the sparse sample misses.
+Longer-window predictors and targets still overlap at this spacing: even
+five sessions apart, the 20-session target windows share 15 returns.
 
-An alternative is to fit all five offsets separately. Indexing consecutive
-training dates by $1,2,\ldots$, the five samples would be:
-
-$$
-\begin{aligned}
-\mathcal T_1&=\{1,6,11,\ldots\},\\
-\mathcal T_2&=\{2,7,12,\ldots\},\\
-&\ \vdots\\
-\mathcal T_5&=\{5,10,15,\ldots\}.
-\end{aligned}
-$$
-
-Each model receives complete cross-sections from its assigned dates. All five
-predict the same next block, and their scores are averaged before ranking
-stocks. Collectively they use every available training date, while each fit
-uses more widely spaced observations. The resulting forecasts can still
-be highly correlated: all five models learn from the same market history
-and overlapping outcomes. Averaging may moderate sensitivity to the chosen
+An alternative is to fit all five offsets separately: one model on dates
+1, 6, 11, …; another on dates 2, 7, 12, …; and so on. Averaging their
+predictions uses every training date collectively, while each fit receives
+more widely spaced observations. The forecasts can still be highly
+correlated because the models learn from the same market history and
+overlapping outcomes. Averaging may moderate sensitivity to the chosen
 offset; its benefit needs to be measured.
 
-The reported study uses this construction with **three offsets**, sampling
-every third trading date: $$\{1,4,7,\ldots\}$$, $$\{2,5,8,\ldots\}$$ and
-$$\{3,6,9,\ldots\}$$. I average the three models' predictions. For linear
-models, that equals averaging their intercepts and coefficient vectors,
-although it generally differs from fitting one regression on all rows.
-The five-offset construction above illustrates an alternative spacing.
-The OLS–Ridge comparison keeps the three-offset design fixed, so it gives
-no separate estimate of the gain from this averaging.
+The reported study uses **three offsets**, sampling every third trading
+date, as Figure 1 shows. Each model receives complete cross-sections from
+its assigned dates, and I average their predictions for the same stock and
+forecast date.
 
-All offsets stay within the historical training window. Date subsampling
-and the gap before prediction do different jobs: subsampling changes which
-rows each fit uses; the gap ensures that its training outcomes finish
-before the forecast block begins.[^chronological-training]
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
+
+For linear models, averaging predictions equals averaging their intercepts
+and coefficient vectors, although it generally differs from fitting one
+regression on all rows. The OLS–Ridge comparison keeps the three-offset
+design fixed, so it gives no separate estimate of the gain from this averaging.
+
+### Expanding walk-forward
+{: #from-predictions-to-portfolios }
+
+Walk-forward sets the chronological training and prediction windows. At each
+refit, I use the history available at that point, then hold the fitted
+coefficients fixed while predicting the following block. The same procedure
+could fit every eligible date in one model or use the interleaved samples
+above; the window boundaries are a separate design choice.
+
+I use an **expanding window**, beginning in January 1995. The first training
+window contains 900 trading dates. A 21-date gap allows the forward
+20-session training outcomes to finish before predictions begin. I then
+predict the next 600 dates and refit, keeping the January 1995 start and
+extending the training endpoint by 600 dates. Figure 2 shows the first
+three windows.[^chronological-training]
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
+
+The expanding window gives each refit more history, while retaining older
+relationships in the estimation sample. A rolling window would instead
+drop the oldest dates as the endpoint moves forward. I keep the expanding
+windows and refit schedule the same for OLS and Ridge. Predictions start
+in September 1998.[^training]
 
 I report results through December 2021 and for January 2022–May 2026 separately.
 
-[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), explain evaluation with a rolling forecasting origin. Here that chronological boundary also accommodates the forward outcome window; the interleaved fits are all constructed inside each training window.
+[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), illustrate evaluation with a rolling forecasting origin and an expanding training set. Here the gap also accommodates the forward outcome window.
 
 ## A fixed-weight comparison
 
@@ -367,7 +378,7 @@ forms a single prediction score for each stock and date; these portfolio
 schedules determine when to act on that score.
 
 Table 3 averages the statistics calculated separately for the three
-schedules. Figure 1 averages their daily net P&L and compounds that series
+schedules. Figure 3 averages their daily net P&L and compounds that series
 into an index. The mean of schedule-level Sharpes and the Sharpe of an
 averaged return series are different calculations.
 
@@ -462,7 +473,7 @@ after 2021, Ridge's mean Sharpe is 0.79 versus 0.83 for OLS. It saves less than
 the coefficients has done little to reduce the trading bill. The flat charge
 also omits borrow, financing and market impact.
 
-Figure 1 shows the paths behind the period averages. OLS and Ridge remain
+Figure 3 shows the paths behind the period averages. OLS and Ridge remain
 close, while both have shallower development drawdowns than the fixed score.
 The lower risk is consistent with the preference built into the training
 target. Its separate contribution would require a comparison with a model
@@ -472,7 +483,7 @@ trained on an unadjusted return target.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
+<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
 ## Interpreting the learned combination
 {: #what-ridge-changes }
@@ -515,7 +526,7 @@ predictor eigenspectrum would require an additional diagnostic. On future
 observations, changes in predictor relationships can also make previously
 low-variance directions more consequential.
 
-Figure 2 follows the ten largest mean absolute Ridge coefficients across the
+Figure 4 follows the ten largest mean absolute Ridge coefficients across the
 twelve refits. All ten keep the same sign. Price relative to its 126-day moving
 average stays positive, while 10/21-day MACD stays negative; both remain among
 the ten largest weights at every refit. Holding the other predictor ranks
@@ -525,7 +536,7 @@ fixed, they favor relative longer-term strength with weaker recent momentum.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2:</strong> The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit. Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
+<p class="figure-caption"><strong>Figure 4:</strong> The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit. Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
 
 These signs describe conditional relationships with the target. A large
 coefficient can reflect a contrast between correlated predictors, so its
@@ -631,6 +642,4 @@ absolute movement even if their angular change stays the same.
 
 [^training]: The first fit uses 900 trading dates, followed by a 21-date gap.
     I refit every 600 dates, expanding the training history, for twelve refits.
-    At each refit, three regressions use interleaved subsets of training dates;
-    I average their predictions before ranking stocks. The coefficient charts
-    show the corresponding average weights.
+    The last prediction block ends with the available sample.
