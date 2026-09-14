@@ -32,7 +32,7 @@ defensive signals and short positioning, giving each theme one third of the
 score and splitting that weight equally among its ingredients (Table 1).
 The rule favours medium-term strength, lower volatility and lighter short
 positioning. I label it “Fixed” in the results because I choose its weights
-in advance. Each ingredient enters as a rank among eligible stocks on that
+in advance. Each ingredient enters as a rank among the stocks on that
 date, on the common scale described below.
 
 <table class="research-table settings-table benchmark-ingredients">
@@ -53,7 +53,7 @@ historical outcomes. Here I compare the twelve-input rule with ordinary
 least squares (OLS) and Ridge on a broader set of 144 predictors. That tests
 the learned approach as a whole, changing both inputs and weights; comparing
 OLS with Ridge keeps the inputs fixed and isolates regularization. All three
-use the same eligible stocks.
+use the same stocks.
 
 ## Supervised learning
 
@@ -70,11 +70,8 @@ risk-adjusted performance from the low-volatility article, while allowing
 several predictors to inform the selection. Past volatility is an input;
 future return relative to future volatility is the outcome to be learned.
 
-This target makes both parts of that ratio matter. For the same positive
-average return, a stock with lower realized volatility has a higher target
-value. For a negative average return, dividing by lower volatility makes the
-ratio more negative. The learning problem therefore concerns the joint
-behaviour of return and risk.
+Lower future volatility amplifies both positive and negative average returns
+in this target, so the model learns about return and risk together.
 
 Twenty sessions covers roughly a trading month, close to the portfolio's
 three-week rebalance interval. The target measures a fixed forward window;
@@ -95,8 +92,8 @@ behaviour, while introducing substantial overlap between the inputs.
 
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes. On each
-date, I rank eligible stocks on each predictor across this whole universe and
-map the ranks into $[-1,1]$.[^rank-scaling]
+date, I rank the remaining stocks on each predictor across this whole universe and
+map the ranks into $[-1,1]$.
 
 ### What ranking changes
 
@@ -107,38 +104,24 @@ $$
 z_i=2\frac{\operatorname{rank}(x_i)}{N}-1.
 $$
 
-The smallest value becomes $-1+2/N$ and the largest becomes $1$. With many
-distinct observations, the values form an approximately uniform grid over
-$[-1,1]$. Ties, imputation and changing group sizes affect the exact
-distribution.[^rank-convention]
-
 For example, a stock's momentum can rise from −2% to +10% while its rank
-stays unchanged if it keeps the same relative position. This is the stability
-I want when pooling history: changes in market-wide levels or dispersion
-leave the input scale comparable, and extreme raw values have bounded
-influence through that predictor. Ranking the target likewise prevents a
-few extreme realized Sharpe ratios from dominating the loss through their
-raw magnitude.
+stays unchanged. The marginal cross-sectional distributions stay approximately
+uniform over time, although ties and changing group sizes affect the exact
+grid.[^rank-convention] This keeps scales comparable when pooling history and
+limits the influence of extreme predictor and target values. Correlations
+and predictive relationships can still change.
 
-The cost is that the model loses those absolute levels and distances.
-Adjacent stocks receive the same rank gap whether their momentum differs
-by one or twenty percentage points. For the target, a narrow win over sector
-peers and a large one can receive the same label. Those discarded magnitudes
-may contain predictive information.
+The cost is losing absolute levels and distances: adjacent stocks receive
+the same rank gap whether their momentum differs by one or twenty percentage
+points. A narrow win over sector peers and a large one can receive the same
+target label. Those discarded magnitudes may contain predictive information.
 
-This gives a useful, limited form of stationarity: the **marginal
-cross-sectional distributions** are approximately stable by construction.
-A stock's ranks can still be persistent, correlations between predictors can
-change, and their relationship with future outcomes can shift.
+The groups also matter: predictors are ranked across the universe, while
+targets are ranked within sectors. A high momentum rank can therefore pair
+with middling subsequent performance among sector peers. Portfolio selection
+still spans sectors and can create sector exposures.
 
-The normalization groups also matter. A stock can rank highly on market-wide
-momentum while having only middling subsequent performance within its sector.
-The model learns from that pairing. Since predictor ranks and portfolio
-selection span sectors, sector exposures can remain in the portfolio.
-
-[^rank-scaling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=24), author manuscript of 13 September 2019, physical PDF page 24, footnote 29, also rank stock characteristics period by period and map them into $[-1,1]$. Here I additionally rank the forward Sharpe target within each date and sector.
-
-[^rank-convention]: Tied values share a dense rank; the divisor is the largest rank in the group. Flat groups map to zero. Without ties, the largest rank equals $N$, giving the formula above. Missing predictor ranks receive a neutral zero fallback.
+[^rank-convention]: Without ties, the range is $[-1+2/N,1]$. Ties share a dense rank, divided by the largest rank in the group; flat groups and missing predictor ranks receive zero. Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), manuscript of 13 September 2019, physical PDF pages 9 and 24, describe pooling across stocks and time and ranking characteristics into $[-1,1]$. Here the target is also ranked, within each date and sector.
 
 ### The feature matrix
 {: #building-the-training-matrix }
@@ -149,37 +132,19 @@ so dates with more usable stocks contribute more to the loss.
 
 ### Breadth and dependence
 
-The row count overstates the independent information in this sample.
-Consecutive 126-session momentum signals share almost all of their return
-window, and consecutive forward 20-session targets share 19 daily returns.
-Daily observations give repeated views of a limited history of market
-conditions.
-
-For independent daily returns, $T$ overlapping 20-session means carry roughly
-$T/20$ independent-observation equivalents for estimating their mean: about
-45 for 900 dates.[^overlap] Our ranked Sharpe labels, persistent predictors
-and shared stock shocks require their own dependence calculation.
-
-Cross-sectional breadth adds variation: stocks on the same date differ in
-characteristics and subsequent outcomes. Pooling lets the model learn from
-those differences as well as changes through time, assuming the predictive
-relationship is sufficiently shared across stocks and dates.[^panel-pooling]
-
-Stocks also share market and sector shocks, and firms with similar
-characteristics can move together. Ranking within sectors leaves dependence
-between their outcomes, so breadth adds less information than the same
-number of independent stocks would.
-
-[^overlap]: In the independent, equal-variance daily-return example, overlapping 20-session means have lag correlation $\rho_k=1-k/20$ for $1\leq k<20$ and zero thereafter. The large-$T$ effective sample size for their sample mean is $T/(1+2\sum_{k=1}^{19}\rho_k)=T/20$. This illustrative calculation concerns a time-series mean, not the ranked Sharpe regression.
-
-[^panel-pooling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=9), author manuscript of 13 September 2019, physical PDF page 9, describe learning a common predictive function across stocks and time. Here that pooling principle is applied to a ranked risk-adjusted target.
+The row count overstates the independent information: adjacent targets share
+19 of their 20 daily returns, predictors persist, and stocks share market
+and sector shocks. Breadth gives the model differences across stocks to
+learn from within a limited market history. Pooling assumes that the
+predictive relationship is sufficiently shared across stocks and dates;
+cross-sectional dependence limits how much information that breadth adds.
 
 ## Learning the weights
 {: #learning-the-combination }
 
 I fit the weights jointly to the historical predictor–target pairs. With
 $z_{i,j,t}$ denoting stock $i$'s rank on predictor $j$ at date $t$, each
-regression produces a score[^score-range]:
+regression produces a score that can extend beyond $[-1,1]$:
 
 $$
 \widehat y_{i,t}
@@ -218,28 +183,24 @@ The smaller the variation in a direction, the stronger the shrinkage.
 This moderates the uncertain contrasts between overlapping predictors,
 at the cost of biasing their estimated contributions toward zero. A
 low-variance direction may still be useful for prediction; the penalty
-controls how much of that estimation risk the model accepts.[^ridge-theory]
+controls how much of that estimation risk the model accepts. [Hastie’s Ridge
+review](https://arxiv.org/html/2006.00371v2) (2024, Sections 2–3) develops this
+spectral interpretation and the bias–variance trade-off.
 
 I use $c=0.01$ in the mean-squared-error objective. Equivalently, the penalty
 on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
 training sample expands. Because coefficient size depends on predictor units,
 the common rank scaling also determines how this penalty treats the inputs.
 
-To put that choice in context, I reconstruct $G$ for each of the twelve
-training windows and its three date subsamples. Of the 144 eigenvalues,
-86–91 lie below $0.1$, accounting for 6.3–7.9% of total predictor variance;
-15–17 lie below $0.01$. At $c=0.01$, a direction with
-$\lambda=0.1$ retains about 91% of its OLS coefficient; one with
-$\lambda=0.01$ retains 50%. The penalty therefore materially shrinks some
-directions, even though the final stock rankings remain close. These counts
-describe the strength of the chosen penalty; they do not establish that it
-is the best choice.[^spectrum-diagnostic]
+Across the twelve training windows and three date subsamples, **86–91 of
+144 eigenvalues lie below $0.1$**. At $c=0.01$, those directions shrink by
+more than 9%; **15–17 lie below $0.01$** and shrink by more than half.
+The penalty reaches most directions, but those below $0.1$ account for only
+6.3–7.9% of total predictor variance. That distinction matters when judging
+how much the penalty changes predictions. These counts describe the chosen
+penalty; a sensitivity test would be needed to choose it empirically.[^diagnostics]
 
-[^spectrum-diagnostic]: [Eigenvalue counts by fit](/assets/multiple-linear-regression/evidence/spectrum_by_fit.csv) and [variance shares](/assets/multiple-linear-regression/evidence/low_spectrum_variance_by_member.csv), reconstructed from the retained normalized inputs and recorded training windows, after dropping missing targets and selecting each date subsample. The covariance is centred separately within each fit. Original training-input hashes were not captured, so this checks the retained design rather than independently reproducing the original fits.
-
-[^score-range]: The inputs and observed target lie within $[-1,1]$, but fitted linear scores can extend beyond that interval.
-
-[^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$. The technical note at the end gives the covariance expressions.
+[^diagnostics]: The [aggregate evidence](https://github.com/piinghel/piinghel.github.io/tree/main/assets/multiple-linear-regression/evidence) includes spectra, coefficient projections, beta estimates and schedule-level results. Training covariances use the retained normalized inputs and recorded windows, dropping missing targets. Original training-input hashes were not captured, so these diagnostics reconstruct the retained design rather than independently reproducing the original fits.
 
 ## Fitting through time
 
@@ -259,7 +220,7 @@ window contains 900 trading dates. A 21-date gap allows the forward
 20-session training outcomes to finish before predictions begin. I then
 predict the next 600 dates and refit, keeping the January 1995 start and
 extending the training endpoint by 600 dates. Figure 1 shows the first
-three windows.[^chronological-training]
+three windows.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
@@ -269,46 +230,34 @@ three windows.[^chronological-training]
 
 Keeping the older history adds observations but retains older relationships;
 a rolling window would drop the earliest dates. OLS and Ridge share the
-same expanding windows and refit schedule, with predictions beginning in
-September 1998.[^training]
+same twelve expanding windows, with predictions beginning in September 1998.
 
 I report results through December 2021 and for January 2022–May 2026 separately.
 
-[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), illustrate evaluation with a rolling forecasting origin and an expanding training set. Here the gap also accommodates the forward outcome window.
-
 ### Sampling the training dates
 
-Within each of these training windows, I can fit every eligible date or
-select more widely spaced cross-sections. This changes the rows used by
-each model while keeping the walk-forward boundaries fixed.
-
-Keeping every fifth trading date gives roughly a weekly sample and one
-fifth of the rows. Some omitted observations are redundant; others capture
-changes the sparse sample misses. Fitting all five offsets separately and
-averaging their predictions uses every date collectively, while spacing out
-each model's observations. The models remain dependent: even five sessions
-apart, 20-session targets share 15 returns.
-
-The reported study uses **three offsets**, sampling every third trading
-date, as Figure 2 shows. Each model receives complete cross-sections from
-its assigned dates, and I average their predictions for the same stock and
-forecast date.
+Within each training window, I use **three offsets**: one model gets dates
+1, 4, 7, …; the next gets 2, 5, 8, …; and the third gets 3, 6, 9, … (Figure 2).
+Each receives complete cross-sections from its dates, and I average their
+predictions for each stock and forecast date. This spreads out each model's
+observations while using all dates collectively. Dependence remains:
+20-session targets three dates apart still share 17 returns. The expanding
+walk-forward boundaries stay the same.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="1" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
+<p class="figure-caption"><strong>Figure 2: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
 
 ## Prediction quality
 {: #prediction-quality-and-portfolio-results }
 
-OLS and Ridge have almost identical mean daily information coefficients
-(IC) in both periods (Table 2).
-IC is the cross-sectional Spearman correlation between the score and the
-forward sector-relative Sharpe target. A positive value means higher scores
-tend to identify better subsequent outcomes. The small development gain
-from Ridge disappears later.
+OLS and Ridge have almost identical ranking quality: both beat the fixed
+score during development, but the fixed score has the highest mean information
+coefficient (IC) after 2021. The regressions' daily IC is less variable in both periods
+(Table 2). I measure IC as the cross-sectional Spearman correlation between
+the score and the forward sector-relative Sharpe target.
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
   <caption><strong>Table 2: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
@@ -326,12 +275,6 @@ from Ridge disappears later.
     <tr><th scope="row">Ridge</th><td>0.0435</td><td>0.1087</td><td>0.400</td></tr>
   </tbody>
 </table>
-
-Both regressions have higher mean IC than the fixed score during development,
-with less variation in daily IC. After 2021, the fixed score has the highest
-mean IC, while the regressions still have less variable daily IC. The broader
-learned combination therefore improves average ordering in the first period,
-but that advantage does not persist in the later one.
 
 IC measures ordering across the whole cross-section. To see what these
 scores deliver after costs, I next turn them into portfolios using the same
@@ -357,21 +300,18 @@ weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. These schedules
 determine when to act on each score and show how the comparison depends on
 the starting week.
 
-Table 3 averages the statistics calculated separately for the three
-schedules. Figure 3 averages their daily net P&L and compounds that series
-into an index. The mean of schedule-level Sharpes and the Sharpe of an
-averaged return series are different calculations.
-
 Splitting capital across staggered schedules is called tranching. I examine
 its effect on timing risk in the
-[rebalance-schedules article](/quants/2025/05/10/rebalancing-luck.html).
+[rebalance-schedules article](/quants/2025/05/10/rebalancing-luck.html).[^schedule-summary]
+
+[^schedule-summary]: Table 3 averages statistics calculated separately for the three schedules. Figure 3 compounds their mean daily net P&L on common dates. Averaging schedule-level Sharpes differs from calculating the Sharpe of that averaged return series.
 
 ## Portfolio results
 
-During development, OLS earns slightly more net return than the fixed score,
-with lower volatility and a shallower maximum drawdown (Table 3). Extra trading
-consumes 0.74 percentage points of its 1.08-point gross-return advantage. That
-leaves most of the Sharpe improvement coming from lower volatility.
+The regressions' main gain is lower volatility, despite slightly higher
+market beta (Table 3). During development, OLS earns only slightly more net
+return than the fixed score: extra trading consumes 0.74 percentage points
+of its 1.08-point gross-return advantage.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 3: Net performance, market beta and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Market beta is the slope from regressing daily net strategy returns on the Russell 1000 benchmark returns, with an intercept, within each period.</caption>
@@ -394,18 +334,12 @@ Market beta is small for all three and slightly higher for the regressions
 in both periods. Their lower volatility therefore does not come from lower
 constant market exposure. Removing the fitted market component leaves
 development volatility at 9.01% for the fixed rule, 6.96% for OLS and 7.16%
-for Ridge; the gap also remains later. This check still leaves the effects
-of stock selection, sizing, changing beta and other factor exposures
-unseparated.[^beta-diagnostic]
+for Ridge; the gap also remains later. This does not separate stock selection
+from sizing, changing beta or other factor exposures.
 
-[^beta-diagnostic]: [Beta summaries](/assets/multiple-linear-regression/evidence/beta_schedule_means.csv) and [individual schedules](/assets/multiple-linear-regression/evidence/beta_by_schedule.csv) use the saved daily net strategy and market returns. Residual volatility is the annualized standard deviation after subtracting the fitted intercept and market component. Each estimate uses one constant beta per schedule and reporting period; summaries average the three schedules equally.
-
-After 2021, the fixed rule earns more net return than either regression, with
-more volatility and a lower Sharpe. Ridge's volatility is about 19% below the
-fixed rule during development and 25% below it later, but its annual net-return
-advantage moves from +0.59 percentage points to −0.68 points. The improvement
-is therefore in risk-adjusted performance, with no consistent net-return
-advantage over the three-factor benchmark.
+After 2021, the fixed rule earns more net return than either regression,
+with more volatility and a lower Sharpe. The learned models improve
+risk-adjusted performance, but have no consistent net-return advantage.
 
 The OLS–Ridge difference is much smaller. Ridge's 0.25-point development return
 gain comes with higher volatility, leaving both Sharpes close to 1.00. That
@@ -415,10 +349,8 @@ after 2021, Ridge's mean Sharpe is 0.79 versus 0.83 for OLS. It saves less than
 the coefficients has done little to reduce the trading bill. The flat charge
 also omits borrow, financing and market impact.
 
-OLS and Ridge also follow close portfolio paths, while both have shallower
-development drawdowns than the fixed score (Figure 3). Their lower risk may
-reflect the target, the stocks selected and the resulting exposures; this
-comparison does not separate those contributions.
+OLS and Ridge follow close portfolio paths, while both have shallower
+development drawdowns than the fixed score (Figure 3).
 
 <div class="research-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
@@ -429,13 +361,12 @@ comparison does not separate those contributions.
 ## What Ridge changes
 {: #what-ridge-changes }
 
-The close OLS–Ridge results raise a useful question about the combination:
-how much has regularization changed the fitted relationship? Ridge reduces
-coefficient size and absolute movement between refits by roughly one third.
-Yet after normalizing each coefficient vector to unit length, the vectors
-move by similar amounts for OLS and Ridge. Much of the apparent coefficient
-stability comes from the smaller scale. Shrinking a vector also reduces its
-absolute movement even when its change in direction stays the same.
+Ridge reduces coefficient size and absolute movement between refits by
+roughly one third, while the rankings barely change. After normalizing each
+coefficient vector to unit length, the vectors move by similar amounts for
+OLS and Ridge. Much of the apparent stability comes from rescaling: a smaller
+vector can move less in absolute terms even when its change in direction
+stays the same.
 
 For stock selection, a positive rescaling of all coefficients leaves the
 ordering unchanged. The relevant empirical check is how much regularization
@@ -461,14 +392,12 @@ $$
 
 The lowest 72 eigenvalue directions contain **99.1% of the squared
 coefficient difference**, averaged across the twelve refits, while accounting
-for only **4.0% of predictor variance**.[^coefficient-projection] Ridge changes
+for only **4.0% of predictor variance**. Ridge changes
 the weights mainly along contrasts that vary little in the training data.
 That helps explain how coefficients can change substantially while scores
 remain close. The observed ranking correlation checks what happens on the
 following prediction blocks; relationships can change beyond the training
 window.
-
-[^coefficient-projection]: [Projection by refit](/assets/multiple-linear-regression/evidence/projection_by_refit.csv). The bottom half contains the 72 smallest eigenvalues of each refit's pooled valid-target training covariance. Its coefficient share is $\sum_{j=1}^{72}(\mathbf v_j^\top\Delta\boldsymbol\beta)^2/\lVert\Delta\boldsymbol\beta\rVert_2^2$, ranging from 98.6% to 99.4%. The reported 99.1% is the equal mean across refits; 4.0% averages the corresponding predictor-variance shares. This uses the stored ensemble coefficients and the retained-input reconstruction described above.
 
 The ten largest mean absolute Ridge coefficients keep the same sign across
 all twelve refits (Figure 4). Price relative to its 126-day moving
@@ -482,35 +411,31 @@ fixed, they favor relative longer-term strength with weaker recent momentum.
 
 <p class="figure-caption"><strong>Figure 4:</strong> The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit. Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
 
-These signs describe conditional relationships with the target. A large
-coefficient can reflect a contrast between correlated predictors, so its
-magnitude alone is a poor measure of a signal's standalone importance.
-That is the distinction between assigning weights to familiar factor themes
-and estimating a joint predictive relationship: the fitted combination can
-use differences within a theme as well as exposure to the theme itself.
-
 ## Where this leaves me
 
-The three-factor model is quite competitive. A fixed combination of momentum,
-defensive signals and short positioning gets close to the learned models with
-far fewer inputs and roughly half the trading. OLS and Ridge improve Sharpe
-and reduce drawdowns, but their net-return advantage is small during
-development and reverses later. I see that as a modest improvement overall;
-given the additional complexity, I don't find it particularly impressive.
+The three-theme rule is competitive: twelve inputs and roughly half the
+trading get close to the learned models. OLS and Ridge improve Sharpe and
+drawdowns, but their small development-period net-return advantage reverses
+later. Given the extra complexity, I don't find it impressive.
 
-Within the linear models, I naturally prefer a small Ridge penalty. Many of
-these predictors overlap by construction, so allowing some shrinkage is a
-sensible modelling choice. The case for it is the estimation problem itself:
-the portfolio results give me little reason to prefer Ridge over OLS, but
-also show little cost to that preference at the penalty used here.
+I prefer a small Ridge penalty when predictors overlap this much. Here it
+shrinks most predictor directions by more than 9% and 15–17 by more than
+half, yet OLS and Ridge rankings correlate at 0.991. The projection explains
+why: 99.1% of their squared coefficient difference lies in directions
+carrying only 4.0% of predictor variance. That supports regularizing the
+weights, while the portfolio results give me little reason to prefer
+Ridge over OLS at this penalty.
 
-The most useful next comparison is to fit OLS and Ridge on the
-three-factor benchmark's same twelve inputs. That would separate the value of
-learning the weights from the value of expanding the predictor set. Comparing
-ranked forward returns with ranked forward Sharpe would isolate the target's
-volatility adjustment. Repricing the same trades at 10 bp would show how
-sensitive the learned models' small development-period net-return advantage
-is to higher costs.
+The lower volatility survives removing a constant market component, but this
+comparison still combines stock selection with the exposures produced by
+sizing. The sizing rule leaves net and market exposure to emerge from the
+positions. In the [optimization article](/quants/2026/08/29/portfolio-optimization.html),
+I treat portfolio risk and exposure limits as explicit choices.
+
+To isolate what learning adds, I would next fit OLS and Ridge on the
+benchmark's same twelve inputs. A ranked-return target would test the value
+of the volatility adjustment, and repricing the trades at 10 bp would test
+how much of the small net-return edge survives higher costs.
 
 <details markdown="1">
 <summary>Technical note: Ridge estimation and coefficient movement</summary>
@@ -551,8 +476,3 @@ direction, weighted by the two magnitudes. Shrinking both vectors reduces
 absolute movement even if their angular change stays the same.
 
 </details>
-
-
-[^training]: The first fit uses 900 trading dates, followed by a 21-date gap.
-    I refit every 600 dates, expanding the training history, for twelve refits.
-    The last prediction block ends with the available sample.

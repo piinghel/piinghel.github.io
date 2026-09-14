@@ -29,7 +29,7 @@ def render(kind: str, *, dark: bool, mobile: bool) -> str:
         parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{rule}"{dash}/>')
 
     if kind == "date-sampling":
-        text(0, 20, "Within one eligible training window", 15)
+        text(0, 20, "Within one training window", 15)
         text(0, 43, "Each date contributes its full stock cross-section", 13, color=muted)
         start, step = (97, 27) if mobile else (160, 58)
         for model in range(3):

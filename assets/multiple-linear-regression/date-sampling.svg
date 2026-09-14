@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="702" height="302" viewBox="0 0 702 302">
 <g font-family="Arial, DejaVu Sans, sans-serif" fill="#24333f">
-<text x="0" y="20" font-size="15" text-anchor="start" fill="#24333f">Within one eligible training window</text>
+<text x="0" y="20" font-size="15" text-anchor="start" fill="#24333f">Within one training window</text>
 <text x="0" y="43" font-size="13" text-anchor="start" fill="#52616e">Each date contributes its full stock cross-section</text>
 <text x="0" y="91" font-size="14" text-anchor="start" fill="#24333f">Model 1</text>
 <line x1="160" y1="86" x2="624" y2="86" stroke="#c2ccd4"/>
