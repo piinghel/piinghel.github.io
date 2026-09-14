@@ -28,6 +28,5 @@
 <text x="290.0" y="265" font-size="13" text-anchor="middle" fill="#24333f">Predict</text>
 <text x="9" y="308" font-size="14" text-anchor="start" fill="#24333f">Training grows; earlier history stays</text>
 <text x="9" y="334" font-size="13" text-anchor="start" fill="#52616e">Time →</text>
-<text x="356" y="334" font-size="12" text-anchor="end" fill="#52616e">Schematic · not to scale</text>
 </g>
 </svg>

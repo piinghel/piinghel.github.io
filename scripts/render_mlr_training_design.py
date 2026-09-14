@@ -67,7 +67,6 @@ def render(kind: str, *, dark: bool, mobile: bool) -> str:
             text(start + train_width + gap_width + block / 2, y + 21, "Predict", 13, "middle")
         text(start, 308, "Training grows; earlier history stays", 14)
         text(start, 334, "Time →", 13, color=muted)
-        text(width - 2, 334, "Schematic · not to scale", 12, "end", muted)
     parts.extend(["</g>", "</svg>"])
     return "\n".join(parts) + "\n"
 
