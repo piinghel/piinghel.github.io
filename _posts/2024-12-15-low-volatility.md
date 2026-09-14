@@ -127,15 +127,15 @@ portfolios beside this check. I keep their stock positions and add an index
 hedge, with trading costs and a 3% annual financing rate.[^beta-check]
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 1: Sizing with and without a point-in-time beta hedge.</strong> 12 July 1995–27 May 2026. Returns, volatility and two-way turnover are annualized. Trading costs are 5 bp per dollar traded. The lower rows include index trades and 3% annual hedge financing; turnover includes stocks and the hedge. Sharpe uses a zero cash benchmark.</caption>
+  <caption><strong>Table 1: Sizing with and without a point-in-time beta hedge.</strong> 12 July 1995–27 May 2026. Returns, volatility and two-way turnover are annualized. Trading costs are 5 bp per dollar traded. The lower rows include index trades and 3% annual hedge financing; their turnover includes stocks and the hedge. P&amp;L uses fixed strategy notional; geometric returns compound that daily series. Sharpe uses a zero cash benchmark.</caption>
   <thead><tr><th>Rule</th><th>Arithmetic return</th><th>Geometric return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Turnover</th></tr></thead>
   <tbody>
-    <tr class="period-heading"><th colspan="7">Original portfolios</th></tr>
-    <tr><th scope="row">Equal-weight</th><td>2.2%</td><td>−3.3%</td><td>33.4%</td><td>0.07</td><td>−87.8%</td><td>18.8×</td></tr>
-    <tr><th scope="row">Inverse-volatility</th><td>7.0%</td><td>6.8%</td><td>9.8%</td><td>0.72</td><td>−38.0%</td><td>12.4×</td></tr>
+    <tr class="period-heading"><th colspan="7">Unhedged portfolios</th></tr>
+    <tr><th scope="row">Equal-weight</th><td>2.2%</td><td>−3.3%</td><td>33.4%</td><td>0.07</td><td>−87.8%</td><td>18.78×</td></tr>
+    <tr><th scope="row">Inverse-volatility</th><td>7.0%</td><td>6.8%</td><td>9.8%</td><td>0.72</td><td>−38.0%</td><td>12.39×</td></tr>
     <tr class="period-heading"><th colspan="7">Point-in-time beta hedge · 3% financing</th></tr>
-    <tr><th scope="row">Equal-weight</th><td>7.5%</td><td>4.6%</td><td>24.5%</td><td>0.30</td><td>−69.9%</td><td>20.1×</td></tr>
-    <tr><th scope="row">Inverse-volatility</th><td>6.8%</td><td>6.6%</td><td>9.8%</td><td>0.70</td><td>−37.0%</td><td>13.0×</td></tr>
+    <tr><th scope="row">Equal-weight</th><td>7.5%</td><td>4.6%</td><td>24.5%</td><td>0.30</td><td>−69.9%</td><td>20.10×</td></tr>
+    <tr><th scope="row">Inverse-volatility</th><td>6.8%</td><td>6.6%</td><td>9.8%</td><td>0.70</td><td>−37.0%</td><td>13.02×</td></tr>
   </tbody>
 </table>
 
@@ -160,7 +160,8 @@ returns are about 7%, with a gap of roughly a quarter of a point.
 Turnover measures how much I trade relative to strategy capital, counting
 both purchases and sales. Volatility-decile membership churns quickly, so
 even a rebalance every three weeks produces about 12–19 times capital in
-annual turnover. Smaller short positions reduce the dollars I trade and
+annual stock turnover. The index hedge adds about 0.63 times capital for
+inverse volatility and 1.32 for equal weighting. Smaller short positions reduce the dollars I trade and
 the costs I pay.
 
 Figure 3 shows the original compounded paths: about 35 cents remain per
@@ -177,7 +178,8 @@ suffers a worst drawdown of about 38%.
 
 ## Shared losses during market rallies
 
-The drawdown panel brings me back to that apparently reassuring combination:
+Figure 4 returns to the unhedged inverse-volatility portfolio and its
+apparently reassuring combination:
 about 63% net long and roughly zero beta over the full sample. Within both
 rallies in Figure 4, the short book's market sensitivity outweighs the
 longs', leaving the portfolio with negative realized beta.
@@ -228,4 +230,4 @@ the more elaborate approach has to earn its place.
 
 [^windows]: The ranking averages trailing volatility estimates over 21, 63 and 126 sessions. The separate sizing estimate uses 60 sessions, with a 5% annualized volatility floor.
 
-[^beta-check]: At each signal close I sum target stock weights times their trailing market betas (252 sessions, at least 126 observations, each beta clipped to [−4, 4]). The index target is the negative of that sum. I trade at the next close, earn returns from the following session and hold quantities until the next three-week rebalance. Hedge trading costs are 5 bp per dollar traded. Financing accrues at an assumed 3% annually on signed prior-close index exposure, using calendar days/365 and daily P&L sweeps; short exposure receives the same rate. The 0% and 5% cases vary that assumption. This uses the Russell 1000 return proxy and retains the original stock accounting; historical funding rates, futures basis and roll costs are outside this comparison. The hedge targets estimated beta; realized beta can differ.
+[^beta-check]: At each signal close I sum target stock weights times their trailing market betas (252 sessions, at least 126 observations, each beta clipped to [−4, 4]). The index target is the negative of that sum. I trade at the next close, earn returns from the following session and hold quantities until the next three-week rebalance. Hedge trading costs are 5 bp per dollar traded. Financing accrues at an assumed 3% annually on signed prior-close index exposure, using calendar days/365 and daily P&L sweeps; short exposure receives the same rate. The 0% and 5% cases vary that assumption. This is a simulated Russell 1000 index hedge: historical funding rates, futures basis and roll costs are outside this comparison. Both stock portfolios retain their original accounting, which excludes stock borrow fees and stock-book financing. The hedge targets estimated beta; realized beta can differ. The realized betas reported in the article describe the resulting returns and never determine hedge sizes.
