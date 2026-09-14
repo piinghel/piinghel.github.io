@@ -17,8 +17,6 @@ The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=
 is the tendency for calmer stocks to earn better returns per unit of risk
 than more volatile stocks. Turning that observation into a portfolio means
 deciding both which stocks to hold and how much capital to give them.
-Buying the calm stocks and shorting the wild ones is a start, but equal
-amounts of capital can leave the volatile shorts driving most of the risk.
 
 In this article, I compare equal weighting with inverse-volatility sizing
 and use a market hedge to check how much market exposure matters.
