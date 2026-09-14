@@ -251,27 +251,13 @@ isolates regularization. All three use the same eligible stocks.
 {: #learning-the-combination }
 
 The regressions instead estimate the weights jointly from the historical
-predictor–target pairs. For each stock, they produce a score:
+predictor–target pairs. They combine the predictor ranks with learned weights
+and an intercept to produce a score[^score-range]:
 
 $$
 \widehat y_{i,t}
 =\widehat a+\sum_{j=1}^{144}\widehat\beta_j z_{i,j,t}.
 $$
-
-Each coefficient weights one predictor, and the intercept supplies the
-baseline. For an illustrative two-predictor model, suppose the intercept is
-0.1, the momentum coefficient is 0.3 and the volatility coefficient is −0.2.
-A stock with momentum rank 0.8 and volatility rank 0.6 receives
-
-$$
-\widehat y=0.1+0.3(0.8)-0.2(0.6)=0.22.
-$$
-
-These numbers illustrate the calculation; the actual fits use all 144
-predictors. Each coefficient has the same additive effect across observations
-within a fit; interactions would require additional terms. Although the
-inputs and target lie within $[-1,1]$, fitted linear scores can extend
-beyond that interval.
 
 Joint estimation matters when predictors overlap. The coefficient on
 six-month momentum measures its relationship with the target conditional on
@@ -328,6 +314,8 @@ on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
 training sample expands. Because coefficient size depends on predictor units,
 the common rank scaling also determines how this penalty treats the inputs.
 
+[^score-range]: The inputs and observed target lie within $[-1,1]$, but fitted linear scores can extend beyond that interval.
+
 [^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$. The technical note at the end gives the covariance expressions.
 
 ## Fitting through time
@@ -335,55 +323,26 @@ the common rank scaling also determines how this penalty treats the inputs.
 The regression formula defines one fit. To evaluate a sequence of forecasts,
 I also need to decide which dates enter each fit and when to update it.
 
-### Sampling the training dates
-
-The dependence in the panel makes date spacing worth considering. Within
-a given training window, I can fit every date, or select more widely spaced
-cross-sections.
-
-Keeping every fifth trading date gives roughly a weekly sample and one
-fifth of the rows. Some omitted observations are redundant; others capture
-changes the sparse sample misses. Fitting all five offsets separately and
-averaging their predictions uses every date collectively, while spacing out
-each model's observations. The models remain dependent: even five sessions
-apart, 20-session targets share 15 returns.
-
-The reported study uses **three offsets**, sampling every third trading
-date, as Figure 1 shows. Each model receives complete cross-sections from
-its assigned dates, and I average their predictions for the same stock and
-forecast date.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="1" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 1: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
-
-For linear models, averaging predictions equals averaging their intercepts
-and coefficient vectors, although it generally differs from fitting one
-regression on all rows. The OLS–Ridge comparison keeps the three-offset
-design fixed, so it gives no separate estimate of the gain from this averaging.
-
 ### Expanding walk-forward
 {: #from-predictions-to-portfolios }
 
 Walk-forward sets the chronological training and prediction windows. At each
 refit, I use the history available at that point, then hold the fitted
-coefficients fixed while predicting the following block. Those boundaries are a separate choice from the date sampling inside each
-training window.
+coefficients fixed while predicting the following block. Those boundaries
+are a separate choice from the date sampling inside each training window.
 
 I use an **expanding window**, beginning in January 1995. The first training
 window contains 900 trading dates. A 21-date gap allows the forward
 20-session training outcomes to finish before predictions begin. I then
 predict the next 600 dates and refit, keeping the January 1995 start and
-extending the training endpoint by 600 dates. Figure 2 shows the first
+extending the training endpoint by 600 dates. Figure 1 shows the first
 three windows.[^chronological-training]
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
+<p class="figure-caption"><strong>Figure 1: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
 
 Keeping the older history adds observations but retains older relationships;
 a rolling window would drop the earliest dates. OLS and Ridge share the
@@ -394,33 +353,34 @@ I report results through December 2021 and for January 2022–May 2026 separatel
 
 [^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), illustrate evaluation with a rolling forecasting origin and an expanding training set. Here the gap also accommodates the forward outcome window.
 
-## From scores to portfolios
-{: #portfolio-construction }
+### Sampling the training dates
 
-On each forecast date, I rank the available predictors and compute three
-sets of stock scores: the benchmark's fixed combination, the averaged OLS
-predictions and the averaged Ridge predictions. Each ranking feeds the same
-portfolio rule: buy the top 75 stocks, short the bottom 75, and size inversely
-to volatility with stock and book caps. I rebalance every three weeks with
-next-close execution and charge 5 bp per dollar traded.
+Within each of these training windows, I can fit every eligible date or
+select more widely spaced cross-sections. This changes the rows used by
+each model while keeping the walk-forward boundaries fixed.
 
-Holding selection and sizing rules fixed lets me compare what the scores
-add. Returns use arithmetic annualization, and Sharpe assumes a zero cash
-rate. Two-way turnover counts purchases and sales relative to strategy
-capital, annualized.
+Keeping every fifth trading date gives roughly a weekly sample and one
+fifth of the rows. Some omitted observations are redundant; others capture
+changes the sparse sample misses. Fitting all five offsets separately and
+averaging their predictions uses every date collectively, while spacing out
+each model's observations. The models remain dependent: even five sessions
+apart, 20-session targets share 15 returns.
 
-For each score, I run three rebalance schedules, starting one week apart:
-weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. These schedules determine when to act on each score and show how the
-comparison depends on the starting week.
+The reported study uses **three offsets**, sampling every third trading
+date, as Figure 2 shows. Each model receives complete cross-sections from
+its assigned dates, and I average their predictions for the same stock and
+forecast date.
 
-Table 4 averages the statistics calculated separately for the three
-schedules. Figure 3 averages their daily net P&L and compounds that series
-into an index. The mean of schedule-level Sharpes and the Sharpe of an
-averaged return series are different calculations.
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="1" %}
+</div>
 
-Splitting capital across staggered schedules is called tranching. I examine
-its effect on timing risk in the
-[rebalance-schedules article](/quants/2025/05/10/rebalancing-luck.html).
+<p class="figure-caption"><strong>Figure 2: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
+
+For linear models, averaging predictions equals averaging their intercepts
+and coefficient vectors, although it generally differs from fitting one
+regression on all rows. The OLS–Ridge comparison keeps the three-offset
+design fixed, so it gives no separate estimate of the gain from this averaging.
 
 ## Prediction quality
 {: #prediction-quality-and-portfolio-results }
@@ -455,9 +415,38 @@ mean IC, while the regressions still have less variable daily IC. The broader
 learned combination therefore improves average ordering in the first period,
 but that advantage does not persist in the later one.
 
-IC measures ordering across the whole cross-section. The portfolio holds
-the extremes and incurs costs as positions change, so the next question is
-whether these ranking differences translate into better net performance.
+IC measures ordering across the whole cross-section. To see what these
+scores deliver after costs, I next turn them into portfolios using the same
+selection, sizing and trading rules.
+
+## From scores to portfolios
+{: #portfolio-construction }
+
+On each forecast date, I rank the available predictors and compute three
+sets of stock scores: the benchmark's fixed combination, the averaged OLS
+predictions and the averaged Ridge predictions. Each ranking feeds the same
+portfolio rule: buy the top 75 stocks, short the bottom 75, and size inversely
+to volatility with stock and book caps. I rebalance every three weeks with
+next-close execution and charge 5 bp per dollar traded.
+
+Holding selection and sizing rules fixed lets me compare what the scores
+add. Returns use arithmetic annualization, and Sharpe assumes a zero cash
+rate. Two-way turnover counts purchases and sales relative to strategy
+capital, annualized.
+
+For each score, I run three rebalance schedules, starting one week apart:
+weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. These schedules
+determine when to act on each score and show how the comparison depends on
+the starting week.
+
+Table 4 averages the statistics calculated separately for the three
+schedules. Figure 3 averages their daily net P&L and compounds that series
+into an index. The mean of schedule-level Sharpes and the Sharpe of an
+averaged return series are different calculations.
+
+Splitting capital across staggered schedules is called tranching. I examine
+its effect on timing risk in the
+[rebalance-schedules article](/quants/2025/05/10/rebalancing-luck.html).
 
 ## Portfolio results
 
