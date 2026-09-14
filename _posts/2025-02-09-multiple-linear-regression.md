@@ -26,32 +26,18 @@ given what the others already tell me?
 
 ## Supervised learning
 
-One approach is to choose the weights myself. Another is to learn them from
-historical examples: pair each stock's characteristics on a given date with
-its subsequent outcome, then fit a relationship between the two. That turns
-the combination problem into supervised learning. Once fitted, the model
-maps a new cross-section of characteristics into scores that I can use to
-rank stocks.
+I could choose the weights myself, or learn them from historical examples.
+Take one stock at the close of date $t$: I record the characteristics
+available then and, after the following 20 sessions, attach its measured
+outcome. Repeating this across stocks and dates builds a training set of
+predictors paired with labels. Fitting a relationship between them turns
+the combination problem into supervised learning.
 
-Take one stock at the close of date $t$. I record the momentum, volatility
-and other characteristics available then. After the following 20 sessions,
-I can measure its outcome and attach that label to the historical row.
-Repeating this across stocks and dates builds the training set. At a new
-forecast date, I construct the same predictor columns and apply the fitted
-model; the corresponding outcome will only become observable later.
-
-This makes the definition of the outcome central. The model needs a specific
-target: predicting future returns, risk-adjusted performance or relative
-standing are different tasks. I also need to choose how to represent the
-predictors and which historical observations to learn from. Those decisions
-define the problem within which the model learns its weights.
-
-I start with multiple linear regression and compare ordinary least squares
-(OLS) with Ridge, which penalizes large coefficients. Both learn the weights
-jointly, accounting for overlap between the predictors. A smaller fixed-weight
-combination provides a benchmark for what the broader learned approach adds.
-I evaluate the resulting scores first as predictions, then through the
-portfolios they produce.
+At a new forecast date, the fitted model maps the available characteristics
+into stock scores. What it learns depends on the outcome I choose, how I
+represent the predictors and which observations I pool. I develop those
+choices below, then compare a simple three-theme benchmark with ordinary
+least squares (OLS) and Ridge.
 
 ### Choosing the target
 {: #what-i-ask-the-model-to-predict }
@@ -69,31 +55,22 @@ value. For a negative average return, dividing by lower volatility makes the
 ratio more negative. The learning problem therefore concerns the joint
 behaviour of return and risk.
 
-Twenty sessions gives the model an outcome over roughly a trading month.
-The portfolio rebalances every three weeks, so the forecast and rebalance
-horizons are close but differ. The target measures a fixed forward window;
-portfolio outcomes also depend on subsequent selections and position sizes.
-The comparison below evaluates this particular horizon.
+Twenty sessions covers roughly a trading month, close to the portfolio's
+three-week rebalance interval. The target measures a fixed forward window;
+portfolio results will also depend on selection, sizing and trading costs.
 
 I then rank these forward Sharpe ratios within each date and sector and
-map them into the interval $[-1,1]$. A high
-target rank identifies a stock that subsequently performs well relative to
-its sector peers. The same relative position receives a comparable label
-across sectors and dates, even when their raw Sharpe ratios differ greatly.
-This puts within-sector ordering at the centre of the learning problem.
-
-The fitted score estimates relative standing in this transformed target.
-Expected returns in percentage points would require a separate mapping.
-I assess the score first by its ranking quality, then by the portfolio
-results after costs.
+map them into $[-1,1]$. A high label identifies a stock that subsequently
+performs well relative to its sector peers. The fitted score estimates that
+relative standing; expected returns in percentage points would require a
+separate mapping.
 
 ### Representing the predictors
 
-Both regressions use 144 predictors, mostly based on prices and trading
-activity: momentum and trend, volatility, liquidity, size and short positioning.
-Many measure the same idea at different horizons. Including several horizons
-lets the model combine information about recent and longer-term behaviour,
-but also introduces substantial overlap between the inputs.
+To predict that outcome, both regressions use 144 predictors, mostly based
+on prices and trading activity: momentum and trend, volatility, liquidity,
+size and short positioning. Several horizons capture recent and longer-term
+behaviour, while introducing substantial overlap between the inputs.
 
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes. On each
@@ -102,10 +79,8 @@ map the ranks into $[-1,1]$.[^rank-scaling]
 
 ### What ranking changes
 
-Momentum, volatility and market size arrive in different units, with
-distributions that change over time. Ranking gives every predictor and the
-target a bounded, comparable scale. For a group of $N$ distinct observations,
-the transformation used here is
+Ranking puts those different units on a bounded, comparable scale. For a
+non-flat group of $N$ distinct observations, the transformation used here is
 
 $$
 z_i=2\frac{\operatorname{rank}(x_i)}{N}-1.
@@ -113,66 +88,32 @@ $$
 
 The smallest value becomes $-1+2/N$ and the largest becomes $1$. With many
 distinct observations, the values form an approximately uniform grid over
-$[-1,1]$. Predictor ranks are computed within each date; target ranks within
-each date and sector. Ties, imputation and changing group sizes affect the
-exact distribution.[^rank-convention]
+$[-1,1]$. Ties, imputation and changing group sizes affect the exact
+distribution.[^rank-convention]
 
-Table 1 makes the trade-off concrete. Consider the same five stocks on two
-hypothetical dates. Their raw momentum levels and the gaps between them
-change substantially, while their ordering stays the same.
+For example, a stock's momentum can rise from −2% to +10% while its rank
+stays unchanged if it keeps the same relative position. This is the stability
+I want when pooling history: changes in market-wide levels or dispersion
+leave the input scale comparable, and extreme raw values have bounded
+influence through that predictor. Ranking the target likewise prevents a
+few extreme realized Sharpe ratios from dominating the loss through their
+raw magnitude.
 
-<table class="research-table comparison-table rank-example">
-  <caption><strong>Table 1: Different raw values, identical ranked inputs.</strong> Illustrative momentum returns (%), using five stocks with no ties. The final column applies to both dates.</caption>
-  <thead>
-    <tr><th>Stock</th><th>Date 1</th><th>Date 2</th><th>Ranked input</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">A</th><td>−2</td><td>10</td><td>−0.6</td></tr>
-    <tr><th scope="row">B</th><td>1</td><td>20</td><td>−0.2</td></tr>
-    <tr><th scope="row">C</th><td>2</td><td>30</td><td>0.2</td></tr>
-    <tr><th scope="row">D</th><td>3</td><td>40</td><td>0.6</td></tr>
-    <tr><th scope="row">E</th><td>20</td><td>80</td><td>1.0</td></tr>
-  </tbody>
-</table>
+The cost is that the model loses those absolute levels and distances.
+Adjacent stocks receive the same rank gap whether their momentum differs
+by one or twenty percentage points. For the target, a narrow win over sector
+peers and a large one can receive the same label. Those discarded magnitudes
+may contain predictive information.
 
-The model receives the same momentum column on both dates. This is the
-stability I want when pooling history: market-wide shifts in level or
-dispersion do not change the input scale, and an extreme raw value has
-bounded influence through that predictor. Applying the same transformation
-to the target also prevents a few extreme realized Sharpe ratios from
-dominating squared-error fitting through their raw magnitude.
+This gives a useful, limited form of stationarity: the **marginal
+cross-sectional distributions** are approximately stable by construction.
+A stock's ranks can still be persistent, correlations between predictors can
+change, and their relationship with future outcomes can shift.
 
-The cost is visible in the same table. Stock A switches from negative to
-positive momentum, yet its ranked value stays at −0.6. On date 1, the
-one-percentage-point gap between C and D receives the same rank gap as the
-17-point gap between D and E. Ranking preserves order while discarding
-absolute levels and distances. Target ranking makes the same choice about
-outcomes: a narrow win over sector peers and a large one can receive the
-same label. Those discarded magnitudes may contain predictive information.
-
-There is a useful sense of stationarity here: the **marginal cross-sectional
-distributions** are made approximately stable by construction, subject to
-the qualifications above. That makes scales more comparable across training
-dates and keeps Ridge's coefficient penalty on a consistent footing. A
-stock's ranks can still be persistent, correlations between predictors can
-change, and the relationship between predictors and future outcomes can
-shift. Stability of the ranked margins therefore leaves those modelling
-problems to be addressed.
-
-The regression is linear in these ranks. Each coefficient describes how the
-fitted target score changes with a stock's relative standing on one predictor,
-holding the others fixed. Ranking can reshape a relationship with the raw
-variable; the fitted combination remains additive in the transformed inputs.
-Closely related momentum horizons can still be highly correlated after
-ranking; normalization leaves the model with overlapping inputs to combine.
-
-The two normalization groups serve different roles. Predictor ranks retain
-a stock's standing across the universe, including differences between sectors;
-target ranks measure its subsequent outcome relative to sector peers. For
-example, a stock can rank highly on market-wide momentum while having only
-middling subsequent performance within its own sector. The model learns from
-that pairing. Portfolio selection also spans sectors, so sector exposures
-can remain in the resulting portfolio.
+The normalization groups also matter. A stock can rank highly on market-wide
+momentum while having only middling subsequent performance within its sector.
+The model learns from that pairing. Since predictor ranks and portfolio
+selection span sectors, sector exposures can remain in the portfolio.
 
 [^rank-scaling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=24), author manuscript of 13 September 2019, physical PDF page 24, footnote 29, also rank stock characteristics period by period and map them into $[-1,1]$. Here I additionally rank the forward Sharpe target within each date and sector.
 
@@ -180,9 +121,34 @@ can remain in the resulting portfolio.
 
 ### Building the training matrix
 
-The daily cross-section is the building block of the dataset. Let
-$z_{i,j,t}$ be stock $i$'s normalized value for predictor $j$ on date $t$.
-With $p=144$ predictors and $N_t$ usable stocks, that date contributes:
+I store the observations as a panel indexed by **date and asset ID**, with
+the predictors and target in columns. Each row is one stock on one date;
+the index identifies the observation. Table 1 shows a small example with
+two predictor columns and the target.
+
+<table class="research-table comparison-table training-panel">
+  <caption><strong>Table 1: The training panel.</strong> Illustrative ranked values for four stocks in one sector on two dates. Momentum and volatility stand in for two of the 144 predictor columns; the target is the forward 20-session Sharpe rank, attached once its outcome is available.</caption>
+  <thead>
+    <tr><th colspan="2">Index</th><th colspan="2">Predictors</th><th>Target</th></tr>
+    <tr><th>Date</th><th>Asset ID</th><th>Mom.</th><th>Vol.</th><th>y</th></tr>
+  </thead>
+  <tbody>
+    <tr><th rowspan="4" scope="rowgroup">t₁</th><th scope="row">A</th><td>−0.5</td><td>0.5</td><td>0.0</td></tr>
+    <tr><th scope="row">B</th><td>0.0</td><td>−0.5</td><td>0.5</td></tr>
+    <tr><th scope="row">C</th><td>0.5</td><td>1.0</td><td>−0.5</td></tr>
+    <tr><th scope="row">D</th><td>1.0</td><td>0.0</td><td>1.0</td></tr>
+    <tr class="period-break"><th rowspan="4" scope="rowgroup">t₂</th><th scope="row">A</th><td>0.0</td><td>0.5</td><td>0.5</td></tr>
+    <tr><th scope="row">B</th><td>−0.5</td><td>0.0</td><td>0.0</td></tr>
+    <tr><th scope="row">C</th><td>1.0</td><td>1.0</td><td>1.0</td></tr>
+    <tr><th scope="row">D</th><td>0.5</td><td>−0.5</td><td>−0.5</td></tr>
+  </tbody>
+</table>
+
+For estimation, the predictor columns form $X$ and the target column forms
+$\mathbf y$, with identical row order. The date–asset index keeps them aligned;
+it supplies no extra predictor columns. In matrix notation, let $z_{i,j,t}$
+be stock $i$'s normalized value for predictor $j$ on date $t$. With $p=144$
+predictors and $N_t$ usable stocks, that date contributes:
 
 $$
 X_t=
@@ -195,9 +161,7 @@ $$
 
 Each row is one stock and each column is one predictor. The matching vector
 $$\mathbf y_t$$ contains those stocks' sector-relative forward Sharpe ranks
-in the same row order. Predictor normalization happens separately within
-each date, and target normalization within each date and sector, before
-assembling the training sample.
+in the same row order. Each block is normalized before stacking.
 
 For one fit, I stack the selected historical dates vertically:
 
@@ -231,111 +195,37 @@ to the loss.
 
 ### Breadth and dependence
 
-The stacked matrix can contain many rows, but the amount of independent
-information is much smaller than that count suggests. Daily observations
-give repeated views of a limited history of market conditions. Many inputs
-change slowly: consecutive 126-session momentum signals share almost all
-of their return window, and a stock may retain a similar rank for many dates.
-Forward 20-session targets on consecutive dates also share 19 daily returns.
+The row count overstates the independent information in this sample.
+Consecutive 126-session momentum signals share almost all of their return
+window, and consecutive forward 20-session targets share 19 daily returns.
+Daily observations give repeated views of a limited history of market
+conditions.
 
-Cross-sectional breadth gives me another source of variation. On the same
-date, stocks differ in momentum, volatility, liquidity and other
-characteristics, and subsequently have different outcomes. Pooling them lets
-the model estimate a shared relationship from those differences as well as
-from changes through time. This is the benefit I am trying to obtain by
-fitting across the panel.[^panel-pooling]
+Cross-sectional breadth adds variation: stocks on the same date differ in
+characteristics and subsequent outcomes. Pooling lets the model learn from
+those differences as well as changes through time, assuming the predictive
+relationship is sufficiently shared across stocks and dates.[^panel-pooling]
 
-That breadth is also correlated. Stocks share market and sector shocks,
-and firms with similar characteristics can move together. Ranking the target
-within sectors focuses the comparison on sector peers, but leaves dependence
-between their outcomes. Cross-sectional normalization likewise preserves
-much of the persistence in predictor ranks.
-
-The relevant question is how much useful variation remains across stocks
-and dates. More stock-date rows expand the training sample, while their
-dependence limits the precision that the raw count might suggest. Pooling
-also assumes the relationship is sufficiently shared across those observations
-to help predict the next cross-section. Fitting all dates remains a candidate;
-sampling and averaging are choices to assess within this setting.
+Stocks also share market and sector shocks, and firms with similar
+characteristics can move together. Ranking within sectors leaves dependence
+between their outcomes. The useful sample therefore depends on the variation
+across stocks and dates, as well as the number of rows.
 
 [^panel-pooling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=9), author manuscript of 13 September 2019, physical PDF page 9, describe learning a common predictive function across stocks and time. Here that pooling principle is applied to a ranked risk-adjusted target.
 
-### Sampling the training dates
+## Combining the signals
+{: #a-fixed-weight-comparison }
 
-Within a given historical training window, I can choose how densely to
-sample the dates. This choice determines which cross-sections enter each
-model's training matrix.
+With the inputs and target defined, I can compare ways to combine them.
+Learning 144 coefficients should earn its complexity against a simpler rule.
 
-One option is to keep every fifth trading date, roughly a weekly sample,
-and stack those cross-sections. That spaces observations further apart and
-cuts the rows in each fit to roughly one fifth. Four fifths fewer rows need
-not mean four fifths less information: many of the omitted observations are
-partly redundant, while others capture changes the sparse sample misses.
-Longer-window predictors and targets still overlap at this spacing: even
-five sessions apart, the 20-session target windows share 15 returns.
+### A three-theme benchmark
 
-An alternative is to fit all five offsets separately: one model on dates
-1, 6, 11, …; another on dates 2, 7, 12, …; and so on. Averaging their
-predictions uses every training date collectively, while each fit receives
-more widely spaced observations. The forecasts can still be highly
-correlated because the models learn from the same market history and
-overlapping outcomes. Averaging may moderate sensitivity to the chosen
-offset; its benefit needs to be measured.
-
-The reported study uses **three offsets**, sampling every third trading
-date, as Figure 1 shows. Each model receives complete cross-sections from
-its assigned dates, and I average their predictions for the same stock and
-forecast date.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="1" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 1: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
-
-For linear models, averaging predictions equals averaging their intercepts
-and coefficient vectors, although it generally differs from fitting one
-regression on all rows. The OLS–Ridge comparison keeps the three-offset
-design fixed, so it gives no separate estimate of the gain from this averaging.
-
-### Expanding walk-forward
-{: #from-predictions-to-portfolios }
-
-Walk-forward sets the chronological training and prediction windows. At each
-refit, I use the history available at that point, then hold the fitted
-coefficients fixed while predicting the following block. The same procedure
-could fit every eligible date in one model or use the interleaved samples
-above; the window boundaries are a separate design choice.
-
-I use an **expanding window**, beginning in January 1995. The first training
-window contains 900 trading dates. A 21-date gap allows the forward
-20-session training outcomes to finish before predictions begin. I then
-predict the next 600 dates and refit, keeping the January 1995 start and
-extending the training endpoint by 600 dates. Figure 2 shows the first
-three windows.[^chronological-training]
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="1" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
-
-The expanding window gives each refit more history, while retaining older
-relationships in the estimation sample. A rolling window would instead
-drop the oldest dates as the endpoint moves forward. I keep the expanding
-windows and refit schedule the same for OLS and Ridge. Predictions start
-in September 1998.[^training]
-
-I report results through December 2021 and for January 2022–May 2026 separately.
-
-[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), illustrate evaluation with a rolling forecasting origin and an expanding training set. Here the gap also accommodates the forward outcome window.
-
-## A fixed-weight comparison
-
-My three-factor benchmark combines momentum, defensive signals and short positioning with
-fixed weights. It favors medium-term strength, lower volatility and lighter
-short positioning. Table 2 gives the twelve inputs, grouped into three themes
-so that a theme's weight doesn't depend on how many variants it contains.
+I group twelve predictors into momentum, defensive signals and short
+positioning, giving each theme one third of the score and splitting that
+weight equally among its ingredients (Table 2). The rule favours medium-term
+strength, lower volatility and lighter short positioning. I label it
+“Fixed” in the results because its weights are chosen in advance.
 
 <table class="research-table settings-table benchmark-ingredients">
   <caption><strong>Table 2: The fixed score.</strong> Each theme receives one third of the weight, divided equally among its ingredients. Horizons are trading sessions.</caption>
@@ -354,10 +244,11 @@ Comparing them tests the broader learned approach as a whole, changing both the
 inputs and their weights. OLS versus Ridge keeps the predictors fixed and
 isolates regularization. All three use the same eligible stocks.
 
-## Learning the combination
+### Learning the weights
+{: #learning-the-combination }
 
-Once the training rows are assembled, the regression learns how to turn
-a stock's predictor ranks into a score:
+The regressions instead estimate the weights jointly from the historical
+predictor–target pairs. For each stock, they produce a score:
 
 $$
 \widehat y_{i,t}
@@ -373,15 +264,11 @@ $$
 \widehat y=0.1+0.3(0.8)-0.2(0.6)=0.22.
 $$
 
-These numbers illustrate the calculation; the regressions below estimate
-their coefficients from the full predictor set. Repeating it across the
-eligible stocks gives the scores used for selection. The inputs and observed
-target lie within $[-1,1]$; a linear model's fitted scores can extend beyond
-that interval. They are used to order stocks.
-
-An additive specification uses the same coefficient for a predictor across
-observations within a fit. Interactions would need additional terms or a
-different model.
+These numbers illustrate the calculation; the actual fits use all 144
+predictors. Each coefficient has the same additive effect across observations
+within a fit; interactions would require additional terms. Although the
+inputs and target lie within $[-1,1]$, fitted linear scores can extend
+beyond that interval.
 
 Joint estimation matters when predictors overlap. The coefficient on
 six-month momentum measures its relationship with the target conditional on
@@ -414,8 +301,7 @@ $$
 Here $c=0$ gives OLS. The squared-error term rewards accurate predictions of
 target-rank levels across the training observations. Large errors receive
 more weight, and errors in the middle of the cross-section count too.
-Stock selection ultimately depends on the tails, so I also evaluate ordering
-and portfolio outcomes.
+The portfolio will use only the tails of the resulting ranking.
 
 Ridge adds a cost for large coefficients. Its effect is clearest in the
 eigenvectors $$\mathbf v_j$$ of the empirical predictor covariance
@@ -436,27 +322,93 @@ controls how much of that estimation risk the model accepts.[^ridge-theory]
 
 I use $c=0.01$ in the mean-squared-error objective. Equivalently, the penalty
 on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
-training sample expands. The common rank scaling matters here: coefficient
-size depends on predictor units, so normalization also determines how the
-penalty treats the inputs. The OLS–Ridge results below concern this penalty
-and this representation of the predictors.
+training sample expands. Because coefficient size depends on predictor units,
+the common rank scaling also determines how this penalty treats the inputs.
 
 [^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$. The technical note at the end gives the covariance expressions.
 
-## Portfolio construction
+## Fitting through time
 
-All three scores enter the same portfolio rule: buy the top 75 stocks and
-short the bottom 75, size inversely to volatility with stock and book caps,
-and rebalance every three weeks with next-close execution. I charge 5 bp per
-dollar traded. Returns use arithmetic annualization, and Sharpe assumes a
-zero cash rate. Two-way turnover counts all purchases and sales relative
-to strategy capital, annualized.
+The regression formula defines one fit. To evaluate a sequence of forecasts,
+I also need to decide which dates enter each fit and when to update it.
+
+### Sampling the training dates
+
+The dependence in the panel makes date spacing worth considering. Within
+a given training window, I can fit every date, or select more widely spaced
+cross-sections.
+
+Keeping every fifth trading date gives roughly a weekly sample and one
+fifth of the rows. Some omitted observations are redundant; others capture
+changes the sparse sample misses. Fitting all five offsets separately and
+averaging their predictions uses every date collectively, while spacing out
+each model's observations. The models remain dependent: even five sessions
+apart, 20-session targets share 15 returns.
+
+The reported study uses **three offsets**, sampling every third trading
+date, as Figure 1 shows. Each model receives complete cross-sections from
+its assigned dates, and I average their predictions for the same stock and
+forecast date.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 1: Interleaved training dates.</strong> The first nine eligible dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
+
+For linear models, averaging predictions equals averaging their intercepts
+and coefficient vectors, although it generally differs from fitting one
+regression on all rows. The OLS–Ridge comparison keeps the three-offset
+design fixed, so it gives no separate estimate of the gain from this averaging.
+
+### Expanding walk-forward
+{: #from-predictions-to-portfolios }
+
+Walk-forward sets the chronological training and prediction windows. At each
+refit, I use the history available at that point, then hold the fitted
+coefficients fixed while predicting the following block. Those boundaries are a separate choice from the date sampling inside each
+training window.
+
+I use an **expanding window**, beginning in January 1995. The first training
+window contains 900 trading dates. A 21-date gap allows the forward
+20-session training outcomes to finish before predictions begin. I then
+predict the next 600 dates and refit, keeping the January 1995 start and
+extending the training endpoint by 600 dates. Figure 2 shows the first
+three windows.[^chronological-training]
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="1" %}
+</div>
+
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
+
+Keeping the older history adds observations but retains older relationships;
+a rolling window would drop the earliest dates. OLS and Ridge share the
+same expanding windows and refit schedule, with predictions beginning in
+September 1998.[^training]
+
+I report results through December 2021 and for January 2022–May 2026 separately.
+
+[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), illustrate evaluation with a rolling forecasting origin and an expanding training set. Here the gap also accommodates the forward outcome window.
+
+## From scores to portfolios
+{: #portfolio-construction }
+
+On each forecast date, I rank the available predictors and compute three
+sets of stock scores: the benchmark's fixed combination, the averaged OLS
+predictions and the averaged Ridge predictions. Each ranking feeds the same
+portfolio rule: buy the top 75 stocks, short the bottom 75, and size inversely
+to volatility with stock and book caps. I rebalance every three weeks with
+next-close execution and charge 5 bp per dollar traded.
+
+Holding selection and sizing rules fixed lets me compare what the scores
+add. Returns use arithmetic annualization, and Sharpe assumes a zero cash
+rate. Two-way turnover counts purchases and sales relative to strategy
+capital, annualized.
 
 For each score, I run three rebalance schedules, starting one week apart:
-weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. This shows how
-the model comparison depends on the starting week. The training ensemble
-forms a single prediction score for each stock and date; these portfolio
-schedules determine when to act on that score.
+weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. These schedules determine when to act on each score and show how the
+comparison depends on the starting week.
 
 Table 4 averages the statistics calculated separately for the three
 schedules. Figure 3 averages their daily net P&L and compounds that series
@@ -467,19 +419,15 @@ Splitting capital across staggered schedules is called tranching. I examine
 its effect on timing risk in the
 [rebalance-schedules article](/quants/2025/05/10/rebalancing-luck.html).
 
-These shared rules let me follow the different scores through the same
-selection, sizing and execution procedure. The low-volatility article showed
-how much sizing can affect a portfolio; holding it fixed here keeps the
-comparison focused on the scores.
-
 ## Prediction quality
 {: #prediction-quality-and-portfolio-results }
 
-Table 3 compares ranking quality using the daily information
-coefficient (IC), the cross-sectional Spearman correlation between each score
-and the target observed over the following 20 sessions.
-OLS and Ridge have almost identical mean IC in both periods. The small
-development gain from Ridge disappears in the later period.
+Before considering portfolio P&L, I check whether the scores order stocks
+as intended. Table 3 reports the daily information coefficient (IC): the
+cross-sectional Spearman correlation with the forward sector-relative
+Sharpe target. A positive value means higher scores tend to identify better
+subsequent outcomes. OLS and Ridge have almost identical mean IC in both
+periods; the small development gain from Ridge disappears later.
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
   <caption><strong>Table 3: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
@@ -504,16 +452,9 @@ mean IC, while the regressions still have less variable daily IC. The broader
 learned combination therefore improves average ordering in the first period,
 but that advantage does not persist in the later one.
 
-This IC measures agreement with the sector-relative, risk-adjusted target
-across eligible stocks. Its interpretation follows from the target choice:
-a positive IC means the score tends to place stocks with better subsequent
-sector-relative Sharpe ranks above those with worse ranks.
-
-The next question is what those scores deliver in a portfolio. IC gives
-weight to ordering across the cross-section; the portfolio holds only the
-extremes, sizes them inversely to volatility and incurs costs when positions
-change. A higher mean IC can therefore coexist with a less attractive
-portfolio result.
+IC measures ordering across the whole cross-section. The portfolio holds
+the extremes and incurs costs as positions change, so the next question is
+whether these ranking differences translate into better net performance.
 
 ## Portfolio results
 
@@ -566,7 +507,7 @@ trained on an unadjusted return target.
 
 <p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 4 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
-## Interpreting the learned combination
+## What Ridge changes
 {: #what-ridge-changes }
 
 The close OLS–Ridge results raise a useful question about the combination:
@@ -582,10 +523,8 @@ ordering unchanged. The relevant empirical check is how much regularization
 changes the rankings: their daily correlation is 0.991, and only about 14–15
 of the 150 daily candidates differ between OLS and Ridge. The coefficient
 changes translate into limited changes in the portfolio's candidate set.
-These are comparisons of daily candidates; the three-week rebalance rule
-determines when a changed selection leads to a trade. Together with the
-similar IC and trading costs, they show how little this penalty changes the
-stock-selection outcome despite visibly shrinking the coefficients.
+These are daily candidate comparisons; the rebalance schedule determines
+when a changed selection leads to a trade.
 
 A useful link to the estimation problem is that a coefficient change
 $$\Delta\boldsymbol\beta$$ changes centred training predictions by
@@ -628,12 +567,6 @@ use differences within a theme as well as exposure to the theme itself.
 
 ## Where this leaves me
 
-Moving from the low-volatility signal to supervised learning means specifying
-what a good outcome is and how the predictors represent each stock. Here the
-model learns sector-relative forward Sharpe ranks from market-wide predictor
-ranks. The results assess that formulation, with linear estimation and a
-shared portfolio rule.
-
 The three-factor model is quite competitive. A fixed combination of momentum,
 defensive signals and short positioning gets close to the learned models with
 far fewer inputs and roughly half the trading. OLS and Ridge improve Sharpe
@@ -651,8 +584,7 @@ The most useful next comparison is to fit OLS and Ridge on the
 three-factor benchmark's same twelve inputs. That would separate the value of
 learning the weights from the value of expanding the predictor set. The
 target and rank transformations are further choices to compare separately:
-their contribution is bundled into the results here. For now, the simple
-combination remains a strong benchmark for the additional complexity.
+their contribution is bundled into the results here.
 
 <details markdown="1">
 <summary>Technical note: Ridge estimation and coefficient movement</summary>
