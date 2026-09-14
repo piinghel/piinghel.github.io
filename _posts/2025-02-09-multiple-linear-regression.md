@@ -33,6 +33,13 @@ the combination problem into supervised learning. Once fitted, the model
 maps a new cross-section of characteristics into scores that I can use to
 rank stocks.
 
+Take one stock at the close of date $t$. I record the momentum, volatility
+and other characteristics available then. After the following 20 sessions,
+I can measure its outcome and attach that label to the historical row.
+Repeating this across stocks and dates builds the training set. At a new
+forecast date, I construct the same predictor columns and apply the fitted
+model; the corresponding outcome will only become observable later.
+
 This makes the definition of the outcome central. The model needs a specific
 target: predicting future returns, risk-adjusted performance or relative
 standing are different tasks. I also need to choose how to represent the
@@ -68,18 +75,17 @@ horizons are close but differ. The target measures a fixed forward window;
 portfolio outcomes also depend on subsequent selections and position sizes.
 The comparison below evaluates this particular horizon.
 
-I then rank these forward Sharpe ratios within each date and sector. A high
+I then rank these forward Sharpe ratios within each date and sector and
+map them into the interval $[-1,1]$. A high
 target rank identifies a stock that subsequently performs well relative to
 its sector peers. The same relative position receives a comparable label
 across sectors and dates, even when their raw Sharpe ratios differ greatly.
 This puts within-sector ordering at the centre of the learning problem.
 
-Ranking also discards the distances between the raw outcomes. Within a
-sector-date group, small and large Sharpe gaps between adjacent stocks
-become equal rank gaps, apart from ties. The fitted score estimates relative standing in this
-transformed target. Expected returns in percentage points would require a
-separate mapping. I assess the score first by its ranking quality, then by
-the portfolio results after costs.
+The fitted score estimates relative standing in this transformed target.
+Expected returns in percentage points would require a separate mapping.
+I assess the score first by its ranking quality, then by the portfolio
+results after costs.
 
 ### Representing the predictors
 
@@ -92,15 +98,66 @@ but also introduces substantial overlap between the inputs.
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes. On each
 date, I rank eligible stocks on each predictor across this whole universe and
-rescale the ranks to roughly −1 to 1.
+map the ranks into $[-1,1]$.[^rank-scaling]
 
-This transformation puts returns, volatility and other quantities on comparable
-scales and limits the influence of extreme raw observations. It also chooses
-which information the model receives. Two stocks next to each other in the
-momentum ranking remain close after normalization, even if their raw momentum
-values are far apart. A stock at the same percentile on two dates has
-approximately the same transformed value despite changes in the market-wide
-level of momentum.
+### What ranking changes
+
+Momentum, volatility and market size arrive in different units, with
+distributions that change over time. Ranking gives every predictor and the
+target a bounded, comparable scale. For a group of $N$ distinct observations,
+the transformation used here is
+
+$$
+z_i=2\frac{\operatorname{rank}(x_i)}{N}-1.
+$$
+
+The smallest value becomes $-1+2/N$ and the largest becomes $1$. With many
+distinct observations, the values form an approximately uniform grid over
+$[-1,1]$. Predictor ranks are computed within each date; target ranks within
+each date and sector. Ties, imputation and changing group sizes affect the
+exact distribution.[^rank-convention]
+
+Table 1 makes the trade-off concrete. Consider the same five stocks on two
+hypothetical dates. Their raw momentum levels and the gaps between them
+change substantially, while their ordering stays the same.
+
+<table class="research-table comparison-table rank-example">
+  <caption><strong>Table 1: Different raw values, identical ranked inputs.</strong> Illustrative momentum returns (%), using five stocks with no ties. The final column applies to both dates.</caption>
+  <thead>
+    <tr><th>Stock</th><th>Date 1</th><th>Date 2</th><th>Ranked input</th></tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">A</th><td>−2</td><td>10</td><td>−0.6</td></tr>
+    <tr><th scope="row">B</th><td>1</td><td>20</td><td>−0.2</td></tr>
+    <tr><th scope="row">C</th><td>2</td><td>30</td><td>0.2</td></tr>
+    <tr><th scope="row">D</th><td>3</td><td>40</td><td>0.6</td></tr>
+    <tr><th scope="row">E</th><td>20</td><td>80</td><td>1.0</td></tr>
+  </tbody>
+</table>
+
+The model receives the same momentum column on both dates. This is the
+stability I want when pooling history: market-wide shifts in level or
+dispersion do not change the input scale, and an extreme raw value has
+bounded influence through that predictor. Applying the same transformation
+to the target also prevents a few extreme realized Sharpe ratios from
+dominating squared-error fitting through their raw magnitude.
+
+The cost is visible in the same table. Stock A switches from negative to
+positive momentum, yet its ranked value stays at −0.6. On date 1, the
+one-percentage-point gap between C and D receives the same rank gap as the
+17-point gap between D and E. Ranking preserves order while discarding
+absolute levels and distances. Target ranking makes the same choice about
+outcomes: a narrow win over sector peers and a large one can receive the
+same label. Those discarded magnitudes may contain predictive information.
+
+There is a useful sense of stationarity here: the **marginal cross-sectional
+distributions** are made approximately stable by construction, subject to
+the qualifications above. That makes scales more comparable across training
+dates and keeps Ridge's coefficient penalty on a consistent footing. A
+stock's ranks can still be persistent, correlations between predictors can
+change, and the relationship between predictors and future outcomes can
+shift. Stability of the ranked margins therefore leaves those modelling
+problems to be addressed.
 
 The regression is linear in these ranks. Each coefficient describes how the
 fitted target score changes with a stock's relative standing on one predictor,
@@ -116,6 +173,10 @@ example, a stock can rank highly on market-wide momentum while having only
 middling subsequent performance within its own sector. The model learns from
 that pairing. Portfolio selection also spans sectors, so sector exposures
 can remain in the resulting portfolio.
+
+[^rank-scaling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=24), author manuscript of 13 September 2019, physical PDF page 24, footnote 29, also rank stock characteristics period by period and map them into $[-1,1]$. Here I additionally rank the forward Sharpe target within each date and sector.
+
+[^rank-convention]: Tied values share a dense rank; the divisor is the largest rank in the group. Flat groups map to zero. Without ties, the largest rank equals $N$, giving the formula above. Missing predictor ranks receive a neutral zero fallback.
 
 ### Building the training matrix
 
@@ -273,11 +334,11 @@ I report results through December 2021 and for January 2022–May 2026 separatel
 
 My three-factor benchmark combines momentum, defensive signals and short positioning with
 fixed weights. It favors medium-term strength, lower volatility and lighter
-short positioning. Table 1 gives the twelve inputs, grouped into three themes
+short positioning. Table 2 gives the twelve inputs, grouped into three themes
 so that a theme's weight doesn't depend on how many variants it contains.
 
 <table class="research-table settings-table benchmark-ingredients">
-  <caption><strong>Table 1: The fixed score.</strong> Each theme receives one third of the weight, divided equally among its ingredients. Horizons are trading sessions.</caption>
+  <caption><strong>Table 2: The fixed score.</strong> Each theme receives one third of the weight, divided equally among its ingredients. Horizons are trading sessions.</caption>
   <thead>
     <tr><th>Theme</th><th>What the score favors</th></tr>
   </thead>
@@ -295,12 +356,32 @@ isolates regularization. All three use the same eligible stocks.
 
 ## Learning the combination
 
-A linear model gives each ranked predictor a coefficient and adds their
-contributions to an intercept. This is a useful first supervised combination:
-the model can adjust the weights jointly, while each fitted relationship
-remains straightforward to inspect. An additive specification uses the same
-coefficient for a predictor across observations; interactions would need
-additional terms or a different model.
+Once the training rows are assembled, the regression learns how to turn
+a stock's predictor ranks into a score:
+
+$$
+\widehat y_{i,t}
+=\widehat a+\sum_{j=1}^{144}\widehat\beta_j z_{i,j,t}.
+$$
+
+Each coefficient weights one predictor, and the intercept supplies the
+baseline. For an illustrative two-predictor model, suppose the intercept is
+0.1, the momentum coefficient is 0.3 and the volatility coefficient is −0.2.
+A stock with momentum rank 0.8 and volatility rank 0.6 receives
+
+$$
+\widehat y=0.1+0.3(0.8)-0.2(0.6)=0.22.
+$$
+
+These numbers illustrate the calculation; the regressions below estimate
+their coefficients from the full predictor set. Repeating it across the
+eligible stocks gives the scores used for selection. The inputs and observed
+target lie within $[-1,1]$; a linear model's fitted scores can extend beyond
+that interval. They are used to order stocks.
+
+An additive specification uses the same coefficient for a predictor across
+observations within a fit. Interactions would need additional terms or a
+different model.
 
 Joint estimation matters when predictors overlap. The coefficient on
 six-month momentum measures its relationship with the target conditional on
@@ -377,7 +458,7 @@ the model comparison depends on the starting week. The training ensemble
 forms a single prediction score for each stock and date; these portfolio
 schedules determine when to act on that score.
 
-Table 3 averages the statistics calculated separately for the three
+Table 4 averages the statistics calculated separately for the three
 schedules. Figure 3 averages their daily net P&L and compounds that series
 into an index. The mean of schedule-level Sharpes and the Sharpe of an
 averaged return series are different calculations.
@@ -394,14 +475,14 @@ comparison focused on the scores.
 ## Prediction quality
 {: #prediction-quality-and-portfolio-results }
 
-Table 2 compares ranking quality using the daily information
+Table 3 compares ranking quality using the daily information
 coefficient (IC), the cross-sectional Spearman correlation between each score
 and the target observed over the following 20 sessions.
 OLS and Ridge have almost identical mean IC in both periods. The small
 development gain from Ridge disappears in the later period.
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
-  <caption><strong>Table 2: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
+  <caption><strong>Table 3: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
   <thead>
     <tr><th>Ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
@@ -437,12 +518,12 @@ portfolio result.
 ## Portfolio results
 
 During development, OLS earns slightly more net return than the fixed score,
-with lower volatility and a shallower maximum drawdown (Table 3). Extra trading
+with lower volatility and a shallower maximum drawdown (Table 4). Extra trading
 consumes 0.74 percentage points of its 1.08-point gross-return advantage. That
 leaves most of the Sharpe improvement coming from lower volatility.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 3: Net performance and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital.</caption>
+  <caption><strong>Table 4: Net performance and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Traded notional / year</th></tr>
   </thead>
@@ -483,7 +564,7 @@ trained on an unadjusted return target.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
+<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 4 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
 ## Interpreting the learned combination
 {: #what-ridge-changes }
