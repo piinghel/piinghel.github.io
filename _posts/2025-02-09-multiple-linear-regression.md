@@ -120,15 +120,16 @@ selection span sectors, sector exposures can remain in the portfolio.
 
 [^rank-convention]: Tied values share a dense rank; the divisor is the largest rank in the group. Flat groups map to zero. Without ties, the largest rank equals $N$, giving the formula above. Missing predictor ranks receive a neutral zero fallback.
 
-### Building the training matrix
+### The feature matrix
+{: #building-the-training-matrix }
 
 I store the observations as a panel indexed by **date and asset ID**, with
-the predictors and target in columns. Each row is one stock on one date;
-the index identifies the observation. Table 1 shows a small example with
-two predictor columns and the target.
+the predictors in columns and the target added once its outcome is available.
+Each row is one stock on one date. The same structure is used for training
+and testing; Table 1 shows an example with two predictors and observed targets.
 
 <table class="research-table comparison-table training-panel">
-  <caption><strong>Table 1: The training panel.</strong> Illustrative ranked values for four stocks in one sector on two dates. Momentum and volatility stand in for two of the 144 predictor columns; the target is the forward 20-session Sharpe rank, attached once its outcome is available.</caption>
+  <caption><strong>Table 1: The date–asset panel.</strong> Illustrative ranked values for four stocks in one sector on two dates. Momentum and volatility stand in for two of the 144 predictor columns; the target is the forward 20-session Sharpe rank, shown here after its outcome is observed.</caption>
   <thead>
     <tr><th colspan="2">Index</th><th colspan="2">Predictors</th><th>Target</th></tr>
     <tr><th>Date</th><th>Asset ID</th><th>Mom.</th><th>Vol.</th><th>y</th></tr>
@@ -145,9 +146,10 @@ two predictor columns and the target.
   </tbody>
 </table>
 
-For estimation, the predictor columns form $X$ and the target column forms
-$\mathbf y$, with identical row order. The date–asset index keeps them aligned;
-it supplies no extra predictor columns. In matrix notation, let $z_{i,j,t}$
+The predictor columns form the feature matrix $X$. The target column forms
+$\mathbf y$, aligned by the date–asset index. At prediction time, I pass $X$
+to the fitted model while $\mathbf y$ is still unknown; once observed, it can
+be used to evaluate the predictions. In matrix notation, let $z_{i,j,t}$
 be stock $i$'s normalized value for predictor $j$ on date $t$. With $p=144$
 predictors and $N_t$ usable stocks, that date contributes:
 
@@ -164,7 +166,7 @@ Each row is one stock and each column is one predictor. The matching vector
 $$\mathbf y_t$$ contains those stocks' sector-relative forward Sharpe ranks
 in the same row order. Each block is normalized before stacking.
 
-For one fit, I stack the selected historical dates vertically:
+To combine several dates, I stack their blocks vertically:
 
 $$
 X=
@@ -185,12 +187,12 @@ X_{t_T}
 $$
 
 The result is a matrix with $$n=\sum_{k=1}^{T}N_{t_k}$$ stock-date rows and
-144 columns, paired with $n$ target values. The same stock can appear on
-many dates, and the number of usable stocks can change. Training includes
-only rows whose forward outcome is available by the fitting cutoff.
+144 predictor columns. The same stock can appear on many dates, and the
+number of usable stocks can change. The corresponding $n$ target values
+become available after their forward windows finish.
 
-Stacking lets me estimate one relationship across the selected history.
-The coefficients are shared across stocks and dates within that fit. With
+For training, I select only rows whose outcomes are available by the fitting
+cutoff and estimate coefficients shared across those stocks and dates. With
 equal weight per row, dates with more usable stocks contribute more terms
 to the loss.
 
