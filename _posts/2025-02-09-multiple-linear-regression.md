@@ -376,11 +376,17 @@ changes translate into limited changes in the portfolio's candidate set.
 These are daily candidate comparisons; the rebalance schedule determines
 when a changed selection leads to a trade.
 
-To locate the difference, I subtract the OLS coefficient vector from the
-Ridge vector at each refit, using the saved ensemble-average weights, and
-project $$\Delta\boldsymbol\beta$$ onto the eigenvectors of the pooled
-training covariance $G$. The resulting change in centred training scores is
-$$X_c\Delta\boldsymbol\beta$$, with mean squared difference:
+If two momentum predictors move almost together, shifting weight from one
+to the other can change the coefficients substantially while barely changing
+their combined score. I check whether Ridge's weight changes have this
+property.
+
+At each refit, I take Ridge minus OLS using the coefficients averaged across
+the three training fits. I split this difference, $$\Delta\boldsymbol\beta$$,
+across the predictor combinations defined by the eigenvectors of the pooled
+training covariance $G$. The equation below weights each squared coefficient
+change by how much that combination varies in the training data,
+$$\lambda_j$$, to give the mean squared change in centred scores:
 
 $$
 \begin{aligned}
@@ -390,14 +396,12 @@ $$
 \end{aligned}
 $$
 
-The lowest 72 eigenvalue directions contain **99.1% of the squared
-coefficient difference**, averaged across the twelve refits, while accounting
-for only **4.0% of predictor variance**. Ridge changes
-the weights mainly along contrasts that vary little in the training data.
-That helps explain how coefficients can change substantially while scores
-remain close. The observed ranking correlation checks what happens on the
-following prediction blocks; relationships can change beyond the training
-window.
+The 72 least-variable combinations contain **99.1% of the squared coefficient
+difference**, averaged across the twelve refits, but only **4.0% of predictor
+variance**. Most of the weight change therefore acts on combinations that
+vary little across the training observations. Large changes there have
+relatively little effect on scores. This helps explain the close rankings;
+their correlation of 0.991 is measured on the subsequent prediction blocks.
 
 The ten largest mean absolute Ridge coefficients keep the same sign across
 all twelve refits (Figure 4). Price relative to its 126-day moving
