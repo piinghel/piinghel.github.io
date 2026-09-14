@@ -27,9 +27,10 @@ given what the others already tell me?
 ## Supervised learning
 
 I could choose the weights myself, or learn them from historical examples.
-Take one stock at the close of date $t$: I record the characteristics
-available then and, after the following 20 sessions, attach its measured
-outcome. Repeating this across stocks and dates builds a training set of
+For a stock on date $t$, I compute its momentum, volatility and other
+predictors using the data available then. After the next 20 sessions,
+I compute its outcome and add it to the same row. Repeating this across
+stocks and dates builds a training set of
 predictors paired with labels. Fitting a relationship between them turns
 the combination problem into supervised learning.
 
