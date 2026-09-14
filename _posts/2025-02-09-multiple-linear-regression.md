@@ -171,8 +171,6 @@ on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
 training sample expands. Because coefficient size depends on predictor units,
 the common rank scaling also determines how this penalty treats the inputs.
 
-[^diagnostics]: The [aggregate evidence](https://github.com/piinghel/piinghel.github.io/tree/main/assets/multiple-linear-regression/evidence) includes spectra, coefficient projections, beta estimates and schedule-level results. Training covariances use the retained normalized inputs and recorded windows, dropping missing targets. Original training-input hashes were not captured, so these diagnostics reconstruct the retained design rather than independently reproducing the original fits.
-
 ## Fitting through time
 
 <span id="from-predictions-to-portfolios"></span>
@@ -362,7 +360,7 @@ this interpretation. Across the twelve training windows and three date
 subsamples, 86–91 of 144 eigenvalues lie below $0.1$ and shrink by
 more than 9% at $c=0.01$; 15–17 lie below $0.01$ and shrink by more
 than half. The directions below $0.1$ carry only 6.3–7.9% of total predictor
-variance.[^diagnostics]
+variance.
 
 Where do the weights actually change? At each refit, I take Ridge minus OLS using
 the coefficients averaged across the three training fits. I express this
