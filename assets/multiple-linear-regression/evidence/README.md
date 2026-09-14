@@ -21,6 +21,10 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   forward risk-adjusted target, with dates and an unannualized mean/SD ratio.
 - `portfolio_by_schedule.csv` retains each starting-week schedule's statistics;
   `portfolio_schedule_means.csv` contains the means used in the article table.
+- `twelve_input_portfolio_by_schedule.csv` and `twelve_input_portfolio_ranges.csv`
+  report the fixed rule and new OLS/Ridge fits on its exact twelve inputs.
+  Ranges are the observed minimum and maximum across the three schedules.
+  `twelve_input_ranking_summary.csv` uses the same IC definition as Table 2.
 - `ranking_sensitivity.csv` compares rankings and daily tail candidates with
   Ridge. Candidate overlap is not inter-rebalance holdings overlap.
 - `coefficient_size_and_movement.csv` reports Euclidean coefficient norms and
@@ -59,10 +63,11 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   spectrum used for the coefficient projection.
 
 The fixed rule uses twelve ranked predictors in three equally weighted themes:
-momentum, defensive characteristics and short positioning. OLS and Ridge use
-the same 144 predictors. All three share eligible stock-date rows and portfolio
-rules. The benchmark comparison changes both inputs and weighting; OLS versus
-Ridge isolates regularization.
+momentum, defensive characteristics and short positioning. OLS and Ridge in
+Tables 2–3 use the same 144 predictors. All three share eligible stock-date
+rows and portfolio rules. That benchmark comparison changes both inputs and
+weighting; OLS versus Ridge isolates regularization. Table 4 holds the twelve
+inputs fixed and changes the weighting, retaining Ridge's MSE penalty c=0.01.
 
 Portfolio returns are annualized arithmetic means with 252 sessions and 5 bp
 per dollar traded. Sharpe uses a zero cash rate. Annual traded notional is
@@ -90,7 +95,7 @@ The heatmap and coefficient diagnostics use that mean vector at each refit,
 not an average across refits or across portfolio schedules. Date thinning
 still leaves overlapping 20-session outcomes within and between members.
 
-These rules were checked against the retained matched-study configuration and
+For the original 144-input comparison, these rules were checked against the retained matched-study configuration and
 the splitter, target filtering, date-subsampling and score-averaging code.
 They document the procedure; the aggregates do not verify its original execution.
 Original training input content hashes were not captured, and the retained
@@ -102,7 +107,16 @@ over the full history. Training windows overlap, and later history has informed
 research choices. Coefficient persistence is descriptive; these data do not
 provide independent coefficient-significance tests.
 
-This is a new matched comparison using retained predictions. The original
-training runs have not been independently reproduced. Aggregate evidence can
-reproduce displays and reporting; model fitting also requires the original
-research inputs and execution dependencies.
+The original 144-input comparison uses retained predictions; those training
+runs have not been independently reproduced. The twelve-input extension was
+fitted and evaluated on 14 September 2026 using the retained normalized panel,
+with input/configuration hashes and imported code captured during execution.
+Its forecast keys, labels, eligibility and twelve window boundaries match
+the retained design. A fixed-score control reproduces every score and holding
+exactly. Current Float64 price arithmetic changes daily control returns by
+at most 1.9e-10 versus the older calculation, below reporting precision;
+all three twelve-input scores use the same current execution code. Schedule
+metrics were also independently recomputed from the daily returns.
+
+Aggregate evidence reproduces displays and reporting; model fitting also
+requires the private research inputs and execution dependencies.

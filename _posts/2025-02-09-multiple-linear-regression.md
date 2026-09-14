@@ -53,7 +53,8 @@ historical outcomes. Here I compare the twelve-input rule with ordinary
 least squares (OLS) and Ridge on a broader set of 144 predictors. That tests
 the learned approach as a whole, changing both inputs and weights; comparing
 OLS with Ridge keeps the inputs fixed and isolates regularization. All three
-use the same stocks.
+use the same stocks. I also repeat the regressions on the benchmark's twelve
+inputs, so I can separate learning the weights from adding predictors.
 
 ## Supervised learning
 
@@ -85,7 +86,7 @@ separate mapping.
 
 ### Representing the predictors
 
-To predict that outcome, both regressions use 144 predictors, mostly based
+For the main comparison, both regressions use 144 predictors, mostly based
 on prices and trading activity: momentum and trend, volatility, liquidity,
 size and short positioning. Several horizons capture recent and longer-term
 behaviour, while introducing substantial overlap between the inputs.
@@ -123,14 +124,12 @@ still spans sectors and can create sector exposures.
 
 [^rank-convention]: Without ties, the range is $[-1+2/N,1]$. Ties share a dense rank, divided by the largest rank in the group; flat groups and missing predictor ranks receive zero. Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), manuscript of 13 September 2019, physical PDF pages 9 and 24, describe pooling across stocks and time and ranking characteristics into $[-1,1]$. Here the target is also ranked, within each date and sector.
 
-### The feature matrix
+### Breadth and dependence
 {: #building-the-training-matrix }
 
 Indexed by date and asset ID, the feature matrix $X$ has $n$ stock-date rows
 and 144 ranked predictor columns; I give each training row equal weight,
 so dates with more usable stocks contribute more to the loss.
-
-### Breadth and dependence
 
 The row count overstates the independent information: adjacent targets share
 19 of their 20 daily returns, predictors persist, and stocks share market
@@ -151,6 +150,10 @@ $$
 =\widehat a+\sum_{j=1}^{144}\widehat\beta_j z_{i,j,t}.
 $$
 
+The model is linear in the predictor ranks. A given change in a rank has
+the same effect on the score wherever that stock starts; the ranking step
+has already discarded the original units and distances.
+
 Fitting the weights together matters when predictors overlap. The coefficient on
 six-month momentum measures its relationship with the target conditional on
 the other inputs, including shorter and longer momentum horizons. Its sign
@@ -168,37 +171,15 @@ I minimize $\mathrm{MSE}+c\lVert\boldsymbol\beta\rVert_2^2$, leaving the
 intercept unpenalized; $c=0$ gives OLS. Squared error fits target-rank levels
 across the whole cross-section, while the portfolio uses only the tails.
 
-Let $X_c$ denote $X$ centred using its training column means. Ridge's effect
-is clearest in the eigenvectors $$\mathbf v_j$$ of the predictor covariance
-$$G=X_c^\top X_c/n$$, with eigenvalues $$\lambda_j$$. Writing
-$$\widehat\theta_{j,c}=\mathbf v_j^\top\widehat{\boldsymbol\beta}_c$$ gives:
-
-$$
-\widehat\theta_{j,c}
-=\frac{\lambda_j}{\lambda_j+c}\widehat\theta_{j,0},
-\qquad \lambda_j>0.
-$$
-
-The smaller the variation in a direction, the stronger the shrinkage.
-This moderates the uncertain contrasts between overlapping predictors,
-at the cost of biasing their estimated contributions toward zero. A
-low-variance direction may still be useful for prediction; the penalty
-controls how much of that estimation risk the model accepts. [Hastie’s Ridge
-review](https://arxiv.org/html/2006.00371v2) (2024, Sections 2–3) develops this
-spectral interpretation and the bias–variance trade-off.
+Ridge moderates the large, opposing weights that overlapping predictors
+can produce. It shrinks the least-variable combinations most strongly,
+accepting some bias to reduce sensitivity to noise. Those combinations may
+still contain useful information, so the amount of shrinkage matters.
 
 I use $c=0.01$ in the mean-squared-error objective. Equivalently, the penalty
 on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
 training sample expands. Because coefficient size depends on predictor units,
 the common rank scaling also determines how this penalty treats the inputs.
-
-Across the twelve training windows and three date subsamples, **86–91 of
-144 eigenvalues lie below $0.1$**. At $c=0.01$, those directions shrink by
-more than 9%; **15–17 lie below $0.01$** and shrink by more than half.
-The penalty reaches most directions, but those below $0.1$ account for only
-6.3–7.9% of total predictor variance. That distinction matters when judging
-how much the penalty changes predictions. These counts describe the chosen
-penalty; a sensitivity test would be needed to choose it empirically.[^diagnostics]
 
 [^diagnostics]: The [aggregate evidence](https://github.com/piinghel/piinghel.github.io/tree/main/assets/multiple-linear-regression/evidence) includes spectra, coefficient projections, beta estimates and schedule-level results. Training covariances use the retained normalized inputs and recorded windows, dropping missing targets. Original training-input hashes were not captured, so these diagnostics reconstruct the retained design rather than independently reproducing the original fits.
 
@@ -218,9 +199,8 @@ are a separate choice from the date sampling inside each training window.
 I use an **expanding window**, beginning in January 1995. The first training
 window contains 900 trading dates. A 21-date gap allows the forward
 20-session training outcomes to finish before predictions begin. I then
-predict the next 600 dates and refit, keeping the January 1995 start and
-extending the training endpoint by 600 dates. Figure 1 shows the first
-three windows.
+refit roughly every two and a half years, keeping the January 1995 start
+and adding the available history. Figure 1 shows the first three windows.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
@@ -286,9 +266,13 @@ selection, sizing and trading rules.
 On each forecast date, I rank the available predictors and compute three
 sets of stock scores: the benchmark's fixed combination, the averaged OLS
 predictions and the averaged Ridge predictions. Each ranking feeds the same
-portfolio rule: buy the top 75 stocks, short the bottom 75, and size inversely
-to volatility with stock and book caps. I rebalance every three weeks with
-next-close execution and charge 5 bp per dollar traded.
+portfolio rule: buy the top 75 stocks and short the bottom 75. Starting
+from equal weights within each side, I scale positions inversely to their
+past 60-session volatility, using 20% annual volatility as the reference
+and a 5% floor. Each stock is capped at 4% of strategy capital, and each
+side at 100%; a side below that cap is left at its resulting size. I
+rebalance every three weeks with next-close execution and charge 5 bp
+per dollar traded.
 
 Holding selection and sizing rules fixed lets me compare what the scores
 add. Returns use arithmetic annualization, and Sharpe assumes a zero cash
@@ -314,19 +298,19 @@ return than the fixed score: extra trading consumes 0.74 percentage points
 of its 1.08-point gross-return advantage.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 3: Net performance, market beta and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Market beta is the slope from regressing daily net strategy returns on the Russell 1000 benchmark returns, with an intercept, within each period.</caption>
+  <caption><strong>Table 3: Net performance, market beta and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded; Sharpe also shows the min–max across schedules in parentheses. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Market beta is the slope from regressing daily net strategy returns on the Russell 1000 benchmark returns, with an intercept, within each period.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Traded notional / year</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="7">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed</th><td>6.81%</td><td>9.11%</td><td>0.75</td><td>−26.32%</td><td>0.07</td><td>14.4×</td></tr>
-    <tr><th scope="row">OLS</th><td>7.14%</td><td>7.14%</td><td>1.00</td><td>−18.31%</td><td>0.08</td><td>29.3×</td></tr>
-    <tr><th scope="row">Ridge</th><td>7.40%</td><td>7.36%</td><td>1.01</td><td>−18.46%</td><td>0.09</td><td>29.0×</td></tr>
+    <tr><th scope="row">Fixed</th><td>6.81%</td><td>9.11%</td><td>0.75<br><small>(0.71–0.80)</small></td><td>−26.32%</td><td>0.07</td><td>14.4×</td></tr>
+    <tr><th scope="row">OLS</th><td>7.14%</td><td>7.14%</td><td>1.00<br><small>(0.90–1.13)</small></td><td>−18.31%</td><td>0.08</td><td>29.3×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.40%</td><td>7.36%</td><td>1.01<br><small>(0.91–1.09)</small></td><td>−18.46%</td><td>0.09</td><td>29.0×</td></tr>
     <tr class="period-heading"><th colspan="7">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Fixed</th><td>7.76%</td><td>11.92%</td><td>0.65</td><td>−10.03%</td><td>−0.02</td><td>13.1×</td></tr>
-    <tr><th scope="row">OLS</th><td>7.17%</td><td>8.67%</td><td>0.83</td><td>−7.91%</td><td>0.07</td><td>26.8×</td></tr>
-    <tr><th scope="row">Ridge</th><td>7.08%</td><td>8.98%</td><td>0.79</td><td>−8.28%</td><td>0.07</td><td>26.3×</td></tr>
+    <tr><th scope="row">Fixed</th><td>7.76%</td><td>11.92%</td><td>0.65<br><small>(0.56–0.73)</small></td><td>−10.03%</td><td>−0.02</td><td>13.1×</td></tr>
+    <tr><th scope="row">OLS</th><td>7.17%</td><td>8.67%</td><td>0.83<br><small>(0.73–1.01)</small></td><td>−7.91%</td><td>0.07</td><td>26.8×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.08%</td><td>8.98%</td><td>0.79<br><small>(0.72–0.92)</small></td><td>−8.28%</td><td>0.07</td><td>26.3×</td></tr>
   </tbody>
 </table>
 
@@ -339,7 +323,8 @@ from sizing, changing beta or other factor exposures.
 
 After 2021, the fixed rule earns more net return than either regression,
 with more volatility and a lower Sharpe. The learned models improve
-risk-adjusted performance, but have no consistent net-return advantage.
+risk-adjusted performance, with higher Sharpe on each of the three schedules
+in both periods, but have no consistent net-return advantage.
 
 The OLS–Ridge difference is much smaller. Ridge's 0.25-point development return
 gain comes with higher volatility, leaving both Sharpes close to 1.00. That
@@ -358,13 +343,45 @@ development drawdowns than the fixed score (Figure 3).
 
 <p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
+### Learning weights on the same inputs
+
+How much of that improvement comes from learning the weights? I repeat OLS
+and Ridge using exactly the fixed rule's twelve predictors, keeping the
+target, training windows and portfolio rules the same. Ridge keeps the
+same $c=0.01$ penalty.
+
+<table class="research-table comparison-table portfolio-card-table">
+  <caption><strong>Table 4: The same twelve inputs, different weights.</strong> Mean statistics across the three rebalance schedules, with min–max Sharpe in parentheses. Returns are net of 5 bp per dollar traded; annualization and trading conventions match Table 3.</caption>
+  <thead>
+    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Traded notional / year</th></tr>
+  </thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="6">Development · September 1998–December 2021</th></tr>
+    <tr><th scope="row">Fixed</th><td>6.81%</td><td>9.11%</td><td>0.75<br><small>(0.71–0.80)</small></td><td>−26.32%</td><td>14.4×</td></tr>
+    <tr><th scope="row">OLS · 12</th><td>6.66%</td><td>8.27%</td><td>0.81<br><small>(0.78–0.82)</small></td><td>−26.63%</td><td>21.3×</td></tr>
+    <tr><th scope="row">Ridge · 12</th><td>6.97%</td><td>8.41%</td><td>0.83<br><small>(0.79–0.86)</small></td><td>−26.74%</td><td>19.6×</td></tr>
+    <tr class="period-heading"><th colspan="6">Later · January 2022–May 2026</th></tr>
+    <tr><th scope="row">Fixed</th><td>7.76%</td><td>11.92%</td><td>0.65<br><small>(0.56–0.73)</small></td><td>−10.03%</td><td>13.1×</td></tr>
+    <tr><th scope="row">OLS · 12</th><td>7.28%</td><td>10.89%</td><td>0.67<br><small>(0.59–0.77)</small></td><td>−10.19%</td><td>17.4×</td></tr>
+    <tr><th scope="row">Ridge · 12</th><td>7.72%</td><td>11.07%</td><td>0.70<br><small>(0.62–0.75)</small></td><td>−10.23%</td><td>16.0×</td></tr>
+  </tbody>
+</table>
+
+Learning the weights alone gives a modest average Sharpe gain, with no
+consistent net-return or drawdown advantage. It also raises trading. Ridge
+does somewhat better than OLS on these inputs and trades less, but after
+2021 each beats the fixed rule's Sharpe on only one of the three schedules.
+The broader predictor set adds more of the volatility reduction seen in
+Table 3, along with another increase in trading.
+
 ## What Ridge changes
 {: #what-ridge-changes }
 
-Ridge reduces coefficient size and absolute movement between refits by
-roughly one third, while the rankings barely change. After normalizing each
-coefficient vector to unit length, the vectors move by similar amounts for
-OLS and Ridge. Much of the apparent stability comes from rescaling.
+With the full 144-predictor set, Ridge reduces coefficient size and absolute
+movement between refits by roughly one third, while the rankings barely
+change. After normalizing each coefficient vector to unit length, the
+vectors move by similar amounts for OLS and Ridge. Much of the apparent
+stability comes from rescaling.
 
 For stock selection, a positive rescaling of all coefficients leaves the
 ordering unchanged. On the prediction blocks, OLS and Ridge have a daily
@@ -372,7 +389,28 @@ ranking correlation of 0.991, with about 14–15 of the 150 daily candidates
 differing. The rebalance schedule determines when those differences lead
 to trades.
 
-Where do the weights change? At each refit, I take Ridge minus OLS using
+To see why, consider combinations of the predictors that vary together.
+Let $X_c$ denote the training inputs centred on their column means. The
+eigenvectors $$\mathbf v_j$$ of $$G=X_c^\top X_c/n$$ identify those
+combinations, and each eigenvalue $$\lambda_j$$ measures its variance.
+For one fitted model, Ridge scales the OLS coefficient in each direction by
+
+$$
+\widehat\theta_{j,c}
+=\frac{\lambda_j}{\lambda_j+c}\widehat\theta_{j,0},
+\qquad \widehat\theta_{j,c}=\mathbf v_j^\top\widehat{\boldsymbol\beta}_c,
+\quad \lambda_j>0.
+$$
+
+The smaller the variance, the stronger the shrinkage. [Hastie's Ridge
+review](https://arxiv.org/html/2006.00371v2) (2024, Sections 2–3) develops
+this interpretation. Across the twelve training windows and three date
+subsamples, **86–91 of 144 eigenvalues lie below $0.1$** and shrink by
+more than 9% at $c=0.01$; **15–17 lie below $0.01$** and shrink by more
+than half. The directions below $0.1$ carry only 6.3–7.9% of total predictor
+variance. These counts describe the chosen penalty; they do not select it.[^diagnostics]
+
+Where do the weights actually change? At each refit, I take Ridge minus OLS using
 the coefficients averaged across the three training fits. I express this
 difference, $$\Delta\boldsymbol\beta$$, along the eigenvectors of the pooled
 training covariance $G$. Each represents a combination of predictors. The
@@ -406,18 +444,17 @@ fixed, they favor relative longer-term strength with weaker recent momentum.
 
 ## Where this leaves me
 
-The three-theme rule is competitive: twelve inputs and roughly half the
-trading get close to the learned models. OLS and Ridge improve Sharpe and
-drawdowns, but their small development-period net-return advantage reverses
-later. Given the extra complexity, I don't find it impressive.
+The three-theme rule is competitive. With 144 predictors, OLS and Ridge
+improve Sharpe and drawdowns, but their small development-period net-return
+advantage reverses later, while trading roughly doubles. Learning weights
+on the same twelve inputs adds only a modest Sharpe gain. These are
+improvements, but given the extra complexity, I don't find them especially
+impressive.
 
-I prefer a small Ridge penalty when predictors overlap this much. Here it
-shrinks most predictor directions by more than 9% and 15–17 by more than
-half, yet OLS and Ridge rankings correlate at 0.991. The projection explains
-why: 99.1% of their squared coefficient difference lies in directions
-carrying only 4.0% of predictor variance. That supports regularizing the
-weights, while the portfolio results give me little reason to prefer
-Ridge over OLS at this penalty.
+I still prefer a small Ridge penalty when predictors overlap this much.
+It moderates the uncertain contrasts between them, although with the full
+predictor set that changes stock selection too little to give Ridge a
+clear portfolio advantage over OLS.
 
 The lower volatility survives removing a constant market component, but this
 comparison still combines stock selection with the exposures produced by
@@ -425,7 +462,5 @@ sizing. The sizing rule leaves net and market exposure to emerge from the
 positions. In the [optimization article](/quants/2026/08/29/portfolio-optimization.html),
 I treat portfolio risk and exposure limits as explicit choices.
 
-To isolate what learning adds, I would next fit OLS and Ridge on the
-benchmark's same twelve inputs. A ranked-return target would test the value
-of the volatility adjustment, and repricing the trades at 10 bp would test
-how much of the small net-return edge survives higher costs.
+A ranked-return target would be a useful next comparison: how much does
+adjusting the training outcome for future volatility actually add?
