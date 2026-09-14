@@ -30,6 +30,14 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   gross notionals as percentages of each schedule's fixed capital, valued at
   the close. `exposure_schedule_means.csv` averages those period statistics
   equally across schedules. These are dollar exposures, not market betas.
+- `beta_by_schedule.csv` regresses each schedule's saved daily net strategy
+  returns on its Russell 1000 benchmark returns, with an intercept, separately
+  for each reporting period. `beta_schedule_means.csv` averages the three
+  schedule-level estimates equally. Both retain beta before costs as a check,
+  R-squared and residual annual volatility. Benchmark returns match daily
+  percentage changes in the retained index series exactly; no cash-rate
+  adjustment is applied. These constant period betas do not separate stock
+  selection, sizing, changing exposures or other factors.
 - `spectrum_by_fit.csv` reconstructs the centred predictor covariance for each
   of twelve training windows and three date subsamples from the retained
   normalized cache. Counts use eigenvalue thresholds 0.01 and 0.1; the

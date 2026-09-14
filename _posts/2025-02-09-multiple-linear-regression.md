@@ -374,32 +374,31 @@ consumes 0.74 percentage points of its 1.08-point gross-return advantage. That
 leaves most of the Sharpe improvement coming from lower volatility.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 3: Net performance, exposure and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Net exposure is the average daily long minus short notional, at closing prices, divided by strategy capital.</caption>
+  <caption><strong>Table 3: Net performance, market beta and trading.</strong> Mean of three schedule-level statistics, after 5 bp per dollar traded. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Market beta is the slope from regressing daily net strategy returns on the Russell 1000 benchmark returns, with an intercept, within each period.</caption>
   <thead>
-    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Net exposure</th><th>Traded notional / year</th></tr>
+    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Traded notional / year</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="7">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed</th><td>6.81%</td><td>9.11%</td><td>0.75</td><td>−26.32%</td><td>44.1%</td><td>14.4×</td></tr>
-    <tr><th scope="row">OLS</th><td>7.14%</td><td>7.14%</td><td>1.00</td><td>−18.31%</td><td>28.3%</td><td>29.3×</td></tr>
-    <tr><th scope="row">Ridge</th><td>7.40%</td><td>7.36%</td><td>1.01</td><td>−18.46%</td><td>30.4%</td><td>29.0×</td></tr>
+    <tr><th scope="row">Fixed</th><td>6.81%</td><td>9.11%</td><td>0.75</td><td>−26.32%</td><td>0.07</td><td>14.4×</td></tr>
+    <tr><th scope="row">OLS</th><td>7.14%</td><td>7.14%</td><td>1.00</td><td>−18.31%</td><td>0.08</td><td>29.3×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.40%</td><td>7.36%</td><td>1.01</td><td>−18.46%</td><td>0.09</td><td>29.0×</td></tr>
     <tr class="period-heading"><th colspan="7">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Fixed</th><td>7.76%</td><td>11.92%</td><td>0.65</td><td>−10.03%</td><td>52.6%</td><td>13.1×</td></tr>
-    <tr><th scope="row">OLS</th><td>7.17%</td><td>8.67%</td><td>0.83</td><td>−7.91%</td><td>44.7%</td><td>26.8×</td></tr>
-    <tr><th scope="row">Ridge</th><td>7.08%</td><td>8.98%</td><td>0.79</td><td>−8.28%</td><td>46.9%</td><td>26.3×</td></tr>
+    <tr><th scope="row">Fixed</th><td>7.76%</td><td>11.92%</td><td>0.65</td><td>−10.03%</td><td>−0.02</td><td>13.1×</td></tr>
+    <tr><th scope="row">OLS</th><td>7.17%</td><td>8.67%</td><td>0.83</td><td>−7.91%</td><td>0.07</td><td>26.8×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.08%</td><td>8.98%</td><td>0.79</td><td>−8.28%</td><td>0.07</td><td>26.3×</td></tr>
   </tbody>
 </table>
 
-The regressions also carry less net long exposure. During development,
-OLS averages 28.3% against the fixed rule's 44.1%, even though its gross
-exposure is slightly higher: 140.4% against 136.5%. The common sizing rule
-therefore produces different exposure profiles from the different selections.
-Lower net exposure may contribute to lower volatility. Market beta, stock
-risk and correlations would be needed to explain the difference further.
-The higher Sharpe describes the complete strategy, including these changes
-in exposure.[^exposure-diagnostic]
+Market beta is small for all three and slightly higher for the regressions
+in both periods. Their lower volatility therefore does not come from lower
+constant market exposure. Removing the fitted market component leaves
+development volatility at 9.01% for the fixed rule, 6.96% for OLS and 7.16%
+for Ridge; the gap also remains later. This check still leaves the effects
+of stock selection, sizing, changing beta and other factor exposures
+unseparated.[^beta-diagnostic]
 
-[^exposure-diagnostic]: [Exposure summaries](/assets/multiple-linear-regression/evidence/exposure_schedule_means.csv) use the saved realized holdings for each rebalance schedule. Long and short notionals are valued at the close and divided by each schedule's fixed capital; period means are then averaged across the three schedules.
+[^beta-diagnostic]: [Beta summaries](/assets/multiple-linear-regression/evidence/beta_schedule_means.csv) and [individual schedules](/assets/multiple-linear-regression/evidence/beta_by_schedule.csv) use the saved daily net strategy and market returns. Residual volatility is the annualized standard deviation after subtracting the fitted intercept and market component. Each estimate uses one constant beta per schedule and reporting period; summaries average the three schedules equally.
 
 After 2021, the fixed rule earns more net return than either regression, with
 more volatility and a lower Sharpe. Ridge's volatility is about 19% below the
