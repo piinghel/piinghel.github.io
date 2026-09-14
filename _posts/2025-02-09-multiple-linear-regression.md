@@ -12,8 +12,6 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">I extend a single-factor stock ranking into a supervised learning problem, choosing a risk-adjusted target and rank-transformed predictors. The learned combinations produce lower-volatility portfolios than a smaller fixed-weight benchmark, with comparable net returns and roughly twice the trading.</p>
-
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
 changed the portfolio. Here I want to broaden the stock-selection problem.
@@ -21,19 +19,26 @@ Volatility is one piece of information; momentum, liquidity, size and short
 positioning may also help. How should I combine them, especially when several
 predictors measure closely related things?
 
-I approach this as a supervised learning problem: use historical predictor
-values and subsequent outcomes to estimate a combination. That requires
-choices before fitting anything. I need to define the outcome I want to
-predict, decide how to represent the inputs, and choose a criterion for
-learning their weights. Those choices shape what the fitted score means.
-
 Multiple linear regression is my starting point. I compare ordinary least
 squares (OLS) with Ridge, which adds a penalty on coefficient size, then
 evaluate their predictions and the portfolios they produce. A smaller
 fixed-weight combination provides a benchmark for what the broader learned
 approach adds.
 
-## Choosing the target
+## Supervised learning
+
+For each stock and date, I pair the available predictors with a chosen
+outcome measured over the following sessions. Historical pairs whose
+outcomes have finished form the training sample. I fit a relationship between
+the two, then apply it to a new cross-section of predictor values to produce
+scores for outcomes that are still ahead.
+
+That formulation involves several choices: what outcome to predict, how to
+normalize the inputs and target, and which stocks and dates to pool. Together
+they define the information the model can learn from. The model then learns
+the weights within that formulation.
+
+### Choosing the target
 {: #what-i-ask-the-model-to-predict }
 
 The first choice is what a successful stock selection should deliver. I use
@@ -68,7 +73,7 @@ transformed target. Expected returns in percentage points would require a
 separate mapping. I assess the score first by its ranking quality, then by
 the portfolio results after costs.
 
-## Representing the predictors
+### Representing the predictors
 
 Both regressions use 144 predictors, mostly based on prices and trading
 activity: momentum and trend, volatility, liquidity, size and short positioning.
@@ -104,7 +109,7 @@ middling subsequent performance within its own sector. The model learns from
 that pairing. Portfolio selection also spans sectors, so sector exposures
 can remain in the resulting portfolio.
 
-## Building the training matrix
+### Building the training matrix
 
 The daily cross-section is the building block of the dataset. Let
 $z_{i,j,t}$ be stock $i$'s normalized value for predictor $j$ on date $t$.
@@ -153,8 +158,105 @@ only rows whose forward outcome is available by the fitting cutoff.
 Stacking lets me estimate one relationship across the selected history.
 The coefficients are shared across stocks and dates within that fit. With
 equal weight per row, dates with more usable stocks contribute more terms
-to the loss. This pooling assumption and the date-sampling rule are further
-parts of the supervised problem.
+to the loss.
+
+### Breadth and dependence
+
+The stacked matrix can contain many rows, but the amount of independent
+information is much smaller than that count suggests. Daily observations
+give repeated views of a limited history of market conditions. Many inputs
+change slowly: consecutive 126-session momentum signals share almost all
+of their return window, and a stock may retain a similar rank for many dates.
+Forward 20-session targets on consecutive dates also share 19 daily returns.
+
+Cross-sectional breadth gives me another source of variation. On the same
+date, stocks differ in momentum, volatility, liquidity and other
+characteristics, and subsequently have different outcomes. Pooling them lets
+the model estimate a shared relationship from those differences as well as
+from changes through time. This is the benefit I am trying to obtain by
+fitting across the panel.[^panel-pooling]
+
+That breadth is also correlated. Stocks share market and sector shocks,
+and firms with similar characteristics can move together. Ranking the target
+within sectors focuses the comparison on sector peers, but leaves dependence
+between their outcomes. Cross-sectional normalization likewise preserves
+much of the persistence in predictor ranks.
+
+The relevant question is how much useful variation remains across stocks
+and dates. More stock-date rows expand the training sample, while their
+dependence limits the precision that the raw count might suggest. Pooling
+also assumes the relationship is sufficiently shared across those observations
+to help predict the next cross-section. Fitting all dates remains a candidate;
+sampling and averaging are choices to assess within this setting.
+
+[^panel-pooling]: Gu, Kelly and Xiu, [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf#page=9), author manuscript of 13 September 2019, physical PDF page 9, describe learning a common predictive function across stocks and time. Here that pooling principle is applied to a ranked risk-adjusted target.
+
+### Training through time
+{: #from-predictions-to-portfolios }
+
+I fit the models on an expanding history beginning in January 1995, then
+predict the next block of dates. A gap between training and prediction lets
+the last training outcomes finish before the forecasts begin. Predictions
+start in September 1998.[^training]
+
+An expanding window retains the earlier observations as new dates become
+available. That gives the fit more history, while leaving older relationships
+in the estimation sample. A rolling window would make a different trade-off
+between retaining information and adapting to change. Here I keep the
+training design the same for OLS and Ridge.
+
+### Sampling the training dates
+
+The dependence in the panel motivates a choice about how densely to sample
+that history.
+
+One option is to keep every fifth trading date, roughly a weekly sample,
+and stack those cross-sections. That spaces observations further apart and
+cuts the rows in each fit to roughly one fifth. It also omits four of the
+five date sequences, including changes in rankings and outcomes between
+the selected dates. Four fifths fewer rows need not mean four fifths less
+information: many of the omitted observations are partly redundant, while
+others capture changes the sparse sample misses. Longer-window predictors
+and targets still overlap at this spacing: even five sessions apart, the
+20-session target windows share 15 returns.
+
+An alternative is to fit all five offsets separately. Indexing consecutive
+training dates by $1,2,\ldots$, the five samples would be:
+
+$$
+\begin{aligned}
+\mathcal T_1&=\{1,6,11,\ldots\},\\
+\mathcal T_2&=\{2,7,12,\ldots\},\\
+&\ \vdots\\
+\mathcal T_5&=\{5,10,15,\ldots\}.
+\end{aligned}
+$$
+
+Each model receives complete cross-sections from its assigned dates. All five
+predict the same next block, and their scores are averaged before ranking
+stocks. Collectively they use every available training date, while each fit
+uses more widely spaced observations. The resulting forecasts can still
+be highly correlated: all five models learn from the same market history
+and overlapping outcomes. Averaging may moderate sensitivity to the chosen
+offset; its benefit needs to be measured.
+
+The reported study uses this construction with **three offsets**, sampling
+every third trading date: $$\{1,4,7,\ldots\}$$, $$\{2,5,8,\ldots\}$$ and
+$$\{3,6,9,\ldots\}$$. I average the three models' predictions. For linear
+models, that equals averaging their intercepts and coefficient vectors,
+although it generally differs from fitting one regression on all rows.
+The five-offset construction above illustrates an alternative spacing.
+The OLS–Ridge comparison keeps the three-offset design fixed, so it gives
+no separate estimate of the gain from this averaging.
+
+All offsets stay within the historical training window. Date subsampling
+and the gap before prediction do different jobs: subsampling changes which
+rows each fit uses; the gap ensures that its training outcomes finish
+before the forecast block begins.[^chronological-training]
+
+I report results through December 2021 and for January 2022–May 2026 separately.
+
+[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), explain evaluation with a rolling forecasting origin. Here that chronological boundary also accommodates the forward outcome window; the interleaved fits are all constructed inside each training window.
 
 ## A fixed-weight comparison
 
@@ -249,95 +351,29 @@ and this representation of the predictors.
 
 [^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$. The technical note at the end gives the covariance expressions.
 
-## Training through time
-{: #from-predictions-to-portfolios }
-
-I fit the models on an expanding history beginning in January 1995, then
-predict the next block of dates. A gap between training and prediction lets
-the last training outcomes finish before the forecasts begin. Predictions
-start in September 1998.[^training]
-
-An expanding window retains the earlier observations as new dates become
-available. That gives the fit more history, while leaving older relationships
-in the estimation sample. A rolling window would make a different trade-off
-between retaining information and adapting to change. Here I keep the
-training design the same for OLS and Ridge.
-
-### Sampling the training dates
-
-Another choice is how densely to sample that history. Normalizing each
-cross-section puts its inputs on a comparable scale, but dependence remains
-both across stocks and through time. Stocks respond to common market and
-sector conditions. Many predictors use slowly changing or overlapping
-histories: a 126-session momentum signal on consecutive dates shares almost
-all of its underlying return window. A stock can also remain near the same
-cross-sectional rank for many dates.
-
-The target adds another source of dependence. Forward 20-session outcomes
-on consecutive dates share 19 daily returns. Even five sessions apart, their
-windows still share 15 returns. Ranking within sectors preserves the
-overlapping construction. The number of stacked rows therefore overstates
-the number of independent observations; the exact amount of information
-depends on the dependence structure. Fitting all dates remains a valid
-candidate. The concern is how much precision and stability that history
-supports, and how the model performs on later dates.
-
-One option is to keep every fifth trading date, roughly a weekly sample,
-and stack those cross-sections. That spaces observations further apart and
-cuts the rows in each fit to roughly one fifth. It also omits four of the
-five date sequences, including changes in rankings and outcomes between
-the selected dates. Four fifths fewer rows need not mean four fifths less
-information: many of the omitted observations are partly redundant, while
-others capture changes the sparse sample misses. Longer-window predictors
-and targets still overlap at this spacing.
-
-An alternative is to fit all five offsets separately. Indexing consecutive
-training dates by $1,2,\ldots$, the five samples would be:
-
-$$
-\begin{aligned}
-\mathcal T_1&=\{1,6,11,\ldots\},\\
-\mathcal T_2&=\{2,7,12,\ldots\},\\
-&\ \vdots\\
-\mathcal T_5&=\{5,10,15,\ldots\}.
-\end{aligned}
-$$
-
-Each model receives complete cross-sections from its assigned dates. All five
-predict the same next block, and their scores are averaged before ranking
-stocks. Collectively they use every available training date, while each fit
-uses more widely spaced observations. The resulting forecasts can still
-be highly correlated: all five models learn from the same market history
-and overlapping outcomes. Averaging may moderate sensitivity to the chosen
-offset; its benefit needs to be measured.
-
-The reported study uses this construction with **three offsets**, sampling
-every third trading date: $$\{1,4,7,\ldots\}$$, $$\{2,5,8,\ldots\}$$ and
-$$\{3,6,9,\ldots\}$$. I average the three models' predictions. For linear
-models, that equals averaging their intercepts and coefficient vectors,
-although it generally differs from fitting one regression on all rows.
-The five-offset construction above illustrates an alternative spacing.
-The OLS–Ridge comparison keeps the three-offset design fixed, so it gives
-no separate estimate of the gain from this averaging.
-
-All offsets stay within the historical training window. Date subsampling
-and the gap before prediction do different jobs: subsampling changes which
-rows each fit uses; the gap ensures that its training outcomes finish
-before the forecast block begins.[^chronological-training]
-
-I report results through December 2021 and for January 2022–May 2026 separately.
-
-[^chronological-training]: Hyndman and Athanasopoulos, [*Forecasting: Principles and Practice*, third edition, Section 5.10](https://otexts.com/fpp3/tscv.html), explain evaluation with a rolling forecasting origin. Here that chronological boundary also accommodates the forward outcome window; the interleaved fits are all constructed inside each training window.
-
 ## Portfolio construction
 
 All three scores enter the same portfolio rule: buy the top 75 stocks and
 short the bottom 75, size inversely to volatility with stock and book caps,
 and rebalance every three weeks with next-close execution. I charge 5 bp per
-dollar traded. Three starting-week schedules show sensitivity to the
-rebalancing calendar; reported statistics are their averages. Returns use
-arithmetic annualization, and Sharpe assumes a zero cash rate. Two-way turnover
-counts all purchases and sales relative to strategy capital, annualized.
+dollar traded. Returns use arithmetic annualization, and Sharpe assumes a
+zero cash rate. Two-way turnover counts all purchases and sales relative
+to strategy capital, annualized.
+
+For each score, I run three rebalance schedules, starting one week apart:
+weeks 1, 4, 7, …; weeks 2, 5, 8, …; and weeks 3, 6, 9, …. This shows how
+the model comparison depends on the starting week. The training ensemble
+forms a single prediction score for each stock and date; these portfolio
+schedules determine when to act on that score.
+
+Table 3 averages the statistics calculated separately for the three
+schedules. Figure 1 averages their daily net P&L and compounds that series
+into an index. The mean of schedule-level Sharpes and the Sharpe of an
+averaged return series are different calculations.
+
+Splitting capital across staggered schedules is called tranching. I examine
+its effect on timing risk in the
+[rebalance-schedules article](/quants/2025/05/10/rebalancing-luck.html).
 
 These shared rules let me follow the different scores through the same
 selection, sizing and execution procedure. The low-volatility article showed
