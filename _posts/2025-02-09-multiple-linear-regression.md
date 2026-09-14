@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Combining Multiple Predictors: The Linear Case"
-description: "Combining overlapping stock predictors with linear regression, and why smaller Ridge coefficients need not produce a different portfolio."
+description: "From a low-volatility signal to supervised stock selection: choosing a target, ranking predictors, and learning a linear combination."
 date: 2025-02-09
 last_modified_at: 2026-09-14
 categories: ["Regression"]
@@ -12,46 +12,96 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">Learning from a broad set of stock predictors produces lower-volatility portfolios than a small fixed-weight benchmark, with comparable net returns and roughly twice the trading. Regularizing the regression changes the coefficients much more than it changes the stocks selected.</p>
+<p class="article-summary">I extend a single-factor stock ranking into a supervised learning problem, choosing a risk-adjusted target and rank-transformed predictors. The learned combinations produce lower-volatility portfolios than a smaller fixed-weight benchmark, with comparable net returns and roughly twice the trading.</p>
 
-Here I use multiple linear regression to model stocks' relative risk-adjusted
-performance from momentum, volatility, liquidity, size and short-positioning
-predictors. I'm interested in how correlated inputs affect the fitted model,
-and what regularization changes in its coefficients and predictions.
+In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
+I selected stocks using one characteristic and examined how position sizing
+changed the portfolio. Here I want to broaden the stock-selection problem.
+Volatility is one piece of information; momentum, liquidity, size and short
+positioning may also help. How should I combine them, especially when several
+predictors measure closely related things?
 
-I start with ordinary least squares (OLS), then compare it with Ridge
-regression. OLS estimates the relationship with each predictor conditional
-on the others, but multicollinearity can produce large, opposing coefficients.
-Ridge penalizes coefficient size. That gives me a way to examine whether
-shrinking the coefficients also makes the forecasts more stable and useful.
+I approach this as a supervised learning problem: use historical predictor
+values and subsequent outcomes to estimate a combination. That requires
+choices before fitting anything. I need to define the outcome I want to
+predict, decide how to represent the inputs, and choose a criterion for
+learning their weights. Those choices shape what the fitted score means.
 
-The portfolio comparison follows from that modelling question. I compare
-the stock rankings and returns after costs, using the same allocation rules
-for both models and a smaller fixed-weight benchmark. This builds on the
-[low-volatility article](/quant/2024/12/15/low-volatility-factor.html): the
-focus now is the model that selects stocks, before deciding how to size them.
+Multiple linear regression is my starting point. I compare ordinary least
+squares (OLS) with Ridge, which adds a penalty on coefficient size, then
+evaluate their predictions and the portfolios they produce. A smaller
+fixed-weight combination provides a benchmark for what the broader learned
+approach adds.
 
-## Target and predictors
+## Choosing the target
 {: #what-i-ask-the-model-to-predict }
 
-The prediction target is each stock's forward 20-session Sharpe ratio: mean
-daily return divided by daily return volatility over those sessions, ranked
-within date and sector. This builds a preference for risk-adjusted performance
-into stock selection. The forecasts are relative ranking scores; ranking
-discards the original return magnitudes.
+The first choice is what a successful stock selection should deliver. I use
+each stock's forward 20-session Sharpe ratio: mean daily return divided by
+daily return volatility over those sessions. This continues the interest in
+risk-adjusted performance from the low-volatility article, while allowing
+several predictors to inform the selection. Past volatility is an input;
+future return relative to future volatility is the outcome to be learned.
+
+This target makes both parts of that ratio matter. For the same positive
+average return, a stock with lower realized volatility has a higher target
+value. For a negative average return, dividing by lower volatility makes the
+ratio more negative. The learning problem therefore concerns the joint
+behaviour of return and risk.
+
+Twenty sessions gives the model an outcome over roughly a trading month.
+The portfolio rebalances every three weeks, so the forecast and rebalance
+horizons are close but differ. The target measures a fixed forward window;
+portfolio outcomes also depend on subsequent selections and position sizes.
+The comparison below evaluates this particular horizon.
+
+I then rank these forward Sharpe ratios within each date and sector. A high
+target rank identifies a stock that subsequently performs well relative to
+its sector peers. The same relative position receives a comparable label
+across sectors and dates, even when their raw Sharpe ratios differ greatly.
+This puts within-sector ordering at the centre of the learning problem.
+
+Ranking also discards the distances between the raw outcomes. Within a
+sector-date group, small and large Sharpe gaps between adjacent stocks
+become equal rank gaps, apart from ties. The fitted score estimates relative standing in this
+transformed target. Expected returns in percentage points would require a
+separate mapping. I assess the score first by its ranking quality, then by
+the portfolio results after costs.
+
+## Representing the predictors
 
 Both regressions use 144 predictors, mostly based on prices and trading
 activity: momentum and trend, volatility, liquidity, size and short positioning.
-Many measure the same idea at different horizons. On each date, I rank stocks
-on each predictor across the whole eligible universe and rescale the ranks to
-roughly −1 to 1. This makes different units comparable and limits the influence
-of raw outliers. The regression coefficients then describe the effect of a
-stock's relative standing on each predictor.
+Many measure the same idea at different horizons. Including several horizons
+lets the model combine information about recent and longer-term behaviour,
+but also introduces substantial overlap between the inputs.
 
 The universe uses point-in-time Russell 1000 membership, excluding stocks below
-five dollars, announced merger targets and duplicate share classes. Predictor
-ranks and portfolio selection span sectors, even though the target compares
-sector peers. Sector exposures can therefore remain in the portfolio.
+five dollars, announced merger targets and duplicate share classes. On each
+date, I rank eligible stocks on each predictor across this whole universe and
+rescale the ranks to roughly −1 to 1.
+
+This transformation puts returns, volatility and other quantities on comparable
+scales and limits the influence of extreme raw observations. It also chooses
+which information the model receives. Two stocks next to each other in the
+momentum ranking remain close after normalization, even if their raw momentum
+values are far apart. A stock at the same percentile on two dates has the
+approximately the same transformed value despite changes in the market-wide level of momentum.
+
+The regression is linear in these ranks. Each coefficient describes how the
+fitted target score changes with a stock's relative standing on one predictor,
+holding the others fixed. Ranking can reshape a relationship with the raw
+variable; the fitted combination remains additive in the transformed inputs.
+Closely related momentum horizons can still be highly correlated after
+ranking; normalization leaves the model with overlapping inputs to combine.
+
+The two normalization groups serve different roles. Predictor ranks retain
+a stock's standing across the universe, including differences between sectors;
+target ranks measure its subsequent outcome relative to sector peers. For
+example, a stock can rank highly on market-wide momentum while having only
+middling subsequent performance within its own sector. The model learns from
+that pairing. Portfolio selection also spans sectors, so sector exposures
+can remain in the resulting portfolio.
 
 ## A fixed-weight comparison
 
@@ -79,17 +129,30 @@ isolates regularization. All three use the same eligible stocks.
 
 ## Learning the combination
 
-With 144 overlapping predictors, the estimation problem is how much information
-the sample contains about their joint effects. Several momentum horizons can
-identify a common trend exposure quite well while providing much less
-information about the differences between those horizons. Those differences
-are where an unconstrained fit can become sensitive to noise.
+A linear model gives each ranked predictor a coefficient and adds their
+contributions to an intercept. This is a useful first supervised combination:
+the model can adjust the weights jointly, while each fitted relationship
+remains straightforward to inspect. An additive specification uses the same
+coefficient for a predictor across observations; interactions would need
+additional terms or a different model.
+
+Joint estimation matters when predictors overlap. The coefficient on
+six-month momentum measures its relationship with the target conditional on
+the other inputs, including shorter and longer momentum horizons. Its sign
+can differ from the relationship obtained using six-month momentum alone.
+
+For example, $2x_1-1.8x_2=0.2x_1+1.8(x_1-x_2)$ combines a small common
+exposure with a large weight on the difference between two signals. With
+related momentum horizons, that difference may contain information about the
+shape of the trend. But if the horizons move closely together, the sample
+contains much less variation from which to estimate the effect of their
+difference. OLS can then assign large, opposing coefficients that are
+sensitive to noise.
 
 At each refit, I pool the training stock-date observations into
 $$X\in\mathbb R^{n\times144}$$ and the corresponding target ranks into
 $$\mathbf y$$. Let $$X_c$$ and $$\mathbf y_c$$ denote their training-centred
-versions, absorbing the unpenalized intercept. OLS and Ridge then solve the
-same family of problems:
+versions, absorbing the unpenalized intercept. OLS and Ridge solve:
 
 $$
 \widehat{\boldsymbol\beta}_c
@@ -100,118 +163,61 @@ $$
 \right\}.
 $$
 
-Here the subscript on $$\widehat{\boldsymbol\beta}_c$$ indexes the penalty;
-$c=0$ gives OLS. Define the empirical predictor covariance and predictor–target
-cross-moment as $$G=X_c^\top X_c/n$$ and
-$$\mathbf g=X_c^\top\mathbf y_c/n$$. The first-order condition is
-$$(G+cI)\widehat{\boldsymbol\beta}_c=\mathbf g$$. For $c>0$ the system is
-positive definite, including when $G$ is singular. For OLS, a singular value
-decomposition gives the minimum-norm solution if the coefficients are not
-uniquely identified.
+Here $c=0$ gives OLS. The squared-error term rewards accurate predictions of
+target-rank levels across the training observations. Large errors receive
+more weight, and errors in the middle of the cross-section count too.
+Stock selection ultimately depends on the tails, so I also evaluate ordering
+and portfolio outcomes.
 
-**Identification and shrinkage.** Write $$G=V\Lambda V^\top$$, with orthonormal
-eigenvectors $$\mathbf v_j$$ and eigenvalues $$\lambda_j$$. In this basis,
-estimation separates into individual directions:
+Ridge adds a cost for large coefficients. Its effect is clearest in the
+eigenvectors $$\mathbf v_j$$ of the empirical predictor covariance
+$$G=X_c^\top X_c/n$$, with eigenvalues $$\lambda_j$$. Writing
+$$\widehat\theta_{j,c}=\mathbf v_j^\top\widehat{\boldsymbol\beta}_c$$ gives:
 
 $$
-\begin{aligned}
 \widehat\theta_{j,c}
-&=\frac{\mathbf v_j^\top\mathbf g}{\lambda_j+c},\\
-\widehat\theta_{j,c}
-&=\frac{\lambda_j}{\lambda_j+c}\widehat\theta_{j,0},
+=\frac{\lambda_j}{\lambda_j+c}\widehat\theta_{j,0},
 \qquad \lambda_j>0.
-\end{aligned}
 $$
 
-Here $$\widehat\theta_{j,c}=\mathbf v_j^\top\widehat{\boldsymbol\beta}_c$$.
-Small eigenvalues correspond to low-variance combinations of predictors.
-OLS amplifies perturbations in their estimated cross-moments through
-$1/\lambda_j$; Ridge limits that amplification through $1/(\lambda_j+c)$.
-The penalty acts most strongly on weakly identified directions.[^ridge-theory]
-
-For example, $2x_1-1.8x_2=0.2x_1+1.8(x_1-x_2)$ puts considerable weight on
-the difference between two signals. With closely related momentum horizons,
-that difference may capture useful information about the shape of the trend,
-but its coefficient is estimated from much less variation than the common
-component. A numerically accurate OLS solution can therefore still be
-statistically fragile. Regularization changes how much of that estimation
-risk the model accepts.
-
-**The bias–variance trade-off.** Under the working model
-$$\mathbf y_c=X_c\boldsymbol\beta^\star+\boldsymbol\varepsilon$$, assume
-$$E[\boldsymbol\varepsilon\mid X_c]=0$$ and homoskedastic, uncorrelated errors
-with variance $$\sigma^2$$ before centring. For
-$$\theta_j^\star=\mathbf v_j^\top\boldsymbol\beta^\star$$:
-
-$$
-\begin{aligned}
-\operatorname{Bias}(\widehat\theta_{j,c}\mid X_c)
-&=-\frac{c}{\lambda_j+c}\theta_j^\star,\\
-\operatorname{Var}(\widehat\theta_{j,c}\mid X_c)
-&=\frac{\sigma^2}{n}
-\frac{\lambda_j}{(\lambda_j+c)^2}.
-\end{aligned}
-$$
-
-At $c=0$, the variance is $$\sigma^2/(n\lambda_j)$$ for positive
-$$\lambda_j$$. Ridge reduces it at the cost of bias toward zero. Whether
-squared bias plus variance falls depends on the signal in each direction;
-low predictor variance alone does not imply low predictive value.[^ridge-theory]
-
-For this panel, cross-sectional dependence and overlapping 20-session targets
-complicate that benchmark. With a general conditional residual covariance
-$$\Omega$$, the coefficient covariance becomes:
-
-$$
-\operatorname{Var}(\widehat{\boldsymbol\beta}_c\mid X_c)
-=(G+cI)^{-1}
-\frac{X_c^\top\Omega X_c}{n^2}
-(G+cI)^{-1}.
-$$
-
-Here $$\Omega$$ refers to the residuals after centring. The information in
-the panel depends on this dependence structure as well as the stock-date row
-count. Shrinkage still changes the same estimating
-equations, but the independent-error variance formula is only a theoretical
-benchmark for interpreting this comparison.
-
-**From coefficient risk to forecast risk.** A change in coefficients
-$$\Delta\boldsymbol\beta$$ changes centred training predictions by
-$$X_c\Delta\boldsymbol\beta$$. Their mean squared difference is exactly:
-
-$$
-\begin{aligned}
-\frac{\lVert X_c\Delta\boldsymbol\beta\rVert_2^2}{n}
-&=\Delta\boldsymbol\beta^\top G\Delta\boldsymbol\beta\\
-&=\sum_j\lambda_j
-(\mathbf v_j^\top\Delta\boldsymbol\beta)^2.
-\end{aligned}
-$$
-
-Large coefficient differences can have little effect on scores when they lie
-in directions with small eigenvalues. This is the distinction I care about
-when comparing OLS and Ridge: a smaller coefficient norm is useful evidence
-about the fit, but forecast stability depends on where those changes occur.
-On future observations, the relevant second-moment matrix may differ from
-$G$. A direction that barely varied in the training sample can matter more
-when the relationships between signals change.
+The smaller the variation in a direction, the stronger the shrinkage.
+This moderates the uncertain contrasts between overlapping predictors,
+at the cost of biasing their estimated contributions toward zero. A
+low-variance direction may still be useful for prediction; the penalty
+controls how much of that estimation risk the model accepts.[^ridge-theory]
 
 I use $c=0.01$ in the mean-squared-error objective. Equivalently, the penalty
 on a sum-of-squares objective is $\alpha=nc$, preserving its scale as the
-training sample expands. The common rank scaling also matters: an isotropic
-penalty depends on the units of the predictors. Here it acts on comparable
-rank scales.
+training sample expands. The common rank scaling matters here: coefficient
+size depends on predictor units, so normalization also determines how the
+penalty treats the inputs. The OLS–Ridge results below concern this penalty
+and this representation of the predictors.
 
-[^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$.
+[^ridge-theory]: Trevor Hastie, [*Ridge Regularization: an Essential Concept in Data Science*](https://arxiv.org/html/2006.00371v2), arXiv version 2 (2024), Sections 2–3, gives the spectral and bias–variance formulations. Here the objective is divided by $n$, so its sum-of-squares penalty corresponds to $nc$. The technical note at the end gives the covariance expressions.
 
-## From predictions to portfolios
+## Training through time
+{: #from-predictions-to-portfolios }
 
 I fit the models on an expanding history beginning in January 1995, then
 predict the next block of dates. A gap between training and prediction lets
 the last training outcomes finish before the forecasts begin. Predictions
 start in September 1998.[^training]
 
+An expanding window retains the earlier observations as new dates become
+available. That gives the fit more history, while leaving older relationships
+in the estimation sample. A rolling window would make a different trade-off
+between retaining information and adapting to change. Here I keep the
+training design the same for OLS and Ridge.
+
+At each refit, I fit three regressions on interleaved subsets of training
+dates and average their predictions. For linear models, this is equivalent
+to averaging their intercepts and coefficient vectors. The subsets still
+share overlapping 20-session outcomes, leaving dependence within and between
+the fitted models.
+
 I report results through December 2021 and for January 2022–May 2026 separately.
+
+## Portfolio construction
 
 All three scores enter the same portfolio rule: buy the top 75 stocks and
 short the bottom 75, size inversely to volatility with stock and book caps,
@@ -221,7 +227,13 @@ rebalancing calendar; reported statistics are their averages. Returns use
 arithmetic annualization, and Sharpe assumes a zero cash rate. Two-way turnover
 counts all purchases and sales relative to strategy capital, annualized.
 
-## Prediction quality and portfolio results
+These shared rules let me follow the different scores through the same
+selection, sizing and execution procedure. The low-volatility article showed
+how much sizing can affect a portfolio; holding it fixed here keeps the
+comparison focused on the scores.
+
+## Prediction quality
+{: #prediction-quality-and-portfolio-results }
 
 Table 2 compares ranking quality using the daily information
 coefficient (IC), the cross-sectional Spearman correlation between each score
@@ -246,10 +258,24 @@ development gain from Ridge disappears in the later period.
   </tbody>
 </table>
 
-The fixed score has the highest later-period mean IC, with more variable daily
-IC. Squared-error training penalizes errors in target-rank levels; IC measures
-ordering across the cross-section; the portfolio holds only the extremes and
-incurs costs when positions change. These objectives can favor different models.
+Both regressions have higher mean IC than the fixed score during development,
+with less variation in daily IC. After 2021, the fixed score has the highest
+mean IC, while the regressions still have less variable daily IC. The broader
+learned combination therefore improves average ordering in the first period,
+but that advantage does not persist in the later one.
+
+This IC measures agreement with the sector-relative, risk-adjusted target
+across eligible stocks. Its interpretation follows from the target choice:
+a positive IC means the score tends to place stocks with better subsequent
+sector-relative Sharpe ranks above those with worse ranks.
+
+The next question is what those scores deliver in a portfolio. IC gives
+weight to ordering across the cross-section; the portfolio holds only the
+extremes, sizes them inversely to volatility and incurs costs when positions
+change. A higher mean IC can therefore coexist with a less attractive
+portfolio result.
+
+## Portfolio results
 
 During development, OLS earns slightly more net return than the fixed score,
 with lower volatility and a shallower maximum drawdown (Table 3). Extra trading
@@ -300,33 +326,46 @@ trained on an unadjusted return target.
 
 <p class="figure-caption"><strong>Figure 1: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
-## What Ridge changes
+## Interpreting the learned combination
+{: #what-ridge-changes }
 
-Ridge reduces coefficient size and absolute movement between refits by roughly
-one third. To interpret that movement, write the coefficient vector at refit
-$k$ as $$\boldsymbol\beta_k=a_k\mathbf u_k$$, where
-$$a_k=\lVert\boldsymbol\beta_k\rVert_2>0$$ and
-$$\lVert\mathbf u_k\rVert_2=1$$. The change between refits decomposes exactly as:
-
-$$
-\begin{aligned}
-\lVert\boldsymbol\beta_{k+1}-\boldsymbol\beta_k\rVert_2^2
-&=(a_{k+1}-a_k)^2\\
-&\quad+a_{k+1}a_k\lVert\mathbf u_{k+1}-\mathbf u_k\rVert_2^2.
-\end{aligned}
-$$
-
-The first term measures changes in magnitude; the second measures changes in
-direction, weighted by the two magnitudes. Shrinking both vectors reduces
-absolute movement even if their angular change stays the same. Here the
-unit-normalized vectors move by similar amounts for OLS and Ridge. Much of
-the apparent coefficient stability therefore comes from the smaller scale.
+The close OLS–Ridge results raise a useful question about the combination:
+how much has regularization changed the fitted relationship? Ridge reduces
+coefficient size and absolute movement between refits by roughly one third.
+Yet after normalizing each coefficient vector to unit length, the vectors
+move by similar amounts for OLS and Ridge. Much of the apparent coefficient
+stability comes from the smaller scale. Shrinking a vector also reduces its
+absolute movement even when its change in direction stays the same.
 
 For stock selection, a positive rescaling of all coefficients leaves the
 ordering unchanged. The relevant empirical check is how much regularization
 changes the rankings: their daily correlation is 0.991, and only about 14–15
 of the 150 daily candidates differ between OLS and Ridge. The coefficient
 changes translate into limited changes in the portfolio's candidate set.
+These are comparisons of daily candidates; the three-week rebalance rule
+determines when a changed selection leads to a trade. Together with the
+similar IC and trading costs, they show how little this penalty changes the
+stock-selection outcome despite visibly shrinking the coefficients.
+
+A useful link to the estimation problem is that a coefficient change
+$$\Delta\boldsymbol\beta$$ changes centred training predictions by
+$$X_c\Delta\boldsymbol\beta$$. The mean squared difference is:
+
+$$
+\begin{aligned}
+\frac{\lVert X_c\Delta\boldsymbol\beta\rVert_2^2}{n}
+&=\Delta\boldsymbol\beta^\top G\Delta\boldsymbol\beta\\
+&=\sum_j\lambda_j(\mathbf v_j^\top\Delta\boldsymbol\beta)^2.
+\end{aligned}
+$$
+
+Large coefficient changes can have little effect on scores when they lie
+in low-variance directions. This explains why coefficient size and forecast
+similarity need separate checks. The ranking and candidate comparisons above
+establish their empirical similarity here; locating the changes within the
+predictor eigenspectrum would require an additional diagnostic. On future
+observations, changes in predictor relationships can also make previously
+low-variance directions more consequential.
 
 Figure 2 follows the ten largest mean absolute Ridge coefficients across the
 twelve refits. All ten keep the same sign. Price relative to its 126-day moving
@@ -343,8 +382,17 @@ fixed, they favor relative longer-term strength with weaker recent momentum.
 These signs describe conditional relationships with the target. A large
 coefficient can reflect a contrast between correlated predictors, so its
 magnitude alone is a poor measure of a signal's standalone importance.
+That is the distinction between assigning weights to familiar factor themes
+and estimating a joint predictive relationship: the fitted combination can
+use differences within a theme as well as exposure to the theme itself.
 
 ## Where this leaves me
+
+Moving from the low-volatility signal to supervised learning means specifying
+what a good outcome is and how the predictors represent each stock. Here the
+model learns sector-relative forward Sharpe ranks from market-wide predictor
+ranks. The results assess that formulation, with linear estimation and a
+shared portfolio rule.
 
 The three-factor model is quite competitive. A fixed combination of momentum,
 defensive signals and short positioning gets close to the learned models with
@@ -359,10 +407,79 @@ sensible modelling choice. The case for it is the estimation problem itself:
 the portfolio results give me little reason to prefer Ridge over OLS, but
 also show little cost to that preference at the penalty used here.
 
-The more interesting next comparison is to fit OLS and Ridge on the
+The most useful next comparison is to fit OLS and Ridge on the
 three-factor benchmark's same twelve inputs. That would separate the value of
-learning the weights from the value of expanding the predictor set. For now,
-the simple combination remains a strong benchmark for any added complexity.
+learning the weights from the value of expanding the predictor set. The
+target and rank transformations are further choices to compare separately:
+their contribution is bundled into the results here. For now, the simple
+combination remains a strong benchmark for the additional complexity.
+
+<details markdown="1">
+<summary>Technical note: Ridge estimation and coefficient movement</summary>
+
+With $$\mathbf g=X_c^\top\mathbf y_c/n$$, the first-order condition is
+$$(G+cI)\widehat{\boldsymbol\beta}_c=\mathbf g$$. For $c>0$ the system is
+positive definite, including when $G$ is singular. For OLS, a singular value
+decomposition gives the minimum-norm solution if the coefficients are not
+uniquely identified.
+
+**The bias–variance trade-off.** Under the working model
+$$\mathbf y_c=X_c\boldsymbol\beta^\star+\boldsymbol\varepsilon$$, assume
+$$E[\boldsymbol\varepsilon\mid X_c]=0$$ and homoskedastic, uncorrelated errors
+with variance $$\sigma^2$$ before centring. For
+$$\theta_j^\star=\mathbf v_j^\top\boldsymbol\beta^\star$$:
+
+$$
+\begin{aligned}
+\operatorname{Bias}(\widehat\theta_{j,c}\mid X_c)
+&=-\frac{c}{\lambda_j+c}\theta_j^\star,\\
+\operatorname{Var}(\widehat\theta_{j,c}\mid X_c)
+&=\frac{\sigma^2}{n}
+\frac{\lambda_j}{(\lambda_j+c)^2}.
+\end{aligned}
+$$
+
+At $c=0$, the variance is $$\sigma^2/(n\lambda_j)$$ for positive
+$$\lambda_j$$. Ridge reduces it at the cost of bias toward zero. Whether
+squared bias plus variance falls depends on the signal in each direction;
+low predictor variance alone does not imply low predictive value.[^ridge-theory]
+
+For this panel, cross-sectional dependence and overlapping 20-session targets
+complicate that benchmark. With a general conditional residual covariance
+$$\Omega$$, the coefficient covariance becomes:
+
+$$
+\operatorname{Var}(\widehat{\boldsymbol\beta}_c\mid X_c)
+=(G+cI)^{-1}
+\frac{X_c^\top\Omega X_c}{n^2}
+(G+cI)^{-1}.
+$$
+
+Here $$\Omega$$ refers to the residuals after centring. The information in
+the panel depends on this dependence structure as well as the stock-date row
+count. Shrinkage still changes the same estimating
+equations, but the independent-error variance formula is only a theoretical
+benchmark for interpreting this comparison.
+
+**Magnitude and direction.** Write the coefficient vector at refit $k$ as
+$$\boldsymbol\beta_k=a_k\mathbf u_k$$, where
+$$a_k=\lVert\boldsymbol\beta_k\rVert_2>0$$ and
+$$\lVert\mathbf u_k\rVert_2=1$$. Then:
+
+$$
+\begin{aligned}
+\lVert\boldsymbol\beta_{k+1}-\boldsymbol\beta_k\rVert_2^2
+&=(a_{k+1}-a_k)^2\\
+&\quad+a_{k+1}a_k\lVert\mathbf u_{k+1}-\mathbf u_k\rVert_2^2.
+\end{aligned}
+$$
+
+The first term measures changes in magnitude; the second measures changes in
+direction, weighted by the two magnitudes. Shrinking both vectors reduces
+absolute movement even if their angular change stays the same.
+
+</details>
+
 
 [^training]: The first fit uses 900 trading dates, followed by a 21-date gap.
     I refit every 600 dates, expanding the training history, for twelve refits.
