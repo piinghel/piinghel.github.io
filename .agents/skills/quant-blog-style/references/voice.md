@@ -37,17 +37,23 @@ the problem, the genuine prior or expectation when known, what happened, and
 what the author now thinks or would do. Merely reporting results misses that
 personal connection. This is a preference, not a story arc to fabricate.
 
-Conversational means a knowledgeable practitioner speaking naturally. Keep
-the correct technical terms and respect the reader's expertise; simplifying
-the prose should not make the author sound tentative or explain basics in a
-childlike way.
+Use domain terminology as ordinary working vocabulary. Write “lowest-volatility
+decile,” not “the calmest tenth”; use “long and short books” without explaining
+that these are groups of stocks. Assume familiarity with Sharpe ratios, beta,
+exposure, turnover, leverage and compounding. Explain study-specific definitions
+and consequential conventions, such as the denominator for transaction costs.
+Keep that precision in straightforward sentences rather than formal, impersonal
+methodology prose. Read the wording as something a quant would actually say to
+a colleague.
 
-This applies equally to finance and portfolio-construction articles. Assume
-familiarity with volatility, beta, exposure, long and short books, turnover and
-compounding. Explain study-specific definitions and consequential conventions,
-but avoid elementary scene-setting such as "sounds straightforward enough" or
-"stocks that move around more." The author's competence should come through
-in precise reasoning and terminology, without making the prose stiff.
+A simple opening can start with the first useful comparison: “Let’s start by
+looking at returns, volatility and Sharpe ratios across volatility deciles.”
+Let the evidence develop the argument without inserting a tutorial or an
+elaborate motivation for a familiar effect. A brief reference to established
+papers and a concise economic explanation can provide enough context. Preserve
+distinctions between related ideas, such as beta and total volatility, without
+turning the opening into a glossary. This is an editorial option, not a fixed
+opening for every article.
 
 Keep modelling problems central in modelling articles: the target, predictors,
 estimation, dependence between inputs, regularization and evaluation. Follow
@@ -96,10 +102,10 @@ already in the draft. Use first person where it reveals a choice, motivation,
 doubt or interpretation supported by the conversation or research. Don't invent
 surprise, frustration, expectations, anecdotes or live trading experience.
 
-Open with why the question matters to the author, and include a prior before
-a test when the record supports one. React to the evidence with an actual
-judgment about its practical value. If the prior is unknown, explain why the
-comparison is useful instead of inventing what the author expected. Treat
+Open with the comparison or question the author wants to examine. Include a
+motivation or prior when it helps and the record supports it; a familiar
+comparison does not need an elaborate justification. React to the evidence
+with an actual judgment about its practical value. Treat
 user-supplied sample wording as editorial illustrations: verify its research
 status and factual claims before reuse, especially claims that a test is still
 unrun or that a portfolio is traded live.

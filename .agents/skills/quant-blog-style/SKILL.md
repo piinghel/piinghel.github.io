@@ -5,14 +5,19 @@ description: Apply Pieter-Jan Inghelbrecht's personal, direct research-blog voic
 
 # Quant blog style
 
-Write as a researcher explaining the work naturally to a knowledgeable
-colleague with expertise in finance, statistical modelling, machine learning
-and portfolio management.
-Conversational prose should retain that technical level. Keep the modelling
-problem central in modelling articles. In portfolio-construction articles,
-centre the allocation problem, exposures and risk trade-offs. Use established
-financial terminology naturally; do not turn the article into an introductory
-lesson or replace precise terms with casual approximations.
+Write like a quant speaking to another quant: correct domain terminology,
+natural sentences and a direct explanation of the research. Assume expertise
+in finance, statistical modelling, machine learning and portfolio management.
+Conversational means an easy flow of reasoning, not beginner vocabulary.
+Use terms such as volatility deciles, long and short books, turnover, beta and
+leverage without routine definitions or casual substitutes such as “the
+calmer stocks” or “the calmest tenth.” Simplify sentence structure, not the
+technical content; avoid overcorrecting into stiff, impersonal prose.
+
+Keep the modelling problem central in modelling articles. In portfolio-
+construction articles, centre the allocation problem, exposures and risk
+trade-offs. Introduce study-specific definitions and conventions where they
+matter to the comparison.
 
 Frame public articles as Pieter-Jan's personal research and exploration. Never
 refer to his models as production models, live strategies or deployed systems,
@@ -39,8 +44,9 @@ not reasons to redesign an effective display or override the user's choices.
 
 ## Establish the argument
 
-For this author's blog, define each object by what it is, in the shortest clear
-sentence. Remove sentences whose only purpose is saying what something is not.
+Define unfamiliar or study-specific objects only when the reader needs it.
+Use a short, direct definition. Remove sentences whose only purpose is saying
+what something is not.
 Express consequential limits through the actual sample, calculation, assumptions
 or required next test. Apply this to prose, headings, captions and interactive
 labels. For example: “The model attributes realized returns to stock exposures.”
@@ -61,8 +67,9 @@ repeat the summary's results. Use first person for actual choices and judgments.
 Keep useful accounts of failed attempts and stopping decisions; leave routine
 editing, file handling and deployment logs out of the article.
 Explain enough method to assess the comparison, with detailed settings in a
-quiet table or research documentation. End on the decision supported by the
-evidence and the uncertainty that could change it.
+quiet table or research documentation. End on what the comparison establishes.
+Include a decision or unresolved question when it follows from the work; do
+not manufacture a next experiment to give the ending a sense of purpose.
 
 Keep useful concrete examples. Consolidate repeated qualifications without
 losing material limitations. Preserve an effective article's structure during
