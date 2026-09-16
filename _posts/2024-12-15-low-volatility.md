@@ -14,7 +14,7 @@ github_repositories:
 ---
 
 The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
-is the tendency for calmer stocks to earn better returns per unit of risk
+is the tendency for low-volatility stocks to earn better returns per unit of risk
 than more volatile stocks. Turning that observation into a portfolio means
 deciding both which stocks to hold and how much capital to give them.
 
@@ -37,14 +37,11 @@ offer a related explanation: investors who cannot easily borrow may favour
 stocks with more market exposure, bidding up their prices and reducing
 their expected returns.[^bab]
 
-I use point-in-time Russell 1000 membership: each ranking uses the stocks
-that belonged to the index at that date. I keep stocks priced above five
-dollars and rank them by average volatility over one, three and six
-months.[^windows] I buy the lowest-volatility decile—the calmest tenth—and
-short the highest-volatility decile, the most volatile tenth. I call these long
-and short groups the two books, with roughly 100 names in each.
-I rebalance every three weeks, trade at the next close,
-and charge 5 bp per dollar traded.
+I rank point-in-time Russell 1000 constituents priced above $5 by their
+average one-, three- and six-month volatility.[^windows] I go long the
+lowest-volatility decile and short the highest, with roughly 100 names per
+book. I rebalance every three weeks, execute at the next close and assume
+transaction costs of 5 bp of traded notional.
 
 Figure 1 shows all ten volatility deciles, each an equal-weighted long
 portfolio of roughly 100 stocks, from the least volatile in decile 1 to the most volatile
@@ -58,7 +55,7 @@ over the sample. That makes the size of the short book matter.
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="13" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: More volatile stocks earn less per unit of risk.</strong> Before-cost Sharpe, annual return and volatility, July 1995–May 2026. Annual return means compounded annual growth throughout this article. Each decile is an equal-weighted long portfolio of about 100 stocks, re-formed every three weeks; decile 1 is the calmest. Volatility rises from 11.9% to 37.9% and Sharpe falls from 0.90 to 0.20.</p>
+<p class="figure-caption"><strong>Figure 1: More volatile stocks earn less per unit of risk.</strong> Before-cost Sharpe, annual return and volatility, July 1995–May 2026. Annual return means compounded annual growth throughout this article. Each decile is an equal-weighted long portfolio of about 100 stocks, re-formed every three weeks; decile 1 has the lowest volatility. Volatility rises from 11.9% to 37.9% and Sharpe falls from 0.90 to 0.20.</p>
 
 ## Equal capital, unequal risk
 
