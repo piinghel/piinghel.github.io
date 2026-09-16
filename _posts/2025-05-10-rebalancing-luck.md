@@ -3,7 +3,7 @@ layout: post
 title: "Combining Rebalance Weeks Reduces Timing Risk"
 description: "Three tranches preserve average return while reducing dependence on the rebalance calendar. A comparison of fifteen calendars."
 date: 2025-05-10
-last_modified_at: 2026-09-06
+last_modified_at: 2026-09-17
 categories: ["Rebalancing"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
@@ -12,20 +12,16 @@ github_repositories:
     url: https://github.com/piinghel/rebalance-tranching
 ---
 
-<p class="article-summary">Splitting the strategy into three equal parts, each rebalancing in a different week, reduces calendar dependence and portfolio volatility with almost no change in average return. The benefit appears in both development and later history, although weekday differences remain.</p>
-
 ## The starting-week problem
 
-With the [ranking and sizing rules](/quants/2026/08/29/portfolio-optimization.html) in place, I still have to decide when to trade.
+With the [ranking and sizing rules](/quants/2026/08/29/portfolio-optimization.html) in place, I want to see how much the choice of rebalance date affects performance.
 
-“Rebalance every three weeks” sounds like a complete rule. It still leaves me
-with a choice of three starting weeks. Each one sees a different sequence of
-signals and prices, even though I use the same forecasting and allocation
-rules. Across all fifteen combinations of starting week and weekday, annualized
-net return ranges from **10.21% to 12.27%** over September 1998–May 2026:
-a **2.06 percentage-point spread** with the strategy unchanged. Choosing the
-best calendar after seeing the results would just give me another way to fit
-the backtest.
+The strategy rebalances every three weeks. For each weekday, there are three
+possible starting weeks, giving fifteen rebalance schedules. They use the same
+forecasts and allocation rules, but trade on different dates. Across these
+schedules, annualized net return ranges from **10.21% to 12.27%** over
+September 1998–May 2026: a **2.06 percentage-point spread** from the calendar
+choice alone.
 
 I use the [same stock strategy](/quants/2026/08/29/portfolio-optimization.html)
 throughout: the forecasts, point-in-time universe, selection and sizing rules,

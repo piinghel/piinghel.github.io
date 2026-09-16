@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Do Two Return Horizons Work Better Together?"
-description: "Comparing multi-output XGBoost, ordinary XGBoost, LightGBM and Ridge across two return horizons and their 50:50 blends."
+title: "Do Two Forecast Horizons Work Better Together?"
+description: "Comparing multi-output XGBoost, ordinary XGBoost, LightGBM and Ridge across two forecast horizons and their 50:50 blends."
 permalink: /quants/xgboost-vector-leaves.html
 toc: false
 show_date: false
@@ -9,7 +9,7 @@ date: 2026-09-09
 categories: ["Machine learning"]
 ---
 
-So far, I've used [Ridge](/quants/2025/02/09/multiple-linear-regression.html) as my starting point for forecasting stock returns. The [attribution articles](/quants/portfolio-attribution.html) looked at the portfolio it produces; here I return to the forecasts themselves. I came across XGBoost's [post about vector leaves](https://xgboost.ai/2026/08/25/introducing-the-xgboost-vector-leaf-model) on X, and the idea caught my attention: one tree can share its splits across several outputs, with a separate prediction for each output in every leaf. I wanted to see whether that helped with two related return horizons.
+So far, I've used [Ridge](/quants/2025/02/09/multiple-linear-regression.html) as my starting point for predicting forward Sharpe. The [attribution articles](/quants/portfolio-attribution.html) looked at the portfolio it produces; here I return to the forecasts themselves. I came across XGBoost's [post about vector leaves](https://xgboost.ai/2026/08/25/introducing-the-xgboost-vector-leaf-model) on X, and the idea caught my attention: one tree can share its splits across several outputs, with a separate prediction for each output in every leaf. I wanted to see whether that helped with two related forecast horizons.
 
 ## Sharing splits across horizons
 
