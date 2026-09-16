@@ -210,10 +210,7 @@ Hedged equal weighting earns more at the sizes tested, but inverse volatility
 offers much lower volatility, shallower drawdowns and less trading. Its
 advantage here is a more manageable portfolio with a better Sharpe.
 
-The next comparison should put both hedged rules at the same risk target,
-set using information available at each rebalance, with the same cost
-assumptions. That would make the sizing trade-off easier to judge.
-I would then test whether using covariance and portfolio exposure limits
+I would test whether using covariance and portfolio exposure limits
 improves on that baseline, especially when several positions lose together.
 Inverse-volatility sizing already gets us a long way;
 the more elaborate approach has to earn its place.
