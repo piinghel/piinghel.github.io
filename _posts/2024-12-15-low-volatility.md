@@ -182,7 +182,7 @@ dominates losses despite its smaller allocation.
 
 Hedged equal weighting earns more at the allocations tested, but inverse
 volatility offers a higher Sharpe, lower volatility, smaller drawdowns and
-less turnover. Inverse-volatility sizing seems like a good start.
+less turnover. Inverse-volatility sizing already seems like a good starting point.
 
 [^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, author draft dated 10 May 2013, physical PDF pages 2–3; published in the *Journal of Financial Economics* in 2014. Their mechanism concerns market beta; this article ranks total volatility. [Public author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2).
 
