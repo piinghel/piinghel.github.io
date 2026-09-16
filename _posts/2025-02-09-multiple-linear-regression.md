@@ -3,7 +3,7 @@ layout: post
 title: "Combining Multiple Predictors: The Linear Case"
 description: "From a low-volatility signal to supervised stock selection: choosing a target, ranking predictors, and learning a linear combination."
 date: 2025-02-09
-last_modified_at: 2026-09-14
+last_modified_at: 2026-09-16
 categories: ["Regression"]
 article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -29,14 +29,14 @@ given what the others already tell me?
 
 I start with a simple rule. I group twelve predictors into momentum,
 defensive signals and short positioning, giving each theme one third of the
-score and splitting that weight equally among its ingredients (Table 1).
+score and splitting that weight equally among its predictors (Table 1).
 The rule favours medium-term strength, lower volatility and lighter short
 positioning. I label it “Fixed” in the results because I choose its weights
-in advance. Each ingredient enters as a rank among the stocks on that
+in advance. Each predictor enters as a rank among the stocks on that
 date, on the common scale described below.
 
 <table class="research-table settings-table benchmark-ingredients">
-  <caption>Table 1: The fixed score. Each theme receives one third of the weight, divided equally among its ingredients. Horizons are trading sessions.</caption>
+  <caption>Table 1: The fixed score. Each theme receives one third of the weight, divided equally among its predictors. Horizons are trading sessions.</caption>
   <thead>
     <tr><th>Theme</th><th>What the score favors</th></tr>
   </thead>
@@ -104,8 +104,9 @@ and predictive relationships can still change.
 
 The cost is losing absolute levels and distances: adjacent stocks receive
 the same rank gap whether their momentum differs by one or twenty percentage
-points. A narrow win over sector peers and a large one can receive the same
-target label. Those discarded magnitudes may contain predictive information.
+points. Small and large differences in forward Sharpe relative to sector
+peers can receive the same target label. Those discarded magnitudes may
+contain predictive information.
 
 The groups also matter: predictors are ranked across the universe, while
 targets are ranked within sectors. A high momentum rank can therefore pair
@@ -259,7 +260,7 @@ results across all three.[^schedule-summary]
 
 OLS and Ridge mainly improve the portfolio by lowering volatility (Table 3).
 The gain in net return is much less convincing. During development, extra
-trading eats up most of OLS's gross-return advantage over the fixed score.
+trading costs absorb most of OLS's gross-return advantage over the fixed score.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption>Table 3: Net performance and trading. Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Beta is measured against the Russell 1000.</caption>
@@ -415,8 +416,8 @@ Liquidity matters too. The negative illiquidity weight favours stocks with
 less absolute price movement per dollar traded. The market-cap variability
 terms contrast different horizons: the two-year measure has a positive
 weight, while the one-month measure has a negative weight. This pair favours
-more variation over the longer history and a quieter recent month. These
-features describe variation in log market capitalization over time.
+more variation over the longer history and lower variability over the recent
+month. These features describe variation in log market capitalization over time.
 
 One-year upside volatility has a positive weight.
 Conditional on the other predictors, more variation in the positive part of
@@ -448,6 +449,3 @@ These results also depend on how I size the selected stocks. Here, net and
 market exposure emerge from the positions. In the
 [optimization article](/quants/2026/08/29/portfolio-optimization.html), I take
 more control over portfolio risk and exposures.
-
-A ranked-return target would be a useful next comparison: how much does
-adjusting the training outcome for future volatility actually add?

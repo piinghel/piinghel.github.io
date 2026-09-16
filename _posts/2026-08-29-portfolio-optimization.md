@@ -3,7 +3,7 @@ layout: post
 title: "Joint Sizing with Fewer Trades"
 description: "Joint sizing adds turnover. A rank buffer and trade penalty recover more of the gross return."
 date: 2026-08-29
-last_modified_at: 2026-09-14
+last_modified_at: 2026-09-16
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Ridge allocation
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -54,8 +54,7 @@ zero risk-free rate. Two-way turnover sums absolute executed trades relative
 to strategy capital, annualized over the reporting window.
 
 I change covariance, score scaling and constraints together when moving from
-individual to joint sizing. This tests which complete rule I would use;
-separating the benefit of covariance would need another comparison.
+individual to joint sizing, so the comparison evaluates the full allocation rules.
 
 <h2 id="development-results">Sizing stocks together</h2>
 
@@ -130,7 +129,7 @@ gross return while removing much of the extra trading.
 </table>
 
 Figure 1 shows where the lead opens, mainly around 2000 and 2021.
-Trading controls give the highest ending value and the smallest worst drawdown.
+Trading controls give the highest ending value and the smallest maximum drawdown.
 The paths use each portfolio's actual risk level: about 8.4% annualized
 volatility for the joint rules versus 7.9% for volatility scaling. Table 1
 puts those gains alongside volatility and Sharpe.
@@ -148,8 +147,8 @@ A small change in rank or covariance can trigger a replacement whose benefit is 
 than its trading cost. A slightly better portfolio on paper can be a worse
 trade in practice.
 
-I need to give the optimizer both permission to keep an acceptable holding
-and a reason to care about the trade required to replace it.
+The rank buffer keeps existing holdings eligible, while the trading penalty
+discourages unnecessary replacements.
 
 Take a long stock whose rank slips from 60 to 110. The basic optimizer drops it
 because only the top 75 enter the new selection. A *rank buffer* lets it stay
@@ -166,7 +165,7 @@ $$
 $$
 
 under the same portfolio constraints. The second term penalizes changes
-from the existing weights; $$c$$ controls how reluctant the optimizer is to trade.
+from the existing weights; $$c$$ sets the penalty relative to the sizing scores.
 
 The score scale matters once I add this penalty. Multiplying all sizing scores
 by a positive constant leaves the basic optimizer's preferred weights unchanged.
@@ -194,8 +193,8 @@ Table 2 separates what the buffer and penalty contribute.
 </table>
 
 The buffer alone saves about three times capital in annual trading; adding it
-alongside the penalty saves seven. That's why I use them together: keeping an
-acceptable holding becomes more useful when the optimizer cares about replacing it.
+alongside the penalty saves seven. That's why I use them together: the buffer
+allows more holdings to remain eligible, and the penalty favours retaining them.
 Both controls change positions as well as trading costs.
 
 Figure 2 checks nearby settings in development, varying one control at a time
@@ -210,7 +209,7 @@ $$10^{-4}$$; the plotted value 2.5 is the setting in Table 4.
 
 From 1 through 3, net Sharpe stays between 1.42 and 1.43 while turnover keeps
 falling, from 34× to 27×. I choose 2.5 for the lower turnover within that
-plateau; pushing to 5 gives back some return.
+plateau; increasing the coefficient to 5 reduces return.
 
 Rank cutoffs from 150 to 200 also give similar Sharpe, with modest turnover
 savings. I use 175: moving to 200 saves less than another turn and worsens
@@ -326,8 +325,7 @@ Figure 3 shows why I keep some estimated correlation. I rebuild both joint
 rules at each shrinkage value using development data. From 0.3 to 0.6,
 forecast calibration, beta error, turnover, and Sharpe move relatively little.
 At zero shrinkage, realized risk exceeds forecast by more. Full shrinkage
-discards shared-risk information and misses by more again. The broad middle
-matters more than the exact point inside it.
+discards shared-risk information and also increases the forecast error.
 
 <div class="research-figure rho-ladder-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" alt="Four panels showing risk calibration, holding-period beta error, annual turnover, and net Sharpe across correlation shrinkage for both optimizers, with the 0.3 to 0.6 region shaded" version="14" %}
@@ -363,8 +361,7 @@ so it can stay far from zero even when new target weights satisfy the limit.
 
 Joint sizing reduces the long departures from zero relative to volatility
 scaling, but several episodes still last for months and reach roughly 0.2.
-The holding-period diagnostics show estimation error too, so this isn't just
-the trailing measure remembering earlier positions.
+Estimation error is also present over individual holding periods.
 
 I tested a 63-day beta window in matched portfolios. It removes the
 persistent episodes, but with trading controls the later tail-error measure
@@ -377,10 +374,6 @@ I keep joint sizing with both trading controls. In development, they preserve
 almost all of the optimizer's gross return while cutting turnover by about a
 third. The later advantage is smaller and depends more on the rebalance
 schedule, but the combination still helps on average.
-
-This gives me a way to use the ranking within portfolio limits without so
-much unnecessary trading. The risk estimates still need work, and the
-losses in the short book deserve a closer look.
 
 ## Allocation settings
 
