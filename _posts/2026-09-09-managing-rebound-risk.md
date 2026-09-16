@@ -41,7 +41,8 @@ V_t=\frac{\sum_i w_{i,t}u_{i,t}}{\sum_i |w_{i,t}|},
 $$
 
 where $u_{i,t}$ is the volatility rank and $w_{i,t}$ the signed position weight.
-Buying quiet stocks and shorting volatile stocks both make $V_t$ negative.
+Long positions in low-volatility stocks and short positions in high-volatility
+stocks both make $V_t$ negative.
 Dividing by gross exposure expresses the average tilt per dollar invested.
 
 This measure uses volatility ranks per dollar of gross exposure.
@@ -115,7 +116,7 @@ drawdown, with diminishing drawdown gains at the tight end, where Sharpe falls.
 about 0.7 points a year behind after costs, mostly because of extra trading.**
 That comparison uses the fast rule's original average multiplier of 89.4%.
 At equal average gross in Table 1, both overlays still earn less net P&L
-than the original. Slow scaling improves Sharpe but has a worse worst drawdown.
+than the original. Slow scaling improves Sharpe but has a larger maximum drawdown.
 
 In January 2022–May 2026, the tighter ±0.15 limit had a higher Sharpe than the
 ±0.30 limit, reversing their full-history ranking. The original and both limits
@@ -233,13 +234,6 @@ typical rebounds; fast scaling loses to constant sizing after trading costs.
 
 The beta limit's small typical gain comes with a worse 2020 rebound and less
 decline protection. That's too uneven an improvement for me to include it in the baseline.
-
-I still want to know whether joint limits on persistent factor exposures can
-do better. Before another test, I'd decide how much full-history P&L I'm willing
-to give up for better rebounds, then check both the typical episode and the
-total gain across episodes while preserving decline protection. These results
-make me more selective about adding a constraint simply because an exposure
-looks uncomfortable in an attribution chart.
 
 <aside class="research-note" markdown="1">
 **Calculation notes.** Market lows are selected in hindsight, and

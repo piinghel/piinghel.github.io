@@ -93,10 +93,8 @@ The common weakness across models makes a changing market environment worth inve
 
 ## What I take from the comparison
 
-I tried shared trees because learning two related horizons together seemed worth exploring. Under these settings, they produce much the same portfolio performance as ordinary trees. The larger historical gain is from the tree models over the Ridge benchmark. For the next comparison, I'd keep ordinary trees as the starting point.
+I tried shared trees because learning two related horizons together seemed worth exploring. Under these settings, they produce much the same portfolio performance as ordinary trees. The larger historical gain is from the tree models over the Ridge benchmark. I'd keep ordinary trees as the baseline.
 
 I still like the simple 50:50 blend of the 20-day and 60-day forecasts. Part of that preference is methodological: I'd rather spread the choice across two horizons than rely entirely on one. Here, the full-history performance trade-off is modest, and the blend does better in the final period. If it lagged the 20-day forecast by a lot, I'd find that preference much harder to defend. My hunch is that combining horizons could also help as the economic environment changes. That depends on their mistakes differing enough to offset each other; they still share predictors, training history and overlapping targets. Greater robustness is something I'd like to test, rather than a benefit I can already claim.
-
-I did get a bit sidetracked by the declining performance, but I still find that detour interesting. It leaves me with a separate question to come back to: where has the strategy weakened? I'd start by checking whether the weaker rankings and portfolio losses are concentrated in the same sectors or on the same side of the book, then compare their exposures and realized payoffs across periods. That would help separate a change in what the signals predict from a change in the risks the portfolio takes.
 
 [^setup]: Walk-forward training uses a 900-session warmup, 600-session steps and a 61-session gap. Predictions average three date-phase models; both horizons require complete 60-day targets. Trees use 350 rounds, depth 5, learning rate 0.05, feature subsampling 0.25 and 255 bins; LightGBM allows 32 leaves.

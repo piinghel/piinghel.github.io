@@ -197,11 +197,9 @@ Their daily returns remain highly correlated: pairwise correlations within
 weekdays range from 0.75 to 0.77 in development and 0.82 to 0.85 later.
 Those differences provide some diversification, while most strategy risk
 remains shared. The higher later correlations also fit the smaller volatility
-reduction. The tranches' variances and covariances account for the combined
-portfolio's lower volatility: what matters is how much they fluctuate and how
-closely they move together.
+reduction.
 
-This is also the useful connection to [Concretum's tranching study](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf).
+[Concretum's tranching study](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf) reports a similar result.
 Its Section 4 reports little change in average CAGR before transaction costs
 as the number of tranches increases, alongside a substantial reduction in
 dispersion across schedules.
@@ -227,5 +225,4 @@ change here is tracking three books and sending smaller orders more often.
 
 I prefer combining all three tranches. The lower portfolio volatility
 seems worth the added complexity of tracking three books, and the results depend
-less on the starting week. The remaining weekday differences give me a reason to keep
-comparing calendars rather than pick the historical winner.
+less on the starting week.

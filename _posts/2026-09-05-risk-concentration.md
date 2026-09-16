@@ -257,11 +257,10 @@ that tilt would require factor attribution.
 
 ## Would I add these limits?
 
-For the next tests, I'd keep tracking these concentrations. PCA
-10% looks like a reasonable backstop: it cuts the concentration tail under the
-model with little change in performance or trading. Before including it in the baseline, I want to know
-whether it limits the risks that concern me. Lower concentration under the
-model leaves that question open.
+The 10% PCA cap looks promising: it reduces the largest modelled risk
+concentrations with little change in performance or turnover. Before adding it
+to the baseline, I'd want to understand the economic exposures behind those
+components.
 
 In the [attribution series](/quants/portfolio-attribution.html), I trace P&L
 and risk to stocks, sectors and styles, then test limits on the volatility tilt
