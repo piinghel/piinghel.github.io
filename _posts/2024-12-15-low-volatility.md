@@ -24,19 +24,18 @@ and use a market hedge to check how much market exposure matters.
 ## High-volatility stocks earn less per unit of risk
 {: #what-the-ranking-selects }
 
-Sharpe expresses return per unit of risk as average return divided by
-volatility.
-Beta measures how sensitively a stock or portfolio's returns move with the market.
-[Frazzini and Pedersen](https://www.nber.org/papers/w16601) offer one explanation
-for why this can persist: investors with limited access to borrowing reach
-for high-beta stocks instead, bidding up their prices and accepting less
-return per unit of risk.[^bab]
+Let’s start by looking at returns, volatility and Sharpe ratios across ten
+groups of stocks, ranked from the least to the most volatile. This gives us
+a first look at the low-volatility effect before we move on to building a
+portfolio.
 
-That matters for a long-short portfolio. A poor Sharpe differs from a
-negative return: volatile stocks can still go up, with a lot of noise along
-the way, and a short position pays for every up-move. Before sizing the
-short positions, I want to see whether these stocks actually lose money or
-simply earn little for the risk they take.
+The low-volatility effect has been studied extensively.
+[Blitz and van Vliet](https://repub.eur.nl/pub/10460) document the strong
+risk-adjusted returns of low-volatility stocks.
+[Frazzini and Pedersen](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf)
+offer a related explanation: investors who cannot easily borrow may favour
+stocks with more market exposure, bidding up their prices and reducing
+their expected returns.[^bab]
 
 I use point-in-time Russell 1000 membership: each ranking uses the stocks
 that belonged to the index at that date. I keep stocks priced above five
