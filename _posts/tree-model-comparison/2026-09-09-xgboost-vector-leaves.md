@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Do Two Forecast Horizons Work Better Together?"
+title: "Do Multiple Forecast Horizons Work Better Together?"
 description: "Comparing multi-output XGBoost, ordinary XGBoost, LightGBM and Ridge across two forecast horizons and their 50:50 blends."
 permalink: /quants/xgboost-vector-leaves.html
 toc: false
