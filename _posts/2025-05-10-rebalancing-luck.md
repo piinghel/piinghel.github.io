@@ -14,7 +14,10 @@ github_repositories:
 
 ## The starting-week problem
 
-With the [ranking and sizing rules](/quants/2026/08/29/portfolio-optimization.html) in place, I want to see how much the choice of rebalance date affects performance.
+In the previous articles, I started with [stock ranking](/quants/2025/02/09/multiple-linear-regression.html),
+then moved on to [portfolio construction and management](/quants/2026/08/29/portfolio-optimization.html).
+Here, I turn to execution timing: how much does the rebalance schedule affect
+performance?
 
 The strategy rebalances every three weeks. For each weekday, there are three
 possible starting weeks, giving fifteen rebalance schedules. They use the same
