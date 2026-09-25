@@ -87,8 +87,7 @@ other terms over each complete drawdown.
 </div>
 <p class="figure-caption"><strong>Figure 2: Similar total losses, different factor contributions.</strong> Peak-to-trough P&amp;L points. Each panel includes factor terms, residual, uncovered holdings and costs.</p>
 
-Beta was the largest losing style in 2008–09; volatility led the style losses
-in 2020–21. The residual was material in both. Table 3 separates beta exposure
+Beta was the largest losing style in 2008–09 and volatility in 2020–21; the residual was large in both. Table 3 separates beta exposure
 from its payoff using [Part 1's calculation](/quants/portfolio-attribution.html#follow-exposure-and-payoff-together).
 
 <div markdown="1">
@@ -118,10 +117,7 @@ betas, larger prior losses and higher volatility than the longs.**
 </div>
 <p class="figure-caption"><strong>Figure 3: The shorts held riskier stocks than the longs.</strong> Average stock characteristics, weighted by position size within each book, entering the first rebound session. Measurements end at the market lows of 9 March 2009 and 23 March 2020. Beta uses up to 252 daily returns against the Russell 1000 (126 minimum); prior return uses 126 sessions; volatility uses 21 sessions, annualized.</p>
 
-The larger long book offsets the shorts' higher stock betas in Table 4.
-Covered raw beta exposure is positive at both lows, alongside negative
-standardized exposure: lower-beta stocks relative to the universe, held in
-a net long dollar position.
+In Table 4, the larger long book more than offsets the shorts' higher betas: raw beta exposure is positive at both lows. Standardized exposure is still negative, because the portfolio holds lower-beta stocks than the universe, in a net long dollar position.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 4: Book sizes change the portfolio-level reading.</strong> Sum of signed beginning-of-rebound weights times each descriptor measured at the preceding market low. Raw beta and prior return cover 98.1% and 98.5% of gross at the two lows; volatility covers all holdings. Missing descriptors contribute zero, with no gross renormalization. Volatility and prior-return sums are percentage points per notional: they are descriptive exposures, not portfolio volatility or realized P&amp;L.</p>
@@ -133,8 +129,7 @@ a net long dollar position.
 {: .research-table .comparison-table .attribution-table }
 </div>
 
-The raw volatility sum changes sign between the lows. Centered, standardized
-exposures and their contributions show the persistent low-volatility bet.
+The raw volatility sum even changes sign between the lows; the persistent low-volatility bet only shows up once exposures are centered and standardized.
 
 Momentum can add to the same bet. During a decline, stocks that fall less
 can rank as winners, reinforcing the preference for defensive stocks.
@@ -147,9 +142,7 @@ in both episodes.
 
 To see how often the same imbalance appeared elsewhere, I identified **11 market
 declines of at least 10%** and followed the first
-63 sessions after each low. A new episode starts only after the
-previous market peak has been regained; intervening declines belong to the
-same episode.
+63 sessions after each low. A new episode starts only after the previous market peak has been regained; intervening declines belong to the same episode.
 
 The long book is usually larger than the short book, so comparing their
 P&L totals alone mixes stock performance with position size. I measure
@@ -162,9 +155,7 @@ G_\ell(H)=100\sum_{t=1}^{H}
 \frac{\sum_{i\in\ell}|w_{i,t^-}|r_{i,t}}{A_{\ell,t}}.
 $$
 
-The measure tracks the positions held each day and adds their returns. A price rise
-counts as a stock gain on either side; it hurts the portfolio when the stock
-is short. I compare $G_{\mathrm{short}}-G_{\mathrm{long}}$, then
+It adds up the returns of each day's positions, counting a price rise as a gain on either side, even though that rise hurts the portfolio when the stock is short. I compare $G_{\mathrm{short}}-G_{\mathrm{long}}$, then
 look separately at the actual portfolio P&L over exactly the same sessions.
 
 Figure 4 starts with all 11 rebounds. Select an episode to follow the two
@@ -197,24 +188,20 @@ Table 5 checks shorter and longer windows around the same lows.
 By 126 sessions, the median imbalance has reversed and only one portfolio
 window remains negative. That changes what I'd try to fix: the difficulty is
 usually in the first few months, and often fades as holdings and market
-conditions change. The severe losses in Table 1 last longer, though.
-Making money after a low also doesn't mean the strategy has regained its
-preceding peak.
+conditions change. The severe losses in Table 1 last longer, though, and making money after a low doesn't mean the strategy is back at its previous peak.
 
 
 ## What this changes
 
 I'd focus on the early rebound rather than try to remove the short book's
-defensive role altogether. Any permanent limit will also change the protection
-it provides on the way down. That's the trade-off I care about: improving the
+defensive role altogether. Any permanent limit will also change the protection the short book provides on the way down. That's the trade-off I care about: improving the
 first three months of a recovery while preserving that decline protection. In
 [part 3](/quants/managing-rebound-risk.html), I test tilt limits, standardized
 beta limits and daily portfolio scaling against that requirement.
 
 <aside class="research-note" markdown="1">
 **Episode selection.** The two deepest strategy drawdowns helped form the
-hypothesis; all 11 market lows are selected in hindsight. The 21-, 63- and
-126-session windows overlap and follow changing holdings. Attribution inherits Part 1's
+hypothesis; all 11 market lows are selected in hindsight. The 21-, 63- and 126-session windows overlap, and holdings change within each window. Attribution inherits Part 1's
 sector labels and incomplete coverage. These observations leave short-squeeze
 and predictor-causality explanations untested.
 </aside>

@@ -14,8 +14,7 @@ github_repositories:
 
 The [low-volatility effect](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
 is the tendency for low-volatility stocks to earn better returns per unit of risk
-than more volatile stocks. Building a portfolio around it also requires a
-choice about position sizing.
+than more volatile stocks. To build a portfolio around it, I also have to decide how to size positions.
 
 In this article, I compare equal weighting with inverse-volatility sizing
 and use a market hedge to check how much market exposure matters.
@@ -80,16 +79,12 @@ $$
 
 Here $N$ is the number of stocks in the book, $\sigma_{\mathrm{ref}}=20\%$
 and $a_{\max}=4\%$. I estimate volatility over about three months and apply
-a 5% floor.[^windows] I cap each book at 100% gross by scaling down its
-positions proportionally when needed. Books below the cap retain their
-calculated weights.
+a 5% floor.[^windows] If a book's gross exceeds 100%, I scale its positions down proportionally; otherwise I leave its weights as calculated.
 
-Without renormalizing each book to 100%, inverse-volatility sizing reduces
-the short allocation substantially. The long book averages about 97% gross
+Because I don't scale each book back up to 100%, inverse-volatility sizing shrinks the short book substantially. The long book averages about 97% gross
 and the short book 34%, bringing total gross exposure down from 200% to
 about 131%. Both books now have standalone volatility of about 10%, compared
-with more than 37% for the equal-weighted short book. Portfolio volatility
-also depends on the correlation between the books.
+with more than 37% for the equal-weighted short book. Portfolio volatility also depends on how the two books move together.
 
 Average net exposure is about 63% long, while full-sample realized beta is
 roughly zero. The higher-beta stocks in the smaller short book offset the
@@ -98,9 +93,7 @@ long book's market exposure on average, though the offset varies over time.
 ## Comparing the portfolios with a beta hedge
 {: #what-improves }
 
-The two sizing rules also produce very different market exposures. To
-assess how much this affects the comparison, I add a Russell 1000 beta hedge
-to each portfolio at every rebalance, using trailing beta estimates.
+The two sizing rules also produce very different market exposures. To see how much of the difference comes from market exposure, I hedge each portfolio's beta with the Russell 1000 at every rebalance, using trailing beta estimates.
 Hedged equal weighting earns more, but remains much more volatile.[^beta-check]
 
 <table class="research-table comparison-table portfolio-card-table">
@@ -116,13 +109,10 @@ Hedged equal weighting earns more, but remains much more volatile.[^beta-check]
   </tbody>
 </table>
 
-The hedge brings realized beta close to zero for both rules: 0.011 for
-equal weighting and 0.005 for inverse volatility over the full sample.
-Beta can still drift between rebalances.
+Over the full sample, the hedge brings realized beta close to zero for both rules (0.011 for equal weighting, 0.005 for inverse volatility), although beta can still drift between rebalances.
 With the hedge, equal weighting earns about 8% a year versus 6.6% for
 inverse volatility, with about two and a half times the volatility.
-The comparison includes changes in gross exposure and book allocation as
-well as stock weights.
+The two rules differ in gross exposure and in how much goes to each book, not only in stock weights.
 
 Inverse-volatility sizing reduces portfolio volatility from about 33% to
 10% without the hedge, and from about 25% to 10% with it. Sharpe is higher
@@ -130,17 +120,14 @@ and maximum drawdown is smaller in both comparisons. Adding a hedge to the
 inverse-volatility portfolio makes little difference to either its
 volatility or maximum drawdown.
 
-Annual two-way stock turnover is about 12–19 times strategy capital,
-counting purchases and sales. The index hedge adds about 0.63 times capital
-for inverse volatility and 1.32 for equal weighting. The smaller short
+Two-way stock turnover (purchases plus sales) is about 12–19 times strategy capital a year. The index hedge adds about 0.63 times strategy capital for inverse volatility and 1.32 times for equal weighting. The smaller short
 allocation reduces traded notional and transaction costs.
 
 Figure 3 compares the cumulative returns and drawdowns. Hedging raises the
 equal-weighted portfolio's terminal index value from 0.35 to 10.84,
 compared with 7.54 for unhedged inverse-volatility sizing.
 Its maximum drawdown remains much larger: about 68%, versus 38%.
-Removing the short market exposure changes the return comparison
-substantially, while the difference in risk persists.
+Removing the short market exposure changes the return comparison a lot, but not the risk gap.
 
 <div class="low-vol-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="16" %}
@@ -151,9 +138,7 @@ substantially, while the difference in risk persists.
 ## Shared losses during market rallies
 
 Figure 4 decomposes the unhedged inverse-volatility portfolio's returns
-during two market rallies. Realized beta is modestly negative in both
-windows, despite being roughly zero over the full sample. The book-level
-contributions show where the losses occur.
+during two market rallies. Realized beta is modestly negative in both windows, despite being roughly zero over the full sample, and the book contributions show which side the losses come from.
 
 <div class="low-vol-figure regime-comparison-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="17" %}

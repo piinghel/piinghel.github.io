@@ -72,20 +72,16 @@ $$
 
 Multiplying all positions by a positive constant scales expected return and
 volatility equally, so Sharpe is unchanged. The solution fixes relative
-weights but leaves portfolio size open. Setting portfolio volatility to
-one—unit volatility—is a convenient normalization for the derivation.
-Without other limits, I can then rescale to the volatility I want.
+weights but leaves portfolio size open. For the derivation, it's convenient to fix portfolio volatility at one; without other limits, I can then scale to any volatility I want.
 
-Portfolio limits make size and risk a joint decision. Scaling from 5% to 7%
+With portfolio limits, I can't choose size and risk separately. Scaling from 5% to 7%
 forecast volatility turns a 4% position into 5.6%, breaching the name cap.
 That's why I put the actual volatility budget inside the optimization.
 
 My inputs are relative sizing scores, rather than calibrated expected returns.
 For each stock, I multiply its Ridge prediction $$s_{i,t}$$ by estimated daily
 volatility $$\widehat\sigma_{i,t}$$ to get
-$$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$. The target ranks forward returns
-divided by volatility. Multiplying by volatility puts those scores on each
-stock's risk scale, but can't recover the return magnitudes lost in ranking.
+$$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$. Because the Ridge target ranks forward return divided by volatility, multiplying by volatility puts the scores on each stock's risk scale. It can't recover the return magnitudes lost in ranking.
 With signed portfolio weights $$w_t$$ and volatility target
 $$\sigma_{\mathrm{target}}$$, I solve
 
@@ -107,8 +103,7 @@ candidates negative or zero weights. With these limits, maximizing the score
 isn't the same as maximizing Sharpe: other limits can bind before forecast
 volatility reaches 7%.
 
-These limits apply to target weights at a rebalance. Next-close execution and
-subsequent price moves can take the actual holdings outside those bounds.
+The limits apply to target weights; after next-close execution and later price moves, actual holdings can drift outside them.
 
 In Table 1, joint sizing adds about three and a half percentage points of gross
 return at similar realized risk. It also trades 42.5 times capital annually,
@@ -129,9 +124,7 @@ gross return while removing much of the extra trading.
 
 Figure 1 shows where the lead opens, mainly around 2000 and 2021.
 Trading controls give the highest ending value and the smallest maximum drawdown.
-The paths use each portfolio's actual risk level: about 8.4% annualized
-volatility for the joint rules versus 7.9% for volatility scaling. Table 1
-puts those gains alongside volatility and Sharpe.
+The paths aren't risk-matched: the joint rules run at about 8.4% annualized volatility versus 7.9% for volatility scaling, so Table 1 gives the risk-adjusted comparison.
 
 <div class="research-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for the volatility-scaled rule, optimizer, and optimizer with trading controls" version="14" %}
@@ -174,9 +167,7 @@ these score units.
 
 The L1 term counts both sides of a replacement. Selling a 1% position and buying
 another 1% position changes $$\lVert w_t-w_t^{\mathrm{pre}}\rVert_1$$ by 2%.
-The optimizer keeps the existing holding unless the new score-and-risk combination
-clears that hurdle. Constraints can still force a trade when the old position
-breaches a limit. The backtest separately charges 5 bp on executed trades.
+The optimizer keeps the existing holding unless the new score-and-risk combination clears that hurdle or the old position breaches a limit. The 5 bp trading cost is charged separately on executed trades.
 
 Table 2 separates what the buffer and penalty contribute.
 
@@ -343,8 +334,7 @@ The full development results tell the same story: I asked for 7% forecast
 volatility and got about 8.4% realized volatility. These forecasts already
 include the 1.18 volatility multiplier in Table 4. Shrinkage helps, but I would
 still need a new multiplier estimated on development data, then rerun the portfolios.
-Changing covariance changes the
-allocation decision too, including which constraints bind and how much the portfolio trades.
+A different covariance also changes the weights, including which constraints bind and how much the portfolio trades.
 
 ## Forecast beta versus realized beta
 
@@ -361,12 +351,9 @@ so it can stay far from zero even when new target weights satisfy the limit.
 
 Joint sizing reduces the long departures from zero relative to volatility
 scaling, but several episodes still last for months and reach roughly 0.2.
-Estimation error is also present over individual holding periods.
+The beta estimate also misses over individual holding periods, not only in these long episodes.
 
-I tested a 63-day beta window in matched portfolios. It removes the
-persistent episodes, but with trading controls the later tail-error measure
-remains at least as large and annualized net return falls by 0.6 percentage points,
-beyond the 0.5-point tolerance I used. I keep the existing estimate.
+I also tried a 63-day beta window, keeping everything else the same. It removes the persistent episodes, but with trading controls the later tail-error measure is no smaller and net return falls by 0.6 percentage points a year, more than the 0.5-point tolerance I set. So I keep the existing estimate.
 
 ## What joint sizing delivers
 

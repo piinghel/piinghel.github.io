@@ -23,9 +23,7 @@ limit the low-volatility tilt, reduce portfolio size when recent volatility
 rises, and limit standardized beta exposure directly. I want to know which,
 if any, improves the early recovery while preserving protection during declines.
 
-I keep the forecasts, covariance model and execution rules unchanged. Three rebalancing
-calendars receive equal capital. The original portfolio is labelled
-**Original** in the comparisons below.
+I keep the forecasts, covariance model and execution rules unchanged. The three rebalance schedules each get a third of the capital, and I label the unchanged portfolio **Original**.
 
 I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
@@ -44,15 +42,11 @@ Long positions in low-volatility stocks and short positions in high-volatility
 stocks both make $V_t$ negative.
 Dividing by gross exposure expresses the average tilt per dollar invested.
 
-This measure uses volatility ranks per dollar of gross exposure.
-[Part 1's factor exposure](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio)
-uses centered, standardized characteristics per unit of strategy notional,
-so the numerical limits are on different scales.
+This measure uses volatility ranks per dollar of gross exposure. [Part 1's factor exposure](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio) is on a different scale (centered, standardized characteristics per unit of strategy notional), so its numbers aren't comparable with these limits.
 
 I replayed the optimizer with five limits: **±0.30, ±0.25, ±0.20, ±0.15
 and ±0.10**.
-The limits apply whenever each calendar rebalances, about every three weeks.
-Prices and ranks continue moving between those decisions.
+The limits apply only when each schedule rebalances, about every three weeks; prices and ranks keep moving in between.
 
 Even the loosest limit reached its boundary on **53.4% of rebalances**.
 Its average daily tilt moved only modestly, from −0.286 to −0.248;
@@ -71,18 +65,12 @@ $$
 m_t=\min\left(1,\frac{7\%}{\widehat{\sigma}_t}\right).
 $$
 
-The scaling signal uses information available before execution at the following close.
-The resized positions then affect the next session's
-P&L. Each overlay follows the original scheduled stock book and charges for
-both its scheduled trades and additional resizing trades.
+The multiplier uses only information available before I trade at the next close, and the resized positions earn the session after that. Each scaled version (overlay) holds the original stock book and pays for both its scheduled trades and the extra resizing trades.
 
 I use an illustrative 7% target, below the original's 7.9% realized volatility.
 Since the multiplier stays at or below one, this reduces both gains and losses.
 
-Scaling preserves the tilt per dollar. For Table 1, I rescale each overlay's
-positions, P&L and costs to match the original's average gross exposure of
-183.6% of notional. The rescaled comparison can exceed full size;
-the trading rule itself cannot.
+Scaling leaves the tilt per dollar unchanged. For Table 1, I rescale each overlay's positions, P&L and costs to the original's average gross exposure of 183.6% of notional. The rescaled version can exceed full size; the trading rule itself never does.
 
 ## P&L and drawdown
 {: #what-the-changes-delivered }

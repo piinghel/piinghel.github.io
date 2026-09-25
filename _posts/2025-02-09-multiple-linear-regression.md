@@ -50,9 +50,7 @@ date, on the common scale described below.
 Equal theme weights are easy to understand, but they do not tell me how much
 each overlapping horizon adds. I can instead learn the weights jointly from
 historical outcomes. Here I compare the twelve-input rule with ordinary
-least squares (OLS) and Ridge on a broader set of 144 predictors. That tests
-the learned approach as a whole, changing both inputs and weights; comparing
-OLS with Ridge keeps the inputs fixed and isolates regularization. All three
+least squares (OLS) and Ridge on a broader set of 144 predictors. Against the fixed rule, the regressions change both the inputs and the weights. OLS versus Ridge keeps the inputs the same, so that comparison isolates regularization. All three
 use the same stocks. I also repeat the regressions on the benchmark's twelve
 inputs, so I can separate learning the weights from adding predictors.
 
@@ -99,8 +97,7 @@ $$
 For example, a stock's momentum can rise from −2% to +10% while its rank
 stays unchanged. The marginal cross-sectional distributions stay approximately
 uniform over time. This keeps scales comparable when pooling history[^rank-convention] and
-limits the influence of extreme predictor and target values. Correlations
-and predictive relationships can still change.
+limits the influence of extreme predictor and target values. Ranking fixes the scale, not the relationships: correlations and predictive relationships can still change over time.
 
 The cost is losing absolute levels and distances: adjacent stocks receive
 the same rank gap whether their momentum differs by one or twenty percentage
@@ -110,8 +107,7 @@ contain predictive information.
 
 The groups also matter: predictors are ranked across the universe, while
 targets are ranked within sectors. A high momentum rank can therefore pair
-with middling subsequent performance among sector peers. Portfolio selection
-still spans sectors and can create sector exposures.
+with middling subsequent performance among sector peers. And because the portfolio selects across sectors rather than within them, it can still take on sector exposures.
 
 [^rank-convention]: Gu, Kelly and Xiu also rank stock characteristics in [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), September 2019 manuscript, PDF page 24.
 
@@ -141,9 +137,7 @@ $$
 =\widehat a+\sum_{j=1}^{144}\widehat\beta_j z_{i,j,t}.
 $$
 
-The model is linear in the predictor ranks. A given change in a rank has
-the same effect on the score wherever that stock starts; the ranking step
-has already discarded the original units and distances.
+Because the model is linear in the ranks, a given rank change moves the score by the same amount wherever the stock starts; ranking has already discarded the original units and distances.
 
 Fitting the weights together matters when predictors overlap. The coefficient on
 six-month momentum measures its relationship with the target conditional on
@@ -332,15 +326,12 @@ Table 3, along with another increase in trading.
 
 With the full 144-predictor set, Ridge reduces coefficient size and absolute
 movement between refits by roughly one third, while the rankings barely
-change. After normalizing each coefficient vector to unit length, the
-vectors move by similar amounts for OLS and Ridge. Much of the apparent
-stability comes from rescaling.
+change. Once I rescale each coefficient vector to length one, OLS and Ridge move by similar amounts between refits, so much of the apparent stability comes from rescaling.
 
 For stock selection, a positive rescaling of all coefficients leaves the
 ordering unchanged. On the prediction blocks, OLS and Ridge have a daily
 ranking correlation of 0.991, with about 14–15 of the 150 daily candidates
-differing. The rebalance schedule determines when those differences lead
-to trades.
+differing. Those differences only turn into trades when a schedule rebalances.
 
 To see why, consider combinations of the predictors that vary together.
 Let $X_c$ denote the training inputs centered on their column means. The

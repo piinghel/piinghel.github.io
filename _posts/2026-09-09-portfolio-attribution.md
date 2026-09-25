@@ -37,7 +37,7 @@ stocks with a prediction model and sizes them within risk limits.
 The history runs from **23 September 1998 to 27 May 2026**.
 
 <div id="pnl-conventions" markdown="1">
-One **P&L point** means 1% of the same fixed strategy notional throughout.
+One **P&L point** is 1% of strategy notional, which stays fixed throughout.
 Trading costs are 5 basis points per dollar traded, excluding borrow, financing
 and market impact. Turnover is two-way traded notional divided by strategy
 capital. Sharpe divides annualized net P&L by annualized volatility, using a
@@ -84,8 +84,7 @@ on the index's daily price return, with an intercept.
 Figure 3 follows trailing 126- and 252-session estimates above the model's
 standardized beta exposure: signed positions multiplied by standardized stock
 betas. Negative exposure favors lower-beta stocks relative to the universe.
-The panels use different units. Centering stock betas and the net dollar
-position help explain their difference, alongside changes in realized sensitivity.
+The panels use different units and can disagree: stock betas are centered on the universe, the portfolio is net long in dollars, and realized sensitivity changes over time.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/beta-history" mobile="/assets/portfolio-attribution/beta-history_mobile" version="3" alt="Trailing 126- and 252-session realized Russell 1000 beta above prior-session standardized beta exposure, with the 2008–09 and 2020–21 strategy drawdowns shaded." %}
@@ -109,11 +108,7 @@ At the 2009 and 2020 lows, the trailing 252-session market betas were
 whole-book market sensitivity.
 
 The existing optimizer already limits its own estimated market beta to
-**±0.05 at rebalance**. Its estimate combines long-window correlation with
-short-window volatility; the attribution descriptor uses a 252-session
-regression. Rebalance target beta averaged +0.018, but price moves,
-changing holdings and estimation error can separate that target from
-subsequent realized beta. The [optimizer study](/quants/2026/08/29/portfolio-optimization.html#forecast-beta-versus-realized-beta)
+**±0.05 at rebalance**. The optimizer's beta estimate combines long-window correlation with short-window volatility; the attribution uses a 252-session regression beta. Target beta at rebalance averaged +0.018, but price moves, changing holdings and estimation error can pull realized beta away from it. The [optimizer study](/quants/2026/08/29/portfolio-optimization.html#forecast-beta-versus-realized-beta)
 examines that gap and a shorter-window estimator. Part 3 tests an additional
 limit on the standardized beta exposure shown here.
 
@@ -196,8 +191,7 @@ q_{i,t-1}=\sqrt{\mathrm{cap}_{i,t-1}}.
 $$
 
 $U_t$ is the eligible universe with valid returns. A stock four times as large
-gets twice the fitting weight. Prior-session characteristics and market caps
-explain the session that has just finished.
+gets twice the fitting weight. Each session's returns are explained with the previous session's characteristics and market caps.
 
 To identify the common return and sector effects, I constrain the weighted
 average sector effect to zero:
@@ -244,8 +238,7 @@ realized variance**. It contains stock-specific outcomes and any common
 effects the chosen model leaves unexplained, such as omitted value, quality
 or industry characteristics.
 
-The **common return contributed +84.1 points** through the net long position
-in covered stocks. It is the fitted intercept under square-root-cap weighting.
+The **common return**, the fitted intercept under square-root-cap weighting, **contributed +84.1 points** through the net long position in covered stocks.
 Other factor and residual contributions offset much of its market sensitivity;
 Figure 3 measures the resulting beta of the whole book.
 
@@ -266,8 +259,7 @@ $$
 C_k(T)=100\sum_{t\le T}E_{k,t}\widehat f_{k,t}.
 $$
 
-Positions, stock characteristics and payoffs all change. Each day's
-payoff therefore needs the exposure held on that day.
+Because positions, characteristics and payoffs all change, each day's payoff has to be paired with that day's exposure.
 
 You can follow that calculation in Figure 6. The middle panel accumulates
 payoffs for a constant +1 exposure; the bottom uses the portfolio's changing
@@ -283,15 +275,13 @@ winners.
 <p class="figure-caption"><strong>Figure 6: Exposure × payoff = portfolio P&amp;L.</strong> Daily standardized exposure and cumulative contributions in the two deepest drawdowns. Shading ends at the market low.</p>
 
 Positive exposure gains when the payoff line rises; negative exposure gains
-when it falls. In the 2009 momentum view, the exposure changes sign.
-That allows portfolio P&L to recover while the momentum payoff keeps falling.
+when it falls. In the 2009 momentum view, the exposure changes sign, which lets portfolio P&L recover while the momentum payoff keeps falling.
 
 ## Daily risk and accumulated losses
 {: #judge-protection-over-the-path }
 
 The 2020–21 drawdown illustrates why I need both P&L and variance
-attribution. Shorts lost **13.5 points** while receiving just **0.2% of
-portfolio variance**. Their standalone volatility was **23.4%**.
+attribution. Shorts lost **13.5 points** yet received just **0.2% of portfolio variance**, despite **23.4%** standalone volatility.
 Their daily fluctuations largely offset those of the longs, so the covariance
 allocation credits that offset even while the shorts accumulate losses.
 

@@ -26,9 +26,7 @@ same underlying move. Before adding more constraints, though, I wanted to know:
 does the backtest show this problem? And if it does, can I reduce the
 concentration with limited trading?
 
-Just as in my other articles, I keep the Ridge predictions, selected stocks,
-trading controls, execution, and 5 bp charge on traded notional fixed. The
-comparison is about allocation. I use three rebalance schedules, each starting
+As in my other articles, I hold the Ridge predictions, selected stocks, trading controls, execution and 5 bp cost on traded notional fixed, so only the allocation changes. I use three rebalance schedules, each starting
 in a different week, from September 1998 through May 2026, reporting results before and after 2021
 separately. The three schedules let me check
 sensitivity to rebalance timing; they share the same market history.
@@ -59,15 +57,11 @@ c_k^{\mathrm{PC}}
 =\frac{\lambda_k(q_k^\top w)^2}{V(w)}.
 $$
 
-These shares are non-negative and add to one across all components. I estimate
-PCA on the stocks eligible at each date, then use the held-stock block of that
-covariance in the optimizer. Restricting the factor loadings to those holdings
-and keeping every component preserves the full decomposition of portfolio
-variance. To separate the effect of a PCA cap from this covariance change, I
+These shares are non-negative and add to one across all components. I estimate PCA on all eligible stocks at each date and give the optimizer the part of that covariance covering the portfolio's stocks. Because I keep every component, the decomposition of portfolio variance stays complete. To separate the effect of a PCA cap from this covariance change, I
 compare it with an uncapped optimizer using the same covariance. Stock and
 sector caps are compared with the original optimizer.
 
-The stock contribution is its signed Euler allocation of variance,
+A stock's contribution is its weight times its covariance with the portfolio, as a share of total variance (its Euler allocation):
 
 $$
 c_i^{\mathrm{stock}}
@@ -84,15 +78,9 @@ $$
 
 Stock and sector contributions can be negative when a position hedges the rest
 of the book. I put an upper limit on positive contributions and track the total
-negative contribution separately. Signed stock contributions sum to one, as do
-sector contributions when sectors form a complete partition. The cross-sector
-covariance terms make this a decomposition of the whole portfolio's variance.
+negative contribution separately. Stock contributions sum to one, and so do sector contributions when every stock belongs to exactly one sector; the cross-sector covariance terms are what make them add up.
 
-These caps are non-convex because changing the weights changes both the risk
-contributions and total variance. I enforce them through successive local
-approximations, then recompute the exact shares. Each accepted target satisfies
-the caps to the stated tolerance. A run stops when its candidate targets fail
-the checks.
+These caps are non-convex, because changing the weights changes both the contributions and total variance. So I enforce them with successive local approximations and then recompute the exact shares. I accept a target only if it meets the caps within tolerance; a run stops when its candidate targets fail.
 
 ## Is risk concentrated in this portfolio?
 
@@ -119,9 +107,7 @@ at 7.5%, it is 30.20%. These frequencies count breaches in the uncapped
 portfolio over the full sample. Table 1 counts corrections in the capped
 portfolio after 2021.
 
-I check all principal components. The portfolio's largest contribution comes
-from a component after PC10 on 26.05% of observations, and can come from as far
-down as PC141.
+I check all principal components, not just the leading ones: on 26.05% of observations the largest contribution comes from a component after PC10, and it can come from as far down as PC141.
 
 Sector limits intervene sooner. A 20% cap changes roughly 59% of targets, while
 15% changes roughly 98%. A 2% stock cap changes almost every target.
@@ -136,9 +122,7 @@ Figure 1 compares how often each tested limit requires an adjustment.
 PCA caps intervene more often in the later period. Table 1 puts that frequency
 beside the amount of capital the cap reallocates.
 
-The caps apply to target weights using the covariance estimated at that
-rebalance. Rounding, execution, and subsequent price moves can take the actual
-portfolio above a cap before it trades again.
+Caps apply to target weights at each rebalance; rounding, execution and price moves can push the actual portfolio above a cap before it next trades.
 
 “Own concentration” is the 95th percentile of the largest contribution in the
 dimension being capped, averaged across schedules. “Targets corrected” counts
@@ -163,11 +147,9 @@ Executed turnover is in Table 2.
 </table>
 
 The 20% sector cap corrects targets fairly often, yet its average target
-difference is 6.6% of capital, versus 19.4% at a 15% cap. That distinction
-matters to me: I want a cap that intervenes selectively while leaving most
-allocation decisions to the score and covariance model.
+difference is 6.6% of capital, versus 19.4% at a 15% cap. That distinction matters to me: I want a cap that intervenes selectively and leaves most of the sizing to the score and covariance model.
 
-A stock cap also leaves open the question of shared risk. Figure 2 compares
+A stock cap also doesn't address shared risk. Figure 2 compares
 all three dimensions under the 2% stock cap. The later 95th
 percentile of the largest stock contribution falls from 7.17% to 2%, while the
 corresponding PCA statistic rises from 15.44% to 16.05%. Smaller stock
@@ -215,8 +197,7 @@ caps use the original optimizer.
 <p class="figure-caption">Sector 15% and Stock 4% each had a solver convergence warning on one rebalance.</p>
 
 With moderate caps, performance and trading stay close to the matching control.
-That leaves little historical performance gain, but also little observed cost
-for reducing the modeled concentration. With the 7% forecast target, realized
+So the caps gain little historically, but reducing the modeled concentration also costs little. With the 7% forecast target, realized
 volatility remains near 8.4% before 2022 and 9.3% afterward.
 
 I also tried a 10% sector cap, but only one schedule completed before the next
