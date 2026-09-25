@@ -219,6 +219,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table.risk-performance-table th, .research-table.risk-performance-table td { padding: 0.5rem 0.3rem; }
 @media (max-width: 600px) {
   .research-table.risk-performance-table { font-size: 0.84rem; }
+  .risk-performance-table th:first-child { width: 26%; }
 }
 .research-table-scroll .standalone-factor-table, .research-table-scroll .settings-table { min-width: 0; }
 .research-table-scroll .attribution-table { min-width: 0; table-layout: auto; margin-bottom: 0; }
