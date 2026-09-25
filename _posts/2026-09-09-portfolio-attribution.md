@@ -88,7 +88,7 @@ The panels use different units. Centering stock betas and the net dollar
 position help explain their difference, alongside changes in realized sensitivity.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/beta-history" mobile="/assets/portfolio-attribution/beta-history_mobile" version="2" alt="Trailing 126- and 252-session realized Russell 1000 beta above prior-session standardized beta exposure, with the 2008–09 and 2020–21 strategy drawdowns shaded." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/beta-history" mobile="/assets/portfolio-attribution/beta-history_mobile" version="3" alt="Trailing 126- and 252-session realized Russell 1000 beta above prior-session standardized beta exposure, with the 2008–09 and 2020–21 strategy drawdowns shaded." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Low average beta still leaves changing market sensitivity.</strong> Each regression requires a complete trailing window. Model exposure uses holdings entering each session and prior-session standardized beta loadings, available for 93.3% of gross exposure on an average day. Missing loadings contribute zero, the universe mean; dates with no coverage are gaps. Dots mark the two market lows; shading marks the strategy drawdowns. Each panel retains its own units and scale.</p>
 

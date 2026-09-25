@@ -68,8 +68,6 @@ def render(data, results, dark, mobile):
             when = dt.date.fromisoformat(row["date"])
             for ax, key in zip(axes, ["realized_beta", "model_beta"]):
                 ax.scatter(when, row[key], s=20, color=colors["blue"], zorder=4)
-            axes[1].annotate(row["date"][:4], (when, row["model_beta"]), xytext=(0, -18),
-                             textcoords="offset points", ha="center", fontsize=9, color=colors["ink"])
         for ax in axes:
             ax.yaxis.set_major_locator(plt.MaxNLocator(4))
         fig.subplots_adjust(left=.17 if mobile else .085, right=.97, top=.90, bottom=.08, hspace=.57)
