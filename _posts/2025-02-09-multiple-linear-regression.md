@@ -450,5 +450,5 @@ market exposure emerge from the positions. In the
 [optimization article](/quants/2026/08/29/portfolio-optimization.html), I take
 more control over portfolio risk and exposures. The same Ridge ranking has a
 development net Sharpe of about 1.43 there, versus 1.01 here. The difference comes
-from portfolio construction: joint sizing with a forecast-volatility target and
-trading controls, rather than volatility-scaled top and bottom 75 positions.
+from portfolio construction: giving stronger scores larger weights already lifts
+Sharpe to 1.12, and joint sizing with trading controls adds the rest.
