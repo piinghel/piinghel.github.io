@@ -4,9 +4,8 @@ title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
 last_modified_at: 2026-09-16
-show_date: false
 categories: ["Signals"]
-article_label: Low-volatility · portfolio construction
+article_label: Signals · Low volatility
 permalink: /quant/2024/12/15/low-volatility-factor.html
 github_repositories:
   - label: Research materials
@@ -32,7 +31,7 @@ The low-volatility effect has been studied extensively.
 [Blitz and van Vliet](https://repub.eur.nl/pub/10460) document the strong
 risk-adjusted returns of low-volatility stocks.
 [Frazzini and Pedersen](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf)
-offer a related explanation: investors who cannot easily borrow may favour
+offer a related explanation: investors who cannot easily borrow may favor
 stocks with more market exposure, bidding up their prices and reducing
 their expected returns.[^bab]
 
@@ -63,7 +62,7 @@ of the low-volatility stocks. The resulting portfolio has a realized beta
 of −1.12: equal capital produces substantial short market exposure.
 
 <div class="low-vol-figure naive-leg-risk-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" mobile="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile" alt="Realised volatility and average beta of the low- and high-volatility deciles" version="11" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" mobile="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile" alt="Realized volatility and average beta of the low- and high-volatility deciles" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: The short book dominates risk under equal weighting.</strong> Annualized realized volatility and average point-in-time beta, July 1995–May 2026. The high-volatility book's beta is measured before applying the short sign. The combined portfolio's full-sample realized beta is −1.12.</p>

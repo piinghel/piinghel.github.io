@@ -21,7 +21,7 @@ layout: base
         {%- unless page.show_date == false -%}<span> · </span>{%- endunless -%}
         <span>Updated </span>
         <time class="dt-modified" datetime="{{ updated_date | date_to_xmlschema }}" itemprop="dateModified">
-          {{ updated_date | date: "%B %Y" }}
+          {{ updated_date | date: date_format }}
         </time>
       {%- endif -%}
       {%- assign words = content | strip_html | number_of_words -%}

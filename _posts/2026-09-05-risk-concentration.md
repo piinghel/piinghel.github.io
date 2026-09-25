@@ -3,6 +3,7 @@ layout: post
 title: "When Risk Limits Start Changing the Portfolio"
 description: "Do weight limits leave concentrated portfolio risk? Testing what stock, sector and PCA risk caps reduce, and how much they change the portfolio."
 date: 2026-09-05
+last_modified_at: 2026-09-25
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Risk concentration
 permalink: /quants/2026/09/05/risk-concentration.html
@@ -247,7 +248,7 @@ that tilt would require factor attribution.
 
 ## Would I add these limits?
 
-The 10% PCA cap looks promising: it reduces the largest modelled risk
+The 10% PCA cap looks promising: it reduces the largest modeled risk
 concentrations with little change in performance or turnover. Before adding it
 to the baseline, I'd want to understand the economic exposures behind those
 components.

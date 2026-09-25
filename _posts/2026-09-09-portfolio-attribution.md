@@ -83,7 +83,7 @@ on the index's daily price return, with an intercept.
 
 Figure 3 follows trailing 126- and 252-session estimates above the model's
 standardized beta exposure: signed positions multiplied by standardized stock
-betas. Negative exposure favours lower-beta stocks relative to the universe.
+betas. Negative exposure favors lower-beta stocks relative to the universe.
 The panels use different units. Centering stock betas and the net dollar
 position help explain their difference, alongside changes in realized sensitivity.
 
@@ -226,7 +226,7 @@ $H_t$ contains holdings covered by the fit. A 2% long with a volatility
 loading of −1 contributes −0.02 to exposure. A 1% short with a loading of +2
 also contributes −0.02. Together they hold **−0.04 units**. If the volatility
 payoff is **+1%**, their contribution is **−0.04 P&L points**.
-Higher-volatility stocks did better that day, while both positions favoured
+Higher-volatility stocks did better that day, while both positions favored
 lower volatility. Other factors and residuals complete each position's P&L.
 
 I apply the same signed weights to the residuals, common return and sector

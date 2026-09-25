@@ -3,9 +3,9 @@ layout: post
 title: "Combining Multiple Predictors: The Linear Case"
 description: "From a low-volatility signal to supervised stock selection: choosing a target, ranking predictors, and learning a linear combination."
 date: 2025-02-09
-last_modified_at: 2026-09-16
+last_modified_at: 2026-09-25
 categories: ["Signals"]
-article_label: Factor combination · Multiple linear and Ridge regression
+article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 github_repositories:
   - label: Research materials
@@ -30,13 +30,13 @@ given what the others already tell me?
 I start with a simple rule. I group twelve predictors into momentum,
 defensive signals and short positioning, giving each theme one third of the
 score and splitting that weight equally among its predictors (Table 1).
-The rule favours medium-term strength, lower volatility and lighter short
+The rule favors medium-term strength, lower volatility and lighter short
 positioning. I label it “Fixed” in the results because I choose its weights
 in advance. Each predictor enters as a rank among the stocks on that
 date, on the common scale described below.
 
 <table class="research-table settings-table benchmark-ingredients">
-  <caption>Table 1: The fixed score. Each theme receives one third of the weight, divided equally among its predictors. Horizons are trading sessions.</caption>
+  <caption><strong>Table 1: The fixed score.</strong> Each theme receives one third of the weight, divided equally among its predictors. Horizons are trading sessions.</caption>
   <thead>
     <tr><th>Theme</th><th>What the score favors</th></tr>
   </thead>
@@ -187,7 +187,7 @@ fixed. Figure 1 shows the first three windows.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
 </div>
 
-<p class="figure-caption">Figure 1: Expanding walk-forward. Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
+<p class="figure-caption"><strong>Figure 1: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Recent dates enter training once their forward outcomes are available. Widths are schematic; the final prediction block can be shorter.</p>
 
 Keeping the older history adds observations but retains older relationships;
 a rolling window would drop the earliest dates. OLS and Ridge share the
@@ -207,7 +207,7 @@ collectively, although their forward targets still overlap.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="2" %}
 </div>
 
-<p class="figure-caption">Figure 2: Interleaved training dates. The first nine training dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
+<p class="figure-caption"><strong>Figure 2: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets used in the study. Each selected date contributes a full cross-section. The same construction is applied within each training window.</p>
 
 ## Prediction quality
 {: #prediction-quality-and-portfolio-results }
@@ -219,7 +219,7 @@ coefficient (IC) after 2021. The regressions' daily IC is less variable in both 
 the score and the forward sector-relative Sharpe target.
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
-  <caption>Table 2: Cross-sectional ranking quality. Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
+  <caption><strong>Table 2: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
   <thead>
     <tr><th>Ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
@@ -263,7 +263,7 @@ The gain in net return is much less convincing. During development, extra
 trading costs absorb most of OLS's gross-return advantage over the fixed score.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption>Table 3: Net performance and trading. Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Beta is measured against the Russell 1000.</caption>
+  <caption><strong>Table 3: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Arithmetic return and volatility are annualized; traded notional is annual two-way trading divided by strategy capital. Beta is measured against the Russell 1000.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Traded notional / year</th></tr>
   </thead>
@@ -294,7 +294,7 @@ market impact, so the extra trading remains a concern.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption">Figure 3: Portfolio paths from the three scores. The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
+<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio retains its own risk level; Table 3 supplies the risk-adjusted comparison for development through 2021 and the later period from January 2022.</p>
 
 ### Learning weights on the same inputs
 
@@ -304,7 +304,7 @@ target, training windows and portfolio rules the same. Ridge keeps the
 same $c=0.01$ penalty.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption>Table 4: The same twelve inputs, different weights. Mean statistics across the three rebalance schedules, with min–max Sharpe in parentheses. Returns are net of 5 bp per dollar traded; annualization and trading conventions match Table 3.</caption>
+  <caption><strong>Table 4: The same twelve inputs, different weights.</strong> Mean statistics across the three rebalance schedules, with min–max Sharpe in parentheses. Returns are net of 5 bp per dollar traded; annualization and trading conventions match Table 3.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Traded notional / year</th></tr>
   </thead>
@@ -343,7 +343,7 @@ differing. The rebalance schedule determines when those differences lead
 to trades.
 
 To see why, consider combinations of the predictors that vary together.
-Let $X_c$ denote the training inputs centred on their column means. The
+Let $X_c$ denote the training inputs centered on their column means. The
 eigenvectors $$\mathbf v_j$$ of $$G=X_c^\top X_c/n$$ identify those
 combinations, and each eigenvalue $$\lambda_j$$ measures its variance.
 For one fitted model, Ridge scales the OLS coefficient in each direction by
@@ -393,14 +393,14 @@ rises; a negative weight lowers it, holding the other ranks fixed.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
 </div>
 
-<p class="figure-caption">Figure 4: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit. Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
+<p class="figure-caption"><strong>Figure 4: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit.</strong> Signs persist while most magnitudes decline; the rows are selected using the full coefficient history.</p>
 
 The clearest pattern is longer-term strength with a short-term reversal
 component. Price relative to its six-month moving average, historical
 six-month Sharpe and the past year's return all receive positive weights.
 So does the fraction of days spent above the 200-day moving average over
-the past two years. Together, these terms favour stronger, more persistent
-trends. The negative 10/21-day MACD weight then favours weaker recent
+the past two years. Together, these terms favor stronger, more persistent
+trends. The negative 10/21-day MACD weight then favors weaker recent
 momentum among otherwise similar stocks. I read this combination as looking
 for longer-term strength without chasing the latest upward move.
 
@@ -412,10 +412,10 @@ run-up lowers the score. The model is learning contrasts between horizons
 and aspects of the price path, rather than giving every momentum measure
 the same sign.
 
-Liquidity matters too. The negative illiquidity weight favours stocks with
+Liquidity matters too. The negative illiquidity weight favors stocks with
 less absolute price movement per dollar traded. The market-cap variability
 terms contrast different horizons: the two-year measure has a positive
-weight, while the one-month measure has a negative weight. This pair favours
+weight, while the one-month measure has a negative weight. This pair favors
 more variation over the longer history and lower variability over the recent
 month. These features describe variation in log market capitalization over time.
 

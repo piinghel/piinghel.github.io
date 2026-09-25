@@ -3,9 +3,9 @@ layout: post
 title: "Joint Sizing with Fewer Trades"
 description: "Joint sizing adds turnover. A rank buffer and trade penalty recover more of the gross return."
 date: 2026-08-29
-last_modified_at: 2026-09-16
+last_modified_at: 2026-09-25
 categories: ["Portfolio construction"]
-article_label: Portfolio construction · Ridge allocation
+article_label: Portfolio construction · Joint sizing
 permalink: /quants/2026/08/29/portfolio-optimization.html
 github_repositories:
   - label: Research materials
@@ -193,7 +193,7 @@ Table 2 separates what the buffer and penalty contribute.
 
 The buffer alone saves about three times capital in annual trading; adding it
 alongside the penalty saves seven. That's why I use them together: the buffer
-allows more holdings to remain eligible, and the penalty favours retaining them.
+allows more holdings to remain eligible, and the penalty favors retaining them.
 Both controls change positions as well as trading costs.
 
 Figure 2 checks nearby settings in development, varying one control at a time

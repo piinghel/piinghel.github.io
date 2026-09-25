@@ -49,8 +49,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Do not add temporary plotting scripts, scratch files, generated caches, or speculative refactors to the repository.
 - Preserve existing article framing and quantitative claims unless the source evidence is checked first.
 - Do not reintroduce dollar-neutrality, market-neutrality, mandate, or neutrality framing into the low-volatility article.
-- Keep the low-volatility article's visible publication date hidden while
-  retaining its stable permalink and front-matter date for Jekyll ordering.
+- Show the publication date on every post; add `last_modified_at` when an
+  article's content changes so the header also shows "Updated".
 
 ## Figures
 
