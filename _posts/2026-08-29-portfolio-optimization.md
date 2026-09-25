@@ -53,8 +53,8 @@ geometric annualized returns; Sharpe uses arithmetic mean daily return and a
 zero risk-free rate. Two-way turnover sums absolute executed trades relative
 to strategy capital, annualized over the reporting window.
 
-I change covariance, score scaling and constraints together when moving from
-individual to joint sizing, so the comparison evaluates the full allocation rules.
+Joint sizing changes the covariance, score scaling and constraints at once, so I
+compare the full rules rather than each change separately.
 
 <h2 id="development-results">Sizing stocks together</h2>
 
@@ -103,10 +103,9 @@ forecast covariance matrix, so $$w_t^\top\Sigma_t w_t$$ is annual portfolio vari
 The set $$\mathcal W_t$$ contains the other portfolio limits:
 200% gross, ±25% net, 4% per name, ±0.05 estimated beta, and the sector caps
 in Table 4. Long candidates can receive positive or zero weights; short
-candidates negative or zero weights. Maximizing the combined score under
-these limits and a volatility ceiling is not
-generally equivalent to constrained Sharpe maximization. Other limits can
-bind while forecast volatility remains below 7%.
+candidates negative or zero weights. With these limits, maximizing the score
+isn't the same as maximizing Sharpe: other limits can bind before forecast
+volatility reaches 7%.
 
 These limits apply to target weights at a rebalance. Next-close execution and
 subsequent price moves can take the actual holdings outside those bounds.
@@ -341,8 +340,9 @@ is about 21% above forecast for the optimizer and 18% above for the version
 with trading controls.
 
 The full development results tell the same story: I asked for 7% forecast
-volatility and got about 8.4% realized volatility. Shrinkage helps, but I still
-need to recalibrate the risk level on development data and rerun the portfolios.
+volatility and got about 8.4% realized volatility. These forecasts already
+include the 1.18 volatility multiplier in Table 4. Shrinkage helps, but I would
+still need a new multiplier estimated on development data, then rerun the portfolios.
 Changing covariance changes the
 allocation decision too, including which constraints bind and how much the portfolio trades.
 

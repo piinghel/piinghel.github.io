@@ -7,7 +7,7 @@ permalink: /quants/hybrid-risk-model.html
 toc: false
 show_date: false
 published: false
-categories: ["Portfolio risk"]
+categories: ["Risk & attribution"]
 ---
 
 After [comparing Ridge with tree models](/quants/xgboost-vector-leaves.html), I wanted to take a closer look at the risk model. It helps the optimizer decide how much to hold in each stock and which positions work well together.

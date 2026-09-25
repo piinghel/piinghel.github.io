@@ -1,10 +1,11 @@
 ---
+published: false
 layout: post
 title: "Combining Rebalance Weeks Reduces Timing Risk"
 description: "Three tranches preserve average return while reducing dependence on the rebalance calendar. A comparison of fifteen calendars."
 date: 2025-05-10
 last_modified_at: 2026-09-17
-categories: ["Rebalancing"]
+categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
 github_repositories:

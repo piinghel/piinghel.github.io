@@ -5,11 +5,11 @@ description: "How equal weighting and inverse-volatility sizing compare in risk,
 date: 2024-12-15
 last_modified_at: 2026-09-16
 show_date: false
-categories: ["Low volatility"]
+categories: ["Signals"]
 article_label: Low-volatility · portfolio construction
 permalink: /quant/2024/12/15/low-volatility-factor.html
 github_repositories:
-  - label: Research code on GitHub
+  - label: Research materials
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 

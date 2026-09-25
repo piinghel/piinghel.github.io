@@ -25,11 +25,11 @@ layout: base
         </time>
       {%- endif -%}
       {%- assign words = content | strip_html | number_of_words -%}
-      {%- if words < 360 -%}
-        <span class="reading-time"> · 1 min read</span>
-      {%- else -%}
-        <span class="reading-time"> · {{ words | divided_by: 180 }} min read</span>
-      {%- endif -%}
+      {%- assign reading_minutes = words | divided_by: 180 -%}
+      {%- if words < 360 -%}{%- assign reading_minutes = 1 -%}{%- endif -%}
+      <span class="reading-time">
+        {%- if page.show_date != false or updated_date -%} · {% endif -%}
+        {{ reading_minutes }} min read</span>
       {%- if page.author -%}
         • {% for author in page.author %}
           <span itemprop="author" itemscope itemtype="http://schema.org/Person">

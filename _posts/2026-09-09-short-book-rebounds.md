@@ -4,9 +4,8 @@ title: "Performance Attribution, Part 2: Why the Short Book Struggles in Rebound
 description: "Higher-beta shorts create an early-rebound vulnerability. The imbalance fades at longer horizons, but severe losses can persist."
 permalink: /quants/short-book-rebounds.html
 toc: true
-show_date: false
 date: 2026-09-09
-categories: ["Portfolio management"]
+categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 3
 series_id: performance-attribution
 series_order: 2

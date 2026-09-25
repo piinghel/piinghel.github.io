@@ -3,29 +3,32 @@ layout: base
 ---
 
 <div class="home">
-  <h1 class="home-title">Systematic equity research</h1>
-  <p class="home-intro">From sizing individual stocks to building a portfolio, understanding its P&amp;L and comparing its return and risk models.</p>
+  <h1 class="home-title">Research notes</h1>
+  <p class="home-intro">Personal experiments and backtests in quantitative finance.</p>
+  {%- assign start_url = site.data.reading_order | first -%}
+  <p class="home-start"><a href="{{ start_url | relative_url }}">Start here</a> with the first article.</p>
   {% assign posts = site.posts %}
 
   {% include ordered-posts.html posts=posts %}
-  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" | reverse %}
-  {% assign reference_posts = curated_posts | where: "navigation", false %}
-  {% assign posts = unplaced_posts | concat: research_posts | concat: reference_posts %}
+  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" %}
+  {% assign posts = unplaced_posts | concat: research_posts %}
 
   {%- if posts.size > 0 -%}
-    {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
-    <ul class="post-list">
+    <ol class="post-list">
       {%- for post in posts -%}
+      {%- assign reading_step = nil -%}
+      {%- for research_post in research_posts -%}
+        {%- if research_post.url == post.url -%}{%- assign reading_step = forloop.index -%}{%- break -%}{%- endif -%}
+      {%- endfor -%}
       <li>
+        <span class="reading-step" aria-hidden="true">{{ reading_step }}</span>
+        <div class="post-list-entry">
         <h2>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}
           </a>
         </h2>
         <div class="post-list-details">
-          {%- unless post.show_date == false -%}
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
-          {%- endunless -%}
           {%- for category in post.categories limit: 2 -%}
             <span class="post-topic">{{ category }}</span>
           {%- endfor -%}
@@ -34,9 +37,10 @@ layout: base
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}
         {%- endif -%}
+        </div>
       </li>
       {%- endfor -%}
-    </ul>
+    </ol>
 
   {%- endif -%}
 

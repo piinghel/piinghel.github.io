@@ -4,7 +4,7 @@ title: "Combining Multiple Predictors: The Linear Case"
 description: "From a low-volatility signal to supervised stock selection: choosing a target, ranking predictors, and learning a linear combination."
 date: 2025-02-09
 last_modified_at: 2026-09-16
-categories: ["Regression"]
+categories: ["Signals"]
 article_label: Factor combination · Multiple linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
 github_repositories:
@@ -125,9 +125,9 @@ so dates with more usable stocks contribute more to the loss.
 The row count overstates the independent information: adjacent targets share
 19 of their 20 daily returns, predictors persist, and stocks share market
 and sector shocks. Breadth gives the model differences across stocks to
-learn from within a limited market history. Pooling assumes that the
-predictive relationship is sufficiently shared across stocks and dates;
-cross-sectional dependence limits how much information that breadth adds.
+learn from within a limited market history. Pooling assumes the
+same relationship holds across stocks and dates. Because stocks move together,
+the extra rows add less information than their number suggests.
 
 ## Learning the weights
 {: #learning-the-combination }
@@ -250,7 +250,7 @@ Returns use arithmetic annualization, and Sharpe assumes a zero cash
 rate. Two-way turnover counts purchases and sales relative to strategy
 capital, annualized.
 
-To reduce dependence on [rebalance luck](/quants/2025/05/10/rebalancing-luck.html),
+To reduce dependence on the rebalance week,
 I run each score on three schedules starting one week apart and report
 results across all three.[^schedule-summary]
 
@@ -448,4 +448,7 @@ clear portfolio advantage over OLS.
 These results also depend on how I size the selected stocks. Here, net and
 market exposure emerge from the positions. In the
 [optimization article](/quants/2026/08/29/portfolio-optimization.html), I take
-more control over portfolio risk and exposures.
+more control over portfolio risk and exposures. The same Ridge ranking has a
+development net Sharpe of about 1.43 there, versus 1.01 here. The difference comes
+from portfolio construction: joint sizing with a forecast-volatility target and
+trading controls, rather than volatility-scaled top and bottom 75 positions.

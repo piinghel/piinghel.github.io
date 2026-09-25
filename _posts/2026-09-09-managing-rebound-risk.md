@@ -4,9 +4,8 @@ title: "Performance Attribution, Part 3: Can Risk Limits Improve Rebounds?"
 description: "Tilt limits buy lower drawdown but worsen typical rebounds as they tighten. Direct beta limits offer modest, uneven improvement."
 permalink: /quants/managing-rebound-risk.html
 toc: true
-show_date: false
 date: 2026-09-09
-categories: ["Portfolio management"]
+categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 3 of 3
 series_id: performance-attribution
 series_order: 3

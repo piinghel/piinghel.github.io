@@ -4,12 +4,14 @@ title: "Performance Attribution, Part 1: Understanding Your P&L"
 description: "The portfolio's market beta, factor exposures, and the positions behind its P&L and realized risk."
 permalink: /quants/portfolio-attribution.html
 toc: true
-show_date: false
 date: 2026-09-09
-categories: ["Portfolio management"]
+categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 3
 series_id: performance-attribution
 series_order: 1
+github_repositories:
+  - label: Dashboard source code
+    url: https://github.com/piinghel/portfolio-pnl-dashboard
 ---
 
 <p class="article-summary">A return chart shows how the portfolio did. Attribution helps explain why. I break down P&amp;L and risk by positions, sectors and shared stock characteristics, then look at what those views reveal during drawdowns.</p>

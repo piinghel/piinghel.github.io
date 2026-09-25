@@ -142,21 +142,21 @@ portfolio above a cap before it trades again.
 “Own concentration” is the 95th percentile of the largest contribution in the
 dimension being capped, averaged across schedules. “Targets corrected” counts
 rebalances that needed a local correction. Target L1 adds the absolute weight
-differences between capped and control targets on the same date. These
-portfolios evolve independently, so it includes differences built up over time.
+differences between capped and control targets on the same date. Because
+the portfolios drift apart, this also includes differences that build up over time.
 Executed turnover is in Table 2.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections use a 10<sup>−6</sup> tolerance. * Solver warnings for Sector 15% and Stock 4%; Stock 3% checks cover targets only.</caption>
+  <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. Concentration is a share of forecast variance; target L1 is a percentage of capital. Corrections use a 10<sup>−6</sup> tolerance. Sector 15% and Stock 4% each had a solver convergence warning on one rebalance; Stock 3% checks cover targets only.</caption>
   <thead>
     <tr><th>Configuration</th><th>Matched control</th><th>Own concentration<br>control → capped</th><th>Targets corrected</th><th>Mean target L1</th></tr>
   </thead>
   <tbody>
     <tr><th scope="row">All PCs · 10%</th><td>PCA covariance control</td><td>15.88% → 10.00%</td><td>27.1%</td><td>4.8%</td></tr>
     <tr><th scope="row">Sector · 20%</th><td>Original optimizer</td><td>27.28% → 20.00%</td><td>58.1%</td><td>6.6%</td></tr>
-    <tr><th scope="row">Sector · 15%*</th><td>Original optimizer</td><td>27.28% → 15.00%</td><td>98.3%</td><td>19.4%</td></tr>
-    <tr><th scope="row">Stock · 4%*</th><td>Original optimizer</td><td>7.17% → 4.00%</td><td>50.7%</td><td>4.1%</td></tr>
-    <tr><th scope="row">Stock · 3%*</th><td>Original optimizer</td><td>7.17% → 3.00%</td><td>83.4%</td><td>7.1%</td></tr>
+    <tr><th scope="row">Sector · 15%</th><td>Original optimizer</td><td>27.28% → 15.00%</td><td>98.3%</td><td>19.4%</td></tr>
+    <tr><th scope="row">Stock · 4%</th><td>Original optimizer</td><td>7.17% → 4.00%</td><td>50.7%</td><td>4.1%</td></tr>
+    <tr><th scope="row">Stock · 3%</th><td>Original optimizer</td><td>7.17% → 3.00%</td><td>83.4%</td><td>7.1%</td></tr>
     <tr><th scope="row">Stock · 2%</th><td>Original optimizer</td><td>7.17% → 2.00%</td><td>100.0%</td><td>17.0%</td></tr>
   </tbody>
 </table>
@@ -185,7 +185,7 @@ controls (Table 2). PCA uses its matching covariance control; stock and sector
 caps use the original optimizer.
 
 <table class="research-table comparison-table risk-performance-table">
-  <caption><strong>Table 2: Returns, risk, and trading.</strong> Three-schedule means, except Sector 10%**. Net returns are geometric, after 5 bp trading costs. Return, volatility, and two-way turnover are annualized; turnover is a multiple of capital.</caption>
+  <caption><strong>Table 2: Returns, risk, and trading.</strong> Three-schedule means. Net returns are geometric, after 5 bp trading costs. Return, volatility, and two-way turnover are annualized; turnover is a multiple of capital.</caption>
   <thead>
     <tr><th>Portfolio</th><th>Net return</th><th>Vol.</th><th>Net Sharpe</th><th>Turnover</th></tr>
   </thead>
@@ -195,9 +195,8 @@ caps use the original optimizer.
     <tr><th scope="row">PCA control</th><td>12.22%</td><td>8.33%</td><td>1.43</td><td>28.0×</td></tr>
     <tr><th scope="row">PCA 10%</th><td>12.21%</td><td>8.32%</td><td>1.43</td><td>28.0×</td></tr>
     <tr><th scope="row">Sector 20%</th><td>12.40%</td><td>8.40%</td><td>1.43</td><td>28.2×</td></tr>
-    <tr><th scope="row">Sector 15%*</th><td>12.30%</td><td>8.40%</td><td>1.42</td><td>28.3×</td></tr>
-    <tr><th scope="row">Sector 10%**</th><td>11.06%</td><td>8.27%</td><td>1.31</td><td>28.6×</td></tr>
-    <tr><th scope="row">Stock 4%*</th><td>12.34%</td><td>8.42%</td><td>1.42</td><td>28.3×</td></tr>
+    <tr><th scope="row">Sector 15%</th><td>12.30%</td><td>8.40%</td><td>1.42</td><td>28.3×</td></tr>
+    <tr><th scope="row">Stock 4%</th><td>12.34%</td><td>8.42%</td><td>1.42</td><td>28.3×</td></tr>
     <tr><th scope="row">Stock 3%</th><td>12.30%</td><td>8.44%</td><td>1.42</td><td>28.4×</td></tr>
     <tr><th scope="row">Stock 2%</th><td>12.26%</td><td>8.47%</td><td>1.41</td><td>28.7×</td></tr>
     <tr class="period-heading"><th colspan="5">Later · January 2022–May 2026</th></tr>
@@ -205,31 +204,22 @@ caps use the original optimizer.
     <tr><th scope="row">PCA control</th><td>8.11%</td><td>9.32%</td><td>0.88</td><td>24.5×</td></tr>
     <tr><th scope="row">PCA 10%</th><td>8.12%</td><td>9.30%</td><td>0.88</td><td>24.6×</td></tr>
     <tr><th scope="row">Sector 20%</th><td>8.18%</td><td>9.29%</td><td>0.89</td><td>24.6×</td></tr>
-    <tr><th scope="row">Sector 15%*</th><td>8.17%</td><td>9.24%</td><td>0.89</td><td>24.7×</td></tr>
-    <tr><th scope="row">Sector 10%**</th><td>8.12%</td><td>9.10%</td><td>0.90</td><td>25.3×</td></tr>
-    <tr><th scope="row">Stock 4%*</th><td>8.11%</td><td>9.31%</td><td>0.88</td><td>24.6×</td></tr>
+    <tr><th scope="row">Sector 15%</th><td>8.17%</td><td>9.24%</td><td>0.89</td><td>24.7×</td></tr>
+    <tr><th scope="row">Stock 4%</th><td>8.11%</td><td>9.31%</td><td>0.88</td><td>24.6×</td></tr>
     <tr><th scope="row">Stock 3%</th><td>8.30%</td><td>9.32%</td><td>0.90</td><td>24.7×</td></tr>
     <tr><th scope="row">Stock 2%</th><td>8.60%</td><td>9.30%</td><td>0.93</td><td>24.9×</td></tr>
   </tbody>
 </table>
 
-<p class="figure-caption">* Sector 15% and Stock 4% have solver warnings.<br>** Sector 10%: one completed schedule, with solver and convergence warnings. Against its same-schedule control, net Sharpe falls from 1.40 to 1.31 in development and from 0.93 to 0.90 later. Testing stopped.</p>
+<p class="figure-caption">Sector 15% and Stock 4% each had a solver convergence warning on one rebalance.</p>
 
 With moderate caps, performance and trading stay close to the matching control.
 That leaves little historical performance gain, but also little observed cost
 for reducing the modeled concentration. With the 7% forecast target, realized
 volatility remains near 8.4% before 2022 and 9.3% afterward.
 
-I pushed the sector cap down to 10% to see what a stricter limit would do. In
-the only completed schedule, it requires a correction at every rebalance.
-The later 95th percentile of the largest sector contribution falls from 28.6%
-to 10%, but the corresponding
-PCA contribution barely changes, from 14.6% to 14.2%.
-
-On that same schedule, later maximum drawdown improves from 9.16% to 7.47%,
-while earlier drawdown worsens slightly and turnover rises in both periods.
-The next schedule hit the iteration limit. Slow runs and mixed results led me
-to abandon the 10% sector test.
+I also tried a 10% sector cap, but only one schedule completed before the next
+hit the solver's iteration limit, so I stopped that test.
 
 The 2% stock cap looks more appealing if I focus on the later period. Net Sharpe
 rises from 0.87 to 0.93 and maximum drawdown falls from 9.05% to 8.47%, but the improvement

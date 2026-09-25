@@ -18,10 +18,11 @@ bundle exec jekyll serve
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:
 low-volatility sizing → regression → portfolio construction and risk concentration
-→ tranching → P&L attribution 1–3 → tree models → risk-model comparison → resources.
-The homepage reverses the research sequence, with the latest instalments at the
-top and Resources below the articles. Previous/Next links follow the sequence
-from its beginning. Place new articles beside their prerequisites and follow-ups;
+→ P&L attribution 1–3 → resources. The tranching and tree-model articles are
+unpublished and out of the sequence until they are rebuilt.
+The homepage lists the research sequence in reading order with step numbers;
+Resources stays in the header rather than the list. Previous/Next links follow
+the sequence from its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
 Unlisted posts appear first in their existing date order so they cannot disappear;
