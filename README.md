@@ -20,7 +20,7 @@ bundle exec jekyll serve
 low-volatility sizing → regression → portfolio construction and risk concentration
 → P&L attribution 1–3 → resources. The tranching and tree-model articles are
 unpublished and out of the sequence until they are rebuilt.
-The homepage lists the research sequence in reading order with step numbers;
+The homepage lists the research sequence newest first, with publication dates;
 Resources stays in the header rather than the list. Previous/Next links follow
 the sequence from its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
@@ -207,8 +207,15 @@ the included aggregate series:
 
 ```sh
 python3 scripts/render_attribution_series.py
+python3 scripts/render_attribution_holdings.py
+python3 scripts/render_attribution_recoveries.py
 python3 scripts/check_site.py --update-dimensions
 ```
+
+`render_attribution_holdings.py` draws Part 2's rebound snapshots from
+`rebound-holdings.json`; `render_attribution_recoveries.py` draws the eleven
+recovery windows from `recoveries.json`. `export_attribution_dynamics.py`
+refreshes `dynamics.json` for the time explorer from the frozen private snapshot.
 
 Its renderer requires NumPy and Matplotlib and emits desktop/mobile SVGs for
 both themes. The underlying diagnostic and controlled beta replays live in the

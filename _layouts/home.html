@@ -4,31 +4,25 @@ layout: base
 
 <div class="home">
   <h1 class="home-title">Research notes</h1>
-  <p class="home-intro">Personal experiments and backtests in quantitative finance.</p>
-  {%- assign start_url = site.data.reading_order | first -%}
-  <p class="home-start"><a href="{{ start_url | relative_url }}">Start here</a> with the first article.</p>
+  <p class="home-intro">Personal experiments in quantitative finance and data science.</p>
   {% assign posts = site.posts %}
 
   {% include ordered-posts.html posts=posts %}
-  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" %}
+  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" | reverse %}
   {% assign posts = unplaced_posts | concat: research_posts %}
 
   {%- if posts.size > 0 -%}
-    <ol class="post-list">
+    {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
+    <ul class="post-list">
       {%- for post in posts -%}
-      {%- assign reading_step = nil -%}
-      {%- for research_post in research_posts -%}
-        {%- if research_post.url == post.url -%}{%- assign reading_step = forloop.index -%}{%- break -%}{%- endif -%}
-      {%- endfor -%}
       <li>
-        <span class="reading-step" aria-hidden="true">{{ reading_step }}</span>
-        <div class="post-list-entry">
         <h2>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}
           </a>
         </h2>
         <div class="post-list-details">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
           {%- for category in post.categories limit: 2 -%}
             <span class="post-topic">{{ category }}</span>
           {%- endfor -%}
@@ -37,10 +31,9 @@ layout: base
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}
         {%- endif -%}
-        </div>
       </li>
       {%- endfor -%}
-    </ol>
+    </ul>
 
   {%- endif -%}
 
