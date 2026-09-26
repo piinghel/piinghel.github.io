@@ -5,6 +5,7 @@ description: "The portfolio's market beta, factor exposures, and the positions b
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
+last_modified_at: 2026-09-26
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 3
 series_id: performance-attribution
@@ -33,7 +34,7 @@ point: Part 2 investigates the rebound losses, and Part 3 tests ways to reduce t
 
 I use the strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
-stocks with a prediction model and sizes them within risk limits.
+stocks with a prediction model and sizes them within risk limits.[^portfolio-version]
 The history runs from **23 September 1998 to 27 May 2026**.
 
 <div id="pnl-conventions" markdown="1">
@@ -308,3 +309,5 @@ Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/e
 
 The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
 is available to explore your own portfolio.
+
+[^portfolio-version]: These results use an earlier version of the optimizer portfolio: the 144-predictor Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses [TBD: ranking] and a multiplier re-estimated on development data, so its numbers differ from those here.

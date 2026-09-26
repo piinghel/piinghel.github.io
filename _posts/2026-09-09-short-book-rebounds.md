@@ -5,6 +5,7 @@ description: "Higher-beta shorts create an early-rebound vulnerability. The imba
 permalink: /quants/short-book-rebounds.html
 toc: true
 date: 2026-09-09
+last_modified_at: 2026-09-26
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 3
 series_id: performance-attribution
@@ -24,7 +25,7 @@ with the 2009 and 2020 rebounds, compare the holdings and their factor
 contributions, then check eleven episodes. The aim is to see whether the
 problem repeats and whether it is concentrated in the first few months.
 
-I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
+I use the same portfolio,[^portfolio-version] period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
 
 ## Protection during the decline, losses during the rebound
@@ -211,3 +212,5 @@ and predictor-causality explanations untested.
 Kent Daniel and Tobias Moskowitz, [*Momentum Crashes*](https://www.kentdaniel.net/papers/published/jfe_16.pdf),
 *Journal of Financial Economics*, 2016, Sections 2–3. Their rebound mechanism
 motivates the comparison with the observed holdings here.
+
+[^portfolio-version]: These results use an earlier version of the optimizer portfolio: the 144-predictor Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses [TBD: ranking] and a multiplier re-estimated on development data, so its numbers differ from those here.

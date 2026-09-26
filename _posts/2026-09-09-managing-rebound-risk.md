@@ -5,6 +5,7 @@ description: "Tilt limits buy lower drawdown but worsen typical rebounds as they
 permalink: /quants/managing-rebound-risk.html
 toc: true
 date: 2026-09-09
+last_modified_at: 2026-09-26
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 3 of 3
 series_id: performance-attribution
@@ -25,7 +26,7 @@ if any, improves the early recovery while preserving protection during declines.
 
 I keep the forecasts, covariance model and execution rules unchanged. The three rebalance schedules each get a third of the capital, and I label the unchanged portfolio **Original**.
 
-I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
+I use the same portfolio,[^portfolio-version] period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
 
 ## Limit the volatility tilt
@@ -228,3 +229,5 @@ constant sizing and equal-gross rescaling use full-history averages. The
 factor model's normalization inherits Part 1's sector labels.
 The trading rules use decision-time prices and descriptors.
 </aside>
+
+[^portfolio-version]: These results use an earlier version of the optimizer portfolio: the 144-predictor Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses [TBD: ranking] and a multiplier re-estimated on development data, so its numbers differ from those here.
