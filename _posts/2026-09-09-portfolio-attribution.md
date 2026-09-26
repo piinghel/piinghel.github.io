@@ -33,7 +33,8 @@ point: Part 2 investigates the rebound losses, and Part 3 tests ways to reduce t
 
 I use the strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
-stocks with a prediction model and sizes them within risk limits.
+stocks with a prediction model and sizes them within risk limits. The
+ranking is the Ridge model fitted on the earlier set of 144 predictors.
 The history runs from **23 September 1998 to 27 May 2026**.
 
 <div id="pnl-conventions" markdown="1">

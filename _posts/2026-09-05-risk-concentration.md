@@ -26,7 +26,7 @@ same underlying move. Before adding more constraints, though, I wanted to know:
 does the backtest show this problem? And if it does, can I reduce the
 concentration with limited trading?
 
-As in my other articles, I hold the Ridge predictions, selected stocks, trading controls, execution and 5 bp cost on traded notional fixed, so only the allocation changes. I use three rebalance schedules, each starting
+As in my other articles, I hold the Ridge predictions (fitted on the earlier set of 144 predictors), selected stocks, trading controls, execution and 5 bp cost on traded notional fixed, so only the allocation changes. I use three rebalance schedules, each starting
 in a different week, from September 1998 through May 2026, reporting results before and after 2021
 separately. The three schedules let me check
 sensitivity to rebalance timing; they share the same market history.
