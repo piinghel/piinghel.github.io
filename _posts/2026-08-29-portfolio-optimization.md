@@ -3,7 +3,7 @@ layout: post
 title: "Joint Sizing with Fewer Trades"
 description: "Joint sizing adds turnover. A rank buffer and trade penalty recover more of the gross return."
 date: 2026-08-29
-last_modified_at: 2026-09-25
+last_modified_at: 2026-09-26
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -110,7 +110,7 @@ The limits apply to target weights; after next-close execution and later price m
 In Table 1, joint sizing adds about three and a half percentage points of gross
 return at similar realized risk. It also trades 42.5 times capital annually,
 versus 30.3 for volatility scaling. The third rule preserves almost all that
-gross return while removing much of the extra trading.
+gross return while trading less than volatility scaling (28.2× versus 30.3×).
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 1: Joint sizing and trading costs.</strong> September 1998–December 2021, means of three schedule-level metrics. Returns are geometric and annualized; volatility is annualized. Net results charge 5 bp on traded notional. Drawdowns are reported as positive loss magnitudes.</caption>
@@ -237,11 +237,11 @@ one is much weaker. Trading more slowly still helps on average, but the
 result is much less consistent than during development.
 
 Short-book losses remain substantial in December 2022–February 2023.
-Across schedules, the long book contributes about +7.2
+For the three schedules combined, the long book contributes about +7.2
 percentage points and the short book −16.4, measured as sums of daily
 after-cost contributions. A market-only decomposition explains little of the
-loss. That locates the problem in the short book, but identifying a shared
-sector or style exposure requires a separate attribution study.
+loss. That locates the problem in the short book; the
+[attribution series](/quants/portfolio-attribution.html) looks at why short books struggle in rebounds.
 
 ## Covariance and risk forecasts
 
@@ -374,6 +374,7 @@ schedule, but the combination still helps on average.
     <tr><th scope="row">Volatility-scaled baseline</th><td>Logistic signal shares with slope 2; 60-day volatility, 20% reference and 5% floor; 4% name cap; each book scales down above 100% gross</td></tr>
     <tr><th scope="row">Joint portfolio limits</th><td>7% forecast volatility; 200% gross; 4% per name; ±25% net; ±0.05 estimated beta</td></tr>
     <tr><th scope="row">Covariance estimate</th><td>21-day volatility; 756-day correlations of volatility-standardized returns (252 observations minimum); 50% shrinkage toward identity; volatility multiplied by 1.18</td></tr>
+    <tr><th scope="row">Beta estimate</th><td>756-day correlation with the market (252 observations minimum) combined with 21-day stock and market volatility</td></tr>
     <tr><th scope="row">Correlation preparation</th><td>Daily returns capped at ±30%; missing pairs use 0.50; matrix symmetrized, negative eigenvalues clipped and unit diagonal restored before shrinkage</td></tr>
     <tr><th scope="row">Sector limits</th><td>±20% net; 30% of either book</td></tr>
     <tr><th scope="row">Trading penalty</th><td><i>c</i> = 2.5 × 10<sup>−4</sup>, applied to the absolute change from drifted pre-trade weights</td></tr>
