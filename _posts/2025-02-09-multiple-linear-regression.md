@@ -59,18 +59,73 @@ activity. I group them into seven themes (Table 1).
 <table class="research-table settings-table predictor-themes">
   <caption><strong>Table 1: The predictors by theme.</strong> Horizons are trading sessions.</caption>
   <thead>
-    <tr><th>Theme</th><th>What it captures</th><th>Predictors</th></tr>
+    <tr><th>Theme</th><th>What it measures</th><th>Predictors</th></tr>
   </thead>
   <tbody>
     <tr><th scope="row">Momentum &amp; trend</th><td>Returns and risk-adjusted returns over 3–12 months, price relative to moving averages and to recent highs and lows, how persistently the price stayed above its 200-day average, and the share of losing days</td><td>33</td></tr>
-    <tr><th scope="row">Short-term reversal</th><td>Returns over the last 1–21 sessions, which tend to partly reverse</td><td>4</td></tr>
+    <tr><th scope="row">Short-term reversal</th><td>Returns over the last 1–21 sessions</td><td>4</td></tr>
     <tr><th scope="row">Volatility</th><td>Close-to-close, downside and upside volatility and average true range, over 5–252 sessions</td><td>12</td></tr>
-    <tr><th scope="row">Size</th><td>Log market capitalization, its change, and its variability: the standard deviation of log market cap over a window, or how much the company's value has moved around</td><td>10</td></tr>
-    <tr><th scope="row">Liquidity &amp; volume</th><td>Share turnover, Amihud illiquidity (absolute return per dollar traded), variability of trading volume, and the correlation between price and volume changes</td><td>10</td></tr>
+    <tr><th scope="row">Size</th><td>Log market capitalization, its change, and its variability: the standard deviation of log market cap over a window</td><td>10</td></tr>
+    <tr><th scope="row">Liquidity &amp; volume</th><td>Share turnover, Amihud illiquidity, variability of trading volume, and the correlation between price and volume changes</td><td>10</td></tr>
     <tr><th scope="row">Market correlation</th><td>Correlation of the stock's daily returns with the market over one and two years</td><td>2</td></tr>
     <tr><th scope="row">Short positioning</th><td>Short interest relative to daily volume: its level, variability and change</td><td>9</td></tr>
   </tbody>
 </table>
+
+Each theme comes with an economic story for why it might predict the target.
+None of these stories is settled, but they tell me what to expect.
+
+**Momentum &amp; trend.** Stocks that did well over the past three to twelve
+months have tended to keep doing well for a while.[^momentum] The usual
+explanation is that investors underreact: news diffuses slowly, and prices
+take time to adjust. The trend measures add whether the move was steady or
+came in one jump. Because the target is a Sharpe ratio, a steady trend
+matters as much as a large one.
+
+**Short-term reversal.** Over days to a month, prices partly reverse.[^reversal]
+A common reading is compensation for providing liquidity: an investor who has
+to sell quickly pushes the price below fair value, and whoever buys earns the
+recovery. Among large caps the effect is small and expensive to trade.
+
+**Volatility.** Low-volatility stocks have earned about as much as
+high-volatility stocks, with far less risk.[^low-volatility] Investors who
+cannot or will not use leverage reach for high-beta stocks instead, and some
+like lottery-like payoffs, which bids up the most volatile names. My target
+adds a mechanical reason: it divides by future volatility, and volatility
+persists.
+
+**Size.** Every stock here is in the Russell 1000, so this is not the
+small-cap premium. Larger, steadier companies tend to have lower future
+volatility, and market-cap variability, the standard deviation of log market
+cap over a window, is a slow measure of how much a company's value moves
+around. The change in market cap overlaps with momentum.
+
+**Liquidity &amp; volume.** Heavily traded stocks attract attention and
+disagreement, and high turnover has tended to precede lower returns.[^turnover]
+Amihud illiquidity, the absolute return per dollar traded, measures price
+impact: stocks that move more per dollar should compensate their holders.[^amihud]
+The price–volume correlation asks whether volume arrives with up-moves or
+down-moves.
+
+**Market correlation.** A stock that moves tightly with the market carries
+more of its beta. The betting-against-beta argument says such stocks are
+overpriced for the same leverage reasons as volatile ones.[^bab] But my target
+is a 20-session Sharpe ratio, so stocks that move with the market look good
+when it rises and bad when it falls; this theme's IC depends on the market's
+direction.
+
+**Short positioning.** Short sellers are often well informed, and heavily
+shorted stocks have tended to underperform.[^shorts] Short interest relative
+to daily volume, often called days to cover, also measures crowding: how long
+the shorts would need to buy back.
+
+[^momentum]: Jegadeesh and Titman, *Returns to Buying Winners and Selling Losers*, Journal of Finance, 1993.
+[^reversal]: Jegadeesh, *Evidence of Predictable Behavior of Security Returns*, Journal of Finance, 1990; Lehmann, *Fads, Martingales, and Market Efficiency*, Quarterly Journal of Economics, 1990.
+[^low-volatility]: Ang, Hodrick, Xing and Zhang, *The Cross-Section of Volatility and Expected Returns*, Journal of Finance, 2006; Baker, Bradley and Wurgler, *Benchmarks as Limits to Arbitrage*, Financial Analysts Journal, 2011.
+[^turnover]: Datar, Naik and Radcliffe, *Liquidity and Stock Returns: An Alternative Test*, Journal of Financial Markets, 1998.
+[^amihud]: Amihud, *Illiquidity and Stock Returns*, Journal of Financial Markets, 2002.
+[^bab]: Frazzini and Pedersen, *Betting Against Beta*, Journal of Financial Economics, 2014.
+[^shorts]: Boehmer, Jones and Zhang, *Which Shorts Are Informed?*, Journal of Finance, 2008.
 
 An earlier version of this article used 144 predictors. Many were near
 copies: the same measurement at a neighbouring window, or volatility measured
