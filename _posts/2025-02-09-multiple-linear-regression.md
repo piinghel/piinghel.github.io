@@ -12,7 +12,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<link rel="stylesheet" href="/assets/css/predictor-structure.css?v=2">
+<link rel="stylesheet" href="/assets/css/regression-article.css?v=3">
 
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
@@ -276,18 +276,21 @@ capital. Portfolio construction itself is the subject of the
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>0.0367</td><td>0.1093</td><td>0.336</td></tr>
+    <tr><th scope="row">OLS</th><td>0.0466</td><td>0.0834</td><td>0.558</td></tr>
+    <tr><th scope="row">Ridge</th><td>0.0472</td><td>0.0847</td><td>0.557</td></tr>
     <tr class="period-heading"><th colspan="4">Later · January 2022–April 2026</th></tr>
-    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>0.0489</td><td>0.1242</td><td>0.394</td></tr>
+    <tr><th scope="row">OLS</th><td>0.0412</td><td>0.1087</td><td>0.379</td></tr>
+    <tr><th scope="row">Ridge</th><td>0.0416</td><td>0.1116</td><td>0.373</td></tr>
   </tbody>
 </table>
 
-[TBD: two or three sentences on Table 2 — whether the regressions rank better
-than the fixed score in each period, and how OLS and Ridge compare.]
+Through 2021 the regressions rank stocks better than the fixed score: a mean
+IC of 0.047 against 0.037, and a steadier one, with an IC IR of about 0.56
+against 0.34. After 2021 the order flips. The fixed score's IC rises to
+0.049, while the regressions' falls to 0.041. OLS and Ridge are almost
+indistinguishable in both periods.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 3: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Return and volatility are annualized; beta is measured against the Russell 1000.</caption>
@@ -296,32 +299,40 @@ than the fixed score in each period, and how OLS and Ridge compare.]
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>6.79%</td><td>9.11%</td><td>0.75<br><small>(0.71–0.81)</small></td><td>−26.4%</td><td>0.07</td><td>136%</td><td>14.4×</td></tr>
+    <tr><th scope="row">OLS</th><td>7.31%</td><td>7.37%</td><td>0.99<br><small>(0.90–1.05)</small></td><td>−18.7%</td><td>0.09</td><td>139%</td><td>29.0×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.46%</td><td>7.50%</td><td>0.99<br><small>(0.90–1.10)</small></td><td>−18.3%</td><td>0.10</td><td>138%</td><td>28.7×</td></tr>
     <tr class="period-heading"><th colspan="8">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>7.77%</td><td>11.92%</td><td>0.65<br><small>(0.55–0.73)</small></td><td>−10.0%</td><td>−0.02</td><td>131%</td><td>13.1×</td></tr>
+    <tr><th scope="row">OLS</th><td>6.37%</td><td>9.18%</td><td>0.69<br><small>(0.67–0.73)</small></td><td>−8.5%</td><td>0.06</td><td>134%</td><td>25.9×</td></tr>
+    <tr><th scope="row">Ridge</th><td>6.44%</td><td>9.38%</td><td>0.69<br><small>(0.63–0.74)</small></td><td>−8.6%</td><td>0.06</td><td>133%</td><td>25.6×</td></tr>
   </tbody>
 </table>
 
-[TBD: Table 3 in two short paragraphs — where any Sharpe difference comes
-from (return or volatility), whether it holds on each schedule and in both
-periods, what it costs in trading, and Ridge against OLS. The cost estimate
-excludes borrow, financing and market impact.]
+Through 2021 the regressions lift Sharpe from 0.75 to 0.99, and Ridge beats
+the fixed score on all three schedules. Most of that comes from lower
+volatility, 7.5% against 9.1%. Ridge's gross return is 1.4 points higher, but
+twice the trading costs half of that, leaving 0.7 points of net return. Its
+drawdowns are also shallower. After 2021 the edge nearly disappears: net
+return is 1.3 points lower, volatility 2.5 points lower, and Sharpe 0.69
+against 0.65, with Ridge ahead on two of the three schedules.
 
-<div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for the fixed score, OLS and Ridge" version="19" %}
-</div>
+Gross exposure is similar for every score, so the differences are not about
+position size. The regressions carry a little more market beta. Ridge and OLS
+differ by at most 0.06 Sharpe on any schedule, in both directions. The cost
+estimate excludes borrow, financing and market impact, so the doubled trading
+counts against the regressions more than Table 3 shows.
 
-<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> [TBD: rebuild as an interactive chart from the 80-predictor rerun.] The mean daily net P&amp;L of the three schedules, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below.</p>
+<div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the fixed score, OLS and Ridge, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=1" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<noscript><p>This chart needs JavaScript; Table 3 gives the same comparison.</p></noscript>
+
+<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 3 gives the risk-adjusted comparison.</p>
 
 ### Learning weights on the same inputs
 
-How much of any difference comes from learning the weights? I refit OLS and
-Ridge on exactly the fixed score's twelve predictors, keeping the target,
-training windows, penalty and portfolio rules the same.
+How much of that comes from learning the weights? I refit OLS and Ridge on
+exactly the fixed score's twelve predictors, keeping the target, training
+windows, penalty and portfolio rules the same.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 4: The same twelve inputs, different weights.</strong> Mean statistics across the three rebalance schedules, with min–max Sharpe in parentheses; conventions match Table 3.</caption>
@@ -330,39 +341,56 @@ training windows, penalty and portfolio rules the same.
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">OLS · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Ridge · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>6.79%</td><td>9.11%</td><td>0.75<br><small>(0.71–0.81)</small></td><td>−26.4%</td><td>0.07</td><td>136%</td><td>14.4×</td></tr>
+    <tr><th scope="row">OLS · 12</th><td>6.68%</td><td>8.25%</td><td>0.81<br><small>(0.79–0.83)</small></td><td>−27.2%</td><td>0.08</td><td>138%</td><td>21.4×</td></tr>
+    <tr><th scope="row">Ridge · 12</th><td>6.91%</td><td>8.41%</td><td>0.82<br><small>(0.78–0.85)</small></td><td>−26.7%</td><td>0.08</td><td>138%</td><td>19.7×</td></tr>
     <tr class="period-heading"><th colspan="8">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">OLS · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Ridge · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>7.77%</td><td>11.92%</td><td>0.65<br><small>(0.55–0.73)</small></td><td>−10.0%</td><td>−0.02</td><td>131%</td><td>13.1×</td></tr>
+    <tr><th scope="row">OLS · 12</th><td>7.36%</td><td>10.89%</td><td>0.68<br><small>(0.58–0.78)</small></td><td>−9.9%</td><td>0.00</td><td>132%</td><td>17.3×</td></tr>
+    <tr><th scope="row">Ridge · 12</th><td>7.81%</td><td>11.10%</td><td>0.70<br><small>(0.61–0.77)</small></td><td>−10.2%</td><td>0.00</td><td>132%</td><td>15.9×</td></tr>
   </tbody>
 </table>
 
-[TBD: compare Table 4 with Table 3 — how much of the difference appears with
-the same twelve inputs and how much only with the 80 predictors.]
+Learning the weights on the same inputs adds a little: through 2021, Sharpe
+rises from 0.75 to 0.81–0.82, with lower volatility, no shallower drawdown and
+40–50% more trading. The rest of the gain to 0.99 appears only with the 80
+predictors. After 2021, Ridge on the twelve inputs, at 0.70, matches the
+80-predictor models while trading 16× a year instead of 26×.
 
 ## What the model learned
 {: #reading-the-predictors }
 
-Figure 4 shows the ten largest average absolute Ridge weights. A positive
-weight raises a stock's score as its rank on that predictor rises, holding
-the other ranks fixed.
+Figure 4 shows the ten largest average absolute Ridge weights at each refit.
+A positive weight raises a stock's score as its rank on that predictor rises,
+holding the other ranks fixed.
 
-<div class="research-figure coefficient-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
-</div>
+<div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=1" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
+<script src="/assets/js/regression-results.js?v=3" defer></script>
 
-<p class="figure-caption"><strong>Figure 4: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit.</strong> [TBD: rebuild from the 80-predictor fits.] Rows are selected using the full coefficient history.</p>
+<p class="figure-caption"><strong>Figure 4: The ten largest mean absolute Ridge coefficients by refit.</strong> Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows are selected on the full coefficient history.</p>
 
-Because each weight is conditional, it can disagree with the predictor's own
-IC. Figure 1 shows where to expect that: inside Momentum &amp; trend, short
-and long horizons point in opposite directions, so a linear model can learn a
-contrast between them rather than one sign for the whole theme.
-[TBD: which contrasts the 80-predictor fit learns, whether their signs
-persist across the twelve refits, and whether the short-horizon terms explain
-any extra trading.]
+The largest weight is negative, on the 10/21-day MACD, a short-horizon trend
+measure whose own IC is close to zero. Next to it sit positive weights on the
+126-day Sharpe ratio, the 12-month return and the share of two years spent
+above the 200-day average. Together they favour long, steady trends while
+leaning against the latest spurt, the same contrast between short and long
+horizons that Figure 1 shows inside Momentum &amp; trend. Two-year market-cap
+variability gets a positive weight although its own IC is negative: holding
+the other predictors fixed, more variation in market value over two years
+raises the score. Amihud illiquidity and days to cover get negative weights, as their own
+ICs suggest. Nine of the ten keep their sign at all twelve refits, and the
+remaining one at eleven. Momentum &amp; trend takes about half of the absolute
+weight.
+
+The short-horizon terms also explain the trading. The 25 predictors with
+windows of 21 sessions or less carry 27% of the absolute Ridge weight, and
+they change rank quickly: the reversal predictors' rank correlation with
+themselves 15 sessions later is 0.06, against 0.74 for volatility and 0.88 for
+size. The Ridge score's own 15-session rank correlation is 0.66 through 2021,
+against 0.93 for the fixed score and 0.86 for Ridge on the twelve inputs. I
+have not refit without the short-horizon predictors, so this describes where
+the turnover comes from rather than what removing them would cost.
 
 These are ten terms among 80, and several describe similar characteristics,
 so a large coefficient can partly offset another. To establish which themes
@@ -370,12 +398,20 @@ improve the portfolio, I would need to remove them and refit.
 
 ## Where this leaves me
 
-The predictors tell a clear story before any model is fitted: seven themes
-that all rank the target on average, with volatility and size overlapping
-heavily and the strongest themes changing between decades.
-[TBD: the takeaway from Tables 2–4 — whether a simple theme-based score is
-hard to beat, how much learning the weights adds on its own, how much comes
-from the broader predictor set, and at what cost in trading.]
+A simple theme-based score is hard to beat. Through 2021, learning weights on
+80 predictors lifts Sharpe from 0.75 to 0.99, but learning weights on the
+fixed score's own twelve inputs adds only 0.06–0.08. The rest comes from the
+broader predictor set, mostly through lower volatility and at twice the
+trading. After 2021 the regressions rank stocks worse than the fixed score and
+keep only a small Sharpe edge. Figure 1 is consistent with that: the strongest
+themes changed between decades, and the learned model leans on short-horizon
+contrasts that turn over quickly.
+
+Ridge changes little here. It shrinks the coefficients by about a fifth, but
+OLS and Ridge rank stocks with a daily correlation of 0.996, and on a typical
+day about nine of the 150 selected stocks differ. I would still keep a small
+penalty when predictors overlap this much, but it is not what drives the
+results.
 
 In the [optimization article](/quants/2026/08/29/portfolio-optimization.html)
 I take more control over portfolio risk and exposures, starting from the
@@ -386,9 +422,12 @@ earlier 144-predictor Ridge ranking.
 ### What Ridge changes
 {: #what-ridge-changes }
 
-[TBD: rerun on the 80-predictor fits — how much Ridge reduces coefficient
-size and movement between refits, the daily ranking correlation between OLS
-and Ridge, and how many of the 150 daily candidates differ.]
+Across the twelve refits, Ridge shrinks the coefficient vector by about a
+fifth (length 0.098 against 0.119) and its movement between adjacent refits
+by about a quarter (0.032 against 0.041). The direction barely changes: the
+cosine between adjacent refits is 0.945 against 0.939. The daily rank
+correlation between the OLS and Ridge scores is 0.996 through 2021 and 0.997
+after, and on average 9.4 and 8.1 of the 150 daily candidates differ.
 
 To see where Ridge acts, consider combinations of the predictors that vary
 together. Let $X_c$ denote the training inputs centered on their column
@@ -405,9 +444,10 @@ $$
 
 The smaller the variance, the stronger the shrinkage; a direction with
 $\lambda_j=c$ is halved. Hastie develops this interpretation in his Ridge
-review.[^hastie] [TBD: across the twelve training windows and three date
-subsamples, how many of the 80 eigenvalues lie below 0.1 and below 0.01, and
-their share of predictor variance.]
+review.[^hastie] Across the twelve training windows and three date
+subsamples, 44–48 of the 80 eigenvalues lie below 0.1 and shrink by more than
+9% at $c=0.01$; together they carry 7–9% of predictor variance. Only one to
+three lie below 0.01 and shrink by more than half.
 
 A coefficient change matters for scores in proportion to the variance of the
 combination it moves along. With $$\Delta\boldsymbol\beta$$ the Ridge minus
@@ -418,8 +458,10 @@ $$
 =\sum_j\lambda_j(\mathbf v_j^\top\Delta\boldsymbol\beta)^2 .
 $$
 
-[TBD: the share of the squared coefficient difference in the least-variable
-directions and their share of predictor variance, averaged across refits.]
+The directions with eigenvalues below 0.1 hold 98.5% of the squared Ridge
+minus OLS coefficient difference, averaged across refits, but only 7.9% of
+predictor variance. Ridge makes almost all of its adjustments where they
+barely move the scores.
 
 ### Sampling the training dates
 {: #sampling-the-training-dates }

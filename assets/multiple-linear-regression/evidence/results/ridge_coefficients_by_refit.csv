@@ -1,0 +1,961 @@
+feature,fold_id,test_date,coefficient,model,theme,description
+X_feature_liquidity_turnover_level63,0,1998-09-03,0.026858991011977196,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,1,2001-01-22,0.019874073565006256,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,2,2003-06-13,0.014634788036346436,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,3,2005-10-28,0.01893233321607113,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,4,2008-03-20,0.013485454333325228,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,5,2010-08-06,0.01167830607543389,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,6,2012-12-24,0.008740033954381943,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,7,2015-05-14,0.009943173577388128,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,8,2017-09-29,0.007678940736999114,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,9,2020-02-20,0.004304954006026189,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,10,2022-07-08,0.004615943568448226,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_liquidity_turnover_level63,11,2024-11-25,0.0033737705865254006,ridge,Liquidity & volume,"turnover: dollar volume / market cap, 63-day level"
+X_feature_market_cap_log_diff_126,0,1998-09-03,0.017301540821790695,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,1,2001-01-22,0.01363528830309709,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,2,2003-06-13,0.006592677440494299,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,3,2005-10-28,0.0009408881305716932,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,4,2008-03-20,-0.0014936678247371067,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,5,2010-08-06,-0.007906783993045488,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,6,2012-12-24,-0.011645112497111162,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,7,2015-05-14,-0.008696600484351317,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,8,2017-09-29,-0.005026531095306079,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,9,2020-02-20,-0.00412435798595349,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,10,2022-07-08,-0.0028756794054061174,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_126,11,2024-11-25,-0.0032339851992825666,ridge,Size,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,0,1998-09-03,-0.003964284590135018,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,1,2001-01-22,-0.01103391187886397,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,2,2003-06-13,-0.018981264904141426,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,3,2005-10-28,-0.004073622869327664,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,4,2008-03-20,-0.002370919566601515,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,5,2010-08-06,-0.013626347606380781,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,6,2012-12-24,-0.016016138717532158,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,7,2015-05-14,-0.017060970266660053,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,8,2017-09-29,-0.015507497824728489,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,9,2020-02-20,-0.013687487381199995,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,10,2022-07-08,-0.017521473889549572,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_diff_504,11,2024-11-25,-0.016973618417978287,ridge,Size,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_identity,0,1998-09-03,0.005498731043189764,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,1,2001-01-22,0.0012440647309025128,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,2,2003-06-13,-0.010510849145551523,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,3,2005-10-28,-0.0061273290775716305,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,4,2008-03-20,-0.005577041922758023,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,5,2010-08-06,-0.007553052001943191,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,6,2012-12-24,-0.00886513696362575,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,7,2015-05-14,-0.008519611321389675,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,8,2017-09-29,-0.01005167451997598,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,9,2020-02-20,-0.010113292373716831,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,10,2022-07-08,-0.009910311239461103,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_identity,11,2024-11-25,-0.009981837744514147,ridge,Size,firm size: log market cap
+X_feature_market_cap_log_std126,0,1998-09-03,0.0001601001810437689,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,1,2001-01-22,0.005590182884285848,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,2,2003-06-13,0.010377163998782635,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,3,2005-10-28,0.0052437336804966135,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,4,2008-03-20,0.005641602134952943,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,5,2010-08-06,0.005741346472253402,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,6,2012-12-24,0.009812972818811735,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,7,2015-05-14,0.005857252205411593,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,8,2017-09-29,0.0038973049571116767,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,9,2020-02-20,0.0064470187450448675,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,10,2022-07-08,0.004736264236271381,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,11,2024-11-25,0.003783910612886151,ridge,Size,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,0,1998-09-03,-0.029037628322839737,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,1,2001-01-22,-0.01927163762350877,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,2,2003-06-13,-0.016595156242450077,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,3,2005-10-28,-0.015597742361327013,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,4,2008-03-20,-0.014039743381241957,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,5,2010-08-06,-0.013023740611970425,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,6,2012-12-24,-0.013171513564884663,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,7,2015-05-14,-0.013013701575497786,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,8,2017-09-29,-0.012150497486193975,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,9,2020-02-20,-0.007910716347396374,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,10,2022-07-08,-0.006861495319753885,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std21,11,2024-11-25,-0.008167242941757044,ridge,Size,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,0,1998-09-03,-0.0052400692366063595,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,1,2001-01-22,0.0065849570867915945,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,2,2003-06-13,0.0048049619266142445,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,3,2005-10-28,0.003973270688826839,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,4,2008-03-20,0.007835733238607645,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,5,2010-08-06,0.01290239735196034,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,6,2012-12-24,0.006315461980799834,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,7,2015-05-14,0.004253484929601352,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,8,2017-09-29,0.0023940297154088816,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,9,2020-02-20,0.001677457825280726,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,10,2022-07-08,0.0029350825740645328,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,11,2024-11-25,0.005020899542917808,ridge,Size,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,0,1998-09-03,0.017600469291210175,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,1,2001-01-22,0.026969831436872482,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,2,2003-06-13,0.027842672541737556,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,3,2005-10-28,0.03437414144476255,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,4,2008-03-20,0.02620886079967022,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,5,2010-08-06,0.023763469730814297,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,6,2012-12-24,0.025786524017651875,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,7,2015-05-14,0.021972702195247013,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,8,2017-09-29,0.022971145808696747,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,9,2020-02-20,0.019387445723017056,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,10,2022-07-08,0.01777484454214573,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,11,2024-11-25,0.015717404273649056,ridge,Size,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_to_max504,0,1998-09-03,-0.00757291695723931,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,1,2001-01-22,-0.0002584903462169071,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,2,2003-06-13,-0.00143720512278378,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,3,2005-10-28,0.0031089188220600286,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,4,2008-03-20,0.0057709972995022936,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,5,2010-08-06,0.006822512019425631,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,6,2012-12-24,0.006493158793697755,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,7,2015-05-14,0.005529224406927824,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,8,2017-09-29,0.005941839733471473,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,9,2020-02-20,0.008331047060588995,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,10,2022-07-08,0.009396685908238092,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_max504,11,2024-11-25,0.009158004385729631,ridge,Size,market cap relative to its 504-day high
+X_feature_market_cap_log_to_min126,0,1998-09-03,0.006655713077634573,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,1,2001-01-22,-0.008759025173882643,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,2,2003-06-13,-0.013414670092364153,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,3,2005-10-28,-0.00873128573099772,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,4,2008-03-20,-0.008494369685649872,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,5,2010-08-06,-0.005455866921693087,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,6,2012-12-24,-0.006423074131210645,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,7,2015-05-14,-0.006059506442397833,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,8,2017-09-29,-0.006189206459869941,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,9,2020-02-20,-0.008986637617150942,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,10,2022-07-08,-0.011564484797418118,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min126,11,2024-11-25,-0.011388416402041912,ridge,Size,market cap relative to its 126-day low
+X_feature_market_cap_log_to_min504,0,1998-09-03,-0.014680517526964346,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,1,2001-01-22,-0.027604812756180763,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,2,2003-06-13,-0.01673744060099125,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,3,2005-10-28,-0.026674826319019,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,4,2008-03-20,-0.019308921570579212,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,5,2010-08-06,-0.010001019574701786,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,6,2012-12-24,-0.007221574739863475,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,7,2015-05-14,-0.005388790741562843,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,8,2017-09-29,-0.003905268075565497,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,9,2020-02-20,-0.0028284262710561356,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,10,2022-07-08,0.00008490823408161911,ridge,Size,market cap relative to its 504-day low
+X_feature_market_cap_log_to_min504,11,2024-11-25,0.0025963402974108853,ridge,Size,market cap relative to its 504-day low
+X_feature_market_corr252,0,1998-09-03,-0.0026252356668313346,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,1,2001-01-22,0.007583984329054753,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,2,2003-06-13,0.0002645895486542334,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,3,2005-10-28,-0.005153500630209844,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,4,2008-03-20,-0.004200599621981382,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,5,2010-08-06,-0.00035295668931212276,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,6,2012-12-24,-0.0013230010323847334,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,7,2015-05-14,-0.000040035738493315876,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,8,2017-09-29,0.0015144216595217586,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,9,2020-02-20,0.0027493718080222607,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,10,2022-07-08,-0.00011116992633712168,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr252,11,2024-11-25,-0.0021321347448974848,ridge,Market correlation,correlation with the market over 252 days
+X_feature_market_corr504,0,1998-09-03,0.006029778781036536,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,1,2001-01-22,0.01215224340558052,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,2,2003-06-13,0.009079160479207834,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,3,2005-10-28,0.005607020730773608,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,4,2008-03-20,0.005243323432902495,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,5,2010-08-06,0.004332245327532291,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,6,2012-12-24,0.007632398667434852,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,7,2015-05-14,0.007148003360877435,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,8,2017-09-29,0.0051117236725986,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,9,2020-02-20,0.003790598285074035,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,10,2022-07-08,0.006471973843872547,ridge,Market correlation,correlation with the market over 504 days
+X_feature_market_corr504,11,2024-11-25,0.009020350563029448,ridge,Market correlation,correlation with the market over 504 days
+X_feature_price_atr126,0,1998-09-03,-0.005443048352996509,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,1,2001-01-22,-0.004461472233136495,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,2,2003-06-13,-0.0072042242002983885,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,3,2005-10-28,-0.008162422726551691,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,4,2008-03-20,-0.007270952376226584,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,5,2010-08-06,-0.01477892603725195,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,6,2012-12-24,-0.013960575684905052,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,7,2015-05-14,-0.013649657679100832,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,8,2017-09-29,-0.01827840010325114,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,9,2020-02-20,-0.020809855312108994,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,10,2022-07-08,-0.018870277951161068,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr126,11,2024-11-25,-0.01868523160616557,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_atr21,0,1998-09-03,-0.020408570145567257,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,1,2001-01-22,-0.010554175513486067,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,2,2003-06-13,0.0005998392298351973,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,3,2005-10-28,-0.004169392942761381,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,4,2008-03-20,-0.002824686545257767,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,5,2010-08-06,-0.0015160418891658385,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,6,2012-12-24,-0.006263720026860635,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,7,2015-05-14,-0.007726052775979042,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,8,2017-09-29,-0.009488439187407494,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,9,2020-02-20,-0.012076004408299923,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,10,2022-07-08,-0.013218226532141367,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr21,11,2024-11-25,-0.01446513645350933,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr5,0,1998-09-03,-0.018085023388266563,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,1,2001-01-22,-0.01256002609928449,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,2,2003-06-13,-0.012495858905216059,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,3,2005-10-28,-0.01301917340606451,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,4,2008-03-20,-0.010959936926762262,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,5,2010-08-06,-0.01118396253635486,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,6,2012-12-24,-0.012072171084582806,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,7,2015-05-14,-0.013164361007511616,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,8,2017-09-29,-0.013094375220437845,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,9,2020-02-20,-0.01156961265951395,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,10,2022-07-08,-0.012811100420852503,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_atr5,11,2024-11-25,-0.012314361209670702,ridge,Volatility,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_bb_pct10,0,1998-09-03,0.00695312162861228,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,1,2001-01-22,0.006057628740866979,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,2,2003-06-13,-0.00009388800632829468,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,3,2005-10-28,-0.0015573884156765416,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,4,2008-03-20,-0.00155984892626293,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,5,2010-08-06,-0.0026373172683330872,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,6,2012-12-24,-0.004571778311704596,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,7,2015-05-14,-0.0038343806906292834,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,8,2017-09-29,-0.0034322884554664292,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,9,2020-02-20,-0.0017647748269761603,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,10,2022-07-08,-0.0022230809457444898,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct10,11,2024-11-25,-0.003092113610667487,ridge,Momentum & trend,position within 10-day Bollinger bands (%B)
+X_feature_price_bb_pct126,0,1998-09-03,0.02081494654218356,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,1,2001-01-22,0.02162274035314719,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,2,2003-06-13,0.013318130436042944,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,3,2005-10-28,0.011554094652334848,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,4,2008-03-20,0.00870852917432785,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,5,2010-08-06,0.006548771324257056,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,6,2012-12-24,0.008654731636246046,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,7,2015-05-14,0.010052630056937536,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,8,2017-09-29,0.009840802599986395,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,9,2020-02-20,0.01005351822823286,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,10,2022-07-08,0.011135407413045565,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct126,11,2024-11-25,0.00937697539726893,ridge,Momentum & trend,position within 126-day Bollinger bands (%B)
+X_feature_price_bb_pct21,0,1998-09-03,-0.0054361239696542425,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,1,2001-01-22,0.006932837733378013,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,2,2003-06-13,-0.0010529241990298033,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,3,2005-10-28,-0.006282508218040069,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,4,2008-03-20,-0.00563792884349823,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,5,2010-08-06,-0.009446537122130394,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,6,2012-12-24,-0.012237582666178545,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,7,2015-05-14,-0.01332897786051035,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,8,2017-09-29,-0.01213691383600235,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,9,2020-02-20,-0.00977238453924656,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,10,2022-07-08,-0.010431154631078243,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct21,11,2024-11-25,-0.010114874069889387,ridge,Momentum & trend,position within 21-day Bollinger bands (%B)
+X_feature_price_bb_pct5,0,1998-09-03,-0.012069712082544962,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,1,2001-01-22,-0.011317880203326544,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,2,2003-06-13,-0.010751589201390743,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,3,2005-10-28,-0.009061264960716168,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,4,2008-03-20,-0.007491179121037324,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,5,2010-08-06,-0.006397855002433062,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,6,2012-12-24,-0.005601946264505386,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,7,2015-05-14,-0.00533103911827008,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,8,2017-09-29,-0.004531624571730693,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,9,2020-02-20,-0.0046042222529649734,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,10,2022-07-08,-0.004374990705400705,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_bb_pct5,11,2024-11-25,-0.003844265282774965,ridge,Momentum & trend,position within 5-day Bollinger bands (%B)
+X_feature_price_downside_vol10,0,1998-09-03,0.0007049950460592905,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,1,2001-01-22,-0.006328091025352478,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,2,2003-06-13,-0.0074415323324501514,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,3,2005-10-28,-0.0045019440197696286,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,4,2008-03-20,-0.005931209151943524,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,5,2010-08-06,-0.0044205239197860164,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,6,2012-12-24,-0.0033908775076270103,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,7,2015-05-14,-0.0030776377922544875,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,8,2017-09-29,-0.003147074021399021,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,9,2020-02-20,-0.0017918026229987543,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,10,2022-07-08,-0.0023457522814472518,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol10,11,2024-11-25,-0.002961185916016499,ridge,Volatility,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol126,0,1998-09-03,-0.029353618000944454,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,1,2001-01-22,-0.020841351399819057,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,2,2003-06-13,-0.010843392461538315,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,3,2005-10-28,-0.006151456851512194,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,4,2008-03-20,-0.0065928976982831955,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,5,2010-08-06,-0.012064405406514803,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,6,2012-12-24,-0.0119019765406847,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,7,2015-05-14,-0.010754096632202467,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,8,2017-09-29,-0.008766421427329382,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,9,2020-02-20,-0.0076190380689998465,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,10,2022-07-08,-0.003319032102202376,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol126,11,2024-11-25,-0.004226143627117078,ridge,Volatility,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol21,0,1998-09-03,0.007306324318051338,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,1,2001-01-22,0.007309229889263709,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,2,2003-06-13,0.0036457577565064034,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,3,2005-10-28,0.005023353888342778,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,4,2008-03-20,0.0012391277899344761,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,5,2010-08-06,-0.002093764992120365,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,6,2012-12-24,-0.0017189167362327378,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,7,2015-05-14,-0.0012124508696918686,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,8,2017-09-29,-0.004227814730256796,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,9,2020-02-20,-0.0032680844888091087,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,10,2022-07-08,-0.0026707409415394068,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol21,11,2024-11-25,-0.0021649019715065756,ridge,Volatility,"volatility of down-day returns only, 21 days"
+X_feature_price_downside_vol63,0,1998-09-03,0.00019070954294875264,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,1,2001-01-22,-0.0063807060942053795,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,2,2003-06-13,-0.008662213571369648,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,3,2005-10-28,-0.013113077109058699,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,4,2008-03-20,-0.012175837842126688,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,5,2010-08-06,-0.005917055066674948,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,6,2012-12-24,-0.004536527985086043,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,7,2015-05-14,-0.007327751566966374,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,8,2017-09-29,-0.0030350010686864457,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,9,2020-02-20,-0.004258914617821574,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,10,2022-07-08,-0.004884887176255385,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_downside_vol63,11,2024-11-25,-0.004145270911976695,ridge,Volatility,"volatility of down-day returns only, 63 days"
+X_feature_price_final_to_high252_exclude21,0,1998-09-03,-0.008717541893323263,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,1,2001-01-22,-0.0022829826339147985,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,2,2003-06-13,0.0036187779624015093,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,3,2005-10-28,-0.005198216220984857,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,4,2008-03-20,-0.002260553049078832,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,5,2010-08-06,-0.0009039378249629711,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,6,2012-12-24,-0.0014348859161448975,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,7,2015-05-14,-0.001606811109619836,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,8,2017-09-29,-0.0020127708557993174,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,9,2020-02-20,-0.0033345745565990605,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,10,2022-07-08,-0.0027313762499640384,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high252_exclude21,11,2024-11-25,-0.0015585577154221635,ridge,Momentum & trend,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_final_to_high90_exclude10,0,1998-09-03,-0.02084374489883582,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,1,2001-01-22,-0.01293164367477099,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,2,2003-06-13,-0.013319385548432669,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,3,2005-10-28,-0.014137743972241879,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,4,2008-03-20,-0.012814912013709545,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,5,2010-08-06,-0.00999817190070947,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,6,2012-12-24,-0.010705756023526192,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,7,2015-05-14,-0.010996256023645401,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,8,2017-09-29,-0.009993469342589378,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,9,2020-02-20,-0.010343609067300955,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,10,2022-07-08,-0.008937781366209189,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_final_to_high90_exclude10,11,2024-11-25,-0.008673489714662233,ridge,Momentum & trend,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_freq_loss_fl21,0,1998-09-03,0.025345863153537113,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,1,2001-01-22,0.026115672662854195,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,2,2003-06-13,0.020506516719857853,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,3,2005-10-28,0.016035184264183044,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,4,2008-03-20,0.014251600950956345,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,5,2010-08-06,0.013522895673910776,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,6,2012-12-24,0.009836389372746149,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,7,2015-05-14,0.010455094277858734,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,8,2017-09-29,0.009879296335081259,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,9,2020-02-20,0.011636346889038881,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,10,2022-07-08,0.010839230691393217,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl21,11,2024-11-25,0.010123269011576971,ridge,Momentum & trend,share of down days over the last 21 days
+X_feature_price_freq_loss_fl252,0,1998-09-03,-0.026929009705781937,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,1,2001-01-22,-0.02910784383614858,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,2,2003-06-13,-0.02545894930760066,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,3,2005-10-28,-0.019788196310400963,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,4,2008-03-20,-0.012634831480681896,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,5,2010-08-06,-0.012429925302664438,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,6,2012-12-24,-0.011479467463990053,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,7,2015-05-14,-0.008224637868503729,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,8,2017-09-29,-0.00785109493881464,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,9,2020-02-20,-0.006094058820356925,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,10,2022-07-08,-0.0057587701206405955,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl252,11,2024-11-25,-0.007156580841789643,ridge,Momentum & trend,share of down days over the last 252 days
+X_feature_price_freq_loss_fl63,0,1998-09-03,0.009153245637814203,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,1,2001-01-22,-0.004056139926736553,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,2,2003-06-13,0.001723803502197067,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,3,2005-10-28,0.00337414164096117,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,4,2008-03-20,0.0005427324637518419,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,5,2010-08-06,0.0006534683828552564,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,6,2012-12-24,0.0015025560666496556,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,7,2015-05-14,-0.0009130152563254038,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,8,2017-09-29,-0.0027907992092271647,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,9,2020-02-20,-0.00451610687499245,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,10,2022-07-08,-0.00299255169617633,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl63,11,2024-11-25,-0.0015004922558243077,ridge,Momentum & trend,share of down days over the last 63 days
+X_feature_price_freq_loss_fl756,0,1998-09-03,-0.006178251312424739,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,1,2001-01-22,0.01354883952687184,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,2,2003-06-13,0.011346735060214996,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,3,2005-10-28,0.0007021469427854754,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,4,2008-03-20,-0.0021601587844391665,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,5,2010-08-06,-0.0026253413719435534,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,6,2012-12-24,-0.00442661764100194,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,7,2015-05-14,-0.005331776415308316,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,8,2017-09-29,-0.006360035079220931,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,9,2020-02-20,-0.009045595303177834,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,10,2022-07-08,-0.008291158514718214,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_freq_loss_fl756,11,2024-11-25,-0.009364884036282698,ridge,Momentum & trend,share of down days over the last 756 days
+X_feature_price_high_to_initial126_exclude21,0,1998-09-03,-0.024435603991150856,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,1,2001-01-22,-0.0075690834783017635,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,2,2003-06-13,-0.007057226883868377,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,3,2005-10-28,-0.005990893735239903,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,4,2008-03-20,-0.005284946256627639,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,5,2010-08-06,-0.003154782888789972,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,6,2012-12-24,-0.004428615172704061,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,7,2015-05-14,-0.005393096711486578,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,8,2017-09-29,-0.0061261761002242565,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,9,2020-02-20,-0.0074147724856932955,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,10,2022-07-08,-0.005467256065458059,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial126_exclude21,11,2024-11-25,-0.004956389932582776,ridge,Momentum & trend,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,0,1998-09-03,0.020270201688011486,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,1,2001-01-22,0.009550378347436586,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,2,2003-06-13,0.0055305456432203455,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,3,2005-10-28,-0.0005679713697948804,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,4,2008-03-20,-0.0017139194921279948,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,5,2010-08-06,0.0005975554498339383,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,6,2012-12-24,0.002268273732624948,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,7,2015-05-14,0.0024243309162557125,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,8,2017-09-29,-0.00026014953376337263,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,9,2020-02-20,0.00029651654525271926,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,10,2022-07-08,-0.001035933014160643,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial252_exclude21,11,2024-11-25,0.0006097616957655797,ridge,Momentum & trend,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial90_exclude10,0,1998-09-03,-0.04745635266105334,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,1,2001-01-22,-0.03913251558939616,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,2,2003-06-13,-0.02760455881555875,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,3,2005-10-28,-0.024313707525531452,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,4,2008-03-20,-0.01936812202135722,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,5,2010-08-06,-0.015377500715355078,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,6,2012-12-24,-0.01815010669330756,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,7,2015-05-14,-0.01658075489103794,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,8,2017-09-29,-0.013498050781587759,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,9,2020-02-20,-0.012174383737146854,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,10,2022-07-08,-0.009836900047957897,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_high_to_initial90_exclude10,11,2024-11-25,-0.009215187902251879,ridge,Momentum & trend,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_lag1,0,1998-09-03,-0.0037651443271897733,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,1,2001-01-22,-0.004167938236302386,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,2,2003-06-13,-0.002723192951331536,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,3,2005-10-28,-0.002064982933613161,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,4,2008-03-20,-0.0015074678134017934,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,5,2010-08-06,-0.0011236574306773643,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,6,2012-12-24,-0.0009990966694507126,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,7,2015-05-14,-0.0010093754341748233,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,8,2017-09-29,-0.0009603250655345619,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,9,2020-02-20,-0.0009466111562990894,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,10,2022-07-08,-0.0011833361447012674,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_lag1,11,2024-11-25,-0.00106723246093073,ridge,Short-term reversal,return of the single day 1 days ago
+X_feature_price_macd_10_21,0,1998-09-03,-0.03686938559015592,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,1,2001-01-22,-0.03240290035804113,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,2,2003-06-13,-0.034186720848083496,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,3,2005-10-28,-0.03598873565594355,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,4,2008-03-20,-0.035004968444506325,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,5,2010-08-06,-0.03504357114434242,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,6,2012-12-24,-0.03164942438403765,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,7,2015-05-14,-0.028754526749253273,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,8,2017-09-29,-0.02622995525598526,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,9,2020-02-20,-0.022326490531365078,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,10,2022-07-08,-0.020776355639100075,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_10_21,11,2024-11-25,-0.019555851817131042,ridge,Momentum & trend,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_macd_21_126,0,1998-09-03,0.005356180171171824,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,1,2001-01-22,0.006448908553769191,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,2,2003-06-13,0.0031490730276952186,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,3,2005-10-28,0.0025791971323390803,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,4,2008-03-20,0.0006698609989446899,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,5,2010-08-06,0.004559284852196773,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,6,2012-12-24,0.0006251313025131822,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,7,2015-05-14,0.0006805851589888334,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,8,2017-09-29,0.0007929580266742656,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,9,2020-02-20,0.0005447969985349724,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,10,2022-07-08,0.0007664465035001437,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_126,11,2024-11-25,0.0001318051702886199,ridge,Momentum & trend,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_macd_21_252,0,1998-09-03,0.03722796589136124,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,1,2001-01-22,-0.02014090120792389,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,2,2003-06-13,-0.024746489400664966,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,3,2005-10-28,-0.022947093471884727,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,4,2008-03-20,-0.019671024133761723,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,5,2010-08-06,-0.013169859846433004,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,6,2012-12-24,-0.008518763817846775,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,7,2015-05-14,-0.007847258045027653,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,8,2017-09-29,-0.008703646870950857,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,9,2020-02-20,-0.00862158959110578,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,10,2022-07-08,-0.007849971142907938,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_macd_21_252,11,2024-11-25,-0.007424503254393737,ridge,Momentum & trend,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_price_to_ma10,0,1998-09-03,-0.008974547497928143,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,1,2001-01-22,-0.009521538081268469,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,2,2003-06-13,-0.0032064235225940743,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,3,2005-10-28,-0.001621899224119261,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,4,2008-03-20,-0.0018121982769419749,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,5,2010-08-06,-0.0013829291177292664,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,6,2012-12-24,-0.00019275989810315272,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,7,2015-05-14,0.0004556351341307163,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,8,2017-09-29,-0.0005161939867927382,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,9,2020-02-20,-0.0008816828194539994,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,10,2022-07-08,-0.0006087354995543137,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma10,11,2024-11-25,0.0001792081748135388,ridge,Momentum & trend,price relative to its 10-day moving average
+X_feature_price_price_to_ma21,0,1998-09-03,-0.008667157031595707,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,1,2001-01-22,-0.006747597750897209,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,2,2003-06-13,0.00164232663034151,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,3,2005-10-28,0.00315705508304139,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,4,2008-03-20,0.0002921752942105134,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,5,2010-08-06,0.004614651280765732,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,6,2012-12-24,0.0063383135323723154,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,7,2015-05-14,0.0065747518092393875,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,8,2017-09-29,0.0045975215422610445,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,9,2020-02-20,0.002620777658497294,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,10,2022-07-08,0.004655120118210713,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma21,11,2024-11-25,0.005559736552337806,ridge,Momentum & trend,price relative to its 21-day moving average
+X_feature_price_price_to_ma252,0,1998-09-03,0.013845994758109251,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,1,2001-01-22,0.010773641678194204,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,2,2003-06-13,-0.002375089291793605,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,3,2005-10-28,0.004329021632050474,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,4,2008-03-20,0.008865127029518286,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,5,2010-08-06,-0.00789672089740634,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,6,2012-12-24,-0.0020025286357849836,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,7,2015-05-14,-0.005211177747696638,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,8,2017-09-29,-0.005849038561185201,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,9,2020-02-20,0.0004990853679676851,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,10,2022-07-08,0.0017109636003927637,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma252,11,2024-11-25,0.0031426693700874844,ridge,Momentum & trend,price relative to its 252-day moving average
+X_feature_price_price_to_ma63,0,1998-09-03,-0.004502738515535991,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,1,2001-01-22,-0.00019936412233316028,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,2,2003-06-13,-0.003463719350596269,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,3,2005-10-28,0.007443603749076526,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,4,2008-03-20,0.012183780471483866,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,5,2010-08-06,0.00644249174123009,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,6,2012-12-24,0.004651331730807821,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,7,2015-05-14,0.005851928610354662,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,8,2017-09-29,0.00501296715810895,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,9,2020-02-20,0.00440644418510298,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,10,2022-07-08,-0.0009494887005227307,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_ma63,11,2024-11-25,0.001456273040579011,ridge,Momentum & trend,price relative to its 63-day moving average
+X_feature_price_price_to_max252,0,1998-09-03,0.005011600907891989,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,1,2001-01-22,0.012035219309230646,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,2,2003-06-13,0.0031295682614048323,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,3,2005-10-28,0.013849158150454363,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,4,2008-03-20,0.017623734350005787,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,5,2010-08-06,0.01844637965162595,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,6,2012-12-24,0.017268824701507885,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,7,2015-05-14,0.01795908994972706,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,8,2017-09-29,0.018222626298666,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,9,2020-02-20,0.016760293394327164,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,10,2022-07-08,0.014676559095581373,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_max252,11,2024-11-25,0.01594358527412017,ridge,Momentum & trend,price relative to its 252-day high
+X_feature_price_price_to_min10,0,1998-09-03,-0.0109950367671748,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,1,2001-01-22,-0.008044156401107708,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,2,2003-06-13,-0.003204941846585522,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,3,2005-10-28,-0.0030228782755633197,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,4,2008-03-20,-0.0023907271679490805,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,5,2010-08-06,-0.002176688712400695,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,6,2012-12-24,-0.0021793590082476535,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,7,2015-05-14,-0.0032343024698396525,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,8,2017-09-29,-0.003034913601974646,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,9,2020-02-20,-0.003257343778386712,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,10,2022-07-08,-0.0032688421197235584,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min10,11,2024-11-25,-0.003415484679862857,ridge,Momentum & trend,price relative to its 10-day low
+X_feature_price_price_to_min21,0,1998-09-03,0.006709088183318575,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,1,2001-01-22,0.0011991772917099297,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,2,2003-06-13,-0.0009906736086122692,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,3,2005-10-28,-0.0014912457663740497,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,4,2008-03-20,-0.0030905652480820813,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,5,2010-08-06,-0.004351291495064895,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,6,2012-12-24,-0.005830506328493357,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,7,2015-05-14,-0.0058496929705142975,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,8,2017-09-29,-0.005984760510424773,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,9,2020-02-20,-0.004789071312795083,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,10,2022-07-08,-0.003704408183693886,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min21,11,2024-11-25,-0.0025819295551627874,ridge,Momentum & trend,price relative to its 21-day low
+X_feature_price_price_to_min252,0,1998-09-03,-0.007680286653339863,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,1,2001-01-22,-0.005304940044879913,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,2,2003-06-13,-0.002533451459991435,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,3,2005-10-28,0.00026736998764439096,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,4,2008-03-20,-0.0012486751074902713,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,5,2010-08-06,0.01599784040202697,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,6,2012-12-24,0.012719489944477877,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,7,2015-05-14,0.012057446874678135,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,8,2017-09-29,0.015116157320638498,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,9,2020-02-20,0.01574870975067218,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,10,2022-07-08,0.016194298242529232,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min252,11,2024-11-25,0.013757214260598024,ridge,Momentum & trend,price relative to its 252-day low
+X_feature_price_price_to_min5,0,1998-09-03,-0.010369153848538796,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,1,2001-01-22,-0.012137887068092823,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,2,2003-06-13,-0.010385190602391958,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,3,2005-10-28,-0.009008515005310377,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,4,2008-03-20,-0.009330806167175373,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,5,2010-08-06,-0.008685951897253593,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,6,2012-12-24,-0.006998482936372359,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,7,2015-05-14,-0.005812801420688629,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,8,2017-09-29,-0.005517769139260054,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,9,2020-02-20,-0.005203982349485159,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,10,2022-07-08,-0.004778879306589563,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min5,11,2024-11-25,-0.004964746534824371,ridge,Momentum & trend,price relative to its 5-day low
+X_feature_price_price_to_min63,0,1998-09-03,-0.02492018478612105,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,1,2001-01-22,-0.01633475472529729,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,2,2003-06-13,-0.010738004930317402,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,3,2005-10-28,-0.017094163844982784,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,4,2008-03-20,-0.01529636854926745,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,5,2010-08-06,-0.008679700394471487,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,6,2012-12-24,-0.007825322449207306,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,7,2015-05-14,-0.010716673297186693,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,8,2017-09-29,-0.0087113988896211,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,9,2020-02-20,-0.007833825113872686,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,10,2022-07-08,-0.007440483663231134,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_price_to_min63,11,2024-11-25,-0.006167556469639142,ridge,Momentum & trend,price relative to its 63-day low
+X_feature_price_ret10_shift0,0,1998-09-03,-0.017448081634938717,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,1,2001-01-22,-0.01819135497013728,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,2,2003-06-13,-0.014853382172683874,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,3,2005-10-28,-0.012541009423633417,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,4,2008-03-20,-0.012554846393565336,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,5,2010-08-06,-0.009564726303021112,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,6,2012-12-24,-0.00946469729145368,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,7,2015-05-14,-0.008892456690470377,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,8,2017-09-29,-0.008239179539183775,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,9,2020-02-20,-0.008108213233451048,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,10,2022-07-08,-0.005881718515108029,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret10_shift0,11,2024-11-25,-0.0061773791288336115,ridge,Short-term reversal,total return over the last 10 days
+X_feature_price_ret21_shift0,0,1998-09-03,-0.0069234563658634824,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,1,2001-01-22,-0.0005822590998529146,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,2,2003-06-13,0.002352249148922662,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,3,2005-10-28,-0.0026314621209166944,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,4,2008-03-20,-0.004132311946401994,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,5,2010-08-06,0.00009158208922599442,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,6,2012-12-24,-0.0005701789341401309,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,7,2015-05-14,-0.0001309620274696499,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,8,2017-09-29,-0.000923992192838341,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,9,2020-02-20,-0.0032822765254726014,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,10,2022-07-08,-0.003020169756685694,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret21_shift0,11,2024-11-25,-0.0018336958601139486,ridge,Short-term reversal,total return over the last 21 days
+X_feature_price_ret252_shift0,0,1998-09-03,0.02847772091627121,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,1,2001-01-22,0.034615797301133476,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,2,2003-06-13,0.03818077594041824,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,3,2005-10-28,0.028608196104566257,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,4,2008-03-20,0.023372596750656765,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,5,2010-08-06,0.00612436110774676,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,6,2012-12-24,0.012196799429754416,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,7,2015-05-14,0.013113957519332567,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,8,2017-09-29,0.01186132493118445,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,9,2020-02-20,0.008663814514875412,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,10,2022-07-08,0.0033438066796710095,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret252_shift0,11,2024-11-25,0.003589850617572665,ridge,Momentum & trend,total return over the last 252 days
+X_feature_price_ret5_shift0,0,1998-09-03,-0.0026213513338007033,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,1,2001-01-22,-0.004826049475620191,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,2,2003-06-13,-0.0020591632540648184,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,3,2005-10-28,-0.00190353361540474,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,4,2008-03-20,-0.0019185905305979152,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,5,2010-08-06,-0.0013365448685362935,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,6,2012-12-24,-0.000438691097466896,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,7,2015-05-14,-0.0006136805071340253,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,8,2017-09-29,-0.00033543256965155405,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,9,2020-02-20,-0.00011656198572988312,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,10,2022-07-08,-0.0000693272838058571,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret5_shift0,11,2024-11-25,-0.0002897182712331414,ridge,Short-term reversal,total return over the last 5 days
+X_feature_price_ret90_shift0,0,1998-09-03,0.015252579003572464,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,1,2001-01-22,0.0030180678392450013,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,2,2003-06-13,-0.0020202433612818518,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,3,2005-10-28,-0.0018794954133530457,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,4,2008-03-20,-0.0004899803801284482,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,5,2010-08-06,0.0012283121662524839,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,6,2012-12-24,0.0013938411138951778,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,7,2015-05-14,0.0006372524803737178,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,8,2017-09-29,-0.00015986080203826228,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,9,2020-02-20,-0.004705923764655988,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,10,2022-07-08,-0.0014496050619830687,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_ret90_shift0,11,2024-11-25,-0.003233191557228565,ridge,Momentum & trend,total return over the last 90 days
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,0,1998-09-03,0.02227233350276947,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,1,2001-01-22,0.018585599958896637,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,2,2003-06-13,0.03730198244253794,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,3,2005-10-28,0.03411469608545303,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,4,2008-03-20,0.03192956869800886,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,5,2010-08-06,0.02827645217378934,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,6,2012-12-24,0.02807701813677947,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,7,2015-05-14,0.0263948409507672,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,8,2017-09-29,0.023849160720904667,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,9,2020-02-20,0.021647545819481213,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,10,2022-07-08,0.017606524750590324,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,11,2024-11-25,0.015397758533557257,ridge,Momentum & trend,126-day return divided by 126-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,0,1998-09-03,0.022632723053296406,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,1,2001-01-22,0.0032378582594295344,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,2,2003-06-13,0.011517981067299843,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,3,2005-10-28,0.009039970735708872,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,4,2008-03-20,0.00997128120313088,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,5,2010-08-06,0.008290732279419899,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,6,2012-12-24,0.0084764181325833,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,7,2015-05-14,0.008733043757577738,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,8,2017-09-29,0.0066286300619443255,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,9,2020-02-20,0.008897381213804087,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,10,2022-07-08,0.012037906795740128,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,11,2024-11-25,0.008132735112061104,ridge,Momentum & trend,63-day return divided by 63-day volatility
+X_feature_price_trend_streak200_126,0,1998-09-03,-0.003447165945544839,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,1,2001-01-22,0.001886888484780987,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,2,2003-06-13,0.0011570596252568066,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,3,2005-10-28,0.008018618604789177,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,4,2008-03-20,0.006770563156654437,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,5,2010-08-06,0.007879522784302631,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,6,2012-12-24,0.0035682019467155137,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,7,2015-05-14,0.0029575852677226067,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,8,2017-09-29,0.0024509476497769356,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,9,2020-02-20,0.004157268054162462,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,10,2022-07-08,-0.0006279814891361942,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_126,11,2024-11-25,-0.0006978626479394734,ridge,Momentum & trend,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,0,1998-09-03,0.00018936263707776865,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,1,2001-01-22,-0.0030863794963806868,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,2,2003-06-13,0.0037755803981175027,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,3,2005-10-28,-0.004567682355021437,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,4,2008-03-20,-0.012077361345291138,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,5,2010-08-06,-0.012497913092374802,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,6,2012-12-24,-0.009591953828930855,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,7,2015-05-14,-0.009766556943456331,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,8,2017-09-29,-0.009913553483784199,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,9,2020-02-20,-0.012458746942381064,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,10,2022-07-08,-0.004171448449293773,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,11,2024-11-25,-0.005184828458974759,ridge,Momentum & trend,share of the last 252 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,0,1998-09-03,0.01140262900541226,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,1,2001-01-22,0.0005970379376473526,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,2,2003-06-13,0.004568388840804498,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,3,2005-10-28,0.014061608662207922,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,4,2008-03-20,0.018636773029963177,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,5,2010-08-06,0.021483419463038445,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,6,2012-12-24,0.022956565022468567,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,7,2015-05-14,0.021155578394730885,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,8,2017-09-29,0.02133830947180589,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,9,2020-02-20,0.019802570343017578,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,10,2022-07-08,0.0180879645049572,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_trend_streak200_504,11,2024-11-25,0.01848853627840678,ridge,Momentum & trend,share of the last 504 days the price was above its 200-day average
+X_feature_price_upside_vol10,0,1998-09-03,0.0032266255002468824,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,1,2001-01-22,-0.0012640578255134944,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,2,2003-06-13,-0.0026919765320296087,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,3,2005-10-28,-0.004132097819820046,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,4,2008-03-20,-0.00598851079121232,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,5,2010-08-06,-0.004616000146294634,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,6,2012-12-24,-0.004344074986875057,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,7,2015-05-14,-0.003965665508682529,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,8,2017-09-29,-0.0017412783733258645,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,9,2020-02-20,-0.00154255210266759,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,10,2022-07-08,-0.0036522917604694762,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol10,11,2024-11-25,-0.0035216393104443946,ridge,Volatility,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol21,0,1998-09-03,-0.0056977720620731516,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,1,2001-01-22,-0.007586560677736998,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,2,2003-06-13,-0.009841766208410263,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,3,2005-10-28,-0.00825476103151838,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,4,2008-03-20,-0.002158798471403619,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,5,2010-08-06,-0.0019178611303990085,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,6,2012-12-24,-0.00022501579951494932,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,7,2015-05-14,0.0003336436166136991,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,8,2017-09-29,0.002759367460384965,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,9,2020-02-20,0.002619957939411203,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,10,2022-07-08,0.0016085160508130987,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol21,11,2024-11-25,0.002425634302198887,ridge,Volatility,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol63,0,1998-09-03,0.01743379731973012,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,1,2001-01-22,0.010550192557275295,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,2,2003-06-13,0.003932620243479808,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,3,2005-10-28,0.013677037631471952,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,4,2008-03-20,0.006859698177625735,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,5,2010-08-06,0.008503582328557968,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,6,2012-12-24,0.009456046546498934,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,7,2015-05-14,0.010278606166442236,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,8,2017-09-29,0.011585504127045473,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,9,2020-02-20,0.010559401164452234,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,10,2022-07-08,0.008983753621578217,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_upside_vol63,11,2024-11-25,0.008964133448898792,ridge,Volatility,"volatility of up-day returns only, 63 days"
+X_feature_price_vol10,0,1998-09-03,-0.0007779698935337365,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,1,2001-01-22,0.005167772527784109,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,2,2003-06-13,0.0027308744999269643,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,3,2005-10-28,0.0013077668942666303,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,4,2008-03-20,0.0012483386890380643,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,5,2010-08-06,-0.00007806470815315454,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,6,2012-12-24,0.0001581646101840306,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,7,2015-05-14,0.0012055968400090933,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,8,2017-09-29,-0.00009310969229166706,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,9,2020-02-20,-0.0016304785191702347,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,10,2022-07-08,-0.0009652601826625565,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol10,11,2024-11-25,0.0001281658211761775,ridge,Volatility,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_vol252,0,1998-09-03,0.018297119066119194,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,1,2001-01-22,0.025460322697957356,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,2,2003-06-13,0.014146035847564539,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,3,2005-10-28,0.012458874844014645,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,4,2008-03-20,0.01654986913005511,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,5,2010-08-06,0.012969464684526125,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,6,2012-12-24,0.010537724631528059,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,7,2015-05-14,0.014756033817927042,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,8,2017-09-29,0.011835407776137194,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,9,2020-02-20,0.013605142943561077,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,10,2022-07-08,0.013701414689421654,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_price_vol252,11,2024-11-25,0.0136024613554279,ridge,Volatility,"volatility of daily close-to-close returns, 252 days"
+X_feature_pv_illiquidity_mean21,0,1998-09-03,-0.034343838691711426,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,1,2001-01-22,-0.04121600463986397,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,2,2003-06-13,-0.0313274667908748,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,3,2005-10-28,-0.020211654404799145,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,4,2008-03-20,-0.018953890229264896,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,5,2010-08-06,-0.013486833311617374,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,6,2012-12-24,-0.013597320454816023,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,7,2015-05-14,-0.013762762459615866,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,8,2017-09-29,-0.014074568947156271,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,9,2020-02-20,-0.018088022867838543,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,10,2022-07-08,-0.01742558429638545,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_illiquidity_mean21,11,2024-11-25,-0.01812715580066045,ridge,Liquidity & volume,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_pv_pv_corr126,0,1998-09-03,-0.003031358743707339,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,1,2001-01-22,-0.0036281985230743885,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,2,2003-06-13,-0.006927155579129855,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,3,2005-10-28,-0.0067084054462611675,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,4,2008-03-20,-0.005921549474199613,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,5,2010-08-06,-0.004943709820508957,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,6,2012-12-24,-0.003354298804576198,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,7,2015-05-14,-0.004667490255087614,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,8,2017-09-29,-0.00646184120948116,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,9,2020-02-20,-0.004853957022229831,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,10,2022-07-08,-0.004537597453842561,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr126,11,2024-11-25,-0.004821081645786762,ridge,Liquidity & volume,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr21,0,1998-09-03,0.0001591119022729496,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,1,2001-01-22,0.0022522874642163515,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,2,2003-06-13,-0.00014174975998078784,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,3,2005-10-28,0.0033476565343638263,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,4,2008-03-20,0.0026214905083179474,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,5,2010-08-06,0.0006920223531778902,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,6,2012-12-24,0.00022189565303657824,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,7,2015-05-14,0.0009610826382413507,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,8,2017-09-29,0.0018926173603783052,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,9,2020-02-20,0.0020265634326885142,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,10,2022-07-08,0.0014879100490361452,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr21,11,2024-11-25,0.0004437426299167176,ridge,Liquidity & volume,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr63,0,1998-09-03,-0.012799611625572046,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,1,2001-01-22,-0.011008962988853455,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,2,2003-06-13,-0.005889470844219129,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,3,2005-10-28,-0.006651032405594985,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,4,2008-03-20,-0.009138730665047964,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,5,2010-08-06,-0.009927242683867613,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,6,2012-12-24,-0.00838092528283596,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,7,2015-05-14,-0.00879364771147569,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,8,2017-09-29,-0.008383888440827528,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,9,2020-02-20,-0.009422870042423407,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,10,2022-07-08,-0.009115871042013168,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_pv_pv_corr63,11,2024-11-25,-0.006386918481439352,ridge,Liquidity & volume,correlation of price and volume changes over 63 days
+X_feature_short_interest_log_diff126,0,1998-09-03,-0.0009100776417956998,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,1,2001-01-22,-0.0069778238733609515,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,2,2003-06-13,-0.009881346486508846,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,3,2005-10-28,-0.008301851960519949,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,4,2008-03-20,-0.006011819001287222,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,5,2010-08-06,-0.005944746546447277,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,6,2012-12-24,-0.006233700861533483,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,7,2015-05-14,-0.0045636009114483995,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,8,2017-09-29,-0.0029488333966583014,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,9,2020-02-20,-0.002934739226475358,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,10,2022-07-08,-0.0032112850652386746,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff126,11,2024-11-25,-0.002606534476702412,ridge,Short positioning,change in (lagged) short interest over 126 days
+X_feature_short_interest_log_diff21,0,1998-09-03,-0.005919203162193298,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,1,2001-01-22,-0.004811141950388749,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,2,2003-06-13,-0.0015300469240173697,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,3,2005-10-28,-0.0005361670531177273,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,4,2008-03-20,-0.0009808798786252737,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,5,2010-08-06,0.0004238519856395821,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,6,2012-12-24,-0.0008301034298104545,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,7,2015-05-14,-0.002237882542734345,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,8,2017-09-29,-0.002817841169113914,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,9,2020-02-20,-0.0034719229054947696,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,10,2022-07-08,-0.0034040551787863174,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff21,11,2024-11-25,-0.003479427114749948,ridge,Short positioning,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff252,0,1998-09-03,-0.00701678404584527,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,1,2001-01-22,-0.0024187660698468485,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,2,2003-06-13,-0.002320459384160737,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,3,2005-10-28,-0.0037363773056616387,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,4,2008-03-20,-0.00494369709243377,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,5,2010-08-06,-0.005130525057514508,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,6,2012-12-24,-0.004003361954043309,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,7,2015-05-14,-0.0022075172358502946,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,8,2017-09-29,-0.0029612244882931313,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,9,2020-02-20,-0.0023284832326074443,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,10,2022-07-08,-0.0016231460807224114,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff252,11,2024-11-25,-0.002453927183523774,ridge,Short positioning,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff63,0,1998-09-03,-0.007268328840533893,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,1,2001-01-22,0.0023064575313280025,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,2,2003-06-13,-0.0004153988556936383,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,3,2005-10-28,-0.0005997618815551201,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,4,2008-03-20,-0.00041636297828517854,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,5,2010-08-06,-0.0002234216720656453,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,6,2012-12-24,0.0003143191043667078,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,7,2015-05-14,0.00039432529592886567,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,8,2017-09-29,-0.00019290560279235555,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,9,2020-02-20,-0.00017380919355976707,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,10,2022-07-08,-0.0007372372007618347,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff63,11,2024-11-25,-0.00010312559243175201,ridge,Short positioning,change in (lagged) short interest over 63 days
+X_feature_short_interest_to_volume_log_ratio,0,1998-09-03,-0.019945357615749042,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,1,2001-01-22,-0.022883901993433636,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,2,2003-06-13,-0.025536068404714268,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,3,2005-10-28,-0.021413540467619896,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,4,2008-03-20,-0.022595389435688656,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,5,2010-08-06,-0.02105446035663287,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,6,2012-12-24,-0.0193924227108558,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,7,2015-05-14,-0.017871050784985226,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,8,2017-09-29,-0.017042353749275208,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,9,2020-02-20,-0.016471892595291138,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,10,2022-07-08,-0.015848128435512383,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio,11,2024-11-25,-0.015092389347652594,ridge,Short positioning,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio_mean252,0,1998-09-03,-0.006314833338061969,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,1,2001-01-22,0.0014029287073450785,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,2,2003-06-13,0.002242858502237747,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,3,2005-10-28,0.001535934570711106,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,4,2008-03-20,-0.0002927075062567989,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,5,2010-08-06,0.003819089693327745,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,6,2012-12-24,0.006050231090436379,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,7,2015-05-14,0.0044017634354531765,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,8,2017-09-29,0.0050126900896430016,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,9,2020-02-20,0.005936772096902132,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,10,2022-07-08,0.005204318401714166,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean252,11,2024-11-25,0.0028964041266590357,ridge,Short positioning,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,0,1998-09-03,-0.006129153383274873,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,1,2001-01-22,-0.00962037934611241,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,2,2003-06-13,-0.0010746681946329772,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,3,2005-10-28,-0.0031886439149578414,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,4,2008-03-20,-0.005590321030467749,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,5,2010-08-06,-0.006326323685546716,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,6,2012-12-24,-0.00838098426659902,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,7,2015-05-14,-0.007163189041117827,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,8,2017-09-29,-0.009366360493004322,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,9,2020-02-20,-0.009059992929299673,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,10,2022-07-08,-0.008665420735875765,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,11,2024-11-25,-0.007989261609812578,ridge,Short positioning,"days to cover, 63-day average"
+X_feature_short_interest_to_volume_log_ratio_std252,0,1998-09-03,0.014681361926098665,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,1,2001-01-22,0.011022868566215038,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,2,2003-06-13,0.010243770355979601,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,3,2005-10-28,0.011105943781634172,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,4,2008-03-20,0.009311297908425331,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,5,2010-08-06,0.008338809634248415,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,6,2012-12-24,0.007753636067112287,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,7,2015-05-14,0.006695621957381566,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,8,2017-09-29,0.005218677843610446,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,9,2020-02-20,0.005864863439152638,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,10,2022-07-08,0.005299593321979046,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,11,2024-11-25,0.0045604150121410685,ridge,Short positioning,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std63,0,1998-09-03,0.003293114248663187,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,1,2001-01-22,0.00047203734720824286,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,2,2003-06-13,0.003356352293243011,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,3,2005-10-28,0.0038860298227518797,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,4,2008-03-20,-0.0016484173635641735,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,5,2010-08-06,0.001068525967032959,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,6,2012-12-24,0.0002660723475855775,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,7,2015-05-14,-0.000026768345681678813,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,8,2017-09-29,-0.0006149812543299049,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,9,2020-02-20,-0.0017466335945452254,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,10,2022-07-08,-0.003149493131786585,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio_std63,11,2024-11-25,-0.001514890929684043,ridge,Short positioning,variability of days to cover over 63 days
+X_feature_volume_log_volume_ratio_max126,0,1998-09-03,0.017916043599446613,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,1,2001-01-22,0.012619190228482088,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,2,2003-06-13,0.012273844021062056,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,3,2005-10-28,0.008399488404393196,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,4,2008-03-20,0.007682466258605321,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,5,2010-08-06,0.007113367629547914,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,6,2012-12-24,0.005829970041910808,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,7,2015-05-14,0.004832854184011619,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,8,2017-09-29,0.0023873435178150735,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,9,2020-02-20,0.0003787196522656207,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,10,2022-07-08,0.0013767263541618984,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max126,11,2024-11-25,0.0016876677206406991,ridge,Liquidity & volume,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max252,0,1998-09-03,0.0024613989517092705,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,1,2001-01-22,0.001998008267643551,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,2,2003-06-13,-0.0021055253067364297,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,3,2005-10-28,-0.0006266691295119623,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,4,2008-03-20,-0.003080670954659581,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,5,2010-08-06,-0.001623530328894655,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,6,2012-12-24,-0.0009294598130509257,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,7,2015-05-14,-0.0007137151357407371,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,8,2017-09-29,0.001368873907874028,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,9,2020-02-20,0.0021182202423612275,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,10,2022-07-08,0.0023412269074469805,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_ratio_max252,11,2024-11-25,0.0018474955577403307,ridge,Liquidity & volume,volume relative to its 252-day high
+X_feature_volume_log_volume_std126,0,1998-09-03,0.018463926389813423,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,1,2001-01-22,0.016653653234243393,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,2,2003-06-13,0.005749304623653491,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,3,2005-10-28,0.005474632916351159,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,4,2008-03-20,0.002626098304366072,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,5,2010-08-06,0.005123259189228217,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,6,2012-12-24,0.004337731748819351,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,7,2015-05-14,0.004935502074658871,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,8,2017-09-29,0.0026618183280030885,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,9,2020-02-20,0.003093952933947245,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,10,2022-07-08,0.003115311342601975,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std126,11,2024-11-25,0.0037030738312751055,ridge,Liquidity & volume,how much log volume moved over 126 days
+X_feature_volume_log_volume_std504,0,1998-09-03,-0.009341392355660597,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,1,2001-01-22,0.010693199001252651,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,2,2003-06-13,0.008399350879093012,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,3,2005-10-28,0.0049696797505021095,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,4,2008-03-20,0.005729296555121739,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,5,2010-08-06,0.00011836355406558141,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,6,2012-12-24,-0.00005426013255297827,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,7,2015-05-14,0.0010118630986350279,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,8,2017-09-29,0.00022609591178479604,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,9,2020-02-20,-0.0014459682085240881,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,10,2022-07-08,-0.0024211812609185777,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std504,11,2024-11-25,-0.0022117475358148417,ridge,Liquidity & volume,how much log volume moved over 504 days
+X_feature_volume_log_volume_std63,0,1998-09-03,-0.009190240254004797,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,1,2001-01-22,-0.0032655075968553624,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,2,2003-06-13,0.0042514260082195205,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,3,2005-10-28,0.0028928957569102445,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,4,2008-03-20,0.008730534774561724,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,5,2010-08-06,0.006113166610399882,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,6,2012-12-24,0.0056394537289937334,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,7,2015-05-14,0.003683103403697411,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,8,2017-09-29,0.0050332266837358475,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,9,2020-02-20,0.006365743776162465,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,10,2022-07-08,0.007948136888444424,ridge,Liquidity & volume,how much log volume moved over 63 days
+X_feature_volume_log_volume_std63,11,2024-11-25,0.005945991724729538,ridge,Liquidity & volume,how much log volume moved over 63 days

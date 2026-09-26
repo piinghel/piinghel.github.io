@@ -96,59 +96,20 @@ block-matrix diagram with `python3 scripts/render_risk_matrices.py`. The article
 is currently unpublished (`published: false`); its retained permalink is
 `/quants/hybrid-risk-model.html`.
 
-The regression article figures are regenerated from the included aggregate evidence:
+The regression article's interactive figures (Plotly, loaded when they scroll into
+view) read two JSON files exported from the aggregate evidence in
+[`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence)
+(see its README for provenance):
 
 ```bash
-python3 scripts/render_multiple_linear_regression_figures.py \
-  --review-dir assets/multiple-linear-regression/evidence
+python3 scripts/export_mlr_data.py
 ```
 
-Every run also renders the two static predictor-structure figures (theme-ordered
-correlation matrix and theme IC by year, the explorer's fallback) from
-`assets/multiple-linear-regression/evidence/predictor-structure/`. Render only
-those with:
-
-```bash
-python3 scripts/render_multiple_linear_regression_figures.py --structure-only
-```
-
-The interactive Figure 1 (`_includes/predictor-structure-explorer.html`,
-`assets/js/predictor-structure.js`) reads `predictor-structure.json`, exported from
-the same evidence with `python3 scripts/export_predictor_structure.py`; the static
-correlation and theme-IC SVGs are its no-JavaScript fallback.
-
-That evidence comes from `projects/factor_combination/predictor_structure.py`
-on the 80-predictor default of the feature organization (core + standard of
-every family plus 21-day loss frequency), 1998–2021, every fifth session.
-
-With a review directory, the renderer also produces the coefficient heatmap and
-performance / drawdown figure. It requires two compact source files in the review directory:
-`multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz` and
-`multiple_linear_selected_return_drawdown_figure_source.csv.gz`. It does not
-require IC, penalty-sweep or holdings-tilt inputs.
-The [evidence directory](assets/multiple-linear-regression/evidence) also
-contains the ranking and portfolio summaries behind the article tables, plus
-the coefficient-persistence diagnostics. These are the three-theme benchmark,
-OLS and Ridge results on matched stock-date rows. The figures and reporting
-can be reproduced from these aggregate files; full model fitting requires the
-original research inputs and dependencies.
-
-To review another validated compact bundle before changing article assets:
-
-```bash
-python3 scripts/render_multiple_linear_regression_figures.py \
-  --review-dir /path/to/validated-matched-review \
-  --output-dir /path/to/new-figure-review
-```
-
-This produces light/dark heatmaps and desktop/phone performance figures. The
-heatmap uses a common signed scale without cell annotations; exact coefficients
-remain in the source bundle. Performance preserves the source series and checks that
-drawdowns include the initial index of 1 before adding its starting reference.
-Missing, inconsistent or non-positive log-growth evidence is rejected before
-any chart is written. Fixture tests check rendering behavior. The published
-matched export is also reconciled against the daily returns of all three
-starting-week schedules, including costs and initial-index drawdowns.
+Figure 1 (`_includes/predictor-structure-explorer.html`, `assets/js/predictor-structure.js`)
+reads `predictor-structure.json`; Figures 3 and 4 (`assets/js/regression-results.js`)
+read `regression-results.json`. The static correlation and theme-IC SVGs, Figure 1's
+no-JavaScript fallback, are rendered with
+`python3 scripts/render_multiple_linear_regression_figures.py`.
 
 The timing calculations, figure generators and their portfolio-level inputs live
 in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching).

@@ -1,0 +1,15 @@
+model,theme,mean_absolute_weight_share
+ols,Liquidity & volume,0.09870252240983067
+ols,Market correlation,0.012799657243029191
+ols,Momentum & trend,0.4770278812952972
+ols,Short positioning,0.07219141758030842
+ols,Short-term reversal,0.026325211069270393
+ols,Size,0.1599668900439893
+ols,Volatility,0.15298642035827495
+ridge,Liquidity & volume,0.10729894774879552
+ridge,Market correlation,0.01388709367881102
+ridge,Momentum & trend,0.47591993115988934
+ridge,Short positioning,0.08044056153276308
+ridge,Short-term reversal,0.02383422778149788
+ridge,Size,0.15674755928159248
+ridge,Volatility,0.14187167881665072

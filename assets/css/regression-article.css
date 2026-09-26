@@ -1,14 +1,17 @@
-/* Theme colours (validated categorical order) shared by the theme cards and the explorer.
-   Dark values are their own steps for the dark surface. */
+/* Regression article: theme colours (validated categorical order) shared by the theme
+   cards and Figure 1, model colours for Figure 3, heat scale. Dark values are their own
+   steps for the dark surface. */
 :root {
   --theme-1: #2a78d6; --theme-2: #eb6834; --theme-3: #1baf7a; --theme-4: #eda100;
   --theme-5: #e87ba4; --theme-6: #008300; --theme-7: #4a3aa7;
   --heat-neg: #b83a3a; --heat-mid: #f0efec; --heat-pos: #1c5cab;
+  --model-fixed: #9aa6af; --model-ols: #345b7e; --model-ridge: #378579;
 }
 html[data-theme="dark"] {
   --theme-1: #3987e5; --theme-2: #d95926; --theme-3: #199e70; --theme-4: #c98500;
   --theme-5: #d55181; --theme-6: #008300; --theme-7: #9085e9;
   --heat-neg: #e66767; --heat-mid: #383835; --heat-pos: #6da7ec;
+  --model-fixed: #8b949e; --model-ols: #78a0c4; --model-ridge: #6eb5a5;
 }
 
 /* Theme cards */
@@ -31,4 +34,5 @@ html[data-theme="dark"] {
 .pse-segments button:hover { background: var(--soft-accent); color: var(--ink); }
 .pse-segments button[aria-checked="true"] { background: var(--ink); color: var(--page-surface); font-weight: 600; }
 .pse-status { color: var(--muted-ink); font-size: 0.9rem; }
-.pse-heat, .pse-ic { width: 100%; }
+.pse-heat, .pse-ic, .mlr-plot { width: 100%; }
+.mlr-plot { margin: 1.4rem 0 0.4rem; min-height: 200px; }

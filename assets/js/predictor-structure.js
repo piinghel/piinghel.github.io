@@ -175,12 +175,22 @@
     new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
+  // Shared with the article's other Plotly figures, so the library loads once.
+  function loadPlotly(src) {
+    if (!window.__plotlyPromise) {
+      window.__plotlyPromise = window.Plotly ? Promise.resolve() : new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    return window.__plotlyPromise;
+  }
+
   function load() {
-    const script = document.createElement('script');
-    script.src = root.dataset.plotly;
-    const plotly = new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
-    document.head.appendChild(script);
-    Promise.all([plotly, fetch(root.dataset.source).then((r) => r.json())])
+    Promise.all([loadPlotly(root.dataset.plotly), fetch(root.dataset.source).then((r) => r.json())])
       .then(([, json]) => { data = json; start(); })
       .catch(() => { root.querySelector('.pse-status').textContent = 'The interactive figure could not load.'; });
   }

@@ -1,10 +1,11 @@
-"""Export the predictor-structure evidence for the regression article's explorer.
+"""Export the regression article's evidence as JSON for its interactive figures.
 
-Reads the compact CSVs in assets/multiple-linear-regression/evidence/predictor-structure
-(written by factor_combination/predictor_structure.py) and writes one JSON file with
-yearly IC-signed predictor and theme correlations and the per-date theme IC. Values are
-stored as integers (correlation x 1000) to keep the file small; no new statistics are
-computed here.
+predictor-structure.json (Figure 1) comes from evidence/predictor-structure, written by
+factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
+correlations (x 1000), the dendrogram and the per-date theme IC.
+regression-results.json (Figures 3 and 4) comes from evidence/results, written by
+factor_combination/linear_model_diagnostics.py: growth and drawdown of the three scores
+and the ten largest Ridge coefficients per refit. No statistics are computed here.
 """
 
 from __future__ import annotations
@@ -16,8 +17,7 @@ from pathlib import Path
 import polars as pl
 
 ROOT = Path(__file__).resolve().parents[1]
-EVIDENCE = ROOT / "assets/multiple-linear-regression/evidence/predictor-structure"
-OUTPUT = ROOT / "assets/multiple-linear-regression/predictor-structure.json"
+ASSETS = ROOT / "assets/multiple-linear-regression"
 SHORT_THEMES = {
     "Momentum & trend": "Momentum",
     "Short-term reversal": "Reversal",
@@ -33,7 +33,7 @@ def scaled(values, *, scale: int = 1000) -> list[int]:
     return [round(float(v) * scale) for v in values]
 
 
-def export(evidence: Path, *, short_themes: dict[str, str] = SHORT_THEMES) -> dict:
+def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THEMES) -> dict:
     predictors = pl.read_csv(evidence / "predictors.csv")
     order = predictors.get_column("predictor").to_list()
     themes = list(dict.fromkeys(predictors.get_column("theme").to_list()))
@@ -97,13 +97,56 @@ def export(evidence: Path, *, short_themes: dict[str, str] = SHORT_THEMES) -> di
     }
 
 
+def export_results(evidence: Path) -> dict:
+    growth = pl.read_csv(evidence / "figure3_growth_drawdown.csv").sort("date")
+    series = list(dict.fromkeys(growth["series"].to_list()))
+    dates = growth.filter(pl.col("series") == series[0])["date"].to_list()
+    if any(growth.filter(pl.col("series") == n)["date"].to_list() != dates for n in series):
+        raise ValueError("the three scores must share their common dates")
+    top = pl.read_csv(evidence / "ridge_top10_coefficients.csv").sort("rank")
+    refits = pl.read_csv(evidence / "ridge_coefficients_by_refit.csv")
+    years = [
+        int(d[:4])
+        for d in refits.unique("fold_id").sort("fold_id")["test_date"].to_list()
+    ]
+    rows = []
+    for feature in top["feature"].to_list():
+        coef = refits.filter(pl.col("feature") == feature).sort("fold_id")["coefficient"]
+        if coef.len() != len(years):
+            raise ValueError(f"{feature}: expected one coefficient per refit")
+        rows.append([round(float(v), 4) for v in coef])
+    return {
+        "source": "factor_combination/linear_model_diagnostics.py",
+        "dates": dates,
+        "growth": {
+            name: {
+                "growth": [round(float(v), 4) for v in group["growth_index"]],
+                "drawdown": [round(float(v), 2) for v in group["drawdown_pct"]],
+            }
+            for name in series
+            for group in [growth.filter(pl.col("series") == name)]
+        },
+        "coefficients": {
+            "refit_years": years,
+            "predictors": [
+                {"description": d, "theme": t}
+                for d, t in zip(top["description"], top["theme"])
+            ],
+            "values": rows,
+        },
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--evidence", type=Path, default=EVIDENCE)
-    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--assets", type=Path, default=ASSETS)
     args = parser.parse_args()
-    data = export(args.evidence)
-    args.output.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+    outputs = {
+        "predictor-structure.json": export_structure(args.assets / "evidence/predictor-structure"),
+        "regression-results.json": export_results(args.assets / "evidence/results"),
+    }
+    for name, data in outputs.items():
+        (args.assets / name).write_text(json.dumps(data, separators=(",", ":")) + "\n")
 
 
 if __name__ == "__main__":

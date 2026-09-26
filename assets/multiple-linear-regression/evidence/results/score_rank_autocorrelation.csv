@@ -1,0 +1,11 @@
+period,score_rank_autocorrelation_15,dates,model
+development,0.9312471377647991,1175,fixed
+development,0.6512558373555224,1175,ols
+development,0.8319238592715974,1175,ols_twelve
+development,0.6575532851384042,1175,ridge
+development,0.859249242163719,1175,ridge_twelve
+later,0.9395616459909448,217,fixed
+later,0.7372977118338307,217,ols
+later,0.8906657912764132,217,ols_twelve
+later,0.7478942541482811,217,ridge
+later,0.9074333244205071,217,ridge_twelve
