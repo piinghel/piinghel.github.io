@@ -1,4 +1,5 @@
-"""Predictor-structure figures: theme-ordered correlations, theme overlap and theme IC by year."""
+"""Static predictor-structure figures (the explorer's no-JavaScript fallback): theme-ordered
+correlations and theme IC by year."""
 
 from __future__ import annotations
 
@@ -66,7 +67,6 @@ def plot_structure_figures(
 ) -> None:
     suffix = "_mobile" if mobile else ""
     plot_predictor_correlation(structure, output_dir, style, stem=f"predictor-correlation{suffix}", mobile=mobile)
-    plot_theme_overlap(structure, output_dir, style, stem=f"theme-overlap-by-year{suffix}", mobile=mobile)
     plot_theme_ic(structure, output_dir, style, stem=f"theme-ic-by-year{suffix}", mobile=mobile)
 
 
@@ -119,43 +119,6 @@ def plot_predictor_correlation(
         ticks=[-1, -0.5, 0, 0.5, 1],
     )
     _style_colorbar(colorbar, style, "Average rank correlation (IC-signed)")
-    save_figure(fig, output_dir, stem, style)
-
-
-def plot_theme_overlap(
-    structure: PredictorStructure,
-    output_dir: Path,
-    style: FigureStyle,
-    *,
-    stem: str,
-    mobile: bool,
-    short_labels: Mapping[str, str] = SHORT_THEME_LABELS,
-) -> None:
-    """Correlation between theme composites, one row per pair, by year."""
-    pairs = structure.theme_pairs.with_columns(
-        (
-            pl.col("theme_a").replace_strict(short_labels)
-            + " / "
-            + pl.col("theme_b").replace_strict(short_labels)
-        ).alias("pair")
-    )
-    order = (
-        pairs.group_by("pair")
-        .agg(pl.col("rho").mean())
-        .sort("rho", descending=True)
-        .get_column("pair")
-        .to_list()
-    )
-    years, values = _pivot(pairs, rows=order, row_column="pair", value="rho")
-    fig, ax = plt.subplots(
-        figsize=(4.8, 6.4) if mobile else (8.6, 6.2), facecolor=style.white
-    )
-    mesh = _year_heatmap(ax, values, years, order, style, limit=1.0, mobile=mobile)
-    colorbar = fig.colorbar(
-        mesh, ax=ax, orientation="horizontal", fraction=0.035, pad=0.08, aspect=30,
-        ticks=[-1, -0.5, 0, 0.5, 1],
-    )
-    _style_colorbar(colorbar, style, "Correlation between theme composites")
     save_figure(fig, output_dir, stem, style)
 
 

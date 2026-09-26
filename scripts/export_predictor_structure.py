@@ -54,6 +54,8 @@ def export(evidence: Path, *, short_themes: dict[str, str] = SHORT_THEMES) -> di
         for (year,), group in theme_pairs.group_by("year")
     }
 
+    tree = pl.read_csv(evidence / "predictor_dendrogram.csv")
+
     daily = (
         pl.read_csv(evidence / "theme_ic_daily.csv")
         .pivot(on="theme", index="date", values="ic")
@@ -76,9 +78,14 @@ def export(evidence: Path, *, short_themes: dict[str, str] = SHORT_THEMES) -> di
                 "theme": theme_index[row["theme"]],
                 "description": row["description"],
                 "sign": int(row["sign"]),
+                "leaf": int(row["dendrogram_leaf"]),
             }
             for row in predictors.iter_rows(named=True)
         ],
+        "dendrogram": {
+            "positions": [[round(float(v), 1) for v in r] for r in tree.select(r"^position_\d$").iter_rows()],
+            "heights": [[round(float(v), 4) for v in r] for r in tree.select(r"^height_\d$").iter_rows()],
+        },
         "predictor_pairs": [scaled(pairs[y]) for y in years],
         "theme_pairs": [
             scaled(theme_rows[int(y)][pair] for pair in theme_expected) for y in years

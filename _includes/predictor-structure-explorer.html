@@ -1,46 +1,15 @@
-<div class="pse" id="predictor-structure-explorer" data-source="/assets/multiple-linear-regression/predictor-structure.json?v=1">
+<div class="pse" id="predictor-structure-explorer"
+     data-source="/assets/multiple-linear-regression/predictor-structure.json?v=2"
+     data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js">
   <div class="pse-controls">
-    <div class="pse-control">
-      <span class="pse-label" id="pse-period-label">Period</span>
-      <div class="pse-segments pse-periods" role="radiogroup" aria-labelledby="pse-period-label"></div>
-      <span class="pse-custom">
-        <select class="pse-from" aria-label="First year"></select>
-        <span aria-hidden="true">–</span>
-        <select class="pse-to" aria-label="Last year"></select>
-      </span>
-    </div>
-    <div class="pse-control">
-      <span class="pse-label" id="pse-level-label">Heatmap</span>
-      <div class="pse-segments" role="radiogroup" aria-labelledby="pse-level-label">
-        <button type="button" role="radio" aria-checked="false" data-level="theme">Themes</button>
-        <button type="button" role="radio" aria-checked="true" data-level="predictor">Predictors</button>
-      </div>
+    <div class="pse-segments pse-periods" role="radiogroup" aria-label="Period"></div>
+    <div class="pse-segments" role="radiogroup" aria-label="Heatmap">
+      <button type="button" role="radio" aria-checked="true" data-level="predictor">80 predictors</button>
+      <button type="button" role="radio" aria-checked="false" data-level="theme">7 themes</button>
     </div>
   </div>
-  <p class="pse-status" role="status">Loading the correlation data…</p>
-  <div class="pse-body" hidden>
-    <div class="pse-panel">
-      <p class="pse-title"><span class="pse-heat-title"></span></p>
-      <svg class="pse-heat" role="img" aria-label="Heatmap of average rank correlations for the selected period"></svg>
-      <div class="pse-scale" aria-hidden="true"><span>−1</span><i></i><span>0</span><i></i><span>+1</span></div>
-    </div>
-    <div class="pse-panel">
-      <div class="pse-title-row">
-        <p class="pse-title"><span class="pse-ic-title"></span></p>
-        <div class="pse-segments pse-small" role="radiogroup" aria-label="IC view">
-          <button type="button" role="radio" aria-checked="true" data-ic="cumulative">Cumulative</button>
-          <button type="button" role="radio" aria-checked="false" data-ic="yearly">By year</button>
-        </div>
-      </div>
-      <svg class="pse-ic" role="img" aria-label="Information coefficient of each theme composite with the target over the selected period"></svg>
-      <ul class="pse-legend" aria-label="Themes: select one to highlight it"></ul>
-    </div>
-    <details class="pse-table">
-      <summary>Show the selected period as a table</summary>
-      <div class="pse-table-body"></div>
-    </details>
-  </div>
-  <div class="pse-tooltip" hidden></div>
+  <p class="pse-status" role="status">Loading the interactive figure…</p>
+  <div class="pse-heat" role="img" aria-label="Correlation heatmap for the selected period"></div>
+  <div class="pse-ic" role="img" aria-label="Cumulative IC of each theme with the target for the selected period"></div>
 </div>
-<link rel="stylesheet" href="/assets/css/predictor-structure.css?v=1">
-<script src="/assets/js/predictor-structure.js?v=1" defer></script>
+<script src="/assets/js/predictor-structure.js?v=2" defer></script>

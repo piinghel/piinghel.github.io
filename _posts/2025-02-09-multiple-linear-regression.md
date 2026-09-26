@@ -12,6 +12,8 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
+<link rel="stylesheet" href="/assets/css/predictor-structure.css?v=2">
+
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
 changed the portfolio. Here I want to bring more information into that
@@ -35,105 +37,66 @@ least squares (OLS) and Ridge.
 The universe is point-in-time Russell 1000 membership, excluding stocks below
 five dollars, announced merger targets and duplicate share classes.
 
-The target is each stock's forward 20-session Sharpe ratio: mean daily return
-divided by daily return volatility over the next 20 sessions, roughly a
-trading month and close to the three-week rebalance interval. Lower future
-volatility amplifies both positive and negative average returns, so the
-target mixes return and risk. I rank it within each date and sector and map
-the ranks into $[-1,1]$; a high label marks a stock that subsequently did well
-relative to its sector peers.
+The target is each stock's forward 20-session Sharpe ratio, roughly a trading
+month: mean daily return divided by daily return volatility over the next 20
+sessions. Lower future volatility amplifies both positive and negative
+average returns, so the target mixes return and risk. I rank it within each
+date and BICS sector and map the ranks into $(-1,1]$; a high label marks a
+stock that subsequently did well relative to its sector peers.
 
-Each predictor is ranked across the whole universe on each date and mapped
-into $[-1,1]$ in the same way. Ranking puts different units on one bounded
-scale and limits the influence of outliers, at the cost of discarding
-magnitudes ([details](#ranking-details)). Throughout, the information
-coefficient (IC) is the cross-sectional Spearman rank correlation between a
-predictor, or a score, and the target on one date.
+Each predictor is ranked across the whole universe on each date and mapped in
+the same way. Ranking puts different units on one bounded scale and limits
+the influence of outliers, at the cost of discarding magnitudes
+([details](#ranking-details)). Throughout, the information coefficient (IC)
+is the cross-sectional Spearman rank correlation between a predictor, or a
+score, and the target on one date.
 
 ## The predictors
 {: #the-predictors }
 
-The regressions use 80 predictors, mostly built from prices and trading
-activity. I group them into seven themes (Table 1).
+I use 80 predictors, mostly built from prices and trading activity, in seven
+themes.[^predictor-set] Each theme comes with an economic story for why it
+might rank the target; where the data here disagree with the story, I say so.
 
-<table class="research-table settings-table predictor-themes">
-  <caption><strong>Table 1: The predictors by theme.</strong> Horizons are trading sessions.</caption>
-  <thead>
-    <tr><th>Theme</th><th>What it measures</th><th>Predictors</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">Momentum &amp; trend</th><td>Returns and risk-adjusted returns over 3–12 months, price relative to moving averages and to recent highs and lows, how persistently the price stayed above its 200-day average, and the share of losing days</td><td>33</td></tr>
-    <tr><th scope="row">Short-term reversal</th><td>Returns over the last 1–21 sessions</td><td>4</td></tr>
-    <tr><th scope="row">Volatility</th><td>Close-to-close, downside and upside volatility and average true range, over 5–252 sessions</td><td>12</td></tr>
-    <tr><th scope="row">Size</th><td>Log market capitalization, its change, and its variability: the standard deviation of log market cap over a window</td><td>10</td></tr>
-    <tr><th scope="row">Liquidity &amp; volume</th><td>Share turnover, Amihud illiquidity, variability of trading volume, and the correlation between price and volume changes</td><td>10</td></tr>
-    <tr><th scope="row">Market correlation</th><td>Correlation of the stock's daily returns with the market over one and two years</td><td>2</td></tr>
-    <tr><th scope="row">Short positioning</th><td>Short interest relative to daily volume: its level, variability and change</td><td>9</td></tr>
-  </tbody>
-</table>
+<div class="theme-cards" markdown="0">
+  <section class="theme-card" style="--theme-color: var(--theme-1)">
+    <h3>Momentum &amp; trend <span>33 predictors</span></h3>
+    <p class="theme-measures">Returns and risk-adjusted returns over 3–12 months, price relative to moving averages and to highs and lows, how persistently the price stayed above its 200-day average, and the share of losing days over up to three years.</p>
+    <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. The theme also holds short-horizon position measures, such as price relative to its 5-day low, which work the other way.</p>
+  </section>
+  <section class="theme-card" style="--theme-color: var(--theme-2)">
+    <h3>Short-term reversal <span>4 predictors</span></h3>
+    <p class="theme-measures">Returns over the last 1–21 sessions.</p>
+    <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery.</p>
+  </section>
+  <section class="theme-card" style="--theme-color: var(--theme-3)">
+    <h3>Volatility <span>12 predictors</span></h3>
+    <p class="theme-measures">Close-to-close, downside and upside volatility and average true range, over 5–252 sessions.</p>
+    <p>Low-volatility stocks have earned about as much as volatile ones with far less risk. Investors who cannot or will not use leverage bid up high-beta stocks, and some pay for lottery-like payoffs. The target adds a tilt when returns are positive: lower future volatility raises the Sharpe ratio of a positive mean, and volatility persists.</p>
+  </section>
+  <section class="theme-card" style="--theme-color: var(--theme-4)">
+    <h3>Size <span>10 predictors</span></h3>
+    <p class="theme-measures">Log market capitalization, its change, its position relative to recent highs and lows, and its variability: the standard deviation of log market cap over a window.</p>
+    <p>Every stock here is in the Russell 1000, so size means large versus mega cap. Larger, steadier companies tend to have lower future volatility, and the change in market cap overlaps with momentum.</p>
+  </section>
+  <section class="theme-card" style="--theme-color: var(--theme-5)">
+    <h3>Liquidity &amp; volume <span>10 predictors</span></h3>
+    <p class="theme-measures">Share turnover, Amihud illiquidity (absolute return per dollar traded), variability of trading volume, and the correlation between price and volume changes.</p>
+    <p>Heavily traded stocks have tended to earn less than lightly traded ones. Illiquid stocks should compensate their holders, but here Amihud illiquidity points the other way: within the Russell 1000 it mostly marks the smaller names, which rank lower on the target.</p>
+  </section>
+  <section class="theme-card" style="--theme-color: var(--theme-6)">
+    <h3>Market correlation <span>2 predictors</span></h3>
+    <p class="theme-measures">Correlation of the stock's daily returns with the market over one and two years.</p>
+    <p>Beta is correlation times relative volatility; this theme isolates the correlation. The betting-against-beta argument says market-sensitive stocks are overpriced. Here higher correlation ranked slightly better on average, but the sign flips with the market's direction: such stocks look good on a 20-session Sharpe target when the market rises.</p>
+  </section>
+  <section class="theme-card" style="--theme-color: var(--theme-7)">
+    <h3>Short positioning <span>9 predictors</span></h3>
+    <p class="theme-measures">Short interest relative to daily volume, its variability, and changes in short interest.</p>
+    <p>Short sellers are often well informed, and heavily shorted stocks have tended to underperform. Short interest relative to volume, often called days to cover, also measures crowding: how long the shorts would need to buy back.</p>
+  </section>
+</div>
 
-Each theme comes with an economic story for why it might predict the target.
-None of these stories is settled, but they tell me what to expect.
-
-**Momentum &amp; trend.** Stocks that did well over the past three to twelve
-months have tended to keep doing well for a while.[^momentum] The usual
-explanation is that investors underreact: news diffuses slowly, and prices
-take time to adjust. The trend measures add whether the move was steady or
-came in one jump. Because the target is a Sharpe ratio, a steady trend
-matters as much as a large one.
-
-**Short-term reversal.** Over days to a month, prices partly reverse.[^reversal]
-A common reading is compensation for providing liquidity: an investor who has
-to sell quickly pushes the price below fair value, and whoever buys earns the
-recovery. Among large caps the effect is small and expensive to trade.
-
-**Volatility.** Low-volatility stocks have earned about as much as
-high-volatility stocks, with far less risk.[^low-volatility] Investors who
-cannot or will not use leverage reach for high-beta stocks instead, and some
-like lottery-like payoffs, which bids up the most volatile names. My target
-adds a mechanical reason: it divides by future volatility, and volatility
-persists.
-
-**Size.** Every stock here is in the Russell 1000, so this is not the
-small-cap premium. Larger, steadier companies tend to have lower future
-volatility, and market-cap variability, the standard deviation of log market
-cap over a window, is a slow measure of how much a company's value moves
-around. The change in market cap overlaps with momentum.
-
-**Liquidity &amp; volume.** Heavily traded stocks attract attention and
-disagreement, and high turnover has tended to precede lower returns.[^turnover]
-Amihud illiquidity, the absolute return per dollar traded, measures price
-impact: stocks that move more per dollar should compensate their holders.[^amihud]
-The price–volume correlation asks whether volume arrives with up-moves or
-down-moves.
-
-**Market correlation.** A stock that moves tightly with the market carries
-more of its beta. The betting-against-beta argument says such stocks are
-overpriced for the same leverage reasons as volatile ones.[^bab] But my target
-is a 20-session Sharpe ratio, so stocks that move with the market look good
-when it rises and bad when it falls; this theme's IC depends on the market's
-direction.
-
-**Short positioning.** Short sellers are often well informed, and heavily
-shorted stocks have tended to underperform.[^shorts] Short interest relative
-to daily volume, often called days to cover, also measures crowding: how long
-the shorts would need to buy back.
-
-[^momentum]: Jegadeesh and Titman, *Returns to Buying Winners and Selling Losers*, Journal of Finance, 1993.
-[^reversal]: Jegadeesh, *Evidence of Predictable Behavior of Security Returns*, Journal of Finance, 1990; Lehmann, *Fads, Martingales, and Market Efficiency*, Quarterly Journal of Economics, 1990.
-[^low-volatility]: Ang, Hodrick, Xing and Zhang, *The Cross-Section of Volatility and Expected Returns*, Journal of Finance, 2006; Baker, Bradley and Wurgler, *Benchmarks as Limits to Arbitrage*, Financial Analysts Journal, 2011.
-[^turnover]: Datar, Naik and Radcliffe, *Liquidity and Stock Returns: An Alternative Test*, Journal of Financial Markets, 1998.
-[^amihud]: Amihud, *Illiquidity and Stock Returns*, Journal of Financial Markets, 2002.
-[^bab]: Frazzini and Pedersen, *Betting Against Beta*, Journal of Financial Economics, 2014.
-[^shorts]: Boehmer, Jones and Zhang, *Which Shorts Are Informed?*, Journal of Finance, 2008.
-
-An earlier version of this article used 144 predictors. Many were near
-copies: the same measurement at a neighbouring window, or volatility measured
-two slightly different ways. I kept a core and a few distinct variants per
-family, dropped predictors that correlated above 0.9 with one I kept, and
-added 21-day loss frequency as a short-term candidate. I chose the set on
-data through 2021, from its stability across five-year blocks in a separate
-tree-model comparison, not from the regressions below.
+The literature behind these stories is in the footnote.[^theme-references]
 
 ## How the predictors overlap
 {: #correlation-structure }
@@ -148,74 +111,77 @@ positive correlation means two predictors favour the same stocks.
 To follow whole themes, I also combine each theme into one composite: the
 equal-weight sum of its signed, standardized predictor ranks. Figure 1 lets
 you pick a period and switch between all 80 predictors and the seven theme
-composites; its lower panel adds up each composite's daily IC with the
-target, so a steadily rising line is a theme that kept ranking stocks well.
+composites. The predictors are ordered by a dendrogram, which joins the most
+similar predictors first, and the colour strip shows each one's theme. The
+lower panel adds up each composite's daily IC with the target, so a steadily
+rising line is a theme that kept ranking stocks well.
 
 {% include predictor-structure-explorer.html %}
 
 <noscript markdown="0">
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/predictor-correlation" mobile="/assets/multiple-linear-regression/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="2" %}
+    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/predictor-correlation" mobile="/assets/multiple-linear-regression/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="3" %}
   </div>
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-ic-by-year" mobile="/assets/multiple-linear-regression/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean daily rank IC by year from 1998 to 2021." version="2" %}
+    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-ic-by-year" mobile="/assets/multiple-linear-regression/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2021." version="3" %}
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation for the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. Predictors are grouped by theme and, within a theme, ordered by similarity. The lower panel shows each theme composite's IC with the forward 20-session sector-relative Sharpe target.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel adds up each theme composite's IC with the forward 20-session sector-relative Sharpe target; the legend gives each theme's mean IC over the period.</p>
 
 Over the full period, volatility is the most coherent theme: its predictors
-correlate 0.71 on average. Momentum &amp; trend is the least coherent. It spans
-horizons from days to two years, and 43% of its signed pairs are negatively
-correlated: a stock trading well above its 10-day average is a short-term bet
-against the stock, while a strong 12-month return is a bet for it. Across
-themes, the largest block links volatility with size. Although there are 80
-columns, about ten independent combinations carry most of their variation.
+correlate 0.71 on average. Momentum &amp; trend is the least coherent. It
+spans horizons from days to three years, and 43% of its signed pairs are
+negatively correlated: a stock trading well above its 10-day average is a
+short-term bet against the stock, while a strong 12-month return is a bet for
+it. The dendrogram agrees: cut into seven clusters, it matches the themes for
+about three quarters of the predictors, and the exceptions are informative.
+The 5–21-day price-position measures join short-term reversal, market-cap
+variability joins volatility, and the market-cap change measures join the
+longer momentum horizons.
 
-Figure 2 shows how strongly each pair of theme composites moves together in
-each year.
+Although there are 80 predictors, the average correlation matrix behaves like
+about ten uncorrelated directions: its ten largest eigenvalues account for
+roughly three quarters of the variance.
 
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-overlap-by-year" mobile="/assets/multiple-linear-regression/theme-overlap-by-year_mobile" alt="Heatmap of correlations between the seven theme composites, one row per pair of themes and one column per year from 1998 to 2021. Volatility and size are strongly correlated in every year; most pairs involving short-term reversal are close to zero." version="2" %}
-</div>
+Between themes, the composites overlap more than their individual predictors
+do, because averaging removes each predictor's own noise. Volatility and size
+correlate 0.72 on average, and between 0.56 and 0.83 in every calendar year.
+Momentum &amp; trend and size average 0.55. Other relationships change sign:
+market correlation and volatility range from −0.51 to 0.37 across years.
 
-<p class="figure-caption"><strong>Figure 2: Overlap between themes by year, 1998–2021.</strong> Mean daily rank correlation between two theme composites in each calendar year. Rows are sorted by their average correlation.</p>
+Every theme ranks the target on average, but not in every period. Momentum
+&amp; trend has an IC of 0.037 in 1998–2008 and 0.040 in 2009–2021, despite a
+year of −0.060 in 2009. Short-term reversal fades from 0.021 to 0.004 across
+the same split. Volatility and size strengthen, from about 0.02 to about
+0.05, which makes them the two strongest themes after 2009. Market correlation
+has a negative IC in 7 of the 11 years through 2008 and in only one year
+after.
 
-Volatility and size overlap in every year, with correlations between 0.56 and
-0.83. Small companies tend to be volatile, and the size theme also measures
-how much a company's market value has moved. Momentum &amp; trend and size
-average 0.55. Other relationships change sign: the correlation between market
-correlation and volatility ranges from −0.51 to 0.37 across years.
+Overlap does not make a theme redundant. A correlation of 0.72 still leaves
+about half of each composite's variance unexplained by the other, and that
+part can carry its own information. So the question for a simple score is
+which themes to include, and for a learned one, whether weights fitted on one
+decade still suit the next.
 
-Every theme predicts the target on average, but not in every period (lower
-panel of Figure 1). Momentum &amp; trend keeps a similar IC before and after
-2009, 0.037 and 0.040, apart from a sharp loss in the 2009 rebound (−0.060
-that year). Short-term reversal fades from 0.021 in 1998–2008 to 0.004 in
-2009–2021. Volatility and size strengthen, from about 0.02 to about 0.05.
-Market correlation has a negative IC in 7 of the 11 years through 2008 and in
-only one year after.
-
-So the themes overlap, and their usefulness shifts. Overlap does not make a
-theme redundant: volatility and size correlate 0.72 on average, and each can
-still carry information the other lacks. But equal weights across all seven
-themes would lean heavily on that shared bet, and weights that suit one decade
-may not suit the next. Combining them needs some care.
-
-## A three-theme benchmark
+## The fixed score
 {: #a-fixed-weight-comparison }
 
-The simplest response to that overlap is to choose a few themes that differ
-and weight them equally. Momentum &amp; trend, volatility and short
-positioning are among the least correlated pairs in Figure 2 (0.36, 0.09 and
-0.07 on average). Size overlaps most with volatility, so I leave it out to keep
-the rule small, not because it lacks information. My benchmark gives each
-of these three themes one third of the score and splits that weight equally
-among its predictors (Table 2). It favours medium-term strength, lower
-volatility and lighter short positioning. I label it “Fixed” because I choose
-its weights in advance.
+My simple score uses three themes. Momentum and volatility are the strongest
+over the full period and share some of their bet (0.36). Short positioning
+brings a different one: it correlates 0.09 with momentum and 0.07 with
+volatility. Size is also strong, but it correlates 0.72 with volatility and
+0.55 with momentum, so a score that already holds those two carries much of
+its bet; I leave it out to keep the rule to three themes. Equal weights also
+cannot chase a decade, which matters given how much the strongest themes
+changed in Figure 1.
+
+Each theme receives one third of the score, split equally among its
+predictors (Table 1). I call it the fixed score because its weights are set
+by hand rather than fitted.
 
 <table class="research-table settings-table benchmark-ingredients">
-  <caption><strong>Table 2: The fixed score.</strong> Each theme receives one third of the weight, divided equally among its predictors. Horizons are trading sessions.</caption>
+  <caption><strong>Table 1: The fixed score.</strong> Each theme receives one third of the weight, divided equally among its predictors. Horizons are trading sessions. Momentum and Defensive are narrower versions of the Momentum &amp; trend and Volatility themes; five of the twelve inputs are among the 80 predictors.</caption>
   <thead>
     <tr><th>Theme</th><th>What the score favors</th></tr>
   </thead>
@@ -226,20 +192,19 @@ its weights in advance.
   </tbody>
 </table>
 
-Equal theme weights are easy to understand, but they do not say how much
-each overlapping horizon adds. The regressions learn the weights instead,
-on all 80 predictors. Against the fixed rule they change both the inputs and
-the weights; OLS against Ridge keeps the inputs the same and isolates
-regularization. I also refit both on the benchmark's twelve inputs, to
-separate learning the weights from adding predictors.
+The regressions learn the weights instead, on all 80 predictors. Against the
+fixed score they change both the predictor set and the weights; OLS against
+Ridge keeps the inputs the same and isolates regularization. I also refit
+both on the fixed score's twelve inputs, to separate learning the weights
+from changing the predictor set.
 
 ## OLS versus Ridge
 {: #learning-the-combination }
 
 Fitting the weights jointly makes each one conditional. The coefficient on
-six-month momentum measures its relationship with the target holding the
-other inputs fixed, including the neighbouring momentum horizons, and its
-sign can differ from six-month momentum's own IC.
+the 12-month return measures its relationship with the target holding the
+other inputs fixed, including the neighbouring momentum horizons, and its sign
+can differ from the 12-month return's own IC.
 
 That is useful when two predictors differ in a meaningful way. For example,
 $2x_1-1.8x_2=0.2x_1+1.8(x_1-x_2)$ combines a small common exposure with a
@@ -255,14 +220,15 @@ $$
 \min_{a,\,\boldsymbol\beta}\;\frac1n\sum_{i,t}\bigl(y_{i,t}-a-\mathbf z_{i,t}^\top\boldsymbol\beta\bigr)^2+c\lVert\boldsymbol\beta\rVert_2^2 ,
 $$
 
-where $\mathbf z_{i,t}$ holds stock $i$'s 80 predictor ranks on date $t$ and
-the intercept $a$ is unpenalized; $c=0$ gives OLS. The penalty shrinks the
-least-variable combinations of predictors most, accepting some bias for less
-sensitivity to noise ([appendix](#what-ridge-changes)). I fixed $c=0.01$ in
-advance rather than tuning it: on these rank-scaled inputs it halves the
-weight on combinations whose variance is below 0.01 and barely touches the
-combinations that carry most of the variation. The predictor set, target,
-penalty and training scheme were all fixed using data through 2021.
+where $\mathbf z_{i,t}$ holds stock $i$'s 80 predictor ranks on date $t$, $n$
+is the number of stock-date rows and the intercept $a$ is unpenalized; $c=0$
+gives OLS. The penalty shrinks the least-variable combinations of predictors
+most ([appendix](#what-ridge-changes)). I fixed $c=0.01$ in advance rather
+than tuning it: it at least halves the weight on any combination with a
+variance of 0.01 or less, about 3% of one rank predictor's variance, and
+barely touches the combinations that carry most of the variation. The fixed
+score, predictor set, target, penalty and training scheme were all fixed
+using data through 2021.
 
 ## Fitting through time
 {: #from-predictions-to-portfolios }
@@ -270,122 +236,117 @@ penalty and training scheme were all fixed using data through 2021.
 I use an expanding window starting in January 1995. The first training
 window contains 900 trading dates, and a 21-date gap lets the forward
 20-session outcomes finish before predictions begin. I then refit every 600
-dates, keeping the January 1995 start, so each refit adds history (Figure 3).
-OLS and Ridge share the same twelve windows, with predictions from September
-1998. Within each window, I fit three models on interleaved dates and average
-their predictions ([appendix](#sampling-the-training-dates)).
+dates, keeping the January 1995 start, so each refit adds history (Figure 2).
+Until a long-window predictor has enough history, it takes its date-and-sector
+mean. OLS and Ridge share the same twelve windows, with predictions from
+September 1998. Within each window, I fit three models on interleaved dates
+and average their predictions ([appendix](#sampling-the-training-dates)).
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Widths are schematic; the final prediction block can be shorter.</p>
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Widths are schematic; the final prediction block can be shorter.</p>
 
 I report results through December 2021 and for January 2022–May 2026
 separately.
 
 <aside class="research-note" markdown="1" id="portfolio-construction">
 **How I evaluate the scores.** Every score goes through the same plain
-portfolio rule. I buy the top 75 stocks and short the bottom 75, scale
-positions inversely to their past 60-session volatility (20% annual
-reference, 5% floor), cap each stock at 4% and each side at 100% of capital,
-rebalance every three weeks at the next close and charge 5 bp per dollar
-traded. I run three rebalance schedules starting one week apart and average
-their statistics. Portfolio construction itself is the subject of the
-[optimization article](/quants/2026/08/29/portfolio-optimization.html). Because
-this rule lets each score take its own level of risk, I compare scores on
-Sharpe rather than return. Gross exposure is long plus short positions
-relative to capital; traded notional is annual two-way trading divided by
-capital. Returns use arithmetic annualization, and Sharpe assumes a zero cash
-rate.
+portfolio rule. I buy the top 75 stocks and short the bottom 75, weight each
+position by 20% divided by its past 60-session volatility (floored at 5%),
+cap each stock at 4% and each side at 100% of capital, rebalance every three
+weeks at the next close and charge 5 bp per dollar traded. I run three
+rebalance schedules starting one week apart and average their statistics.
+Because this rule lets each score take its own level of risk, I compare
+scores on Sharpe rather than return, and report gross exposure, long plus
+short positions relative to capital: a score that selects calmer stocks gets
+larger positions. Traded notional is annual two-way trading divided by
+capital. Portfolio construction itself is the subject of the
+[optimization article](/quants/2026/08/29/portfolio-optimization.html).
 </aside>
 
 ## Results
 {: #prediction-quality-and-portfolio-results }
 
-I start with ranking quality, then look at portfolios, then at the
-same-input refit.
-
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
-  <caption><strong>Table 3: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
+  <caption><strong>Table 2: Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
   <thead>
     <tr><th>Ranking</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr class="period-heading"><th colspan="4">Later · January 2022–April 2026</th></tr>
-    <tr><th scope="row">Fixed</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
   </tbody>
 </table>
 
-[TBD: two or three sentences on Table 3 — whether the regressions rank better
+[TBD: two or three sentences on Table 2 — whether the regressions rank better
 than the fixed score in each period, and how OLS and Ridge compare.]
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Return and volatility are annualized; beta is measured against the Russell 1000.</caption>
+  <caption><strong>Table 3: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Return and volatility are annualized; beta is measured against the Russell 1000.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Traded notional / year</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr class="period-heading"><th colspan="8">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Fixed</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">OLS</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">Ridge</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
   </tbody>
 </table>
 
-[TBD: Table 4 in three short paragraphs — where the Sharpe difference comes
-from (return or volatility), whether the regressions' advantage holds on each
-schedule and in both periods, and how much extra trading it costs. Compare
-Ridge with OLS last. The cost estimate excludes borrow, financing and market
-impact.]
+[TBD: Table 3 in two short paragraphs — where any Sharpe difference comes
+from (return or volatility), whether it holds on each schedule and in both
+periods, what it costs in trading, and Ridge against OLS. The cost estimate
+excludes borrow, financing and market impact.]
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for the fixed score, OLS and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 4: Portfolio paths from the three scores.</strong> [TBD: rerender from the 80-predictor rerun.] The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+<p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> [TBD: rebuild as an interactive chart from the 80-predictor rerun.] The mean daily net P&amp;L of the three schedules, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below.</p>
 
 ### Learning weights on the same inputs
 
-How much of the difference comes from learning the weights? I refit OLS and
-Ridge on exactly the fixed rule's twelve predictors, keeping the target,
+How much of any difference comes from learning the weights? I refit OLS and
+Ridge on exactly the fixed score's twelve predictors, keeping the target,
 training windows, penalty and portfolio rules the same.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 5: The same twelve inputs, different weights.</strong> Mean statistics across the three rebalance schedules, with min–max Sharpe in parentheses; conventions match Table 4.</caption>
+  <caption><strong>Table 4: The same twelve inputs, different weights.</strong> Mean statistics across the three rebalance schedules, with min–max Sharpe in parentheses; conventions match Table 3.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Traded notional / year</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Fixed</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">OLS · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">Ridge · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr class="period-heading"><th colspan="8">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Fixed</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Fixed score</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">OLS · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
     <tr><th scope="row">Ridge · 12</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
   </tbody>
 </table>
 
-[TBD: compare Table 5 with Table 4 — how much of the Sharpe gain appears with
-the same twelve inputs, and how much only with the 80 predictors; whether the
-extra volatility reduction and trading come with the broader set.]
+[TBD: compare Table 4 with Table 3 — how much of the difference appears with
+the same twelve inputs and how much only with the 80 predictors.]
 
 ## What the model learned
 {: #reading-the-predictors }
 
-Figure 5 shows the ten largest average absolute Ridge weights. A positive
+Figure 4 shows the ten largest average absolute Ridge weights. A positive
 weight raises a stock's score as its rank on that predictor rises, holding
 the other ranks fixed.
 
@@ -393,22 +354,15 @@ the other ranks fixed.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 5: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit.</strong> [TBD: rerender from the 80-predictor fits, with a mobile variant.] Rows are selected using the full coefficient history.</p>
+<p class="figure-caption"><strong>Figure 4: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit.</strong> [TBD: rebuild from the 80-predictor fits.] Rows are selected using the full coefficient history.</p>
 
 Because each weight is conditional, it can disagree with the predictor's own
-IC in Figure 1. In the earlier 144-predictor fit, the 10/21-day MACD had a
-positive standalone IC but a negative weight, sitting among positive weights
-on longer-horizon momentum: the model favoured long-term strength without
-chasing the latest move. That is the contrast visible inside the
-Momentum &amp; trend block of Figure 1, where short and long horizons point in
-opposite directions. [TBD: confirm which contrasts the 80-predictor fit
-learns, and whether their signs persist across the twelve refits.]
-
-Those short-horizon contrasts are also a likely source of the extra trading.
-Reversal and short-horizon trend predictors change rank quickly, so a score
-that leans on them reshuffles its top and bottom 75 more often than the fixed
-rule, which has no predictor shorter than 21 sessions. [TBD: support with the
-rank persistence of each theme and the traded notional in Table 4.]
+IC. Figure 1 shows where to expect that: inside Momentum &amp; trend, short
+and long horizons point in opposite directions, so a linear model can learn a
+contrast between them rather than one sign for the whole theme.
+[TBD: which contrasts the 80-predictor fit learns, whether their signs
+persist across the twelve refits, and whether the short-horizon terms explain
+any extra trading.]
 
 These are ten terms among 80, and several describe similar characteristics,
 so a large coefficient can partly offset another. To establish which themes
@@ -416,22 +370,16 @@ improve the portfolio, I would need to remove them and refit.
 
 ## Where this leaves me
 
-A simple theme-based score is hard to beat. [TBD: confirm with Tables 4–5.]
-Learning the weights adds little on its own. Most of the modest gain comes
-from the broader predictor set, mainly through lower volatility, at the cost
-of more trading. The overlap in the predictors helps explain why: the two
-strongest themes, volatility and size, share much of their bet, so a learned
-model spends much of its freedom reweighting that shared bet and adding
-short-horizon contrasts that trade a lot.
+The predictors tell a clear story before any model is fitted: seven themes
+that all rank the target on average, with volatility and size overlapping
+heavily and the strongest themes changing between decades.
+[TBD: the takeaway from Tables 2–4 — whether a simple theme-based score is
+hard to beat, how much learning the weights adds on its own, how much comes
+from the broader predictor set, and at what cost in trading.]
 
-I still prefer a small Ridge penalty when predictors overlap this much. It
-moderates the uncertain contrasts between them, although
-[TBD: whether it changes stock selection enough to matter].
-
-These results also depend on how I size the selected stocks. In the
-[optimization article](/quants/2026/08/29/portfolio-optimization.html) I take
-more control over portfolio risk and exposures, starting from the earlier
-144-predictor Ridge ranking.
+In the [optimization article](/quants/2026/08/29/portfolio-optimization.html)
+I take more control over portfolio risk and exposures, starting from the
+earlier 144-predictor Ridge ranking.
 
 ## Appendix
 
@@ -455,12 +403,11 @@ $$
 \quad \lambda_j>0.
 $$
 
-The smaller the variance, the stronger the shrinkage; at $c=0.01$ a direction
-with $\lambda_j=0.01$ is halved. [Hastie's Ridge
-review](https://arxiv.org/html/2006.00371v2) (2024, Sections 2–3) develops
-this interpretation. [TBD: across the twelve training windows and three date
+The smaller the variance, the stronger the shrinkage; a direction with
+$\lambda_j=c$ is halved. Hastie develops this interpretation in his Ridge
+review.[^hastie] [TBD: across the twelve training windows and three date
 subsamples, how many of the 80 eigenvalues lie below 0.1 and below 0.01, and
-the share of predictor variance in those directions.]
+their share of predictor variance.]
 
 A coefficient change matters for scores in proportion to the variance of the
 combination it moves along. With $$\Delta\boldsymbol\beta$$ the Ridge minus
@@ -478,7 +425,7 @@ directions and their share of predictor variance, averaged across refits.]
 {: #sampling-the-training-dates }
 
 Within each training window, I fit three models: one gets dates 1, 4, 7, …;
-the next gets 2, 5, 8, …; and the third gets 3, 6, 9, … (Figure 6). Each
+the next gets 2, 5, 8, …; and the third gets 3, 6, 9, … (Figure 5). Each
 receives complete cross-sections from its dates, and I average their
 predictions. This spreads out each model's observations while using all
 dates collectively, although their forward targets still overlap.
@@ -487,7 +434,7 @@ dates collectively, although their forward targets still overlap.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 6: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets. Each selected date contributes a full cross-section.</p>
+<p class="figure-caption"><strong>Figure 5: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets. Each selected date contributes a full cross-section.</p>
 
 I give each training row equal weight, so dates with more usable stocks
 contribute more to the loss. The row count overstates the independent
@@ -497,18 +444,19 @@ persist, and stocks share market and sector shocks.
 ### Ranking details
 {: #ranking-details }
 
-For a non-flat group of $N$ distinct observations, the rank transformation is
+For a group of $N$ distinct observations on one date, the rank
+transformation is
 
 $$
-z_i=2\frac{\operatorname{rank}(x_i)}{N}-1.
+z_i=2\frac{\operatorname{rank}(x_i)}{N}-1 \in (-1,1].
 $$
 
 A stock's momentum can rise from −2% to +10% while its rank stays unchanged.
 The cross-sectional distributions stay approximately uniform over time, which
 keeps scales comparable when pooling history[^rank-convention] and limits the
-influence of extreme predictor and target values. Ranking fixes the scale,
-not the relationships: correlations and predictive relationships can still
-change, as Figures 2 and 3 show.
+influence of extreme predictor and target values. Correlations between
+predictors, and their relationship with the target, can still change, as
+Figure 1 shows.
 
 The cost is losing absolute levels and distances. Adjacent stocks receive the
 same rank gap whether their momentum differs by one or twenty percentage
@@ -518,4 +466,7 @@ sectors, so a high momentum rank can pair with middling performance among
 sector peers, and a portfolio that selects across sectors can still take
 sector exposures.
 
-[^rank-convention]: Gu, Kelly and Xiu also rank stock characteristics in [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), September 2019 manuscript, PDF page 24.
+[^predictor-set]: I started from a library of 144 predictors and use a core-plus-standard set of 79, chosen on data through 2021 for its stability across five-year blocks in a separate tree-model comparison, plus 21-day loss frequency as a short-term candidate. The set leaves out near copies, weak predictors and some distinct variants.
+[^theme-references]: Momentum: Jegadeesh and Titman, *Returns to Buying Winners and Selling Losers*, Journal of Finance, 1993; Da, Gurun and Warachka, *Frog in the Pan*, Review of Financial Studies, 2014. Reversal: Jegadeesh, *Evidence of Predictable Behavior of Security Returns*, Journal of Finance, 1990; Lehmann, *Fads, Martingales, and Market Efficiency*, Quarterly Journal of Economics, 1990. Volatility: Ang, Hodrick, Xing and Zhang, *The Cross-Section of Volatility and Expected Returns*, Journal of Finance, 2006; Baker, Bradley and Wurgler, *Benchmarks as Limits to Arbitrage*, Financial Analysts Journal, 2011; Bali, Cakici and Whitelaw, *Maxing Out*, Journal of Financial Economics, 2011. Trading volume: Lee and Swaminathan, *Price Momentum and Trading Volume*, Journal of Finance, 2000. Illiquidity: Amihud, *Illiquidity and Stock Returns*, Journal of Financial Markets, 2002. Market correlation: Frazzini and Pedersen, *Betting Against Beta*, Journal of Financial Economics, 2014. Short positioning: Boehmer, Jones and Zhang, *Which Shorts Are Informed?*, Journal of Finance, 2008; Hong, Li, Ni, Scheinkman and Yan, *Days to Cover and Stock Returns*, NBER working paper, 2015.
+[^hastie]: Hastie, [*Ridge Regularization: An Essential Concept in Data Science*](https://arxiv.org/abs/2006.00371), Technometrics, 2020, Sections 2–3.
+[^rank-convention]: Gu, Kelly and Xiu also rank stock characteristics in [*Empirical Asset Pricing via Machine Learning*](https://dachxiu.chicagobooth.edu/download/ML_BKP.pdf), Review of Financial Studies, 2020.

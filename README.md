@@ -103,8 +103,8 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   --review-dir assets/multiple-linear-regression/evidence
 ```
 
-Every run also renders the three predictor-structure figures (theme-ordered
-correlation matrix, theme overlap by year, theme IC by year) from
+Every run also renders the two static predictor-structure figures (theme-ordered
+correlation matrix and theme IC by year, the explorer's fallback) from
 `assets/multiple-linear-regression/evidence/predictor-structure/`. Render only
 those with:
 
