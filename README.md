@@ -150,20 +150,6 @@ any chart is written. Fixture tests check rendering behavior. The published
 matched export is also reconciled against the daily returns of all three
 starting-week schedules, including costs and initial-index drawdowns.
 
-The historical five-theme size-choice diagnostic uses the retained daily factor scores:
-
-```bash
-python3 scripts/check_benchmark_size.py \
-  --scores ../projects/factor_combination/outputs/review/five_factor_scores.parquet \
-  --output assets/multiple-linear-regression/benchmark-size-sensitivity.csv
-```
-
-It compares same-date Spearman rankings and membership of the top/bottom 75
-candidate sets. Removing size reweights four factors to 25%; reversing size
-retains five 20% weights. Selection ties follow the stable security identifier.
-The public CSV contains aggregate diagnostics; the local input contains
-security-level scores. Portfolio returns require a separate execution replay.
-
 The timing calculations, figure generators and their portfolio-level inputs live
 in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching).
 From that repository:

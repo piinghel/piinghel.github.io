@@ -7,7 +7,6 @@ __pycache__/
 .ruff_cache/
 *.py[cod]
 *.csv
-!assets/multiple-linear-regression/benchmark-size-sensitivity.csv
 !assets/portfolio-optimization/period-comparison.csv
 !assets/portfolio-optimization/parameter-sensitivity.csv
 *.parquet

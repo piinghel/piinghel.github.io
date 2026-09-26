@@ -11,37 +11,6 @@ from mlr_figures.support import load_daily_series, load_selected_coefficients
 
 
 class FigureInputTests(unittest.TestCase):
-    def test_size_check_preserves_selection_for_monotone_scores(self):
-        import datetime
-
-        import polars as pl
-        from check_benchmark_size import summarize_size_choices
-
-        factors = [
-            "defensive",
-            "momentum",
-            "short_positioning",
-            "size",
-            "return_consistency",
-        ]
-        frame = pl.DataFrame(
-            {
-                "date": [datetime.date(2020, 1, 2)] * 160,
-                "asset_id_bb_global": [f"stock-{i:03d}" for i in range(160)],
-                **{name: [i / 160 for i in range(160)] for name in factors},
-            }
-        )
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "scores.parquet"
-            frame.write_parquet(path)
-            result = summarize_size_choices(path)
-            self.assertEqual(result["replaced_names"].to_list(), [0.0, 0.0])
-            for correlation in result["rank_correlation"]:
-                self.assertAlmostEqual(correlation, 1.0)
-            pl.concat([frame, frame.head(1)]).write_parquet(path)
-            with self.assertRaisesRegex(ValueError, "duplicate"):
-                summarize_size_choices(path)
-
     def test_series_sort_and_validate(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "series.csv"
