@@ -128,6 +128,6 @@ section on how the predictors overlap: the IC-signed average rank correlation
 between the 80 predictors (`predictor_correlation.csv`, in theme order), their
 themes and signs (`predictors.csv`), and yearly correlations and ICs of the seven
 theme composites. They come from `projects/factor_combination/predictor_structure.py`
-on the normalized research panel, every fifth session from 1995 to 2021; the
+on the normalized research panel, every fifth session from 1998 to 2021; the
 predictor set is the default of the feature organization (core + standard of
 every family plus 21-day loss frequency).

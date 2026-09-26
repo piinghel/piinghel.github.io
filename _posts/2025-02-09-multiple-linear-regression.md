@@ -138,60 +138,65 @@ tree-model comparison, not from the regressions below.
 ## How the predictors overlap
 {: #correlation-structure }
 
-On every fifth session from 1995 through 2021, I compute the rank
-correlation between every pair of predictors and between each predictor and
-the target, then average across dates. First I flip the sign of each
-predictor whose average IC is negative. Lower volatility predicts a higher
-target, for example, so I use negative volatility. After the flip, a positive
-correlation means two predictors favour the same stocks.
+On every fifth session from 1998 through 2021, once every predictor has
+enough history, I compute the rank correlation between every pair of
+predictors and between each predictor and the target. First I flip the sign
+of each predictor whose average IC is negative. Lower volatility predicts a
+higher target, for example, so I use negative volatility. After the flip, a
+positive correlation means two predictors favour the same stocks.
+
+To follow whole themes, I also combine each theme into one composite: the
+equal-weight sum of its signed, standardized predictor ranks. Figure 1 lets
+you pick a period and switch between all 80 predictors and the seven theme
+composites; its lower panel adds up each composite's daily IC with the
+target, so a steadily rising line is a theme that kept ranking stocks well.
+
+{% include predictor-structure-explorer.html %}
+
+<noscript markdown="0">
+  <div class="research-figure responsive-figure">
+    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/predictor-correlation" mobile="/assets/multiple-linear-regression/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="2" %}
+  </div>
+  <div class="research-figure responsive-figure">
+    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-ic-by-year" mobile="/assets/multiple-linear-regression/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean daily rank IC by year from 1998 to 2021." version="2" %}
+  </div>
+</noscript>
+
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation for the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. Predictors are grouped by theme and, within a theme, ordered by similarity. The lower panel shows each theme composite's IC with the forward 20-session sector-relative Sharpe target.</p>
+
+Over the full period, volatility is the most coherent theme: its predictors
+correlate 0.71 on average. Momentum &amp; trend is the least coherent. It spans
+horizons from days to two years, and 43% of its signed pairs are negatively
+correlated: a stock trading well above its 10-day average is a short-term bet
+against the stock, while a strong 12-month return is a bet for it. Across
+themes, the largest block links volatility with size. Although there are 80
+columns, about ten independent combinations carry most of their variation.
+
+Figure 2 shows how strongly each pair of theme composites moves together in
+each year.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/predictor-correlation" mobile="/assets/multiple-linear-regression/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks. Volatility forms a strongly correlated block that also correlates with size; momentum and trend contains both positive and negative pairs." version="1" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-overlap-by-year" mobile="/assets/multiple-linear-regression/theme-overlap-by-year_mobile" alt="Heatmap of correlations between the seven theme composites, one row per pair of themes and one column per year from 1998 to 2021. Volatility and size are strongly correlated in every year; most pairs involving short-term reversal are close to zero." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Average rank correlation between the 80 predictors, 1995–2021.</strong> Predictors are grouped by theme and, within a theme, ordered by similarity. Each predictor is signed so that its average IC is positive; blue pairs favour the same stocks.</p>
+<p class="figure-caption"><strong>Figure 2: Overlap between themes by year, 1998–2021.</strong> Mean daily rank correlation between two theme composites in each calendar year. Rows are sorted by their average correlation.</p>
 
-Volatility is the most coherent theme: its predictors correlate 0.72 on
-average. Momentum &amp; trend is the least coherent. It spans horizons from
-days to two years, and 45% of its signed pairs are negatively correlated: a
-stock trading well above its 10-day average is a short-term bet against the
-stock, while a strong 12-month return is a bet for it. Across themes, the
-largest block links volatility with size. Although there are 80 columns,
-about ten independent combinations carry most of their variation.
-
-To follow the themes through time, I combine each theme into one composite:
-the equal-weight sum of its signed, standardized predictor ranks. Figure 2
-shows how strongly each pair of composites moves together in each year.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-overlap-by-year" mobile="/assets/multiple-linear-regression/theme-overlap-by-year_mobile" alt="Heatmap of correlations between the seven theme composites, one row per pair of themes and one column per year from 1995 to 2021. Volatility and size are strongly correlated in every year; most pairs involving short-term reversal are close to zero." version="1" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 2: Overlap between themes by year, 1995–2021.</strong> Mean daily rank correlation between two theme composites in each calendar year. Rows are sorted by their average correlation.</p>
-
-Volatility and size overlap in every year, with correlations between 0.55 and
+Volatility and size overlap in every year, with correlations between 0.56 and
 0.83. Small companies tend to be volatile, and the size theme also measures
 how much a company's market value has moved. Momentum &amp; trend and size
-average 0.51. Other relationships change sign: the correlation between market
+average 0.55. Other relationships change sign: the correlation between market
 correlation and volatility ranges from −0.51 to 0.37 across years.
 
-Figure 3 shows how well each composite ranked the target in each year.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-ic-by-year" mobile="/assets/multiple-linear-regression/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean daily rank IC by year from 1995 to 2021. Volatility and size are strongest after 2009; momentum and trend drops below zero in 2009; short-term reversal fades after the early 2000s." version="1" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 3: Theme IC by year, 1995–2021.</strong> Mean daily rank IC of each theme composite with the forward 20-session sector-relative Sharpe target. Signs use the full period, so every theme's average IC is positive by construction.</p>
-
-Every theme predicts the target on average, but not every year. Momentum
-&amp; trend keeps a similar IC before and after 2009, 0.048 and 0.042, apart
-from a sharp loss in the 2009 rebound (−0.053). Short-term reversal fades
-from 0.029 in 1995–2008 to 0.006 in 2009–2021. Volatility and size
-strengthen, from about 0.03 to above 0.05. Market correlation has a negative
-IC in 8 of the 14 years through 2008 and in only one year after.
+Every theme predicts the target on average, but not in every period (lower
+panel of Figure 1). Momentum &amp; trend keeps a similar IC before and after
+2009, 0.037 and 0.040, apart from a sharp loss in the 2009 rebound (−0.060
+that year). Short-term reversal fades from 0.021 in 1998–2008 to 0.004 in
+2009–2021. Volatility and size strengthen, from about 0.02 to about 0.05.
+Market correlation has a negative IC in 7 of the 11 years through 2008 and in
+only one year after.
 
 So the themes overlap, and their usefulness shifts. Overlap does not make a
-theme redundant: volatility and size correlate 0.71 on average, and each can
+theme redundant: volatility and size correlate 0.72 on average, and each can
 still carry information the other lacks. But equal weights across all seven
 themes would lean heavily on that shared bet, and weights that suit one decade
 may not suit the next. Combining them needs some care.
@@ -201,8 +206,8 @@ may not suit the next. Combining them needs some care.
 
 The simplest response to that overlap is to choose a few themes that differ
 and weight them equally. Momentum &amp; trend, volatility and short
-positioning are among the least correlated pairs in Figure 2 (0.34, 0.08 and
-0.05 on average). Size overlaps most with volatility, so I leave it out to keep
+positioning are among the least correlated pairs in Figure 2 (0.36, 0.09 and
+0.07 on average). Size overlaps most with volatility, so I leave it out to keep
 the rule small, not because it lacks information. My benchmark gives each
 of these three themes one third of the score and splits that weight equally
 among its predictors (Table 2). It favours medium-term strength, lower
@@ -265,7 +270,7 @@ penalty and training scheme were all fixed using data through 2021.
 I use an expanding window starting in January 1995. The first training
 window contains 900 trading dates, and a 21-date gap lets the forward
 20-session outcomes finish before predictions begin. I then refit every 600
-dates, keeping the January 1995 start, so each refit adds history (Figure 4).
+dates, keeping the January 1995 start, so each refit adds history (Figure 3).
 OLS and Ridge share the same twelve windows, with predictions from September
 1998. Within each window, I fit three models on interleaved dates and average
 their predictions ([appendix](#sampling-the-training-dates)).
@@ -274,7 +279,7 @@ their predictions ([appendix](#sampling-the-training-dates)).
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 4: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Widths are schematic; the final prediction block can be shorter.</p>
+<p class="figure-caption"><strong>Figure 3: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Widths are schematic; the final prediction block can be shorter.</p>
 
 I report results through December 2021 and for January 2022–May 2026
 separately.
@@ -348,7 +353,7 @@ impact.]
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/performance-and-drawdowns" mobile="/assets/multiple-linear-regression/performance-and-drawdowns_mobile" alt="Net growth on a logarithmic scale with a shared drawdown panel below for fixed weights, OLS, and Ridge" version="19" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 5: Portfolio paths from the three scores.</strong> [TBD: rerender from the 80-predictor rerun.] The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+<p class="figure-caption"><strong>Figure 4: Portfolio paths from the three scores.</strong> [TBD: rerender from the 80-predictor rerun.] The mean daily net P&amp;L of the three schedules, on common active dates, compounded into an index starting at <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
 
 ### Learning weights on the same inputs
 
@@ -380,7 +385,7 @@ extra volatility reduction and trading come with the broader set.]
 ## What the model learned
 {: #reading-the-predictors }
 
-Figure 6 shows the ten largest average absolute Ridge weights. A positive
+Figure 5 shows the ten largest average absolute Ridge weights. A positive
 weight raises a stock's score as its rank on that predictor rises, holding
 the other ranks fixed.
 
@@ -388,10 +393,10 @@ the other ranks fixed.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/top-coefficients" alt="Signed coefficients for the ten largest mean absolute Ridge weights across walk-forward refits" version="12" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 6: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit.</strong> [TBD: rerender from the 80-predictor fits, with a mobile variant.] Rows are selected using the full coefficient history.</p>
+<p class="figure-caption"><strong>Figure 5: The ten largest mean absolute Ridge coefficients, averaged across the three training subsamples at each refit.</strong> [TBD: rerender from the 80-predictor fits, with a mobile variant.] Rows are selected using the full coefficient history.</p>
 
 Because each weight is conditional, it can disagree with the predictor's own
-IC in Figure 3. In the earlier 144-predictor fit, the 10/21-day MACD had a
+IC in Figure 1. In the earlier 144-predictor fit, the 10/21-day MACD had a
 positive standalone IC but a negative weight, sitting among positive weights
 on longer-horizon momentum: the model favoured long-term strength without
 chasing the latest move. That is the contrast visible inside the
@@ -473,7 +478,7 @@ directions and their share of predictor variance, averaged across refits.]
 {: #sampling-the-training-dates }
 
 Within each training window, I fit three models: one gets dates 1, 4, 7, …;
-the next gets 2, 5, 8, …; and the third gets 3, 6, 9, … (Figure 7). Each
+the next gets 2, 5, 8, …; and the third gets 3, 6, 9, … (Figure 6). Each
 receives complete cross-sections from its dates, and I average their
 predictions. This spreads out each model's observations while using all
 dates collectively, although their forward targets still overlap.
@@ -482,7 +487,7 @@ dates collectively, although their forward targets still overlap.
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 7: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets. Each selected date contributes a full cross-section.</p>
+<p class="figure-caption"><strong>Figure 6: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets. Each selected date contributes a full cross-section.</p>
 
 I give each training row equal weight, so dates with more usable stocks
 contribute more to the loss. The row count overstates the independent

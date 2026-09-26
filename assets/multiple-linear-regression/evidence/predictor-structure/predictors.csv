@@ -1,81 +1,81 @@
-predictor,theme,family,sign,mean_ic
-X_feature_price_bb_pct5,Momentum & trend,price_position,-1.000000,-0.015037
-X_feature_price_price_to_min5,Momentum & trend,price_position,-1.000000,-0.028185
-X_feature_price_price_to_ma21,Momentum & trend,trend,-1.000000,-0.016043
-X_feature_price_bb_pct21,Momentum & trend,price_position,-1.000000,-0.016175
-X_feature_price_price_to_ma10,Momentum & trend,trend,-1.000000,-0.018257
-X_feature_price_bb_pct10,Momentum & trend,price_position,-1.000000,-0.017147
-X_feature_price_price_to_min21,Momentum & trend,price_position,-1.000000,-0.032115
-X_feature_price_price_to_min10,Momentum & trend,price_position,-1.000000,-0.031363
-X_feature_price_high_to_initial126_exclude21,Momentum & trend,price_position,1.000000,0.002516
-X_feature_price_high_to_initial90_exclude10,Momentum & trend,price_position,-1.000000,-0.005959
-X_feature_price_freq_loss_fl756,Momentum & trend,loss_frequency,-1.000000,-0.027145
-X_feature_price_freq_loss_fl252,Momentum & trend,loss_frequency,-1.000000,-0.025473
-X_feature_price_high_to_initial252_exclude21,Momentum & trend,price_position,1.000000,0.005152
-X_feature_price_trend_streak200_504,Momentum & trend,trend,1.000000,0.031735
-X_feature_price_ret252_shift0,Momentum & trend,momentum,1.000000,0.022154
-X_feature_price_macd_21_252,Momentum & trend,trend,1.000000,0.027542
-X_feature_price_trend_streak200_126,Momentum & trend,trend,1.000000,0.030050
-X_feature_price_trend_streak200_252,Momentum & trend,trend,1.000000,0.028512
-X_feature_price_freq_loss_fl63,Momentum & trend,loss_frequency,-1.000000,-0.009131
-X_feature_price_freq_loss_fl21,Momentum & trend,loss_frequency,1.000000,0.006273
-X_feature_price_price_to_min63,Momentum & trend,price_position,-1.000000,-0.023421
-X_feature_price_macd_10_21,Momentum & trend,trend,-1.000000,-0.001122
-X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,Momentum & trend,risk_adjusted_returns,1.000000,0.006683
-X_feature_price_price_to_ma63,Momentum & trend,trend,-1.000000,-0.007263
-X_feature_price_bb_pct126,Momentum & trend,price_position,1.000000,0.004651
-X_feature_price_price_to_min252,Momentum & trend,price_position,1.000000,0.001745
-X_feature_price_ret90_shift0,Momentum & trend,momentum,1.000000,0.005703
-X_feature_price_price_to_ma252,Momentum & trend,trend,1.000000,0.017643
-X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,Momentum & trend,risk_adjusted_returns,1.000000,0.019907
-X_feature_price_macd_21_126,Momentum & trend,trend,1.000000,0.021034
-X_feature_price_final_to_high90_exclude10,Momentum & trend,price_position,1.000000,0.023382
-X_feature_price_price_to_max252,Momentum & trend,price_position,1.000000,0.027999
-X_feature_price_final_to_high252_exclude21,Momentum & trend,price_position,1.000000,0.034655
-X_feature_price_lag1,Short-term reversal,reversal,-1.000000,-0.010238
-X_feature_price_ret21_shift0,Short-term reversal,reversal,-1.000000,-0.011966
-X_feature_price_ret10_shift0,Short-term reversal,reversal,-1.000000,-0.014889
-X_feature_price_ret5_shift0,Short-term reversal,reversal,-1.000000,-0.016243
-X_feature_price_downside_vol10,Volatility,volatility,-1.000000,-0.026296
-X_feature_price_downside_vol21,Volatility,volatility,-1.000000,-0.032503
-X_feature_price_vol10,Volatility,volatility,-1.000000,-0.037722
-X_feature_price_upside_vol10,Volatility,volatility,-1.000000,-0.037342
-X_feature_price_upside_vol21,Volatility,volatility,-1.000000,-0.038856
-X_feature_price_upside_vol63,Volatility,volatility,-1.000000,-0.035422
-X_feature_price_atr5,Volatility,volatility,-1.000000,-0.041028
-X_feature_price_downside_vol126,Volatility,volatility,-1.000000,-0.038834
-X_feature_price_downside_vol63,Volatility,volatility,-1.000000,-0.036266
-X_feature_price_atr21,Volatility,volatility,-1.000000,-0.043255
-X_feature_price_atr126,Volatility,volatility,-1.000000,-0.041816
-X_feature_price_vol252,Volatility,volatility,-1.000000,-0.035105
-X_feature_market_cap_log_identity,Size,size,1.000000,0.019153
-X_feature_market_cap_log_std21,Size,size,-1.000000,-0.033979
-X_feature_market_cap_log_std126,Size,size,-1.000000,-0.025011
-X_feature_market_cap_log_std504,Size,size,-1.000000,-0.012829
-X_feature_market_cap_log_std252,Size,size,-1.000000,-0.017515
-X_feature_market_cap_log_diff_126,Size,size,1.000000,0.011887
-X_feature_market_cap_log_to_min126,Size,size,-1.000000,-0.015159
-X_feature_market_cap_log_to_max504,Size,size,1.000000,0.027668
-X_feature_market_cap_log_diff_504,Size,size,1.000000,0.013416
-X_feature_market_cap_log_to_min504,Size,size,1.000000,0.000737
-X_feature_pv_pv_corr21,Liquidity & volume,price_volume_correlation,-1.000000,-0.012099
-X_feature_pv_pv_corr126,Liquidity & volume,price_volume_correlation,-1.000000,-0.006976
-X_feature_pv_pv_corr63,Liquidity & volume,price_volume_correlation,-1.000000,-0.011615
-X_feature_liquidity_turnover_level63,Liquidity & volume,liquidity,-1.000000,-0.019912
-X_feature_volume_log_volume_ratio_max126,Liquidity & volume,volume,1.000000,0.008293
-X_feature_volume_log_volume_ratio_max252,Liquidity & volume,volume,1.000000,0.008263
-X_feature_pv_illiquidity_mean21,Liquidity & volume,liquidity,-1.000000,-0.021763
-X_feature_volume_log_volume_std504,Liquidity & volume,volume,-1.000000,-0.009945
-X_feature_volume_log_volume_std126,Liquidity & volume,volume,-1.000000,-0.007579
-X_feature_volume_log_volume_std63,Liquidity & volume,volume,-1.000000,-0.005021
-X_feature_market_corr504,Market correlation,market_correlation,1.000000,0.012414
-X_feature_market_corr252,Market correlation,market_correlation,1.000000,0.012141
-X_feature_short_interest_to_volume_log_ratio_std252,Short positioning,short_interest,-1.000000,-0.004928
-X_feature_short_interest_to_volume_log_ratio_std63,Short positioning,short_interest,-1.000000,-0.005893
-X_feature_short_interest_to_volume_log_ratio,Short positioning,short_interest,-1.000000,-0.020255
-X_feature_short_interest_to_volume_log_ratio_mean252,Short positioning,short_interest,-1.000000,-0.013493
-X_feature_short_interest_to_volume_log_ratio_mean63,Short positioning,short_interest,-1.000000,-0.018710
-X_feature_short_interest_log_diff21,Short positioning,short_interest,-1.000000,-0.007591
-X_feature_short_interest_log_diff252,Short positioning,short_interest,-1.000000,-0.013820
-X_feature_short_interest_log_diff63,Short positioning,short_interest,-1.000000,-0.010119
-X_feature_short_interest_log_diff126,Short positioning,short_interest,-1.000000,-0.013634
+predictor,theme,family,sign,mean_ic,description
+X_feature_price_bb_pct5,Momentum & trend,price_position,-1.000000,-0.011778,position within 5-day Bollinger bands (%B)
+X_feature_price_price_to_min5,Momentum & trend,price_position,-1.000000,-0.023677,price relative to its 5-day low
+X_feature_price_price_to_ma21,Momentum & trend,trend,-1.000000,-0.011127,price relative to its 21-day moving average
+X_feature_price_bb_pct21,Momentum & trend,price_position,-1.000000,-0.012101,position within 21-day Bollinger bands (%B)
+X_feature_price_price_to_ma10,Momentum & trend,trend,-1.000000,-0.012891,price relative to its 10-day moving average
+X_feature_price_bb_pct10,Momentum & trend,price_position,-1.000000,-0.013100,position within 10-day Bollinger bands (%B)
+X_feature_price_price_to_min21,Momentum & trend,price_position,-1.000000,-0.026630,price relative to its 21-day low
+X_feature_price_price_to_min10,Momentum & trend,price_position,-1.000000,-0.026577,price relative to its 10-day low
+X_feature_price_high_to_initial126_exclude21,Momentum & trend,price_position,1.000000,0.004537,126-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_high_to_initial90_exclude10,Momentum & trend,price_position,-1.000000,-0.003243,90-day high relative to the price at the start of the window (skips last 10 days)
+X_feature_price_freq_loss_fl756,Momentum & trend,loss_frequency,-1.000000,-0.026078,share of down days over the last 756 days
+X_feature_price_freq_loss_fl252,Momentum & trend,loss_frequency,-1.000000,-0.024884,share of down days over the last 252 days
+X_feature_price_high_to_initial252_exclude21,Momentum & trend,price_position,1.000000,0.004403,252-day high relative to the price at the start of the window (skips last 21 days)
+X_feature_price_trend_streak200_504,Momentum & trend,trend,1.000000,0.030615,share of the last 504 days the price was above its 200-day average
+X_feature_price_ret252_shift0,Momentum & trend,momentum,1.000000,0.021323,total return over the last 252 days
+X_feature_price_macd_21_252,Momentum & trend,trend,1.000000,0.026325,MACD: 21-day vs 252-day moving-average gap
+X_feature_price_trend_streak200_126,Momentum & trend,trend,1.000000,0.028344,share of the last 126 days the price was above its 200-day average
+X_feature_price_trend_streak200_252,Momentum & trend,trend,1.000000,0.026334,share of the last 252 days the price was above its 200-day average
+X_feature_price_freq_loss_fl63,Momentum & trend,loss_frequency,-1.000000,-0.011560,share of down days over the last 63 days
+X_feature_price_freq_loss_fl21,Momentum & trend,loss_frequency,1.000000,0.003194,share of down days over the last 21 days
+X_feature_price_price_to_min63,Momentum & trend,price_position,-1.000000,-0.018272,price relative to its 63-day low
+X_feature_price_macd_10_21,Momentum & trend,trend,1.000000,0.001142,MACD: 10-day vs 21-day moving-average gap
+X_feature_price_sharpe_ratio_compound_r63_volatility63_rolling,Momentum & trend,risk_adjusted_returns,1.000000,0.009335,63-day return divided by 63-day volatility
+X_feature_price_price_to_ma63,Momentum & trend,trend,-1.000000,-0.002479,price relative to its 63-day moving average
+X_feature_price_bb_pct126,Momentum & trend,price_position,1.000000,0.007453,position within 126-day Bollinger bands (%B)
+X_feature_price_price_to_min252,Momentum & trend,price_position,1.000000,0.003486,price relative to its 252-day low
+X_feature_price_ret90_shift0,Momentum & trend,momentum,1.000000,0.008633,total return over the last 90 days
+X_feature_price_price_to_ma252,Momentum & trend,trend,1.000000,0.018888,price relative to its 252-day moving average
+X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling,Momentum & trend,risk_adjusted_returns,1.000000,0.020234,126-day return divided by 126-day volatility
+X_feature_price_macd_21_126,Momentum & trend,trend,1.000000,0.019945,MACD: 21-day vs 126-day moving-average gap
+X_feature_price_final_to_high90_exclude10,Momentum & trend,price_position,1.000000,0.023199,price 10 days ago relative to the 90-day high (skips the last 10 days)
+X_feature_price_price_to_max252,Momentum & trend,price_position,1.000000,0.028079,price relative to its 252-day high
+X_feature_price_final_to_high252_exclude21,Momentum & trend,price_position,1.000000,0.033530,price 21 days ago relative to the 252-day high (skips the last 21 days)
+X_feature_price_lag1,Short-term reversal,reversal,-1.000000,-0.004230,return of the single day 1 days ago
+X_feature_price_ret21_shift0,Short-term reversal,reversal,-1.000000,-0.008440,total return over the last 21 days
+X_feature_price_ret10_shift0,Short-term reversal,reversal,-1.000000,-0.010991,total return over the last 10 days
+X_feature_price_ret5_shift0,Short-term reversal,reversal,-1.000000,-0.011443,total return over the last 5 days
+X_feature_price_downside_vol10,Volatility,volatility,-1.000000,-0.024686,"volatility of down-day returns only, 10 days"
+X_feature_price_downside_vol21,Volatility,volatility,-1.000000,-0.029905,"volatility of down-day returns only, 21 days"
+X_feature_price_vol10,Volatility,volatility,-1.000000,-0.034233,"volatility of daily close-to-close returns, 10 days"
+X_feature_price_upside_vol10,Volatility,volatility,-1.000000,-0.032893,"volatility of up-day returns only, 10 days"
+X_feature_price_upside_vol21,Volatility,volatility,-1.000000,-0.033852,"volatility of up-day returns only, 21 days"
+X_feature_price_upside_vol63,Volatility,volatility,-1.000000,-0.031243,"volatility of up-day returns only, 63 days"
+X_feature_price_atr5,Volatility,volatility,-1.000000,-0.037414,"average daily high-low range incl. overnight gaps (ATR, relative), 5 days"
+X_feature_price_downside_vol126,Volatility,volatility,-1.000000,-0.035406,"volatility of down-day returns only, 126 days"
+X_feature_price_downside_vol63,Volatility,volatility,-1.000000,-0.033118,"volatility of down-day returns only, 63 days"
+X_feature_price_atr21,Volatility,volatility,-1.000000,-0.039570,"average daily high-low range incl. overnight gaps (ATR, relative), 21 days"
+X_feature_price_atr126,Volatility,volatility,-1.000000,-0.038592,"average daily high-low range incl. overnight gaps (ATR, relative), 126 days"
+X_feature_price_vol252,Volatility,volatility,-1.000000,-0.032007,"volatility of daily close-to-close returns, 252 days"
+X_feature_market_cap_log_identity,Size,size,1.000000,0.017503,firm size: log market cap
+X_feature_market_cap_log_std21,Size,size,-1.000000,-0.030988,how much log market cap moved over 21 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std126,Size,size,-1.000000,-0.022263,how much log market cap moved over 126 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std504,Size,size,-1.000000,-0.011555,how much log market cap moved over 504 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_std252,Size,size,-1.000000,-0.015469,how much log market cap moved over 252 days (std of the level: volatility plus trend)
+X_feature_market_cap_log_diff_126,Size,size,1.000000,0.012546,change in log market cap over 126 days (price return plus share-count change)
+X_feature_market_cap_log_to_min126,Size,size,-1.000000,-0.012557,market cap relative to its 126-day low
+X_feature_market_cap_log_to_max504,Size,size,1.000000,0.027229,market cap relative to its 504-day high
+X_feature_market_cap_log_diff_504,Size,size,1.000000,0.013175,change in log market cap over 504 days (price return plus share-count change)
+X_feature_market_cap_log_to_min504,Size,size,1.000000,0.001492,market cap relative to its 504-day low
+X_feature_pv_pv_corr21,Liquidity & volume,price_volume_correlation,-1.000000,-0.010817,correlation of price and volume changes over 21 days
+X_feature_pv_pv_corr126,Liquidity & volume,price_volume_correlation,-1.000000,-0.006320,correlation of price and volume changes over 126 days
+X_feature_pv_pv_corr63,Liquidity & volume,price_volume_correlation,-1.000000,-0.010034,correlation of price and volume changes over 63 days
+X_feature_liquidity_turnover_level63,Liquidity & volume,liquidity,-1.000000,-0.020110,"turnover: dollar volume / market cap, 63-day level"
+X_feature_volume_log_volume_ratio_max126,Liquidity & volume,volume,1.000000,0.007412,volume relative to its 126-day high
+X_feature_volume_log_volume_ratio_max252,Liquidity & volume,volume,1.000000,0.007183,volume relative to its 252-day high
+X_feature_pv_illiquidity_mean21,Liquidity & volume,liquidity,-1.000000,-0.019458,"Amihud illiquidity: absolute return per dollar traded, 21-day mean"
+X_feature_volume_log_volume_std504,Liquidity & volume,volume,-1.000000,-0.010341,how much log volume moved over 504 days
+X_feature_volume_log_volume_std126,Liquidity & volume,volume,-1.000000,-0.007252,how much log volume moved over 126 days
+X_feature_volume_log_volume_std63,Liquidity & volume,volume,-1.000000,-0.003983,how much log volume moved over 63 days
+X_feature_market_corr504,Market correlation,market_correlation,1.000000,0.011828,correlation with the market over 504 days
+X_feature_market_corr252,Market correlation,market_correlation,1.000000,0.011219,correlation with the market over 252 days
+X_feature_short_interest_to_volume_log_ratio_std252,Short positioning,short_interest,-1.000000,-0.005791,variability of days to cover over 252 days
+X_feature_short_interest_to_volume_log_ratio_std63,Short positioning,short_interest,-1.000000,-0.005842,variability of days to cover over 63 days
+X_feature_short_interest_to_volume_log_ratio,Short positioning,short_interest,-1.000000,-0.020869,days to cover today: short interest / volume (log)
+X_feature_short_interest_to_volume_log_ratio_mean252,Short positioning,short_interest,-1.000000,-0.013829,"days to cover, 252-day average"
+X_feature_short_interest_to_volume_log_ratio_mean63,Short positioning,short_interest,-1.000000,-0.018880,"days to cover, 63-day average"
+X_feature_short_interest_log_diff21,Short positioning,short_interest,-1.000000,-0.007378,change in (lagged) short interest over 21 days
+X_feature_short_interest_log_diff252,Short positioning,short_interest,-1.000000,-0.013409,change in (lagged) short interest over 252 days
+X_feature_short_interest_log_diff63,Short positioning,short_interest,-1.000000,-0.009302,change in (lagged) short interest over 63 days
+X_feature_short_interest_log_diff126,Short positioning,short_interest,-1.000000,-0.013211,change in (lagged) short interest over 126 days

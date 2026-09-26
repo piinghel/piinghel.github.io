@@ -112,9 +112,14 @@ those with:
 python3 scripts/render_multiple_linear_regression_figures.py --structure-only
 ```
 
+The interactive Figure 1 (`_includes/predictor-structure-explorer.html`,
+`assets/js/predictor-structure.js`) reads `predictor-structure.json`, exported from
+the same evidence with `python3 scripts/export_predictor_structure.py`; the static
+correlation and theme-IC SVGs are its no-JavaScript fallback.
+
 That evidence comes from `projects/factor_combination/predictor_structure.py`
 on the 80-predictor default of the feature organization (core + standard of
-every family plus 21-day loss frequency), 1995–2021, every fifth session.
+every family plus 21-day loss frequency), 1998–2021, every fifth session.
 
 With a review directory, the renderer also produces the coefficient heatmap and
 performance / drawdown figure. It requires two compact source files in the review directory:
