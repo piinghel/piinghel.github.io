@@ -99,10 +99,12 @@ button { font: inherit; }
 }
 .home { max-width: 780px; margin: 3rem auto 4rem; }
 .home-title { font-size: 1.5rem; margin-bottom: 0.7rem; }
-.home-intro { max-width: 640px; color: var(--muted-ink); margin-bottom: 2rem; }
+.home-intro { max-width: 640px; color: var(--muted-ink); margin-bottom: 2.5rem; }
+.home-theme + .home-theme { margin-top: 2.5rem; }
+.home-theme-title { color: var(--muted-ink); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 0.3rem; }
 .post-list { list-style: none; padding: 0; margin: 0; }
 .post-list li { padding: 1.15rem 0; border-top: 1px solid var(--rule); }
-.post-list h2 { font-size: 1.22rem; line-height: 1.3; margin: 0; }
+.post-list h3 { font-size: 1.22rem; line-height: 1.3; margin: 0; }
 .post-link { color: var(--ink); text-decoration: none; }
 .post-list-details { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; margin-top: 0.4rem; color: var(--muted-ink); font-size: 0.78rem; }
 .post-deck { margin: 0.5rem 0 0; color: var(--muted-ink); font-size: 0.95rem; line-height: 1.5; }

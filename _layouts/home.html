@@ -4,37 +4,46 @@ layout: base
 
 <div class="home">
   <h1 class="home-title">Research notes</h1>
-  <p class="home-intro">Personal experiments in quantitative finance and data science.</p>
+  <p class="home-intro">I'm Pieter-Jan, and these are my notes on systematic equity research. I try to understand simple things deeply, such as a volatility sort, a linear combination of predictors or a risk limit, and I share the reasoning and experiments behind each decision rather than a finished strategy.</p>
   {% assign posts = site.posts %}
 
   {% include ordered-posts.html posts=posts %}
-  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" | reverse %}
-  {% assign posts = unplaced_posts | concat: research_posts %}
+  {%- comment -%}
+    Reading order, grouped under each post's first category. Consecutive posts with the
+    same category form one group, so keep a theme's posts together in reading_order.yml.
+    Unplaced posts close the list so a new post cannot disappear.
+  {%- endcomment -%}
+  {% assign research_posts = curated_posts | where_exp: "post", "post.navigation != false" %}
+  {% assign posts = research_posts | concat: unplaced_posts %}
 
   {%- if posts.size > 0 -%}
     {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
-    <ul class="post-list">
-      {%- for post in posts -%}
+    {%- assign current_theme = nil -%}
+    {%- for post in posts -%}
+      {%- assign theme = post.categories | first | default: "Other notes" -%}
+      {%- if theme != current_theme -%}
+        {%- unless forloop.first -%}</ul></section>{%- endunless -%}
+        <section class="home-theme">
+          <h2 class="home-theme-title">{{ theme | escape }}</h2>
+          <ul class="post-list">
+        {%- assign current_theme = theme -%}
+      {%- endif -%}
       <li>
-        <h2>
+        <h3>
           <a class="post-link" href="{{ post.url | relative_url }}">
             {{ post.title | escape }}
           </a>
-        </h2>
+        </h3>
         <div class="post-list-details">
           <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
-          {%- for category in post.categories limit: 2 -%}
-            <span class="post-topic">{{ category }}</span>
-          {%- endfor -%}
         </div>
         {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
         {%- if site.show_excerpts -%}
           {{ post.excerpt }}
         {%- endif -%}
       </li>
-      {%- endfor -%}
-    </ul>
-
+      {%- if forloop.last -%}</ul></section>{%- endif -%}
+    {%- endfor -%}
   {%- endif -%}
 
 </div>

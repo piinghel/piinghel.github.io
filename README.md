@@ -20,12 +20,15 @@ bundle exec jekyll serve
 low-volatility sizing → regression → portfolio construction and risk concentration
 → P&L attribution 1–3 → resources. The tranching and tree-model articles are
 unpublished and out of the sequence until they are rebuilt.
-The homepage lists the research sequence newest first, with publication dates;
-Resources stays in the header rather than the list. Previous/Next links follow
-the sequence from its beginning. Place new articles beside their prerequisites and follow-ups;
+The homepage lists the research sequence in reading order, grouped under each
+post's first category (Signals, Portfolio construction, Risk & attribution), with
+the publication date on every entry. Consecutive posts with the same category form
+one group, so keep a theme's posts together. Resources (`navigation: false`) stays
+in the header rather than the list. Previous/Next links follow the sequence from
+its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
-Unlisted posts appear first in their existing date order so they cannot disappear;
+Posts missing from the sequence close the homepage list so they cannot disappear;
 assign their editorial position before publishing. Both layouts use the shared
 `_includes/ordered-posts.html` ordering logic.
 
