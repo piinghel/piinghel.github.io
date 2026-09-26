@@ -59,10 +59,6 @@
     "width": 358,
     "height": 350
   },
-  "/assets/multiple-linear-regression/factor-correlation": {
-    "width": 561,
-    "height": 313
-  },
   "/assets/multiple-linear-regression/performance-and-drawdowns": {
     "width": 554,
     "height": 436
@@ -70,6 +66,30 @@
   "/assets/multiple-linear-regression/performance-and-drawdowns_mobile": {
     "width": 292,
     "height": 426
+  },
+  "/assets/multiple-linear-regression/predictor-correlation": {
+    "width": 534,
+    "height": 430
+  },
+  "/assets/multiple-linear-regression/predictor-correlation_mobile": {
+    "width": 333,
+    "height": 306
+  },
+  "/assets/multiple-linear-regression/theme-ic-by-year": {
+    "width": 587,
+    "height": 214
+  },
+  "/assets/multiple-linear-regression/theme-ic-by-year_mobile": {
+    "width": 341,
+    "height": 215
+  },
+  "/assets/multiple-linear-regression/theme-overlap-by-year": {
+    "width": 599,
+    "height": 375
+  },
+  "/assets/multiple-linear-regression/theme-overlap-by-year_mobile": {
+    "width": 389,
+    "height": 382
   },
   "/assets/multiple-linear-regression/top-coefficients": {
     "width": 605,

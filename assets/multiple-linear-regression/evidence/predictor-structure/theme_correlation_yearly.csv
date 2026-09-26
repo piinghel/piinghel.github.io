@@ -1,0 +1,568 @@
+year,theme_a,theme_b,rho
+1995,Momentum & trend,Short-term reversal,0.802180
+1995,Momentum & trend,Volatility,0.228421
+1995,Momentum & trend,Size,0.160301
+1995,Momentum & trend,Liquidity & volume,0.081366
+1995,Momentum & trend,Market correlation,0.096625
+1995,Momentum & trend,Short positioning,-0.073732
+1995,Short-term reversal,Volatility,0.011594
+1995,Short-term reversal,Size,0.045092
+1995,Short-term reversal,Liquidity & volume,0.126762
+1995,Short-term reversal,Market correlation,0.060767
+1995,Short-term reversal,Short positioning,-0.026299
+1995,Volatility,Size,0.636492
+1995,Volatility,Liquidity & volume,0.124980
+1995,Volatility,Market correlation,-0.061503
+1995,Volatility,Short positioning,-0.117949
+1995,Size,Liquidity & volume,0.409420
+1995,Size,Market correlation,0.072459
+1995,Size,Short positioning,-0.008752
+1995,Liquidity & volume,Market correlation,0.389561
+1995,Liquidity & volume,Short positioning,0.143544
+1995,Market correlation,Short positioning,0.043173
+1996,Momentum & trend,Short-term reversal,0.439125
+1996,Momentum & trend,Volatility,0.314961
+1996,Momentum & trend,Size,0.295223
+1996,Momentum & trend,Liquidity & volume,-0.016145
+1996,Momentum & trend,Market correlation,0.063718
+1996,Momentum & trend,Short positioning,-0.094447
+1996,Short-term reversal,Volatility,-0.012232
+1996,Short-term reversal,Size,-0.031628
+1996,Short-term reversal,Liquidity & volume,0.065316
+1996,Short-term reversal,Market correlation,-0.030413
+1996,Short-term reversal,Short positioning,-0.042173
+1996,Volatility,Size,0.766773
+1996,Volatility,Liquidity & volume,0.050739
+1996,Volatility,Market correlation,0.087436
+1996,Volatility,Short positioning,-0.146672
+1996,Size,Liquidity & volume,0.248637
+1996,Size,Market correlation,0.238303
+1996,Size,Short positioning,-0.020216
+1996,Liquidity & volume,Market correlation,0.492302
+1996,Liquidity & volume,Short positioning,0.272417
+1996,Market correlation,Short positioning,0.121402
+1997,Momentum & trend,Short-term reversal,0.345744
+1997,Momentum & trend,Volatility,0.343451
+1997,Momentum & trend,Size,0.423491
+1997,Momentum & trend,Liquidity & volume,0.021777
+1997,Momentum & trend,Market correlation,0.200151
+1997,Momentum & trend,Short positioning,0.003377
+1997,Short-term reversal,Volatility,-0.027124
+1997,Short-term reversal,Size,-0.163053
+1997,Short-term reversal,Liquidity & volume,0.087057
+1997,Short-term reversal,Market correlation,-0.047712
+1997,Short-term reversal,Short positioning,-0.031064
+1997,Volatility,Size,0.645361
+1997,Volatility,Liquidity & volume,0.028198
+1997,Volatility,Market correlation,0.135407
+1997,Volatility,Short positioning,-0.099050
+1997,Size,Liquidity & volume,0.269003
+1997,Size,Market correlation,0.403125
+1997,Size,Short positioning,0.087072
+1997,Liquidity & volume,Market correlation,0.575248
+1997,Liquidity & volume,Short positioning,0.359435
+1997,Market correlation,Short positioning,0.241682
+1998,Momentum & trend,Short-term reversal,0.275324
+1998,Momentum & trend,Volatility,0.372976
+1998,Momentum & trend,Size,0.555318
+1998,Momentum & trend,Liquidity & volume,0.005061
+1998,Momentum & trend,Market correlation,0.104934
+1998,Momentum & trend,Short positioning,-0.001314
+1998,Short-term reversal,Volatility,-0.008102
+1998,Short-term reversal,Size,-0.157732
+1998,Short-term reversal,Liquidity & volume,0.070137
+1998,Short-term reversal,Market correlation,-0.043705
+1998,Short-term reversal,Short positioning,-0.048954
+1998,Volatility,Size,0.627997
+1998,Volatility,Liquidity & volume,0.042374
+1998,Volatility,Market correlation,0.063478
+1998,Volatility,Short positioning,-0.086049
+1998,Size,Liquidity & volume,0.224351
+1998,Size,Market correlation,0.296079
+1998,Size,Short positioning,0.073301
+1998,Liquidity & volume,Market correlation,0.552953
+1998,Liquidity & volume,Short positioning,0.371063
+1998,Market correlation,Short positioning,0.267631
+1999,Momentum & trend,Short-term reversal,0.329500
+1999,Momentum & trend,Volatility,0.154279
+1999,Momentum & trend,Size,0.512726
+1999,Momentum & trend,Liquidity & volume,0.077751
+1999,Momentum & trend,Market correlation,0.206646
+1999,Momentum & trend,Short positioning,0.051120
+1999,Short-term reversal,Volatility,0.072244
+1999,Short-term reversal,Size,-0.084157
+1999,Short-term reversal,Liquidity & volume,0.115103
+1999,Short-term reversal,Market correlation,-0.033797
+1999,Short-term reversal,Short positioning,-0.044677
+1999,Volatility,Size,0.591193
+1999,Volatility,Liquidity & volume,0.099898
+1999,Volatility,Market correlation,-0.125264
+1999,Volatility,Short positioning,-0.133577
+1999,Size,Liquidity & volume,0.287935
+1999,Size,Market correlation,0.251102
+1999,Size,Short positioning,0.089873
+1999,Liquidity & volume,Market correlation,0.432859
+1999,Liquidity & volume,Short positioning,0.385296
+1999,Market correlation,Short positioning,0.237803
+2000,Momentum & trend,Short-term reversal,0.331595
+2000,Momentum & trend,Volatility,0.007106
+2000,Momentum & trend,Size,0.437249
+2000,Momentum & trend,Liquidity & volume,-0.014781
+2000,Momentum & trend,Market correlation,0.023704
+2000,Momentum & trend,Short positioning,0.021555
+2000,Short-term reversal,Volatility,-0.101766
+2000,Short-term reversal,Size,-0.166224
+2000,Short-term reversal,Liquidity & volume,0.104515
+2000,Short-term reversal,Market correlation,0.051642
+2000,Short-term reversal,Short positioning,-0.012371
+2000,Volatility,Size,0.554947
+2000,Volatility,Liquidity & volume,0.078634
+2000,Volatility,Market correlation,-0.323234
+2000,Volatility,Short positioning,-0.120323
+2000,Size,Liquidity & volume,0.230742
+2000,Size,Market correlation,-0.000595
+2000,Size,Short positioning,0.073368
+2000,Liquidity & volume,Market correlation,0.347359
+2000,Liquidity & volume,Short positioning,0.397451
+2000,Market correlation,Short positioning,0.215175
+2001,Momentum & trend,Short-term reversal,0.328852
+2001,Momentum & trend,Volatility,0.601177
+2001,Momentum & trend,Size,0.688798
+2001,Momentum & trend,Liquidity & volume,0.105239
+2001,Momentum & trend,Market correlation,-0.392069
+2001,Momentum & trend,Short positioning,-0.086113
+2001,Short-term reversal,Volatility,-0.060785
+2001,Short-term reversal,Size,-0.062449
+2001,Short-term reversal,Liquidity & volume,0.127145
+2001,Short-term reversal,Market correlation,0.012830
+2001,Short-term reversal,Short positioning,0.011274
+2001,Volatility,Size,0.810109
+2001,Volatility,Liquidity & volume,0.182193
+2001,Volatility,Market correlation,-0.511618
+2001,Volatility,Short positioning,-0.092851
+2001,Size,Liquidity & volume,0.308203
+2001,Size,Market correlation,-0.418213
+2001,Size,Short positioning,-0.007027
+2001,Liquidity & volume,Market correlation,0.033042
+2001,Liquidity & volume,Short positioning,0.411132
+2001,Market correlation,Short positioning,0.183796
+2002,Momentum & trend,Short-term reversal,0.219295
+2002,Momentum & trend,Volatility,0.580634
+2002,Momentum & trend,Size,0.683610
+2002,Momentum & trend,Liquidity & volume,-0.011728
+2002,Momentum & trend,Market correlation,-0.190562
+2002,Momentum & trend,Short positioning,-0.048130
+2002,Short-term reversal,Volatility,-0.175847
+2002,Short-term reversal,Size,-0.202499
+2002,Short-term reversal,Liquidity & volume,0.110689
+2002,Short-term reversal,Market correlation,0.096324
+2002,Short-term reversal,Short positioning,0.007705
+2002,Volatility,Size,0.829152
+2002,Volatility,Liquidity & volume,0.111907
+2002,Volatility,Market correlation,-0.270881
+2002,Volatility,Short positioning,-0.024600
+2002,Size,Liquidity & volume,0.207081
+2002,Size,Market correlation,-0.205744
+2002,Size,Short positioning,0.045152
+2002,Liquidity & volume,Market correlation,0.243987
+2002,Liquidity & volume,Short positioning,0.415789
+2002,Market correlation,Short positioning,0.222649
+2003,Momentum & trend,Short-term reversal,0.389832
+2003,Momentum & trend,Volatility,0.367307
+2003,Momentum & trend,Size,0.498507
+2003,Momentum & trend,Liquidity & volume,0.005223
+2003,Momentum & trend,Market correlation,-0.062530
+2003,Momentum & trend,Short positioning,-0.009199
+2003,Short-term reversal,Volatility,0.058808
+2003,Short-term reversal,Size,-0.001243
+2003,Short-term reversal,Liquidity & volume,0.162454
+2003,Short-term reversal,Market correlation,0.012739
+2003,Short-term reversal,Short positioning,-0.001756
+2003,Volatility,Size,0.750557
+2003,Volatility,Liquidity & volume,0.208656
+2003,Volatility,Market correlation,0.050953
+2003,Volatility,Short positioning,-0.019932
+2003,Size,Liquidity & volume,0.300733
+2003,Size,Market correlation,0.119503
+2003,Size,Short positioning,0.114657
+2003,Liquidity & volume,Market correlation,0.389603
+2003,Liquidity & volume,Short positioning,0.431943
+2003,Market correlation,Short positioning,0.204265
+2004,Momentum & trend,Short-term reversal,0.345241
+2004,Momentum & trend,Volatility,0.304002
+2004,Momentum & trend,Size,0.409403
+2004,Momentum & trend,Liquidity & volume,0.027667
+2004,Momentum & trend,Market correlation,-0.041387
+2004,Momentum & trend,Short positioning,-0.034597
+2004,Short-term reversal,Volatility,-0.034047
+2004,Short-term reversal,Size,-0.112644
+2004,Short-term reversal,Liquidity & volume,0.141849
+2004,Short-term reversal,Market correlation,0.038231
+2004,Short-term reversal,Short positioning,0.014381
+2004,Volatility,Size,0.729788
+2004,Volatility,Liquidity & volume,0.273821
+2004,Volatility,Market correlation,0.150893
+2004,Volatility,Short positioning,-0.000239
+2004,Size,Liquidity & volume,0.363298
+2004,Size,Market correlation,0.213372
+2004,Size,Short positioning,0.151735
+2004,Liquidity & volume,Market correlation,0.422380
+2004,Liquidity & volume,Short positioning,0.460015
+2004,Market correlation,Short positioning,0.288522
+2005,Momentum & trend,Short-term reversal,0.294563
+2005,Momentum & trend,Volatility,0.195249
+2005,Momentum & trend,Size,0.432974
+2005,Momentum & trend,Liquidity & volume,0.078137
+2005,Momentum & trend,Market correlation,-0.026275
+2005,Momentum & trend,Short positioning,0.023863
+2005,Short-term reversal,Volatility,0.001970
+2005,Short-term reversal,Size,-0.136473
+2005,Short-term reversal,Liquidity & volume,0.128729
+2005,Short-term reversal,Market correlation,0.033249
+2005,Short-term reversal,Short positioning,-0.016851
+2005,Volatility,Size,0.676724
+2005,Volatility,Liquidity & volume,0.279316
+2005,Volatility,Market correlation,0.231780
+2005,Volatility,Short positioning,-0.028904
+2005,Size,Liquidity & volume,0.375939
+2005,Size,Market correlation,0.291957
+2005,Size,Short positioning,0.132363
+2005,Liquidity & volume,Market correlation,0.426784
+2005,Liquidity & volume,Short positioning,0.411729
+2005,Market correlation,Short positioning,0.228986
+2006,Momentum & trend,Short-term reversal,0.358635
+2006,Momentum & trend,Volatility,0.201317
+2006,Momentum & trend,Size,0.485487
+2006,Momentum & trend,Liquidity & volume,0.096323
+2006,Momentum & trend,Market correlation,0.189079
+2006,Momentum & trend,Short positioning,0.078731
+2006,Short-term reversal,Volatility,-0.021582
+2006,Short-term reversal,Size,-0.097137
+2006,Short-term reversal,Liquidity & volume,0.117210
+2006,Short-term reversal,Market correlation,-0.014695
+2006,Short-term reversal,Short positioning,-0.012189
+2006,Volatility,Size,0.673638
+2006,Volatility,Liquidity & volume,0.189181
+2006,Volatility,Market correlation,0.214536
+2006,Volatility,Short positioning,-0.064341
+2006,Size,Liquidity & volume,0.325587
+2006,Size,Market correlation,0.353686
+2006,Size,Short positioning,0.159106
+2006,Liquidity & volume,Market correlation,0.439161
+2006,Liquidity & volume,Short positioning,0.442022
+2006,Market correlation,Short positioning,0.224529
+2007,Momentum & trend,Short-term reversal,0.269733
+2007,Momentum & trend,Volatility,0.265321
+2007,Momentum & trend,Size,0.469890
+2007,Momentum & trend,Liquidity & volume,0.101756
+2007,Momentum & trend,Market correlation,0.098255
+2007,Momentum & trend,Short positioning,0.137539
+2007,Short-term reversal,Volatility,-0.024901
+2007,Short-term reversal,Size,-0.172027
+2007,Short-term reversal,Liquidity & volume,0.110088
+2007,Short-term reversal,Market correlation,0.020306
+2007,Short-term reversal,Short positioning,-0.068629
+2007,Volatility,Size,0.620916
+2007,Volatility,Liquidity & volume,0.224777
+2007,Volatility,Market correlation,0.079859
+2007,Volatility,Short positioning,0.038313
+2007,Size,Liquidity & volume,0.352227
+2007,Size,Market correlation,0.265844
+2007,Size,Short positioning,0.262133
+2007,Liquidity & volume,Market correlation,0.465866
+2007,Liquidity & volume,Short positioning,0.408018
+2007,Market correlation,Short positioning,0.148772
+2008,Momentum & trend,Short-term reversal,0.257432
+2008,Momentum & trend,Volatility,0.390026
+2008,Momentum & trend,Size,0.677935
+2008,Momentum & trend,Liquidity & volume,0.171718
+2008,Momentum & trend,Market correlation,0.041291
+2008,Momentum & trend,Short positioning,0.227547
+2008,Short-term reversal,Volatility,-0.109362
+2008,Short-term reversal,Size,-0.186560
+2008,Short-term reversal,Liquidity & volume,0.090997
+2008,Short-term reversal,Market correlation,-0.015964
+2008,Short-term reversal,Short positioning,-0.023140
+2008,Volatility,Size,0.711719
+2008,Volatility,Liquidity & volume,0.201525
+2008,Volatility,Market correlation,0.028024
+2008,Volatility,Short positioning,0.157589
+2008,Size,Liquidity & volume,0.296800
+2008,Size,Market correlation,0.188198
+2008,Size,Short positioning,0.280985
+2008,Liquidity & volume,Market correlation,0.476356
+2008,Liquidity & volume,Short positioning,0.472990
+2008,Market correlation,Short positioning,0.162175
+2009,Momentum & trend,Short-term reversal,0.445353
+2009,Momentum & trend,Volatility,0.391929
+2009,Momentum & trend,Size,0.509588
+2009,Momentum & trend,Liquidity & volume,0.118497
+2009,Momentum & trend,Market correlation,0.033922
+2009,Momentum & trend,Short positioning,0.071146
+2009,Short-term reversal,Volatility,0.090383
+2009,Short-term reversal,Size,0.037388
+2009,Short-term reversal,Liquidity & volume,0.121049
+2009,Short-term reversal,Market correlation,-0.008563
+2009,Short-term reversal,Short positioning,-0.013262
+2009,Volatility,Size,0.798773
+2009,Volatility,Liquidity & volume,0.354703
+2009,Volatility,Market correlation,0.023639
+2009,Volatility,Short positioning,0.122790
+2009,Size,Liquidity & volume,0.366646
+2009,Size,Market correlation,0.079369
+2009,Size,Short positioning,0.173594
+2009,Liquidity & volume,Market correlation,0.444364
+2009,Liquidity & volume,Short positioning,0.401682
+2009,Market correlation,Short positioning,0.188411
+2010,Momentum & trend,Short-term reversal,0.348658
+2010,Momentum & trend,Volatility,0.252046
+2010,Momentum & trend,Size,0.426276
+2010,Momentum & trend,Liquidity & volume,0.099254
+2010,Momentum & trend,Market correlation,0.115591
+2010,Momentum & trend,Short positioning,0.054190
+2010,Short-term reversal,Volatility,0.034884
+2010,Short-term reversal,Size,-0.037146
+2010,Short-term reversal,Liquidity & volume,0.122877
+2010,Short-term reversal,Market correlation,-0.033433
+2010,Short-term reversal,Short positioning,-0.003150
+2010,Volatility,Size,0.732237
+2010,Volatility,Liquidity & volume,0.322734
+2010,Volatility,Market correlation,-0.011512
+2010,Volatility,Short positioning,0.032755
+2010,Size,Liquidity & volume,0.382530
+2010,Size,Market correlation,0.099509
+2010,Size,Short positioning,0.184467
+2010,Liquidity & volume,Market correlation,0.412356
+2010,Liquidity & volume,Short positioning,0.430836
+2010,Market correlation,Short positioning,0.253647
+2011,Momentum & trend,Short-term reversal,0.275590
+2011,Momentum & trend,Volatility,0.324462
+2011,Momentum & trend,Size,0.499258
+2011,Momentum & trend,Liquidity & volume,0.121996
+2011,Momentum & trend,Market correlation,0.097198
+2011,Momentum & trend,Short positioning,0.092954
+2011,Short-term reversal,Volatility,-0.076585
+2011,Short-term reversal,Size,-0.167753
+2011,Short-term reversal,Liquidity & volume,0.086737
+2011,Short-term reversal,Market correlation,0.007691
+2011,Short-term reversal,Short positioning,-0.021847
+2011,Volatility,Size,0.718401
+2011,Volatility,Liquidity & volume,0.276595
+2011,Volatility,Market correlation,0.043700
+2011,Volatility,Short positioning,0.031834
+2011,Size,Liquidity & volume,0.378448
+2011,Size,Market correlation,0.216709
+2011,Size,Short positioning,0.188260
+2011,Liquidity & volume,Market correlation,0.428440
+2011,Liquidity & volume,Short positioning,0.389703
+2011,Market correlation,Short positioning,0.188367
+2012,Momentum & trend,Short-term reversal,0.312943
+2012,Momentum & trend,Volatility,0.505272
+2012,Momentum & trend,Size,0.657912
+2012,Momentum & trend,Liquidity & volume,0.154962
+2012,Momentum & trend,Market correlation,0.086674
+2012,Momentum & trend,Short positioning,0.124437
+2012,Short-term reversal,Volatility,-0.040436
+2012,Short-term reversal,Size,-0.089406
+2012,Short-term reversal,Liquidity & volume,0.112993
+2012,Short-term reversal,Market correlation,-0.010012
+2012,Short-term reversal,Short positioning,-0.015389
+2012,Volatility,Size,0.780551
+2012,Volatility,Liquidity & volume,0.322702
+2012,Volatility,Market correlation,0.176217
+2012,Volatility,Short positioning,0.150603
+2012,Size,Liquidity & volume,0.368556
+2012,Size,Market correlation,0.217592
+2012,Size,Short positioning,0.234581
+2012,Liquidity & volume,Market correlation,0.384562
+2012,Liquidity & volume,Short positioning,0.420071
+2012,Market correlation,Short positioning,0.203972
+2013,Momentum & trend,Short-term reversal,0.365117
+2013,Momentum & trend,Volatility,0.340982
+2013,Momentum & trend,Size,0.425238
+2013,Momentum & trend,Liquidity & volume,0.142434
+2013,Momentum & trend,Market correlation,0.229256
+2013,Momentum & trend,Short positioning,0.144462
+2013,Short-term reversal,Volatility,0.009998
+2013,Short-term reversal,Size,-0.081482
+2013,Short-term reversal,Liquidity & volume,0.136717
+2013,Short-term reversal,Market correlation,-0.020381
+2013,Short-term reversal,Short positioning,-0.002968
+2013,Volatility,Size,0.708156
+2013,Volatility,Liquidity & volume,0.363855
+2013,Volatility,Market correlation,0.316988
+2013,Volatility,Short positioning,0.105295
+2013,Size,Liquidity & volume,0.437191
+2013,Size,Market correlation,0.405110
+2013,Size,Short positioning,0.234627
+2013,Liquidity & volume,Market correlation,0.456544
+2013,Liquidity & volume,Short positioning,0.389736
+2013,Market correlation,Short positioning,0.260106
+2014,Momentum & trend,Short-term reversal,0.352229
+2014,Momentum & trend,Volatility,0.258991
+2014,Momentum & trend,Size,0.442801
+2014,Momentum & trend,Liquidity & volume,0.144284
+2014,Momentum & trend,Market correlation,0.258581
+2014,Momentum & trend,Short positioning,0.197558
+2014,Short-term reversal,Volatility,-0.053104
+2014,Short-term reversal,Size,-0.147774
+2014,Short-term reversal,Liquidity & volume,0.110236
+2014,Short-term reversal,Market correlation,-0.001983
+2014,Short-term reversal,Short positioning,-0.001149
+2014,Volatility,Size,0.695365
+2014,Volatility,Liquidity & volume,0.354714
+2014,Volatility,Market correlation,0.340259
+2014,Volatility,Short positioning,0.141401
+2014,Size,Liquidity & volume,0.422708
+2014,Size,Market correlation,0.488028
+2014,Size,Short positioning,0.260762
+2014,Liquidity & volume,Market correlation,0.469433
+2014,Liquidity & volume,Short positioning,0.381431
+2014,Market correlation,Short positioning,0.288835
+2015,Momentum & trend,Short-term reversal,0.246178
+2015,Momentum & trend,Volatility,0.456076
+2015,Momentum & trend,Size,0.643705
+2015,Momentum & trend,Liquidity & volume,0.081010
+2015,Momentum & trend,Market correlation,0.184121
+2015,Momentum & trend,Short positioning,0.180549
+2015,Short-term reversal,Volatility,-0.103396
+2015,Short-term reversal,Size,-0.172742
+2015,Short-term reversal,Liquidity & volume,0.111397
+2015,Short-term reversal,Market correlation,-0.023939
+2015,Short-term reversal,Short positioning,-0.021582
+2015,Volatility,Size,0.725858
+2015,Volatility,Liquidity & volume,0.279314
+2015,Volatility,Market correlation,0.365388
+2015,Volatility,Short positioning,0.194088
+2015,Size,Liquidity & volume,0.296948
+2015,Size,Market correlation,0.436796
+2015,Size,Short positioning,0.270603
+2015,Liquidity & volume,Market correlation,0.431834
+2015,Liquidity & volume,Short positioning,0.368005
+2015,Market correlation,Short positioning,0.173862
+2016,Momentum & trend,Short-term reversal,0.364417
+2016,Momentum & trend,Volatility,0.575011
+2016,Momentum & trend,Size,0.659031
+2016,Momentum & trend,Liquidity & volume,0.167922
+2016,Momentum & trend,Market correlation,0.160695
+2016,Momentum & trend,Short positioning,0.153442
+2016,Short-term reversal,Volatility,-0.002789
+2016,Short-term reversal,Size,-0.031951
+2016,Short-term reversal,Liquidity & volume,0.117225
+2016,Short-term reversal,Market correlation,-0.035917
+2016,Short-term reversal,Short positioning,-0.010747
+2016,Volatility,Size,0.808043
+2016,Volatility,Liquidity & volume,0.319970
+2016,Volatility,Market correlation,0.367534
+2016,Volatility,Short positioning,0.215137
+2016,Size,Liquidity & volume,0.379139
+2016,Size,Market correlation,0.384607
+2016,Size,Short positioning,0.239690
+2016,Liquidity & volume,Market correlation,0.402235
+2016,Liquidity & volume,Short positioning,0.410043
+2016,Market correlation,Short positioning,0.222448
+2017,Momentum & trend,Short-term reversal,0.317541
+2017,Momentum & trend,Volatility,0.425878
+2017,Momentum & trend,Size,0.537886
+2017,Momentum & trend,Liquidity & volume,0.113827
+2017,Momentum & trend,Market correlation,0.344400
+2017,Momentum & trend,Short positioning,0.248789
+2017,Short-term reversal,Volatility,-0.057982
+2017,Short-term reversal,Size,-0.115244
+2017,Short-term reversal,Liquidity & volume,0.124787
+2017,Short-term reversal,Market correlation,-0.053143
+2017,Short-term reversal,Short positioning,-0.023193
+2017,Volatility,Size,0.777684
+2017,Volatility,Liquidity & volume,0.322056
+2017,Volatility,Market correlation,0.260591
+2017,Volatility,Short positioning,0.262028
+2017,Size,Liquidity & volume,0.368286
+2017,Size,Market correlation,0.374631
+2017,Size,Short positioning,0.334914
+2017,Liquidity & volume,Market correlation,0.248776
+2017,Liquidity & volume,Short positioning,0.396822
+2017,Market correlation,Short positioning,0.264017
+2018,Momentum & trend,Short-term reversal,0.299314
+2018,Momentum & trend,Volatility,0.250877
+2018,Momentum & trend,Size,0.523158
+2018,Momentum & trend,Liquidity & volume,0.118698
+2018,Momentum & trend,Market correlation,0.284599
+2018,Momentum & trend,Short positioning,0.211845
+2018,Short-term reversal,Volatility,-0.095395
+2018,Short-term reversal,Size,-0.154203
+2018,Short-term reversal,Liquidity & volume,0.113484
+2018,Short-term reversal,Market correlation,0.026400
+2018,Short-term reversal,Short positioning,-0.002150
+2018,Volatility,Size,0.650137
+2018,Volatility,Liquidity & volume,0.262168
+2018,Volatility,Market correlation,0.132225
+2018,Volatility,Short positioning,0.158661
+2018,Size,Liquidity & volume,0.336422
+2018,Size,Market correlation,0.366777
+2018,Size,Short positioning,0.290810
+2018,Liquidity & volume,Market correlation,0.327988
+2018,Liquidity & volume,Short positioning,0.435646
+2018,Market correlation,Short positioning,0.277488
+2019,Momentum & trend,Short-term reversal,0.303702
+2019,Momentum & trend,Volatility,0.505276
+2019,Momentum & trend,Size,0.685685
+2019,Momentum & trend,Liquidity & volume,0.141935
+2019,Momentum & trend,Market correlation,0.025825
+2019,Momentum & trend,Short positioning,0.142264
+2019,Short-term reversal,Volatility,-0.033895
+2019,Short-term reversal,Size,-0.082802
+2019,Short-term reversal,Liquidity & volume,0.112560
+2019,Short-term reversal,Market correlation,-0.068358
+2019,Short-term reversal,Short positioning,-0.013066
+2019,Volatility,Size,0.746705
+2019,Volatility,Liquidity & volume,0.297820
+2019,Volatility,Market correlation,-0.016064
+2019,Volatility,Short positioning,0.214065
+2019,Size,Liquidity & volume,0.332287
+2019,Size,Market correlation,0.115291
+2019,Size,Short positioning,0.252156
+2019,Liquidity & volume,Market correlation,0.240467
+2019,Liquidity & volume,Short positioning,0.445082
+2019,Market correlation,Short positioning,0.228932
+2020,Momentum & trend,Short-term reversal,0.261660
+2020,Momentum & trend,Volatility,0.502818
+2020,Momentum & trend,Size,0.688772
+2020,Momentum & trend,Liquidity & volume,0.164194
+2020,Momentum & trend,Market correlation,0.132300
+2020,Momentum & trend,Short positioning,0.176491
+2020,Short-term reversal,Volatility,0.018936
+2020,Short-term reversal,Size,-0.081782
+2020,Short-term reversal,Liquidity & volume,0.125662
+2020,Short-term reversal,Market correlation,0.027335
+2020,Short-term reversal,Short positioning,0.021156
+2020,Volatility,Size,0.807443
+2020,Volatility,Liquidity & volume,0.377110
+2020,Volatility,Market correlation,0.213382
+2020,Volatility,Short positioning,0.245062
+2020,Size,Liquidity & volume,0.375583
+2020,Size,Market correlation,0.242753
+2020,Size,Short positioning,0.265149
+2020,Liquidity & volume,Market correlation,0.400845
+2020,Liquidity & volume,Short positioning,0.468121
+2020,Market correlation,Short positioning,0.296261
+2021,Momentum & trend,Short-term reversal,0.399642
+2021,Momentum & trend,Volatility,0.164769
+2021,Momentum & trend,Size,0.310318
+2021,Momentum & trend,Liquidity & volume,0.150181
+2021,Momentum & trend,Market correlation,0.295502
+2021,Momentum & trend,Short positioning,0.147236
+2021,Short-term reversal,Volatility,-0.046080
+2021,Short-term reversal,Size,-0.126426
+2021,Short-term reversal,Liquidity & volume,0.063178
+2021,Short-term reversal,Market correlation,-0.069297
+2021,Short-term reversal,Short positioning,-0.033238
+2021,Volatility,Size,0.728323
+2021,Volatility,Liquidity & volume,0.435220
+2021,Volatility,Market correlation,0.370167
+2021,Volatility,Short positioning,0.162793
+2021,Size,Liquidity & volume,0.493550
+2021,Size,Market correlation,0.459288
+2021,Size,Short positioning,0.222951
+2021,Liquidity & volume,Market correlation,0.426453
+2021,Liquidity & volume,Short positioning,0.470299
+2021,Market correlation,Short positioning,0.293481

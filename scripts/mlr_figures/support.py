@@ -28,6 +28,8 @@ class FigureStyle:
     long_leg: str = "#4F7396"
     short_leg: str = "#756A8E"
     net_exposure: str = "#56636D"
+    heat_negative: str = "#9A4E22"
+    heat_positive: str = "#2E5B82"
     tick_label_size: float = 9.2
     axis_label_size: float = 10.5
     legend_size: float = 9.5
@@ -52,6 +54,8 @@ def dark_figure_style() -> FigureStyle:
         long_leg="#78A0C4",
         short_leg="#A093B8",
         net_exposure="#AAB4BD",
+        heat_negative="#E3A574",
+        heat_positive="#8DB8DE",
         output_suffix="_dark",
     )
 

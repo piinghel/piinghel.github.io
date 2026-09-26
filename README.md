@@ -104,18 +104,24 @@ python3 scripts/render_multiple_linear_regression_figures.py \
   --review-dir assets/multiple-linear-regression/evidence
 ```
 
-The factor correlation comparison can be regenerated from the included matrix:
+Every run also renders the three predictor-structure figures (theme-ordered
+correlation matrix, theme overlap by year, theme IC by year) from
+`assets/multiple-linear-regression/evidence/predictor-structure/`. Render only
+those with:
 
 ```bash
-python3 scripts/render_multiple_linear_regression_figures.py \
-  --factor-correlation-only
+python3 scripts/render_multiple_linear_regression_figures.py --structure-only
 ```
 
-The primary renderer produces the coefficient heatmap and performance /
-drawdown figure. It requires two compact source files in the review directory:
+That evidence comes from `projects/factor_combination/predictor_structure.py`
+on the 80-predictor default of the feature organization (core + standard of
+every family plus 21-day loss frequency), 1995–2021, every fifth session.
+
+With a review directory, the renderer also produces the coefficient heatmap and
+performance / drawdown figure. It requires two compact source files in the review directory:
 `multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz` and
 `multiple_linear_selected_return_drawdown_figure_source.csv.gz`. It does not
-require IC, penalty-sweep, holdings-tilt or factor-correlation inputs.
+require IC, penalty-sweep or holdings-tilt inputs.
 The [evidence directory](assets/multiple-linear-regression/evidence) also
 contains the ranking and portfolio summaries behind the article tables, plus
 the coefficient-persistence diagnostics. These are the three-theme benchmark,

@@ -46,7 +46,9 @@ uses the same next-close execution, and pays 5 basis points on traded notional.
 
 This baseline differs from the regression article's allocation rule. There,
 selected stocks start with equal signal weights before volatility scaling;
-here, stronger prediction scores receive larger signal weights.
+here, stronger prediction scores receive larger signal weights. The Ridge
+ranking used here is the earlier version fitted on 144 predictors; the
+regression article now uses a pruned set of 80.
 
 The tables average metrics calculated separately for the three schedules. Returns are
 geometric annualized returns; Sharpe uses arithmetic mean daily return and a
