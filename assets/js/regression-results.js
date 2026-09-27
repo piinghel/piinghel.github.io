@@ -1,13 +1,17 @@
-/* Regression article, Figures 3 and 4 (Plotly): growth and drawdown of the three scores,
-   and the ten largest Ridge coefficients by refit. Data: regression-results.json. */
+/* Regression article (Plotly): decile portfolios of the theme-equal and Ridge scores,
+   their growth and drawdown, and the ten largest Ridge coefficients by refit.
+   Data: regression-results.json. */
 (function () {
   'use strict';
 
+  const decileEl = document.getElementById('mlr-deciles');
   const growthEl = document.getElementById('mlr-growth');
   const coefEl = document.getElementById('mlr-coefficients');
-  if (!growthEl && !coefEl) return;
-  const source = (growthEl || coefEl).dataset.source;
-  const MODELS = { 'Fixed score': '--model-fixed', OLS: '--model-ols', Ridge: '--model-ridge' };
+  const plots = [decileEl, growthEl, coefEl].filter(Boolean);
+  if (!plots.length) return;
+  const source = plots[0].dataset.source;
+  const MODELS = { 'Theme-equal': '--model-baseline', Ridge: '--model-ridge' };
+  const decileState = { period: 'development' };
   let data = null;
 
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -26,14 +30,19 @@
     showarrow: false, font: { size: 13, color: cssVar('--ink') },
   });
 
+  // Keep labels at least one line height (15 px) apart, highest first, for an axis whose
+  // range spans panelPx pixels.
+  function spreadLabels(labels, range, panelPx) {
+    const gap = (15 * (range[1] - range[0])) / panelPx;
+    const sorted = labels.slice().sort((a, b) => b.y - a.y);
+    sorted.forEach((label, k) => { if (k) label.y = Math.min(label.y, sorted[k - 1].y - gap); });
+    return sorted;
+  }
+
   // Line-end labels, pushed apart by one label height when two series finish close together.
   function endLabels(names, last, range, panelPx) {
-    const gap = (15 * (range[1] - range[0])) / panelPx; // 15 px in log10 units
-    const ends = names
-      .map((name) => ({ name, y: Math.log10(data.growth[name].growth[data.growth[name].growth.length - 1]) }))
-      .sort((a, b) => b.y - a.y);
-    ends.forEach((end, k) => { if (k) end.y = Math.min(end.y, ends[k - 1].y - gap); });
-    return ends.map((end) => ({
+    const ends = names.map((name) => ({ name, y: Math.log10(data.growth[name].growth[data.growth[name].growth.length - 1]) }));
+    return spreadLabels(ends, range, panelPx).map((end) => ({
       x: last, y: end.y, yref: 'y', xanchor: 'left', xshift: 5,
       text: end.name, showarrow: false, font: { color: cssVar(MODELS[end.name]), size: 12 },
     }));
@@ -55,7 +64,7 @@
     const range = [Math.log10(Math.min(...values) * 0.92), Math.log10(Math.max(...values) * 1.08)];
     const narrow = growthEl.clientWidth < 560;
     const height = narrow ? 420 : 460;
-    const margin = { l: 40, r: narrow ? 72 : 80, t: 24, b: 28 };
+    const margin = { l: 40, r: narrow ? 86 : 92, t: 24, b: 28 };
     const growthDomain = [0.42, 1];
     const drawdownDomain = [0, 0.27];
     const panelPx = (height - margin.t - margin.b) * (growthDomain[1] - growthDomain[0]);
@@ -75,6 +84,34 @@
       ],
     });
     window.Plotly.react(growthEl, traces, layout, config);
+  }
+
+  // Annual return by decile as grouped bars, with volatility and Sharpe in a small table.
+  function decileChart() {
+    const deciles = Array.from({ length: 10 }, (_, k) => k + 1);
+    const scores = data.deciles[decileState.period];
+    const names = Object.keys(scores).reverse(); // Ridge first
+    const traces = names.map((name) => ({
+      type: 'bar', name, x: deciles, y: scores[name].annual_return.map((v) => v * 100),
+      marker: { color: cssVar(MODELS[name]) },
+      hovertemplate: `${name} · decile %{x}<br>%{y:.1f}% a year<extra></extra>`,
+    }));
+    const grid = cssVar('--rule');
+    const layout = Object.assign(base(decileEl.clientWidth < 560 ? 300 : 340), {
+      margin: { l: 36, r: 8, t: 30, b: 40 },
+      barmode: 'group', bargap: 0.25, bargroupgap: 0.08,
+      legend: { orientation: 'h', x: 0, y: 1.02, xanchor: 'left', yanchor: 'bottom', font: { color: cssVar('--ink') } },
+      xaxis: { tickvals: deciles, showgrid: false, linecolor: grid, ticks: '', title: { text: 'Decile (1 = lowest score)', standoff: 6 } },
+      yaxis: { gridcolor: grid, zerolinecolor: cssVar('--muted-ink'), ticksuffix: '%' },
+    });
+    window.Plotly.react(decileEl, traces, layout, config);
+    const table = document.getElementById('mlr-decile-table');
+    if (!table) return;
+    const cells = (values, digits, scale) => values.map((v) => `<td>${(v * scale).toFixed(digits)}</td>`).join('');
+    table.innerHTML = `<thead><tr><th></th>${deciles.map((d) => `<th>${d}</th>`).join('')}</tr></thead><tbody>${
+      names.map((name) => `<tr class="period-heading"><th colspan="11">${name}</th></tr>`
+        + `<tr><th scope="row">Vol %</th>${cells(scores[name].volatility, 1, 100)}</tr>`
+        + `<tr><th scope="row">Sharpe</th>${cells(scores[name].sharpe, 2, 1)}</tr>`).join('')}</tbody>`;
   }
 
   function coefficientChart() {
@@ -104,9 +141,19 @@
   }
 
   function render() {
+    if (decileEl) decileChart();
     if (growthEl) growthChart();
     if (coefEl) coefficientChart();
   }
+
+  // Development / later toggle above the decile chart.
+  document.querySelectorAll('[data-decile-period]').forEach((button) => {
+    button.addEventListener('click', () => {
+      decileState.period = button.dataset.decilePeriod;
+      document.querySelectorAll('[data-decile-period]').forEach((b) => b.setAttribute('aria-checked', String(b === button)));
+      if (data) decileChart();
+    });
+  });
 
   function loadPlotly(src) {
     if (!window.__plotlyPromise) {
@@ -122,17 +169,17 @@
   }
 
   function load() {
-    Promise.all([loadPlotly((growthEl || coefEl).dataset.plotly), fetch(source).then((r) => r.json())])
+    Promise.all([loadPlotly(plots[0].dataset.plotly), fetch(source).then((r) => r.json())])
       .then(([, json]) => {
         data = json;
         render();
         new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
       })
-      .catch(() => { [growthEl, coefEl].forEach((el) => { if (el) el.textContent = 'The interactive chart could not load.'; }); });
+      .catch(() => { plots.forEach((el) => { el.textContent = 'The interactive chart could not load.'; }); });
   }
 
   const observer = new IntersectionObserver((entries) => {
     if (entries.some((e) => e.isIntersecting)) { observer.disconnect(); load(); }
   }, { rootMargin: '600px' });
-  [growthEl, coefEl].forEach((el) => { if (el) observer.observe(el); });
+  plots.forEach((el) => observer.observe(el));
 }());

@@ -20,26 +20,32 @@ organization (core + standard of every family plus 21-day loss frequency).
 
 ## results/
 
-Tables 2–4, Figures 3–4 and the appendix, from the matched rerun of the fixed score,
-OLS and Ridge on the 80 predictors and on the fixed score's twelve inputs
-(`projects/factor_combination`, outputs `matched_80_20260926`, registry experiment
-`factor-combination:exp:matched-80-predictors`). All scores share one panel built after
+Tables 2–4 and Figures 3–5, from the 2026-09-27 comparison of equal weights with
+learned weights on the same 80 predictors (`projects/factor_combination`, outputs
+`matched_80_20260926/article_2026_09_27`). Every score shares one panel built after
 the volatility warm-up and ATR fixes, the same walk-forward (900/21/600, three
-interleaved subsample fits), portfolio rules, three rebalance schedules and 5 bp costs.
+interleaved subsample fits), portfolio rule, three rebalance schedules and 5 bp costs.
+Theme-equal and equal-weight scores take each predictor's sign from its training-window
+correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
+(c = 0 is OLS), and the article uses c = 0.1.
 
-- `ranking_summary.csv`, `twelve_input_ranking_summary.csv`: daily rank IC.
-- `portfolio_table.csv`, `portfolio_by_schedule.csv`: net and gross return, volatility,
-  Sharpe, drawdown, market beta, gross and net exposure, traded notional and cost drag,
-  as schedule means and per schedule.
-- `figure3_growth_drawdown.csv`: mean daily net P&L of the three schedules on common
-  dates, compounded, with drawdowns.
-- `ridge_coefficients_by_refit.csv`, `ridge_top10_coefficients.csv`: Ridge
-  coefficients per refit (mean of the three subsample fits) and the ten largest.
-- `coefficient_size_and_movement.csv`, `spectrum_by_fit.csv`, `projection_by_refit.csv`:
-  the appendix on what Ridge changes.
-- `score_rank_autocorrelation.csv`, `theme_rank_autocorrelation.csv`,
-  `short_horizon_weight_share.csv`, `theme_weight_share.csv`: the turnover discussion.
-- `fixed_data_fix_portfolio.csv`: effect of the data fixes on the fixed score.
+- `ranking_summary.csv`: daily rank IC by score and period (written by `sweep_review.py`).
+- `portfolio_table.csv`, `portfolio_by_schedule.csv`: net return, volatility, Sharpe,
+  drawdown, market beta, gross exposure and traded notional, as schedule means and per
+  schedule.
+- `penalty_ic_summary.csv`, `chosen_penalty_by_refit.csv`: IC by penalty and the penalty
+  chosen at each refit from earlier out-of-sample blocks (`penalty_validation.py`).
+- `decile_metrics.csv`: equal-weighted decile portfolios of each score, before costs
+  (`prediction_deciles.py`).
+- `growth_drawdown.csv`: mean daily net P&L of the three schedules, compounded, with
+  drawdowns.
+- `ridge_coefficients_by_refit.csv`: c = 0.1 Ridge coefficients per refit (mean of the
+  three subsample fits).
+- `score_rank_autocorrelation.csv`, `ols_ridge_score_correlation.csv`: score persistence
+  over 15 sessions and the daily OLS–Ridge score correlation.
+- `spectrum_by_fit.csv`: eigenvalues of the training covariance per fit (penalty section).
+- `predictor_return_risk.csv`: IC of size and market-correlation predictors with forward
+  return, forward volatility and the target (`predictor_return_risk.py`).
 
 `scripts/export_mlr_data.py` turns both folders into the JSON files the interactive
 figures read.

@@ -3,9 +3,10 @@
 predictor-structure.json (Figure 1) comes from evidence/predictor-structure, written by
 factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
 correlations (x 1000), the dendrogram and the per-date theme IC.
-regression-results.json (Figures 3 and 4) comes from evidence/results, written by
-factor_combination/linear_model_diagnostics.py: growth and drawdown of the three scores
-and the ten largest Ridge coefficients per refit. No statistics are computed here.
+regression-results.json (Figures 3–5) comes from evidence/results, written by
+factor_combination's sweep_review.py and prediction_deciles.py: decile statistics,
+growth and drawdown of the theme-equal and Ridge scores, and Ridge coefficients by
+refit. Only the ten largest coefficients are selected here.
 """
 
 from __future__ import annotations
@@ -27,19 +28,21 @@ SHORT_THEMES = {
     "Market correlation": "Mkt corr.",
     "Short positioning": "Shorts",
 }
-# Figure 4 row labels; the full catalogue description stays in the hover.
+# Figure 5 row labels; the full catalogue description stays in the hover.
 SHORT_PREDICTORS = {
     "X_feature_price_macd_10_21": "MACD 10/21",
+    "X_feature_short_interest_to_volume_log_ratio": "Days to cover",
     "X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling": "Sharpe 126d",
-    "X_feature_market_cap_log_std504": "Mcap variability 504d",
     "X_feature_pv_illiquidity_mean21": "Amihud illiquidity 21d",
     "X_feature_price_high_to_initial90_exclude10": "90d high / start price",
-    "X_feature_short_interest_to_volume_log_ratio": "Days to cover",
+    "X_feature_market_cap_log_std504": "Mcap variability 504d",
+    "X_feature_liquidity_turnover_level63": "Share turnover 63d",
     "X_feature_price_ret252_shift0": "Return 252d",
-    "X_feature_price_trend_streak200_504": "Time above 200d MA",
-    "X_feature_price_macd_21_252": "MACD 21/252",
-    "X_feature_price_freq_loss_fl21": "Down-day share 21d",
+    "X_feature_market_cap_log_std21": "Mcap variability 21d",
+    "X_feature_price_atr5": "Average true range 5d",
 }
+# Article names of the compared scores, in display order.
+SCORES = {"theme_equal": "Theme-equal", "equal_weight": "Equal-weight", "ols": "OLS", "ridge_0p1": "Ridge"}
 
 
 def scaled(values, *, scale: int = 1000) -> list[int]:
@@ -110,42 +113,71 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
     }
 
 
-def export_results(evidence: Path) -> dict:
-    growth = pl.read_csv(evidence / "figure3_growth_drawdown.csv").sort("date")
-    series = list(dict.fromkeys(growth["series"].to_list()))
-    dates = growth.filter(pl.col("series") == series[0])["date"].to_list()
-    if any(growth.filter(pl.col("series") == n)["date"].to_list() != dates for n in series):
-        raise ValueError("the three scores must share their common dates")
-    top = pl.read_csv(evidence / "ridge_top10_coefficients.csv").sort("rank")
-    refits = pl.read_csv(evidence / "ridge_coefficients_by_refit.csv")
+def export_results(evidence: Path, predictors: Path) -> dict:
+    growth = pl.read_csv(evidence / "growth_drawdown.csv").sort("date")
+    plotted = ["theme_equal", "ridge_0p1"]
+    dates = growth.filter(pl.col("model") == plotted[0])["date"].to_list()
+    if any(growth.filter(pl.col("model") == m)["date"].to_list() != dates for m in plotted):
+        raise ValueError("the plotted scores must share their common dates")
+    coefficients = pl.read_csv(evidence / "ridge_coefficients_by_refit.csv")
+    top = (
+        coefficients.group_by("feature")
+        .agg(pl.col("coefficient").abs().mean().alias("size"))
+        .sort(["size", "feature"], descending=[True, False])
+        .head(10)["feature"]
+        .to_list()
+    )
+    catalogue = pl.read_csv(predictors).select("predictor", "theme", "description")
+    info = {row["predictor"]: row for row in catalogue.iter_rows(named=True)}
     years = [
         int(d[:4])
-        for d in refits.unique("fold_id").sort("fold_id")["test_date"].to_list()
+        for d in coefficients.unique("fold_id").sort("fold_id")["test_date"].to_list()
     ]
-    rows = []
-    for feature in top["feature"].to_list():
-        coef = refits.filter(pl.col("feature") == feature).sort("fold_id")["coefficient"]
-        if coef.len() != len(years):
-            raise ValueError(f"{feature}: expected one coefficient per refit")
-        rows.append([round(float(v), 4) for v in coef])
+    deciles = pl.read_csv(evidence / "decile_metrics.csv")
     return {
-        "source": "factor_combination/linear_model_diagnostics.py",
+        "source": "factor_combination sweep_review.py and prediction_deciles.py",
         "dates": dates,
         "growth": {
-            name: {
-                "growth": [round(float(v), 4) for v in group["growth_index"]],
-                "drawdown": [round(float(v), 2) for v in group["drawdown_pct"]],
+            SCORES[m]: {
+                "growth": [round(float(v), 4) for v in part["growth_index"]],
+                "drawdown": [round(float(v), 2) for v in part["drawdown_pct"]],
             }
-            for name in series
-            for group in [growth.filter(pl.col("series") == name)]
+            for m in plotted
+            for part in [growth.filter(pl.col("model") == m)]
         },
         "coefficients": {
             "refit_years": years,
             "predictors": [
-                {"label": SHORT_PREDICTORS[f], "description": d, "theme": t}
-                for f, d, t in zip(top["feature"], top["description"], top["theme"])
+                {
+                    "label": SHORT_PREDICTORS[f],
+                    "description": info[f]["description"],
+                    "theme": info[f]["theme"],
+                }
+                for f in top
             ],
-            "values": rows,
+            "values": [
+                [
+                    round(float(v), 4)
+                    for v in coefficients.filter(pl.col("feature") == f).sort("fold_id")["coefficient"]
+                ]
+                for f in top
+            ],
+        },
+        "deciles": {
+            period: {
+                SCORES[m]: {
+                    metric: [
+                        round(float(v), 4)
+                        for v in deciles.filter(
+                            (pl.col("score") == ("ridge" if m == "ridge_0p1" else m))
+                            & (pl.col("period") == period)
+                        ).sort("decile")[metric]
+                    ]
+                    for metric in ("annual_return", "volatility", "sharpe")
+                }
+                for m in plotted
+            }
+            for period in ("development", "later")
         },
     }
 
@@ -156,7 +188,10 @@ def main() -> None:
     args = parser.parse_args()
     outputs = {
         "predictor-structure.json": export_structure(args.assets / "evidence/predictor-structure"),
-        "regression-results.json": export_results(args.assets / "evidence/results"),
+        "regression-results.json": export_results(
+            args.assets / "evidence/results",
+            args.assets / "evidence/predictor-structure/predictors.csv",
+        ),
     }
     for name, data in outputs.items():
         (args.assets / name).write_text(json.dumps(data, separators=(",", ":")) + "\n")
