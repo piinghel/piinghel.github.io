@@ -43,22 +43,15 @@ $$
 
 Scaling all positions by a positive constant scales expected return and
 volatility equally, so Sharpe fixes the relative weights and leaves the size
-of the portfolio open. Without other limits, I could pick the direction first
-and then lever it to any volatility I want.
-
-Portfolio limits break that separation. Scaling from 5% to 7% forecast
-volatility turns a 4% position into 5.6% and breaches the name cap. So I put
-the volatility budget inside the optimization. A risk penalty
-$$\lambda w^\top\Sigma w$$ in the objective would give the same solutions for
-some $$\lambda$$, but a hard budget sets the risk directly in volatility units.
+of the portfolio open. Portfolio limits break that separation: scaling from
+5% to 7% forecast volatility turns a 4% position into 5.6% and breaches the
+name cap. So I put the volatility budget inside the optimization.
 
 My inputs are relative scores, not calibrated expected returns. For each
 stock I multiply its Ridge prediction $$s_{i,t}$$ by its estimated daily
 volatility $$\widehat\sigma_{i,t}$$ to get a *sizing score*
-$$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$. This is the familiar
-$$\alpha=\mathrm{IC}\cdot\sigma\cdot\text{score}$$ form with one IC for all
-stocks, which only rescales the scores. With signed weights $$w_t$$ and
-volatility target $$\sigma_{\mathrm{target}}$$, I solve
+$$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$, which puts the scores back on each
+stock's risk scale. With signed weights $$w_t$$, I solve
 
 $$
 \begin{aligned}
@@ -69,22 +62,17 @@ $$
 \end{aligned}
 $$
 
-where $$\Sigma_t$$ is the annualized forecast covariance matrix and
-$$\mathcal W_t$$ holds the other portfolio limits. I use a 7% target, close to
-the [TBD] realized volatility of volatility scaling in development. Once the
-other limits bind, maximizing the score is no longer the same as maximizing
-Sharpe, and forecast volatility can end up below 7%.
+where $$\Sigma_t$$ is the annualized forecast covariance matrix,
+$$\sigma_{\mathrm{target}}$$ is 7%, and $$\mathcal W_t$$ holds the portfolio
+limits below.
 
 ## Covariance and correlation shrinkage
 {: #covariance-and-risk-forecasts }
 
-The optimizer is only as good as $$\Sigma_t$$. I use empirical correlations
-because they leave a single choice to make, the shrinkage. Each stock's
-volatility reacts faster than the correlations: 21-session volatility,
-756-session correlations of volatility-standardized returns. The raw
-correlation estimate needs some repair before it is a valid correlation
-matrix (appendix). I then shrink the repaired estimate
-$$\widetilde R_t$$ toward the identity matrix:
+The optimizer is only as good as $$\Sigma_t$$. I let each stock's volatility
+react faster than the correlations: 21-session volatility, 756-session
+correlations of volatility-standardized returns.[^correlation-repair] I then
+shrink the correlation estimate $$\widetilde R_t$$ toward the identity matrix:
 
 $$
 C_t(\rho)=(1-\rho)\widetilde R_t+\rho I.
@@ -92,17 +80,13 @@ $$
 
 At $$\rho=0$$ I keep the estimated correlations; at $$\rho=1$$ I discard
 them. I use $$\rho=0.5$$, which halves every off-diagonal correlation and
-leaves each stock's own variance unchanged. Halving the correlations also
-halves their average, so the model understates common risk; part of what the
-volatility multiplier below corrects may come from this. A constant-correlation
-target would keep the average.
+leaves each stock's own variance unchanged.
 
-I like the explanation of shrinkage through principal components in Pedersen,
-Babu and Levine's
-[*Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543)
-(2021, pp. 129–130). Each component is a combination of
-volatility-standardized returns with unit-length eigenvector $$q_j$$ and
-estimated variance $$\lambda_j$$. Shrinkage keeps the eigenvectors and gives
+I like the explanation of why this helps in Pedersen, Babu and Levine's
+*Enhanced Portfolio Optimization*, through principal components. Each
+component is a combination of volatility-standardized returns with
+unit-length eigenvector $$q_j$$ and estimated variance $$\lambda_j$$.
+Shrinkage keeps the eigenvectors and gives
 
 $$
 \begin{aligned}
@@ -111,12 +95,12 @@ C(\rho)^{-1}q_j&=\frac{q_j}{\lambda_j(\rho)}.
 \end{aligned}
 $$
 
-The eigenvalues move toward their average of one: small ones rise and large
-ones fall. Because the inverse divides each component by its estimated
-variance, a favorable score in a low-variance direction attracts a large
-allocation, and an underestimated variance amplifies the error in that score
-too. Shrinking gives up some of the most attractive-looking diversification
-in exchange for weights that are less sensitive to estimation error.
+The eigenvalues move toward their average of one. Because the inverse divides
+each component by its estimated variance, a favorable score in a
+low-variance direction attracts a large allocation, and an underestimated
+variance amplifies the error in that score too. Shrinking gives up some of the
+most attractive-looking diversification for weights that are less sensitive
+to estimation error.
 
 The covariance matrix and its inverse, the *precision matrix*, are
 
@@ -127,70 +111,59 @@ $$
 \end{aligned}
 $$
 
-with $$D_t$$ the diagonal matrix of annualized volatility forecasts. Read
-right to left, the precision matrix divides expected returns by volatility,
-adjusts them for correlation, and converts back to weights. At full
+with $$D_t$$ the diagonal matrix of annualized volatility forecasts. At full
 shrinkage, the sizing scores cancel one volatility factor and the weights
 become proportional to $$s_{i,t}/\widehat\sigma_{i,t}$$: volatility scaling
 again, apart from the portfolio limits. Joint sizing is the same idea with
 correlations added back in.
 
-*Risk calibration* is the square root of mean realized holding-period
-variance divided by mean forecast variance at execution; one means forecast
-and realized risk agree. I expect an optimized portfolio to under-forecast
-its risk, because the optimizer seeks out the directions whose estimated risk
-is lowest, and those are the ones most likely to be underestimated. The
-volatility forecasts in $$D_t$$ therefore include a multiplier, which I
-estimate on complete holding periods ending by December 2021. It comes out at
-[TBD]. That makes development calibration close to one by construction, so
-the test is the later period (Table 3).[^calibration]
+An optimized portfolio tends to under-forecast its own risk, because the
+optimizer seeks out the directions whose estimated risk is lowest. Halving
+the correlations also halves their average, so the model understates common
+risk as well. I correct both with a multiplier on the volatility forecasts in
+$$D_t$$. *Risk calibration* is the square root of mean realized
+holding-period variance divided by mean forecast variance; one means forecast
+and realized risk agree. With the multiplier I used before, 1.18, the
+optimizer forecasts 7% but realizes 8.5–9.0% in development, a calibration of
+about 1.25. I scale the multiplier by that ratio to [TBD], and a check run
+confirms a development calibration of [TBD]. The later period is the real
+test (Table 3).
 
-Figure 1 shows why I keep some estimated correlation. I rebuild the optimizer
-at each shrinkage value using development data, with and without the trading
-controls described below (a rank buffer and a trade penalty).
+Figure 1 shows why I keep some estimated correlation. I rebuild the
+optimizer at each shrinkage value using development data, with and without
+the trading controls described below.
 
 <div class="research-figure rho-ladder-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" alt="Four panels showing risk calibration, holding-period beta error, annual turnover, and net Sharpe across correlation shrinkage for the optimizer with and without trading controls, with the 0.3 to 0.6 region shaded" version="14" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> Risk calibration (including the volatility multiplier), mean holding-period beta error, annual turnover and net Sharpe at each shrinkage value, development period. The shaded band marks 0.3–0.6; the selected value is 0.5.</p>
+<p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> Risk calibration, mean holding-period beta error, annual turnover and net Sharpe at each shrinkage value, development period. The shaded band marks 0.3–0.6; the selected value is 0.5.</p>
 
-[TBD: how calibration, beta error, turnover and Sharpe move from 0.3 to 0.6,
-and at zero and full shrinkage.] Full shrinkage also separates the two sources
-of the optimizer's gain: at $$\rho=1$$ it keeps [TBD] of its gross-return gain
-over score-weighted volatility scaling, so [TBD: how much comes from
-correlations and how much from the limits and score scaling].
-
-Factor models are the other standard route to a covariance matrix, and they
-combine with shrinkage in the same optimizer. I stick with empirical
-correlations here. For an introduction I liked HRT's
-[*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
-and Chapter 4 of Giuseppe Paleologo's
-[*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6).
+[TBD: how the four measures move from 0.3 to 0.6 and at the extremes. At
+$$\rho=1$$, the share of the optimizer's gross-return gain over score-weighted
+volatility scaling that survives, which separates the gain from correlations
+from the gain from the limits.]
 
 ## Portfolio limits
 
 In the regression article, volatility scaling runs 35–50% net long through
 2021 with market beta near 0.1, because the calmer long side gets larger
-positions. The limits in $$\mathcal W_t$$ are there to stop that and a few
-other failures:
+positions. The limits in $$\mathcal W_t$$ stop that and a few other failures:
 
 - Gross exposure (200%) stops the optimizer from levering up low-risk
   combinations to reach the volatility target.
-- Estimated beta (±0.05) limits market exposure at each rebalance. I limit
-  beta rather than forcing dollar neutrality because the long book has the
-  lower beta; net exposure (±25%) caps how far the portfolio can run net long
-  to balance it.
+- Estimated beta (±0.05) limits market exposure at each rebalance. Because
+  the long book has the lower beta, I limit beta rather than dollars and cap
+  net exposure at ±25%.
 - The name limit (4%) caps the damage from one bad forecast or one
   underestimated volatility.
 - Sector limits (±20% net, 30% of either book) matter because the Ridge
   target is ranked within sectors: a sector tilt would be a bet the ranking
   was never trained to make.
 
-Long candidates can take positive or zero weights and short candidates
-negative or zero weights, so the optimizer sizes the selected names but
-cannot flip their side. The limits apply to target weights; the appendix
-covers how holdings drift between rebalances.
+Long candidates take positive or zero weights and short candidates negative
+or zero weights, so the optimizer sizes the selected names but cannot flip
+their side.[^drift] Table 4 lists all settings.
 
 ## Step by step
 {: #development-results }
@@ -224,9 +197,7 @@ return and bring turnover down to [TBD]×, for a Sharpe of [TBD].
 Several things change at once between the second and third rows: the
 optimizer uses correlations, 21-session instead of 60-session volatility and
 the volatility multiplier; the score enters linearly instead of through
-logistic signal weights; and the volatility target and the gross, net, beta
-and sector limits apply. The third row compares the full rule rather than
-isolating each change.
+logistic signal weights; and the volatility target and the limits apply.
 
 <div class="research-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="14" %}
@@ -247,7 +218,7 @@ it, because only the top 75 enter the new selection. With a *rank buffer*,
 existing holdings stay eligible through rank 175 (the short book uses the
 matching bottom ranks). Holdings outside that range are still closed.
 
-The buffer only keeps a holding eligible; the trade penalty makes keeping it
+The buffer only keeps a holding eligible; a trade penalty makes keeping it
 the default. With $$w_t^{\mathrm{pre}}$$ the weights just before rebalancing
 and *trade coefficient* $$c$$, the objective becomes
 
@@ -259,11 +230,9 @@ $$
 under the same constraints and risk budget. Ignoring risk and limits, moving
 weight from an existing holding to a new name pays only if the new name's
 sizing score beats the old one's by more than $$2c$$ per unit of weight
-moved. An L1 penalty creates this kind of no-trade zone, which suits linear
-costs; a quadratic penalty would suit market impact. Because the penalty is
-in score units, multiplying all scores by $$a$$ is the same as dividing
-$$c$$ by $$a$$, so $$c=2.5\times10^{-4}$$ only means something relative to
-these scores. The 5 bp cost is charged separately on executed trades.
+moved. The penalty is in score units, so $$c=2.5\times10^{-4}$$ only means
+something relative to these scores. The 5 bp cost is charged separately on
+executed trades.
 
 <table class="research-table comparison-table control-table">
   <caption><strong>Table 2: What each trading control contributes.</strong> Development period, September 1998–December 2021. Conventions as in Table 1.</caption>
@@ -276,8 +245,7 @@ these scores. The 5 bp cost is charged separately on executed trades.
   </tbody>
 </table>
 
-[TBD: turnover saved by each control alone and together; say the controls
-work together only if the combined saving exceeds the sum.]
+[TBD: turnover saved by each control alone and together.]
 
 Figure 3 varies one control at a time around the chosen settings.
 
@@ -309,21 +277,16 @@ Table 3 covers January 2022–May 2026, about four and a half years.
 
 [TBD: how the four rules compare after 2021, with a paired block-bootstrap
 interval for the Sharpe difference between the optimizer with trading controls
-and volatility scaling.] Risk calibration, which the
-multiplier sets close to one in development, is [TBD] after 2021.
+and volatility scaling.] Risk calibration after 2021 is [TBD].
 
 The average hides a large spread across rebalance schedules. With trading
 controls, net return differs by [TBD] points between the best and worst
-schedule, against [TBD] for score-weighted volatility scaling. Trading more
-slowly still helps on average, but much less consistently than in
-development.
+schedule, against [TBD] for score-weighted volatility scaling.
 
 Much of the weakness comes from the short book in December 2022–February
 2023. For the three schedules combined, the long book contributes about
 [TBD] P&L points and the short book [TBD], where a P&L point is 1% of strategy
-capital, summed over daily after-cost contributions. The
-[attribution series](/quants/portfolio-attribution.html) looks at why short
-books struggle in rebounds.
+capital, summed over daily after-cost contributions.
 
 ## Forecast beta versus realized beta
 
@@ -339,10 +302,9 @@ reflects holdings and market moves throughout that year.
 
 Realized beta averages [TBD] for volatility scaling and [TBD] for the
 optimizer with trading controls, and several episodes last for months and
-reach [TBD]. I tried a shorter estimate: a 63-session [TBD: which window]
-window removes the long episodes, but costs [TBD] points of net return a
-year, more than the 0.5 points I was willing to give up. So I keep the
-756-session estimate (appendix).
+reach [TBD]. A 63-session [TBD: which window] window removes the long
+episodes but costs [TBD] points of net return a year, more than the 0.5 points
+I was willing to give up, so I keep the 756-session estimate.
 
 ## What joint sizing buys, and what it costs
 
@@ -353,19 +315,18 @@ for the regression article's rule to [TBD], and maximum drawdown goes from
 The cost is complexity and, without controls, turnover. The optimizer needs a
 covariance estimate, a shrinkage choice, a risk multiplier and a set of
 limits, and on its own it trades [TBD]× capital a year against [TBD]× for
-volatility scaling. [TBD: whether the controls remove all of the extra
-trading.] It also runs at [TBD] average gross against [TBD] for volatility
-scaling, so the borrow, financing and impact costs left out here weigh more
-on it. Its advantage over volatility scaling disappears at about [TBD] bp per
-dollar traded.
+volatility scaling. It also runs at [TBD] average gross against [TBD] for
+volatility scaling, so the borrow, financing and impact costs left out here
+weigh more on it. Its advantage disappears at about [TBD] bp per dollar
+traded.
 
 Two problems remain. Realized beta drifts away from the rebalance-time
 estimate for months at a time, and after 2021 the result depends heavily on
-which week the portfolio rebalances.
-
-## Appendix
-
-### Allocation settings
+which week the portfolio rebalances. In
+[the next article](/quants/2026/09/05/risk-concentration.html) I look at
+where this portfolio's forecast risk sits and what capping it changes; the
+[attribution series](/quants/portfolio-attribution.html) then breaks down its
+P&L, including the short book's losses in rebounds.
 
 <table class="research-table settings-table">
   <caption><strong>Table 4: Allocation settings.</strong></caption>
@@ -381,27 +342,19 @@ which week the portfolio rebalances.
   </tbody>
 </table>
 
-### Correlation-matrix preparation
+## References
 
-Daily returns are capped at ±30% before estimating correlations, and pairs
-without enough overlapping history use a correlation of 0.50. The resulting
-matrix is symmetrized, negative eigenvalues are clipped to zero and the unit
-diagonal is restored, all before shrinkage.
+Lasse Heje Pedersen, Abhilash Babu and Ari Levine,
+[*Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543),
+*Financial Analysts Journal*, 2021, pp. 129–130.
 
-### Targets, drift and costs
+Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
+2021, Chapter 4 on multi-factor models, the other standard route to a
+covariance matrix.
 
-All limits apply to target weights at the rebalance. After next-close
-execution and later price moves, holdings can drift outside them until the
-next rebalance. The trade penalty measures changes from these drifted
-pre-trade weights, and costs are charged on executed trades. At [TBD]×
-annual turnover, 5 bp costs about [TBD]% of strategy capital a year on an
-arithmetic basis; the gap between gross and net geometric returns also
-includes compounding.
+Hudson River Trading, [*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/),
+a clear introduction to factor risk models.
 
-### A shorter beta window
-
-[TBD: the 63-session test in full: which window changes, the beta-error
-results and the net-return cost with trading controls.]
-
-[^calibration]: A different multiplier also changes the weights, including which constraints bind and how much the portfolio trades, so every result here uses the recalibrated forecasts.
+[^correlation-repair]: Before estimating correlations I cap daily returns at ±30% and give pairs without enough overlapping history a correlation of 0.50. The matrix is then symmetrized, negative eigenvalues are clipped to zero and the unit diagonal is restored.
+[^drift]: All limits apply to target weights. After next-close execution and later price moves, holdings can drift outside them until the next rebalance; the trade penalty measures changes from these drifted weights.
 [^row-one]: The regression article reports arithmetic annualized returns; here they are geometric, so net returns differ slightly while Sharpe and turnover are comparable.
