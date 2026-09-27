@@ -73,21 +73,11 @@ c_i^{\mathrm{stock}}
 =\frac{w_i(\Sigma w)_i}{V(w)},
 $$
 
-and a sector contribution adds those allocations within sector $$S$$,
+and a sector's contribution is the sum of its stocks'. Both can be negative
+when a position hedges the rest of the book, so I limit positive contributions
+only.[^caps]
 
-$$
-c_S^{\mathrm{sector}}
-=\frac{w_S^\top\Sigma w}{V(w)}
-=\sum_{i\in S}c_i^{\mathrm{stock}}.
-$$
-
-Stock and sector contributions can be negative when a position hedges the rest
-of the book. I put an upper limit on positive contributions and track the total
-negative contribution separately. Stock contributions sum to one, and so do sector contributions when every stock belongs to exactly one sector; the cross-sector covariance terms are what make them add up.
-
-These caps are non-convex, because changing the weights changes both the contributions and total variance. So I enforce them with successive local approximations and then recompute the exact shares. I accept a target only if it meets the caps within tolerance.
-
-## Is risk concentrated in this portfolio?
+## Where the risk concentrates
 
 Even with a 4% position limit, a stock can contribute much more than 4% of
 portfolio risk. Across the three schedules, the mean 95th percentile of the
@@ -100,9 +90,9 @@ portfolio usually spreads its modeled risk widely: the median effective number
 of PCA directions, $$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40 on the
 selected stocks. Several components may still share an economic theme.
 
-Did the AI rally change that? Stock and sector concentration actually fell
-after 2021. The shared, cross-sector view is where concentration shows, but it
-didn't start with the AI rally. On the eligible-universe components, the
+Stock and sector concentration actually fell after 2021. Concentration shows
+in the shared, cross-sector view, and it predates the AI rally. On the
+eligible-universe components, the
 largest one took more than 10% of forecast variance on about 6% of rebalances
 before 2015, 31% in 2015–16, 20% in 2017–21 and 28% since 2022, lately mostly
 the third and fourth components (Figure 1; tap or hover over a point to see
@@ -115,13 +105,13 @@ the direction the weight limits can't see, but it built up well before 2022.
 
 <p class="figure-caption"><strong>Figure 1: Shared risk has concentrated more often since 2015.</strong> The largest principal component's share of forecast variance at every rebalance of the uncapped optimizer, three schedules pooled, with components from the eligible-universe covariance. Highlighted points exceed 10%; the shaded area is January 2022–May 2026.</p>
 
-## How much do risk limits change the portfolio?
+## How much the limits change the portfolio
 
 Over the full sample, a cap on every component's share would bind on about 1%
 of rebalances at 20%, 13% at 10% and 30% at 7.5%. I cap all components, not
 only the leading ones, although the difference is small in practice: when the
 largest share exceeds 10%, it comes from the first ten components 94% of the
-time and never from beyond the seventeenth.
+time.
 
 Sector limits intervene far more often. In 2022–2026, a 20% sector cap corrects
 58% of targets and a 15% cap 98%, and a 2% stock cap corrects every one.
@@ -131,7 +121,7 @@ Figure 2 compares how often each tested limit requires an adjustment.
   {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Paired dots comparing the percentage of rebalances requiring adjustment under each PCA, sector and stock risk cap, in the development and later periods" version="4" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: How often risk caps require an adjustment.</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Solver warnings for Sector 15%, Stock 4% and Stock 6%; checks cover targets only for PCA 7.5% and Stock 3%.</p>
+<p class="figure-caption"><strong>Figure 2: How often risk caps require an adjustment.</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. Asterisks mark caps with a solver warning or target-only checks.</p>
 
 PCA caps intervene more often in the later period. Table 1 puts that frequency
 beside the amount of capital each cap reallocates.
@@ -168,7 +158,7 @@ a large shared exposure.
 
 <p class="figure-caption"><strong>Figure 3: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Schedule-mean 95th percentiles of the largest contributions to forecast variance at rebalance targets, with components from the optimizer's covariance of the selected stocks.</p>
 
-## What does it cost?
+## What the limits cost
 
 Moderate caps leave net return, volatility, Sharpe and turnover close to their
 controls (Table 2).
@@ -201,36 +191,17 @@ controls (Table 2).
 </table>
 
 The caps gain little historically, but reducing the modeled concentration also
-costs little. With the 7% forecast target, realized
-volatility remains near 8.4% before 2022 and 9.3% afterward.
+costs little. With the 7% forecast target, realized volatility remains near
+8.4% before 2022 and 9.3% afterward, and the intended low-volatility tilt
+survives: the shorts' forecast volatility is 1.58 times the longs' before 2022
+and 1.75 after under the original optimizer, the same under the 10% PCA cap,
+and 1.56 and 1.73 under the 2% stock cap.[^vol-ratio]
 
-I also tried a 10% sector cap, but only one schedule completed before the next
-hit the solver's iteration limit, so I stopped that test.
+A 2% stock cap raises later-period Sharpe from 0.87 to 0.93, but it lowers
+Sharpe before 2022 and the later gain is within rebalance-timing noise, so I
+wouldn't add it.
 
-The 2% stock cap looks better if I focus on the later period: net Sharpe rises
-from 0.87 to 0.93 and maximum drawdown falls from 9.05% to 8.47%. But the gain
-is uneven across schedules, and over four years fixed schedules routinely
-differ by more than that. Before 2022 the same cap lowers Sharpe, raises
-turnover by about 0.55 times capital a year, and costs about 0.7 points in the
-technology unwind (March 2000–October 2002) and 1.1 points around the
-financial crisis (July 2007–June 2009). I can't distinguish the later gain from
-rebalance-timing noise, so I wouldn't add it.
-
-## What happens to the other risks?
-
-A risk cap shouldn't quietly remove the strategy's intended low-volatility
-tilt, which can span several principal components. As a simple check, I look at
-whether the shorts are still more volatile than the longs.
-For each book, I take the geometric mean of stock forecast volatility, weighted
-by each position's share of that book's absolute weights.
-The short-to-long ratio is 1.58 before 2022 and
-1.75 later under the original optimizer; under the 10% PCA cap it is unchanged
-at 1.58 and 1.75, and under the 2% stock cap 1.56 and 1.73. The intended
-low-volatility tilt remains clear. This ratio
-compares the stocks' volatilities; measuring how much portfolio risk comes from
-that tilt would require factor attribution.
-
-## Would I add these limits?
+## Which limit I'd consider
 
 The weight limits leave some concentration, and since about 2015 it has sat
 increasingly in a few leading components that cut across sectors. A 10% cap on every
@@ -245,3 +216,7 @@ What I still don't know is what those leading components are. If the third and
 fourth components since 2022 turn out to be the AI trade, a cap on shared risk
 is the right tool; if they are a style exposure the ranking relies on, capping
 them would cost more than it shows here.
+
+[^caps]: Stock contributions sum to one, and so do sector contributions when every stock belongs to exactly one sector; the cross-sector covariance terms make them add up. The caps are non-convex, because changing the weights changes both the contributions and total variance, so I enforce them with successive local approximations, recompute the exact shares and accept a target only if it meets the caps within tolerance.
+
+[^vol-ratio]: For each book, the geometric mean of stock forecast volatility, weighted by each position's share of that book's absolute weights.
