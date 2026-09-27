@@ -25,7 +25,7 @@ learned weights on the same 80 predictors (`projects/factor_combination`, output
 `matched_80_20260926/article_2026_09_27`). Every score shares one panel built after
 the volatility warm-up and ATR fixes, the same walk-forward (900/21/600, three
 interleaved subsample fits), portfolio rule, three rebalance schedules and 5 bp costs.
-Theme-equal and equal-weight scores take each predictor's sign from its training-window
+The equal-weight score gives each predictor 1/80 with the sign of its training-window
 correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
 (c = 0 is OLS), and the article uses c = 0.1.
 
@@ -33,8 +33,9 @@ correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
 - `portfolio_table.csv`, `portfolio_by_schedule.csv`: net return, volatility, Sharpe,
   drawdown, market beta, gross exposure and traded notional, as schedule means and per
   schedule.
-- `penalty_ic_summary.csv`, `chosen_penalty_by_refit.csv`: IC by penalty and the penalty
-  chosen at each refit from earlier out-of-sample blocks (`penalty_validation.py`).
+- `penalty_ic_summary.csv`, `chosen_penalty_by_refit.csv`, `penalty_coefficient_size.csv`:
+  IC by penalty, the penalty chosen at each refit from earlier out-of-sample blocks and
+  coefficient size relative to OLS (`penalty_validation.py`).
 - `decile_metrics.csv`: equal-weighted decile portfolios of each score, before costs
   (`prediction_deciles.py`).
 - `growth_drawdown.csv`: mean daily net P&L of the three schedules, compounded, with
@@ -48,6 +49,10 @@ correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
   return, forward volatility and the target (`predictor_return_risk.py`).
 - `book_size_tilt.csv`: average market-cap percentile of the 75 highest and lowest scores
   and the score–size rank correlation (`book_size_tilt.py`).
+- `sharpe_difference.csv`: block-bootstrap interval of the Ridge minus equal-weight Sharpe
+  difference (`sharpe_difference.py`).
+- `low_vol_overlap.csv`: correlation with, and returns next to, the low-volatility
+  article's portfolio (`low_vol_overlap.py`).
 
 `scripts/export_mlr_data.py` turns both folders into the JSON files the interactive
 figures read.

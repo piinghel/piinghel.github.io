@@ -12,6 +12,7 @@
   const source = plots[0].dataset.source;
   const MODELS = { 'Equal-weight': '--model-baseline', Ridge: '--model-ridge' };
   const decileState = { period: 'development' };
+  const TEST_START = '2022-01-03';
   let data = null;
 
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -77,7 +78,12 @@
       xaxis: { anchor: 'y2', range: [data.dates[0], last], showgrid: false, linecolor: grid, ticks: '' },
       yaxis: { type: 'log', range, domain: growthDomain, gridcolor: grid, tickformat: '~g' },
       yaxis2: { domain: drawdownDomain, gridcolor: grid, zerolinecolor: grid, nticks: 4 },
+      // Quiet boundary where the test period starts.
+      shapes: [{ type: 'line', xref: 'x', yref: 'paper', x0: TEST_START, x1: TEST_START, y0: 0, y1: 1,
+        line: { color: cssVar('--muted-ink'), width: 1, dash: 'dot' } }],
       annotations: [
+        { x: TEST_START, xref: 'x', y: growthDomain[0] + 0.02, yref: 'paper', xanchor: 'left', yanchor: 'bottom',
+          xshift: 4, text: 'Test period', showarrow: false, font: { size: 11, color: cssVar('--muted-ink') } },
         heading('Growth of $1 (log scale)', 1.0, margin.l - 4),
         heading('Drawdown (%)', drawdownDomain[1] + 0.03, margin.l - 4),
         ...endLabels(names, last, range, panelPx),
