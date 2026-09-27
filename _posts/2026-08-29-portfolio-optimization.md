@@ -156,7 +156,10 @@ controls described below (a rank buffer and a trade penalty).
 <p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> Risk calibration (including the volatility multiplier), mean holding-period beta error, annual turnover and net Sharpe at each shrinkage value, development period. The shaded band marks 0.3–0.6; the selected value is 0.5.</p>
 
 [TBD: how calibration, beta error, turnover and Sharpe move from 0.3 to 0.6,
-and at zero and full shrinkage.]
+and at zero and full shrinkage.] Full shrinkage also separates the two sources
+of the optimizer's gain: at $$\rho=1$$ it keeps [TBD] of its gross-return gain
+over score-weighted volatility scaling, so [TBD: how much comes from
+correlations and how much from the limits and score scaling].
 
 Factor models are the other standard route to a covariance matrix, and they
 combine with shrinkage in the same optimizer. I stick with empirical
@@ -304,7 +307,9 @@ Table 3 covers January 2022–May 2026, about four and a half years.
   </tbody>
 </table>
 
-[TBD: how the four rules compare after 2021.] Risk calibration, which the
+[TBD: how the four rules compare after 2021, with a paired block-bootstrap
+interval for the Sharpe difference between the optimizer with trading controls
+and volatility scaling.] Risk calibration, which the
 multiplier sets close to one in development, is [TBD] after 2021.
 
 The average hides a large spread across rebalance schedules. With trading
