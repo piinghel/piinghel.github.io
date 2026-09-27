@@ -1,230 +1,175 @@
 ---
 layout: post
 title: "Performance Attribution, Part 3: Can Risk Limits Improve Rebounds?"
-description: "Tilt limits buy lower drawdown but worsen typical rebounds as they tighten. Direct beta limits offer modest, uneven improvement."
+description: "At equal risk, moderate tilt limits help in declines and most strong rallies at no measurable cost, but not in the 2020–21 rebound; beta limits mostly add market beta."
 permalink: /quants/managing-rebound-risk.html
 toc: true
 date: 2026-09-09
+last_modified_at: 2026-09-27
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 3 of 3
 series_id: performance-attribution
 series_order: 3
 ---
 
-<p class="article-summary">The rebound analysis points to a defensive tilt that can become costly when markets recover. I test limits on that tilt, daily volatility scaling and beta-exposure limits, looking for better rebounds without giving up too much elsewhere.</p>
+<p class="article-summary">The rebound analysis points to a defensive tilt that becomes costly in strong rallies. I test limits on that tilt, direct limits on beta exposure and daily volatility scaling, and ask what each one buys in rallies and gives up elsewhere.</p>
 
 Once a pattern shows up in attribution, it's tempting to add a constraint
 and move on. But a limit changes the portfolio on every date it applies,
 including the periods when that exposure was useful. The question is whether
 it fixes enough of the problem to justify what it gives up elsewhere.
 
-For the [rebound losses](/quants/short-book-rebounds.html), I try three approaches:
-limit the low-volatility tilt, reduce portfolio size when recent volatility
-rises, and limit standardized beta exposure directly. I want to know which,
-if any, improves the early recovery while preserving protection during declines.
+[Part 2](/quants/short-book-rebounds.html) located the problem: the shorts
+hold higher-beta, higher-volatility stocks than the longs, and in strong
+rallies that defensive tilt gives back roughly what the net long position
+earns. Rallies cluster early in rebounds, but the 2020–21 rebound lost its
+money seven months after the low. So I judge each rule on strong rallies,
+on market declines and on the two complete rebounds, not on a fixed window
+after each low.
 
-I keep the forecasts, covariance model and execution rules unchanged. The three rebalance schedules each get a third of the capital, and I label the unchanged portfolio **Original**.
+I try three rules: limit the low-volatility tilt, limit standardized beta
+exposure directly, and reduce the whole book when recent volatility rises. I
+keep the forecasts, covariance model and execution rules unchanged, and label
+the unchanged portfolio **Original**. The same portfolio, period and
+[conventions as Part 1](/quants/portfolio-attribution.html#pnl-conventions)
+apply: fixed-notional P&L points, 5 bp trading costs, and no borrow, financing
+or impact.
 
-I use the same portfolio, period and [conventions as part 1](/quants/portfolio-attribution.html#pnl-conventions):
-fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
+## Three rules
 
-## Limit the volatility tilt
-
-The strategy ranks stocks by 21-session volatility on a scale from −1
-(least volatile) to +1 (most volatile). I measure the book's tilt as
+**Tilt limits.** The strategy ranks stocks by 21-session volatility on a scale
+from −1 (least volatile) to +1 (most volatile). I measure the book's tilt as
 
 $$
 V_t=\frac{\sum_i w_{i,t}u_{i,t}}{\sum_i |w_{i,t}|},
 $$
 
-where $u_{i,t}$ is the volatility rank and $w_{i,t}$ the signed position weight.
-Long positions in low-volatility stocks and short positions in high-volatility
-stocks both make $V_t$ negative.
-Dividing by gross exposure expresses the average tilt per dollar invested.
+where $u_{i,t}$ is the volatility rank and $w_{i,t}$ the signed position weight,
+so long positions in calm stocks and shorts in volatile ones both make $V_t$
+negative. I replayed the optimizer with limits of **±0.30, ±0.25, ±0.20, ±0.15
+and ±0.10** on $V_t$, applied at each rebalance. Even the loosest bound was
+binding on about half of all rebalances, and it moved the average tilt only
+from −0.29 to −0.25.
 
-This measure uses volatility ranks per dollar of gross exposure. [Part 1's factor exposure](/quants/portfolio-attribution.html#apply-the-fit-to-the-portfolio) is on a different scale (centered, standardized characteristics per unit of strategy notional), so its numbers aren't comparable with these limits.
-
-I replayed the optimizer with five limits: **±0.30, ±0.25, ±0.20, ±0.15
-and ±0.10**.
-The limits apply only when each schedule rebalances, about every three weeks; prices and ranks keep moving in between.
-
-Even the loosest limit reached its boundary on **53.4% of rebalances**.
-Its average daily tilt moved only modestly, from −0.286 to −0.248;
-tighter limits were binding more often and reduced the tilt further. The measurements
-covered about 99.5% of gross holdings; reported P&L includes every position.
-
-## Reduce size when volatility rises
-
-I also tried reducing the whole book when recent P&L became more volatile.
-This keeps the same stock mix while changing the amount at risk. I estimate
-volatility from an
-exponentially weighted average of squared daily gross P&L, annualized using
-252 sessions, with half-lives of **5** and **21 sessions**. The size multiplier is
+**Standardized beta limits.** The optimizer already caps its forecast beta at
+±0.05, which still leaves the negative standardized beta exposure from
+[Part 1](/quants/portfolio-attribution.html#portfolio-beta). I added a limit on
+that exposure,
 
 $$
-m_t=\min\left(1,\frac{7\%}{\widehat{\sigma}_t}\right).
+-b\leq\sum_i w_i z_{i,\beta}\leq b,
 $$
 
-The multiplier uses only information available before I trade at the next close, and the resized positions earn the session after that. Each scaled version (overlay) holds the original stock book and pays for both its scheduled trades and the extra resizing trades.
+with $b$ at **±0.50, ±0.30 and ±0.10**. Loadings cover about 93% of gross
+exposure; a missing loading counts as the universe mean, zero.
 
-I use an illustrative 7% target, below the original's 7.9% realized volatility.
-Since the multiplier stays at or below one, this reduces both gains and losses.
+**Volatility scaling.** Instead of changing which stocks the book holds, I
+shrink the whole book when its recent P&L becomes more volatile:
 
-Scaling leaves the tilt per dollar unchanged. For Table 1, I rescale each overlay's positions, P&L and costs to the original's average gross exposure of 183.6% of notional. The rescaled version can exceed full size; the trading rule itself never does.
+$$
+m_t=\min\left(1,\frac{7\%}{\widehat{\sigma}_t}\right),
+$$
 
-## P&L and drawdown
-{: #what-the-changes-delivered }
+where $\widehat{\sigma}_t$ is an exponentially weighted estimate of daily
+gross P&L volatility, annualized, with a half-life of **5 sessions** (fast) or
+**21 sessions** (slow). The multiplier uses only information available before
+the trade and pays for its extra resizing trades.
 
-Table 1 compares the P&L given up with the reduction in volatility and drawdown.
+## Full-history results
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: Full-history results.</strong> Annual gross/net P&amp;L and worst drawdown are points of fixed notional; volatility is annualized. The two scaling rows match the original's full-history mean end-of-session gross exposure. Tilt-limit rows retain their own gross exposure.</p>
+<p class="table-caption"><strong>Table 1: Each rule as run.</strong> Net P&amp;L in points of fixed notional; volatility annualized; realized beta is the full-history regression of daily net P&amp;L on the Russell 1000.</p>
 
-| Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Original | 12.71 | 11.33 | 7.90% | 1.43 | −16.32 | 27.6× |
-| Tilt limit ±0.30 | 12.58 | 11.16 | 7.67% | 1.45 | −14.12 | 28.4× |
-| Tilt limit ±0.20 | 12.10 | 10.65 | 7.44% | 1.43 | −12.76 | 29.0× |
-| Tilt limit ±0.10 | 11.15 | 9.68 | 7.16% | 1.35 | −11.48 | 29.4× |
-| Scaling · 5 sessions | 12.59 | 10.52 | 7.47% | 1.41 | −15.79 | 41.4× |
-| Scaling · 21 sessions | 12.68 | 11.07 | 7.55% | 1.47 | −17.27 | 32.2× |
-{: .research-table .comparison-table .portfolio-card-table }
+| Rule | Net / year | Volatility | Sharpe | Realized beta |
+| :--- | ---: | ---: | ---: | ---: |
+| Original | 11.33 | 7.90% | 1.43 | 0.068 |
+| Tilt limit ±0.30 | 11.16 | 7.67% | 1.45 | 0.064 |
+| Tilt limit ±0.20 | 10.65 | 7.44% | 1.43 | 0.048 |
+| Tilt limit ±0.10 | 9.68 | 7.16% | 1.35 | 0.021 |
+| Beta limit ±0.30 | 11.31 | 7.81% | 1.45 | 0.081 |
+| Beta limit ±0.10 | 11.16 | 7.70% | 1.45 | 0.091 |
+| Fast scaling | 9.44 | 6.71% | 1.41 | 0.048 |
+| Slow scaling | 9.95 | 6.79% | 1.47 | 0.053 |
+{: .research-table .comparison-table .attribution-table }
 </div>
 
-Figure 1 traces the cost of tighter limits: lower net P&L for a smaller worst
-drawdown, with diminishing drawdown gains at the tight end, where Sharpe falls.
+Every rule earns less P&L than the Original, but every rule also takes less
+risk, and on Sharpe most of them are level with it; only the tightest tilt
+limit falls clearly behind. The tilt limits run a smaller book, and scaling
+cuts size whenever volatility rises, so comparing raw P&L would mostly
+measure size. I compare the rules at equal risk instead, scaling each one's
+daily P&L to the Original's 7.9% volatility.
+
+The rules also move market beta, in opposite directions. The beta limit
+raises realized beta to 0.091: removing the negative beta exposure leaves more
+of the net long book's market sensitivity, the mechanism from Part 1. The tilt
+limits lower it, to 0.021 at ±0.10, for reasons I haven't traced. A rule that
+simply holds more market will look better in rallies and worse in declines,
+so that direction is worth keeping in view.
+
+## Declines and rallies
+
+Table 2 splits each rule's equal-risk difference from the Original by market
+regime. A strong rally is a period in which the Russell 1000 rose more than
+13% over 63 sessions, as in Part 2; merging overlapping windows leaves 16
+distinct rallies since 1998. The Original itself made 45.6 points across them,
+but lost money in six, including both of the rebounds from Part 2.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 2: What each rule changes at equal risk.</strong> Net P&amp;L points of fixed notional, rule minus Original, after scaling each rule to the Original's full-history volatility. Declines run from each of the 11 market peaks to the low; strong rallies give the total over the 16 rallies, with the number improved in parentheses; rebounds run from the 2009 and 2020 lows to the strategy troughs.</p>
+
+| Rule | Full history | Declines | Strong rallies | 2009 rebound | 2020–21 rebound |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| Tilt limit ±0.30 | +4.7 | +2.8 | +4.5 (11) | +1.9 | −1.5 |
+| Tilt limit ±0.20 | −0.3 | +9.7 | +7.1 (11) | +1.8 | −2.9 |
+| Tilt limit ±0.10 | −17.7 | +20.2 | +3.8 (8) | +1.9 | −2.6 |
+| Beta limit ±0.30 | +3.2 | −4.0 | +5.9 (12) | +2.8 | +0.7 |
+| Beta limit ±0.10 | +3.5 | −10.7 | +12.8 (12) | +5.3 | +1.0 |
+| Fast scaling | −5.5 | +5.9 | +1.3 (9) | +1.0 | +2.2 |
+| Slow scaling | +7.2 | +6.5 | +3.7 (7) | −0.5 | +2.4 |
+{: .research-table .comparison-table .attribution-table }
+</div>
+
+None of the full-history differences means much: block-bootstrap intervals
+for them all include zero. The pattern across regimes is more informative,
+and Figure 1 shows it for every rule.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/cap-tradeoff" mobile="/assets/portfolio-attribution/cap-tradeoff_mobile" version="1" alt="The original and five tilt limits: tighter limits move towards smaller worst drawdowns and lower annual net P&L." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/control-tradeoff" mobile="/assets/portfolio-attribution/control-tradeoff_mobile" version="2" alt="Each rule's equal-risk difference from the Original in market declines against strong rallies. Beta limits lie along the line for extra market beta; tilt limits arc into the region that is better in both; scaling sits slightly better in both." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: Smaller drawdowns come with lower P&amp;L.</strong> Full-history net P&amp;L per year against worst drawdown. Higher and further right are preferable. Labels give the symmetric tilt limit.</p>
+<p class="figure-caption"><strong>Figure 1: Beta limits mostly add market beta; tilt limits improve both regimes.</strong> Equal-risk differences from the Original, in net P&amp;L points over the 11 declines and the 16 strong rallies. Lines join each family from the Original to its tightest limit (tilt ±0.30 to ±0.10, beta ±0.50 to ±0.10). The dashed line shows where a book that only added or removed market beta would land.</p>
 
-**Fast scaling added no gross P&L advantage over constant sizing, and finished
-about 0.7 points a year behind after costs, mostly because of extra trading.**
-That comparison uses the fast rule's original average multiplier of 89.4%.
-At equal average gross in Table 1, both overlays still earn less net P&L
-than the original. Slow scaling improves Sharpe but has a larger maximum drawdown.
+The beta limits lie almost exactly on the market-beta line: what they gain in
+rallies they give back in declines, as a small index position would. Net of
+their extra beta, the ±0.10 limit's rally gain falls from 12.8 to 4.7 points
+and it improves only 8 of the 16 rallies.
 
-In January 2022–May 2026, the tighter ±0.15 limit had a higher Sharpe than the
-±0.30 limit, reversing their full-history ranking. The original and both limits
-earned similar annual net P&L in that block. With little P&L sacrificed,
-the tighter limit's lower daily volatility improves its Sharpe ranking.
-That period-specific trade-off differs from the full-history result.
+The tilt limits do something different. The moderate ones, ±0.30 and ±0.20,
+do better in declines and in 11 of the 16 rallies at no measurable
+full-history cost, and at equal risk they make both deep drawdowns 1.6 to 3
+points shallower (−13.3 and −13.6 at ±0.20, against −16.3 and −16.1). Tighter
+than that, the rally gain fades and the full-history cost appears.
 
-## Did the limits help during rebounds?
-
-The smaller drawdowns don't solve the problem I started with. Table 2 shows
-a small positive median rebound difference at ±0.30 and negative medians at
-every tighter limit. With eleven episodes, I wouldn't put much
-weight on that small gain.
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 2: Rebound results across all 11 lows.</strong> Counts show episodes with higher net P&amp;L than the original. Mean and median differences are net P&amp;L points over the first 63 sessions after each low.</p>
-
-| Tilt limit | Improved · 21 sessions | Improved · 63 sessions | Mean difference | Median difference |
-| :--- | ---: | ---: | ---: | ---: |
-| ±0.30 | 8/11 | 7/11 | +0.20 | +0.13 |
-| ±0.25 | 7/11 | 5/11 | +0.11 | −0.06 |
-| ±0.20 | 6/11 | 5/11 | −0.09 | −0.08 |
-| ±0.15 | 4/11 | 4/11 | −0.28 | −0.18 |
-| ±0.10 | 4/11 | 5/11 | −0.47 | −0.41 |
-{: .research-table .comparison-table .attribution-table }
-</div>
-
-All five limits improved the first three months of the 2009 rebound;
-every limit earned less during the equivalent 2020 window.
-
-Table 3 locates the benefit in declines. The ±0.20 limit gains there but
-loses more elsewhere, including the early rebounds. That's useful if I'm
-willing to give up P&L for more decline protection, but it gives me no reason
-to prefer the limit as a rebound fix.
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 3: Where the ±0.20 limit gains and loses.</strong> Aggregate net P&amp;L points. Declines run from each preceding market peak to the low, excluding the peak day; the first begins at the available history boundary. Rebounds cover the next 63 sessions after each of the 11 lows. These sets do not overlap, and the three rows reconcile to full-history P&amp;L.</p>
-
-| Sessions | Days | Original | Tilt limit ±0.20 | Difference |
-| :--- | ---: | ---: | ---: | ---: |
-| Market declines | 1,480 | +53.90 | +59.84 | +5.94 |
-| First 63-session rebounds | 693 | +15.37 | +14.38 | −0.99 |
-| All other sessions | 4,789 | +243.64 | +219.88 | −23.76 |
-{: .research-table .comparison-table .attribution-table }
-</div>
-
-## Test beta exposure directly
-{: #what-i-would-test-next }
-
-Beta deserves a direct test too: the shorts held higher-beta stocks in both
-major rebounds. The existing market-beta limit still leaves the negative
-standardized beta exposure shown in
-[part 1](/quants/portfolio-attribution.html#portfolio-beta), so I added a limit
-on that exposure:
-
-$$
-E_{\beta}(w)=\sum_i w_i z_{i,\beta},
-\qquad -b\leq E_{\beta}(w)\leq b.
-$$
-
-I set three limits before running the comparison: **±0.50, ±0.30 and ±0.10**,
-using Part 1's standardized stock-beta descriptor and weights per strategy
-notional. Missing loadings receive the universe mean, zero; I measure their
-share of gross exposure.
-
-All existing portfolio settings remain, including the separate ±0.05 market-beta
-limit. Each new limit applies at scheduled rebalance, with loadings observed
-before execution. Table 4 compares their full-history P&L and drawdown.
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 4: Direct standardized beta limits over the full history.</strong> Same portfolio, dates, costs and definitions as Table 1. The limits use standardized exposure per strategy notional.</p>
-
-| Rule | Gross / year | Net / year | Volatility | Sharpe | Worst drawdown | Turnover |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Original | 12.71 | 11.33 | 7.90% | 1.43 | −16.32 | 27.6× |
-| Beta limit ±0.50 | 12.72 | 11.33 | 7.88% | 1.44 | −16.13 | 27.7× |
-| Beta limit ±0.30 | 12.70 | 11.31 | 7.81% | 1.45 | −15.41 | 27.8× |
-| Beta limit ±0.10 | 12.55 | 11.16 | 7.70% | 1.45 | −14.30 | 27.8× |
-{: .research-table .comparison-table .portfolio-card-table }
-</div>
-
-The tightest beta limit gives up about **0.2 points of annual net P&L** while
-reducing the worst drawdown. Its median rebound gain in Table 5 is small;
-a much larger gain in 2009 lifts the mean.
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 5: Beta limits across the same 11 lows.</strong> Counts show higher net P&amp;L than the original. Mean and median differences are fixed-notional points over the first 63 sessions, matching Table 2.</p>
-
-| Beta limit | Improved · 21 sessions | Improved · 63 sessions | Mean difference | Median difference |
-| :--- | ---: | ---: | ---: | ---: |
-| ±0.50 | 4/11 | 6/11 | −0.01 | +0.03 |
-| ±0.30 | 6/11 | 6/11 | +0.16 | +0.01 |
-| ±0.10 | 7/11 | 7/11 | +0.48 | +0.17 |
-{: .research-table .comparison-table .attribution-table }
-</div>
-
-Every beta limit still worsens the first three months of the 2020 rebound.
-The tightest limit also earns less across the market-decline windows and lowers
-Sharpe in 2022–26. Its median improvement remains positive
-at 126 sessions.
-
-Realized market beta rises from **+0.068 to
-+0.091** under the tightest limit. Reducing a negative standardized-beta tilt
-changes which stocks the optimizer holds and slightly reduces gross exposure.
-All solved targets respected both their new limit and the original
-market-beta limit. Available loadings covered about 93% of gross target
-exposure; two rebalances in September 2001 had no coverage, so the added
-limit was ineffective on those dates.
+But the episode that motivated all this barely moves. Every tilt limit does
+worse over the complete 2020–21 rebound, and none of them changes the
+12.4-point loss from November 2020 to January 2021 by more than 1.3 points.
+Only scaling cushioned that leg, by about 3.5 points, because both versions
+were holding a much smaller book when the rally began. In 2008–09, where the
+tilt limits helped, scaling made the drawdown deeper.
 
 ## Would I change the baseline?
 {: #what-the-experiment-settles }
 
-For now, I still prefer the original portfolio as a baseline. Tighter tilt limits cost P&L and worsen
-typical rebounds; fast scaling loses to constant sizing after trading costs.
+Not yet. The one rule I would consider is a moderate tilt limit: at the same
+risk it gives up nothing I can measure, does a little better in declines and
+in most strong rallies, and makes the deep drawdowns shallower. What it doesn't
+do is fix the loss that started this series, and the case for it rests on
+sixteen rallies, two drawdowns and full-history differences well inside the
+noise. The beta limit, which looked cheapest on raw P&L, mostly buys market
+beta.
 
-The beta limit's small typical gain comes with a worse 2020 rebound and less
-decline protection. That's too uneven an improvement for me to include it in the baseline.
-
-<aside class="research-note" markdown="1">
-**Calculation notes.** Market lows are selected in hindsight, and
-constant sizing and equal-gross rescaling use full-history averages. The
-factor model's normalization inherits Part 1's sector labels.
-The trading rules use decision-time prices and descriptors.
-</aside>
+Three questions stay open. Why did the 2020–21 rally, which began seven months
+after the low, hurt a less defensive book as much as the Original, when the
+same limits helped in 2009? Why do the tilt limits lower realized beta, when a
+less defensive tilt might be expected to raise it? And does the later version
+of the Ridge ranking carry the same defensive tilt and pay for it the same way?

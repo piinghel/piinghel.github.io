@@ -87,13 +87,13 @@
     "width": 288,
     "height": 259
   },
-  "/assets/portfolio-attribution/cap-tradeoff": {
+  "/assets/portfolio-attribution/control-tradeoff": {
     "width": 576,
-    "height": 288
+    "height": 317
   },
-  "/assets/portfolio-attribution/cap-tradeoff_mobile": {
+  "/assets/portfolio-attribution/control-tradeoff_mobile": {
     "width": 288,
-    "height": 281
+    "height": 302
   },
   "/assets/portfolio-attribution/drawdown-factors": {
     "width": 648,

@@ -1,0 +1,49 @@
+{
+ "definition": "Differences from the Original at equal full-history volatility, net P&L points of fixed notional; strong rallies are 16 merged 63-session windows with a compounded Russell 1000 gain above 13%.",
+ "index_per_unit_beta": {
+  "declines_pp": -308.3456941895893,
+  "rallies_pp": 315.0006238080252
+ },
+ "controls": {
+  "style_0.30": {
+   "declines_pp": 2.783729317360043,
+   "rallies_pp": 4.51838521106257
+  },
+  "style_0.25": {
+   "declines_pp": 5.700819501099931,
+   "rallies_pp": 6.508161970526231
+  },
+  "style_0.20": {
+   "declines_pp": 9.697716190200861,
+   "rallies_pp": 7.055713864251397
+  },
+  "style_0.15": {
+   "declines_pp": 15.501698257215976,
+   "rallies_pp": 6.6313808853207465
+  },
+  "style_0.10": {
+   "declines_pp": 20.170250667843614,
+   "rallies_pp": 3.8205022556303407
+  },
+  "beta_0.50": {
+   "declines_pp": -1.0826315699250442,
+   "rallies_pp": 1.4795938726368976
+  },
+  "beta_0.30": {
+   "declines_pp": -4.006506589788573,
+   "rallies_pp": 5.851476656984608
+  },
+  "beta_0.10": {
+   "declines_pp": -10.719453467809297,
+   "rallies_pp": 12.826933144202936
+  },
+  "vol_5": {
+   "declines_pp": 5.870373687801466,
+   "rallies_pp": 1.3043734887213168
+  },
+  "vol_21": {
+   "declines_pp": 6.512293148509504,
+   "rallies_pp": 3.7438309276419472
+  }
+ }
+}

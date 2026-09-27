@@ -159,7 +159,7 @@ far larger than the typical episode.
 
 How unusual is that? Across every 63-session window in the history, shorted
 stocks outgained the longs only **28%** of the time. In windows where the
-Russell 1000 rose more than about 13%, they did so **81%** of the time, and
+Russell 1000 rose more than 13%, they did so **82%** of the time, and
 across the 11 episodes the gap grows with the size of the rally (correlation
 0.7). The imbalance is a strong-rally effect; rebounds just tend to start with
 strong rallies.
