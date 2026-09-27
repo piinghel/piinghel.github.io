@@ -50,11 +50,6 @@ files. After regenerating figures, run
 `python3 scripts/check_site.py --update-dimensions` to refresh their intrinsic
 sizes before rebuilding the site.
 
-For changes to the attribution explorers, run the browser regression with Node.js
-and Playwright installed: `node --test tests/test_article_interactions.cjs`.
-It uses Playwright's Chromium, or an existing Chrome executable supplied through
-`CHROME_PATH`, and loads only local aggregate inputs.
-
 Jekyll remains deliberate: the site needs static articles, equations, SVGs,
 stable permalinks, and RSS. The local build already serves those requirements;
 a framework migration would not strengthen the research.
@@ -78,28 +73,19 @@ for byte), run the renderer from this directory, then
 | | 2 | `scripts/render_mlr_training_design.py` |
 | Joint sizing | all | private portfolio-optimization project (see below) |
 | Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
-| | 2 and 5 | `scripts/render_attribution_series.py` |
-| | 3 | `scripts/render_attribution_components.py` |
-| | 4 (explorer) | `assets/js/attribution-dynamics.js`; data from `scripts/export_attribution_dynamics.py` |
-| Attribution Part 2 | 1 | `scripts/render_attribution_pnl.py` |
-| | 2 | `scripts/render_attribution_components.py` |
-| | 3 | `scripts/render_attribution_holdings.py` |
-| | 4 (explorer) | `assets/js/attribution-explorers.js` over `scripts/render_attribution_recoveries.py` |
+| | 2–4 | `scripts/render_attribution_themes.py` |
+| Attribution Part 2 | 1–2 | `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
 
 The regression evidence and its provenance are described in
 [`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence/README.md).
 The attribution aggregates come from the private `performance_attribution`
-project (`outputs/full_history` and the registered series and beta diagnostics):
-`render_attribution_pnl.py --outputs` and `render_attribution_components.py
---outputs` read `outputs/full_history`; `export_attribution_series.py
---diagnostics PATH --beta-history PATH` refreshes `beta-history.json` and keeps only
-recovery paths in `explorer-paths.json`; `export_attribution_dynamics.py` rebuilds
-`dynamics.json` from the frozen snapshot. `recoveries.json` and
-`rebound-holdings.json` are frozen aggregates of the private recovery and holdings
-diagnostics, with their source hashes recorded inside; the explorer paths come from
-`python -m performance_attribution.explorer_export`. The public files contain
-portfolio aggregates only; stock examples stay in the private evidence.
+project, on the 80-predictor Ridge optimizer book:
+`render_attribution_pnl.py --outputs` reads the whole-history ledger
+(`outputs/full-history-ridge80-b3k155-*`), and `render_attribution_themes.py
+--outputs` reads the theme attribution (`outputs/theme-over-time-ridge80-b3k155-*`,
+study `studies/2026-09-theme-attribution-over-time`). The public files contain
+portfolio aggregates only.
 
 The tranching calculations and renderers live only in rebalance-tranching; copy
 the reviewed SVGs into `assets/tranching/` rather than maintaining a second

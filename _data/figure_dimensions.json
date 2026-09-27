@@ -55,85 +55,45 @@
     "width": 341,
     "height": 215
   },
-  "/assets/portfolio-attribution/beta-history": {
-    "width": 691,
-    "height": 418
-  },
-  "/assets/portfolio-attribution/beta-history_mobile": {
-    "width": 288,
-    "height": 432
-  },
-  "/assets/portfolio-attribution/book-sizes": {
-    "width": 691,
-    "height": 259
-  },
-  "/assets/portfolio-attribution/book-sizes_mobile": {
-    "width": 288,
-    "height": 259
-  },
-  "/assets/portfolio-attribution/drawdown-factors": {
+  "/assets/portfolio-attribution/theme-drawdowns": {
     "width": 648,
     "height": 403
   },
-  "/assets/portfolio-attribution/drawdown-factors_mobile": {
+  "/assets/portfolio-attribution/theme-drawdowns_mobile": {
     "width": 360,
     "height": 461
   },
-  "/assets/portfolio-attribution/factor-pnl": {
+  "/assets/portfolio-attribution/theme-pnl": {
     "width": 648,
     "height": 403
   },
-  "/assets/portfolio-attribution/factor-pnl_mobile": {
+  "/assets/portfolio-attribution/theme-pnl_mobile": {
     "width": 360,
     "height": 461
   },
-  "/assets/portfolio-attribution/market-phases": {
-    "width": 634,
-    "height": 446
-  },
-  "/assets/portfolio-attribution/market-phases_mobile": {
-    "width": 288,
-    "height": 691
-  },
-  "/assets/portfolio-attribution/rebound-holdings": {
-    "width": 691,
-    "height": 245
-  },
-  "/assets/portfolio-attribution/rebound-holdings_mobile": {
-    "width": 281,
-    "height": 626
-  },
-  "/assets/portfolio-attribution/recoveries-126": {
-    "width": 677,
-    "height": 418
-  },
-  "/assets/portfolio-attribution/recoveries-126_mobile": {
-    "width": 302,
-    "height": 770
-  },
-  "/assets/portfolio-attribution/recoveries-21": {
-    "width": 677,
-    "height": 418
-  },
-  "/assets/portfolio-attribution/recoveries-21_mobile": {
-    "width": 302,
-    "height": 770
-  },
-  "/assets/portfolio-attribution/recoveries": {
-    "width": 677,
-    "height": 418
-  },
-  "/assets/portfolio-attribution/recoveries_mobile": {
-    "width": 302,
-    "height": 770
-  },
-  "/assets/portfolio-attribution/sector-pnl": {
+  "/assets/portfolio-attribution/theme-regimes": {
     "width": 648,
     "height": 403
   },
-  "/assets/portfolio-attribution/sector-pnl_mobile": {
+  "/assets/portfolio-attribution/theme-regimes_mobile": {
     "width": 360,
     "height": 461
+  },
+  "/assets/portfolio-attribution/theme-return-years": {
+    "width": 720,
+    "height": 490
+  },
+  "/assets/portfolio-attribution/theme-return-years_mobile": {
+    "width": 374,
+    "height": 781
+  },
+  "/assets/portfolio-attribution/theme-risk-years": {
+    "width": 720,
+    "height": 490
+  },
+  "/assets/portfolio-attribution/theme-risk-years_mobile": {
+    "width": 374,
+    "height": 781
   },
   "/assets/portfolio-attribution/whole-history": {
     "width": 634,

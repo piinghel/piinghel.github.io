@@ -1,0 +1,1972 @@
+{
+ "full": {
+  "Low volatility": [
+   1.641,
+   14.89
+  ],
+  "Beta & market correlation": [
+   0.066,
+   4.26
+  ],
+  "Net market exposure": [
+   3.208,
+   7.97
+  ],
+  "Size": [
+   -1.884,
+   18.05
+  ],
+  "Liquidity & volume": [
+   0.98,
+   -1.45
+  ],
+  "Momentum": [
+   0.737,
+   2.18
+  ],
+  "Trend": [
+   -2.068,
+   6.54
+  ],
+  "Short-term reversal": [
+   1.02,
+   9.85
+  ],
+  "Price position": [
+   1.379,
+   0.01
+  ],
+  "Loss frequency": [
+   0.98,
+   3.82
+  ],
+  "Short interest": [
+   2.185,
+   9.39
+  ],
+  "Sector tilt": [
+   0.025,
+   6.94
+  ],
+  "Stock-specific": [
+   1.432,
+   17.55
+  ]
+ },
+ "blocks": {
+  "1999-2003": {
+   "Low volatility": [
+    4.322,
+    -2.61
+   ],
+   "Beta & market correlation": [
+    0.825,
+    7.97
+   ],
+   "Net market exposure": [
+    3.327,
+    16.51
+   ],
+   "Size": [
+    -9.777,
+    16.72
+   ],
+   "Liquidity & volume": [
+    5.36,
+    11.58
+   ],
+   "Momentum": [
+    -0.99,
+    0.51
+   ],
+   "Trend": [
+    -4.182,
+    5.06
+   ],
+   "Short-term reversal": [
+    1.888,
+    8.69
+   ],
+   "Price position": [
+    3.68,
+    -3.09
+   ],
+   "Loss frequency": [
+    1.111,
+    2.48
+   ],
+   "Short interest": [
+    2.835,
+    9.64
+   ],
+   "Sector tilt": [
+    0.205,
+    10.25
+   ],
+   "Stock-specific": [
+    2.486,
+    16.29
+   ]
+  },
+  "2004-2008": {
+   "Low volatility": [
+    1.444,
+    -0.42
+   ],
+   "Beta & market correlation": [
+    -0.36,
+    1.95
+   ],
+   "Net market exposure": [
+    1.036,
+    23.44
+   ],
+   "Size": [
+    0.267,
+    5.75
+   ],
+   "Liquidity & volume": [
+    1.616,
+    -2.38
+   ],
+   "Momentum": [
+    0.953,
+    -3.98
+   ],
+   "Trend": [
+    -1.042,
+    0.82
+   ],
+   "Short-term reversal": [
+    -1.96,
+    14.44
+   ],
+   "Price position": [
+    3.179,
+    8.29
+   ],
+   "Loss frequency": [
+    0.516,
+    3.39
+   ],
+   "Short interest": [
+    2.192,
+    11.75
+   ],
+   "Sector tilt": [
+    -1.727,
+    8.02
+   ],
+   "Stock-specific": [
+    2.485,
+    28.92
+   ]
+  },
+  "2009-2013": {
+   "Low volatility": [
+    2.417,
+    18.54
+   ],
+   "Beta & market correlation": [
+    0.428,
+    3.83
+   ],
+   "Net market exposure": [
+    6.743,
+    1.31
+   ],
+   "Size": [
+    -2.682,
+    18.0
+   ],
+   "Liquidity & volume": [
+    -1.727,
+    -0.6
+   ],
+   "Momentum": [
+    0.343,
+    -0.7
+   ],
+   "Trend": [
+    -2.974,
+    0.26
+   ],
+   "Short-term reversal": [
+    2.331,
+    10.86
+   ],
+   "Price position": [
+    1.409,
+    2.14
+   ],
+   "Loss frequency": [
+    0.07,
+    1.46
+   ],
+   "Short interest": [
+    1.195,
+    8.73
+   ],
+   "Sector tilt": [
+    0.233,
+    6.52
+   ],
+   "Stock-specific": [
+    1.2,
+    29.65
+   ]
+  },
+  "2014-2018": {
+   "Low volatility": [
+    2.737,
+    8.89
+   ],
+   "Beta & market correlation": [
+    -0.84,
+    6.65
+   ],
+   "Net market exposure": [
+    1.273,
+    7.27
+   ],
+   "Size": [
+    1.123,
+    17.11
+   ],
+   "Liquidity & volume": [
+    -0.702,
+    1.26
+   ],
+   "Momentum": [
+    -0.001,
+    5.51
+   ],
+   "Trend": [
+    -1.853,
+    10.74
+   ],
+   "Short-term reversal": [
+    3.215,
+    6.52
+   ],
+   "Price position": [
+    0.726,
+    -3.1
+   ],
+   "Loss frequency": [
+    1.304,
+    3.56
+   ],
+   "Short interest": [
+    1.937,
+    8.02
+   ],
+   "Sector tilt": [
+    0.0,
+    8.07
+   ],
+   "Stock-specific": [
+    2.604,
+    19.51
+   ]
+  },
+  "2019-2021": {
+   "Low volatility": [
+    1.573,
+    27.04
+   ],
+   "Beta & market correlation": [
+    1.16,
+    2.55
+   ],
+   "Net market exposure": [
+    5.143,
+    10.03
+   ],
+   "Size": [
+    -0.229,
+    21.2
+   ],
+   "Liquidity & volume": [
+    1.922,
+    -9.53
+   ],
+   "Momentum": [
+    2.922,
+    0.42
+   ],
+   "Trend": [
+    -2.351,
+    12.37
+   ],
+   "Short-term reversal": [
+    -1.956,
+    10.65
+   ],
+   "Price position": [
+    0.616,
+    0.77
+   ],
+   "Loss frequency": [
+    0.711,
+    3.91
+   ],
+   "Short interest": [
+    1.736,
+    8.3
+   ],
+   "Sector tilt": [
+    0.768,
+    4.1
+   ],
+   "Stock-specific": [
+    -0.981,
+    8.2
+   ]
+  },
+  "2022-2026": {
+   "Low volatility": [
+    -3.272,
+    29.91
+   ],
+   "Beta & market correlation": [
+    -0.441,
+    3.08
+   ],
+   "Net market exposure": [
+    2.397,
+    -7.17
+   ],
+   "Size": [
+    0.983,
+    26.42
+   ],
+   "Liquidity & volume": [
+    -0.369,
+    -4.93
+   ],
+   "Momentum": [
+    2.244,
+    8.93
+   ],
+   "Trend": [
+    0.147,
+    6.12
+   ],
+   "Short-term reversal": [
+    1.475,
+    8.88
+   ],
+   "Price position": [
+    -2.058,
+    -3.54
+   ],
+   "Loss frequency": [
+    2.21,
+    7.09
+   ],
+   "Short interest": [
+    3.156,
+    10.44
+   ],
+   "Sector tilt": [
+    1.102,
+    5.92
+   ],
+   "Stock-specific": [
+    -0.384,
+    8.85
+   ]
+  }
+ },
+ "years": {
+  "1999": {
+   "Low volatility": [
+    -6.92,
+    -6.78
+   ],
+   "Beta & market correlation": [
+    5.295,
+    9.22
+   ],
+   "Net market exposure": [
+    8.024,
+    15.63
+   ],
+   "Size": [
+    -20.701,
+    21.19
+   ],
+   "Liquidity & volume": [
+    10.394,
+    2.86
+   ],
+   "Momentum": [
+    -6.508,
+    -1.14
+   ],
+   "Trend": [
+    -5.813,
+    16.85
+   ],
+   "Short-term reversal": [
+    12.709,
+    4.75
+   ],
+   "Price position": [
+    4.601,
+    -4.49
+   ],
+   "Loss frequency": [
+    1.542,
+    4.96
+   ],
+   "Short interest": [
+    4.431,
+    7.55
+   ],
+   "Sector tilt": [
+    0.551,
+    8.25
+   ],
+   "Stock-specific": [
+    1.013,
+    21.15
+   ]
+  },
+  "2000": {
+   "Low volatility": [
+    12.331,
+    -4.37
+   ],
+   "Beta & market correlation": [
+    0.146,
+    5.31
+   ],
+   "Net market exposure": [
+    3.061,
+    24.77
+   ],
+   "Size": [
+    -13.844,
+    16.56
+   ],
+   "Liquidity & volume": [
+    7.614,
+    17.06
+   ],
+   "Momentum": [
+    1.925,
+    0.5
+   ],
+   "Trend": [
+    -3.938,
+    -0.36
+   ],
+   "Short-term reversal": [
+    -1.741,
+    11.64
+   ],
+   "Price position": [
+    -1.387,
+    -10.82
+   ],
+   "Loss frequency": [
+    3.197,
+    3.77
+   ],
+   "Short interest": [
+    3.141,
+    9.25
+   ],
+   "Sector tilt": [
+    -0.179,
+    11.29
+   ],
+   "Stock-specific": [
+    3.052,
+    15.39
+   ]
+  },
+  "2001": {
+   "Low volatility": [
+    10.409,
+    11.39
+   ],
+   "Beta & market correlation": [
+    -0.214,
+    3.84
+   ],
+   "Net market exposure": [
+    3.027,
+    -11.19
+   ],
+   "Size": [
+    -7.238,
+    14.78
+   ],
+   "Liquidity & volume": [
+    3.062,
+    25.09
+   ],
+   "Momentum": [
+    -4.221,
+    -5.22
+   ],
+   "Trend": [
+    -18.395,
+    4.29
+   ],
+   "Short-term reversal": [
+    9.97,
+    16.8
+   ],
+   "Price position": [
+    7.488,
+    1.85
+   ],
+   "Loss frequency": [
+    0.241,
+    -0.05
+   ],
+   "Short interest": [
+    3.227,
+    9.49
+   ],
+   "Sector tilt": [
+    -0.06,
+    18.57
+   ],
+   "Stock-specific": [
+    -1.965,
+    10.38
+   ]
+  },
+  "2002": {
+   "Low volatility": [
+    3.689,
+    -7.58
+   ],
+   "Beta & market correlation": [
+    -0.821,
+    13.79
+   ],
+   "Net market exposure": [
+    -5.1,
+    30.7
+   ],
+   "Size": [
+    2.783,
+    12.32
+   ],
+   "Liquidity & volume": [
+    4.82,
+    9.52
+   ],
+   "Momentum": [
+    1.565,
+    2.44
+   ],
+   "Trend": [
+    8.215,
+    -1.28
+   ],
+   "Short-term reversal": [
+    -4.755,
+    7.24
+   ],
+   "Price position": [
+    -1.103,
+    1.28
+   ],
+   "Loss frequency": [
+    0.716,
+    1.11
+   ],
+   "Short interest": [
+    2.245,
+    12.79
+   ],
+   "Sector tilt": [
+    -1.18,
+    7.19
+   ],
+   "Stock-specific": [
+    3.565,
+    10.48
+   ]
+  },
+  "2003": {
+   "Low volatility": [
+    2.222,
+    -0.96
+   ],
+   "Beta & market correlation": [
+    -0.301,
+    5.47
+   ],
+   "Net market exposure": [
+    7.619,
+    12.62
+   ],
+   "Size": [
+    -9.836,
+    19.17
+   ],
+   "Liquidity & volume": [
+    0.864,
+    4.84
+   ],
+   "Momentum": [
+    2.227,
+    5.19
+   ],
+   "Trend": [
+    -1.262,
+    5.19
+   ],
+   "Short-term reversal": [
+    -6.58,
+    5.53
+   ],
+   "Price position": [
+    8.878,
+    -1.06
+   ],
+   "Loss frequency": [
+    -0.161,
+    1.78
+   ],
+   "Short interest": [
+    1.141,
+    8.54
+   ],
+   "Sector tilt": [
+    1.887,
+    7.66
+   ],
+   "Stock-specific": [
+    6.677,
+    26.03
+   ]
+  },
+  "2004": {
+   "Low volatility": [
+    1.659,
+    2.53
+   ],
+   "Beta & market correlation": [
+    -1.573,
+    8.56
+   ],
+   "Net market exposure": [
+    5.119,
+    11.84
+   ],
+   "Size": [
+    0.589,
+    0.82
+   ],
+   "Liquidity & volume": [
+    0.837,
+    5.78
+   ],
+   "Momentum": [
+    5.039,
+    0.47
+   ],
+   "Trend": [
+    -6.442,
+    -3.76
+   ],
+   "Short-term reversal": [
+    1.159,
+    12.48
+   ],
+   "Price position": [
+    3.75,
+    5.43
+   ],
+   "Loss frequency": [
+    -0.909,
+    0.0
+   ],
+   "Short interest": [
+    0.241,
+    5.97
+   ],
+   "Sector tilt": [
+    -1.936,
+    13.72
+   ],
+   "Stock-specific": [
+    5.345,
+    36.17
+   ]
+  },
+  "2005": {
+   "Low volatility": [
+    1.68,
+    0.28
+   ],
+   "Beta & market correlation": [
+    -1.817,
+    7.37
+   ],
+   "Net market exposure": [
+    2.982,
+    16.14
+   ],
+   "Size": [
+    2.948,
+    5.77
+   ],
+   "Liquidity & volume": [
+    -1.72,
+    0.03
+   ],
+   "Momentum": [
+    -1.968,
+    1.31
+   ],
+   "Trend": [
+    0.196,
+    3.13
+   ],
+   "Short-term reversal": [
+    -0.763,
+    10.31
+   ],
+   "Price position": [
+    4.588,
+    4.76
+   ],
+   "Loss frequency": [
+    0.122,
+    1.33
+   ],
+   "Short interest": [
+    3.764,
+    4.09
+   ],
+   "Sector tilt": [
+    -0.906,
+    12.35
+   ],
+   "Stock-specific": [
+    6.609,
+    33.13
+   ]
+  },
+  "2006": {
+   "Low volatility": [
+    2.115,
+    2.53
+   ],
+   "Beta & market correlation": [
+    0.421,
+    2.0
+   ],
+   "Net market exposure": [
+    3.68,
+    11.54
+   ],
+   "Size": [
+    -0.421,
+    2.82
+   ],
+   "Liquidity & volume": [
+    -0.137,
+    -2.46
+   ],
+   "Momentum": [
+    -0.911,
+    -4.65
+   ],
+   "Trend": [
+    -5.256,
+    -5.39
+   ],
+   "Short-term reversal": [
+    -0.279,
+    24.99
+   ],
+   "Price position": [
+    4.987,
+    14.8
+   ],
+   "Loss frequency": [
+    0.725,
+    1.52
+   ],
+   "Short interest": [
+    2.748,
+    9.2
+   ],
+   "Sector tilt": [
+    -1.898,
+    6.17
+   ],
+   "Stock-specific": [
+    3.532,
+    36.94
+   ]
+  },
+  "2007": {
+   "Low volatility": [
+    2.483,
+    3.69
+   ],
+   "Beta & market correlation": [
+    -0.328,
+    0.12
+   ],
+   "Net market exposure": [
+    2.888,
+    7.88
+   ],
+   "Size": [
+    3.132,
+    1.83
+   ],
+   "Liquidity & volume": [
+    -2.69,
+    -4.02
+   ],
+   "Momentum": [
+    0.363,
+    -7.07
+   ],
+   "Trend": [
+    2.981,
+    7.26
+   ],
+   "Short-term reversal": [
+    -0.906,
+    13.93
+   ],
+   "Price position": [
+    -2.025,
+    18.05
+   ],
+   "Loss frequency": [
+    0.833,
+    4.82
+   ],
+   "Short interest": [
+    3.211,
+    17.24
+   ],
+   "Sector tilt": [
+    -0.475,
+    4.65
+   ],
+   "Stock-specific": [
+    -3.062,
+    31.6
+   ]
+  },
+  "2008": {
+   "Low volatility": [
+    -0.701,
+    -7.18
+   ],
+   "Beta & market correlation": [
+    1.494,
+    -1.13
+   ],
+   "Net market exposure": [
+    -9.429,
+    50.15
+   ],
+   "Size": [
+    -4.885,
+    12.27
+   ],
+   "Liquidity & volume": [
+    11.727,
+    -4.37
+   ],
+   "Momentum": [
+    2.228,
+    -4.83
+   ],
+   "Trend": [
+    3.294,
+    -1.14
+   ],
+   "Short-term reversal": [
+    -8.974,
+    12.56
+   ],
+   "Price position": [
+    4.574,
+    -0.82
+   ],
+   "Loss frequency": [
+    1.808,
+    5.31
+   ],
+   "Short interest": [
+    1.005,
+    13.42
+   ],
+   "Sector tilt": [
+    -3.406,
+    7.71
+   ],
+   "Stock-specific": [
+    -0.01,
+    18.05
+   ]
+  },
+  "2009": {
+   "Low volatility": [
+    0.232,
+    41.65
+   ],
+   "Beta & market correlation": [
+    0.135,
+    3.04
+   ],
+   "Net market exposure": [
+    12.817,
+    -40.09
+   ],
+   "Size": [
+    -6.739,
+    32.64
+   ],
+   "Liquidity & volume": [
+    -7.822,
+    5.7
+   ],
+   "Momentum": [
+    -0.006,
+    -4.13
+   ],
+   "Trend": [
+    -2.808,
+    -7.35
+   ],
+   "Short-term reversal": [
+    -0.016,
+    29.13
+   ],
+   "Price position": [
+    3.452,
+    4.4
+   ],
+   "Loss frequency": [
+    0.928,
+    -0.1
+   ],
+   "Short interest": [
+    1.714,
+    7.29
+   ],
+   "Sector tilt": [
+    0.624,
+    8.73
+   ],
+   "Stock-specific": [
+    -4.418,
+    19.09
+   ]
+  },
+  "2010": {
+   "Low volatility": [
+    2.105,
+    3.61
+   ],
+   "Beta & market correlation": [
+    1.419,
+    1.72
+   ],
+   "Net market exposure": [
+    7.396,
+    18.64
+   ],
+   "Size": [
+    -0.326,
+    4.89
+   ],
+   "Liquidity & volume": [
+    -2.447,
+    8.83
+   ],
+   "Momentum": [
+    2.757,
+    4.48
+   ],
+   "Trend": [
+    -2.446,
+    -8.23
+   ],
+   "Short-term reversal": [
+    -0.928,
+    12.5
+   ],
+   "Price position": [
+    0.762,
+    0.56
+   ],
+   "Loss frequency": [
+    -0.376,
+    1.16
+   ],
+   "Short interest": [
+    -1.261,
+    8.96
+   ],
+   "Sector tilt": [
+    -1.807,
+    8.33
+   ],
+   "Stock-specific": [
+    3.232,
+    34.55
+   ]
+  },
+  "2011": {
+   "Low volatility": [
+    7.954,
+    -6.24
+   ],
+   "Beta & market correlation": [
+    -1.623,
+    6.94
+   ],
+   "Net market exposure": [
+    -0.43,
+    39.3
+   ],
+   "Size": [
+    -2.501,
+    15.72
+   ],
+   "Liquidity & volume": [
+    2.378,
+    -10.25
+   ],
+   "Momentum": [
+    0.757,
+    -2.2
+   ],
+   "Trend": [
+    2.094,
+    5.39
+   ],
+   "Short-term reversal": [
+    0.172,
+    1.91
+   ],
+   "Price position": [
+    1.44,
+    0.77
+   ],
+   "Loss frequency": [
+    1.594,
+    0.42
+   ],
+   "Short interest": [
+    1.909,
+    12.49
+   ],
+   "Sector tilt": [
+    -0.519,
+    4.69
+   ],
+   "Stock-specific": [
+    2.997,
+    31.04
+   ]
+  },
+  "2012": {
+   "Low volatility": [
+    7.384,
+    23.7
+   ],
+   "Beta & market correlation": [
+    -0.49,
+    3.81
+   ],
+   "Net market exposure": [
+    4.086,
+    -2.29
+   ],
+   "Size": [
+    -2.23,
+    17.77
+   ],
+   "Liquidity & volume": [
+    -2.168,
+    -4.82
+   ],
+   "Momentum": [
+    -0.147,
+    -3.04
+   ],
+   "Trend": [
+    -7.758,
+    4.96
+   ],
+   "Short-term reversal": [
+    7.165,
+    11.93
+   ],
+   "Price position": [
+    1.609,
+    5.69
+   ],
+   "Loss frequency": [
+    -1.023,
+    2.79
+   ],
+   "Short interest": [
+    3.047,
+    7.21
+   ],
+   "Sector tilt": [
+    -0.287,
+    7.07
+   ],
+   "Stock-specific": [
+    6.666,
+    25.22
+   ]
+  },
+  "2013": {
+   "Low volatility": [
+    -5.552,
+    18.58
+   ],
+   "Beta & market correlation": [
+    2.691,
+    3.77
+   ],
+   "Net market exposure": [
+    9.823,
+    7.82
+   ],
+   "Size": [
+    -1.611,
+    12.57
+   ],
+   "Liquidity & volume": [
+    1.421,
+    -2.57
+   ],
+   "Momentum": [
+    -1.652,
+    2.93
+   ],
+   "Trend": [
+    -3.988,
+    5.41
+   ],
+   "Short-term reversal": [
+    5.301,
+    -3.44
+   ],
+   "Price position": [
+    -0.215,
+    -0.97
+   ],
+   "Loss frequency": [
+    -0.783,
+    3.12
+   ],
+   "Short interest": [
+    0.581,
+    8.36
+   ],
+   "Sector tilt": [
+    3.148,
+    4.38
+   ],
+   "Stock-specific": [
+    -2.436,
+    40.04
+   ]
+  },
+  "2014": {
+   "Low volatility": [
+    5.528,
+    -2.18
+   ],
+   "Beta & market correlation": [
+    -2.528,
+    16.0
+   ],
+   "Net market exposure": [
+    0.905,
+    15.76
+   ],
+   "Size": [
+    2.501,
+    6.21
+   ],
+   "Liquidity & volume": [
+    -0.782,
+    0.33
+   ],
+   "Momentum": [
+    -0.912,
+    -2.62
+   ],
+   "Trend": [
+    -2.307,
+    10.3
+   ],
+   "Short-term reversal": [
+    -1.27,
+    11.99
+   ],
+   "Price position": [
+    2.486,
+    -3.67
+   ],
+   "Loss frequency": [
+    0.528,
+    3.09
+   ],
+   "Short interest": [
+    -0.248,
+    10.74
+   ],
+   "Sector tilt": [
+    -2.763,
+    7.11
+   ],
+   "Stock-specific": [
+    1.817,
+    26.94
+   ]
+  },
+  "2015": {
+   "Low volatility": [
+    4.522,
+    -1.63
+   ],
+   "Beta & market correlation": [
+    -2.186,
+    7.12
+   ],
+   "Net market exposure": [
+    -0.952,
+    20.9
+   ],
+   "Size": [
+    9.599,
+    19.94
+   ],
+   "Liquidity & volume": [
+    -6.152,
+    -0.1
+   ],
+   "Momentum": [
+    -1.19,
+    12.33
+   ],
+   "Trend": [
+    -7.759,
+    9.4
+   ],
+   "Short-term reversal": [
+    5.384,
+    3.64
+   ],
+   "Price position": [
+    3.442,
+    -5.66
+   ],
+   "Loss frequency": [
+    2.754,
+    1.99
+   ],
+   "Short interest": [
+    6.565,
+    6.85
+   ],
+   "Sector tilt": [
+    0.587,
+    10.47
+   ],
+   "Stock-specific": [
+    4.807,
+    14.76
+   ]
+  },
+  "2016": {
+   "Low volatility": [
+    1.428,
+    28.82
+   ],
+   "Beta & market correlation": [
+    1.379,
+    -1.12
+   ],
+   "Net market exposure": [
+    4.843,
+    -8.88
+   ],
+   "Size": [
+    -10.779,
+    25.97
+   ],
+   "Liquidity & volume": [
+    3.791,
+    0.95
+   ],
+   "Momentum": [
+    2.688,
+    9.95
+   ],
+   "Trend": [
+    -2.362,
+    10.84
+   ],
+   "Short-term reversal": [
+    4.216,
+    8.31
+   ],
+   "Price position": [
+    -2.365,
+    -0.56
+   ],
+   "Loss frequency": [
+    0.939,
+    3.12
+   ],
+   "Short interest": [
+    1.602,
+    5.55
+   ],
+   "Sector tilt": [
+    -0.142,
+    2.41
+   ],
+   "Stock-specific": [
+    6.02,
+    14.64
+   ]
+  },
+  "2017": {
+   "Low volatility": [
+    -2.651,
+    13.01
+   ],
+   "Beta & market correlation": [
+    1.915,
+    7.75
+   ],
+   "Net market exposure": [
+    5.089,
+    -0.09
+   ],
+   "Size": [
+    9.543,
+    17.25
+   ],
+   "Liquidity & volume": [
+    -9.539,
+    0.69
+   ],
+   "Momentum": [
+    1.914,
+    2.1
+   ],
+   "Trend": [
+    -0.536,
+    5.85
+   ],
+   "Short-term reversal": [
+    4.377,
+    5.74
+   ],
+   "Price position": [
+    -1.656,
+    -2.3
+   ],
+   "Loss frequency": [
+    1.699,
+    5.07
+   ],
+   "Short interest": [
+    3.819,
+    7.84
+   ],
+   "Sector tilt": [
+    2.235,
+    15.18
+   ],
+   "Stock-specific": [
+    0.965,
+    21.92
+   ]
+  },
+  "2018": {
+   "Low volatility": [
+    4.845,
+    -0.5
+   ],
+   "Beta & market correlation": [
+    -2.776,
+    6.12
+   ],
+   "Net market exposure": [
+    -3.522,
+    14.56
+   ],
+   "Size": [
+    -5.238,
+    12.23
+   ],
+   "Liquidity & volume": [
+    9.174,
+    5.88
+   ],
+   "Momentum": [
+    -2.506,
+    4.28
+   ],
+   "Trend": [
+    3.727,
+    17.79
+   ],
+   "Short-term reversal": [
+    3.373,
+    1.34
+   ],
+   "Price position": [
+    1.716,
+    -4.27
+   ],
+   "Loss frequency": [
+    0.601,
+    4.62
+   ],
+   "Short interest": [
+    -2.06,
+    9.27
+   ],
+   "Sector tilt": [
+    0.093,
+    7.67
+   ],
+   "Stock-specific": [
+    -0.609,
+    21.01
+   ]
+  },
+  "2019": {
+   "Low volatility": [
+    7.702,
+    13.38
+   ],
+   "Beta & market correlation": [
+    0.905,
+    1.32
+   ],
+   "Net market exposure": [
+    5.118,
+    -2.65
+   ],
+   "Size": [
+    2.093,
+    21.47
+   ],
+   "Liquidity & volume": [
+    -3.126,
+    -0.37
+   ],
+   "Momentum": [
+    -0.526,
+    14.75
+   ],
+   "Trend": [
+    0.066,
+    17.93
+   ],
+   "Short-term reversal": [
+    -3.597,
+    7.46
+   ],
+   "Price position": [
+    2.717,
+    -8.12
+   ],
+   "Loss frequency": [
+    0.258,
+    8.66
+   ],
+   "Short interest": [
+    2.102,
+    7.53
+   ],
+   "Sector tilt": [
+    -0.194,
+    6.37
+   ],
+   "Stock-specific": [
+    1.354,
+    12.26
+   ]
+  },
+  "2020": {
+   "Low volatility": [
+    -12.136,
+    22.11
+   ],
+   "Beta & market correlation": [
+    1.771,
+    -1.43
+   ],
+   "Net market exposure": [
+    7.524,
+    23.21
+   ],
+   "Size": [
+    5.956,
+    24.65
+   ],
+   "Liquidity & volume": [
+    0.513,
+    -13.97
+   ],
+   "Momentum": [
+    2.705,
+    -4.82
+   ],
+   "Trend": [
+    -6.91,
+    18.02
+   ],
+   "Short-term reversal": [
+    0.554,
+    8.78
+   ],
+   "Price position": [
+    -1.277,
+    -0.16
+   ],
+   "Loss frequency": [
+    2.962,
+    3.35
+   ],
+   "Short interest": [
+    -0.505,
+    10.31
+   ],
+   "Sector tilt": [
+    0.854,
+    3.86
+   ],
+   "Stock-specific": [
+    -4.111,
+    6.09
+   ]
+  },
+  "2021": {
+   "Low volatility": [
+    9.207,
+    42.95
+   ],
+   "Beta & market correlation": [
+    0.802,
+    9.42
+   ],
+   "Net market exposure": [
+    2.777,
+    -0.19
+   ],
+   "Size": [
+    -8.762,
+    16.98
+   ],
+   "Liquidity & volume": [
+    8.385,
+    -9.86
+   ],
+   "Momentum": [
+    6.589,
+    -2.03
+   ],
+   "Trend": [
+    -0.19,
+    -0.24
+   ],
+   "Short-term reversal": [
+    -2.834,
+    16.06
+   ],
+   "Price position": [
+    0.417,
+    8.28
+   ],
+   "Loss frequency": [
+    -1.094,
+    1.68
+   ],
+   "Short interest": [
+    3.62,
+    5.74
+   ],
+   "Sector tilt": [
+    1.645,
+    2.92
+   ],
+   "Stock-specific": [
+    -0.173,
+    8.29
+   ]
+  },
+  "2022": {
+   "Low volatility": [
+    10.393,
+    44.78
+   ],
+   "Beta & market correlation": [
+    -1.542,
+    6.68
+   ],
+   "Net market exposure": [
+    -5.934,
+    -20.61
+   ],
+   "Size": [
+    -7.45,
+    22.83
+   ],
+   "Liquidity & volume": [
+    14.067,
+    2.6
+   ],
+   "Momentum": [
+    -1.583,
+    30.14
+   ],
+   "Trend": [
+    -8.226,
+    -2.58
+   ],
+   "Short-term reversal": [
+    4.229,
+    11.06
+   ],
+   "Price position": [
+    1.524,
+    -4.78
+   ],
+   "Loss frequency": [
+    -1.802,
+    2.54
+   ],
+   "Short interest": [
+    1.813,
+    7.11
+   ],
+   "Sector tilt": [
+    -0.433,
+    2.01
+   ],
+   "Stock-specific": [
+    -0.231,
+    -1.77
+   ]
+  },
+  "2023": {
+   "Low volatility": [
+    -12.881,
+    30.7
+   ],
+   "Beta & market correlation": [
+    0.862,
+    0.56
+   ],
+   "Net market exposure": [
+    4.323,
+    -11.7
+   ],
+   "Size": [
+    3.866,
+    22.1
+   ],
+   "Liquidity & volume": [
+    0.642,
+    4.81
+   ],
+   "Momentum": [
+    2.023,
+    5.39
+   ],
+   "Trend": [
+    -1.084,
+    2.36
+   ],
+   "Short-term reversal": [
+    -0.106,
+    15.51
+   ],
+   "Price position": [
+    0.105,
+    -2.7
+   ],
+   "Loss frequency": [
+    2.603,
+    4.98
+   ],
+   "Short interest": [
+    3.555,
+    12.58
+   ],
+   "Sector tilt": [
+    1.558,
+    8.02
+   ],
+   "Stock-specific": [
+    -0.924,
+    7.39
+   ]
+  },
+  "2024": {
+   "Low volatility": [
+    -5.921,
+    20.76
+   ],
+   "Beta & market correlation": [
+    -1.016,
+    4.4
+   ],
+   "Net market exposure": [
+    5.495,
+    -2.3
+   ],
+   "Size": [
+    -2.368,
+    28.18
+   ],
+   "Liquidity & volume": [
+    -2.834,
+    -9.14
+   ],
+   "Momentum": [
+    -4.058,
+    9.94
+   ],
+   "Trend": [
+    10.966,
+    5.74
+   ],
+   "Short-term reversal": [
+    0.505,
+    9.98
+   ],
+   "Price position": [
+    0.131,
+    -8.82
+   ],
+   "Loss frequency": [
+    4.823,
+    8.6
+   ],
+   "Short interest": [
+    4.804,
+    10.77
+   ],
+   "Sector tilt": [
+    2.945,
+    4.04
+   ],
+   "Stock-specific": [
+    -1.424,
+    17.87
+   ]
+  },
+  "2025": {
+   "Low volatility": [
+    -5.474,
+    32.82
+   ],
+   "Beta & market correlation": [
+    -0.595,
+    -1.27
+   ],
+   "Net market exposure": [
+    4.847,
+    -1.31
+   ],
+   "Size": [
+    3.246,
+    29.48
+   ],
+   "Liquidity & volume": [
+    -2.918,
+    -13.44
+   ],
+   "Momentum": [
+    9.882,
+    1.62
+   ],
+   "Trend": [
+    -1.636,
+    11.4
+   ],
+   "Short-term reversal": [
+    0.191,
+    1.76
+   ],
+   "Price position": [
+    -10.634,
+    1.43
+   ],
+   "Loss frequency": [
+    4.397,
+    9.97
+   ],
+   "Short interest": [
+    3.902,
+    10.85
+   ],
+   "Sector tilt": [
+    2.063,
+    6.23
+   ],
+   "Stock-specific": [
+    5.682,
+    10.47
+   ]
+  },
+  "2026": {
+   "Low volatility": [
+    -1.363,
+    10.87
+   ],
+   "Beta & market correlation": [
+    0.892,
+    12.83
+   ],
+   "Net market exposure": [
+    4.568,
+    2.26
+   ],
+   "Size": [
+    17.733,
+    33.99
+   ],
+   "Liquidity & volume": [
+    -26.548,
+    -11.79
+   ],
+   "Momentum": [
+    9.187,
+    -4.08
+   ],
+   "Trend": [
+    1.435,
+    17.1
+   ],
+   "Short-term reversal": [
+    4.17,
+    7.52
+   ],
+   "Price position": [
+    -0.54,
+    -5.64
+   ],
+   "Loss frequency": [
+    -0.762,
+    8.82
+   ],
+   "Short interest": [
+    -0.486,
+    9.32
+   ],
+   "Sector tilt": [
+    -3.235,
+    10.91
+   ],
+   "Stock-specific": [
+    -11.957,
+    7.88
+   ]
+  }
+ },
+ "regimes": {
+  "Declines": {
+   "Low volatility": 16.0,
+   "Beta & market correlation": -3.24,
+   "Net market exposure": -20.54,
+   "Size": 1.12,
+   "Liquidity & volume": 6.68,
+   "Momentum": 2.0,
+   "Trend": -2.15,
+   "Short-term reversal": 0.58,
+   "Price position": 2.11,
+   "Loss frequency": 1.33,
+   "Short interest": 2.04,
+   "Sector tilt": -0.9,
+   "Stock-specific": 1.53,
+   "Book net": 5.6
+  },
+  "Strong rallies": {
+   "Low volatility": -9.37,
+   "Beta & market correlation": 2.85,
+   "Net market exposure": 18.03,
+   "Size": -7.56,
+   "Liquidity & volume": 1.38,
+   "Momentum": 0.58,
+   "Trend": -2.4,
+   "Short-term reversal": 0.59,
+   "Price position": -0.41,
+   "Loss frequency": 0.99,
+   "Short interest": 2.34,
+   "Sector tilt": 0.63,
+   "Stock-specific": -0.33,
+   "Book net": 6.39
+  }
+ },
+ "drawdowns": {
+  "2020\u201321 drawdown": {
+   "Low volatility": -15.49,
+   "Beta & market correlation": 0.45,
+   "Net market exposure": 7.59,
+   "Size": -4.7,
+   "Liquidity & volume": 9.09,
+   "Momentum": 4.91,
+   "Trend": -7.74,
+   "Short-term reversal": -0.35,
+   "Price position": -1.72,
+   "Loss frequency": 1.53,
+   "Short interest": -2.39,
+   "Sector tilt": 0.2,
+   "Stock-specific": -5.48
+  },
+  "2008\u201309 drawdown": {
+   "Low volatility": -5.79,
+   "Beta & market correlation": 1.36,
+   "Net market exposure": 2.91,
+   "Size": -9.99,
+   "Liquidity & volume": 3.07,
+   "Momentum": 0.49,
+   "Trend": 2.63,
+   "Short-term reversal": -8.54,
+   "Price position": 6.15,
+   "Loss frequency": 0.1,
+   "Short interest": 1.5,
+   "Sector tilt": -2.31,
+   "Stock-specific": -4.6
+  }
+ },
+ "windows": [
+  [
+   "2020-02-13",
+   "2021-01-27"
+  ],
+  [
+   "2008-07-30",
+   "2009-09-16"
+  ]
+ ]
+}

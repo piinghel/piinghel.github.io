@@ -2,14 +2,11 @@
 
 Part 1, Figure 1 (whole-history): cumulative long, short and net P&L above the
 net drawdown, with the two deepest drawdowns shaded.
-Part 2, Figure 1 (market-phases): the benchmark index (start = 100) above
-cumulative long, short and net P&L in each of those drawdowns, shaded from the
-strategy's peak to the market low.
 
 `--outputs` reads the attribution project's daily P&L
 (projects/performance_attribution/outputs/full_history/daily.parquet) and writes
 the aggregate series to assets/portfolio-attribution/pnl-history.json; rendering
-reads only that file and the drawdown windows in beta-history.json. Longs and
+reads only that file and the drawdown windows in themes.json. Longs and
 shorts are gross, net includes trading costs, all in points of fixed notional.
 """
 
@@ -122,7 +119,7 @@ def render_whole_history(history, windows, dark, mobile):
     style_axis(top, colors, "Cumulative P&L (points)", size)
     style_axis(bottom, colors, "Drawdown (points)", size)
     for ax in (top, bottom):
-        for _, peak, _, end in windows:
+        for peak, end in windows:
             ax.axvspan(dt.date.fromisoformat(peak), dt.date.fromisoformat(end),
                        color=colors["shade"], linewidth=0, zorder=0)
     top.axhline(0, color=colors["grid"], linewidth=0.9)
@@ -140,56 +137,6 @@ def render_whole_history(history, windows, dark, mobile):
     save(fig, "whole-history", colors, dark, mobile)
 
 
-def render_market_phases(history, windows, dark, mobile):
-    colors = palette(dark)
-    size = 11
-    dates = [dt.date.fromisoformat(d) for d in history["dates"]]
-    if mobile:
-        # Episodes stack; an empty row separates them more than their own two panels.
-        fig, axes = plt.subplots(5, 1, figsize=(4.0, 9.6),
-                                 gridspec_kw={"height_ratios": [1, 1.45, 0.12, 1, 1.45],
-                                              "hspace": 0.32})
-        axes[2].set_visible(False)
-        panels = [(axes[0], axes[1]), (axes[3], axes[4])]
-    else:
-        fig, axes = plt.subplots(2, 2, figsize=(8.8, 6.2),
-                                 gridspec_kw={"height_ratios": [1, 1.45], "hspace": 0.32,
-                                              "wspace": 0.3})
-        panels = [(axes[0, 0], axes[1, 0]), (axes[0, 1], axes[1, 1])]
-    series = []
-    for (index_ax, pnl_ax), (name, peak, low, end) in zip(panels, windows, strict=True):
-        peak, low, end = (dt.date.fromisoformat(d) for d in (peak, low, end))
-        # Measured from the close of the strategy's peak session through its trough.
-        rows = [i for i, d in enumerate(dates) if peak <= d <= end]
-        window = [dates[i] for i in rows]
-        benchmark = [100 * history["benchmark"][i] / history["benchmark"][rows[0]] for i in rows]
-        books = {key: [history[key][i] - history[key][rows[0]] for i in rows]
-                 for key, _, _ in BOOKS}
-        series.append((window, books))
-        style_axis(index_ax, colors, f"{name} · Benchmark (start = 100)", size)
-        style_axis(pnl_ax, colors, "P&L (points)", size)
-        for ax in (index_ax, pnl_ax):
-            ax.axvspan(peak, low, color=colors["shade"], linewidth=0, zorder=0)
-            ax.axvline(low, color=colors["ink"], linewidth=0.8, linestyle=(0, (1, 1.6)))
-            ax.set_xlim(peak, end)
-            locator = mdates.MonthLocator(bymonth=(3, 9) if mobile else (3, 6, 9, 12))
-            ax.xaxis.set_major_locator(locator)
-            ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %y"))
-        index_ax.tick_params(labelbottom=False)
-        index_ax.axhline(100, color=colors["ink"], linewidth=0.6)
-        index_ax.plot(window, benchmark, color=colors["net"], linewidth=1.3)
-        index_ax.set_ylim(45, 125)
-        index_ax.yaxis.set_major_locator(plt.MultipleLocator(20))
-        pnl_ax.axhline(0, color=colors["ink"], linewidth=0.6)
-        pnl_ax.set_ylim(-45, 45)
-        pnl_ax.yaxis.set_major_locator(plt.MultipleLocator(20 if mobile else 10))
-    fig.subplots_adjust(left=0.13 if mobile else 0.07, right=0.8 if mobile else 0.9,
-                        top=0.96 if mobile else 0.93, bottom=0.035 if mobile else 0.06)
-    for (_, pnl_ax), (window, books) in zip(panels, series, strict=True):
-        plot_books(pnl_ax, window, books, colors, size)
-    save(fig, "market-phases", colors, dark, mobile)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--outputs", type=Path, help="attribution full_history output folder")
@@ -197,7 +144,7 @@ if __name__ == "__main__":
     if args.outputs:
         export(args.outputs)
     history = json.loads((OUTPUT / "pnl-history.json").read_text())
-    windows = json.loads((OUTPUT / "beta-history.json").read_text())["windows"]
+    windows = json.loads((OUTPUT / "themes.json").read_text())["windows"]
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["Arial", "DejaVu Sans"],
                          "svg.fonttype": "none", "svg.hashsalt": "attribution-pnl",
                          # Drop vertices that move a daily path by under a quarter point.
@@ -205,4 +152,3 @@ if __name__ == "__main__":
         for dark in (False, True):
             for mobile in (False, True):
                 render_whole_history(history, windows, dark, mobile)
-                render_market_phases(history, windows, dark, mobile)
