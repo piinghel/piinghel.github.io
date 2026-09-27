@@ -131,19 +131,22 @@ and settle on 1.55, where development calibration is 1.01. The later period is t
 real test (Table 3).
 
 Figure 1 shows why I keep some estimated correlation. I rebuild the
-optimizer at each shrinkage value using development data, with and without
-the trading controls described below.
+optimizer with the trading controls described below at five shrinkage values,
+using development data.
 
 <div class="research-figure rho-ladder-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" alt="Four panels showing risk calibration, holding-period beta error, annual turnover, and net Sharpe across correlation shrinkage for the optimizer with and without trading controls, with the 0.3 to 0.6 region shaded" version="14" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" alt="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="15" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> Risk calibration, mean holding-period beta error, annual turnover and net Sharpe at each shrinkage value, development period. The shaded band marks 0.3–0.6; the selected value is 0.5.</p>
+<p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> The optimizer with trading controls at five shrinkage values, development period: risk calibration, beta bias (realized minus forecast beta over the next holding period), annual turnover and net Sharpe. The chosen 0.5 is highlighted.</p>
 
-[TBD: how the four measures move from 0.3 to 0.6 and at the extremes. At
-$$\rho=1$$, the share of the optimizer's gross-return gain over score-weighted
-volatility scaling that survives, which separates the gain from correlations
-from the gain from the limits.]
+From 0.25 to 0.5, calibration stays close to one and Sharpe near 1.33.
+Without shrinkage the forecast misses by about 11% and turnover is higher.
+With correlations removed entirely, realized risk runs 50% above forecast and
+Sharpe falls to 1.05, back to score-weighted volatility scaling's 1.03: the
+optimizer's gain comes from the correlations, not from the limits or the
+volatility target. Realized beta also runs about 0.06 above forecast at every
+setting up to 0.75, a bias I come back to below.
 
 ## Portfolio limits
 
@@ -203,12 +206,14 @@ the volatility multiplier; the score enters linearly instead of through
 logistic signal weights; and the volatility target and the limits apply.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="14" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="15" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Development-period growth and drawdowns.</strong> Net growth index (log scale) and drawdown after trading costs for the first and last rules in Table 1, September 1998–December 2021. Each path averages three separately compounded schedules. The rules run at different volatilities; Table 1 compares Sharpe.</p>
 
-[TBD: where the lead opens in Figure 2.]
+The lead builds steadily rather than in one episode, and it shows most in
+the two large drawdowns: about 13% against 18% in 2008–09 and 14% against 18%
+in 2020–21.
 
 ## Trading controls
 
@@ -255,13 +260,17 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 Figure 3 varies one control at a time around the chosen settings.
 
 <div class="research-figure parameter-sensitivity-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="8" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3: Sensitivity to the trading controls.</strong> Development-period net Sharpe and annual turnover across trade coefficients <i>c</i> (×10<sup>−4</sup>; 0 means no penalty) and rank-buffer cutoffs (75 means no buffer). Points are schedule means; whiskers span the three schedules. Chosen settings are highlighted.</p>
 
-[TBD: the coefficient plateau and the choice of 2.5; rank cutoffs 150–200 and
-the choice of 175.]
+Net Sharpe barely moves: 1.29–1.33 across trade coefficients from 0 to 5
+and 1.30–1.32 across cutoffs from 75 to 225, while turnover falls from 33× to
+19× and from 29× to 21×. The settings I use, 2.5 and 175, sit inside both
+plateaus. A larger coefficient or cutoff would cut turnover further at little
+cost in Sharpe, but I chose these settings before this rerun and don't want to
+tune them on it.
 
 ## After 2021
 
@@ -304,17 +313,17 @@ the beta of the portfolio's realized returns over a trailing year, which
 reflects holdings and market moves throughout that year.
 
 <div class="research-figure risk-beta-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" mobile="/assets/portfolio-optimization/risk-calibration-and-beta_mobile" alt="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls" version="13" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" mobile="/assets/portfolio-optimization/risk-calibration-and-beta_mobile" alt="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="14" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 4: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the ±0.05 limit on estimated beta.</p>
+<p class="figure-caption"><strong>Figure 4: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the optimizer's ±0.05 limit, which applies to its rebalance-time estimate.</p>
 
 Over the full development period, realized beta is 0.10 for volatility
 scaling and 0.08 for the optimizer with trading controls; after 2021 it is
-0.07 and 0.02. The trailing-year beta is less well behaved: several episodes
-last for months and reach [TBD]. A 63-session [TBD: which window] window removes the long
-episodes but costs [TBD] points of net return a year, more than the 0.5 points
-I was willing to give up, so I keep the 756-session estimate.
+0.07 and 0.02. The trailing-year beta is less comfortable: the optimizer's
+sits above the +0.05 limit 77% of the time, peaks near 0.3 and tracks
+volatility scaling closely. It is the bias from Figure 1: the rebalance-time
+estimate understates the portfolio's beta by about 0.06.
 
 ## What joint sizing buys, and what it costs
 

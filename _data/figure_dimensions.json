@@ -161,11 +161,11 @@
   },
   "/assets/portfolio-optimization/rho-ladder": {
     "width": 1200,
-    "height": 780
+    "height": 740
   },
   "/assets/portfolio-optimization/rho-ladder_mobile": {
     "width": 480,
-    "height": 1435
+    "height": 1365
   },
   "/assets/portfolio-optimization/risk-calibration-and-beta": {
     "width": 1200,
