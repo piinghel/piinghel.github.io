@@ -1,8 +1,7 @@
 ---
-published: false
 layout: post
 title: "Do Tree Models Beat Ridge on the Same Predictors?"
-description: "LightGBM against Ridge on the same 80 predictors, target and portfolio rule: a clear lead through 2021, built before 2017, and no measurable difference since."
+description: "LightGBM against Ridge on the same 80 predictors and target, on a plain rule and the optimizer: a clear lead through 2021, built before 2017, and no measurable difference since."
 permalink: /quants/tree-models-vs-ridge.html
 toc: true
 date: 2026-09-27
@@ -14,7 +13,7 @@ Ridge combined 80 predictors into one ranking, and learning the weights beat
 equal weights by about 0.2 of Sharpe. Ridge is linear and additive, though. A
 tree model can let one predictor's effect depend on another, such as momentum
 that matters more among calm stocks, and can bend where a linear weight can't.
-Does that flexibility buy anything on the same data?
+Here I test whether that flexibility buys anything on the same data.
 
 ## The comparison
 
@@ -80,14 +79,43 @@ crash of March to June 2009 LightGBM gained 5.6% while Ridge lost 1.6%.[^tilt]
 The trees then converged on the same bet: by 2019–21 the correlation was −0.52
 for LightGBM and −0.66 for Ridge, and the lead stopped growing.
 
+## On the optimizer
+
+The plain rule sizes each stock by its own volatility. The
+[optimization article](/quants/2026/08/29/portfolio-optimization.html) sizes
+the selected stocks jointly, under risk, beta and sector limits with a penalty
+on trading, and that is the allocation the later articles build on. I replay
+both models' saved scores through it, each with its best volatility window:
+21 sessions for Ridge, as in that article, and 63 for LightGBM.[^optimizer]
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 2: The optimizer lifts both models and widens LightGBM's lead before 2022.</strong> Sharpe ratio of the combined three-schedule book after costs, and LightGBM's lead over Ridge with its 95% paired block-bootstrap interval below. 2022–26 runs to May 2026.</p>
+
+| Rule | Period | Ridge | LightGBM | Lead |
+| :--- | :--- | ---: | ---: | ---: |
+| Plain | 1998–2021 | 1.04 | 1.58 | +0.54<br><small>[+0.24, +0.85]</small> |
+| Plain | 2022–26 | 0.75 | 0.85 | +0.10<br><small>[−0.27, +0.46]</small> |
+| Optimizer | 1998–2021 | 1.41 | 2.21 | +0.80<br><small>[+0.45, +1.14]</small> |
+| Optimizer | 2022–26 | 0.90 | 1.26 | +0.36<br><small>[−0.27, +1.00]</small> |
+{: .research-table .comparison-table .compact-table }
+</div>
+
+Joint sizing helps both rankings, and LightGBM more: through 2021 its lead
+grows to 0.8 of Sharpe, with an interval well clear of zero. After 2021 the
+lead is larger than on the plain rule, 0.36, but the interval still runs from
+−0.27 to +1.00. The volatility multiplier was calibrated on Ridge's book with the 21-session
+window, and LightGBM's book lands below the 7% target, at about 6% per schedule
+against Ridge's 7% through 2021. A different multiplier would also change the
+weights, so this is a comparison at these settings.
+
 ## What I take from this
 
-On the same predictors and the same portfolio rule, LightGBM was the better
-ranking over the full history: steadier, less risky and about half a point of
-Sharpe ahead through 2021. But the edge was earned before 2017, mostly in
-periods when it bet less on low volatility than Ridge did, and it faded as the
-trees converged on the same low-volatility bet. Since then nothing
-distinguishes the two.
+On the same predictors, LightGBM was the better ranking under both portfolio
+rules: steadier and 0.5 to 0.8 of Sharpe ahead through 2021. But
+the edge was earned before 2017, mostly in periods when it bet less on low
+volatility than Ridge did, and it faded as the trees converged on the same
+low-volatility bet. Since 2022 it is still ahead on both rules, by 0.10 and
+0.36, and neither difference is distinguishable from noise.
 
 ## References
 
@@ -99,3 +127,5 @@ distinguishes the two.
 [^bootstrap]: Paired block bootstrap of the combined three-schedule daily returns. The combined book's Sharpe ratios (1.58 and 1.04 through 2021) are higher than the schedule means in Table 1 because combining schedules diversifies.
 
 [^tilt]: Mean daily Spearman correlation between each score and the stock's 63-session volatility rank among tradable stocks. Episode returns compound the mean-schedule long–short net return from 8 October 1998 to 9 March 2000 and from 9 March to 30 June 2009.
+
+[^optimizer]: Saved scores replayed through the optimization article's rule with trading controls and a 7% forecast volatility target, with the volatility multiplier recalibrated to 1.55 on development data for Ridge's scores and the 21-session window. The bootstrap is the one described above, on the combined books.

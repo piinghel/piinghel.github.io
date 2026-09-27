@@ -434,7 +434,8 @@ Two choices got a sentence where they deserve an article of their own:
 - **The model.** Ridge is linear and additive. Tree models can pick up
   interactions and non-linear effects, such as a momentum effect that differs
   between calm and volatile stocks, at the cost of more tuning and more ways to
-  overfit.
+  overfit. A [follow-up](/quants/tree-models-vs-ridge.html) compares one with
+  Ridge on the same predictors.
 - **The target.** One paragraph motivates a 20-session, sector-relative Sharpe
   target. A target that separates return from risk would show how much of the
   edge survives once the volatility forecast is taken out, and the horizon is

@@ -17,9 +17,9 @@ bundle exec jekyll serve
 ## Article reading order
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:
-low-volatility sizing → regression → portfolio construction and risk concentration
-→ P&L attribution 1–3 → resources. The tranching, hybrid risk-model and
-tree-model articles are unpublished (`published: false`) and out of the sequence
+low-volatility sizing → regression → trees vs Ridge → portfolio construction and
+risk concentration → P&L attribution 1–3 → resources. The tranching and hybrid
+risk-model articles are unpublished (`published: false`) and out of the sequence
 until they are rebuilt; their assets stay in place.
 The homepage lists posts newest first, with the publication date and topic on
 every entry; posts published on the same day list the latest part first (Part 3,
