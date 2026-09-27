@@ -100,7 +100,7 @@ Because the two rules take such different market exposures, I also hedge each
 portfolio's beta with the Russell 1000 at every rebalance, using trailing
 ex-ante betas.[^beta-check] Table 1 compares all four.
 
-<table class="research-table comparison-table attribution-table">
+<table class="research-table comparison-table compact-table">
   <caption><strong>Table 1: Sizing with and without a beta hedge.</strong> 12 July 1995–27 May 2026, after 5 bp trading costs. Annual return is compounded and volatility annualized; the hedge is financed at no cost.</caption>
   <thead><tr><th>Rule</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>

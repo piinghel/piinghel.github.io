@@ -271,7 +271,7 @@ holdings and the residual take off a little more.
 | Full history | +0.068 | −0.308 | −15.13 |
 | 2008–09 drawdown | +0.026 | −0.476 | −6.55 |
 | 2020–21 drawdown | +0.140 | −0.442 | −4.53 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 </div>
 
 At the 2009 and 2020 lows, the trailing market betas were **+0.069 and

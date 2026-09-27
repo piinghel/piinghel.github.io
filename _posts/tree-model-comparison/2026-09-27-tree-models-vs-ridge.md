@@ -44,7 +44,7 @@ so that no small group of predictors dominates.[^settings]
 | **Later · 2022–May 2026** | | | | | |
 | Ridge | 0.042 | 0.35 | 10.2 | 0.73 | −9.4 |
 | LightGBM | 0.044 | 0.42 | 8.1 | 0.81 | −7.7 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 </div>
 
 Through 2021 the gap is large and not luck: LightGBM's Sharpe is about 0.5

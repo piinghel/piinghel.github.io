@@ -90,7 +90,7 @@ the trade and pays for its extra resizing trades.
 | Beta limit ±0.10 | 11.16 | 7.70% | 1.45 | 0.091 |
 | Fast scaling | 9.44 | 6.71% | 1.41 | 0.048 |
 | Slow scaling | 9.95 | 6.79% | 1.47 | 0.053 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 </div>
 
 Every rule earns less P&L than the Original, but every rule also takes less
@@ -130,7 +130,7 @@ but lost money in six, including both of the rebounds from Part 2.
 | Beta limit ±0.10 | +3.5 | −10.7 | +12.8 (12) | +5.3 | +1.0 |
 | Fast scaling | −5.5 | +5.9 | +1.3 (9) | +1.0 | +2.2 |
 | Slow scaling | +7.2 | +6.5 | +3.7 (7) | −0.5 | +2.4 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 </div>
 
 None of the full-history differences means much: block-bootstrap intervals

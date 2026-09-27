@@ -50,7 +50,7 @@ were **9 March 2009** and **23 March 2020**.
 | 2009 rebound | 133 | +39.59 | −49.14 | −10.14 |
 | 2020 decline | 21 | −39.95 | +30.74 | −9.32 |
 | 2020–21 rebound | 214 | +38.41 | −44.19 | −6.74 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 
 </div>
 
@@ -74,7 +74,7 @@ during the rebound.
 | Short at the market low | −20.90 | −23.12 |
 | Rebound additions | −28.24 | −21.08 |
 | **Total** | **−49.14** | **−44.19** |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 
 </div>
 
@@ -107,7 +107,7 @@ Table 3 separates beta exposure from its payoff using
 | 2009 rebound | −0.513 | +21.18 | −9.87 |
 | 2020 decline | −0.192 | −3.94 | +1.27 |
 | 2020–21 rebound | −0.466 | +12.65 | −5.80 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 </div>
 
 The beta payoff changed sign in both episodes while exposure remained negative.
@@ -187,7 +187,7 @@ Table 4 checks shorter and longer windows around the same lows.
 | 21 | 9 / 11 | +2.73 | 4 / 11 |
 | 63 | 9 / 11 | +2.89 | 4 / 11 |
 | 126 | 3 / 11 | −2.49 | 1 / 11 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 
 </div>
 

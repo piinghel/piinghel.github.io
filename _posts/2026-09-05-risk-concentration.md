@@ -138,7 +138,7 @@ Figure 2 compares how often each tested limit requires an adjustment.
 PCA caps intervene more often in the later period. Table 1 puts that frequency
 beside the amount of capital each cap reallocates.
 
-<table class="research-table comparison-table attribution-table">
+<table class="research-table comparison-table compact-table">
   <caption><strong>Table 1: What the tested limits change.</strong> January 2022–May 2026, matched rebalance targets. “Own concentration” is the schedule-mean 95th percentile of the largest contribution in the capped dimension, as a share of forecast variance; the PCA cap is measured on eligible-universe components and compared with the uncapped optimizer using the same covariance, the others with the original optimizer. “Corrected” counts targets that needed a correction (10<sup>−6</sup> tolerance). Target L1 adds absolute weight differences from the control on the same date, in percent of capital, including differences that build up as the portfolios drift apart. Caps apply to targets; price moves between rebalances can take holdings above them. Sector 15% and Stock 4% each had a solver warning on one rebalance; Stock 3% checks cover targets only.</caption>
   <thead>
     <tr><th>Cap</th><th>Own concentration</th><th>Corrected</th><th>Target L1</th></tr>

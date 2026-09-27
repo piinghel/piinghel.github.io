@@ -153,7 +153,7 @@ accurate on every one.
 | Direct, recalibrated | 11.43 | 1.57 | 11.43 | −15.5 | −14.5 |
 | Hybrid | 9.91 | 1.48 | 10.79 | −11.3 | −18.7 |
 | 50:50 blend | 10.18 | 1.52 | 11.03 | −12.7 | −19.1 |
-{: .research-table .comparison-table .attribution-table }
+{: .research-table .comparison-table .compact-table }
 </div>
 
 The hybrid and blend earn less, but they also run smaller books: their
