@@ -125,7 +125,7 @@ button { font: inherit; }
 .post-content li { margin-bottom: 0.55rem; }
 .post-content h2 { margin: 2.75rem 0 1rem; font-size: 1.5rem; scroll-margin-top: 1.5rem; }
 .post-content h3 { margin: 2rem 0 1rem; font-size: 1.2rem; }
-.post-content .article-summary, blockquote {
+blockquote {
   padding: 1rem 1.2rem;
   border-left: 3px solid #7896bc;
   background: var(--soft-accent);
@@ -157,15 +157,6 @@ button { font: inherit; }
 .site-footer { border-top: 1px solid var(--rule); color: var(--muted-ink); }
 .site-footer .wrapper { max-width: 828px; display: flex; justify-content: space-between; gap: 2rem; padding-top: 1.6rem; padding-bottom: 2rem; font-size: 0.8rem; }
 .footer-note { margin: 0; }
-.research-note {
-  margin: 2rem 0;
-  padding: 0.9rem 1.1rem;
-  border-left: 3px solid var(--rule);
-  color: var(--muted-ink);
-  font-size: 0.92rem;
-}
-.research-note p:first-child { margin-top: 0; }
-.research-note p:last-child { margin-bottom: 0; }
 .footer-note span { display: block; margin-top: 0.3rem; }
 .site-footer a { color: var(--muted-ink); text-decoration: none; }
 code, pre { font-family: var(--font-mono); font-size: 0.85em; background: var(--soft-accent); }
@@ -197,12 +188,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-scroll-hint { font: 0.76rem var(--font-sans); color: var(--muted-ink); margin: 0.4rem 0; }
 .research-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; margin: 1.6rem 0 0.5rem; }
 .research-table-scroll .research-table { min-width: 620px; }
-.research-table-scroll .horizon-comparison { min-width: 0; table-layout: fixed; }
-.horizon-comparison th:first-child { width: 34%; }
-@media (max-width: 600px) {
-  .post-content .horizon-comparison { font-size: 0.8rem; }
-  .horizon-comparison th, .horizon-comparison td { padding: 0.55rem 0.2rem; }
-}
 .research-caption-content { display: block; position: sticky; left: 0; }
 .research-table-scroll .sleeve-schedule { min-width: 0; }
 .research-table-scroll .control-table { min-width: 460px; }
@@ -214,15 +199,15 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .risk-performance-table th:first-child { width: 26%; }
 }
 .research-table-scroll .settings-table { min-width: 0; }
-.research-table-scroll .attribution-table { min-width: 0; table-layout: auto; margin-bottom: 0; }
-.research-table.attribution-table { font-size: 0.88rem; }
-.research-table.attribution-table th, .research-table.attribution-table td { padding: 0.65rem 0.4rem; }
-.research-table.attribution-table th:first-child { width: auto; }
-.research-table.attribution-table td:first-child { text-align: left; white-space: normal; }
-.research-table-scroll:has(.attribution-table) { margin: 0 0 1.6rem; }
+.research-table-scroll .compact-table { min-width: 0; table-layout: auto; margin-bottom: 0; }
+.research-table.compact-table { font-size: 0.88rem; }
+.research-table.compact-table th, .research-table.compact-table td { padding: 0.65rem 0.4rem; }
+.research-table.compact-table th:first-child { width: auto; }
+.research-table.compact-table td:first-child { text-align: left; white-space: normal; }
+.research-table-scroll:has(.compact-table) { margin: 0 0 1.6rem; }
 @media (max-width: 600px) {
-  .research-table.attribution-table { font-size: 0.82rem; }
-  .research-table.attribution-table th, .research-table.attribution-table td { padding: 0.6rem 0.25rem; }
+  .research-table.compact-table { font-size: 0.82rem; }
+  .research-table.compact-table th, .research-table.compact-table td { padding: 0.6rem 0.25rem; }
 }
 @media (min-width: 1160px) {
   // Header and body start on the same reading edge; the contents occupy a rail.
@@ -248,7 +233,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .post-content { font-size: 1.08rem; margin-top: 1.75rem; }
   .post-content h2 { font-size: 1.35rem; margin-top: 2.35rem; }
   .post-content h3 { font-size: 1.14rem; }
-  .post-content .article-summary { padding: 0.9rem 1rem; }
   .post-navigation { flex-direction: column; gap: 1.5rem; }
   .post-nav-next { text-align: left; }
   .site-footer .wrapper { gap: 1rem; }

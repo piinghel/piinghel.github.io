@@ -27,9 +27,9 @@ test('the attribution explorer selects the first rebound session on initial load
     for (const [step, episodeIndex] of [0, 1, 0].entries()) {
       if (step > 0) await page.selectOption('.ad-episode', String(episodeIndex));
       const episode = data.episodes[episodeIndex];
-      const expected = episode.factors.volatility.findIndex(row => row[0] > episode.low);
+      const expected = episode.factors.momentum.findIndex(row => row[0] > episode.low);
       assert.equal(Number(await page.locator('.ad-slider').inputValue()), expected);
-      assert.equal(Number(await page.locator('.ad-slider').getAttribute('max')), episode.factors.volatility.length - 1);
+      assert.equal(Number(await page.locator('.ad-slider').getAttribute('max')), episode.factors.momentum.length - 1);
     }
   } finally {
     await browser.close();

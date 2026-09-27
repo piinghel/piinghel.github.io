@@ -1,60 +1,98 @@
-"""Render the expanding walk-forward schematic; no empirical inputs required."""
+"""Regression article, Figure 2: the twelve expanding walk-forward refits on a real
+time axis, with the test period shaded. Windows come from the evidence file
+chosen_penalty_by_refit.csv (training end and prediction start of each refit);
+every training window starts on the first panel date."""
 
-from html import escape
+import csv
+import datetime as dt
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "assets" / "multiple-linear-regression"
+WINDOWS = OUT / "evidence/results/chosen_penalty_by_refit.csv"
+TRAIN_START = dt.date(1995, 1, 12)
+LAST_DATE = dt.date(2026, 5, 27)
+TEST_START = dt.date(2022, 1, 3)
 
 
-def render(*, dark: bool, mobile: bool) -> str:
-    width = 358 if mobile else 702
-    height = 322
-    ink, muted, rule, train, predict, gap = (
-        ("#e0e6ec", "#aab6c2", "#53616d", "#294c69", "#285b52", "#72522f")
-        if dark else
-        ("#24333f", "#52616e", "#c2ccd4", "#dbeaf5", "#d8eee6", "#f3e3cc")
-    )
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
-             f'<g font-family="Arial, DejaVu Sans, sans-serif" fill="{ink}">']
+def windows() -> list[tuple[dt.date, dt.date, dt.date]]:
+    """(training end, prediction start, prediction end) for each refit."""
+    rows = list(csv.DictReader(WINDOWS.open()))
+    starts = [dt.date.fromisoformat(r["test_start"]) for r in rows]
+    ends = [s - dt.timedelta(days=1) for s in starts[1:]] + [LAST_DATE]
+    return [
+        (dt.date.fromisoformat(r["validation_end"]), start, end)
+        for r, start, end in zip(rows, starts, ends, strict=True)
+    ]
 
-    def text(x, y, value, size=14, anchor="start", color=None):
-        parts.append(f'<text x="{x}" y="{y}" font-size="{size}" text-anchor="{anchor}" fill="{color or ink}">{escape(value)}</text>')
 
-    def rect(x, y, w, h, fill):
-        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="2" fill="{fill}"/>')
-
-    def line(x1, y1, x2, y2, dashed=False):
-        dash = ' stroke-dasharray="3 4"' if dashed else ""
-        parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{rule}"{dash}/>')
-
-    # All three rows share a schematic time axis. Each new training window
-    # ends one gap before the previous prediction block's endpoint.
-    start = 9 if mobile else 12
-    initial, block, gap_width = (96, 70, 10) if mobile else (225, 142, 18)
-    for i, (fill, label) in enumerate(((train, "Training"), (gap, "Gap"), (predict, "Prediction"))):
-        x = i * (116 if mobile else 170)
-        rect(x, 5, 13, 13, fill)
-        text(x + 19, 17, label, 13)
-    text(start, 49, "January 1995 · fixed start", 13, color=muted)
-    line(start, 58, start, 288, True)
-    for fold in range(3):
-        y = 86 + 79 * fold
-        train_width = initial + fold * block
-        text(start, y - 10, f"Fit {fold + 1}", 13, color=muted)
-        rect(start, y, train_width, 32, train)
-        rect(start + train_width, y, gap_width, 32, gap)
-        rect(start + train_width + gap_width, y, block, 32, predict)
-        text(start + train_width / 2, y + 21, f"{900 + fold * 600:,} dates", 13, "middle")
-        text(start + train_width + gap_width + block / 2, y + 21, "Predict", 13, "middle")
-    text(start, 312, "Time →", 13, color=muted)
-    parts.extend(["</g>", "</svg>"])
-    return "\n".join(parts) + "\n"
+def render(*, dark: bool, mobile: bool) -> None:
+    c = {
+        "bg": "#0d1117" if dark else "#ffffff",
+        "ink": "#e4e7ea" if dark else "#25313a",
+        "muted": "#9aa6af" if dark else "#5d6b76",
+        "train": "#2c4a63" if dark else "#d6e4f0",
+        "predict": "#6eb5a5" if dark else "#378579",
+        "test": "#1b222b" if dark else "#f1f3f5",
+    }
+    # Point sizes that render at roughly 12-13 CSS px at each viewport's display width.
+    label, tick = (12, 11.5) if mobile else (10.5, 10)
+    refits = windows()
+    num = mdates.date2num
+    with plt.rc_context(
+        {
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Arial", "DejaVu Sans"],
+            "svg.fonttype": "none",
+            "svg.hashsalt": "mlr-walk-forward",
+        }
+    ):
+        fig, ax = plt.subplots(figsize=(4.8, 4.9) if mobile else (8.4, 4.0))
+        fig.set_facecolor(c["bg"])
+        ax.set_facecolor(c["bg"])
+        ax.axvspan(num(TEST_START), num(LAST_DATE), color=c["test"], zorder=0, linewidth=0)
+        for row, (train_end, start, end) in enumerate(refits):
+            ax.barh(row, num(train_end) - num(TRAIN_START), left=num(TRAIN_START),
+                    height=0.56, color=c["train"], zorder=2)
+            # A thin background edge separates each prediction block from its training window.
+            ax.barh(row, num(end) - num(start), left=num(start), height=0.56,
+                    color=c["predict"], edgecolor=c["bg"], linewidth=1.2, zorder=2)
+        for x, text in ((TRAIN_START + (TEST_START - TRAIN_START) / 2, "Development"),
+                        (TEST_START + (LAST_DATE - TEST_START) / 2, "Test")):
+            ax.annotate(text, (num(x), -0.9), ha="center", va="bottom", fontsize=label - 0.5,
+                        color=c["muted"], annotation_clip=False)
+        # A compact key: every green block is out of sample, in both periods.
+        ax.legend(
+            handles=[Patch(color=c["train"], label="Training window"),
+                     Patch(color=c["predict"], label="Out-of-sample predictions")],
+            loc="lower left", bbox_to_anchor=(0, 1.05), ncol=1 if mobile else 2,
+            frameon=False, fontsize=label, labelcolor=c["ink"], borderaxespad=0,
+            handlelength=1.0, handleheight=0.9, handletextpad=0.5, columnspacing=1.6,
+        )
+        ax.set_yticks([])
+        ax.set_ylim(len(refits) - 0.45, -1.45)
+        ax.set_xlim(num(dt.date(1994, 10, 1)), num(LAST_DATE))
+        ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+        ax.spines[:].set_visible(False)
+        ax.tick_params(length=0, colors=c["muted"], labelsize=tick)
+        fig.subplots_adjust(left=0.03, right=0.97, top=0.81 if mobile else 0.86,
+                            bottom=0.08 if mobile else 0.09)
+        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+        path = OUT / f"expanding-walk-forward{suffix}.svg"
+        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
+        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        plt.close(fig)
 
 
 if __name__ == "__main__":
-    out = ROOT / "assets" / "multiple-linear-regression"
     for mobile in (False, True):
         for dark in (False, True):
-            suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-            (out / f"expanding-walk-forward{suffix}.svg").write_text(render(dark=dark, mobile=mobile))
+            render(dark=dark, mobile=mobile)

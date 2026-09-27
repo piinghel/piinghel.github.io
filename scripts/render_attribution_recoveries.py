@@ -1,7 +1,10 @@
 """Render all 11 primary recovery windows from published aggregate inputs."""
+import datetime as dt
 import json
 from pathlib import Path
+
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -20,7 +23,7 @@ def render(rows,dark,mobile,horizon):
         for ax in axes:
             ax.set_facecolor(c['bg']);ax.spines[:].set_visible(False)
             ax.set_ylim(10.6,-.6)
-            ax.set_yticks(range(11),[r['low'] for r in rows])
+            ax.set_yticks(range(11),[dt.date.fromisoformat(r['low']).strftime('%b %Y') for r in rows])
             ax.tick_params(length=0,labelsize=10.5,colors=c['text'],pad=7)
             ax.grid(axis='x',color=c['grid'],linewidth=.5);ax.set_axisbelow(True)
         left,right=axes

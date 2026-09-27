@@ -2859,7 +2859,7 @@ L 213.000332 88.053863
 L 213.034523 86.323111
 L 213.12 84.712127
 L 213.12 84.712127
-" clip-path="url(#pb0e20aa16d)" style="fill: none; stroke: #76b3d4; stroke-width: 0.9; stroke-linecap: square"/>
+" clip-path="url(#pb0e20aa16d)" style="fill: none; stroke: #57bdab; stroke-width: 0.9; stroke-linecap: square"/>
    </g>
    <g id="line2d_12">
     <path d="M 40.32 141.706263
@@ -5567,7 +5567,7 @@ L 213.000332 120.262312
 L 213.017428 118.440942
 L 213.12 116.554818
 L 213.12 116.554818
-" clip-path="url(#pb0e20aa16d)" style="fill: none; stroke-dasharray: 3.33,1.44; stroke-dashoffset: 0; stroke: #e6ae70; stroke-width: 0.9"/>
+" clip-path="url(#pb0e20aa16d)" style="fill: none; stroke-dasharray: 3.33,1.44; stroke-dashoffset: 0; stroke: #e69482; stroke-width: 0.9"/>
    </g>
    <g id="line2d_13">
     <path d="M 40.32 163.850479
@@ -8321,16 +8321,16 @@ L 212.914856 166.123115
 L 213.017428 166.347109
 L 213.102905 166.953428
 L 213.12 166.466585
-" clip-path="url(#pb0e20aa16d)" style="fill: none; stroke: #88bca5; stroke-width: 0.9; stroke-linecap: square"/>
+" clip-path="url(#pb0e20aa16d)" style="fill: none; stroke: #8bb6ee; stroke-width: 0.9; stroke-linecap: square"/>
    </g>
    <g id="text_7">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #76b3d4" x="220.12" y="87.23869" transform="rotate(-0 220.12 87.23869)">Long gross</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #57bdab" x="220.12" y="87.23869" transform="rotate(-0 220.12 87.23869)">Longs</text>
    </g>
    <g id="text_8">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #e6ae70" x="220.12" y="122.142318" transform="rotate(-0 220.12 122.142318)">Short gross</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #e69482" x="220.12" y="122.139975" transform="rotate(-0 220.12 122.139975)">Shorts</text>
    </g>
    <g id="text_9">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #88bca5" x="220.12" y="169.051741" transform="rotate(-0 220.12 169.051741)">Net</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #8bb6ee" x="220.12" y="169.051741" transform="rotate(-0 220.12 169.051741)">Net</text>
    </g>
    <g id="text_10">
     <text style="font-weight: 600; font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #e4eaf0" x="40.32" y="24.88" transform="rotate(-0 40.32 24.88)">Exposure · % of fixed notional</text>

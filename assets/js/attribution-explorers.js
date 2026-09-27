@@ -78,9 +78,9 @@
       const suffix=h===63?'':'-'+h;
       for(const picture of overview.querySelectorAll('picture')){
         const dark=picture.classList.contains('theme-svg-figure--dark')?'_dark':'';
-        picture.querySelector('img').src=`/assets/portfolio-attribution/recoveries${suffix}${dark}.svg?v=1`;
+        picture.querySelector('img').src=`/assets/portfolio-attribution/recoveries${suffix}${dark}.svg?v=2`;
         picture.querySelector('img').alt=`${h}-session rebounds: ${recoverySummary(h)}`;
-        picture.querySelector('source').srcset=`/assets/portfolio-attribution/recoveries${suffix}_mobile${dark}.svg?v=1`;
+        picture.querySelector('source').srcset=`/assets/portfolio-attribution/recoveries${suffix}_mobile${dark}.svg?v=2`;
       }
       byId('recovery-summary').textContent=`${h} sessions: ${recoverySummary(h)}`;
       byId('recovery-caption-view').textContent='Rows identify the market-low date; left shows stock gains and right shows actual net P&L.';

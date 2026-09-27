@@ -5,7 +5,7 @@ layout: base
 <div class="home">
   <h1 class="home-title">Research notes</h1>
   {%- comment -%}
-    Newest first. Posts published on the same day keep their series order (Part 1, 2, 3).
+    Newest first. Posts published on the same day list the latest part first (Part 3, 2, 1).
     Resources (navigation: false) stays in the header.
   {%- endcomment -%}
   {%- assign listed = site.posts | where_exp: "post", "post.navigation != false" -%}
@@ -15,7 +15,7 @@ layout: base
   {%- if listed.size > 0 -%}
     <ul class="post-list">
       {%- for day in by_day -%}
-      {%- assign day_posts = day.items | sort: "series_order", "last" -%}
+      {%- assign day_posts = day.items | sort: "series_order", "first" | reverse -%}
       {%- for post in day_posts -%}
       <li>
         <h2>

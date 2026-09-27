@@ -1,4 +1,7 @@
-"""Render beta, book sizes and the cap trade-off in light/dark, desktop/mobile."""
+"""Render the beta history and book sizes for Attribution Part 1.
+
+Light/dark and desktop/mobile variants.
+"""
 
 import datetime as dt
 import json
@@ -14,14 +17,18 @@ import numpy as np
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 
 
-def render(data, results, dark, mobile):
+def render(data, dark, mobile):
     colors = {
         "bg": "#0d1117" if dark else "#ffffff",
         "ink": "#e4eaf0" if dark else "#263747",
         "grid": "#43505f" if dark else "#d6dfe5",
         "blue": "#76b3d4" if dark else "#32759a",
+        # Long, short and net keep Figure 1's colours.
+        "long": "#57bdab" if dark else "#268b7b",
+        "short": "#e69482" if dark else "#bd6559",
+        "net": "#8bb6ee" if dark else "#3a689c",
         "orange": "#e6ae70" if dark else "#ad702c",
-        "green": "#88bca5" if dark else "#397c61",
+        "gray": "#9aa6af" if dark else "#6b7785",
     }
     dates = [dt.date.fromisoformat(value) for value in data["dates"]]
     suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
@@ -54,32 +61,29 @@ def render(data, results, dark, mobile):
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["Arial", "DejaVu Sans"],
                          "svg.fonttype": "none", "svg.hashsalt": "attribution-series"}):
         fig, axes = plt.subplots(2, 1, sharex=True, figsize=(4, 6) if mobile else (9.6, 5.8))
-        # The legend sits between the heading and the plot area, clear of the data.
-        axis(axes[0], "Realized market beta", pad=30)
-        axis(axes[1], "Model beta exposure · per notional")
-        for key, color, label, width in [("beta_126", "orange", "126 sessions", .85),
-                                         ("realized_beta", "blue", "252 sessions", 1.25)]:
-            axes[0].plot(dates, data[key], color=colors[color], linewidth=width, label=label)
-        axes[0].legend(loc="lower left", bbox_to_anchor=(0, 1.01), ncol=2, frameon=False,
-                       fontsize=9 if mobile else 10, labelcolor=colors["ink"], borderaxespad=0,
-                       handlelength=1.5, columnspacing=1)
+        axis(axes[0], "Realized market beta · trailing 252 sessions")
+        axis(axes[1], "Standardized beta exposure · per notional")
+        axes[0].plot(dates, data["realized_beta"], color=colors["blue"], linewidth=1.25)
         axes[0].margins(y=.08)
-        axes[1].plot(dates, data["model_beta"], color=colors["blue"], linewidth=1)
+        axes[1].plot(dates, data["fit_beta_exposure"], color=colors["blue"], linewidth=1)
         for row in data["lows"]:
             when = dt.date.fromisoformat(row["date"])
-            for ax, key in zip(axes, ["realized_beta", "model_beta"]):
-                ax.scatter(when, row[key], s=20, color=colors["blue"], zorder=4)
+            index = data["dates"].index(row["date"])
+            for ax, key in zip(axes, ["realized_beta", "fit_beta_exposure"]):
+                # A contrasting dot with a background ring stays visible on the line.
+                ax.scatter(when, data[key][index], s=42, color=colors["ink"], edgecolor=colors["bg"],
+                           linewidth=1.2, zorder=4)
         for ax in axes:
             ax.yaxis.set_major_locator(plt.MaxNLocator(4))
-        fig.subplots_adjust(left=.17 if mobile else .085, right=.97, top=.86, bottom=.08, hspace=.5)
+        fig.subplots_adjust(left=.17 if mobile else .085, right=.97, top=.9, bottom=.08, hspace=.4)
         save(fig, "beta-history")
 
         fig, ax = plt.subplots(figsize=(4, 3.6) if mobile else (9.6, 3.6))
         axis(ax, "Exposure · % of fixed notional")
         for key, label, color, dash, offset in [
-            ("long_gross", "Long gross", "blue", "-", 0),
-            ("short_gross", "Short gross", "orange", "--", -3),
-            ("net_exposure", "Net", "green", "-", 0),
+            ("long_gross", "Longs", "long", "-", 0),
+            ("short_gross", "Shorts", "short", "--", -3),
+            ("net_exposure", "Net", "net", "-", 0),
         ]:
             values = np.array(data[key])*100
             ax.plot(dates, values, color=colors[color], linewidth=.9, linestyle=dash)
@@ -89,35 +93,9 @@ def render(data, results, dark, mobile):
         fig.subplots_adjust(left=.14 if mobile else .065, right=.74 if mobile else .88, top=.85, bottom=.16)
         save(fig, "book-sizes")
 
-        fig, ax = plt.subplots(figsize=(4, 3.9) if mobile else (8, 4))
-        axis(ax, "Worst drawdown · P&L points", time=False)
-        rows = [row for row in results["original_summaries"]
-                if row["variant"] == "baseline" or row["variant"].startswith("style_")]
-        rows.sort(key=lambda row: row["annual_net_pp"])
-        ax.plot([r["annual_net_pp"] for r in rows], [r["max_drawdown_pp"] for r in rows],
-                color=colors["grid"], linewidth=1, zorder=1)
-        offsets = {"0.30": (8, 4), "0.25": (-8, -15)}
-        for row in rows:
-            original = row["variant"] == "baseline"
-            label = "Original" if original else "±"+row["variant"].split("_")[1]
-            x, y = row["annual_net_pp"], row["max_drawdown_pp"]
-            color = colors["ink"] if original else colors["blue"]
-            ax.scatter(x, y, color=color, s=34, zorder=3, marker="D" if original else "o")
-            offset = (-8, 6) if original else offsets.get(label[1:], (0, 9))
-            ax.annotate(label, (x, y), xytext=offset, textcoords="offset points", fontsize=size,
-                        color=color, ha="right" if offset[0]<0 else "left" if offset[0]>0 else "center")
-        ax.set_xlim(9.45, 11.65)
-        ax.set_ylim(-17, -10.7)
-        ax.set_yticks([-16, -14, -12])
-        ax.set_xticks([9.5, 10, 10.5, 11, 11.5])
-        ax.set_xlabel("Net P&L per year · points", color=colors["ink"], fontsize=size, labelpad=12)
-        fig.subplots_adjust(left=.16 if mobile else .1, right=.97, top=.85, bottom=.2)
-        save(fig, "cap-tradeoff")
-
 
 if __name__ == "__main__":
     history = json.loads((OUTPUT / "beta-history.json").read_text())
-    results = json.loads((OUTPUT / "series-diagnostics.json").read_text())
     for dark in [False, True]:
         for mobile in [False, True]:
-            render(history, results, dark, mobile)
+            render(history, dark, mobile)
