@@ -3,7 +3,7 @@ layout: post
 title: "Joint Sizing with Fewer Trades"
 description: "Joint sizing adds turnover. A rank buffer and trade penalty recover more of the gross return."
 date: 2026-08-29
-last_modified_at: 2026-09-26
+last_modified_at: 2026-09-27
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -46,9 +46,8 @@ uses the same next-close execution, and pays 5 basis points on traded notional.
 
 This baseline differs from the regression article's allocation rule. There,
 selected stocks start with equal signal weights before volatility scaling;
-here, stronger prediction scores receive larger signal weights. The Ridge
-ranking used here is the earlier version fitted on 144 predictors; the
-regression article now uses a pruned set of 80.
+here, stronger prediction scores receive larger signal weights. This article
+uses an earlier version of the regression article's Ridge ranking.
 
 The tables average metrics calculated separately for the three schedules. Returns are
 geometric annualized returns; Sharpe uses arithmetic mean daily return and a
