@@ -229,9 +229,9 @@ effects. Adding those pieces, uncovered holdings and costs reconstructs
 portfolio P&L. Figure 5 shows the full-history allocation.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="5" alt="Fitted components with P&L beside their signed variance shares, including residual, uncovered holdings and costs." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="6" alt="Fitted components with P&L beside their signed variance shares, including residual, uncovered holdings and costs." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: The fitted allocation of P&amp;L and risk.</strong> P&amp;L sums to +312.9 points net; variance shares sum to 100%. Sector terms account for the fitted styles.</p>
+<p class="figure-caption"><strong>Figure 5: The fitted allocation of P&amp;L and risk.</strong> P&amp;L sums to +312.9 points net and the components reconcile exactly; variance shares sum to 100%. Sector effects are what remains of sector returns after the styles, so they differ from the sector P&amp;L in Figure 4.</p>
 
 Momentum, volatility and reversal earned money; beta and size detracted.
 The largest component was the **residual, +198.8 points**, with **45.2% of
