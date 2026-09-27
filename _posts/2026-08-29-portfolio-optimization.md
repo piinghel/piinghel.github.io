@@ -13,7 +13,7 @@ github_repositories:
 ---
 
 In the articles on [low-volatility sizing](/quant/2024/12/15/low-volatility-factor.html)
-and [linear regression](/quants/2025/02/09/multiple-linear-regression.html),
+and [regression](/quants/2025/02/09/multiple-linear-regression.html),
 I sized positions one stock at a time: scale each by its own volatility and
 cap it. That simple rule worked well. Here I want to see whether sizing the
 stocks together, taking into account how they move with each other, does
@@ -28,8 +28,8 @@ The setup follows the [regression article](/quants/2025/02/09/multiple-linear-re
 the same universe and Ridge ranking, 75 long and 75 short names, three
 rebalance schedules that each trade every three weeks starting a week apart,
 and next-close execution. I charge 5 bp per dollar traded and ignore borrow,
-financing and market impact. I choose settings on September 1998–December
-2021 (development) and report January 2022–May 2026 separately.
+financing and market impact. I report September 1998–December 2021, the
+development period, and January 2022–May 2026, the later period, separately.
 
 ## Sizing under a volatility budget
 
@@ -253,7 +253,7 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 Figure 3 varies one control at a time around the chosen settings.
 
 <div class="research-figure parameter-sensitivity-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="9" %}
+  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="10" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3: Sensitivity to the trading controls.</strong> Development-period net Sharpe and annual turnover across trade coefficients <i>c</i> (×10<sup>−4</sup>; 0 means no penalty) and rank-buffer cutoffs (75 means no buffer). Points are schedule means; whiskers span the three schedules. Chosen settings are highlighted.</p>
@@ -285,8 +285,8 @@ All four rules earn less than in development. The optimizer on its own no
 longer beats volatility scaling. With the trading controls it has the higher
 Sharpe, 0.87 against 0.73, but the lower net return, 6.4% against 7.1%,
 because it runs at 7.5% volatility instead of 10.2%. It also has the smaller
-drawdown and about 60% of the turnover. The Sharpe difference is not firm: a paired block bootstrap of the
-combined books puts its 95% interval at −0.34 to +0.65.[^bootstrap] Risk
+drawdown and about 60% of the turnover. The Sharpe difference is not firm: a
+paired block bootstrap of the combined schedules puts its 95% interval at −0.34 to +0.65.[^bootstrap] Risk
 calibration after 2021 is 1.06, so the portfolio runs about 6% above its
 forecast.
 
@@ -295,7 +295,7 @@ The lead also depends on the schedule: net Sharpe is 0.96 against 0.68 and
 
 Its worst stretch is the market rebound of December 2022–February 2023, a
 7.3% drawdown for the three schedules combined: the long book made about 3.3%
-of capital and the short book lost 10.8%.
+of fixed strategy notional and the short book lost 10.8%.
 
 ## Forecast beta versus realized beta
 
@@ -335,8 +335,8 @@ financing and impact costs left out here weigh more on it.
 Two weaknesses remain: realized beta runs above the rebalance-time estimate
 for months at a time, and after 2021 the advantage is small relative to its
 uncertainty and depends on the rebalance schedule. The
-[attribution series](/quants/portfolio-attribution.html) breaks down this
-portfolio's P&L, including the short book's losses in rebounds. Neither
+[attribution series](/quants/portfolio-attribution.html) breaks this
+portfolio's P&L down by the ranking's themes. Neither
 weakness changes my verdict: joint sizing with trading controls earns more per
 unit of risk than volatility scaling in both periods, though after 2021 by a
 margin I can't distinguish from noise, and it trades less.
@@ -370,5 +370,5 @@ a clear introduction to factor risk models.
 
 [^correlation-repair]: Before estimating correlations I cap daily returns at ±30% and set pairs with too little overlapping history to 0.50; negative eigenvalues of the result are clipped to zero.
 [^drift]: All limits apply to target weights. After next-close execution and later price moves, holdings can drift outside them until the next rebalance; the trade penalty measures changes from these drifted weights.
-[^bootstrap]: I resample the daily net returns of each rule's combined book 5,000 times in 21-session blocks shared by both rules. The combined books differ in Sharpe by 0.15, against 0.14 for the schedule means in Table 3.
+[^bootstrap]: I resample the daily net returns of each rule's three schedules combined, 5,000 times in 21-session blocks shared by both rules. The combined schedules differ in Sharpe by 0.15, against 0.14 for the schedule means in Table 3.
 [^row-one]: The regression article reports arithmetic annualized returns; here they are geometric, so net returns differ slightly while Sharpe and turnover are comparable.
