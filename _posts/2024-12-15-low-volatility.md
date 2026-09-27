@@ -42,7 +42,7 @@ compounds at only about a third of a percent a year before costs, and Sharpe
 falls from 0.90 in decile 1 to 0.20 in decile 10.
 
 <div class="low-vol-figure decile-profile-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" mobile="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="14" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" mobile="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="15" %}
 </div>
 
 
