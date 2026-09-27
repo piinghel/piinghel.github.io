@@ -20,15 +20,14 @@ bundle exec jekyll serve
 low-volatility sizing → regression → portfolio construction and risk concentration
 → P&L attribution 1–3 → resources. The tranching and tree-model articles are
 unpublished and out of the sequence until they are rebuilt.
-The homepage lists the research sequence in reading order, grouped under each
-post's first category (Signals, Portfolio construction, Risk & attribution), with
-the publication date on every entry. Consecutive posts with the same category form
-one group, so keep a theme's posts together. Resources (`navigation: false`) stays
-in the header rather than the list. Previous/Next links follow the sequence from
+The homepage lists posts newest first, with the publication date and topic on
+every entry; posts published on the same day keep their series order (Part 1,
+2, 3). Resources (`navigation: false`) stays in the header rather than the list.
+Previous/Next links follow the sequence from
 its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
-Posts missing from the sequence close the homepage list so they cannot disappear;
+Posts missing from the sequence appear first in Previous/Next order;
 assign their editorial position before publishing. Both layouts use the shared
 `_includes/ordered-posts.html` ordering logic.
 
@@ -97,62 +96,20 @@ block-matrix diagram with `python3 scripts/render_risk_matrices.py`. The article
 is currently unpublished (`published: false`); its retained permalink is
 `/quants/hybrid-risk-model.html`.
 
-The regression article figures are regenerated from the included aggregate evidence:
+The regression article's interactive figures (Plotly, loaded when they scroll into
+view) read two JSON files exported from the aggregate evidence in
+[`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence)
+(see its README for provenance):
 
 ```bash
-python3 scripts/render_multiple_linear_regression_figures.py \
-  --review-dir assets/multiple-linear-regression/evidence
+python3 scripts/export_mlr_data.py
 ```
 
-The factor correlation comparison can be regenerated from the included matrix:
-
-```bash
-python3 scripts/render_multiple_linear_regression_figures.py \
-  --factor-correlation-only
-```
-
-The primary renderer produces the coefficient heatmap and performance /
-drawdown figure. It requires two compact source files in the review directory:
-`multiple_linear_selected_coefficient_heatmap_source_c0p01.csv.gz` and
-`multiple_linear_selected_return_drawdown_figure_source.csv.gz`. It does not
-require IC, penalty-sweep, holdings-tilt or factor-correlation inputs.
-The [evidence directory](assets/multiple-linear-regression/evidence) also
-contains the ranking and portfolio summaries behind the article tables, plus
-the coefficient-persistence diagnostics. These are the three-theme benchmark,
-OLS and Ridge results on matched stock-date rows. The figures and reporting
-can be reproduced from these aggregate files; full model fitting requires the
-original research inputs and dependencies.
-
-To review another validated compact bundle before changing article assets:
-
-```bash
-python3 scripts/render_multiple_linear_regression_figures.py \
-  --review-dir /path/to/validated-matched-review \
-  --output-dir /path/to/new-figure-review
-```
-
-This produces light/dark heatmaps and desktop/phone performance figures. The
-heatmap uses a common signed scale without cell annotations; exact coefficients
-remain in the source bundle. Performance preserves the source series and checks that
-drawdowns include the initial index of 1 before adding its starting reference.
-Missing, inconsistent or non-positive log-growth evidence is rejected before
-any chart is written. Fixture tests check rendering behavior. The published
-matched export is also reconciled against the daily returns of all three
-starting-week schedules, including costs and initial-index drawdowns.
-
-The historical five-theme size-choice diagnostic uses the retained daily factor scores:
-
-```bash
-python3 scripts/check_benchmark_size.py \
-  --scores ../projects/factor_combination/outputs/review/five_factor_scores.parquet \
-  --output assets/multiple-linear-regression/benchmark-size-sensitivity.csv
-```
-
-It compares same-date Spearman rankings and membership of the top/bottom 75
-candidate sets. Removing size reweights four factors to 25%; reversing size
-retains five 20% weights. Selection ties follow the stable security identifier.
-The public CSV contains aggregate diagnostics; the local input contains
-security-level scores. Portfolio returns require a separate execution replay.
+Figure 1 (`_includes/predictor-structure-explorer.html`, `assets/js/predictor-structure.js`)
+reads `predictor-structure.json`; Figures 3 and 4 (`assets/js/regression-results.js`)
+read `regression-results.json`. The static correlation and theme-IC SVGs, Figure 1's
+no-JavaScript fallback, are rendered with
+`python3 scripts/render_multiple_linear_regression_figures.py`.
 
 The timing calculations, figure generators and their portfolio-level inputs live
 in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching).

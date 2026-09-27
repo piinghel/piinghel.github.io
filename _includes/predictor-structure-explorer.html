@@ -1,0 +1,17 @@
+<div class="pse" id="predictor-structure-explorer"
+     data-source="/assets/multiple-linear-regression/predictor-structure.json?v=2"
+     data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js">
+  <div class="pse-controls">
+    <div class="pse-segments pse-periods" role="radiogroup" aria-label="Period"></div>
+    <div class="pse-segments" role="radiogroup" aria-label="Heatmap">
+      <button type="button" role="radio" aria-checked="true" data-level="predictor">80 predictors</button>
+      <button type="button" role="radio" aria-checked="false" data-level="theme">7 themes</button>
+    </div>
+  </div>
+  <p class="pse-status" role="status">Loading the interactive figure…</p>
+  <p class="pse-heading"></p>
+  <div class="pse-heat" role="img" aria-label="Correlation heatmap for the selected period"></div>
+  <p class="pse-heading"></p>
+  <div class="pse-ic" role="img" aria-label="Cumulative IC of each theme with the target for the selected period"></div>
+</div>
+<script src="/assets/js/predictor-structure.js?v=3" defer></script>

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="358" height="350" viewBox="0 0 358 350">
+<svg xmlns="http://www.w3.org/2000/svg" width="358" height="322" viewBox="0 0 358 322">
 <g font-family="Arial, DejaVu Sans, sans-serif" fill="#e0e6ec">
 <rect x="0" y="5" width="13" height="13" rx="2" fill="#294c69"/>
 <text x="19" y="17" font-size="13" text-anchor="start" fill="#e0e6ec">Training</text>
@@ -26,7 +26,6 @@
 <rect x="255" y="244" width="70" height="32" rx="2" fill="#285b52"/>
 <text x="127.0" y="265" font-size="13" text-anchor="middle" fill="#e0e6ec">2,100 dates</text>
 <text x="290.0" y="265" font-size="13" text-anchor="middle" fill="#e0e6ec">Predict</text>
-<text x="9" y="308" font-size="14" text-anchor="start" fill="#e0e6ec">Training grows; earlier history stays</text>
-<text x="9" y="334" font-size="13" text-anchor="start" fill="#aab6c2">Time →</text>
+<text x="9" y="312" font-size="13" text-anchor="start" fill="#aab6c2">Time →</text>
 </g>
 </svg>
