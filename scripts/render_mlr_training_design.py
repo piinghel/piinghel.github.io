@@ -65,7 +65,7 @@ def render(*, dark: bool, mobile: bool) -> None:
             ax.barh(row, num(end) - num(start), left=num(start), height=0.56,
                     color=c["predict"], edgecolor=c["bg"], linewidth=1.2, zorder=2)
         for x, text in ((TRAIN_START + (TEST_START - TRAIN_START) / 2, "Development"),
-                        (TEST_START + (LAST_DATE - TEST_START) / 2, "Test")):
+                        (TEST_START + (LAST_DATE - TEST_START) / 2, "Later")):
             ax.annotate(text, (num(x), -0.9), ha="center", va="bottom", fontsize=label - 0.5,
                         color=c["muted"], annotation_clip=False)
         # A compact key: every green block is out of sample, in both periods.
