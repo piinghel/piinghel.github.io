@@ -14,13 +14,18 @@ bundle install
 bundle exec jekyll serve
 ```
 
-## Article reading order
+## Article reading order and research map
 
-`_data/reading_order.yml` defines the research sequence used by Previous/Next links:
-low-volatility sizing → regression → portfolio construction and risk concentration
-→ P&L attribution 1–3 → resources. The tranching, hybrid risk-model and
-tree-model articles are unpublished (`published: false`) and out of the sequence
-until they are rebuilt; their assets stay in place.
+`_data/research_map.yml` is the single source for the research sequence, each
+article's goal (the question it answers) and a reader-facing status while work
+remains. Previous/Next links follow its published entries in order: low-volatility
+sizing → regression → portfolio construction and risk concentration → P&L
+attribution 1–3 → resources. The Research map page (`research-map.html`, "Map" in
+the header) lists every entry by section, with unpublished drafts as unlinked
+titles. Update an entry's status when its draft or update finishes; at
+publication replace the draft's `title` with its `url`. The tranching, hybrid
+risk-model and tree-model articles are unpublished (`published: false`); their
+assets stay in place.
 The homepage lists posts newest first, with the publication date and topic on
 every entry; posts published on the same day list the latest part first (Part 3,
 2, 1). Resources (`navigation: false`) stays in the header rather than the list.
@@ -31,7 +36,7 @@ remain chronological. Draft URLs reserve a future place without publishing them.
 Posts missing from the sequence appear first in Previous/Next order;
 assign their editorial position before publishing. Both layouts use the shared
 `_includes/ordered-posts.html` ordering logic. The attribution parts stay together
-in `_data/reading_order.yml`; `series_id` and `series_order` identify the series
+in `_data/research_map.yml`; `series_id` and `series_order` identify the series
 without changing publication dates.
 
 ## Checks and drafts
