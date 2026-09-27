@@ -1,4 +1,5 @@
 ---
+published: false
 layout: post
 title: "Do Tree Models Beat Ridge on the Same Predictors?"
 description: "LightGBM against Ridge on the same 80 predictors and target, on a plain rule and the optimizer: a clear lead through 2021, built before 2017, and no measurable difference since."
