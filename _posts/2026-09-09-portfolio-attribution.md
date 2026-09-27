@@ -89,14 +89,14 @@ that offsets the rest of the book gets a negative share.
 ## Where the return comes from
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" version="1" alt="Return and share of risk of each theme, 1999–May 2026." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" version="2" alt="Return and share of risk of each theme, 1999–May 2026." %}
 </div>
 <p class="figure-caption"><strong>Figure 2: Short interest pays most for its risk; trend and size cost money.</strong> Return before costs, in % of capital a year, and share of the book's daily variance, January 1999–May 2026.</p>
 
 The steadiest earner is **short interest**: 2.2% a year for 9% of the risk,
 and positive in every five-year block. **Net market exposure** earns more, 3.2%
 a year, but that is the market's return on the net long dollars the beta limit
-forces on the book. Low volatility adds 1.6%, stock-specific returns 1.4%, and
+forces on the book. Low volatility adds 1.7%, stock-specific returns 1.3%, and
 price position, reversal, loss frequency, liquidity and momentum 0.7–1.4%
 each.
 
@@ -124,9 +124,9 @@ Low volatility, size, liquidity and the net long dollars move together, so I
 also read them as one defensive package. It took 26–42% of the book's risk in
 each block to 2018, 49% in 2019–21 and 44% since 2022. Its return went the
 other way: positive in every block to 2021, about zero since 2022, with low
-volatility alone losing 3.3% a year on 30% of the risk.
+volatility alone losing 3.5% a year on 30% of the risk.
 
-Stock-specific returns faded too, from 1.2–2.6% a year in every block to 2018
+Stock-specific returns faded too, from 1.0–2.6% a year in every block to 2018
 to slightly negative since. What held up is short interest, and momentum and
 loss frequency had their best block since 2022, at about 2.2% a year each.
 
@@ -149,4 +149,4 @@ Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/e
 The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
 is available to explore your own portfolio.
 
-[^model]: Weighted by the square root of market capitalization, with 20 industries; about 1% of gross exposure lacks theme data and is shown separately.
+[^model]: Weighted by the square root of market capitalization, with 20 industries. Holdings without theme data, about 1% of gross, are shown separately.

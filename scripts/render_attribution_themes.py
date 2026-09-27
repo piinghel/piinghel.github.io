@@ -40,6 +40,7 @@ THEMES = [
     "Net market exposure",
     "Sector tilt",
     "Stock-specific",
+    "Unloaded holdings",
 ]
 FIRST_YEAR, LAST_YEAR = 1999, 2026
 
@@ -49,6 +50,8 @@ def export(outputs: Path) -> None:
     out = {"full": {}, "blocks": {}, "years": {}}
     with open(outputs / "theme_periods_gross.csv") as f:
         for row in csv.DictReader(f):
+            if row["theme"] == "Stock-specific (loaded holdings)":
+                row["theme"] = "Stock-specific"
             if row["theme"] not in THEMES:
                 continue
             value = [round(float(row["return_pct"]), 3), round(float(row["risk_share_pct"]), 2)]
@@ -81,6 +84,15 @@ def export(outputs: Path) -> None:
     if missing:
         raise ValueError(f"themes missing from {outputs}: {missing}")
     DATA.write_text(json.dumps(out, indent=1) + "\n")
+
+
+def wrap(label: str) -> str:
+    """Break a label at the space nearest its middle."""
+    spaces = [i for i, ch in enumerate(label) if ch == " "]
+    if not spaces:
+        return label
+    cut = min(spaces, key=lambda i: abs(i - len(label) / 2))
+    return label[:cut] + "\n" + label[cut + 1:]
 
 
 def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: bool,
@@ -142,8 +154,8 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
             ax.xaxis.set_major_locator(plt.MaxNLocator(3))
             ax.grid(axis="x", color=colors["grid"], linewidth=0.5)
             ax.set_axisbelow(True)
-        labels = [label.replace(" ", "\n", 1) if wrap_labels and mobile and len(label) > 15
-                  else label for _, label in rows]
+        labels = [wrap(label) if wrap_labels and mobile and len(label) > 15 else label
+                  for _, label in rows]
         axes[0].set_yticks(positions, labels)
         axes[0].invert_yaxis()
         left = 0.32 if mobile else (0.2 if wrap_labels else 0.17)
@@ -241,9 +253,9 @@ if __name__ == "__main__":
             render(full, "theme-pnl", dark, mobile, row_order=order, wrap_labels=True)
             small_multiples(data, 0, "theme-return-years", 10, "Return, % a year", dark, mobile)
             small_multiples(data, 1, "theme-risk-years", 40, "Share of risk, %", dark, mobile)
-            regimes = [(f"{k} (% a year)", v, "{:+.1f}") for k, v in data["regimes"].items()]
+            regimes = [(k, v, "{:+.1f}") for k, v in data["regimes"].items()]
             render(regimes, "theme-regimes", dark, mobile, shared_scale=True,
                    row_order=[("Book net", "Whole book, net"), None] + order, wrap_labels=True)
             drawdowns = sorted(data["drawdowns"].items())
-            render([(f"{k} (points)", v, "{:+.1f}") for k, v in drawdowns], "theme-drawdowns",
+            render([(k.replace(" drawdown", ""), v, "{:+.1f}") for k, v in drawdowns], "theme-drawdowns",
                    dark, mobile, shared_scale=True, row_order=order, wrap_labels=True)
