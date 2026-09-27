@@ -3,7 +3,7 @@ layout: post
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-09-27
+last_modified_at: 2026-09-28
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -23,13 +23,13 @@ liquidity, size and short positioning.
 With one characteristic, the ranking is the selection rule. With several, I
 need weights, and the predictors overlap. A stock with strong momentum often
 also has low volatility, and several momentum horizons repeat much of the same
-information. How much weight should each predictor receive, given what the
-others already tell me?
+information. Each predictor's weight has to reflect what the others already
+say.
 
 Before fitting anything, I want to understand the predictors: what they
 measure, how much they overlap and whether their usefulness is stable. Then I
 compare equal weights with weights learned by ordinary least squares (OLS) and
-Ridge.
+Ridge, judged by the Sharpe ratio of the same long–short portfolio.
 
 ## Setup
 {: #what-i-ask-the-model-to-predict }
@@ -51,7 +51,7 @@ take sector tilts the target never rewarded.
 
 The choice has a consequence worth keeping in mind. Future volatility is far
 easier to forecast than future return, and lower volatility alone raises a
-Sharpe ratio, so a model trained on this target will lean toward calmer
+Sharpe ratio, so a model trained on this target will lean toward low-volatility
 stocks. The decile portfolios in the results show how strongly.
 
 Each predictor is ranked across the whole universe on each date and mapped in
@@ -87,7 +87,7 @@ with the story, I say so.
   <section class="theme-card" style="--theme-color: var(--theme-4)">
     <h3>Size <span>10 predictors</span></h3>
     <p class="theme-measures">Log market capitalization, its variability (the standard deviation of log market cap over a window), and its change and position relative to recent highs and lows.</p>
-    <p>The small-cap premium is a return effect among much smaller firms, and it has been weak since the 1980s unless one also controls for quality. Every stock here is in the Russell 1000, so the level means large versus mega cap. On forward returns the larger names earned slightly less, but they rank higher on the Sharpe target because they are much calmer. Here size is mostly a low-risk measure, so it belongs in the pool for the same reason as volatility; its variability measures behave like volatility and its change measures like momentum.</p>
+    <p>The small-cap premium lives among much smaller firms and has been weak since the 1980s unless one controls for quality. Within the Russell 1000, size means large versus mega cap, and larger names rank higher on the Sharpe target because their volatility is lower. Here size is mostly a low-risk measure; its variability measures behave like volatility and its change measures like momentum.</p>
   </section>
   <section class="theme-card" style="--theme-color: var(--theme-5)">
     <h3>Liquidity &amp; volume <span>10 predictors</span></h3>
@@ -97,7 +97,7 @@ with the story, I say so.
   <section class="theme-card" style="--theme-color: var(--theme-6)">
     <h3>Market correlation <span>2 predictors</span></h3>
     <p class="theme-measures">Correlation of the stock's daily returns with the market over one and two years.</p>
-    <p>Beta is correlation times relative volatility. Leverage-constrained investors bid up high-beta stocks for either reason, so high-correlation stocks should earn less even at the same volatility. That matches the data here before 2009. After 2009 the sign reverses: highly correlated stocks were calmer and earned more. I have no convincing explanation for the reversal, which makes this the least well-founded theme.</p>
+    <p>Beta is correlation times relative volatility. Leverage-constrained investors bid up high-beta stocks for either reason, so high-correlation stocks should earn less even at the same volatility. The data here match this story only before 2009, and I have no convincing explanation for the reversal, which makes this the least well-founded theme.</p>
   </section>
   <section class="theme-card" style="--theme-color: var(--theme-7)">
     <h3>Short positioning <span>9 predictors</span></h3>
@@ -121,8 +121,8 @@ equal-weight sum of its signed, standardized predictor ranks. Figure 1 lets
 you pick a period and switch between all 80 predictors and the seven theme
 composites. The predictors are ordered by a dendrogram, which joins the most
 similar predictors first, and the colour strip shows each one's theme. The
-lower panel adds up each composite's daily IC with the target, so a steadily
-rising line is a theme that kept ranking stocks well.
+lower panel adds up each composite's IC with the target, sampled every fifth
+session, so a steadily rising line is a theme that kept ranking stocks well.
 
 {% include predictor-structure-explorer.html %}
 
@@ -135,22 +135,22 @@ rising line is a theme that kept ranking stocks well.
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. These full-period signs are for description only; the models learn signs from their training windows. The dendrogram (average linkage on 1 − |ρ|, since a mirrored predictor carries the same information) is fitted once on 1998–2021 so that periods stay comparable. The lower panel adds up each theme composite's IC with the forward 20-session sector-relative Sharpe target; hovering gives each theme's mean IC over the period.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period.</p>
 
 Over the full period, volatility is the most coherent theme: its predictors
-correlate 0.71 on average. Momentum &amp; trend and Size are the least
+correlate 0.71 on average. Momentum &amp; trend and size are the least
 coherent, at 0.15. Momentum &amp; trend spans horizons from days to three
 years, and 43% of its signed pairs are negatively correlated: after the flip,
 trading well above the 10-day average counts against a stock, while a strong
-12-month return counts for it. Cut into seven clusters, the dendrogram
-matches the themes for about three quarters of the predictors. Although there
+12-month return counts for it. Although there
 are 80 predictors, ten principal components carry nearly three quarters of
 their variance.
 
 Between themes, the composites overlap more than their individual predictors
-do, because averaging removes each predictor's own noise. Volatility and size
-correlate 0.72 on average, and between 0.56 and 0.83 in every calendar year.
-Much of that is built in, as the dendrogram shows. Momentum &amp; trend and
+do, because averaging removes each predictor's idiosyncratic part. Volatility
+and size correlate 0.72 on average, and between 0.56 and 0.83 in every calendar
+year, partly because the size theme's variability measures are volatility
+measures. Momentum &amp; trend and
 size average 0.55. Other relationships change sign: market correlation and
 volatility range from −0.51 to 0.37 across years.
 
@@ -161,19 +161,17 @@ the same split. Volatility and size strengthen, from about 0.02 to about 0.05,
 which makes them the two strongest themes after 2009. Market correlation has a
 negative IC in 7 of the 11 years through 2008 and in only one year after.
 
-The question for a learned combination is whether weights fitted on one
-decade still suit the next.
+A learned combination therefore has to carry weights fitted in one decade into
+the next.
 
 ## Three ways to combine them
 {: #combining-them }
 
-The simplest, most naive combination gives every predictor the same weight,
-1/80. The only thing this *equal-weight* score learns from data is a
+The simplest combination gives every predictor the same weight, 1/80. The only thing this *equal-weight* score learns from data is a
 direction: each predictor enters with the sign of its correlation with the
 target in the training window, so lower volatility counts in a stock's favour
-because it did so in the past, not because I assumed it. Momentum &amp; trend
-then carries 33 of the 80 weights simply because it has the most predictors. A
-regression is free to reweight them.
+because it did so in the past. Momentum &amp; trend then carries 33 of the 80
+weights simply because it has the most predictors.
 
 The regressions learn the weights instead. Fitting them jointly makes each one
 conditional: the coefficient on the 12-month return measures its relationship
@@ -195,36 +193,36 @@ where $\mathbf z_{i,t}$ holds stock $i$'s 80 predictor ranks on date $t$, $n$
 is the number of stock-date rows and the intercept $a$ is unpenalized; $c=0$
 gives OLS. Ridge shrinks most along directions in which the predictors barely
 vary, such as the difference between two nearly identical momentum horizons
-([Hastie](https://arxiv.org/abs/2006.00371) explains this view well). As $c$ grows, the coefficients become proportional
-to each predictor's own covariance with the target, so a heavily penalized
-Ridge becomes a weighted version of the equal-weight score.
+([Hastie](https://arxiv.org/abs/2006.00371) explains this view well). As $c$ grows, each coefficient becomes proportional
+to its predictor's own covariance with the target, so a heavily penalized Ridge
+weights each predictor by its own correlation with the target, close to the
+equal-weight score.
 
 ## Fitting through time
 {: #from-predictions-to-portfolios }
 
 I refit the weights on an expanding window that starts in January 1995, so
-each refit adds history (Figure 2). A rolling window would adapt faster when
-predictors change, as Figure 1 shows they do, but each fit would see less data
-and the weights would move more between refits; an expanding window favours
-stable weights.[^fitting]
+each refit adds history (Figure 2). A rolling window would adapt faster to the
+shifts in Figure 1, but with less data per fit its weights would move more
+between refits; I prefer stable weights.[^fitting]
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded test period." version="6" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="6" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit, so predictions are out of sample in both periods. The shaded area is the test period; the month-long gap between training and predictions is too short to see at this scale.</p>
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the later period; the month-long gap between training and predictions is too short to see at this scale.</p>
 
-Every prediction is made by a model that has not seen that date. I chose the
-predictors, the target, the portfolio rule and the Ridge penalty on results
-through December 2021, the development period, and report January 2022–May
-2026 separately, labelled *Later* in the tables. The later period is short, about 54
-non-overlapping 20-session windows.
+Every prediction is made by a model that has not seen that date. I report two
+periods: development, September 1998–December 2021, and later, January
+2022–May 2026. The later period is short, about 54 non-overlapping 20-session
+windows.
 
 Every score goes through the same plain portfolio rule (Table 1). Because
 volatility scaling lets each score take its own level of risk, I compare
 scores on Sharpe rather than return. Portfolio construction itself is the
 subject of the [optimization
-article](/quants/2026/08/29/portfolio-optimization.html).
+article](/quants/2026/08/29/portfolio-optimization.html), where the same Ridge
+scores reach a Sharpe of 1.32 through 2021 and 0.87 after.
 
 <table class="research-table settings-table" id="portfolio-construction">
   <caption><strong>Table 1: The portfolio rule.</strong> Identical for every score. Traded notional is annual two-way trading divided by capital.</caption>
@@ -260,8 +258,7 @@ Sharpe falling.
 </table>
 
 I use $c=0.1$, which has the highest development IC, the most direct measure
-of how well a score ranks the target; the marginally higher Sharpe of $c$ from
-0 to 0.01, 0.99 against 0.98, is well inside the spread across schedules.
+of how well a score ranks the target; its Sharpe is within 0.01 of the best.
 
 ## Results
 {: #prediction-quality-and-portfolio-results }
@@ -286,12 +283,10 @@ of how well a score ranks the target; the marginally higher Sharpe of $c$ from
 The regressions rank stocks more steadily than equal weights (Table 3).
 Through 2021 Ridge's mean IC, 0.048, is close to the equal-weight score's
 0.047, but its day-to-day variation is smaller, so the IC IR is 0.53 against
-0.44. After 2021 the gap in mean IC widens a little, 0.042 against 0.038.
+0.45. After 2021 the gap in mean IC widens a little, 0.042 against 0.038.
 
-Before looking at portfolios, I want to know how the Ridge and equal-weight
-scores order returns. Figure 3 sorts the universe into ten equal-weighted
-decile portfolios by score, re-formed on the same three-week schedules and
-before costs.
+Figure 3 first shows how the Ridge and equal-weight scores order return and
+volatility, using equal-weighted decile portfolios before costs.
 
 <div class="pse-segments decile-periods" role="radiogroup" aria-label="Period">
   <button type="button" role="radio" aria-checked="true" data-decile-period="development">1998–2021</button>
@@ -304,15 +299,15 @@ before costs.
 <p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Compounded annual return of equal-weighted portfolios of the stocks in each score decile, with each decile's annualized volatility and Sharpe ratio below. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
 
 Through 2021 Ridge's deciles climb from about 3% a year to 16%, and the top
-decile earns a Sharpe ratio of 0.90 against 0.26 at the bottom. Equal weights
-reach almost the same top-decile Sharpe, 0.89, by a different route: 13.5% a
-year at 15.7% volatility, against Ridge's 15.9% at 18.2%. What stands out most
-is volatility. For both scores it falls steadily from around 30% in decile 1
-to 16–18% in decile 10, and more steeply for equal weights. As the target
-suggested, much of what these scores learn is a volatility sort. After 2021
-the return ordering almost disappears above decile 3: Ridge's deciles 3–10 all
-earn 6–10%, the equal-weight top decile only 6.1%, and most of the spread
-comes from the bottom decile. The volatility sort remains.
+decile's Sharpe ratio is 0.90 against 0.26 at the bottom. Equal weights reach
+almost the same top-decile Sharpe, 0.89, with less return and less volatility.
+For both scores volatility falls steadily from around 30% in decile 1 to 16–18%
+in decile 10: as the target suggested, much of what these scores learn is a
+volatility sort. After 2021 the return ordering almost disappears above decile
+3, and most of the spread comes from the bottom decile. The volatility sort
+remains. Ridge's daily returns correlate 0.62 with the volatility-scaled
+portfolio from the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html)
+through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Return and volatility are annualized; beta is measured against the Russell 1000.</caption>
@@ -333,53 +328,49 @@ comes from the bottom decile. The volatility sort remains.
 
 Through 2021 learning the weights pays (Table 4): Ridge's Sharpe is 0.98
 against 0.82 for equal weights, with a higher return, lower volatility and a
-shallower drawdown, and OLS does about as well. The schedule ranges overlap,
-though: Ridge's worst, 0.89, is below the best equal-weight schedule, 0.93.
-The learned scores trade a little more, 28× a year against 26×, and the edge
-survives costs up to about 28 bp per dollar traded, more than five times the 5
-bp charged here. Costs exclude borrow, financing and market impact. Both books
+shallower drawdown, and OLS does about as well. The learned scores trade a
+little more, 28× a year against 26×, and Ridge stays ahead of equal weights up
+to costs of about 28 bp per dollar traded (43 bp after 2021), against the 5 bp
+charged here; borrow, financing and market impact are excluded. Both portfolios
 are net long in dollars, by 35–50% of capital through 2021, because volatility
-scaling gives the calmer long side larger positions; market beta stays near
-0.1.
+scaling gives the lower-volatility long side larger positions; market beta
+stays near 0.1.
 
 After 2021 both Sharpe ratios fall, but the gap holds: Ridge's Sharpe is 0.73
-against 0.52, with a higher return and lower volatility, and its worst
-schedule, 0.67, is above the best equal-weight schedule, 0.61. The edge
-survives costs up to about 43 bp. A block bootstrap of the combined daily
-returns puts Ridge's Sharpe advantage at about 0.2 in
-both periods, with 95% intervals from roughly zero to 0.4: suggestive rather
-than conclusive. Figure 4 shows the two paths.
-
-Both scores lean toward larger stocks. Ridge's long candidates sit on average
-at the 62nd market-cap percentile of the universe through 2021 and its short
-candidates at the 31st, widening to the 70th and 23rd after 2021; equal
-weights lean even further, to the 68th and 31st, then the 77th and 22nd. That
-is the target at work: within the Russell 1000, larger mostly means calmer. So
-the tilt is part of what both scores earn rather than Ridge's edge, and
-whether to keep it is a portfolio construction question rather than a
-modelling one.
+against 0.52, with a higher return and lower volatility. Ridge's return falls
+only slightly; its volatility rises from 8% to 10%. A block bootstrap of daily
+returns, averaged across the three schedules, puts Ridge's Sharpe advantage at
+about 0.2 in both periods, with 95% intervals from roughly zero to 0.4. Figure
+4 shows the two paths.
 
 <div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the equal-weight and Ridge scores, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=5" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; Table 4 gives the same comparison.</p></noscript>
 
-<p class="figure-caption"><strong>Figure 4: Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below; the dotted line marks the start of the test period. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+<p class="figure-caption"><strong>Figure 4: Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below; the dotted line marks the start of the later period. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+
+Both scores lean toward larger stocks, because within the Russell 1000 larger
+mostly means lower volatility. Through 2021 the stocks Ridge selects for the
+long side sit on average at the 62nd market-cap percentile and its shorts at
+the 31st; equal weights lean further, to the 68th and 31st, and both tilts
+widen after 2021. The tilt is common to both scores, so it isn't Ridge's edge,
+and whether to keep it is a portfolio-construction question.
 
 ## What Ridge learned
 {: #reading-the-predictors }
 
-Figure 5 shows the ten largest average absolute Ridge weights at each refit. A
+Figure 5 shows the Ridge weights at each refit for the ten predictors with the
+largest mean absolute weight. A
 positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
 <div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=5" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
-<script src="/assets/js/regression-results.js?v=10" defer></script>
+<script src="/assets/js/regression-results.js?v=11" defer></script>
 
 <p class="figure-caption"><strong>Figure 5: The ten largest Ridge coefficients by refit.</strong> Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows are ranked by mean absolute coefficient over all refits; hover for each predictor's full definition.</p>
 
 The largest weight is negative, on the 10/21-day MACD, a short-horizon trend
-measure whose own IC is close to zero, and the 90-day high relative to the
-start of the window also counts against a stock. Positive weights on the
+measure whose own IC is close to zero. Positive weights on the
 126-day Sharpe ratio and the 12-month return favour long, steady trends, so
 together these weights lean against the latest spurt, the same contrast
 between short and long horizons that Figure 1 shows inside Momentum &amp;
@@ -399,43 +390,18 @@ for equal weights, which is why it trades more.
 
 ## What learning the weights buys
 
-I started by asking how much weight each predictor should get, given what the
-others already tell me. Letting a regression answer that is better than not
-answering it, by about 0.2 of Sharpe in both periods. Against equal weights on every predictor, Ridge lifts the
-Sharpe ratio from 0.82 to 0.98 through 2021 and from 0.52 to 0.73 after,
-trades only a little more, and keeps its edge at costs of 28–43 bp per dollar
-traded, well above the 5 bp I charge. The gain doesn't come from a clever
-penalty: OLS does as well, and a heavy enough penalty pushes Ridge back toward
-the equal-weight score. It comes from fitting the weights jointly, which lets
-the regression discount overlapping and weak predictors instead of counting
-each at 1/80.
+Fitting the weights jointly beats giving every predictor 1/80. Ridge's Sharpe
+is 0.16 higher than the equal-weight score's through 2021 and 0.21 higher
+after, for a little more trading. The gain comes from the joint fit, not the
+penalty: OLS does as well, and a heavy penalty pushes Ridge back toward equal
+weights.
 
-What the regression learns is less exciting than a Sharpe of 0.98 suggests.
-The decile portfolios show that both scores are largely a volatility sort and
-lean toward larger, calmer stocks, equal weights even more so; Ridge's edge
-over them comes more from return. The volatility sort is what the Sharpe
-target asks for, and a volatility-scaled portfolio can use it, but it ties the
-result to the low-volatility effect. After 2021 Ridge's daily returns move
-more closely with the volatility-scaled portfolio from the [low-volatility
-article](/quant/2024/12/15/low-volatility-factor.html), with a correlation of
-0.78 against 0.62 before, and that portfolio earned only about 1.5% a year
-over those years, against 6.5% before. Ridge's own return held up; its
-volatility rose, and that is what lowered its Sharpe. In the April 2025–May
-2026 rally its long and short stocks rose almost equally, and it made roughly nothing.
+Much of what both scores learn is the low-volatility effect. The Sharpe target
+asks for it, the deciles sort volatility more cleanly than return, and both
+scores lean toward larger stocks.
 
-So I would keep Ridge with a light penalty as the ranking, and treat its lean
-toward calm, large stocks as an exposure to manage rather than as skill.
-
-## What I skimmed over
-
-Two choices got a sentence where they deserve an article of their own:
-
-- **The model.** Ridge is linear and additive, so it misses interactions such
-  as a momentum effect that differs between calm and volatile stocks.
-- **The target.** One paragraph motivates a 20-session, sector-relative Sharpe
-  target. A target that separates return from risk would show how much of the
-  edge survives once the volatility forecast is taken out, and the horizon is
-  an open choice too.
+I prefer Ridge with a light penalty as the ranking, and I treat its lean toward
+large, low-volatility stocks as an exposure to manage rather than as skill.
 
 ## References
 
