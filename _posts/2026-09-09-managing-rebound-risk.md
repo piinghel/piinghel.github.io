@@ -104,9 +104,8 @@ cutting it whenever volatility rises.
 The rules also move market beta, in opposite directions. The beta limit
 raises realized beta to 0.091: removing the negative beta exposure leaves more
 of the net long book's market sensitivity, the mechanism from Part 1. The tilt
-limits lower it, to 0.021 at ±0.10, for reasons I haven't traced. A rule that
-simply holds more market will look better in rallies and worse in declines,
-so that direction is worth keeping in view.
+limits lower it, to 0.021 at ±0.10. A rule that simply holds more market will
+look better in rallies and worse in declines, which the next section separates.
 
 ## Declines and rallies
 
@@ -158,19 +157,13 @@ Only scaling cushioned that leg, by about 3.5 points, because both versions
 were holding a much smaller book when the rally began. In 2008–09, where the
 tilt limits helped, scaling made the drawdown deeper.
 
-## Would I change the baseline?
+## What I'd change
 {: #what-the-experiment-settles }
 
-Not yet. The one rule I would consider is a moderate tilt limit: at the same
+Nothing yet. The one rule I would consider is a moderate tilt limit: at the same
 risk it gives up nothing I can measure, does a little better in declines and
 in most strong rallies, and makes the deep drawdowns shallower. What it doesn't
 do is fix the loss that started this series, and the case for it rests on
 sixteen rallies, two drawdowns and full-history differences well inside the
 noise. The beta limit, which looked cheapest on raw P&L, mostly buys market
 beta.
-
-Three questions stay open. Why did the 2020–21 rally, which began seven months
-after the low, hurt a less defensive book as much as the Original, when the
-same limits helped in 2009? Why do the tilt limits lower realized beta, when a
-less defensive tilt might be expected to raise it? And does the later version
-of the Ridge ranking carry the same defensive tilt and pay for it the same way?
