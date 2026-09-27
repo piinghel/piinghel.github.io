@@ -22,8 +22,8 @@ low-volatility sizing → regression → portfolio construction and risk concent
 tree-model articles are unpublished (`published: false`) and out of the sequence
 until they are rebuilt; their assets stay in place.
 The homepage lists posts newest first, with the publication date and topic on
-every entry; posts published on the same day keep their series order (Part 1,
-2, 3). Resources (`navigation: false`) stays in the header rather than the list.
+every entry; posts published on the same day list the latest part first (Part 3,
+2, 1). Resources (`navigation: false`) stays in the header rather than the list.
 Previous/Next links follow the sequence from
 its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
