@@ -462,8 +462,7 @@ article](/quant/2024/12/15/low-volatility-factor.html), with a correlation of
 0.78 against 0.62 before, and that portfolio earned only about 1.5% a year
 over those years, against 6.5% before. Ridge's own return held up; its
 volatility rose, and that is what lowered its Sharpe. In the April 2025–May
-2026 rally that the low-volatility article looks at, its long and short stocks
-rose almost equally, and it made roughly nothing.
+2026 rally its long and short stocks rose almost equally, and it made roughly nothing.
 
 So I would keep Ridge with a light penalty as the ranking, and treat its lean
 toward calm, large stocks as an exposure to manage rather than as skill.

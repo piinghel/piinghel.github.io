@@ -89,9 +89,7 @@ volatility is about 10% too.
 
 Realized beta is roughly zero, which is close to a coincidence of the numbers:
 the short decile is about 3.2 times as volatile as the long decile and has about
-3.0 times its beta, so sizing by volatility almost offsets beta. The two rules
-differ in book sizes as well as in the weights within each book, and these
-results don't separate the two.
+3.0 times its beta, so sizing by volatility almost offsets beta.
 
 ## Comparing the portfolios with a beta hedge
 {: #what-improves }
@@ -101,7 +99,7 @@ portfolio's beta with the Russell 1000 at every rebalance, using trailing
 ex-ante betas.[^beta-check] Table 1 compares all four.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 1: Sizing with and without a beta hedge.</strong> 12 July 1995–27 May 2026, after 5 bp trading costs. Annual return is compounded and volatility annualized; the hedge is financed at no cost.</caption>
+  <caption><strong>Table 1: Sizing with and without a beta hedge.</strong> 12 July 1995–27 May 2026, after 5 bp trading costs. Annual return is compounded and volatility annualized; the hedge is financed at no cost. Two-way stock turnover is about 12 times capital a year for inverse volatility and 19 for equal weighting; the hedge adds 0.6 and 1.3.</caption>
   <thead><tr><th>Rule</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">Unhedged</th></tr>
@@ -116,23 +114,14 @@ ex-ante betas.[^beta-check] Table 1 compares all four.
 Hedging lifts equal weighting's Sharpe from 0.07 to 0.44, so its short market
 exposure explains much of its weakness, but inverse volatility still reaches
 0.70, with a third of the volatility and about half the drawdown. The hedge
-brings realized beta close to zero for both rules (0.011 and 0.005); for
-inverse volatility, already near zero at −0.001, it changes little.
+brings realized beta close to zero for both rules.
 
-Hedged equal weighting does compound faster, 8.0% a year against 6.6%, but at
-two and a half times the volatility and only because its large long index
-hedge is financed for free. Charging 3% a year on the hedge cuts it to 4.6%, and
-5% to 2.3%, while inverse volatility's small hedge barely moves. Neither rule
-earns interest on its net long dollars either, so the absolute returns flatter
-a funded portfolio; the Sharpe ranking is the robust comparison.
+Hedged equal weighting compounds faster, 8.0% a year against 6.6%, only because
+its large long index hedge is financed for free; charging 3% a year on it cuts
+that to 4.6%, while inverse volatility's small hedge barely moves.
 
-Two-way stock turnover is about 12 times capital a year for inverse volatility
-and 19 for equal weighting, which at 5 bp costs about 0.6 and 0.9 points a year;
-the hedge adds 0.6 and 1.3 times capital.
-
-Figure 3 shows the paths. Equal weighting ends at 0.35 unhedged and 10.84
-hedged, against 7.54 for inverse volatility, but each keeps its own risk:
-hedged equal weighting still falls 68% at its worst, against 38%.
+Figure 3 shows the paths. Each rule keeps its own risk: hedged equal weighting
+still falls 68% at its worst, against 38% for inverse volatility.
 
 <div class="low-vol-figure performance-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="18" %}
@@ -179,13 +168,11 @@ half the drawdown and less turnover, and it stays close to beta-neutral without
 a hedge. Funding the hedge and the missing cash return change the absolute
 returns, not that ranking.
 
-Two questions stay open. The near-zero beta here is partly a coincidence of the
-volatility and beta ratios, and the comparison doesn't separate book sizes from
-stock weights: would sizing the books for equal beta do as well, or better? And
-why did the calm long book lag its beta in the 2025–26 rally? The optimizer's
-portfolio showed the same weakness in [strong
-rallies](/quants/short-book-rebounds.html), and whether it's one mechanism is
-worth knowing.
+The calm long book lagged its beta in the 2025–26 rally, the same kind of
+[strong-rally loss](/quants/short-book-rebounds.html) the optimizer's portfolio
+shows later in this series. The ranking itself uses a single characteristic;
+the [next article](/quants/2025/02/09/multiple-linear-regression.html) combines
+many predictors into one and keeps this volatility-scaled sizing.
 
 [^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, author draft dated 10 May 2013, pages 2–3; published in the *Journal of Financial Economics* in 2014. Their mechanism concerns market beta; this article ranks total volatility. [Public author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2).
 
