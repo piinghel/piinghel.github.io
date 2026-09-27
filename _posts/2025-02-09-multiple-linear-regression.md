@@ -463,9 +463,9 @@ questions stay open. The expanding window weights 1995–2008 as heavily as the
 recent decade, and Figure 1 shows the themes changed between them, so a
 rolling window might adapt better. And a target that separates return from
 risk would show how much of the edge survives once the volatility forecast is
-taken out. The [optimization
-article](/quants/2026/08/29/portfolio-optimization.html) takes up the
-portfolio side, controlling risk and exposures directly, starting from an
-earlier Ridge ranking.
+taken out. The
+[optimization article](/quants/2026/08/29/portfolio-optimization.html)
+takes up the portfolio side, controlling portfolio risk and market exposure
+directly.
 
 [^theme-references]: Momentum: Jegadeesh and Titman, *Returns to Buying Winners and Selling Losers*, Journal of Finance, 1993; Da, Gurun and Warachka, *Frog in the Pan*, Review of Financial Studies, 2014. Reversal: Jegadeesh, *Evidence of Predictable Behavior of Security Returns*, Journal of Finance, 1990; Lehmann, *Fads, Martingales, and Market Efficiency*, Quarterly Journal of Economics, 1990. Volatility: Ang, Hodrick, Xing and Zhang, *The Cross-Section of Volatility and Expected Returns*, Journal of Finance, 2006; Baker, Bradley and Wurgler, *Benchmarks as Limits to Arbitrage*, Financial Analysts Journal, 2011; Bali, Cakici and Whitelaw, *Maxing Out*, Journal of Financial Economics, 2011. Trading volume: Lee and Swaminathan, *Price Momentum and Trading Volume*, Journal of Finance, 2000. Illiquidity: Amihud, *Illiquidity and Stock Returns*, Journal of Financial Markets, 2002. Size: Banz, *The Relationship Between Return and Market Value of Common Stocks*, Journal of Financial Economics, 1981; Asness, Frazzini, Israel, Moskowitz and Pedersen, *Size Matters, If You Control Your Junk*, Journal of Financial Economics, 2018. Market correlation: Frazzini and Pedersen, *Betting Against Beta*, Journal of Financial Economics, 2014; Asness, Frazzini, Gormsen and Pedersen, *Betting Against Correlation*, Journal of Financial Economics, 2020. Short positioning: Boehmer, Jones and Zhang, *Which Shorts Are Informed?*, Journal of Finance, 2008; Hong, Li, Ni, Scheinkman and Yan, *Days to Cover and Stock Returns*, NBER working paper, 2015.
