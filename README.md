@@ -18,8 +18,9 @@ bundle exec jekyll serve
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:
 low-volatility sizing → regression → portfolio construction and risk concentration
-→ P&L attribution 1–3 → resources. The tranching and tree-model articles are
-unpublished and out of the sequence until they are rebuilt.
+→ P&L attribution 1–3 → resources. The tranching, hybrid risk-model and
+tree-model articles are unpublished (`published: false`) and out of the sequence
+until they are rebuilt; their assets stay in place.
 The homepage lists posts newest first, with the publication date and topic on
 every entry; posts published on the same day keep their series order (Part 1,
 2, 3). Resources (`navigation: false`) stays in the header rather than the list.
@@ -29,34 +30,21 @@ keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
 Posts missing from the sequence appear first in Previous/Next order;
 assign their editorial position before publishing. Both layouts use the shared
-`_includes/ordered-posts.html` ordering logic.
-
-Research figures use matching light/dark SVG variants. Ordinary line charts
-have phone-specific layouts where needed; dense figures remain scrollable.
-Their generating code lives in `scripts/` or the corresponding study repository
-linked below.
+`_includes/ordered-posts.html` ordering logic. The attribution parts stay together
+in `_data/reading_order.yml`; `series_id` and `series_order` identify the series
+without changing publication dates.
 
 ## Checks and drafts
 
 The unpublished workflow draft is retained in `_drafts/research-workflow.md`.
-The normal build excludes it. Use `--drafts --unpublished` for a local preview.
-
-The aggregate recovery explorer export is maintained in the private research
-project as `python -m performance_attribution.explorer_export`. Its input and
-output paths are explicit. The browser derives summaries and selected dates
-from the exported data.
+The normal build excludes drafts. Use `--drafts --unpublished` for a local preview.
 
 ```bash
 bundle exec jekyll build
 python3 scripts/check_site.py _site
-python3 -m pip install -r requirements-figures.txt
-python3 -m unittest discover -s tests -v
+python3 -m pytest -q tests
+git diff --check
 ```
-
-For changes to the attribution explorer, run the browser regression with Node.js
-and Playwright installed: `node --test tests/test_article_interactions.cjs`.
-It uses Playwright's Chromium, or an existing Chrome executable supplied through
-`CHROME_PATH`, and loads only local aggregate inputs.
 
 The checker validates local links and fragments, SVG XML references, matching
 theme dimensions, image descriptions, and exclusion of development
@@ -64,14 +52,10 @@ files. After regenerating figures, run
 `python3 scripts/check_site.py --update-dimensions` to refresh their intrinsic
 sizes before rebuilding the site.
 
-Drafts are excluded from the normal build. The portfolio-attribution article
-is published at `/quants/portfolio-attribution.html`; its light/dark and mobile
-figures live in `assets/portfolio-attribution`. Source research inputs remain
-outside this website repository. The article states the model coverage and
-uncertainty limits of its descriptive attribution. It starts with full-history
-book, sector, stock and factor contributions, then examines the two deepest
-additive drawdowns. The chart inputs and reproducible aggregation/rendering
-scripts are retained in the private research workspace.
+For changes to the attribution explorers, run the browser regression with Node.js
+and Playwright installed: `node --test tests/test_article_interactions.cjs`.
+It uses Playwright's Chromium, or an existing Chrome executable supplied through
+`CHROME_PATH`, and loads only local aggregate inputs.
 
 Jekyll remains deliberate: the site needs static articles, equations, SVGs,
 stable permalinks, and RSS. The local build already serves those requirements;
@@ -79,55 +63,68 @@ a framework migration would not strengthen the research.
 
 ## Figure sources
 
-The tree-model comparison (LightGBM against Ridge on the 80 predictors) renders its
-one figure from `assets/tree-model-comparison/relative-growth.json`, exported from
-factor_combination's `tree_comparison_2026_09_27/sweep` output by
-`python3 scripts/render_tree_comparison.py --sweep <that folder>`; without
-`--sweep` it re-renders the light/dark and phone variants from the saved JSON.
+Every figure has light/dark SVG variants, with phone layouts where needed, drawn
+from one composition per viewport. Renderers in `scripts/` read only the aggregate
+JSON or CSV beside the figures; an `--outputs`, `--sweep` or `--geometry` option
+first refreshes that aggregate from the research project's saved results. Install
+`requirements-figures.txt` (Matplotlib 3.10.8 reproduces the committed SVGs byte
+for byte), run the renderer from this directory, then
+`python3 scripts/check_site.py --update-dimensions`.
 
-The hybrid risk-model article is `_posts/2026-09-13-hybrid-risk-model.md`. Its retained
-aggregate inputs are `assets/hybrid-risk-model/metrics.json`; regenerate the
-calibration plot with `python3 scripts/render_hybrid_risk.py`. The article
-is currently unpublished (`published: false`); its retained permalink is
-`/quants/hybrid-risk-model.html`.
+| Article | Figures | Source |
+| --- | --- | --- |
+| Low volatility | 1 and 3 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
+| | 2 and 4 | `python -m low_volatility_factor.article_figures` in the same repository |
+| Regression | 1 (explorer), 3–5 | `assets/js/predictor-structure.js`, `assets/js/regression-results.js`; data from `scripts/export_mlr_data.py` |
+| | 1 (no-JavaScript fallback) | `scripts/render_multiple_linear_regression_figures.py` |
+| | 2 | `scripts/render_mlr_training_design.py` |
+| Joint sizing | all | private portfolio-optimization project (see below) |
+| Risk concentration | 1 | `assets/js/risk-concentration.js`; data from `scripts/export_risk_concentration.py --geometry` |
+| | 2 and 3 | `portfolio_optimization.concentration_figure` and `.concentration_migration_figure` (private portfolio-optimization project, `outputs/review/risk_concentration/article_snapshot_20260905`) |
+| Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
+| | 2 and 6 | `scripts/render_attribution_series.py` |
+| | 3 and 4 | `scripts/render_attribution_components.py` |
+| | 5 (explorer) | `assets/js/attribution-dynamics.js`; data from `scripts/export_attribution_dynamics.py` |
+| Attribution Part 2 | 1 | `scripts/render_attribution_pnl.py` |
+| | 2 | `scripts/render_attribution_components.py` |
+| | 3 | `scripts/render_attribution_holdings.py` |
+| | 4 (explorer) | `assets/js/attribution-explorers.js` over `scripts/render_attribution_recoveries.py` |
+| Attribution Part 3 | 1 | `scripts/render_attribution_series.py` |
+| Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
+| Hybrid risk model | 1 | `scripts/render_hybrid_risk.py` |
+| Tree models | 1 | `scripts/render_tree_comparison.py` |
 
-The regression article's interactive figures (Plotly, loaded when they scroll into
-view) read two JSON files exported from the aggregate evidence in
-[`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence)
-(see its README for provenance):
+The regression evidence and its provenance are described in
+[`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence/README.md).
+The attribution aggregates come from the private `performance_attribution`
+project (`outputs/full_history` and the registered series and beta diagnostics):
+`render_attribution_pnl.py --outputs` and `render_attribution_components.py
+--outputs` read `outputs/full_history`; `export_attribution_series.py
+--diagnostics PATH --beta-history PATH` refreshes `beta-history.json` and keeps only
+recovery paths in `explorer-paths.json`; `export_attribution_dynamics.py` rebuilds
+`dynamics.json` from the frozen snapshot; Part 3's `rally-evaluation.json` is
+the aggregate output of that project's rally evaluation. `recoveries.json` and
+`rebound-holdings.json` are frozen aggregates of the private recovery and holdings
+diagnostics, with their source hashes recorded inside; the explorer paths come from
+`python -m performance_attribution.explorer_export`. The public files contain
+portfolio aggregates only; stock examples stay in the private evidence.
 
-```bash
-python3 scripts/export_mlr_data.py
-```
-
-Figure 1 (`_includes/predictor-structure-explorer.html`, `assets/js/predictor-structure.js`)
-reads `predictor-structure.json`; Figures 3 and 4 (`assets/js/regression-results.js`)
-read `regression-results.json`. The static correlation and theme-IC SVGs, Figure 1's
-no-JavaScript fallback, are rendered with
-`python3 scripts/render_multiple_linear_regression_figures.py`.
-
-The timing calculations, figure generators and their portfolio-level inputs live
-in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching).
-From that repository:
+The tranching calculations and renderers live only in rebalance-tranching; copy
+the reviewed SVGs into `assets/tranching/` rather than maintaining a second
+renderer. From that repository:
 
 ```bash
 uv sync --locked
+uv run python -m rebalance_tranching.grid_figures --input output/calendar --output output
 uv run python -m rebalance_tranching.performance
 ```
 
-The command rebuilds the three schedules and their mixture from January 2022
-onward, in both themes and desktop/phone layouts. The same repository owns the
-supporting dispersion figure and tests that reconcile the chart-ready returns
-with the daily evidence. Only the reviewed SVG copies belong in this site's
-`assets/tranching/`; do not maintain another copy of the calculation or renderer.
+The low-volatility figures are rendered from the retained September 2026 run
+(`output/turnover-review-2026-09-05` and `output/point-in-time-beta-2026-09-14`
+in that project); its README lists the commands.
 
-The low-volatility article was fully reproduced in September 2026 with retained
-daily outputs in its research project. The latest run uses commit `0f8acbe`,
-which values exits and retained positions from the execution-date price panel
-when calculating turnover. Gross returns and non-cost diagnostics reconcile
-with the previous run; Table 1, terminal wealth and the net performance figure
-use the corrected costs. The optimizer figures were regenerated
-from the active main-worktree evidence. Older experimental branches and their
+The optimizer figures were regenerated from the active main-worktree evidence
+of the private portfolio-optimization project. Older experimental branches and their
 reports are historical, not interchangeable with the current article's runs.
 
 The optimizer's retained supporting CSVs are copies of
@@ -152,43 +149,11 @@ comparison.
 
 ## Site maintenance
 
-The regression article's training-date and expanding walk-forward diagrams
-are schematics. Regenerate their desktop/mobile and light/dark variants with
-`python3 scripts/render_mlr_training_design.py`, followed by
-`python3 scripts/check_site.py --update-dimensions`.
-
-The attribution beta, book-size and cap trade-off figures are reproduced from
-the included aggregate series:
-
-```sh
-python3 scripts/render_attribution_series.py
-python3 scripts/render_attribution_holdings.py
-python3 scripts/render_attribution_recoveries.py
-python3 scripts/check_site.py --update-dimensions
-```
-
-`render_attribution_holdings.py` draws Part 2's rebound snapshots from
-`rebound-holdings.json`; `render_attribution_recoveries.py` draws the eleven
-recovery windows from `recoveries.json`. `export_attribution_dynamics.py`
-refreshes `dynamics.json` for the time explorer from the frozen private snapshot.
-
-Its renderer requires NumPy and Matplotlib and emits desktop/mobile SVGs for
-both themes. The underlying diagnostic and controlled beta replays live in the
-private `performance_attribution` research project and shared experiment registry.
-`scripts/export_attribution_series.py --diagnostics PATH --beta-history PATH`
-refreshes the public aggregates from the saved series diagnostic and original
-beta diagnostic. It also retains only recovery paths in the public explorer;
-the original stock examples remain in the private evidence.
-The public series contains portfolio aggregates only. Its parts stay together
-in `_data/reading_order.yml`; `series_id` and `series_order` identify the series
-without changing publication dates.
-
 The reusable [Quant Blog Style skill](.agents/skills/quant-blog-style/SKILL.md)
 records the house conventions for prose, figures, captions, tables and mobile
 presentation. Invoke it as `$quant-blog-style` when preparing future posts.
 
 `_sass/site.scss` owns layout, typography, tables, and theme tokens;
-`_sass/_figures.scss` owns figure sizing. Dense figures and tables scroll within
-the article on narrow screens. Keep one shared composition for both themes.
-The retired Minima overrides, unused social icons, signal-flow diagram, and
-duplicate turnover chart have been removed with their callers.
+`_sass/_figures.scss` owns figure sizing. `.compact-table` is the narrow-table
+style shared across articles. Dense figures and tables scroll within the
+article on narrow screens. Keep one shared composition for both themes.
