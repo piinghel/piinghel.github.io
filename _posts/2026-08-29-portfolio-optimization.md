@@ -125,9 +125,10 @@ $$D_t$$. *Risk calibration* is the square root of mean realized
 holding-period variance divided by mean forecast variance; one means forecast
 and realized risk agree. With the multiplier I used before, 1.18, the
 optimizer forecasts 7% but realizes 8.5–9.0% in development, a calibration of
-about 1.25. I scale the multiplier by that ratio to [TBD], and a check run
-confirms a development calibration of [TBD]. The later period is the real
-test (Table 3).
+about 1.25. Scaling the multiplier by that ratio doesn't quite close the
+gap, because the limits change the weights as well, so I adjust it once more
+and settle on 1.55, where development calibration is 1.01. The later period is the
+real test (Table 3).
 
 Figure 1 shows why I keep some estimated correlation. I rebuild the
 optimizer at each shrinkage value using development data, with and without
@@ -182,17 +183,19 @@ eligible, and a penalty on trading.
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Annual turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Volatility-scaled</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Optimizer</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Volatility-scaled</th><td>9.42%</td><td>7.88%</td><td>8.05%</td><td>0.98<br><small>(0.89–1.16)</small></td><td>−19.8%</td><td>28.4×</td></tr>
+    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>10.57%</td><td>8.95%</td><td>8.68%</td><td>1.03<br><small>(0.96–1.17)</small></td><td>−21.6%</td><td>29.7×</td></tr>
+    <tr><th scope="row">Optimizer</th><td>11.02%</td><td>9.03%</td><td>7.06%</td><td>1.26<br><small>(1.22–1.29)</small></td><td>−15.2%</td><td>36.1×</td></tr>
+    <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>10.65%</td><td>9.40%</td><td>7.01%</td><td>1.32<br><small>(1.26–1.36)</small></td><td>−15.5%</td><td>22.6×</td></tr>
   </tbody>
 </table>
 
-Weighting by score takes Sharpe from [TBD] to [TBD]. Joint sizing adds
-[TBD] points of gross return and lifts Sharpe to [TBD], but turnover rises
-from [TBD]× to [TBD]× a year. The trading controls keep [TBD] of that gross
-return and bring turnover down to [TBD]×, for a Sharpe of [TBD].
+Weighting by score takes Sharpe from 0.98 to 1.03. Joint sizing adds less
+than half a point of gross return, but it does so at 7.1% volatility instead
+of 8.7%, which lifts Sharpe to 1.26 and cuts the maximum drawdown from about
+22% to 15%. It also raises turnover from 30× to 36× a year. The trading
+controls keep almost all of the gross return and bring turnover down to
+23×, below either volatility-scaled rule, for a Sharpe of **1.32**.
 
 Several things change at once between the second and third rows: the
 optimizer uses correlations, 21-session instead of 60-session volatility and
@@ -238,14 +241,16 @@ executed trades.
   <caption><strong>Table 2: What each trading control contributes.</strong> Development period, September 1998–December 2021. Conventions as in Table 1.</caption>
   <thead><tr><th>Trading rule</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Annual turnover</th></tr></thead>
   <tbody>
-    <tr><th scope="row">Neither control</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Rank buffer only</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Trade penalty only</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr class="selected-rule"><th scope="row">Buffer + penalty</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Neither control</th><td>11.02%</td><td>9.03%</td><td>1.26</td><td>36.1×</td></tr>
+    <tr><th scope="row">Rank buffer only</th><td>11.29%</td><td>9.48%</td><td>1.31</td><td>32.9×</td></tr>
+    <tr><th scope="row">Trade penalty only</th><td>10.80%</td><td>9.19%</td><td>1.30</td><td>29.4×</td></tr>
+    <tr class="selected-rule"><th scope="row">Buffer + penalty</th><td>10.65%</td><td>9.40%</td><td>1.32</td><td>22.6×</td></tr>
   </tbody>
 </table>
 
-[TBD: turnover saved by each control alone and together.]
+The buffer alone saves about 3 times capital a year and the penalty alone
+about 7; together they save 13.5, more than the two separately. The buffer
+keeps more holdings eligible, and the penalty makes keeping them the default.
 
 Figure 3 varies one control at a time around the chosen settings.
 
@@ -268,25 +273,29 @@ Table 3 covers January 2022–May 2026, about four and a half years.
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Annual turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Volatility-scaled</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr><th scope="row">Optimizer</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
-    <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>[TBD]</td><td>[TBD]</td><td>[TBD]</td><td>[TBD]<br><small>([TBD])</small></td><td>[TBD]</td><td>[TBD]</td></tr>
+    <tr><th scope="row">Volatility-scaled</th><td>8.43%</td><td>7.11%</td><td>10.16%</td><td>0.73<br><small>(0.67–0.83)</small></td><td>−9.4%</td><td>24.3×</td></tr>
+    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>8.62%</td><td>7.19%</td><td>11.00%</td><td>0.68<br><small>(0.63–0.73)</small></td><td>−10.4%</td><td>26.4×</td></tr>
+    <tr><th scope="row">Optimizer</th><td>6.55%</td><td>5.12%</td><td>7.44%</td><td>0.70<br><small>(0.44–0.84)</small></td><td>−8.0%</td><td>26.9×</td></tr>
+    <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>7.16%</td><td>6.37%</td><td>7.46%</td><td>0.87<br><small>(0.68–0.96)</small></td><td>−7.3%</td><td>14.7×</td></tr>
   </tbody>
 </table>
 
-[TBD: how the four rules compare after 2021, with a paired block-bootstrap
-interval for the Sharpe difference between the optimizer with trading controls
-and volatility scaling.] Risk calibration after 2021 is [TBD].
+All four rules earn less than in development. The optimizer on its own no
+longer beats volatility scaling; with the trading controls it does, 0.87
+against 0.73, at lower volatility, a smaller drawdown and about 60% of the
+turnover. That difference is not firm: a paired block bootstrap of the
+combined books puts its 95% interval at −0.34 to +0.65.[^bootstrap] Risk
+calibration after 2021 is 1.06, so the portfolio runs about 6% above its
+forecast.
 
-The average hides a large spread across rebalance schedules. With trading
-controls, net return differs by [TBD] points between the best and worst
-schedule, against [TBD] for score-weighted volatility scaling.
+The average also hides a spread across rebalance schedules. With trading
+controls, net return differs by 2.3 points between the best and worst
+schedule, against 1.8 for volatility scaling.
 
-Much of the weakness comes from the short book in December 2022–February
-2023. For the three schedules combined, the long book contributes about
-[TBD] P&L points and the short book [TBD], where a P&L point is 1% of strategy
-capital, summed over daily after-cost contributions.
+The worst stretch is the rebound of December 2022–February 2023. For the
+three schedules combined, the long book contributes about +3.3 P&L points and
+the short book −10.8, where a P&L point is 1% of strategy capital, summed over
+daily after-cost contributions.
 
 ## Forecast beta versus realized beta
 
@@ -300,29 +309,32 @@ reflects holdings and market moves throughout that year.
 
 <p class="figure-caption"><strong>Figure 4: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the ±0.05 limit on estimated beta.</p>
 
-Realized beta averages [TBD] for volatility scaling and [TBD] for the
-optimizer with trading controls, and several episodes last for months and
-reach [TBD]. A 63-session [TBD: which window] window removes the long
+Over the full development period, realized beta is 0.10 for volatility
+scaling and 0.08 for the optimizer with trading controls; after 2021 it is
+0.07 and 0.02. The trailing-year beta is less well behaved: several episodes
+last for months and reach [TBD]. A 63-session [TBD: which window] window removes the long
 episodes but costs [TBD] points of net return a year, more than the 0.5 points
 I was willing to give up, so I keep the 756-session estimate.
 
 ## What joint sizing buys, and what it costs
 
-In development, joint sizing with trading controls lifts Sharpe from [TBD]
-for the regression article's rule to [TBD], and maximum drawdown goes from
-[TBD] to [TBD]. [TBD: which step contributes most.]
+In development, joint sizing with trading controls lifts Sharpe from 0.98
+for the regression article's rule to 1.32 and shrinks the maximum drawdown
+from about 20% to 15%. Most of that comes from sizing the stocks jointly: it
+delivers the same return with less risk.
 
 The cost is complexity and, without controls, turnover. The optimizer needs a
 covariance estimate, a shrinkage choice, a risk multiplier and a set of
-limits, and on its own it trades [TBD]× capital a year against [TBD]× for
-volatility scaling. It also runs at [TBD] average gross against [TBD] for
-volatility scaling, so the borrow, financing and impact costs left out here
-weigh more on it. Its advantage disappears at about [TBD] bp per dollar
-traded.
+limits, and on its own it trades 36× capital a year against 28× for
+volatility scaling; at about 22 bp per dollar traded its advantage would be
+gone. The trading controls remove that problem: the portfolio then trades
+less than volatility scaling, so higher costs widen its lead. It does run at
+about 160% average gross against 138% in development, so the borrow,
+financing and impact costs left out here weigh more on it.
 
 Two problems remain. Realized beta drifts away from the rebalance-time
-estimate for months at a time, and after 2021 the result depends heavily on
-which week the portfolio rebalances. In
+estimate for months at a time, and after 2021 the advantage is small relative
+to its uncertainty and depends on which week the portfolio rebalances. In
 [the next article](/quants/2026/09/05/risk-concentration.html) I look at
 where this portfolio's forecast risk sits and what capping it changes; the
 [attribution series](/quants/portfolio-attribution.html) then breaks down its
@@ -336,7 +348,7 @@ P&L, including the short book's losses in rebounds.
     <tr><th scope="row">Volatility-scaled rules</th><td>Equal or logistic (slope 2) signal weights; 60-session volatility, 20% reference and 5% floor; 4% name cap; each book scaled down above 100% gross</td></tr>
     <tr><th scope="row">Joint portfolio limits</th><td>7% forecast volatility; 200% gross; 4% per name; ±25% net; ±0.05 estimated beta</td></tr>
     <tr><th scope="row">Sector limits</th><td>±20% net; 30% of either book</td></tr>
-    <tr><th scope="row">Covariance estimate</th><td>21-session volatility; 756-session correlations of volatility-standardized returns (252 observations minimum); 50% shrinkage toward identity; volatility multiplier [TBD], estimated on development data</td></tr>
+    <tr><th scope="row">Covariance estimate</th><td>21-session volatility; 756-session correlations of volatility-standardized returns (252 observations minimum); 50% shrinkage toward identity; volatility multiplier 1.55, estimated on development data</td></tr>
     <tr><th scope="row">Beta estimate</th><td>756-session correlation with the market (252 observations minimum) combined with 21-session stock and market volatility</td></tr>
     <tr><th scope="row">Trade penalty</th><td><i>c</i> = 2.5 × 10<sup>−4</sup> on the absolute change from drifted pre-trade weights</td></tr>
   </tbody>
@@ -357,4 +369,5 @@ a clear introduction to factor risk models.
 
 [^correlation-repair]: Before estimating correlations I cap daily returns at ±30% and give pairs without enough overlapping history a correlation of 0.50. The matrix is then symmetrized, negative eigenvalues are clipped to zero and the unit diagonal is restored.
 [^drift]: All limits apply to target weights. After next-close execution and later price moves, holdings can drift outside them until the next rebalance; the trade penalty measures changes from these drifted weights.
+[^bootstrap]: Daily net returns of each rule's three schedules combined, resampled in shared 21-session blocks, 5,000 draws. The Sharpe difference of the combined books is 0.15, close to the 0.14 difference of the schedule means in Table 3.
 [^row-one]: The regression article reports arithmetic annualized returns; here they are geometric, so net returns differ slightly while Sharpe and turnover are comparable.
