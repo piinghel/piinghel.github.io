@@ -3,25 +3,13 @@
   "pnl_points": -15.1332,
   "variance_share_pct": 6.148
  },
- "size": {
-  "pnl_points": -5.9917,
-  "variance_share_pct": 6.9213
- },
- "idio_pnl": {
-  "pnl_points": 198.8166,
-  "variance_share_pct": 45.1595
- },
- "reversal": {
-  "pnl_points": 17.9448,
-  "variance_share_pct": 3.5194
- },
  "costs": {
   "pnl_points": -38.1845,
   "variance_share_pct": -0.0118
  },
- "volatility": {
-  "pnl_points": 20.2626,
-  "variance_share_pct": 7.1773
+ "idio_pnl": {
+  "pnl_points": 198.8166,
+  "variance_share_pct": 45.1595
  },
  "market": {
   "pnl_points": 84.0935,
@@ -31,16 +19,28 @@
   "pnl_points": 23.0992,
   "variance_share_pct": 9.6481
  },
- "unmodeled_pnl": {
-  "pnl_points": 22.4937,
-  "variance_share_pct": 7.8793
+ "price_basis_gap": {
+  "pnl_points": 0.0,
+  "variance_share_pct": 0.0
+ },
+ "reversal": {
+  "pnl_points": 17.9448,
+  "variance_share_pct": 3.5194
  },
  "sector": {
   "pnl_points": 5.5147,
   "variance_share_pct": 7.314
  },
- "price_basis_gap": {
-  "pnl_points": 0.0,
-  "variance_share_pct": 0.0
+ "size": {
+  "pnl_points": -5.9917,
+  "variance_share_pct": 6.9213
+ },
+ "unmodeled_pnl": {
+  "pnl_points": 22.4937,
+  "variance_share_pct": 7.8793
+ },
+ "volatility": {
+  "pnl_points": 20.2626,
+  "variance_share_pct": 7.1773
  }
 }

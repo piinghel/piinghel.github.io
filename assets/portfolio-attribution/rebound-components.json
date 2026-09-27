@@ -1,0 +1,28 @@
+{
+ "2008\u201309": {
+  "beta": -9.8707,
+  "costs": -0.5979,
+  "idio_pnl": -6.406,
+  "market": 14.9756,
+  "momentum": 1.5743,
+  "price_basis_gap": 0.0,
+  "reversal": -2.4732,
+  "sector": 0.8637,
+  "size": -3.0441,
+  "unmodeled_pnl": 0.5573,
+  "volatility": -5.7197
+ },
+ "2020\u201321": {
+  "beta": -5.8003,
+  "costs": -0.9592,
+  "idio_pnl": -3.9031,
+  "market": 15.2144,
+  "momentum": -0.7633,
+  "price_basis_gap": 0.0,
+  "reversal": 1.5215,
+  "sector": 0.1202,
+  "size": -1.9394,
+  "unmodeled_pnl": -1.5271,
+  "volatility": -8.7074
+ }
+}

@@ -36,8 +36,9 @@ and Part 3 tests ways to reduce those losses.
 I use the strategy from my
 [optimizer article](/quants/2026/08/29/portfolio-optimization.html), which ranks
 stocks with a prediction model and sizes them within risk limits. The
-ranking is an earlier version of that article's Ridge model, fitted on 144
-predictors, and the book combines three rebalance schedules at equal notional.
+ranking comes from an earlier version of the Ridge model in my
+[multiple-predictors article](/quants/2025/02/09/multiple-linear-regression.html),
+and the book combines three rebalance schedules at equal notional.
 The history runs from **23 September 1998 to 27 May 2026**.
 
 <div id="pnl-conventions" markdown="1">
@@ -197,7 +198,7 @@ effects. Adding those pieces, uncovered holdings and costs reconstructs
 portfolio P&L. Figure 4 shows the full-history allocation.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="7" alt="Fitted components with P&L beside their signed variance shares, including residual, uncovered holdings and costs." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/factor-pnl" mobile="/assets/portfolio-attribution/factor-pnl_mobile" version="8" alt="Fitted components with P&L beside their signed variance shares, including residual, uncovered holdings and costs." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: The fitted allocation of P&amp;L and risk.</strong> P&amp;L sums to +312.9 points net and the components reconcile exactly. Sector effects are what remains of sector returns after the styles, so they differ from the sector P&amp;L in Figure 3.</p>
 
