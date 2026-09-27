@@ -65,12 +65,15 @@ interpretation. This is a reasoning sequence, not a mandatory section template.
 Never add a summary, summary box, key takeaways or TL;DR, at the top or anywhere
 else; open with the concrete problem in the first paragraph. Use first person for
 actual choices and judgments.
+Headings are statements; don't pose a question and answer it yourself. Keep
+footnotes to one or two short sentences (a source or one clarification). Don't
+hedge with "noise"; state uncertainty once, as an interval or a plain judgement.
 Keep useful accounts of failed attempts and stopping decisions; leave routine
 editing, file handling and deployment logs out of the article.
 Explain enough method to assess the comparison, with detailed settings in a
 quiet table or research documentation. End on what the comparison establishes.
-Include a decision or unresolved question when it follows from the work; do
-not manufacture a next experiment to give the ending a sense of purpose.
+End on the judgement the work supports, not on open questions; do not
+manufacture a next experiment to give the ending a sense of purpose.
 
 Keep useful concrete examples. Consolidate repeated qualifications without
 losing material limitations. Preserve an effective article's structure during

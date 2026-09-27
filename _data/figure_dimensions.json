@@ -31,14 +31,6 @@
     "width": 389,
     "height": 794
   },
-  "/assets/hybrid-risk-model/calibration": {
-    "width": 702,
-    "height": 274
-  },
-  "/assets/hybrid-risk-model/calibration_mobile": {
-    "width": 324,
-    "height": 252
-  },
   "/assets/multiple-linear-regression/expanding-walk-forward": {
     "width": 605,
     "height": 288
@@ -78,14 +70,6 @@
   "/assets/portfolio-attribution/book-sizes_mobile": {
     "width": 288,
     "height": 259
-  },
-  "/assets/portfolio-attribution/control-tradeoff": {
-    "width": 576,
-    "height": 317
-  },
-  "/assets/portfolio-attribution/control-tradeoff_mobile": {
-    "width": 288,
-    "height": 302
   },
   "/assets/portfolio-attribution/drawdown-factors": {
     "width": 648,
@@ -190,22 +174,6 @@
   "/assets/portfolio-optimization/risk-calibration-and-beta_mobile": {
     "width": 480,
     "height": 560
-  },
-  "/assets/risk-concentration/risk-migration": {
-    "width": 619,
-    "height": 281
-  },
-  "/assets/risk-concentration/risk-migration_mobile": {
-    "width": 317,
-    "height": 338
-  },
-  "/assets/risk-concentration/threshold-impact": {
-    "width": 778,
-    "height": 540
-  },
-  "/assets/risk-concentration/threshold-impact_mobile": {
-    "width": 389,
-    "height": 634
   },
   "/assets/tranching/calendar-grid": {
     "width": 612,

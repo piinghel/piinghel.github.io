@@ -7,7 +7,7 @@ toc: true
 date: 2026-09-09
 last_modified_at: 2026-09-27
 categories: ["Risk & attribution"]
-article_label: Performance attribution · Part 2 of 3
+article_label: Performance attribution · Part 2 of 2
 series_id: performance-attribution
 series_order: 2
 ---
@@ -193,8 +193,15 @@ stocks. Those cluster early in rebounds but, as late 2020 showed, not only
 there. Any fix also has to keep what the shorts provide on the way down: about
 31 points in both declines.
 
-[Part 3](/quants/managing-rebound-risk.html) tests tilt limits, standardized
-beta limits and daily portfolio scaling against that trade-off.
+I also tested three portfolio responses on this book, each at the same risk:
+limiting the low-volatility tilt, limiting standardized beta exposure, and
+shrinking the book when its volatility rises. Moderate tilt limits did a little
+better in declines and in most strong rallies, but none changed the 12.4-point
+loss from November 2020 to January 2021 by more than 1.3 points. Beta limits
+mostly added market beta, gaining in rallies what they gave back in declines,
+and volatility scaling softened the late-2020 leg only by holding a smaller
+book, while deepening 2008–09. Portfolio limits don't remove the loss, because
+it comes from what the ranking bets on.
 
 ## References
 

@@ -7,7 +7,7 @@ toc: true
 date: 2026-09-09
 last_modified_at: 2026-09-27
 categories: ["Risk & attribution"]
-article_label: Performance attribution · Part 1 of 3
+article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
 series_order: 1
 github_repositories:

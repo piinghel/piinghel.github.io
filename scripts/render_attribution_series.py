@@ -1,7 +1,6 @@
-"""Render beta, book sizes (Part 1) and the rebound-control trade-off (Part 3).
+"""Render the beta history and book sizes for Attribution Part 1.
 
-Light/dark and desktop/mobile variants. The trade-off reads rally-evaluation.json,
-the aggregate output of the attribution project's rally evaluation.
+Light/dark and desktop/mobile variants.
 """
 
 import datetime as dt
@@ -18,7 +17,7 @@ import numpy as np
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 
 
-def render(data, results, dark, mobile):
+def render(data, dark, mobile):
     colors = {
         "bg": "#0d1117" if dark else "#ffffff",
         "ink": "#e4eaf0" if dark else "#263747",
@@ -94,62 +93,9 @@ def render(data, results, dark, mobile):
         fig.subplots_adjust(left=.14 if mobile else .065, right=.74 if mobile else .88, top=.85, bottom=.16)
         save(fig, "book-sizes")
 
-        # Part 3: each rule's difference from the Original at equal risk, in declines
-        # against strong rallies. The dashed line is where extra market beta alone lands.
-        fig, ax = plt.subplots(figsize=(4, 4.2) if mobile else (8, 4.4))
-        axis(ax, "Strong rallies · points vs Original", time=False)
-        ax.grid(axis="x", color=colors["grid"], linewidth=0.5, alpha=0.6)
-        ax.axhline(0, color=colors["grid"], linewidth=.8)
-        ax.axvline(0, color=colors["grid"], linewidth=.8)
-        controls = results["controls"]
-        index = results["index_per_unit_beta"]
-        reach = 0.045  # extra beta spanned by the reference line
-        ax.plot([-reach * index["declines_pp"], reach * index["declines_pp"]],
-                [-reach * index["rallies_pp"], reach * index["rallies_pp"]],
-                color=colors["gray"], linewidth=1, linestyle=(0, (4, 3)), zorder=1)
-        ax.annotate("More market beta", (reach * index["declines_pp"], reach * index["rallies_pp"]),
-                    xytext=(5, 0), textcoords="offset points", fontsize=size,
-                    color=colors["gray"], ha="left", va="bottom")
-
-        def point(key):
-            return controls[key]["declines_pp"], controls[key]["rallies_pp"]
-
-        families = [
-            ("Tilt limits", "blue", [f"style_{b}" for b in ("0.30", "0.25", "0.20", "0.15", "0.10")],
-             (6, -13), "right"),
-            ("Beta limits", "orange", [f"beta_{b}" for b in ("0.50", "0.30", "0.10")],
-             (8, 0), "left"),
-        ]
-        for label, color, keys, offset, align in families:
-            xs, ys = zip(*[(0.0, 0.0)] + [point(k) for k in keys])
-            ax.plot(xs, ys, color=colors[color], linewidth=1.2, zorder=2)
-            ax.scatter(xs[1:], ys[1:], color=colors[color], s=26, zorder=3)
-            ax.annotate(f"{label} · ±0.10", (xs[-1], ys[-1]), xytext=offset,
-                        textcoords="offset points", ha=align, va="center", fontsize=size,
-                        color=colors[color])
-        x, y = point("style_0.20")
-        ax.annotate("±0.20", (x, y), xytext=(0, 9), textcoords="offset points", ha="center",
-                    fontsize=size, color=colors["blue"])
-        for key, label, offset in [("vol_5", "Fast scaling", (0, -12)),
-                                   ("vol_21", "Slow scaling", (8, 0))]:
-            x, y = point(key)
-            ax.scatter(x, y, color=colors["gray"], s=26, zorder=3, marker="s")
-            ax.annotate(label, (x, y), xytext=offset, textcoords="offset points", fontsize=size,
-                        color=colors["gray"], ha="center" if offset[0] == 0 else "left",
-                        va="center")
-        ax.scatter(0, 0, color=colors["ink"], s=34, marker="D", zorder=4)
-        ax.annotate("Original", (0, 0), xytext=(-6, -11), textcoords="offset points",
-                    ha="right", fontsize=size, color=colors["ink"])
-        ax.set_xlim(-16, 25)
-        ax.set_ylim(-4, 16)
-        ax.set_xlabel("Market declines · points vs Original", color=colors["ink"], fontsize=size,
-                      labelpad=10)
-        fig.subplots_adjust(left=.13 if mobile else .08, right=.96, top=.88, bottom=.15)
-        save(fig, "control-tradeoff")
 
 if __name__ == "__main__":
     history = json.loads((OUTPUT / "beta-history.json").read_text())
-    results = json.loads((OUTPUT / "rally-evaluation.json").read_text())
     for dark in [False, True]:
         for mobile in [False, True]:
-            render(history, results, dark, mobile)
+            render(history, dark, mobile)

@@ -17,13 +17,12 @@ bundle exec jekyll serve
 ## Article reading order
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:
-low-volatility sizing → regression → portfolio construction and risk concentration
-→ P&L attribution 1–3 → resources. The tranching and hybrid
-risk-model articles are unpublished (`published: false`) and out of the sequence
-until they are rebuilt; their assets stay in place.
+low-volatility sizing → regression → portfolio construction → P&L attribution 1–2
+→ resources. The tranching article is unpublished (`published: false`) and out of
+the sequence until it is rebuilt; its assets stay in place.
 The homepage lists posts newest first, with the publication date and topic on
-every entry; posts published on the same day list the latest part first (Part 3,
-2, 1). Resources (`navigation: false`) stays in the header rather than the list.
+every entry; posts published on the same day list the latest part first (Part 2,
+then 1). Resources (`navigation: false`) stays in the header rather than the list.
 Previous/Next links follow the sequence from
 its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
@@ -36,7 +35,6 @@ without changing publication dates.
 
 ## Checks and drafts
 
-The unpublished workflow draft is retained in `_drafts/research-workflow.md`.
 The normal build excludes drafts. Use `--drafts --unpublished` for a local preview.
 
 ```bash
@@ -79,8 +77,6 @@ for byte), run the renderer from this directory, then
 | | 1 (no-JavaScript fallback) | `scripts/render_multiple_linear_regression_figures.py` |
 | | 2 | `scripts/render_mlr_training_design.py` |
 | Joint sizing | all | private portfolio-optimization project (see below) |
-| Risk concentration | 1 | `assets/js/risk-concentration.js`; data from `scripts/export_risk_concentration.py --geometry` |
-| | 2 and 3 | `portfolio_optimization.concentration_figure` and `.concentration_migration_figure` (private portfolio-optimization project, `outputs/review/risk_concentration/article_snapshot_20260905`) |
 | Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
 | | 2 and 5 | `scripts/render_attribution_series.py` |
 | | 3 | `scripts/render_attribution_components.py` |
@@ -89,9 +85,7 @@ for byte), run the renderer from this directory, then
 | | 2 | `scripts/render_attribution_components.py` |
 | | 3 | `scripts/render_attribution_holdings.py` |
 | | 4 (explorer) | `assets/js/attribution-explorers.js` over `scripts/render_attribution_recoveries.py` |
-| Attribution Part 3 | 1 | `scripts/render_attribution_series.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
-| Hybrid risk model | 1 | `scripts/render_hybrid_risk.py` |
 
 The regression evidence and its provenance are described in
 [`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence/README.md).
@@ -101,8 +95,7 @@ project (`outputs/full_history` and the registered series and beta diagnostics):
 --outputs` read `outputs/full_history`; `export_attribution_series.py
 --diagnostics PATH --beta-history PATH` refreshes `beta-history.json` and keeps only
 recovery paths in `explorer-paths.json`; `export_attribution_dynamics.py` rebuilds
-`dynamics.json` from the frozen snapshot; Part 3's `rally-evaluation.json` is
-the aggregate output of that project's rally evaluation. `recoveries.json` and
+`dynamics.json` from the frozen snapshot. `recoveries.json` and
 `rebound-holdings.json` are frozen aggregates of the private recovery and holdings
 diagnostics, with their source hashes recorded inside; the explorer paths come from
 `python -m performance_attribution.explorer_export`. The public files contain
