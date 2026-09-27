@@ -100,13 +100,13 @@ L 277.337766 32.256
     <g id="ytick_7">
      <g id="line2d_11"/>
      <g id="text_9">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="188.074331" transform="rotate(-0 126.1 188.074331)">Liquidity &amp; volume</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="198.788048" transform="rotate(-0 126.1 198.788048)">Low volatility</text>
      </g>
     </g>
     <g id="ytick_8">
      <g id="line2d_12"/>
      <g id="text_10">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="220.349546" transform="rotate(-0 126.1 220.349546)">Low volatility</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="220.349546" transform="rotate(-0 126.1 220.349546)">Net market exposure</text>
      </g>
     </g>
     <g id="ytick_9">
@@ -118,13 +118,13 @@ L 277.337766 32.256
     <g id="ytick_10">
      <g id="line2d_14"/>
      <g id="text_12">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="263.47254" transform="rotate(-0 126.1 263.47254)">Beta &amp; market correlation</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="263.539571" transform="rotate(-0 126.1 263.539571)">Liquidity &amp; volume</text>
      </g>
     </g>
     <g id="ytick_11">
      <g id="line2d_15"/>
      <g id="text_13">
-      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="285.034038" transform="rotate(-0 126.1 285.034038)">Net market exposure</text>
+      <text style="font-size: 11px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #25313a" x="126.1" y="295.814786" transform="rotate(-0 126.1 295.814786)">Beta &amp; market correlation</text>
      </g>
     </g>
     <g id="ytick_12">
@@ -195,17 +195,17 @@ z
 " clip-path="url(#p1040b1a7fe)" style="fill: #287d70"/>
    </g>
    <g id="patch_9">
-    <path d="M 199.133223 177.386439
-L 229.320177 177.386439
-L 229.320177 190.754567
-L 199.133223 190.754567
+    <path d="M 199.133223 188.167187
+L 251.530267 188.167187
+L 251.530267 201.535316
+L 199.133223 201.535316
 z
 " clip-path="url(#p1040b1a7fe)" style="fill: #287d70"/>
    </g>
    <g id="patch_10">
     <path d="M 199.133223 209.728684
-L 251.530267 209.728684
-L 251.530267 223.096813
+L 298.484275 209.728684
+L 298.484275 223.096813
 L 199.133223 223.096813
 z
 " clip-path="url(#p1040b1a7fe)" style="fill: #287d70"/>
@@ -220,17 +220,17 @@ z
    </g>
    <g id="patch_12">
     <path d="M 199.133223 252.851679
-L 201.072696 252.851679
-L 201.072696 266.219807
+L 229.320177 252.851679
+L 229.320177 266.219807
 L 199.133223 266.219807
 z
 " clip-path="url(#p1040b1a7fe)" style="fill: #287d70"/>
    </g>
    <g id="patch_13">
-    <path d="M 199.133223 274.413176
-L 298.484275 274.413176
-L 298.484275 287.781305
-L 199.133223 287.781305
+    <path d="M 199.133223 285.193925
+L 201.072696 285.193925
+L 201.072696 298.562053
+L 199.133223 298.562053
 z
 " clip-path="url(#p1040b1a7fe)" style="fill: #287d70"/>
    </g>
@@ -282,19 +282,19 @@ L 199.133223 32.256
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="233.820686" y="165.094162" transform="rotate(-0 233.820686 165.094162)">+1.0</text>
    </g>
    <g id="text_23">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="233.320177" y="186.655659" transform="rotate(-0 233.320177 186.655659)">+1.0</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="255.530267" y="197.436408" transform="rotate(-0 255.530267 197.436408)">+1.7</text>
    </g>
    <g id="text_24">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="255.530267" y="218.997905" transform="rotate(-0 255.530267 218.997905)">+1.7</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="302.484275" y="218.997905" transform="rotate(-0 302.484275 218.997905)">+3.2</text>
    </g>
    <g id="text_25">
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="203.133223" y="240.559402" transform="rotate(-0 203.133223 240.559402)">−1.9</text>
    </g>
    <g id="text_26">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="205.072696" y="262.1209" transform="rotate(-0 205.072696 262.1209)">+0.1</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="233.320177" y="262.1209" transform="rotate(-0 233.320177 262.1209)">+1.0</text>
    </g>
    <g id="text_27">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="302.484275" y="283.682397" transform="rotate(-0 302.484275 283.682397)">+3.2</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="205.072696" y="294.463146" transform="rotate(-0 205.072696 294.463146)">+0.1</text>
    </g>
    <g id="text_28">
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="205.010132" y="316.024643" transform="rotate(-0 205.010132 316.024643)">+0.1</text>
@@ -446,17 +446,17 @@ z
 " clip-path="url(#pf85a643694)" style="fill: #287d70"/>
    </g>
    <g id="patch_24">
-    <path d="M 443.519946 177.386439
-L 431.756192 177.386439
-L 431.756192 190.754567
-L 443.519946 190.754567
+    <path d="M 443.519946 188.167187
+L 557.210935 188.167187
+L 557.210935 201.535316
+L 443.519946 201.535316
 z
-" clip-path="url(#pf85a643694)" style="fill: #b86642"/>
+" clip-path="url(#pf85a643694)" style="fill: #287d70"/>
    </g>
    <g id="patch_25">
     <path d="M 443.519946 209.728684
-L 557.210935 209.728684
-L 557.210935 223.096813
+L 504.615571 209.728684
+L 504.615571 223.096813
 L 443.519946 223.096813
 z
 " clip-path="url(#pf85a643694)" style="fill: #287d70"/>
@@ -471,17 +471,17 @@ z
    </g>
    <g id="patch_27">
     <path d="M 443.519946 252.851679
-L 475.927191 252.851679
-L 475.927191 266.219807
+L 431.756192 252.851679
+L 431.756192 266.219807
 L 443.519946 266.219807
 z
-" clip-path="url(#pf85a643694)" style="fill: #287d70"/>
+" clip-path="url(#pf85a643694)" style="fill: #b86642"/>
    </g>
    <g id="patch_28">
-    <path d="M 443.519946 274.413176
-L 504.615571 274.413176
-L 504.615571 287.781305
-L 443.519946 287.781305
+    <path d="M 443.519946 285.193925
+L 475.927191 285.193925
+L 475.927191 298.562053
+L 443.519946 298.562053
 z
 " clip-path="url(#pf85a643694)" style="fill: #287d70"/>
    </g>
@@ -533,19 +533,19 @@ L 443.519946 32.256
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="476.587803" y="165.094162" transform="rotate(-0 476.587803 165.094162)">3.8</text>
    </g>
    <g id="text_41">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="447.519946" y="186.655659" transform="rotate(-0 447.519946 186.655659)">−1.6</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="561.210935" y="197.436408" transform="rotate(-0 561.210935 197.436408)">15.0</text>
    </g>
    <g id="text_42">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="561.210935" y="218.997905" transform="rotate(-0 561.210935 218.997905)">15.0</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="508.615571" y="218.997905" transform="rotate(-0 508.615571 218.997905)">8.1</text>
    </g>
    <g id="text_43">
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="584.586653" y="240.559402" transform="rotate(-0 584.586653 240.559402)">18.1</text>
    </g>
    <g id="text_44">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="479.927191" y="262.1209" transform="rotate(-0 479.927191 262.1209)">4.3</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="447.519946" y="262.1209" transform="rotate(-0 447.519946 262.1209)">−1.6</text>
    </g>
    <g id="text_45">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="508.615571" y="283.682397" transform="rotate(-0 508.615571 283.682397)">8.1</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="479.927191" y="294.463146" transform="rotate(-0 479.927191 294.463146)">4.3</text>
    </g>
    <g id="text_46">
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="499.81173" y="316.024643" transform="rotate(-0 499.81173 316.024643)">6.9</text>

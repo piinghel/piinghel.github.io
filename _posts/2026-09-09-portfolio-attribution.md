@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "Performance Attribution, Part 1: What the Strategy Is Paid For"
+title: "Performance Attribution, Part 1: What the Portfolio Is Paid For"
 description: "Which of the ranking's themes earn their share of the portfolio's risk, and how that has changed since 1999."
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-09-28
+last_modified_at: 2026-09-27
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
@@ -20,28 +20,27 @@ article](/quants/2026/08/29/portfolio-optimization.html) earned about 8.8% a
 year after costs at 6.6% volatility from September 1998 to May 2026. A return
 chart says how much it made. It doesn't say what for.
 
-The ranking behind it combines predictors from several themes: short interest,
-momentum, trend, short-term reversal, low volatility, size and more, as in the
-[multiple-predictors article](/quants/2025/02/09/multiple-linear-regression.html).
-So the question I want to answer is which of those themes the portfolio is
-actually paid for, which take risk without paying for it, and whether that has
-changed.
+The ranking behind it combines the 80 predictors of the [regression
+article](/quants/2025/02/09/multiple-linear-regression.html). So the question I
+want to answer is which of the ranking's themes the portfolio is actually paid
+for, which take risk without paying for it, and whether that has changed.
 
-The book is the 80-predictor Ridge ranking run through the optimizer, with its
-volatility target recalibrated, combining three rebalance schedules at equal
-notional.
+The book is the optimizer article's final portfolio, joint sizing with trading
+controls, with its three rebalance schedules held together at equal notional.
 
 <div id="pnl-conventions" markdown="1">
-One **P&L point** is 1% of strategy notional, which stays fixed throughout.
-Trading costs are 5 basis points per dollar traded, excluding borrow, financing
-and market impact. Returns by theme are before costs; the book's costs were
-about 1.1 points a year.
+Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are
+5 basis points per dollar traded, excluding borrow, financing and market impact.
+Annual figures average daily P&L points, so they sit slightly below the
+compounded returns in the optimizer article. Theme returns are before costs and
+start in January 1999; the book's costs were about 1.1 points a year.
 </div>
 
-## The book
+## The longs carry the book
+{: #the-book }
 
 The longs made **372 points**, the shorts lost **101** and trading costs took
-**30**, leaving **242 points** net. Because the longs hold lower-beta stocks
+**29.6**, leaving **242 points** net. Because the longs hold lower-beta stocks
 than the shorts, keeping forecast beta near zero leaves the book about 24% net
 long in dollars. The shorts lose money over the history even though they made
 money in every market decline.
@@ -49,7 +48,7 @@ money in every market decline.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="6" alt="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
+<p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
 
 ## Attributing P&L to the ranking's themes
 {: #follow-exposure-and-payoff-together }
@@ -59,10 +58,12 @@ and industry indicators, weighting larger stocks more. The coefficients are the
 day's payoffs: what one unit of each characteristic earned, holding the others
 fixed. The book's exposure to a theme is its signed weights times the stocks'
 characteristics, and exposure times payoff is that theme's P&L for the day.
-What the themes don't explain is stock-specific.[^model]
+What the themes don't explain is stock-specific.[^model] A theme's P&L is what
+the book's exposure to those characteristics earned, whether the ranking chose
+the exposure or the optimizer's limits created it, as with the net long dollars.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: The themes.</strong> Each theme groups the characteristics behind related predictors in the ranking.</p>
+<p class="table-caption"><strong>Table 1: The themes.</strong> The regression article's momentum &amp; trend theme is split into four; net market exposure and sector tilt are exposures the portfolio carries without the ranking aiming for them.</p>
 
 | Theme | What it measures |
 | :--- | :--- |
@@ -72,74 +73,91 @@ What the themes don't explain is stock-specific.[^model]
 | Short-term reversal | Returns over the last one to 21 sessions |
 | Price position | Price relative to recent highs and lows |
 | Loss frequency | The share of losing days over windows up to three years |
-| Liquidity &amp; volume | Turnover, illiquidity and the behaviour of trading volume |
 | Low volatility | Stock volatility |
-| Size | Market capitalization, its variability and its change |
-| Beta &amp; market correlation | Market beta and correlation with the index |
 | Net market exposure | Net dollars times the market's move |
+| Size | Market capitalization, its variability and its change |
+| Liquidity &amp; volume | Turnover, illiquidity and the behaviour of trading volume |
+| Beta &amp; market correlation | Market beta and correlation with the index |
 | Sector tilt | Industry exposure beyond the net dollars |
 {: .research-table .comparison-table .compact-table }
 </div>
 
-To allocate risk, I measure how each theme's daily P&L moves with the whole
-book: a theme's **share of risk** is the covariance of its daily P&L with the
-book's, divided by the book's variance. The shares add to 100%, and a theme
-that offsets the rest of the book gets a negative share.
+A theme's **share of risk** is the covariance of its daily P&L with the book's,
+divided by the book's variance. The shares add to 100%, a theme that offsets
+the rest of the book gets a negative one, and a theme pays its way when its
+share of the return exceeds its share of risk.
 
-## Where the return comes from
+## Short interest pays; trend costs money
+{: #where-the-return-comes-from }
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" version="2" alt="Return and share of risk of each theme, 1999–May 2026." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" version="3" alt="Return and share of risk of each theme, 1999–May 2026, grouped into signal themes, the defensive package and the rest." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Short interest pays most for its risk; trend and size cost money.</strong> Return before costs, in % of capital a year, and share of the book's daily variance, January 1999–May 2026.</p>
+<p class="figure-caption"><strong>Figure 2: Short interest is the most reliable earner; trend and size cost money.</strong> Return before costs, % of capital a year, and share of the book's daily variance, January 1999–May 2026. Rows group the signal themes, the defensive package and the rest.</p>
 
-The steadiest earner is **short interest**: 2.2% a year for 9% of the risk,
-and positive in every five-year block. **Net market exposure** earns more, 3.2%
-a year, but that is the market's return on the net long dollars the beta limit
-forces on the book. Low volatility adds 1.7%, stock-specific returns 1.3%, and
-price position, reversal, loss frequency, liquidity and momentum 0.7–1.4%
-each.
+The steadiest earner is **short interest**: 2.2% a year, 23% of the book's 9.7%
+gross return on 9% of the risk, and positive in every block. **Net market
+exposure** earns more, 3.2% a year, but that is the market's return on the net
+long dollars the beta limit forces on the book. Low volatility adds 1.7%,
+stock-specific returns 1.3%, and price position, reversal, loss frequency,
+liquidity and momentum 0.7–1.4% each.
 
-Two themes cost money over the whole history. **Trend** lost 2.1% a year and
-**size** 1.9%, and size did it while carrying 18% of the book's risk, more than
-any other theme. That is risk the book is not paid for.
+Two themes lose money over the whole history. **Trend** lost 2.1% a year, and
+in 19 of 28 years. **Size** lost 1.9% a year on 18% of the risk, but almost all
+of that came in 1999–2003, when it lost 9.8% a year; since 2014 it has been
+close to flat.
 
-## How it changed
+## The defensive package stopped paying
 {: #how-it-changed }
 
-The full-history bars average over very different periods. Figures 3 and 4
-show each theme year by year, with the five-year average as a line.
+Low volatility and the net long dollars are one position seen twice: the beta
+limit adds net long dollars because the longs are low-beta, so the two offset
+each other. Size and liquidity overlap in the same way. I read the four
+together as the **defensive package**.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 2: The defensive package stopped paying after 2021.</strong> Return before costs, % of capital a year, and share of the book's daily variance, %. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
+
+| Block | Book | Package | Package risk | Low volatility | Low vol. risk |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| 1999–2003 | 11.1 | 3.4 | 42 | 4.4 | −2 |
+| 2004–08 | 8.6 | 4.2 | 26 | 1.4 | 0 |
+| 2009–13 | 9.0 | 4.8 | 37 | 2.5 | 19 |
+| 2014–18 | 11.5 | 4.3 | 34 | 2.7 | 9 |
+| 2019–21 | 11.0 | 8.4 | 49 | 2.0 | 27 |
+| 2022–May 2026 | 7.2 | −0.2 | 44 | −3.5 | 30 |
+{: .research-table .comparison-table .compact-table }
+</div>
+
+The package earned 3–5% a year in every block to 2018 and 8.4% in 2019–21,
+while its share of risk rose to 49%. Since 2022 it has earned −0.2% a year,
+with a standard error of about 3 points, on 44% of the risk; low volatility
+alone lost 3.5% a year on 30%. Figures 3 and 4 show every theme year by year.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="1" alt="Each theme's return per year, 1999–2026, with five-year averages." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="2" alt="Each theme's return per year, 1999–2026, with block averages." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: Short interest paid in every period; trend rarely did.</strong> Return before costs, % of capital a year, per calendar year; lines are the five-year averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
+<p class="figure-caption"><strong>Figure 3: Short interest paid in every block; trend rarely did.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-risk-years" mobile="/assets/portfolio-attribution/theme-risk-years_mobile" version="1" alt="Each theme's share of the book's risk per year, 1999–2026, with five-year averages." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-risk-years" mobile="/assets/portfolio-attribution/theme-risk-years_mobile" version="2" alt="Each theme's share of the book's risk per year, 1999–2026, with block averages." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Low volatility and size took over the risk after 2019.</strong> Share of the book's daily variance, %, per calendar year; lines are the five-year averages. Bars beyond ±40 are clipped and marked.</p>
-
-Low volatility, size, liquidity and the net long dollars move together, so I
-also read them as one defensive package. It took 26–42% of the book's risk in
-each block to 2018, 49% in 2019–21 and 44% since 2022. Its return went the
-other way: positive in every block to 2021, about zero since 2022, with low
-volatility alone losing 3.5% a year on 30% of the risk.
+<p class="figure-caption"><strong>Figure 4: Low volatility's share of risk tripled after 2018, while stock-specific risk shrank.</strong> Share of the book's daily variance, %, per calendar year; lines are block averages. Bars beyond ±40 are clipped and marked.</p>
 
 Stock-specific returns faded too, from 1.0–2.6% a year in every block to 2018
-to slightly negative since. What held up is short interest, and momentum and
-loss frequency had their best block since 2022, at about 2.2% a year each.
+to −1.2% in 2019–21 and about zero since, and their share of risk fell from
+about 19% to 8%. Short interest held up, with its best block since 2022 at 3.2%
+a year, and momentum and loss frequency earned 2.2–2.3%, two to three times
+their long-run average.
 
 ## What I'd change
 
-The book is paid mainly for short interest, a handful of smaller signal themes
-and stock selection. It pays for two things: trend and size, which have lost
-money for most of 27 years, and a defensive tilt that earned its keep until
-2021 and now carries close to half the risk for nothing. Limits on the
-portfolio don't fix either. The lever is the ranking's mix of themes: less
-weight on trend and size, and a defensive tilt sized for what it earns now.
-[Part 2](/quants/short-book-rebounds.html) looks at when the book loses, and
-which themes are behind it.
+Over 27 years the book is paid for short interest, the smaller signal themes
+and, until 2019, stock selection. Trend is the one theme that simply costs
+money. The bigger problem is the defensive package, which paid in every block
+to 2021 and has since carried 44% of the risk for nothing. Four years is a
+short record after its best block, but I would change the ranking's mix first:
+less weight on trend, and a low-volatility tilt sized for what it earns now.
 
 ## References
 

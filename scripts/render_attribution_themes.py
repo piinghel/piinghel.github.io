@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 DATA = OUTPUT / "themes.json"
-# Display order: the ranking's signal themes, then the defensive themes, then the rest.
+# Display order: the ranking's signal themes, the defensive package, then the rest.
 THEMES = [
     "Short interest",
     "Momentum",
@@ -33,11 +33,11 @@ THEMES = [
     "Short-term reversal",
     "Price position",
     "Loss frequency",
-    "Liquidity & volume",
     "Low volatility",
-    "Size",
-    "Beta & market correlation",
     "Net market exposure",
+    "Size",
+    "Liquidity & volume",
+    "Beta & market correlation",
     "Sector tilt",
     "Stock-specific",
     "Unloaded holdings",
@@ -246,8 +246,8 @@ if __name__ == "__main__":
         ("Return (% a year)", {t: data["full"][t][0] for t in THEMES}, "{:+.1f}"),
         ("Share of risk (%)", {t: data["full"][t][1] for t in THEMES}, "{:.1f}"),
     ]
-    order = [(t, t) for t in THEMES[:7]] + [None] + [(t, t) for t in THEMES[7:11]] + [None] \
-        + [(t, t) for t in THEMES[11:]]
+    order = [(t, t) for t in THEMES[:6]] + [None] + [(t, t) for t in THEMES[6:10]] + [None] \
+        + [(t, t) for t in THEMES[10:]]
     for dark in (False, True):
         for mobile in (False, True):
             render(full, "theme-pnl", dark, mobile, row_order=order, wrap_labels=True)
