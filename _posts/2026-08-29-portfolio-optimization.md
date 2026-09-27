@@ -334,11 +334,10 @@ financing and impact costs left out here weigh more on it.
 
 Two problems remain. Realized beta drifts away from the rebalance-time
 estimate for months at a time, and after 2021 the advantage is small relative
-to its uncertainty and depends on which week the portfolio rebalances. In
-[the next article](/quants/2026/09/05/risk-concentration.html) I look at
-where this portfolio's forecast risk sits and what capping it changes; the
-[attribution series](/quants/portfolio-attribution.html) then breaks down its
-P&L, including the short book's losses in rebounds.
+to its uncertainty and depends on which week the portfolio rebalances. The
+[attribution series](/quants/portfolio-attribution.html) takes this portfolio
+as its starting point and breaks down its P&L, including the short book's
+losses in rebounds.
 
 <table class="research-table settings-table">
   <caption><strong>Table 4: Allocation settings.</strong></caption>
