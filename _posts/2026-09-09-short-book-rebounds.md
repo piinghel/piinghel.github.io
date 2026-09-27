@@ -60,26 +60,10 @@ than the short-book losses. Figure 1 follows the two contributions through time.
 </div>
 <p class="figure-caption"><strong>Figure 1: The market rebounded while the strategy lost further ground.</strong> Each window runs from the strategy's peak to its trough. Shading ends at the market low. Benchmark price indices start at 100; portfolio contributions use fixed-notional P&amp;L points on separate axes.</p>
 
-I first checked whether the losses came from holding on to the old shorts.
-Table 2 separates names that were short at the market low from additions
-during the rebound.
-
-<div markdown="1">
-<p class="table-caption"><strong>Table 2: New names also contributed to the rebound losses.</strong> Gross short P&amp;L points from after the market low through the strategy trough. "Short at the market low" means held during the low session; groups include subsequent resizing, exits and reentries.</p>
-
-| Short-book names | 2009 rebound | 2020–21 rebound |
-| :--- | ---: | ---: |
-| Short at the market low | −20.90 | −23.12 |
-| Rebound additions | −28.24 | −21.08 |
-| **Total** | **−49.14** | **−44.19** |
-{: .research-table .comparison-table .compact-table }
-
-</div>
-
-Around half the short-book losses came from names added during the rebound,
-and the five worst contributors explained only 12% and 9%. Looking only at
-old shorts or the worst few names would miss most of the loss, so I next look
-at what the stocks across the book had in common.
+The losses weren't a few old shorts held into the recovery. Names added during
+the rebound lost 28.2 of the short book's 49.1 points in 2009 and 21.1 of 44.2
+in 2020–21, and the five worst contributors explained only 12% and 9%. So I
+look at what the stocks across the book had in common.
 
 Figure 2 splits the two rebounds into the factor model's components. In both,
 the net long book earned about **15 points** from the common market move, and
@@ -93,11 +77,11 @@ split between them depends on the model; their sum is the sturdier number.
 </div>
 <p class="figure-caption"><strong>Figure 2: In both rebounds, the defensive tilt gave back what the net long position earned.</strong> P&amp;L points from the session after the market low through the strategy trough, on one shared scale. The components add up to the rebound net P&amp;L in Table 1.</p>
 
-Table 3 separates beta exposure from its payoff using
+Table 2 separates beta exposure from its payoff using
 [Part 1's calculation](/quants/portfolio-attribution.html#follow-exposure-and-payoff-together).
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 3: Negative beta exposure met a positive rebound payoff.</strong> Same phases as Table 1. Mean standardized beta exposure per notional; cumulative payoff for +1 exposure, in percentage points. P&amp;L uses each day's actual exposure, so it need not equal mean exposure times cumulative payoff.</p>
+<p class="table-caption"><strong>Table 2: Negative beta exposure met a positive rebound payoff.</strong> Same phases as Table 1. Mean standardized beta exposure per notional; cumulative payoff for +1 exposure, in percentage points. P&amp;L uses each day's actual exposure, so it need not equal mean exposure times cumulative payoff.</p>
 
 | Phase | Standardized beta exposure | Beta payoff | Beta P&L |
 | :--- | ---: | ---: | ---: |
@@ -130,7 +114,7 @@ book short high-beta past losers going into a rebound. Here it runs through
 the beta and volatility tilt rather than momentum itself, which added 1.6
 points in the 2009 rebound and cost 0.8 in 2020–21.
 
-## Does the pattern repeat?
+## The pattern across eleven rebounds
 
 To see how often the same imbalance appeared elsewhere, I identified **11 market
 declines of at least 10%** and followed the first
@@ -158,7 +142,7 @@ far larger than the typical episode.
 
 {% include attribution-recovery-explorer.html figure="4" %}
 
-How unusual is that? Across every 63-session window in the history, shorted
+That is unusual. Across every 63-session window in the history, shorted
 stocks outgained the longs only **28%** of the time. In windows where the
 Russell 1000 rose more than 13%, they did so **82%** of the time, and
 across the 11 episodes the gap grows with the size of the rally (correlation
@@ -171,14 +155,14 @@ gained **0.4 points** after costs, and by 6 November 2020 it was up **5.7**.
 The whole 2020–21 rebound loss came after that: **12.4 points** by 27 January
 2021, while the index rose another 8%. The stretch runs from the last session
 before the vaccine announcement of 9 November to the closing peak of January's
-retail short squeeze; whether either event drove the loss is untested. The shorts lost 18.7 points in those
+retail short squeeze. The shorts lost 18.7 points in those
 eleven weeks against 6.5 gained on the longs, and volatility was again the
 largest style (−6.1), ahead of size (−2.6) and beta (−2.0).
 
-Table 4 checks shorter and longer windows around the same lows.
+Table 3 checks shorter and longer windows around the same lows.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 4: The imbalance is more common early in the rebound.</strong> The same 11 lows at each horizon; the windows overlap. Gap = short-stock gains minus long-stock gains per unit of exposure, in percentage points. Net losses use portfolio P&amp;L after recorded trading costs.</p>
+<p class="table-caption"><strong>Table 3: The imbalance is more common early in the rebound.</strong> The same 11 lows at each horizon; the windows overlap. Gap = short-stock gains minus long-stock gains per unit of exposure, in percentage points. Net losses use portfolio P&amp;L after recorded trading costs.</p>
 
 | Sessions after low | Shorts gained more | Median gap | Net portfolio losses |
 | ---: | ---: | ---: | ---: |
@@ -208,11 +192,8 @@ stocks. Those cluster early in rebounds but, as late 2020 showed, not only
 there. Any fix also has to keep what the shorts provide on the way down: about
 31 points in both declines.
 
-Two questions stay open. Do the predictors choose these shorts because of
-their beta and volatility, or despite it? And was the late-2020 loss, led by
-volatility and size, the same mechanism as the early rebounds or a different
-rotation? In [Part 3](/quants/managing-rebound-risk.html), I test tilt limits,
-standardized beta limits and daily portfolio scaling against that trade-off.
+[Part 3](/quants/managing-rebound-risk.html) tests tilt limits, standardized
+beta limits and daily portfolio scaling against that trade-off.
 
 ## References
 
