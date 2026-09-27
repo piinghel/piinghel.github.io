@@ -6,7 +6,6 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-09-27T14:07:24.550872</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,32 +39,32 @@ z
    <g id="LineCollection_1">
     <path d="M 53.733594 166.391583
 L 293.994972 166.391583
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_2">
     <path d="M 53.733594 131.632822
 L 293.994972 131.632822
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_3">
     <path d="M 53.733594 96.874061
 L 293.994972 96.874061
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_4">
     <path d="M 53.733594 62.1153
 L 293.994972 62.1153
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_5">
     <path d="M 53.733594 120.046569
 L 293.994972 120.046569
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
    </g>
    <g id="line2d_1">
     <path d="M 190.799006 166.391583
 L 190.799006 38.942793
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke-dasharray: 1.8,2.7; stroke-dashoffset: 0; stroke: #8b949e; stroke-opacity: 0.7; stroke-width: 0.9"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke-dasharray: 1.8,2.7; stroke-dashoffset: 0; stroke: #8b949e; stroke-opacity: 0.7; stroke-width: 0.9"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
@@ -884,7 +883,7 @@ L 292.936552 92.98645
 L 293.730367 95.034436
 L 293.994972 100.071287
 L 293.994972 100.071287
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #5c646d; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #5c646d; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_12">
     <path d="M 53.733594 120.046569
@@ -1414,7 +1413,7 @@ L 292.671947 121.082321
 L 292.936552 120.630331
 L 293.994972 118.03464
 L 293.994972 118.03464
-" clip-path="url(#p169d383a6f)" style="fill: none; stroke: #78a0c4; stroke-width: 1.7; stroke-linecap: square"/>
+" clip-path="url(#p2bfd8c7c6f)" style="fill: none; stroke: #78a0c4; stroke-width: 1.7; stroke-linecap: square"/>
    </g>
    <g id="text_5">
     <!-- Russell 1000 -->
@@ -2068,27 +2067,27 @@ z
    <g id="LineCollection_6">
     <path d="M 53.733594 358.588911
 L 293.994972 358.588911
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_7">
     <path d="M 53.733594 324.450842
 L 293.994972 324.450842
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_8">
     <path d="M 53.733594 290.312773
 L 293.994972 290.312773
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_9">
     <path d="M 53.733594 256.174704
 L 293.994972 256.174704
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="line2d_13">
     <path d="M 190.799006 358.588911
 L 190.799006 244.795348
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke-dasharray: 1.8,2.7; stroke-dashoffset: 0; stroke: #8b949e; stroke-opacity: 0.7; stroke-width: 0.9"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke-dasharray: 1.8,2.7; stroke-dashoffset: 0; stroke: #8b949e; stroke-opacity: 0.7; stroke-width: 0.9"/>
    </g>
    <g id="matplotlib.axis_3">
     <g id="xtick_6">
@@ -2960,7 +2959,7 @@ L 292.936552 263.898935
 L 293.730367 263.001785
 L 293.994972 265.292216
 L 293.994972 265.292216
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke: #78a0c4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke: #78a0c4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_24">
     <path d="M 53.733594 290.312773
@@ -3494,7 +3493,7 @@ L 292.936552 317.873288
 L 293.730367 315.259089
 L 293.994972 311.381326
 L 293.994972 311.381326
-" clip-path="url(#pb1efe4660f)" style="fill: none; stroke: #a093b8; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p792e725db9)" style="fill: none; stroke: #a093b8; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_17">
     <!-- Long -->
@@ -3974,27 +3973,27 @@ z
    <g id="LineCollection_10">
     <path d="M 53.733594 564.441466
 L 294.100493 564.441466
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_11">
     <path d="M 53.733594 529.682705
 L 294.100493 529.682705
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_12">
     <path d="M 53.733594 494.923944
 L 294.100493 494.923944
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_13">
     <path d="M 53.733594 460.165183
 L 294.100493 460.165183
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_14">
     <path d="M 53.733594 518.096451
 L 294.100493 518.096451
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
    </g>
    <g id="matplotlib.axis_5">
     <g id="xtick_11">
@@ -4337,7 +4336,7 @@ L 291.232152 474.421402
 L 293.526825 473.390441
 L 294.100493 473.433285
 L 294.100493 473.433285
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #5c646d; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #5c646d; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_35">
     <path d="M 53.733594 518.096451
@@ -4601,7 +4600,7 @@ L 291.232152 530.642495
 L 293.526825 531.379075
 L 294.100493 532.106994
 L 294.100493 532.106994
-" clip-path="url(#pb5fae371d6)" style="fill: none; stroke: #78a0c4; stroke-width: 1.7; stroke-linecap: square"/>
+" clip-path="url(#pef32ca4172)" style="fill: none; stroke: #78a0c4; stroke-width: 1.7; stroke-linecap: square"/>
    </g>
    <g id="text_25">
     <!-- Russell 1000 -->
@@ -4853,22 +4852,22 @@ z
    <g id="LineCollection_15">
     <path d="M 53.733594 756.638793
 L 294.100493 756.638793
-" clip-path="url(#pb58b474ea0)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p46615deea7)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_16">
     <path d="M 53.733594 722.500724
 L 294.100493 722.500724
-" clip-path="url(#pb58b474ea0)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p46615deea7)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_17">
     <path d="M 53.733594 688.362655
 L 294.100493 688.362655
-" clip-path="url(#pb58b474ea0)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
+" clip-path="url(#p46615deea7)" style="fill: none; stroke: #6e7681; stroke-width: 0.8"/>
    </g>
    <g id="LineCollection_18">
     <path d="M 53.733594 654.224587
 L 294.100493 654.224587
-" clip-path="url(#pb58b474ea0)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
+" clip-path="url(#p46615deea7)" style="fill: none; stroke: #30363d; stroke-width: 0.8"/>
    </g>
    <g id="matplotlib.axis_7">
     <g id="xtick_16">
@@ -5372,7 +5371,7 @@ L 291.232152 677.277246
 L 293.526825 677.735863
 L 294.100493 678.836259
 L 294.100493 678.836259
-" clip-path="url(#pb58b474ea0)" style="fill: none; stroke: #78a0c4; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p46615deea7)" style="fill: none; stroke: #78a0c4; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_46">
     <path d="M 53.733594 688.362655
@@ -5637,7 +5636,7 @@ L 290.084816 722.897111
 L 291.232152 724.09208
 L 294.100493 725.409761
 L 294.100493 725.409761
-" clip-path="url(#pb58b474ea0)" style="fill: none; stroke: #a093b8; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p46615deea7)" style="fill: none; stroke: #a093b8; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="text_37">
     <!-- Long -->
@@ -5716,16 +5715,16 @@ L 294.100493 725.409761
   </g>
  </g>
  <defs>
-  <clipPath id="p169d383a6f">
+  <clipPath id="p2bfd8c7c6f">
    <rect x="53.733594" y="38.942793" width="283.392" height="127.44879"/>
   </clipPath>
-  <clipPath id="pb1efe4660f">
+  <clipPath id="p792e725db9">
    <rect x="53.733594" y="244.795348" width="283.392" height="113.793563"/>
   </clipPath>
-  <clipPath id="pb5fae371d6">
+  <clipPath id="pef32ca4172">
    <rect x="53.733594" y="436.992675" width="283.392" height="127.44879"/>
   </clipPath>
-  <clipPath id="pb58b474ea0">
+  <clipPath id="p46615deea7">
    <rect x="53.733594" y="642.84523" width="283.392" height="113.793563"/>
   </clipPath>
  </defs>

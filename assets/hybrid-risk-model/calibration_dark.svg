@@ -9,7 +9,7 @@
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
-      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
      </cc:Agent>
     </dc:creator>
    </cc:Work>
@@ -45,7 +45,7 @@ L 268.755865 54.72
      </g>
      <g id="line2d_2"/>
      <g id="text_1">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="268.755865" y="247.296328" transform="rotate(-0 268.755865 247.296328)">0.5</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="268.755865" y="247.149375" transform="rotate(-0 268.755865 247.149375)">0.5</text>
      </g>
     </g>
     <g id="xtick_2">
@@ -56,7 +56,7 @@ L 381.773542 54.72
      </g>
      <g id="line2d_4"/>
      <g id="text_2">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="381.773542" y="247.296328" transform="rotate(-0 381.773542 247.296328)">1</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="381.773542" y="247.149375" transform="rotate(-0 381.773542 247.149375)">1</text>
      </g>
     </g>
     <g id="xtick_3">
@@ -67,7 +67,7 @@ L 494.791219 54.72
      </g>
      <g id="line2d_6"/>
      <g id="text_3">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="494.791219" y="247.296328" transform="rotate(-0 494.791219 247.296328)">2</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="494.791219" y="247.149375" transform="rotate(-0 494.791219 247.149375)">2</text>
      </g>
     </g>
     <g id="xtick_4">
@@ -78,7 +78,7 @@ L 607.808897 54.72
      </g>
      <g id="line2d_8"/>
      <g id="text_4">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="607.808897" y="247.296328" transform="rotate(-0 607.808897 247.296328)">4</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #c6cdd5" x="607.808897" y="247.149375" transform="rotate(-0 607.808897 247.149375)">4</text>
      </g>
     </g>
    </g>
@@ -86,25 +86,25 @@ L 607.808897 54.72
     <g id="ytick_1">
      <g id="line2d_9"/>
      <g id="text_5">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="86.287223" transform="rotate(-0 204.6 86.287223)">Direct covariance</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="86.213746" transform="rotate(-0 204.6 86.213746)">Direct covariance</text>
      </g>
     </g>
     <g id="ytick_2">
      <g id="line2d_10"/>
      <g id="text_6">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="128.131929" transform="rotate(-0 204.6 128.131929)">Direct, recalibrated</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="128.058452" transform="rotate(-0 204.6 128.058452)">Direct, recalibrated</text>
      </g>
     </g>
     <g id="ytick_3">
      <g id="line2d_11"/>
      <g id="text_7">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="169.976635" transform="rotate(-0 204.6 169.976635)">Hybrid</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="169.903158" transform="rotate(-0 204.6 169.903158)">Hybrid</text>
      </g>
     </g>
     <g id="ytick_4">
      <g id="line2d_12"/>
      <g id="text_8">
-      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="211.821341" transform="rotate(-0 204.6 211.821341)">50:50 blend</text>
+      <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #c6cdd5" x="204.6" y="211.747864" transform="rotate(-0 204.6 211.747864)">50:50 blend</text>
      </g>
     </g>
    </g>
