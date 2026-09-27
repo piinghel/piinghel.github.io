@@ -82,9 +82,9 @@ for byte), run the renderer from this directory, then
 | Risk concentration | 1 | `assets/js/risk-concentration.js`; data from `scripts/export_risk_concentration.py --geometry` |
 | | 2 and 3 | `portfolio_optimization.concentration_figure` and `.concentration_migration_figure` (private portfolio-optimization project, `outputs/review/risk_concentration/article_snapshot_20260905`) |
 | Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
-| | 2 and 6 | `scripts/render_attribution_series.py` |
-| | 3 and 4 | `scripts/render_attribution_components.py` |
-| | 5 (explorer) | `assets/js/attribution-dynamics.js`; data from `scripts/export_attribution_dynamics.py` |
+| | 2 and 5 | `scripts/render_attribution_series.py` |
+| | 3 | `scripts/render_attribution_components.py` |
+| | 4 (explorer) | `assets/js/attribution-dynamics.js`; data from `scripts/export_attribution_dynamics.py` |
 | Attribution Part 2 | 1 | `scripts/render_attribution_pnl.py` |
 | | 2 | `scripts/render_attribution_components.py` |
 | | 3 | `scripts/render_attribution_holdings.py` |
