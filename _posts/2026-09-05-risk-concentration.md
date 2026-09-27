@@ -103,11 +103,19 @@ of PCA directions, $$1/\sum_k(c_k^{\mathrm{PC}})^2$$, is about 40 on the
 selected stocks. Several components may still share an economic theme.
 
 Did the AI rally change that? Stock and sector concentration actually fell
-after 2021. The shared, cross-sector view is where it shows: on the
-eligible-universe components, the largest one takes more than 10% of forecast
-variance on about 11% of rebalances before 2022 and 28% after, mostly the third
-and fourth components. So the answer is yes, modestly, and only in the
-direction the weight limits can't see.
+after 2021. The shared, cross-sector view is where concentration shows, but it
+didn't start with the AI rally. On the eligible-universe components, the
+largest one took more than 10% of forecast variance on about 6% of rebalances
+before 2015, 31% in 2015–16, 20% in 2017–21 and 28% since 2022, lately mostly
+the third and fourth components (Figure 1; tap or hover over a point to see
+which). So the book does carry more shared concentration than it used to, in
+the direction the weight limits can't see, but it built up well before 2022.
+
+<div id="rc-pc-share" style="width:100%;min-height:280px;margin:1.4rem 0 0.4rem" role="img" aria-label="Largest principal component's share of forecast variance at each rebalance, 1998–2026, with a 10% reference line; shares above 10% become frequent from 2015." data-source="/assets/risk-concentration/pc-share.json?v=1" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<noscript><p>This chart needs JavaScript; the paragraph above gives its main numbers.</p></noscript>
+<script src="/assets/js/risk-concentration.js?v=2" defer></script>
+
+<p class="figure-caption"><strong>Figure 1: Shared risk has concentrated more often since 2015.</strong> The largest principal component's share of forecast variance at every rebalance of the uncapped optimizer, three schedules pooled, with components from the eligible-universe covariance. Highlighted points exceed 10%; the shaded area is January 2022–May 2026.</p>
 
 ## How much do risk limits change the portfolio?
 
@@ -119,13 +127,13 @@ time and never from beyond the seventeenth.
 
 Sector limits intervene far more often. In 2022–2026, a 20% sector cap corrects
 58% of targets and a 15% cap 98%, and a 2% stock cap corrects every one.
-Figure 1 compares how often each tested limit requires an adjustment.
+Figure 2 compares how often each tested limit requires an adjustment.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/risk-concentration/threshold-impact" mobile="/assets/risk-concentration/threshold-impact_mobile" alt="Paired dots comparing the percentage of rebalances requiring adjustment under each PCA, sector and stock risk cap, in the development and later periods" version="4" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1: How often risk caps require an adjustment.</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Solver warnings for Sector 15%, Stock 4% and Stock 6%; checks cover targets only for PCA 7.5% and Stock 3%.</p>
+<p class="figure-caption"><strong>Figure 2: How often risk caps require an adjustment.</strong> Means across three schedules. Development: September 1998–December 2021; later: January 2022–May 2026. * Solver warnings for Sector 15%, Stock 4% and Stock 6%; checks cover targets only for PCA 7.5% and Stock 3%.</p>
 
 PCA caps intervene more often in the later period. Table 1 puts that frequency
 beside the amount of capital each cap reallocates.
@@ -150,7 +158,7 @@ average, against 19.4% at 15%. That distinction matters to me: I want a cap
 whose corrections are small, leaving most of the sizing to the score and the
 covariance model.
 
-A stock cap also doesn't address shared risk. Figure 2 compares
+A stock cap also doesn't address shared risk. Figure 3 compares
 all three dimensions under the 2% stock cap. The 95th percentile of the largest
 stock contribution falls from about 7% to 2%, while the largest PCA share
 barely moves, at about 15–16%. Smaller stock contributions can still add up to
@@ -160,7 +168,7 @@ a large shared exposure.
   {% include theme-svg-figure.html base="/assets/risk-concentration/risk-migration" mobile="/assets/risk-concentration/risk-migration_mobile" alt="Before-and-after dot plot comparing the 95th percentile of the largest PCA, sector, and stock forecast-variance contributions under the original optimizer and a 2% stock risk cap" version="2" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Schedule-mean 95th percentiles of the largest contributions to forecast variance at rebalance targets, with components from the optimizer's covariance of the selected stocks.</p>
+<p class="figure-caption"><strong>Figure 3: Lower stock concentration can coexist with shared risk.</strong> January 2022–May 2026. Schedule-mean 95th percentiles of the largest contributions to forecast variance at rebalance targets, with components from the optimizer's covariance of the selected stocks.</p>
 
 ## What does it cost?
 
@@ -226,8 +234,8 @@ that tilt would require factor attribution.
 
 ## Would I add these limits?
 
-The weight limits leave some concentration, and after 2021 it sits mainly in a
-few leading components that cut across sectors. A 10% cap on every
+The weight limits leave some concentration, and since about 2015 it has sat
+increasingly in a few leading components that cut across sectors. A 10% cap on every
 component's share removes it with almost no change in return, Sharpe or
 turnover, which makes it the only limit here I'd consider. Adopting it would
 also mean switching the optimizer to the eligible-universe covariance, and that
@@ -236,6 +244,6 @@ Tighter sector caps and stock caps of 2–3% reshape the book without a benefit 
 can distinguish from noise.
 
 What I still don't know is what those leading components are. If the third and
-fourth components after 2021 turn out to be the AI trade, a cap on shared risk
+fourth components since 2022 turn out to be the AI trade, a cap on shared risk
 is the right tool; if they are a style exposure the ranking relies on, capping
 them would cost more than it shows here.
