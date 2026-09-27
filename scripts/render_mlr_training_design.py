@@ -12,6 +12,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets" / "multiple-linear-regression"
@@ -53,35 +54,37 @@ def render(*, dark: bool, mobile: bool) -> None:
             "svg.hashsalt": "mlr-walk-forward",
         }
     ):
-        fig, ax = plt.subplots(figsize=(4.8, 4.6) if mobile else (8.4, 3.7))
+        fig, ax = plt.subplots(figsize=(4.8, 4.9) if mobile else (8.4, 4.0))
         fig.set_facecolor(c["bg"])
         ax.set_facecolor(c["bg"])
         ax.axvspan(num(TEST_START), num(LAST_DATE), color=c["test"], zorder=0, linewidth=0)
         for row, (train_end, start, end) in enumerate(refits):
             ax.barh(row, num(train_end) - num(TRAIN_START), left=num(TRAIN_START),
-                    height=0.6, color=c["train"], zorder=2)
-            ax.barh(row, num(end) - num(start), left=num(start),
-                    height=0.6, color=c["predict"], zorder=2)
-        # Name both blocks on one row that is wide enough for them, so they read together.
-        label_row = 2
-        ax.annotate("Training", (num(TRAIN_START), label_row), xytext=(5, 0),
-                    textcoords="offset points", va="center", ha="left", fontsize=label,
-                    color=c["ink"], zorder=3)
-        ax.annotate("Predictions", (num(refits[label_row][2]), label_row), xytext=(5, 0),
-                    textcoords="offset points", va="center", ha="left", fontsize=label,
-                    color=c["predict"], zorder=3)
+                    height=0.56, color=c["train"], zorder=2)
+            # A thin background edge separates each prediction block from its training window.
+            ax.barh(row, num(end) - num(start), left=num(start), height=0.56,
+                    color=c["predict"], edgecolor=c["bg"], linewidth=1.2, zorder=2)
         for x, text in ((TRAIN_START + (TEST_START - TRAIN_START) / 2, "Development"),
                         (TEST_START + (LAST_DATE - TEST_START) / 2, "Test")):
-            ax.annotate(text, (num(x), -1.0), ha="center", va="bottom", fontsize=label,
+            ax.annotate(text, (num(x), -0.9), ha="center", va="bottom", fontsize=label - 0.5,
                         color=c["muted"], annotation_clip=False)
+        # A compact key: every green block is out of sample, in both periods.
+        ax.legend(
+            handles=[Patch(color=c["train"], label="Training window"),
+                     Patch(color=c["predict"], label="Out-of-sample predictions")],
+            loc="lower left", bbox_to_anchor=(0, 1.05), ncol=1 if mobile else 2,
+            frameon=False, fontsize=label, labelcolor=c["ink"], borderaxespad=0,
+            handlelength=1.0, handleheight=0.9, handletextpad=0.5, columnspacing=1.6,
+        )
         ax.set_yticks([])
-        ax.set_ylim(len(refits) - 0.4, -1.3)
+        ax.set_ylim(len(refits) - 0.45, -1.45)
         ax.set_xlim(num(dt.date(1994, 10, 1)), num(LAST_DATE))
         ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
         ax.spines[:].set_visible(False)
         ax.tick_params(length=0, colors=c["muted"], labelsize=tick)
-        fig.subplots_adjust(left=0.03, right=0.97, top=0.95, bottom=0.09 if mobile else 0.1)
+        fig.subplots_adjust(left=0.03, right=0.97, top=0.81 if mobile else 0.86,
+                            bottom=0.08 if mobile else 0.09)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = OUT / f"expanding-walk-forward{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
