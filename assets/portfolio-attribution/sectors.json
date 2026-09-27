@@ -1,0 +1,50 @@
+{
+ "Technology": {
+  "pnl_points": 63.4534,
+  "variance_share_pct": 15.023
+ },
+ "Consumer Discretionary": {
+  "pnl_points": 55.0755,
+  "variance_share_pct": 14.145
+ },
+ "Industrials": {
+  "pnl_points": 49.3397,
+  "variance_share_pct": 11.69
+ },
+ "Communications": {
+  "pnl_points": 40.4868,
+  "variance_share_pct": 8.6627
+ },
+ "Health Care": {
+  "pnl_points": 40.4638,
+  "variance_share_pct": 15.0384
+ },
+ "Financials": {
+  "pnl_points": 39.1538,
+  "variance_share_pct": 13.0429
+ },
+ "Consumer Staples": {
+  "pnl_points": 31.6501,
+  "variance_share_pct": 5.3915
+ },
+ "Real Estate": {
+  "pnl_points": 12.5388,
+  "variance_share_pct": 3.6428
+ },
+ "Utilities": {
+  "pnl_points": 11.4304,
+  "variance_share_pct": 1.974
+ },
+ "Materials": {
+  "pnl_points": 5.1906,
+  "variance_share_pct": 5.3056
+ },
+ "Energy": {
+  "pnl_points": 2.3174,
+  "variance_share_pct": 6.0959
+ },
+ "costs": {
+  "pnl_points": -38.1845,
+  "variance_share_pct": -0.0118
+ }
+}

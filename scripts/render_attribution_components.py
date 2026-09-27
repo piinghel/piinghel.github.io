@@ -1,14 +1,15 @@
 """Attribution component bar charts.
 
+Part 1, Figure 3: full-history P&L and variance share of each sector.
 Part 1, Figure 4: full-history P&L and variance share of each component.
 Part 2, Figure 2: component P&L over the two rebounds (the sessions after each
 market low through the strategy trough).
 
-`--outputs` reads the attribution project's daily component P&L
+`--outputs` reads the attribution project's daily stock and component P&L
 (projects/performance_attribution/outputs/full_history) and writes the aggregates
-to assets/portfolio-attribution/components.json and rebound-components.json;
-rendering reads only those files. A component's variance share is
-Cov(component, net P&L) / Var(net P&L).
+to assets/portfolio-attribution/sectors.json, components.json and
+rebound-components.json; rendering reads only those files. A variance share is
+Cov(contribution, net P&L) / Var(net P&L).
 """
 
 import argparse
@@ -66,23 +67,55 @@ def daily_components(outputs: Path):
     return wide, components
 
 
-def export(outputs: Path) -> None:
-    import datetime as dt
-
-    import polars as pl
-
-    wide, components = daily_components(outputs)
+def pnl_and_variance_share(wide, columns) -> dict:
+    """Total P&L (points) and share of net-P&L variance (%) of each daily column."""
     net = wide["long_short_net"].to_numpy()
     centered = net - net.mean()
-    values = {
+    return {
         c: {
             "pnl_points": round(100 * float(wide[c].sum()), 4),
             "variance_share_pct": round(
                 100 * float((wide[c].to_numpy() - wide[c].mean()) @ centered / (centered @ centered)), 4
             ),
         }
-        for c in components
+        for c in columns
     }
+
+
+def daily_sectors(outputs: Path):
+    """Daily gross stock P&L per sector (both books), plus costs and net P&L."""
+    import numpy as np
+    import polars as pl
+
+    daily = pl.read_parquet(outputs / "daily.parquet").select("date", "cost_pnl", "long_short_net")
+    wide = (
+        pl.scan_parquet(outputs / "assets.parquet")
+        .group_by("date", "sector")
+        .agg(pl.col("asset_pnl").sum())
+        .collect()
+        .pivot(on="sector", index="date", values="asset_pnl")
+        .join(daily, on="date", how="right")
+        .fill_null(0)
+    )
+    sectors = sorted(c for c in wide.columns if c not in ("date", "cost_pnl", "long_short_net"))
+    total = sum(wide[c].to_numpy() for c in [*sectors, "cost_pnl"])
+    if np.abs(total - wide["long_short_net"].to_numpy()).max() > 1e-12:
+        raise ValueError("sectors and costs do not reconcile to net P&L")
+    return wide, sectors
+
+
+def export(outputs: Path) -> None:
+    import datetime as dt
+
+    import polars as pl
+
+    wide, sectors = daily_sectors(outputs)
+    values = pnl_and_variance_share(wide, sectors)
+    ranked = dict(sorted(values.items(), key=lambda item: -item[1]["pnl_points"]))
+    ranked["costs"] = pnl_and_variance_share(wide, ["cost_pnl"])["cost_pnl"]
+    (OUTPUT / "sectors.json").write_text(json.dumps(ranked, indent=1) + "\n")
+    wide, components = daily_components(outputs)
+    values = pnl_and_variance_share(wide, components)
     (OUTPUT / "components.json").write_text(json.dumps(values, indent=1) + "\n")
     # Rebounds: the sessions after each market low through the strategy trough.
     windows = json.loads((OUTPUT / "beta-history.json").read_text())["windows"]
@@ -96,8 +129,13 @@ def export(outputs: Path) -> None:
 
 
 def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: bool,
-           shared_scale: bool = False) -> None:
-    """Draw one horizontal bar panel per (title, {component: value}, format)."""
+           shared_scale: bool = False, row_order: list = ROWS, wrap_labels: bool = False) -> None:
+    """Draw one horizontal bar panel per (title, {key: value}, format).
+
+    `row_order` lists (key, label) rows top to bottom; None adds a half-row gap.
+    `wrap_labels` breaks long labels after their first word on phones and leaves
+    more room for them on desktop.
+    """
     colors = {
         "bg": "#0d1117" if dark else "#ffffff",
         "ink": "#e4e7ea" if dark else "#25313a",
@@ -107,7 +145,7 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
     }
     size = 10.5 if mobile else 11
     rows, y, positions = [], 0.0, []
-    for row in ROWS:
+    for row in row_order:
         if row is None:
             y += 0.5
             continue
@@ -149,9 +187,12 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
             ax.xaxis.set_major_locator(plt.MaxNLocator(3))
             ax.grid(axis="x", color=colors["grid"], linewidth=0.5)
             ax.set_axisbelow(True)
-        axes[0].set_yticks(positions, [label for _, label in rows])
+        labels = [label.replace(" ", "\n", 1) if wrap_labels and mobile and len(label) > 15
+                  else label for _, label in rows]
+        axes[0].set_yticks(positions, labels)
         axes[0].invert_yaxis()
-        fig.subplots_adjust(left=0.32 if mobile else 0.17, right=0.97, top=0.92, bottom=0.06)
+        left = 0.32 if mobile else (0.2 if wrap_labels else 0.17)
+        fig.subplots_adjust(left=left, right=0.97, top=0.92, bottom=0.06)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = OUTPUT / f"{name}{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=colors["bg"])
@@ -165,6 +206,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.outputs:
         export(args.outputs)
+    sectors = json.loads((OUTPUT / "sectors.json").read_text())
+    sectors.pop("costs")  # quoted in the caption; too small to draw
+    by_sector = [
+        ("P&L (points)", {k: v["pnl_points"] for k, v in sectors.items()}, "{:+.1f}"),
+        ("Variance share (%)", {k: v["variance_share_pct"] for k, v in sectors.items()}, "{:.1f}"),
+    ]
     components = json.loads((OUTPUT / "components.json").read_text())
     full_history = [
         ("P&L (points)", {k: v["pnl_points"] for k, v in components.items()}, "{:+.1f}"),
@@ -176,5 +223,7 @@ if __name__ == "__main__":
     ]
     for dark in (False, True):
         for mobile in (False, True):
+            render(by_sector, "sector-pnl", dark, mobile, row_order=[(k, k) for k in sectors],
+                   wrap_labels=True)
             render(full_history, "factor-pnl", dark, mobile)
             render(rebounds, "drawdown-factors", dark, mobile, shared_scale=True)

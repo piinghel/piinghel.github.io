@@ -61,7 +61,7 @@ took **38.2**, leaving **312.9 points net**. Figure 1 follows the P&L
 through time.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="4" alt="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="5" alt="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown. Shading marks the two deepest strategy drawdowns.</p>
 
@@ -97,7 +97,7 @@ portfolio P&L. The variance shares add to 100%, including costs. A component
 that offsets portfolio fluctuations can receive a negative share.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="5" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by P&L." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/sector-pnl" mobile="/assets/portfolio-attribution/sector-pnl_mobile" version="6" alt="Sector P&L and share of net portfolio variance on matching rows, ranked by P&L." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Sector P&amp;L and risk contributions.</strong> Gross P&amp;L across both books; sectors use an August 2026 classification snapshot. Costs contribute −0.01% of variance.</p>
 

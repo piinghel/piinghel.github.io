@@ -108,8 +108,8 @@
     "height": 446
   },
   "/assets/portfolio-attribution/market-phases_mobile": {
-    "width": 360,
-    "height": 778
+    "width": 288,
+    "height": 691
   },
   "/assets/portfolio-attribution/rebound-holdings": {
     "width": 691,
@@ -145,19 +145,19 @@
   },
   "/assets/portfolio-attribution/sector-pnl": {
     "width": 648,
-    "height": 504
+    "height": 403
   },
   "/assets/portfolio-attribution/sector-pnl_mobile": {
     "width": 360,
-    "height": 504
+    "height": 461
   },
   "/assets/portfolio-attribution/whole-history": {
     "width": 634,
-    "height": 475
+    "height": 461
   },
   "/assets/portfolio-attribution/whole-history_mobile": {
-    "width": 360,
-    "height": 475
+    "width": 288,
+    "height": 403
   },
   "/assets/portfolio-optimization/parameter-sensitivity": {
     "width": 1200,
