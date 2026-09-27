@@ -46,6 +46,8 @@ correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
 - `spectrum_by_fit.csv`: eigenvalues of the training covariance per fit (penalty section).
 - `predictor_return_risk.csv`: IC of size and market-correlation predictors with forward
   return, forward volatility and the target (`predictor_return_risk.py`).
+- `book_size_tilt.csv`: average market-cap percentile of the 75 highest and lowest scores
+  and the score–size rank correlation (`book_size_tilt.py`).
 
 `scripts/export_mlr_data.py` turns both folders into the JSON files the interactive
 figures read.

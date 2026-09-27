@@ -88,7 +88,7 @@ the story, I say so.
   <section class="theme-card" style="--theme-color: var(--theme-4)">
     <h3>Size <span>10 predictors</span></h3>
     <p class="theme-measures">Log market capitalization, its variability (the standard deviation of log market cap over a window), and its change and position relative to recent highs and lows.</p>
-    <p>The small-cap premium is a return effect among much smaller firms, and it has been weak since the 1980s unless one also controls for quality. Every stock here is in the Russell 1000, so the level means large versus mega cap. On forward returns the larger names earned slightly less, but they rank higher on the Sharpe target because they are much calmer. Here size is mostly a low-risk measure; its variability measures behave like volatility and its change measures like momentum.</p>
+    <p>The small-cap premium is a return effect among much smaller firms, and it has been weak since the 1980s unless one also controls for quality. Every stock here is in the Russell 1000, so the level means large versus mega cap. On forward returns the larger names earned slightly less, but they rank higher on the Sharpe target because they are much calmer. Here size is mostly a low-risk measure, so it belongs in the pool for the same reason as volatility; its variability measures behave like volatility and its change measures like momentum.</p>
   </section>
   <section class="theme-card" style="--theme-color: var(--theme-5)">
     <h3>Liquidity &amp; volume <span>10 predictors</span></h3>
@@ -136,7 +136,7 @@ rising line is a theme that kept ranking stocks well.
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel adds up each theme composite's IC with the forward 20-session sector-relative Sharpe target; hovering gives each theme's mean IC over the period.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. These full-period signs are for description only; the models learn signs from their training windows. The dendrogram (average linkage on 1 − |ρ|, since a mirrored predictor carries the same information) is fitted once on 1998–2021 so that periods stay comparable. The lower panel adds up each theme composite's IC with the forward 20-session sector-relative Sharpe target; hovering gives each theme's mean IC over the period.</p>
 
 Over the full period, volatility is the most coherent theme: its predictors
 correlate 0.71 on average. Momentum &amp; trend and Size are the least
@@ -281,7 +281,8 @@ $c=100$ its IC, 0.046, is essentially the equal-weight score's 0.047.
 </table>
 
 I use $c=0.1$, which has the highest development IC, the most direct measure
-of how well a score ranks the target. The choice is not sensitive: choosing
+of how well a score ranks the target; $c$ of 0 to 0.01 has a marginally
+higher Sharpe, 0.99 against 0.98, well inside the spread across schedules. The choice is not sensitive: choosing
 $c$ at each refit from the earlier prediction blocks alone picks 0.01 (once
 OLS) through 2010 and 0.1 at five of the six refits from 2012, including every
 refit that predicts after 2021. At $c=0.1$, 44–48 of the 80 directions have a variance below 0.1 and
@@ -358,7 +359,9 @@ comes from the bottom decile. The volatility sort remains.
 
 Through 2021 learning the weights pays: Ridge's Sharpe is 0.98 against 0.82
 for equal weights, with a higher return, lower volatility and a shallower
-drawdown, and OLS does as well as Ridge. The schedules overlap, though:
+drawdown. OLS does as well as Ridge in both periods, so the penalty is a
+detail here; what matters is learning the weights at all. The schedules
+overlap, though:
 Ridge's worst, 0.89, is below the best equal-weight schedule, 0.93. The
 learned scores trade a little more, 28× a year against 26×, and the edge
 survives costs up to about 28 bp per dollar traded, more than five times the
@@ -368,6 +371,14 @@ After 2021 both scores earn less, but the gap holds: Ridge's Sharpe is 0.73
 against 0.52, with a higher return and lower volatility, and its worst
 schedule, 0.67, is above the best equal-weight schedule, 0.61. The edge
 survives costs up to about 43 bp.
+
+Both scores lean toward larger stocks. Ridge's long candidates sit on average
+at the 62nd market-cap percentile of the universe through 2021 and its short
+candidates at the 31st, and the gap widens after 2021, to the 70th and 23rd.
+That is the target at work: within the Russell 1000, larger mostly means
+calmer. Size also ranked the target better after 2009 than before, so part of
+the gain may be that exposure paying off. Whether to keep the tilt is a
+portfolio construction question rather than a modelling one.
 
 <div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the equal-weight and Ridge scores, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=4" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; Table 4 gives the same comparison.</p></noscript>
