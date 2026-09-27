@@ -31,6 +31,11 @@ measure, how much they overlap and whether their usefulness is stable. Then I
 compare equal weights with weights learned by ordinary least squares (OLS) and
 Ridge.
 
+My predictors are mostly built from prices and trading activity, but the
+approach is general: fundamentals, analyst estimates or alternative data would
+enter the same way, as ranked columns in one regression. What would change are
+some of the settings, which I come back to at the end.
+
 ## Setup
 {: #what-i-ask-the-model-to-predict }
 
@@ -223,8 +228,8 @@ reasonable trade-off. A gap of about a month between each training window and
 its predictions lets the 20-session targets finish first. Within each window I
 fit three models on interleaved dates (1, 4, 7, …; 2, 5, 8, …; 3, 6, 9, …) and
 average their predictions, which thins the overlap between neighbouring
-targets within each fit. Until a long-window predictor has enough history, it
-takes its date-and-sector mean.
+targets within each fit. A missing predictor value, including a long-window
+predictor before it has enough history, takes its date-and-sector mean.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded test period." version="6" %}
@@ -461,15 +466,36 @@ volatility rose, and that is what lowered its Sharpe. In the April 2025–May
 rose almost equally, and it made roughly nothing.
 
 So I would keep Ridge with a light penalty as the ranking, and treat its lean
-toward calm, large stocks as an exposure to manage rather than as skill. Two
-questions stay open. The expanding window weights 1995–2008 as heavily as the
-recent decade, and Figure 1 shows the themes changed between them, so a
-rolling window might adapt better. And a target that separates return from
-risk would show how much of the edge survives once the volatility forecast is
-taken out. The
-[optimization article](/quants/2026/08/29/portfolio-optimization.html)
-takes up the portfolio side, controlling portfolio risk and market exposure
-directly.
+toward calm, large stocks as an exposure to manage rather than as skill.
+
+## What I skimmed over
+
+My aim was a framework for combining predictors more than a verdict on each
+choice along the way, and several of those choices got a sentence where they
+deserve an article of their own:
+
+- **The model.** Ridge is linear and additive. Tree models can pick up
+  interactions and non-linear effects, such as a momentum effect that differs
+  between calm and volatile stocks, at the cost of more tuning and more ways to
+  overfit.
+- **The target.** One paragraph motivates a 20-session, sector-relative Sharpe
+  target. A target that separates return from risk would show how much of the
+  edge survives once the volatility forecast is taken out, and the horizon is
+  an open choice too.
+- **Normalization.** I rank the target within sectors but the predictors
+  across the whole universe, so a predictor can still carry sector information
+  the target has removed. Ranking predictors within sectors, or neutralizing
+  them to sector and size, is a reasonable alternative I didn't test.
+- **Missing values.** Filling with the date-and-sector mean is harmless for
+  price data with short gaps. For fundamentals, estimates or alternative data,
+  where coverage is patchy and a missing value can itself carry information,
+  it deserves more care, as do the fast refit schedule and short horizon.
+- **The training window.** The expanding window weights 1995–2008 as heavily
+  as the recent decade, and Figure 1 shows the themes changed between them, so
+  a rolling or down-weighted window might adapt better.
+- **The portfolio.** One plain rule turns scores into positions. The
+  [optimization article](/quants/2026/08/29/portfolio-optimization.html)
+  controls portfolio risk and market exposure directly.
 
 ## References
 
