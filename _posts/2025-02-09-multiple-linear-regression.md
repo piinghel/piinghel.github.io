@@ -227,10 +227,10 @@ targets within each fit. Until a long-window predictor has enough history, it
 takes its date-and-sector mean.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded test period." version="4" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded test period." version="5" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit, labelled by the year of its first prediction. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the test period. The month-long gap between training and predictions is too short to see at this scale.</p>
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the test period; the month-long gap between training and predictions is too short to see at this scale.</p>
 
 Every prediction is made by a model that has not seen that date, so the
 walk-forward keeps the weights out of sample. My own choices are a different

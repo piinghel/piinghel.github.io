@@ -41,7 +41,8 @@ def render(*, dark: bool, mobile: bool) -> None:
         "predict": "#6eb5a5" if dark else "#378579",
         "test": "#1b222b" if dark else "#f1f3f5",
     }
-    size = 10.5 if mobile else 11
+    # Point sizes that render at roughly 12-13 CSS px at each viewport's display width.
+    label, tick = (12, 11.5) if mobile else (10.5, 10)
     refits = windows()
     num = mdates.date2num
     with plt.rc_context(
@@ -52,33 +53,35 @@ def render(*, dark: bool, mobile: bool) -> None:
             "svg.hashsalt": "mlr-walk-forward",
         }
     ):
-        fig, ax = plt.subplots(figsize=(4.8, 4.8) if mobile else (8.4, 4.0))
+        fig, ax = plt.subplots(figsize=(4.8, 4.6) if mobile else (8.4, 3.7))
         fig.set_facecolor(c["bg"])
         ax.set_facecolor(c["bg"])
         ax.axvspan(num(TEST_START), num(LAST_DATE), color=c["test"], zorder=0, linewidth=0)
         for row, (train_end, start, end) in enumerate(refits):
             ax.barh(row, num(train_end) - num(TRAIN_START), left=num(TRAIN_START),
-                    height=0.62, color=c["train"], zorder=2)
+                    height=0.6, color=c["train"], zorder=2)
             ax.barh(row, num(end) - num(start), left=num(start),
-                    height=0.62, color=c["predict"], zorder=2)
-        _, _, first_end = refits[0]
-        ax.annotate("Training", (num(TRAIN_START), len(refits) - 1), xytext=(5, 0),
-                    textcoords="offset points", va="center", ha="left", fontsize=size - 1.5,
+                    height=0.6, color=c["predict"], zorder=2)
+        # Name both blocks on one row that is wide enough for them, so they read together.
+        label_row = 2
+        ax.annotate("Training", (num(TRAIN_START), label_row), xytext=(5, 0),
+                    textcoords="offset points", va="center", ha="left", fontsize=label,
                     color=c["ink"], zorder=3)
-        ax.annotate("Predictions", (num(first_end), 0), xytext=(5, 0), textcoords="offset points",
-                    va="center", ha="left", fontsize=size - 1.5, color=c["predict"], zorder=3)
-        for x, label in ((dt.date(2008, 1, 1), "Development"),
-                         (TEST_START + (LAST_DATE - TEST_START) / 2, "Test")):
-            ax.annotate(label, (num(x), -1.0), ha="center", va="bottom", fontsize=size - 1,
+        ax.annotate("Predictions", (num(refits[label_row][2]), label_row), xytext=(5, 0),
+                    textcoords="offset points", va="center", ha="left", fontsize=label,
+                    color=c["predict"], zorder=3)
+        for x, text in ((TRAIN_START + (TEST_START - TRAIN_START) / 2, "Development"),
+                        (TEST_START + (LAST_DATE - TEST_START) / 2, "Test")):
+            ax.annotate(text, (num(x), -1.0), ha="center", va="bottom", fontsize=label,
                         color=c["muted"], annotation_clip=False)
-        ax.set_yticks(range(len(refits)), [str(start.year) for _, start, _ in refits])
-        ax.set_ylim(len(refits) - 0.4, -1.2)
-        ax.set_xlim(num(dt.date(1994, 7, 1)), num(dt.date(2026, 12, 31)))
+        ax.set_yticks([])
+        ax.set_ylim(len(refits) - 0.4, -1.3)
+        ax.set_xlim(num(dt.date(1994, 10, 1)), num(LAST_DATE))
         ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
         ax.spines[:].set_visible(False)
-        ax.tick_params(length=0, colors=c["muted"], labelsize=size - 1)
-        fig.subplots_adjust(left=0.13 if mobile else 0.07, right=0.98, top=0.93, bottom=0.08)
+        ax.tick_params(length=0, colors=c["muted"], labelsize=tick)
+        fig.subplots_adjust(left=0.03, right=0.97, top=0.95, bottom=0.09 if mobile else 0.1)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = OUT / f"expanding-walk-forward{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
