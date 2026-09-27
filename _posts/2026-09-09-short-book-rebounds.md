@@ -213,4 +213,4 @@ Kent Daniel and Tobias Moskowitz, [*Momentum Crashes*](https://www.kentdaniel.ne
 *Journal of Financial Economics*, 2016, Sections 2–3. Their rebound mechanism
 motivates the comparison with the observed holdings here.
 
-[^portfolio-version]: These results use an earlier version of the optimizer portfolio: the 144-predictor Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses [TBD: ranking] and a multiplier re-estimated on development data, so its numbers differ from those here.
+[^portfolio-version]: These results use an earlier version of the optimizer portfolio, built on an earlier version of the Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses the current ranking and a multiplier re-estimated on development data, so its numbers differ from those here.

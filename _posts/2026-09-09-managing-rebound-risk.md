@@ -230,4 +230,4 @@ factor model's normalization inherits Part 1's sector labels.
 The trading rules use decision-time prices and descriptors.
 </aside>
 
-[^portfolio-version]: These results use an earlier version of the optimizer portfolio: the 144-predictor Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses [TBD: ranking] and a multiplier re-estimated on development data, so its numbers differ from those here.
+[^portfolio-version]: These results use an earlier version of the optimizer portfolio, built on an earlier version of the Ridge ranking and a volatility multiplier of 1.18. The [optimizer article](/quants/2026/08/29/portfolio-optimization.html) now uses the current ranking and a multiplier re-estimated on development data, so its numbers differ from those here.
