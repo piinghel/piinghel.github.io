@@ -79,20 +79,15 @@ a framework migration would not strengthen the research.
 
 ## Figure sources
 
-The tree-model comparison keeps the original horizon-table aggregates in
-`assets/tree-model-comparison/metrics.json` and its disjoint-period figure inputs
-in `assets/tree-model-comparison/period-metrics.json`. Regenerate both figures
-(forecast mean/SD/ICIR and forecast–portfolio associations), including light/dark
-and phone variants, with `python3 scripts/render_tree_comparison.py`.
-The period inputs are the 16 `matched_dates` rows from the retained research
-diagnostic `tree_model_comparison/outputs/ranked-xgboost/review/ic-portfolio-periods-20260912/summary.json`.
-They contain only aggregate results. The source diagnostic, including endpoint
-sensitivities, is reproduced with `review/ic_portfolio_periods.py` in that study.
+The tree-model comparison (LightGBM against Ridge on the 80 predictors) renders its
+one figure from `assets/tree-model-comparison/relative-growth.json`, exported from
+factor_combination's `tree_comparison_2026_09_27/sweep` output by
+`python3 scripts/render_tree_comparison.py --sweep <that folder>`; without
+`--sweep` it re-renders the light/dark and phone variants from the saved JSON.
 
 The hybrid risk-model article is `_posts/2026-09-13-hybrid-risk-model.md`. Its retained
 aggregate inputs are `assets/hybrid-risk-model/metrics.json`; regenerate the
-calibration plot with `python3 scripts/render_hybrid_risk.py` and the symbolic
-block-matrix diagram with `python3 scripts/render_risk_matrices.py`. The article
+calibration plot with `python3 scripts/render_hybrid_risk.py`. The article
 is currently unpublished (`published: false`); its retained permalink is
 `/quants/hybrid-risk-model.html`.
 
