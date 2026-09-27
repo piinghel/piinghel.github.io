@@ -66,8 +66,8 @@ between a predictor, or a score, and the target on one date.
 
 I use a pool of 80 well-known predictors, mostly built from prices and trading
 activity, in seven themes. Each theme comes with an economic story for why it
-might rank the target;[^theme-references] where the data here disagree with
-the story, I say so.
+might rank the target (references at the end); where the data here disagree
+with the story, I say so.
 
 <div class="theme-cards" markdown="0">
   <section class="theme-card" style="--theme-color: var(--theme-1)">
@@ -214,20 +214,23 @@ Ridge becomes a weighted version of the equal-weight score.
 I use an expanding window starting in January 1995. A rolling window would
 adapt faster when predictors change, as Figure 1 shows they do, but each fit
 would see less data and the weights would move more between refits; an
-expanding window favours stable weights. The first training window contains
-900 trading dates, and a 21-date gap lets the forward 20-session outcomes
-finish before predictions begin. I then refit every 600 dates, keeping the
-January 1995 start, so each refit adds history (Figure 2). Within each window
-I fit three models on interleaved dates (1, 4, 7, …; 2, 5, 8, …; 3, 6, 9, …)
-and average their predictions, which thins the overlap between neighbouring
+expanding window favours stable weights. The first fit uses about three and a
+half years of history, and I refit roughly every two and a half years, keeping
+the 1995 start, so each refit adds history (Figure 2). Refitting more often
+would let the weights follow changes sooner, at the cost of more compute;
+since the weights move slowly (Figure 5), every two and a half years is a
+reasonable trade-off. A gap of about a month between each training window and
+its predictions lets the 20-session targets finish first. Within each window I
+fit three models on interleaved dates (1, 4, 7, …; 2, 5, 8, …; 3, 6, 9, …) and
+average their predictions, which thins the overlap between neighbouring
 targets within each fit. Until a long-window predictor has enough history, it
 takes its date-and-sector mean.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="3" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded test period." version="4" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Widths are schematic; the final prediction block can be shorter.</p>
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit, labelled by the year of its first prediction. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the test period. The month-long gap between training and predictions is too short to see at this scale.</p>
 
 Every prediction is made by a model that has not seen that date, so the
 walk-forward keeps the weights out of sample. My own choices are a different
@@ -468,4 +471,12 @@ taken out. The
 takes up the portfolio side, controlling portfolio risk and market exposure
 directly.
 
-[^theme-references]: Momentum: Jegadeesh and Titman, *Returns to Buying Winners and Selling Losers*, Journal of Finance, 1993; Da, Gurun and Warachka, *Frog in the Pan*, Review of Financial Studies, 2014. Reversal: Jegadeesh, *Evidence of Predictable Behavior of Security Returns*, Journal of Finance, 1990; Lehmann, *Fads, Martingales, and Market Efficiency*, Quarterly Journal of Economics, 1990. Volatility: Ang, Hodrick, Xing and Zhang, *The Cross-Section of Volatility and Expected Returns*, Journal of Finance, 2006; Baker, Bradley and Wurgler, *Benchmarks as Limits to Arbitrage*, Financial Analysts Journal, 2011; Bali, Cakici and Whitelaw, *Maxing Out*, Journal of Financial Economics, 2011. Trading volume: Lee and Swaminathan, *Price Momentum and Trading Volume*, Journal of Finance, 2000. Illiquidity: Amihud, *Illiquidity and Stock Returns*, Journal of Financial Markets, 2002. Size: Banz, *The Relationship Between Return and Market Value of Common Stocks*, Journal of Financial Economics, 1981; Asness, Frazzini, Israel, Moskowitz and Pedersen, *Size Matters, If You Control Your Junk*, Journal of Financial Economics, 2018. Market correlation: Frazzini and Pedersen, *Betting Against Beta*, Journal of Financial Economics, 2014; Asness, Frazzini, Gormsen and Pedersen, *Betting Against Correlation*, Journal of Financial Economics, 2020. Short positioning: Boehmer, Jones and Zhang, *Which Shorts Are Informed?*, Journal of Finance, 2008; Hong, Li, Ni, Scheinkman and Yan, *Days to Cover and Stock Returns*, NBER working paper, 2015.
+## References
+
+- **Momentum:** Jegadeesh and Titman (1993), *Returns to Buying Winners and Selling Losers*; Da, Gurun and Warachka (2014), *Frog in the Pan*.
+- **Reversal:** Jegadeesh (1990), *Evidence of Predictable Behavior of Security Returns*; Lehmann (1990), *Fads, Martingales, and Market Efficiency*.
+- **Volatility:** Ang, Hodrick, Xing and Zhang (2006), *The Cross-Section of Volatility and Expected Returns*; Baker, Bradley and Wurgler (2011), *Benchmarks as Limits to Arbitrage*; Bali, Cakici and Whitelaw (2011), *Maxing Out*.
+- **Size:** Banz (1981), *The Relationship Between Return and Market Value of Common Stocks*; Asness et al. (2018), *Size Matters, If You Control Your Junk*.
+- **Liquidity and volume:** Amihud (2002), *Illiquidity and Stock Returns*; Lee and Swaminathan (2000), *Price Momentum and Trading Volume*.
+- **Market correlation:** Frazzini and Pedersen (2014), *Betting Against Beta*; Asness et al. (2020), *Betting Against Correlation*.
+- **Short positioning:** Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
