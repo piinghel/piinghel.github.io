@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Combining Multiple Predictors: The Linear Case"
-description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal theme weights."
+description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
 last_modified_at: 2026-09-27
 categories: ["Signals"]
@@ -171,18 +171,16 @@ about half of each composite's variance unexplained by the other, and that
 part can carry its own information. The question for a learned combination is
 whether weights fitted on one decade still suit the next.
 
-## Four ways to combine them
+## Three ways to combine them
 {: #combining-them }
 
-The simplest combination gives every theme the same weight. In the
-*theme-equal* score, each of the seven themes receives one seventh of the
-weight, split equally among its predictors. The only thing it learns from
-data is a direction: each predictor enters with the sign of its correlation
-with the target in the training window, so lower volatility counts in a
-stock's favour because it did so in the past, not because I assumed it. An
-*equal-weight* variant gives each of the 80 predictors 1/80 instead. Momentum
-&amp; trend then holds 33 of the 80 weights simply because it has the most
-predictors.
+The simplest, most naive combination gives every predictor the same weight,
+1/80. The only thing this *equal-weight* score learns from data is a
+direction: each predictor enters with the sign of its correlation with the
+target in the training window, so lower volatility counts in a stock's favour
+because it did so in the past, not because I assumed it. Momentum &amp; trend
+then carries 33 of the 80 weights simply because it has the most predictors,
+which is one thing a regression can correct.
 
 The regressions learn the weights instead. Fitting them jointly makes each
 one conditional: the coefficient on the 12-month return measures its
@@ -263,7 +261,8 @@ subject of the [optimization article](/quants/2026/08/29/portfolio-optimization.
 The penalty hardly matters until it is large enough to wash out the
 regression's differences between predictors. Up to $c=0.1$, development IC and
 Sharpe barely move (Table 2). From $c=1$, Ridge drifts toward the equal-weight
-score: its volatility rises toward the baselines' 9% and its Sharpe falls. At
+score: its volatility rises toward the equal-weight score's 9% and its Sharpe
+falls. At
 $c=100$ its IC, 0.046, is essentially the equal-weight score's 0.047.
 
 <table class="research-table comparison-table">
@@ -300,24 +299,20 @@ correlation of 0.94.
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Theme-equal</th><td>0.0383</td><td>0.0965</td><td>0.397</td></tr>
     <tr><th scope="row">Equal-weight</th><td>0.0467</td><td>0.1049</td><td>0.445</td></tr>
     <tr><th scope="row">OLS</th><td>0.0466</td><td>0.0834</td><td>0.558</td></tr>
     <tr><th scope="row">Ridge</th><td>0.0481</td><td>0.0900</td><td>0.534</td></tr>
     <tr class="period-heading"><th colspan="4">Later · January 2022–April 2026</th></tr>
-    <tr><th scope="row">Theme-equal</th><td>0.0349</td><td>0.1097</td><td>0.318</td></tr>
     <tr><th scope="row">Equal-weight</th><td>0.0384</td><td>0.1337</td><td>0.287</td></tr>
     <tr><th scope="row">OLS</th><td>0.0412</td><td>0.1087</td><td>0.379</td></tr>
     <tr><th scope="row">Ridge</th><td>0.0422</td><td>0.1218</td><td>0.346</td></tr>
   </tbody>
 </table>
 
-The regressions rank stocks more steadily than equal weights in both periods.
-Through 2021 Ridge's mean IC, 0.048, is close to the equal-weight score's
-0.047, but its day-to-day variation is smaller, so the IC IR is 0.53 against
-0.45. Theme-equal weighting ranks worst on average; it gives the two weakest
-themes, market correlation and reversal, as much weight as momentum and
-volatility.
+The regressions rank stocks more steadily than equal weights. Through 2021
+Ridge's mean IC, 0.048, is close to the equal-weight score's 0.047, but its
+day-to-day variation is smaller, so the IC IR is 0.53 against 0.45. After
+2021 the gap in mean IC widens a little, 0.042 against 0.038.
 
 Before looking at portfolios, I want to know how each score orders returns.
 Figure 3 sorts the universe into ten equal-weighted decile portfolios by
@@ -327,21 +322,22 @@ score, re-formed on the same three-week schedules and before costs.
   <button type="button" role="radio" aria-checked="true" data-decile-period="development">1998–2021</button>
   <button type="button" role="radio" aria-checked="false" data-decile-period="later">2022–2026</button>
 </div>
-<div class="mlr-plot" id="mlr-deciles" role="img" aria-label="Annual return of ten equal-weighted decile portfolios for the Ridge and theme-equal scores" data-source="/assets/multiple-linear-regression/regression-results.json?v=3" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<div class="mlr-plot" id="mlr-deciles" role="img" aria-label="Annual return of ten equal-weighted decile portfolios for the Ridge and equal-weight scores" data-source="/assets/multiple-linear-regression/regression-results.json?v=4" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <div class="research-table-scroll"><table class="research-table comparison-table decile-table" id="mlr-decile-table"></table></div>
 <noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
 
 <p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Compounded annual return of equal-weighted portfolios of the stocks in each score decile, with each decile's annualized volatility and Sharpe ratio below. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
 
 Through 2021 Ridge's deciles climb from about 3% a year to 16%, and the top
-decile earns a Sharpe ratio of 0.90 against 0.26 at the bottom. The
-theme-equal score orders returns less sharply at the top: its deciles 6–10 all
-earn about 12%. What stands out most, though, is volatility. For both scores
-it falls steadily from about 30% in decile 1 to 18% in decile 10. As the
-target suggested, much of what these scores learn is a volatility sort. After
-2021 the return ordering almost disappears above decile 3: Ridge's deciles
-3–10 all earn 6–10%, and most of the spread comes from the bottom decile, at
-−1%. The volatility sort remains.
+decile earns a Sharpe ratio of 0.90 against 0.26 at the bottom. Equal weights
+reach almost the same top-decile Sharpe, 0.89, by a different route: 13.5% a
+year at 15.7% volatility, against Ridge's 15.9% at 18.2%. What stands out most
+is volatility. For both scores it falls steadily from around 30% in decile 1
+to 16–18% in decile 10, and more steeply for equal weights. As the target
+suggested, much of what these scores learn is a volatility sort. After 2021
+the return ordering almost disappears above decile 3: Ridge's deciles 3–10 all
+earn 6–10%, the equal-weight top decile only 6.1%, and most of the spread
+comes from the bottom decile. The volatility sort remains.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Return and volatility are annualized; beta is measured against the Russell 1000.</caption>
@@ -350,36 +346,33 @@ target suggested, much of what these scores learn is a volatility sort. After
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Theme-equal</th><td>6.54%</td><td>9.04%</td><td>0.72<br><small>(0.67–0.82)</small></td><td>−21.9%</td><td>0.13</td><td>132%</td><td>24.1×</td></tr>
     <tr><th scope="row">Equal-weight</th><td>7.52%</td><td>9.20%</td><td>0.82<br><small>(0.74–0.93)</small></td><td>−24.9%</td><td>0.11</td><td>134%</td><td>25.9×</td></tr>
     <tr><th scope="row">OLS</th><td>7.31%</td><td>7.37%</td><td>0.99<br><small>(0.90–1.05)</small></td><td>−18.7%</td><td>0.09</td><td>139%</td><td>29.0×</td></tr>
     <tr><th scope="row">Ridge</th><td>7.90%</td><td>8.05%</td><td>0.98<br><small>(0.89–1.16)</small></td><td>−19.8%</td><td>0.10</td><td>138%</td><td>28.4×</td></tr>
     <tr class="period-heading"><th colspan="8">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Theme-equal</th><td>7.29%</td><td>9.77%</td><td>0.75<br><small>(0.59–0.83)</small></td><td>−8.2%</td><td>0.25</td><td>127%</td><td>20.8×</td></tr>
     <tr><th scope="row">Equal-weight</th><td>6.00%</td><td>11.44%</td><td>0.52<br><small>(0.45–0.61)</small></td><td>−10.7%</td><td>0.07</td><td>131%</td><td>21.4×</td></tr>
     <tr><th scope="row">OLS</th><td>6.37%</td><td>9.18%</td><td>0.69<br><small>(0.67–0.73)</small></td><td>−8.5%</td><td>0.06</td><td>134%</td><td>25.9×</td></tr>
     <tr><th scope="row">Ridge</th><td>7.39%</td><td>10.16%</td><td>0.73<br><small>(0.67–0.83)</small></td><td>−9.4%</td><td>0.07</td><td>132%</td><td>24.4×</td></tr>
   </tbody>
 </table>
 
-Through 2021 learning the weights pays: Ridge's Sharpe is 0.98 against 0.72
-for theme-equal weights and 0.82 for equal weights, with a higher return, lower
-volatility and a shallower drawdown. Its worst schedule, 0.89, is above the
-best theme-equal schedule, 0.82. OLS does as well as Ridge. The learned scores
-trade more, 28× a year against 24×, but the edge survives costs up to about
-35 bp per dollar traded, seven times the 5 bp charged here. Costs exclude
-borrow, financing and market impact.
+Through 2021 learning the weights pays: Ridge's Sharpe is 0.98 against 0.82
+for equal weights, with a higher return, lower volatility and a shallower
+drawdown, and OLS does as well as Ridge. The schedules overlap, though:
+Ridge's worst, 0.89, is below the best equal-weight schedule, 0.93. The
+learned scores trade a little more, 28× a year against 26×, and the edge
+survives costs up to about 28 bp per dollar traded, more than five times the
+5 bp charged here. Costs exclude borrow, financing and market impact.
 
-After 2021 the edge is gone. Ridge's Sharpe of 0.73 is level with
-theme-equal's 0.75, well inside the spread across schedules. With a market
-beta of 0.25, some of theme-equal's later return likely came from a rising
-market.
-Equal weights on all 80 predictors do worst, at 0.52.
+After 2021 both scores earn less, but the gap holds: Ridge's Sharpe is 0.73
+against 0.52, with a higher return and lower volatility, and its worst
+schedule, 0.67, is above the best equal-weight schedule, 0.61. The edge
+survives costs up to about 43 bp.
 
-<div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the theme-equal and Ridge scores, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=3" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the equal-weight and Ridge scores, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=4" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; Table 4 gives the same comparison.</p></noscript>
 
-<p class="figure-caption"><strong>Figure 4: Portfolio paths of the theme-equal and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+<p class="figure-caption"><strong>Figure 4: Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
 
 ## What Ridge learned
 {: #reading-the-predictors }
@@ -388,9 +381,9 @@ Figure 5 shows the ten largest average absolute Ridge weights at each refit.
 A positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
-<div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=3" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=4" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
-<script src="/assets/js/regression-results.js?v=8" defer></script>
+<script src="/assets/js/regression-results.js?v=9" defer></script>
 
 <p class="figure-caption"><strong>Figure 5: The ten largest Ridge coefficients by refit.</strong> Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows are ranked by mean absolute coefficient over all refits; hover for each predictor's full definition.</p>
 
@@ -412,17 +405,16 @@ refit to 0.003 at the last, and Amihud illiquidity's from −0.022 to −0.008.
 Momentum &amp; trend takes 45% of the absolute weight, and the 25 predictors
 with windows of 21 sessions or less take 31%. Those short windows make the
 score change faster: its rank correlation with itself 15 sessions later is
-0.67 through 2021, against 0.76 for theme-equal weights, which is why Ridge
+0.67 through 2021, against 0.76 for equal weights, which is why Ridge
 trades more.
 
 ## Where this leaves me
 
-Through 2021, learning the weights clearly beats giving each theme or each
-predictor the same weight: a Sharpe of 0.98 against 0.72 and 0.82, on every
-schedule, and at costs well above the ones I charge. After 2021 the advantage
-disappears, and the theme-equal score does as well with far less machinery.
+Learning the weights beats the most naive combination, equal weights on every
+predictor: a Sharpe of 0.98 against 0.82 through 2021 and 0.73 against 0.52
+after, with a little more trading and at costs well above the ones I charge.
 The penalty barely matters in the range that works; pushed further, Ridge
-simply turns back into an equal-weight score.
+simply turns back into the equal-weight score.
 
 The decile portfolios changed how I read these results. A large part of every
 score is a volatility sort, which the Sharpe target rewards. That is useful

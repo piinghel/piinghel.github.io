@@ -1,4 +1,4 @@
-/* Regression article (Plotly): decile portfolios of the theme-equal and Ridge scores,
+/* Regression article (Plotly): decile portfolios of the equal-weight and Ridge scores,
    their growth and drawdown, and the ten largest Ridge coefficients by refit.
    Data: regression-results.json. */
 (function () {
@@ -10,7 +10,7 @@
   const plots = [decileEl, growthEl, coefEl].filter(Boolean);
   if (!plots.length) return;
   const source = plots[0].dataset.source;
-  const MODELS = { 'Theme-equal': '--model-baseline', Ridge: '--model-ridge' };
+  const MODELS = { 'Equal-weight': '--model-baseline', Ridge: '--model-ridge' };
   const decileState = { period: 'development' };
   let data = null;
 

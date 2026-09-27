@@ -115,7 +115,7 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
 
 def export_results(evidence: Path, predictors: Path) -> dict:
     growth = pl.read_csv(evidence / "growth_drawdown.csv").sort("date")
-    plotted = ["theme_equal", "ridge_0p1"]
+    plotted = ["equal_weight", "ridge_0p1"]
     dates = growth.filter(pl.col("model") == plotted[0])["date"].to_list()
     if any(growth.filter(pl.col("model") == m)["date"].to_list() != dates for m in plotted):
         raise ValueError("the plotted scores must share their common dates")
