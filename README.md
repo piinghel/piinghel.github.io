@@ -18,8 +18,8 @@ bundle exec jekyll serve
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:
 low-volatility sizing → regression → portfolio construction and risk concentration
-→ P&L attribution 1–3 → resources. The tranching, hybrid risk-model and
-tree-model articles are unpublished (`published: false`) and out of the sequence
+→ P&L attribution 1–3 → resources. The tranching and hybrid
+risk-model articles are unpublished (`published: false`) and out of the sequence
 until they are rebuilt; their assets stay in place.
 The homepage lists posts newest first, with the publication date and topic on
 every entry; posts published on the same day list the latest part first (Part 3,
@@ -92,7 +92,6 @@ for byte), run the renderer from this directory, then
 | Attribution Part 3 | 1 | `scripts/render_attribution_series.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
 | Hybrid risk model | 1 | `scripts/render_hybrid_risk.py` |
-| Tree models | 1 | `scripts/render_tree_comparison.py` |
 
 The regression evidence and its provenance are described in
 [`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence/README.md).
