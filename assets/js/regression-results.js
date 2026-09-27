@@ -83,7 +83,7 @@
         line: { color: cssVar('--muted-ink'), width: 1, dash: 'dot' } }],
       annotations: [
         { x: TEST_START, xref: 'x', y: growthDomain[0] + 0.02, yref: 'paper', xanchor: 'left', yanchor: 'bottom',
-          xshift: 4, text: 'Test period', showarrow: false, font: { size: 11, color: cssVar('--muted-ink') } },
+          xshift: 4, text: 'Later period', showarrow: false, font: { size: 11, color: cssVar('--muted-ink') } },
         heading('Growth of $1 (log scale)', 1.0, margin.l - 4),
         heading('Drawdown (%)', drawdownDomain[1] + 0.03, margin.l - 4),
         ...endLabels(names, last, range, panelPx),
