@@ -31,11 +31,6 @@ measure, how much they overlap and whether their usefulness is stable. Then I
 compare equal weights with weights learned by ordinary least squares (OLS) and
 Ridge.
 
-My predictors are mostly built from prices and trading activity, but the
-approach is general: fundamentals, analyst estimates or alternative data would
-enter the same way, as ranked columns in one regression. What would change are
-some of the settings, which I come back to at the end.
-
 ## Setup
 {: #what-i-ask-the-model-to-predict }
 
@@ -44,8 +39,7 @@ five dollars, announced merger targets and duplicate share classes.
 
 The target is each stock's forward 20-session Sharpe ratio: mean daily return
 divided by daily return volatility over the next 20 sessions, roughly a
-trading month. Other targets would be reasonable too, such as the raw forward
-return, a longer horizon or a return net of market and sector moves. I use a
+trading month. I use a
 risk-adjusted target because the portfolio sizes positions by inverse
 volatility, so return per unit of risk is what it earns. Twenty sessions is
 short enough for predictors built from prices and trading activity, many of
@@ -148,11 +142,8 @@ correlate 0.71 on average. Momentum &amp; trend and Size are the least
 coherent, at 0.15. Momentum &amp; trend spans horizons from days to three
 years, and 43% of its signed pairs are negatively correlated: after the flip,
 trading well above the 10-day average counts against a stock, while a strong
-12-month return counts for it. The dendrogram agrees: cut into seven clusters,
-it matches the themes for about three quarters of the predictors, and the
-exceptions are informative. The 5–21-day price-position measures join
-short-term reversal, market-cap variability joins volatility, and the
-market-cap change measures join the longer momentum horizons. Although there
+12-month return counts for it. Cut into seven clusters, the dendrogram
+matches the themes for about three quarters of the predictors. Although there
 are 80 predictors, ten principal components carry nearly three quarters of
 their variance.
 
@@ -170,10 +161,8 @@ the same split. Volatility and size strengthen, from about 0.02 to about 0.05,
 which makes them the two strongest themes after 2009. Market correlation has a
 negative IC in 7 of the 11 years through 2008 and in only one year after.
 
-Overlap does not make a theme redundant. A correlation of 0.72 still leaves
-about half of each composite's variance unexplained by the other, and that
-part can carry its own information. The question for a learned combination is
-whether weights fitted on one decade still suit the next.
+The question for a learned combination is whether weights fitted on one
+decade still suit the next.
 
 ## Three ways to combine them
 {: #combining-them }
@@ -204,32 +193,20 @@ $$
 
 where $\mathbf z_{i,t}$ holds stock $i$'s 80 predictor ranks on date $t$, $n$
 is the number of stock-date rows and the intercept $a$ is unpenalized; $c=0$
-gives OLS. The penalty acts on combinations of predictors: along a direction
-whose variance across stock-dates is $\lambda$, Ridge multiplies the OLS
-coefficient by $\lambda/(\lambda+c)$. Directions in which the predictors
-barely vary, such as the difference between two nearly identical momentum
-horizons, are shrunk the most ([Hastie](https://arxiv.org/abs/2006.00371)
-explains this view well). As $c$ grows, the coefficients become proportional
+gives OLS. Ridge shrinks most along directions in which the predictors barely
+vary, such as the difference between two nearly identical momentum horizons
+([Hastie](https://arxiv.org/abs/2006.00371) explains this view well). As $c$ grows, the coefficients become proportional
 to each predictor's own covariance with the target, so a heavily penalized
 Ridge becomes a weighted version of the equal-weight score.
 
 ## Fitting through time
 {: #from-predictions-to-portfolios }
 
-I use an expanding window starting in January 1995. A rolling window would
-adapt faster when predictors change, as Figure 1 shows they do, but each fit
-would see less data and the weights would move more between refits; an
-expanding window favours stable weights. The first fit uses about three and a
-half years of history, and I refit roughly every two and a half years, keeping
-the 1995 start, so each refit adds history (Figure 2). Refitting more often
-would let the weights follow changes sooner, at the cost of more compute;
-since the weights move slowly (Figure 5), every two and a half years is a
-reasonable trade-off. A gap of about a month between each training window and
-its predictions lets the 20-session targets finish first. Within each window I
-fit three models on interleaved dates (1, 4, 7, …; 2, 5, 8, …; 3, 6, 9, …) and
-average their predictions, which thins the overlap between neighbouring
-targets within each fit. A missing predictor value, including a long-window
-predictor before it has enough history, takes its date-and-sector mean.
+I refit the weights on an expanding window that starts in January 1995, so
+each refit adds history (Figure 2). A rolling window would adapt faster when
+predictors change, as Figure 1 shows they do, but each fit would see less data
+and the weights would move more between refits; an expanding window favours
+stable weights.[^fitting]
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded test period." version="6" %}
@@ -237,13 +214,10 @@ predictor before it has enough history, takes its date-and-sector mean.
 
 <p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit, so predictions are out of sample in both periods. The shaded area is the test period; the month-long gap between training and predictions is too short to see at this scale.</p>
 
-Every prediction is made by a model that has not seen that date, so the
-walk-forward keeps the weights out of sample. My own choices are a different
-matter. I picked the predictors, the target, the portfolio rule and the Ridge
-penalty by looking at results through December 2021, so I treat September
-1998–December 2021 as the development period, the validation set for those
-choices, and report January 2022–May 2026 separately as the test period,
-labelled *Later* in the tables. The later period is short, about 54
+Every prediction is made by a model that has not seen that date. I chose the
+predictors, the target, the portfolio rule and the Ridge penalty on results
+through December 2021, the development period, and report January 2022–May
+2026 separately, labelled *Later* in the tables. The later period is short, about 54
 non-overlapping 20-session windows, so small differences there are noise.
 
 Every score goes through the same plain portfolio rule (Table 1). Because
@@ -265,15 +239,10 @@ article](/quants/2026/08/29/portfolio-optimization.html).
 ## Choosing the penalty
 {: #choosing-the-penalty }
 
-The penalty hardly matters until it is large enough to wash out the
-regression's differences between predictors. Up to $c=0.1$, development IC and
-Sharpe barely move (Table 2), even though the coefficients shrink to less than
-half their OLS size. The portfolio only uses the ranking of the scores, so
-shrinking every weight by the same factor would change nothing; what matters
-is how the penalty changes the weights relative to each other. From $c=1$,
-Ridge drifts toward the equal-weight score: its volatility rises toward the
-equal-weight score's 9% and its Sharpe falls. At $c=100$ its IC, 0.046, is
-essentially the equal-weight score's 0.047.
+Up to $c=0.1$, development IC and Sharpe barely move (Table 2), even though
+the coefficients shrink to less than half their OLS size; from $c=1$, Ridge
+drifts toward the equal-weight score, its volatility rising toward 9% and its
+Sharpe falling.
 
 <table class="research-table comparison-table">
   <caption><strong>Table 2: Ridge penalty on development data.</strong> September 1998–December 2021, mean of three schedules, after costs. $c=0$ is OLS. IC IR is the mean daily IC divided by its standard deviation, unannualized. Coefficient size is the average length of the coefficient vector across refits, relative to OLS.</caption>
@@ -291,15 +260,8 @@ essentially the equal-weight score's 0.047.
 </table>
 
 I use $c=0.1$, which has the highest development IC, the most direct measure
-of how well a score ranks the target; $c$ of 0 to 0.01 has a marginally higher
-Sharpe, 0.99 against 0.98, well inside the spread across schedules. Choosing
-$c$ at each refit from the earlier prediction blocks alone lands in the same
-range: 0.01 through 2010 (OLS once, and a default at the first refit, which
-has no earlier blocks) and 0.1 at five of the six refits from 2012, including
-every refit that predicts after 2021. At $c=0.1$, 44–48 of the 80 directions
-have a variance below 0.1 and are shrunk by more than half, but together they
-hold only 7–9% of the predictors' variance. OLS and Ridge scores still have a
-daily rank correlation of 0.94.
+of how well a score ranks the target; the marginally higher Sharpe of $c$ from
+0 to 0.01, 0.99 against 0.98, is well inside the spread across schedules.
 
 ## Results
 {: #prediction-quality-and-portfolio-results }
@@ -383,8 +345,8 @@ scaling gives the calmer long side larger positions; market beta stays near
 After 2021 both Sharpe ratios fall, but the gap holds: Ridge's Sharpe is 0.73
 against 0.52, with a higher return and lower volatility, and its worst
 schedule, 0.67, is above the best equal-weight schedule, 0.61. The edge
-survives costs up to about 43 bp. How much of this is luck? A block bootstrap
-of the combined daily returns puts Ridge's Sharpe advantage at about 0.2 in
+survives costs up to about 43 bp. A block bootstrap of the combined daily
+returns puts Ridge's Sharpe advantage at about 0.2 in
 both periods, with 95% intervals from roughly zero to 0.4: suggestive rather
 than conclusive. Figure 4 shows the two paths.
 
@@ -433,9 +395,7 @@ refit to 0.003 at the last, and Amihud illiquidity's from −0.022 to −0.008.
 Momentum &amp; trend takes about 45% of the absolute weight, a little more
 than its 41% under equal weights. Ridge's score also changes faster: its rank
 correlation with itself 15 sessions later is 0.67 through 2021, against 0.76
-for equal weights, which is why it trades more. Short windows don't explain
-that, since predictors of 21 sessions or less hold about 31% of the weight
-under both scores; the contrasts between horizons are the more likely source.
+for equal weights, which is why it trades more.
 
 ## What learning the weights buys
 
@@ -469,9 +429,7 @@ toward calm, large stocks as an exposure to manage rather than as skill.
 
 ## What I skimmed over
 
-My aim was a framework for combining predictors more than a verdict on each
-choice along the way, and several of those choices got a sentence where they
-deserve an article of their own:
+Two choices got a sentence where they deserve an article of their own:
 
 - **The model.** Ridge is linear and additive. Tree models can pick up
   interactions and non-linear effects, such as a momentum effect that differs
@@ -481,20 +439,6 @@ deserve an article of their own:
   target. A target that separates return from risk would show how much of the
   edge survives once the volatility forecast is taken out, and the horizon is
   an open choice too.
-- **Normalization.** I rank the target within sectors but the predictors
-  across the whole universe, so a predictor can still carry sector information
-  the target has removed. Ranking predictors within sectors, or neutralizing
-  them to sector and size, is a reasonable alternative I didn't test.
-- **Missing values.** Filling with the date-and-sector mean is harmless for
-  price data with short gaps. For fundamentals, estimates or alternative data,
-  where coverage is patchy and a missing value can itself carry information,
-  it deserves more care, as do the fast refit schedule and short horizon.
-- **The training window.** The expanding window weights 1995–2008 as heavily
-  as the recent decade, and Figure 1 shows the themes changed between them, so
-  a rolling or down-weighted window might adapt better.
-- **The portfolio.** One plain rule turns scores into positions. The
-  [optimization article](/quants/2026/08/29/portfolio-optimization.html)
-  controls portfolio risk and market exposure directly.
 
 ## References
 
@@ -505,3 +449,5 @@ deserve an article of their own:
 - **Liquidity and volume:** Amihud (2002), *Illiquidity and Stock Returns*; Lee and Swaminathan (2000), *Price Momentum and Trading Volume*.
 - **Market correlation:** Frazzini and Pedersen (2014), *Betting Against Beta*; Asness et al. (2020), *Betting Against Correlation*.
 - **Short positioning:** Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
+
+[^fitting]: The first fit uses about three and a half years of history, and I refit roughly every two and a half years. A gap of about a month between each training window and its predictions lets the 20-session targets finish first. Within each window I fit three models on interleaved dates (1, 4, 7, …; 2, 5, 8, …; 3, 6, 9, …) and average their predictions, which thins the overlap between neighbouring targets. A missing predictor value, including a long-window predictor before it has enough history, takes its date-and-sector mean.
