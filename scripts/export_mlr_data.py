@@ -27,6 +27,19 @@ SHORT_THEMES = {
     "Market correlation": "Mkt corr.",
     "Short positioning": "Shorts",
 }
+# Figure 4 row labels; the full catalogue description stays in the hover.
+SHORT_PREDICTORS = {
+    "X_feature_price_macd_10_21": "MACD 10/21",
+    "X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling": "Sharpe 126d",
+    "X_feature_market_cap_log_std504": "Mcap variability 504d",
+    "X_feature_pv_illiquidity_mean21": "Amihud illiquidity 21d",
+    "X_feature_price_high_to_initial90_exclude10": "90d high / start price",
+    "X_feature_short_interest_to_volume_log_ratio": "Days to cover",
+    "X_feature_price_ret252_shift0": "Return 252d",
+    "X_feature_price_trend_streak200_504": "Time above 200d MA",
+    "X_feature_price_macd_21_252": "MACD 21/252",
+    "X_feature_price_freq_loss_fl21": "Down-day share 21d",
+}
 
 
 def scaled(values, *, scale: int = 1000) -> list[int]:
@@ -129,8 +142,8 @@ def export_results(evidence: Path) -> dict:
         "coefficients": {
             "refit_years": years,
             "predictors": [
-                {"description": d, "theme": t}
-                for d, t in zip(top["description"], top["theme"])
+                {"label": SHORT_PREDICTORS[f], "description": d, "theme": t}
+                for f, d, t in zip(top["feature"], top["description"], top["theme"])
             ],
             "values": rows,
         },

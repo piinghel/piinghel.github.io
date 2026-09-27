@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def render(kind: str, *, dark: bool, mobile: bool) -> str:
     width = 358 if mobile else 702
-    height = 302 if kind == "date-sampling" else 350
+    height = 256 if kind == "date-sampling" else 322
     ink, muted, rule, train, predict, gap = (
         ("#e0e6ec", "#aab6c2", "#53616d", "#294c69", "#285b52", "#72522f")
         if dark else
@@ -29,11 +29,9 @@ def render(kind: str, *, dark: bool, mobile: bool) -> str:
         parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{rule}"{dash}/>')
 
     if kind == "date-sampling":
-        text(0, 20, "Within one training window", 15)
-        text(0, 43, "Each date contributes its full stock cross-section", 13, color=muted)
         start, step = (97, 27) if mobile else (160, 58)
         for model in range(3):
-            y = 86 + 59 * model
+            y = 26 + 59 * model
             text(0, y + 5, f"Model {model + 1}")
             line(start, y, start + 8 * step, y)
             for day in range(9):
@@ -43,8 +41,8 @@ def render(kind: str, *, dark: bool, mobile: bool) -> str:
                 if selected:
                     text(x, y + 5, str(day + 1), 14, "middle")
             text(start + 8 * step + 28, y + 5, "…", 14, "middle")
-        text(width / 2, 254, "Fit each model on its assigned dates", 14, "middle")
-        text(width / 2, 279, "↓  Average their prediction scores", 14, "middle")
+        text(width / 2, 208, "Fit each model on its assigned dates", 14, "middle")
+        text(width / 2, 233, "↓  Average their prediction scores", 14, "middle")
     else:
         # All three rows share a schematic time axis. Each new training window
         # ends one gap before the previous prediction block's endpoint.
@@ -65,8 +63,7 @@ def render(kind: str, *, dark: bool, mobile: bool) -> str:
             rect(start + train_width + gap_width, y, block, 32, predict)
             text(start + train_width / 2, y + 21, f"{900 + fold * 600:,} dates", 13, "middle")
             text(start + train_width + gap_width + block / 2, y + 21, "Predict", 13, "middle")
-        text(start, 308, "Training grows; earlier history stays", 14)
-        text(start, 334, "Time →", 13, color=muted)
+        text(start, 312, "Time →", 13, color=muted)
     parts.extend(["</g>", "</svg>"])
     return "\n".join(parts) + "\n"
 

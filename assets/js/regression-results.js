@@ -15,20 +15,26 @@
     height,
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    font: { family: getComputedStyle(document.body).fontFamily, size: 12, color: cssVar('--muted-ink') },
+    font: { family: cssVar('--font-sans'), size: 12, color: cssVar('--muted-ink') },
     hoverlabel: { bgcolor: cssVar('--page-surface'), bordercolor: cssVar('--rule'), font: { color: cssVar('--ink') } },
   });
   const config = { responsive: true, displayModeBar: false };
 
-  // Line-end labels, pushed apart vertically when two series finish close together.
-  function endLabels(names, last) {
+  // Short horizontal heading above a panel, aligned with the tick labels.
+  const heading = (text, y, left) => ({
+    text, x: 0, xref: 'paper', xanchor: 'left', xshift: -left, y, yref: 'paper', yanchor: 'bottom',
+    showarrow: false, font: { size: 13, color: cssVar('--ink') },
+  });
+
+  // Line-end labels, pushed apart by one label height when two series finish close together.
+  function endLabels(names, last, range, panelPx) {
+    const gap = (15 * (range[1] - range[0])) / panelPx; // 15 px in log10 units
     const ends = names
       .map((name) => ({ name, y: Math.log10(data.growth[name].growth[data.growth[name].growth.length - 1]) }))
       .sort((a, b) => b.y - a.y);
-    const gap = 0.045; // log10 units, about one label height at this chart size
     ends.forEach((end, k) => { if (k) end.y = Math.min(end.y, ends[k - 1].y - gap); });
     return ends.map((end) => ({
-      x: last, y: end.y, yref: 'y', xanchor: 'left', xshift: 6,
+      x: last, y: end.y, yref: 'y', xanchor: 'left', xshift: 5,
       text: end.name, showarrow: false, font: { color: cssVar(MODELS[end.name]), size: 12 },
     }));
   }
@@ -45,39 +51,54 @@
           line: { color, width: 1.2 }, hovertemplate: `${name} %{y:.1f}%<extra></extra>` },
       ];
     });
-    const last = data.dates[data.dates.length - 1];
+    const values = names.flatMap((name) => data.growth[name].growth);
+    const range = [Math.log10(Math.min(...values) * 0.92), Math.log10(Math.max(...values) * 1.08)];
+    const narrow = growthEl.clientWidth < 560;
+    const height = narrow ? 420 : 460;
+    const margin = { l: 40, r: narrow ? 72 : 80, t: 24, b: 28 };
+    const growthDomain = [0.42, 1];
+    const drawdownDomain = [0, 0.27];
+    const panelPx = (height - margin.t - margin.b) * (growthDomain[1] - growthDomain[0]);
     const grid = cssVar('--rule');
-    const layout = Object.assign(base(growthEl.clientWidth > 560 ? 460 : 400), {
-      margin: { l: 48, r: 70, t: 10, b: 30 },
+    const last = data.dates[data.dates.length - 1];
+    const layout = Object.assign(base(height), {
+      margin,
       showlegend: false,
       hovermode: 'x unified',
-      xaxis: { showgrid: false, linecolor: grid, ticks: '' },
-      yaxis: { type: 'log', domain: [0.34, 1], gridcolor: grid, title: { text: 'Growth of $1', standoff: 4 } },
-      yaxis2: { domain: [0, 0.26], gridcolor: grid, zerolinecolor: grid, title: { text: 'Drawdown %', standoff: 4 } },
-      annotations: endLabels(names, last),
+      xaxis: { anchor: 'y2', range: [data.dates[0], last], showgrid: false, linecolor: grid, ticks: '' },
+      yaxis: { type: 'log', range, domain: growthDomain, gridcolor: grid, tickformat: '~g' },
+      yaxis2: { domain: drawdownDomain, gridcolor: grid, zerolinecolor: grid, nticks: 4 },
+      annotations: [
+        heading('Growth of $1 (log scale)', 1.0, margin.l - 4),
+        heading('Drawdown (%)', drawdownDomain[1] + 0.03, margin.l - 4),
+        ...endLabels(names, last, range, panelPx),
+      ],
     });
     window.Plotly.react(growthEl, traces, layout, config);
   }
 
-  const wrap = (text, width) => text.replace(new RegExp(`(.{1,${width}})(\\s+|$)`, 'g'), '$1<br>').replace(/<br>$/, '');
-
   function coefficientChart() {
     const c = data.coefficients;
     const narrow = coefEl.clientWidth < 560;
-    const labels = c.predictors.map((p) => wrap(p.description, narrow ? 26 : 44));
+    const years = c.refit_years.map(String);
     const limit = Math.max(...c.values.flat().map(Math.abs));
+    const tick = Math.floor(limit * 100) / 100;
     const trace = {
-      type: 'heatmap', x: c.refit_years.map(String), y: labels, z: c.values, zmin: -limit, zmax: limit,
+      type: 'heatmap', x: years, y: c.predictors.map((p) => p.label), z: c.values, zmin: -limit, zmax: limit,
       colorscale: [[0, cssVar('--heat-neg')], [0.5, cssVar('--heat-mid')], [1, cssVar('--heat-pos')]],
       xgap: 2, ygap: 2,
       customdata: c.predictors.map((p) => c.refit_years.map(() => `${p.description} · ${p.theme}`)),
       hovertemplate: '<b>%{z:.3f}</b><br>%{customdata}<br>Refit %{x}<extra></extra>',
-      colorbar: { orientation: 'h', thickness: 8, len: 0.5, x: 1, xanchor: 'right', y: -0.12, yanchor: 'top', outlinewidth: 0 },
+      colorbar: {
+        orientation: 'h', thickness: 8, len: narrow ? 0.7 : 0.4, x: 1, xanchor: 'right', y: -0.1, yanchor: 'top',
+        outlinewidth: 0, tickvals: narrow ? [-tick, 0, tick] : undefined, nticks: 5, tickangle: 0, title: { text: 'Coefficient', side: 'top', font: { size: 12 } },
+      },
     };
-    const layout = Object.assign(base(narrow ? 520 : 440), {
-      margin: { l: 10, r: 10, t: 10, b: 60 },
-      xaxis: { ticks: '', type: 'category', tickangle: narrow ? -45 : 0 },
-      yaxis: { autorange: 'reversed', ticks: '', automargin: true, color: cssVar('--ink') },
+    const layout = Object.assign(base(narrow ? 400 : 420), {
+      margin: { l: 10, r: 10, t: 10, b: 70 },
+      // On phones every second refit year keeps the labels horizontal.
+      xaxis: { ticks: '', showgrid: false, zeroline: false, type: 'category', tickangle: 0, tickvals: narrow ? years.filter((_, k) => k % 2 === 0) : years },
+      yaxis: { autorange: 'reversed', ticks: '', showgrid: false, zeroline: false, automargin: true, color: cssVar('--ink') },
     });
     window.Plotly.react(coefEl, [trace], layout, config);
   }

@@ -3,7 +3,7 @@ layout: post
 title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
-last_modified_at: 2026-09-16
+last_modified_at: 2026-09-27
 categories: ["Signals"]
 article_label: Signals · Low volatility
 permalink: /quant/2024/12/15/low-volatility-factor.html
@@ -45,8 +45,8 @@ falls by almost four-fifths. The highest-volatility decile earns only about
 a third of a percent a year before costs. Its return is low relative to its
 risk, but still positive over the sample.
 
-<div class="low-vol-figure decile-profile-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="13" %}
+<div class="low-vol-figure decile-profile-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/decile_profile" mobile="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile" alt="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="14" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1: More volatile stocks earn less per unit of risk.</strong> Before-cost Sharpe, annual return and volatility, July 1995–May 2026. Annual return means compounded annual growth throughout this article. Each decile is an equal-weighted long portfolio of about 100 stocks, re-formed every three weeks; decile 1 has the lowest volatility. Volatility rises from 11.9% to 37.9% and Sharpe falls from 0.90 to 0.20.</p>
@@ -130,7 +130,7 @@ Its maximum drawdown remains much larger: about 68%, versus 38%.
 Removing the short market exposure changes the return comparison a lot, but not the risk gap.
 
 <div class="low-vol-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="16" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" alt="Growth of one dollar and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="17" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3: Hedging changes the return comparison; the risk gap remains.</strong> Growth of $1 (log scale) and drawdown, July 1995–May 2026, after trading costs. The dashed line adds a Russell 1000 hedge to equal weighting at each rebalance. Ending values are 0.35 for equal weighting, 7.54 for inverse volatility and 10.84 for hedged equal weighting.</p>
@@ -141,7 +141,7 @@ Figure 4 decomposes the unhedged inverse-volatility portfolio's returns
 during two market rallies. Realized beta is modestly negative in both windows, despite being roughly zero over the full sample, and the book contributions show which side the losses come from.
 
 <div class="low-vol-figure regime-comparison-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="17" %}
+  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" alt="Growth of one dollar in the Russell 1000 and low-volatility portfolio, with long- and short-book contributions during the dot-com rally and the April 2025 to May 2026 rally" version="18" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4: Short-book losses in two market rallies.</strong> Before-cost indexed growth above linked cumulative book contributions in percentage points. Episode returns run from the first date's close: 8 October 1998–9 March 2000 and 3 April 2025–27 May 2026. Long/short gross contributions are −10.4/−27.1 points and +4.2/−16.3 points, respectively. Realized portfolio betas in these windows are −0.055 and −0.106.</p>

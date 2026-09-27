@@ -3,7 +3,7 @@ layout: post
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats a simple theme score."
 date: 2025-02-09
-last_modified_at: 2026-09-26
+last_modified_at: 2026-09-27
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -12,7 +12,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<link rel="stylesheet" href="/assets/css/regression-article.css?v=3">
+<link rel="stylesheet" href="/assets/css/regression-article.css?v=4">
 
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
@@ -125,7 +125,7 @@ rising line is a theme that kept ranking stocks well.
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel adds up each theme composite's IC with the forward 20-session sector-relative Sharpe target; the legend gives each theme's mean IC over the period.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, every fifth session, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel adds up each theme composite's IC with the forward 20-session sector-relative Sharpe target; hovering gives each theme's mean IC over the period.</p>
 
 Over the full period, volatility is the most coherent theme: its predictors
 correlate 0.71 on average. Momentum &amp; trend and Size are the least
@@ -240,7 +240,7 @@ September 1998. Within each window, I fit three models on interleaved dates
 and average their predictions ([appendix](#sampling-the-training-dates)).
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="2" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Three expanding walk-forward fits share a January 1995 start. Training grows from 900 to 1500 to 2100 dates. Each training window is followed by a gap and a subsequent prediction block." version="3" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each refit retains the earlier history and adds 600 training dates. The 21-date gap precedes each 600-date prediction block. Widths are schematic; the final prediction block can be shorter.</p>
@@ -325,7 +325,7 @@ than Table 3 shows, since the estimate excludes borrow, financing and market
 impact: Ridge's Sharpe edge survives costs up to about 16 bp per dollar
 traded through 2021, but only about 7 bp after.
 
-<div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the fixed score, OLS and Ridge, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=1" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the fixed score, OLS and Ridge, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=2" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; Table 3 gives the same comparison.</p></noscript>
 
 <p class="figure-caption"><strong>Figure 3: Portfolio paths from the three scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below. Each portfolio keeps its own risk level; Table 3 gives the risk-adjusted comparison.</p>
@@ -368,9 +368,9 @@ Figure 4 shows the ten largest average absolute Ridge weights at each refit.
 A positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
-<div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=1" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
+<div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=2" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
 <noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
-<script src="/assets/js/regression-results.js?v=3" defer></script>
+<script src="/assets/js/regression-results.js?v=4" defer></script>
 
 <p class="figure-caption"><strong>Figure 4: The ten largest mean absolute Ridge coefficients by refit.</strong> Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows are selected on the full coefficient history.</p>
 
@@ -480,7 +480,7 @@ predictions. This spreads out each model's observations while using all
 dates collectively, although their forward targets still overlap.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="2" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/date-sampling" mobile="/assets/multiple-linear-regression/date-sampling_mobile" alt="Three models within one training window: model 1 uses dates 1, 4, 7; model 2 uses 2, 5, 8; model 3 uses 3, 6, 9. Their prediction scores are averaged." version="3" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 5: Interleaved training dates.</strong> The first nine training dates illustrate the three offsets. Each selected date contributes a full cross-section.</p>

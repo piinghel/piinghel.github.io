@@ -12,6 +12,7 @@
   const state = { period: 0, level: 'predictor' };
   const heatEl = root.querySelector('.pse-heat');
   const icEl = root.querySelector('.pse-ic');
+  const [heatHeading, icHeading] = root.querySelectorAll('.pse-heading');
   let data = null;
 
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -41,15 +42,14 @@
     return m;
   }
 
-  function baseLayout(title, height) {
+  function baseLayout(height) {
     const ink = cssVar('--ink');
     return {
-      title: { text: title, x: 0, xanchor: 'left', font: { size: 14, color: ink } },
       height,
-      margin: { l: 10, r: 10, t: 40, b: 40 },
+      margin: { l: 10, r: 10, t: 6, b: 40 },
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: getComputedStyle(root).fontFamily, size: 12, color: cssVar('--muted-ink') },
+      font: { family: cssVar('--font-sans'), size: 12, color: cssVar('--muted-ink') },
       hoverlabel: { bgcolor: cssVar('--page-surface'), bordercolor: cssVar('--rule'), font: { color: ink } },
     };
   }
@@ -60,7 +60,7 @@
     tickvals: [-1, 0, 1], outlinewidth: 0,
   };
 
-  function predictorHeatmap(period) {
+  function predictorHeatmap() {
     const n = data.predictors.length;
     const matrix = square(periodMean(data.predictor_pairs), n);
     const order = data.predictors.map((_, i) => i).sort((a, b) => data.predictors[a].leaf - data.predictors[b].leaf);
@@ -94,7 +94,7 @@
         hovertemplate: '<b>ρ = %{z:.2f}</b><br>%{text}<extra></extra>',
       },
     ];
-    const layout = Object.assign(baseLayout(`Correlation between the 80 predictors, ${period}`, wide ? 600 : 420), {
+    const layout = Object.assign(baseLayout(wide ? 560 : 380), {
       xaxis: { domain: [wide ? 0.2 : 0.17, 1], visible: false },
       xaxis2: { domain: [0, wide ? 0.16 : 0.13], autorange: 'reversed', visible: false },
       xaxis3: { domain: [wide ? 0.17 : 0.14, wide ? 0.195 : 0.165], visible: false },
@@ -103,45 +103,71 @@
     return { traces, layout };
   }
 
-  function themeHeatmap(period) {
+  function themeHeatmap() {
     const n = data.themes.length;
     const matrix = square(periodMean(data.theme_pairs), n);
     const names = data.themes.map((t) => t.short);
+    // Phone columns use abbreviations; the rows keep the full short names.
+    const narrow = heatEl.clientWidth <= 560;
+    const abbrev = { Momentum: 'Mom.', Reversal: 'Rev.', Volatility: 'Vol.', Liquidity: 'Liq.', 'Mkt corr.': 'Corr.' };
     const trace = {
       type: 'heatmap', x: names, y: names, z: matrix, zmin: -1, zmax: 1, colorscale: colorscale(), colorbar,
       texttemplate: '%{z:.2f}', xgap: 2, ygap: 2,
       customdata: data.themes.map((a) => data.themes.map((b) => `${a.name} · ${b.name}`)),
       hovertemplate: '<b>ρ = %{z:.2f}</b><br>%{customdata}<extra></extra>',
     };
-    const layout = Object.assign(baseLayout(`Correlation between theme composites, ${period}`, heatEl.clientWidth > 560 ? 460 : 380), {
-      margin: { l: 76, r: 10, t: 40, b: 60 },
-      yaxis: { autorange: 'reversed', ticks: '', color: cssVar('--ink') },
-      xaxis: { ticks: '', tickangle: 0, color: cssVar('--ink') },
+    const layout = Object.assign(baseLayout(narrow ? 360 : 440), {
+      margin: { l: 76, r: 10, t: 6, b: 60 },
+      yaxis: { autorange: 'reversed', ticks: '', showgrid: false, zeroline: false, color: cssVar('--ink') },
+      xaxis: { ticks: '', showgrid: false, zeroline: false, tickangle: 0, color: cssVar('--ink'), tickvals: names, ticktext: narrow ? names.map((n) => abbrev[n] || n) : names },
     });
     return { traces: [trace], layout };
   }
 
-  function icChart(period) {
+  // Theme names at the line ends, spread to at least one label height apart with a short
+  // connector back to each line.
+  function endLabels(ends, range, plotPx) {
+    const gap = (15 * (range[1] - range[0])) / plotPx;
+    const sorted = ends.slice().sort((a, b) => b.y - a.y);
+    sorted.forEach((e, k) => { e.at = k ? Math.min(e.y, sorted[k - 1].at - gap) : e.y; });
+    const shortfall = range[0] + gap / 2 - sorted[sorted.length - 1].at;
+    if (shortfall > 0) sorted.forEach((e) => { e.at += shortfall; });
+    return sorted.map((e) => ({
+      x: e.x, y: e.y, ax: 14, ay: ((e.y - e.at) * plotPx) / (range[1] - range[0]), xanchor: 'left',
+      text: e.text, font: { size: 12, color: e.color },
+      showarrow: true, arrowhead: 0, arrowwidth: 1, arrowcolor: e.color, standoff: 2,
+    }));
+  }
+
+  function icChart() {
     const [from, to] = PERIODS[state.period];
     const rows = data.theme_ic.dates
       .map((date, t) => ({ date, values: data.theme_ic.values[t] }))
       .filter((r) => { const y = Number(r.date.slice(0, 4)); return y >= from && y <= to; });
+    const x = rows.map((r) => r.date);
+    const ends = [];
     const traces = data.themes.map((theme, t) => {
       let sum = 0;
       const y = rows.map((r) => { sum += r.values[t] / data.scale; return sum; });
+      ends.push({ x: x[x.length - 1], y: sum, text: theme.short, color: themeColor(t) });
       return {
-        type: 'scatter', mode: 'lines', name: `${theme.name} · IC ${(sum / rows.length).toFixed(3)}`,
-        x: rows.map((r) => r.date), y, line: { color: themeColor(t), width: 2 },
-        hovertemplate: `${theme.short} %{y:.2f}<extra></extra>`,
+        type: 'scatter', mode: 'lines', name: theme.short, x, y, line: { color: themeColor(t), width: 2 },
+        hovertemplate: `${theme.short} %{y:.1f} · mean IC ${(sum / rows.length).toFixed(3)}<extra></extra>`,
       };
     });
+    const values = traces.flatMap((tr) => tr.y).concat(0);
+    const pad = 0.05 * (Math.max(...values) - Math.min(...values));
+    const range = [Math.min(...values) - pad, Math.max(...values) + pad];
+    const height = 320;
+    const margin = { l: 36, r: 82, t: 6, b: 28 };
     const grid = cssVar('--rule');
-    const layout = Object.assign(baseLayout(`Each theme's daily IC with the target, added up, ${period}`, 400), {
-      margin: { l: 44, r: 10, t: 40, b: 10 },
+    const layout = Object.assign(baseLayout(height), {
+      margin,
+      showlegend: false,
       hovermode: 'x unified',
-      legend: { orientation: 'h', y: -0.12, yanchor: 'top', x: 0, font: { size: 12, color: cssVar('--ink') } },
-      xaxis: { showgrid: false, linecolor: grid, ticks: '' },
-      yaxis: { gridcolor: grid, zerolinecolor: cssVar('--muted-ink'), title: { text: 'Sum of daily IC', standoff: 6 } },
+      xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '' },
+      yaxis: { range, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
+      annotations: endLabels(ends, range, height - margin.t - margin.b),
     });
     return { traces, layout };
   }
@@ -152,9 +178,13 @@
     root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.period) === state.period)));
     root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === state.level)));
     const config = { responsive: true, displayModeBar: false };
-    const heat = state.level === 'theme' ? themeHeatmap(period) : predictorHeatmap(period);
+    const heat = state.level === 'theme' ? themeHeatmap() : predictorHeatmap();
+    heatHeading.textContent = state.level === 'theme'
+      ? `Correlation between theme composites, ${period}`
+      : `Correlation between the 80 predictors, ${period}`;
     window.Plotly.react(heatEl, heat.traces, heat.layout, config);
-    const ic = icChart(period);
+    icHeading.textContent = `Cumulative daily IC by theme, ${period}`;
+    const ic = icChart();
     window.Plotly.react(icEl, ic.traces, ic.layout, config);
   }
 

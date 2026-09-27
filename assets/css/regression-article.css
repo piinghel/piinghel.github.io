@@ -27,12 +27,14 @@ html[data-theme="dark"] {
 .pse-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; margin-bottom: 0.8rem; }
 .pse-segments { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
 .pse-segments button {
-  font: inherit; font-size: 0.8rem; color: var(--muted-ink); background: transparent; cursor: pointer;
+  font: inherit; font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted-ink); background: transparent; cursor: pointer;
   border: 0; border-right: 1px solid var(--rule); padding: 0.3rem 0.6rem; font-variant-numeric: tabular-nums;
 }
 .pse-segments button:last-child { border-right: 0; }
 .pse-segments button:hover { background: var(--soft-accent); color: var(--ink); }
 .pse-segments button[aria-checked="true"] { background: var(--ink); color: var(--page-surface); font-weight: 600; }
 .pse-status { color: var(--muted-ink); font-size: 0.9rem; }
+.pse p.pse-heading { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; color: var(--ink); margin: 1rem 0 0.2rem; }
+.pse p.pse-heading:empty { display: none; }
 .pse-heat, .pse-ic, .mlr-plot { width: 100%; }
 .mlr-plot { margin: 1.4rem 0 0.4rem; min-height: 200px; }
