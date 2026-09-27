@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Performance Attribution, Part 2: Why the Short Book Struggles in Rebounds"
+title: "Performance Attribution, Part 2: Why the Short Book Loses in Strong Rallies"
 description: "Higher-beta, higher-volatility shorts lose in strong rallies. Those rallies cluster early in rebounds, but not only there."
 permalink: /quants/short-book-rebounds.html
 toc: true
@@ -27,6 +27,9 @@ problem repeats and whether it is concentrated in the first few months.
 
 I use the same portfolio, period and [conventions as Part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
+Missing borrow costs flatter the short book most in crashes and squeezes, and
+the backtest also ignores the SEC's ban on shorting about 800 financial stocks
+from 19 September to 8 October 2008, inside the 2008–09 decline.
 
 ## Protection during the decline, losses during the rebound
 
@@ -168,7 +171,9 @@ Faster-rising shorted stocks need not produce a portfolio loss: the long book
 is larger. In the first 63 sessions of the 2020 rebound the portfolio still
 gained **0.4 points** after costs, and by 6 November 2020 it was up **5.7**.
 The whole 2020–21 rebound loss came after that: **12.4 points** by 27 January
-2021, while the index rose another 8%. The shorts lost 18.7 points in those
+2021, while the index rose another 8%. The stretch runs from the last session
+before the vaccine announcement of 9 November to the closing peak of January's
+retail short squeeze; whether either event drove the loss is untested. The shorts lost 18.7 points in those
 eleven weeks against 6.5 gained on the longs, and volatility was again the
 largest style (−6.1), ahead of size (−2.6) and beta (−2.0).
 

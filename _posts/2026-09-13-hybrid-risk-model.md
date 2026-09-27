@@ -182,14 +182,15 @@ common ones, even though its portfolios are no better either.
 That gap between better forecasts and unchanged portfolios is the interesting
 part. The hybrid's books carry noticeably smaller momentum and low-volatility
 tilts than the direct model's: is the factor model treating part of what the
-ranking earns as risk? A named-factors-only version, with the same calibration,
+ranking earns as risk, the factor-alignment problem described by Ceria, Saxena
+and Stubbs?[^alignment] A named-factors-only version, with the same calibration,
 would show whether the residual components help at all; and fitting the
 residual components and their weights under one consistent objective would show
 whether the way they are estimated is part of the problem.
 
 [^setup]: The hybrid uses an intercept, beta, sector exposures, size, momentum, short- and long-term reversals, volatility and dollar volume, plus ten residual PCs. All four completed versions share the historical study's additional L2 weight penalty of 0.000625, alongside the 2.5bp optimization trading penalty. This differs from the earlier portfolio-construction article's zero-L2 setup. The 5bp P&amp;L trading cost is separate. Sector classifications are retrospective; return marking and delisting coverage were not independently verified for this comparison.
 
-[^calibration]: Calibration uses each schedule's earlier fixed-weight, 21-session realized-to-raw-forecast variance ratios. Only fully observed, nonoverlapping windows within that schedule enter the trailing five-year calibration history. The squared scale is shrunk toward one with a 12-observation prior; it stays at one until 12 observations are available. Evaluation windows in Figure 2 overlap even though calibration inputs are selected this way.
+[^calibration]: Calibration uses each schedule's earlier fixed-weight, 21-session realized-to-raw-forecast variance ratios. Only fully observed, nonoverlapping windows within that schedule enter the trailing five-year calibration history. The squared scale is shrunk toward one with a 12-observation prior; it stays at one until 12 observations are available. Evaluation windows in Figure 1 overlap even though calibration inputs are selected this way.
 
 [^model]: Giuseppe A. Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6), first edition (2021), §§4.3 and 11.1, pp. 40–41 and 168–169.
 
@@ -202,3 +203,5 @@ whether the way they are estimated is part of the problem.
 [^descriptors]: Styles are winsorized at the cross-sectional 1st and 99th percentiles, then centred and scaled with the regression weights. Invalid numeric descriptors receive the same-date cross-sectional median before fitting. Momentum sums $p_t/p_{t-h}-1$ over $h\in\lbrace20,60,125,252\rbrace$; the inherited feature sums available horizons if some are missing, and its lags count stock observations. This is a coverage limitation to check for young or interrupted histories. The long-reversal return uses sessions $t-755$ through $t-252$. Sector gaps use a prior observed label where available, otherwise the current cross-sectional mode; sector vintage remains a limitation of the study.
 
 [^estimation]: PCA requires at least 252 sessions; its equations describe the complete-history eligible universe. Specific-risk shrinkage toward the structural variance estimate has weight $0.3+0.7\times60/(60+n_i)$, where $n_i$ counts observed residual sessions; fewer than 60 observations receive the full structural estimate. Daily variance floors and caps precede a 1.5 variance buffer for PCA-excluded stocks, whose specific variance is also bounded below by the buffered pre-PCA estimate. Prior observed exposures may be carried for at most 21 sessions. The separate stale-exposure buffer applies $Q\Sigma Q$, with diagonal $Q_{ii}=\sqrt{1.5}$ for stale names and one otherwise. This is equivalent to replacing $L$ by $QL$ and $D$ by $QDQ$, preserving the factor form. Missing residual observations retain their dates and receive zero estimation weight.
+
+[^alignment]: Sebastián Ceria, Anureet Saxena and Robert A. Stubbs, "Factor Alignment Problems and Quantitative Portfolio Management", *The Journal of Portfolio Management* 38(2), 2012.

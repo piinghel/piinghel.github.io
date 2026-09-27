@@ -98,7 +98,10 @@ risk, and on Sharpe most of them are level with it; only the tightest tilt
 limit falls clearly behind. The tilt limits run a smaller book, and scaling
 cuts size whenever volatility rises, so comparing raw P&L would mostly
 measure size. I compare the rules at equal risk instead, scaling each one's
-daily P&L to the Original's 7.9% volatility.
+daily P&L to the Original's 7.9% volatility. That assumes the smaller books
+could be levered up: by about 3% for the ±0.30 tilt limit and 6% for ±0.20, but
+17% for slow scaling, which would have to add that size back on average while
+cutting it whenever volatility rises.
 
 The rules also move market beta, in opposite directions. The beta limit
 raises realized beta to 0.091: removing the negative beta exposure leaves more
