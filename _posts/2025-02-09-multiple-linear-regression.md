@@ -218,7 +218,7 @@ Every prediction is made by a model that has not seen that date. I chose the
 predictors, the target, the portfolio rule and the Ridge penalty on results
 through December 2021, the development period, and report January 2022–May
 2026 separately, labelled *Later* in the tables. The later period is short, about 54
-non-overlapping 20-session windows, so small differences there are noise.
+non-overlapping 20-session windows.
 
 Every score goes through the same plain portfolio rule (Table 1). Because
 volatility scaling lets each score take its own level of risk, I compare
@@ -401,8 +401,7 @@ for equal weights, which is why it trades more.
 
 I started by asking how much weight each predictor should get, given what the
 others already tell me. Letting a regression answer that is better than not
-answering it, by about 0.2 of Sharpe in both periods, though that gap is not
-far from noise. Against equal weights on every predictor, Ridge lifts the
+answering it, by about 0.2 of Sharpe in both periods. Against equal weights on every predictor, Ridge lifts the
 Sharpe ratio from 0.82 to 0.98 through 2021 and from 0.52 to 0.73 after,
 trades only a little more, and keeps its edge at costs of 28–43 bp per dollar
 traded, well above the 5 bp I charge. The gain doesn't come from a clever
@@ -448,4 +447,4 @@ Two choices got a sentence where they deserve an article of their own:
 - **Market correlation:** Frazzini and Pedersen (2014), *Betting Against Beta*; Asness et al. (2020), *Betting Against Correlation*.
 - **Short positioning:** Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
 
-[^fitting]: The first fit uses about three and a half years of history, and I refit roughly every two and a half years. A gap of about a month between each training window and its predictions lets the 20-session targets finish first. Within each window I fit three models on interleaved dates (1, 4, 7, …; 2, 5, 8, …; 3, 6, 9, …) and average their predictions, which thins the overlap between neighbouring targets. A missing predictor value, including a long-window predictor before it has enough history, takes its date-and-sector mean.
+[^fitting]: I refit about every two and a half years, starting from three and a half years of history, with a one-month gap before each prediction block. Each fit averages three models trained on interleaved dates, and a missing predictor value takes its date-and-sector mean.

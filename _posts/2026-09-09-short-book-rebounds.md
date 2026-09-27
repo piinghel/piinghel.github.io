@@ -23,7 +23,8 @@ with the 2009 and 2020 rebounds, compare the holdings and their factor
 contributions, then check eleven episodes. The aim is to see whether the
 problem repeats and whether it is concentrated in the first few months.
 
-I use the same portfolio, period and [conventions as Part 1](/quants/portfolio-attribution.html#pnl-conventions):
+I use the optimizer book built on an earlier version of the Ridge ranking,
+over September 1998 to May 2026, with the [conventions of Part 1](/quants/portfolio-attribution.html#pnl-conventions):
 fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or impact.
 Missing borrow costs flatter the short book most in crashes and squeezes, and
 the backtest also ignores the SEC's ban on shorting about 800 financial stocks

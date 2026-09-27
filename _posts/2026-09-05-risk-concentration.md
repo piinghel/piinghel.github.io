@@ -198,7 +198,7 @@ and 1.75 after under the original optimizer, the same under the 10% PCA cap,
 and 1.56 and 1.73 under the 2% stock cap.[^vol-ratio]
 
 A 2% stock cap raises later-period Sharpe from 0.87 to 0.93, but it lowers
-Sharpe before 2022 and the later gain is within rebalance-timing noise, so I
+Sharpe before 2022 and the later gain is uneven across schedules, so I
 wouldn't add it.
 
 ## Which limit I'd consider
@@ -209,14 +209,13 @@ component's share removes it with almost no change in return, Sharpe or
 turnover, which makes it the only limit here I'd consider. Adopting it would
 also mean switching the optimizer to the eligible-universe covariance, and that
 switch alone moves targets by about 8–10% of capital, more than the cap itself.
-Tighter sector caps and stock caps of 2–3% reshape the book without a benefit I
-can distinguish from noise.
+Tighter sector caps and stock caps of 2–3% reshape the book without a clear benefit.
 
 What I still don't know is what those leading components are. If the third and
 fourth components since 2022 turn out to be the AI trade, a cap on shared risk
 is the right tool; if they are a style exposure the ranking relies on, capping
 them would cost more than it shows here.
 
-[^caps]: Stock contributions sum to one, and so do sector contributions when every stock belongs to exactly one sector; the cross-sector covariance terms make them add up. The caps are non-convex, because changing the weights changes both the contributions and total variance, so I enforce them with successive local approximations, recompute the exact shares and accept a target only if it meets the caps within tolerance.
+[^caps]: The caps are non-convex, so I enforce them by successive local approximations and accept a target only if its exact shares meet them.
 
 [^vol-ratio]: For each book, the geometric mean of stock forecast volatility, weighted by each position's share of that book's absolute weights.

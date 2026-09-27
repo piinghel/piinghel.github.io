@@ -174,10 +174,10 @@ shows later in this series. The ranking itself uses a single characteristic;
 the [next article](/quants/2025/02/09/multiple-linear-regression.html) combines
 many predictors into one and keeps this volatility-scaled sizing.
 
-[^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, author draft dated 10 May 2013, pages 2–3; published in the *Journal of Financial Economics* in 2014. Their mechanism concerns market beta; this article ranks total volatility. [Public author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2).
+[^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, *Journal of Financial Economics*, 2014 ([author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2)). Their mechanism concerns market beta; this article ranks total volatility.
 
-[^windows]: The ranking averages trailing volatility estimates over 21, 63 and 126 sessions. The separate sizing estimate uses 60 sessions, with a 5% annualized volatility floor. Ex-ante beta is each stock's trailing 252-session beta (at least 126 observations) at the signal; realized beta is the full-sample regression of daily portfolio returns on the Russell 1000.
+[^windows]: The ranking averages 21-, 63- and 126-session volatility; sizing uses 60 sessions with a 5% floor. Ex-ante beta is each stock's trailing 252-session beta, and realized beta regresses daily portfolio returns on the Russell 1000.
 
-[^beta-check]: At each signal close, the Russell 1000 hedge offsets the sum of stock weights times their ex-ante betas, clipped to [−4, 4]. Stocks and hedge trade at the next close and hold fixed quantities until the next three-week rebalance. Returns start after execution. The simulation applies transaction costs of 5 bp of traded notional; funding, stock borrow fees, futures roll costs and delisting returns are excluded, the last mattering most for the high-volatility short book. Returns compound daily P&L per unit of strategy notional; annualization uses 252 sessions.
+[^beta-check]: The Russell 1000 hedge offsets the book's ex-ante beta at each rebalance and trades with the stocks at the next close. Costs are 5 bp of traded notional; funding, borrow fees and delisting returns are excluded.
 
-[^rally-beta]: Summing each book's daily before-cost P&L and removing its in-window market beta; using the books' ex-ante betas instead gives the same split. The figure's linked contributions differ slightly because they compound.
+[^rally-beta]: Each book's summed daily before-cost P&L net of its in-window market beta; ex-ante betas give the same split.

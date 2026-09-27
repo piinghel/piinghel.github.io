@@ -28,10 +28,11 @@ after each low.
 I try three rules: limit the low-volatility tilt, limit standardized beta
 exposure directly, and reduce the whole book when recent volatility rises. I
 keep the forecasts, covariance model and execution rules unchanged, and label
-the unchanged portfolio **Original**. The same portfolio, period and
-[conventions as Part 1](/quants/portfolio-attribution.html#pnl-conventions)
-apply: fixed-notional P&L points, 5 bp trading costs, and no borrow, financing
-or impact.
+the unchanged portfolio **Original**. As in Part 2, it is the optimizer book
+built on an earlier version of the Ridge ranking, with the
+[conventions of Part 1](/quants/portfolio-attribution.html#pnl-conventions):
+fixed-notional P&L points, 5 bp trading costs, and no borrow, financing or
+impact.
 
 ## Three rules
 
@@ -164,6 +165,5 @@ Nothing yet. The one rule I would consider is a moderate tilt limit: at the same
 risk it gives up nothing I can measure, does a little better in declines and
 in most strong rallies, and makes the deep drawdowns shallower. What it doesn't
 do is fix the loss that started this series, and the case for it rests on
-sixteen rallies, two drawdowns and full-history differences well inside the
-noise. The beta limit, which looked cheapest on raw P&L, mostly buys market
+sixteen rallies, two drawdowns and small full-history differences. The beta limit, which looked cheapest on raw P&L, mostly buys market
 beta.

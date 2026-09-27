@@ -287,4 +287,4 @@ Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/e
 The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
 is available to explore your own portfolio.
 
-[^drawdowns]: The drawdown windows run from 30 July 2008 to 16 September 2009 and from 21 February 2020 to 27 January 2021, excluding each peak day. Over the full history, the fitted beta contribution was −15.1 points.
+[^drawdowns]: The drawdowns run from 30 July 2008 to 16 September 2009 and from 21 February 2020 to 27 January 2021, excluding each peak day.
