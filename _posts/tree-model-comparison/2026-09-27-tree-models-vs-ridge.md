@@ -4,7 +4,7 @@ layout: post
 title: "Do Tree Models Beat Ridge on the Same Predictors?"
 description: "LightGBM against Ridge on the same 80 predictors, target and portfolio rule: a clear lead through 2021, built before 2017, and no measurable difference since."
 permalink: /quants/tree-models-vs-ridge.html
-toc: false
+toc: true
 date: 2026-09-27
 categories: ["Machine learning"]
 ---
@@ -47,7 +47,7 @@ so that no small group of predictors dominates.[^settings]
 {: .research-table .comparison-table .compact-table }
 </div>
 
-Through 2021 the gap is large and not luck: LightGBM's Sharpe is about 0.5
+Through 2021 the gap is large and clearly outside noise: LightGBM's Sharpe is about 0.5
 higher, with a block-bootstrap interval of 0.24 to 0.85 on the combined
 book.[^bootstrap] It ranks stocks a little better on average and much more
 consistently from day to day, and it does so at lower risk and similar
@@ -67,25 +67,35 @@ Figure 1 shows when the lead was earned.
 Most of it came in two bursts, around the dot-com peak and in the 2009–10
 rebound, then accumulated slowly until about 2016. The ratio peaked in
 November 2017 and has drifted slightly down since. So the later period isn't a
-break: on this evidence the trees stopped adding anything over Ridge several
-years before it began.
+break: the trees stopped adding anything over Ridge several years before it
+began.
+
+Both bursts came while LightGBM made a much smaller low-volatility bet than
+Ridge. Early on its scores were almost unrelated to volatility: their rank
+correlation with 63-session volatility averaged −0.06 in 1998–2003, against
+−0.37 for Ridge. In the dot-com rally, when calm stocks lagged badly (the
+[low-volatility portfolio](/quant/2024/12/15/low-volatility-factor.html) lost
+38%), LightGBM's book gained 36% and Ridge's about nothing, and in the momentum
+crash of March to June 2009 LightGBM gained 5.6% while Ridge lost 1.6%.[^tilt]
+The trees then converged on the same bet: by 2019–21 the correlation was −0.52
+for LightGBM and −0.66 for Ridge, and the lead stopped growing.
 
 ## What I take from this
 
 On the same predictors and the same portfolio rule, LightGBM was the better
 ranking over the full history: steadier, less risky and about half a point of
-Sharpe ahead through 2021. But all of that edge was earned before 2017, and
-nothing since distinguishes the two. I'd hold the conclusion loosely in both
-directions: the trees clearly found something Ridge missed, and whatever it was
-has not shown up for the best part of a decade.
+Sharpe ahead through 2021. But the edge was earned before 2017, mostly in
+periods when it bet less on low volatility than Ridge did, and it faded as the
+trees converged on the same low-volatility bet. Since then nothing
+distinguishes the two.
 
-Two questions follow. What did the trees capture in 1999–2000 and 2009–10?
-The second is the rebound that hurt the Ridge book in the
-[attribution series](/quants/short-book-rebounds.html), so the obvious
-suspect is that the trees held fewer high-beta shorts into strong rallies. And
-why did the lead stop: did the relationships the trees exploited fade, or did
-the two models converge on the same low-volatility bet?
+## References
+
+- Ke, Meng, Finley, Wang, Chen, Ma, Ye and Liu (2017), *LightGBM: A Highly Efficient Gradient Boosting Decision Tree*, NeurIPS.
+- Daniel and Moskowitz (2016), *Momentum Crashes*, Journal of Financial Economics.
 
 [^settings]: Minimum 20 rows per leaf, 255 histogram bins and deterministic training, with the same three interleaved fits per refit as Ridge. The settings come from the earlier tree study in this project; they were chosen on development data only.
 
 [^bootstrap]: Paired block bootstrap of the combined three-schedule daily returns. The combined book's Sharpe ratios (1.58 and 1.04 through 2021) are higher than the schedule means in Table 1 because combining schedules diversifies.
+
+[^tilt]: Mean daily Spearman correlation between each score and the stock's 63-session volatility rank among tradable stocks. Episode returns compound the mean-schedule long–short net return from 8 October 1998 to 9 March 2000 and from 9 March to 30 June 2009.
