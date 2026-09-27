@@ -338,8 +338,8 @@ uncertainty and depends on the rebalance schedule. The
 [attribution series](/quants/portfolio-attribution.html) breaks this
 portfolio's P&L down by the ranking's themes. Neither
 weakness changes my verdict: joint sizing with trading controls earns more per
-unit of risk than volatility scaling in both periods, though after 2021 by a
-margin I can't distinguish from noise, and it trades less.
+unit of risk than volatility scaling in both periods, by a clear margin in
+development and an unproven one after 2021, and it trades less.
 
 <table class="research-table settings-table">
   <caption><strong>Table 4: Allocation settings.</strong></caption>
