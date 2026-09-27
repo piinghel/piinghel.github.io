@@ -105,12 +105,6 @@ The optimizer figures were regenerated from the active main-worktree evidence
 of the private portfolio-optimization project. Older experimental branches and their
 reports are historical, not interchangeable with the current article's runs.
 
-The optimizer's retained supporting CSVs are copies of
-`article_period_comparison.csv` and `article_parameter_sensitivity.csv` from
-the active research worktree at `5ed6a51`. Table 2 uses B2 and B3 from the first
-file, the zero trade-coefficient row for buffer only, and holding cutoff 75 for
-penalty only from the second. All four rows use development through 2021.
-
 ## Research repositories
 
 | Material | Location | Reproduction scope |

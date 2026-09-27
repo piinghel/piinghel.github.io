@@ -3,7 +3,7 @@ layout: post
 title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
-last_modified_at: 2026-09-28
+last_modified_at: 2026-09-27
 categories: ["Signals"]
 article_label: Signals · Low volatility
 permalink: /quant/2024/12/15/low-volatility-factor.html

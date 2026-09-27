@@ -3,7 +3,7 @@ layout: post
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-09-28
+last_modified_at: 2026-09-27
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -207,7 +207,7 @@ shifts in Figure 1, but with less data per fit its weights would move more
 between refits; I prefer stable weights.[^fitting]
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="6" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="7" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the later period; the month-long gap between training and predictions is too short to see at this scale.</p>
@@ -217,19 +217,19 @@ periods: development, September 1998–December 2021, and later, January
 2022–May 2026. The later period is short, about 54 non-overlapping 20-session
 windows.
 
-Every score goes through the same plain portfolio rule (Table 1). Because
+Every score goes through the same volatility-scaled rule (Table 1), the low-volatility article's inverse-volatility sizing with 75 names per side. Because
 volatility scaling lets each score take its own level of risk, I compare
 scores on Sharpe rather than return. Portfolio construction itself is the
-subject of the [optimization
+subject of the [optimizer
 article](/quants/2026/08/29/portfolio-optimization.html), where the same Ridge
 scores reach a Sharpe of 1.32 through 2021 and 0.87 after.
 
 <table class="research-table settings-table" id="portfolio-construction">
-  <caption><strong>Table 1: The portfolio rule.</strong> Identical for every score. Traded notional is annual two-way trading divided by capital.</caption>
+  <caption><strong>Table 1: The portfolio rule.</strong> Identical for every score. Two-way turnover is annual traded notional divided by capital.</caption>
   <tbody>
     <tr><th scope="row">Holdings</th><td>Long the top 75 stocks, short the bottom 75</td></tr>
     <tr><th scope="row">Position size</th><td>20% divided by the stock's past 60-session volatility (floored at 5%); at most 4% per stock and 100% of capital per side</td></tr>
-    <tr><th scope="row">Rebalancing</th><td>Every three weeks at the next close; three schedules start one week apart and their statistics are averaged</td></tr>
+    <tr><th scope="row">Rebalancing</th><td>Every three weeks at the next close, on three schedules that start one week apart. Tables report the mean of each schedule's statistics; the bootstrap holds the three schedules together at equal notional.</td></tr>
     <tr><th scope="row">Costs</th><td>5 bp per dollar traded</td></tr>
   </tbody>
 </table>
@@ -310,9 +310,9 @@ portfolio from the [low-volatility article](/quant/2024/12/15/low-volatility-fac
 through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Return and volatility are annualized; beta is measured against the Russell 1000.</caption>
+  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are arithmetic annual means and volatility is annualized; Sharpe uses a zero cash rate, and beta is measured against the Russell 1000.</caption>
   <thead>
-    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Traded notional / year</th></tr>
+    <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
