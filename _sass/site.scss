@@ -125,7 +125,7 @@ button { font: inherit; }
 .post-content li { margin-bottom: 0.55rem; }
 .post-content h2 { margin: 2.75rem 0 1rem; font-size: 1.5rem; scroll-margin-top: 1.5rem; }
 .post-content h3 { margin: 2rem 0 1rem; font-size: 1.2rem; }
-.post-content .article-summary, blockquote {
+blockquote {
   padding: 1rem 1.2rem;
   border-left: 3px solid #7896bc;
   background: var(--soft-accent);
@@ -233,7 +233,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .post-content { font-size: 1.08rem; margin-top: 1.75rem; }
   .post-content h2 { font-size: 1.35rem; margin-top: 2.35rem; }
   .post-content h3 { font-size: 1.14rem; }
-  .post-content .article-summary { padding: 0.9rem 1rem; }
   .post-navigation { flex-direction: column; gap: 1.5rem; }
   .post-nav-next { text-align: left; }
   .site-footer .wrapper { gap: 1rem; }

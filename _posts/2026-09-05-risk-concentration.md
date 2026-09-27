@@ -13,8 +13,6 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<p class="article-summary">The optimizer already limits stock and sector weights. Here I check whether the portfolios it produces still take too much risk in one direction, and what happens when I limit risk contributions directly. Moderate caps reduce the concentrations I find with small changes to holdings and performance; tighter caps reshape the portfolio, with less obvious benefits.</p>
-
 The [optimizer](/quants/2026/08/29/portfolio-optimization.html) already
 limits stock and sector weights. But a small position can still carry a lot
 of risk, and several small positions can end up making much the same bet.

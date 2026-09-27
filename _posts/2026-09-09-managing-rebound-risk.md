@@ -12,8 +12,6 @@ series_id: performance-attribution
 series_order: 3
 ---
 
-<p class="article-summary">The rebound analysis points to a defensive tilt that becomes costly in strong rallies. I test limits on that tilt, direct limits on beta exposure and daily volatility scaling, and ask what each one buys in rallies and gives up elsewhere.</p>
-
 Once a pattern shows up in attribution, it's tempting to add a constraint
 and move on. But a limit changes the portfolio on every date it applies,
 including the periods when that exposure was useful. The question is whether

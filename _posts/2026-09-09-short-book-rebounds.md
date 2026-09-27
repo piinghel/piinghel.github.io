@@ -12,8 +12,6 @@ series_id: performance-attribution
 series_order: 2
 ---
 
-<p class="article-summary">A market recovery can be difficult for a portfolio that shorts volatile stocks. I look at the holdings behind two large drawdowns, then compare eleven rebounds with the rest of the history to see when the same imbalance appears.</p>
-
 The market can recover well before a long–short portfolio does. That gap is
 what I want to understand here. In [Part 1](/quants/portfolio-attribution.html),
 the short book helped during declines but gave back more during the rebounds.

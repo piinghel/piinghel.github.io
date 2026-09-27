@@ -15,8 +15,6 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-pnl-dashboard
 ---
 
-<p class="article-summary">A return chart shows how the portfolio did. Attribution helps explain why. I break down P&amp;L and risk by positions, sectors and shared stock characteristics, then look at what those views reveal during drawdowns.</p>
-
 Once I've built a portfolio, I want to understand what is driving it.
 Are returns coming from a few stocks, a sector, or a broader preference for
 things like momentum and low volatility? And when the portfolio struggles,
