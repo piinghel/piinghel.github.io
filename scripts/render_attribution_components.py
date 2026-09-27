@@ -110,7 +110,7 @@ def render(values: dict, dark: bool, mobile: bool) -> None:
                     color=[colors["pos"] if v >= 0 else colors["neg"] for v in data])
             span = max(abs(v) for v in data)
             for p, v in zip(positions, data, strict=True):
-                ax.annotate(fmt.format(v if abs(v) >= 0.05 else 0.0), (max(v, 0), p), xytext=(4, 0), textcoords="offset points",
+                ax.annotate(fmt.format(v if abs(v) >= 0.05 else 0.0).replace("-", "\u2212"), (max(v, 0), p), xytext=(4, 0), textcoords="offset points",
                             va="center", ha="left", fontsize=size - 1, color=colors["ink"])
             ax.set_xlim(min(min(data), 0) - 0.05 * span, span * 1.35)
             ax.axvline(0, color=colors["grid"], linewidth=0.9)

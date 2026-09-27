@@ -40,7 +40,8 @@
     const style=getComputedStyle(root);
     panels.forEach((svg,p)=>{
       svg.replaceChildren();
-      const width=Math.max(280,svg.clientWidth),height=168,l=42,r=14,t=8,b=29;
+      // The first panel keeps a strip above the data for the market-low label.
+      const width=Math.max(280,svg.clientWidth),height=168,l=42,r=14,t=p===0?24:8,b=29;
       svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
       const minDate=date(e.peak),maxDate=date(e.end);
       const x=d=>l+(date(d)-minDate)/(maxDate-minDate)*(width-l-r);
@@ -60,14 +61,13 @@
         add(svg,'path',{d,fill:'none',stroke:style.getPropertyValue(color),'stroke-width':col===3?1.8:1.3,'stroke-dasharray':dash});
         add(svg,'circle',{cx:x(selected[0]),cy:y(selected[col]),r:3,fill:style.getPropertyValue(color)});
       }
-      add(svg,'line',{x1:x(e.low),x2:x(e.low),y1:t,y2:height-b,stroke:'currentColor','stroke-dasharray':'2 3',opacity:.4});
+      add(svg,'line',{x1:x(e.low),x2:x(e.low),y1:p===0?t-18:t,y2:height-b,stroke:'currentColor','stroke-dasharray':'2 3',opacity:.4});
       add(svg,'line',{x1:x(selected[0]),x2:x(selected[0]),y1:t,y2:height-b,stroke:'currentColor',opacity:.6,'stroke-dasharray':'3 3'});
       for(const [d,anchor] of [[e.peak,'start'],[e.end,'end']]){
         const label=new Date(date(d)).toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'});
         add(svg,'text',{x:x(d),y:height-6,'text-anchor':anchor},label);
       }
-      const middle=rows[Math.floor(rows.length/2)][0];
-      add(svg,'text',{x:x(middle),y:height-6,'text-anchor':'middle'},new Date(date(middle)).toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'}));
+      if(p===0)add(svg,'text',{x:x(e.low)+4,y:t-8,'text-anchor':'start',opacity:.75},'Market low');
     });
     root.querySelector('.ad-selected-date').textContent=`${human(selected[0])} · This day's ${direction.name} contribution`;
     root.querySelector('.ad-day-exposure').textContent=signed(selected[3],3);

@@ -211,10 +211,10 @@ L 142.330725 32.256
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="202.545382" y="59.012337" transform="rotate(-0 202.545382 59.012337)">+84.1</text>
    </g>
    <g id="text_14">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="146.330725" y="99.70456" transform="rotate(-0 146.330725 99.70456)">-6.0</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="146.330725" y="99.70456" transform="rotate(-0 146.330725 99.70456)">−6.0</text>
    </g>
    <g id="text_15">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="146.330725" y="126.832709" transform="rotate(-0 146.330725 126.832709)">-15.1</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="146.330725" y="126.832709" transform="rotate(-0 146.330725 126.832709)">−15.1</text>
    </g>
    <g id="text_16">
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="161.772033" y="153.960858" transform="rotate(-0 161.772033 153.960858)">+23.1</text>
@@ -235,7 +235,7 @@ L 142.330725 32.256
     <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="161.367269" y="316.729752" transform="rotate(-0 161.367269 316.729752)">+22.5</text>
    </g>
    <g id="text_22">
-    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="146.330725" y="357.421976" transform="rotate(-0 146.330725 357.421976)">-38.2</text>
+    <text style="font-size: 10px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="146.330725" y="357.421976" transform="rotate(-0 146.330725 357.421976)">−38.2</text>
    </g>
    <g id="text_23">
     <text style="font-weight: 600; font-size: 11.5px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #25313a" x="110.16" y="22.256" transform="rotate(-0 110.16 22.256)">P&amp;L (points)</text>

@@ -20,8 +20,10 @@ def render(data, results, dark, mobile):
         "ink": "#e4eaf0" if dark else "#263747",
         "grid": "#43505f" if dark else "#d6dfe5",
         "blue": "#76b3d4" if dark else "#32759a",
-        "orange": "#e6ae70" if dark else "#ad702c",
-        "green": "#88bca5" if dark else "#397c61",
+        # Long, short and net keep Figure 1's colours.
+        "long": "#57bdab" if dark else "#268b7b",
+        "short": "#e69482" if dark else "#bd6559",
+        "net": "#8bb6ee" if dark else "#3a689c",
     }
     dates = [dt.date.fromisoformat(value) for value in data["dates"]]
     suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
@@ -54,32 +56,29 @@ def render(data, results, dark, mobile):
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["Arial", "DejaVu Sans"],
                          "svg.fonttype": "none", "svg.hashsalt": "attribution-series"}):
         fig, axes = plt.subplots(2, 1, sharex=True, figsize=(4, 6) if mobile else (9.6, 5.8))
-        # The legend sits between the heading and the plot area, clear of the data.
-        axis(axes[0], "Realized market beta", pad=30)
-        axis(axes[1], "Model beta exposure · per notional")
-        for key, color, label, width in [("beta_126", "orange", "126 sessions", .85),
-                                         ("realized_beta", "blue", "252 sessions", 1.25)]:
-            axes[0].plot(dates, data[key], color=colors[color], linewidth=width, label=label)
-        axes[0].legend(loc="lower left", bbox_to_anchor=(0, 1.01), ncol=2, frameon=False,
-                       fontsize=9 if mobile else 10, labelcolor=colors["ink"], borderaxespad=0,
-                       handlelength=1.5, columnspacing=1)
+        axis(axes[0], "Realized market beta · trailing 252 sessions")
+        axis(axes[1], "Standardized beta exposure · per notional")
+        axes[0].plot(dates, data["realized_beta"], color=colors["blue"], linewidth=1.25)
         axes[0].margins(y=.08)
-        axes[1].plot(dates, data["model_beta"], color=colors["blue"], linewidth=1)
+        axes[1].plot(dates, data["fit_beta_exposure"], color=colors["blue"], linewidth=1)
         for row in data["lows"]:
             when = dt.date.fromisoformat(row["date"])
-            for ax, key in zip(axes, ["realized_beta", "model_beta"]):
-                ax.scatter(when, row[key], s=20, color=colors["blue"], zorder=4)
+            index = data["dates"].index(row["date"])
+            for ax, key in zip(axes, ["realized_beta", "fit_beta_exposure"]):
+                # A contrasting dot with a background ring stays visible on the line.
+                ax.scatter(when, data[key][index], s=42, color=colors["ink"], edgecolor=colors["bg"],
+                           linewidth=1.2, zorder=4)
         for ax in axes:
             ax.yaxis.set_major_locator(plt.MaxNLocator(4))
-        fig.subplots_adjust(left=.17 if mobile else .085, right=.97, top=.86, bottom=.08, hspace=.5)
+        fig.subplots_adjust(left=.17 if mobile else .085, right=.97, top=.9, bottom=.08, hspace=.4)
         save(fig, "beta-history")
 
         fig, ax = plt.subplots(figsize=(4, 3.6) if mobile else (9.6, 3.6))
         axis(ax, "Exposure · % of fixed notional")
         for key, label, color, dash, offset in [
-            ("long_gross", "Long gross", "blue", "-", 0),
-            ("short_gross", "Short gross", "orange", "--", -3),
-            ("net_exposure", "Net", "green", "-", 0),
+            ("long_gross", "Longs", "long", "-", 0),
+            ("short_gross", "Shorts", "short", "--", -3),
+            ("net_exposure", "Net", "net", "-", 0),
         ]:
             values = np.array(data[key])*100
             ax.plot(dates, values, color=colors[color], linewidth=.9, linestyle=dash)
