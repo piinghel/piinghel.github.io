@@ -62,8 +62,9 @@ post, identify the practical question and the evidence that answers it. Use
 short headings and connected prose: research decision, experiment, result,
 interpretation. This is a reasoning sequence, not a mandatory section template.
 
-Keep the summary brief. Let the introduction develop the question rather than
-repeat the summary's results. Use first person for actual choices and judgments.
+Never add a summary, summary box, key takeaways or TL;DR, at the top or anywhere
+else; open with the concrete problem in the first paragraph. Use first person for
+actual choices and judgments.
 Keep useful accounts of failed attempts and stopping decisions; leave routine
 editing, file handling and deployment logs out of the article.
 Explain enough method to assess the comparison, with detailed settings in a

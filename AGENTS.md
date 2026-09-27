@@ -12,6 +12,11 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   funded portfolios or operational use. Describe tests, backtests and research
   preferences naturally, preserving the author's curiosity and opinions.
   Apply this quietly; do not add disclaimers or announce the framing in the prose.
+- Give every article the same structure: header, the small Contents list, an
+  introduction that opens with the concrete problem, the analysis sections, a
+  closing section with the judgement, then references if any. Never add a
+  summary in any form. List articles newest first everywhere, and never show
+  unpublished or unfinished articles on the site.
 - Recover the article's practical research question before rewriting. Keep
   follow-up questions when a result motivates the next decision within that
   same argument. Delete unsupported branches rather than filling an appendix.
