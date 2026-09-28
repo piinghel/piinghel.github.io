@@ -29,9 +29,9 @@ free. That matters in 2008: the SEC's [temporary short-sale ban](https://www.sec
 initially covered 799 financial companies from 19 September and
 [expired on 8 October](https://www.nasdaqtrader.com/TraderNews.aspx?id=RA2008-036),
 inside the 2007–08 decline.
-Financials, by sector, made 9.3 of the short book's 32.3 points from October
-2007 to October 2008, while the long book lost about 34, and 2.5 of its 9.3
-points during the ban itself. Rebalancing inside the ban, the book also opened
+Short positions in the financial sector made 9.3 of the short book's 32.3
+points from October 2007 to October 2008; the long book lost about 34.
+Of those 9.3 points, 2.5 came during the ban itself. During that period, the book also opened
 38 new short positions in financials, 2.6% of capital; they made about half a
 point. This sector count has not been matched name by name to the changing
 ban list, so it does not establish how much of that gain was tradable.
@@ -99,9 +99,9 @@ $$
 
 Before costs, in declines the shorted stocks fell much harder than the longs,
 so the gap earned 21.5% a year, and the net long dollars lost 15.3%. In strong rallies the shorted stocks
-rose faster: the gap lost 7.2% a year and the net long made 14.5%. The book
-comes out positive in both because the two halves nearly cancel, which is the
-low-risk tilt and the beta limit working as one position.
+rose faster: the gap lost 7.2% a year and the net long made 14.5%. The two terms
+largely offset, leaving a smaller positive return in each regime. The theme
+decomposition below shows where that remaining return comes from.
 
 ## The low-risk package mostly cancels in declines and rallies
 
@@ -177,8 +177,7 @@ amount the history can't pin down.
 <p class="figure-caption"><strong>Figure 2: The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. Explore reveals the low-risk package's three components.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21 after
-costs, look
-alike by theme: the low-risk package lost 12.4 and 11.7, mostly through low
+costs, look alike by theme: the low-risk package lost 12.4 and 11.7, mostly through low
 volatility, stock-specific returns lost 6.1 and 8.3, and short-term reversal
 helped, by 5.1 and 2.5. They differ by leg. In 2008–09 the short book made 21
 points into the March 2009 low and lost 35 in the rebound, 14.3 net, while the
