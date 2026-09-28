@@ -107,6 +107,9 @@ volatility and arithmetic zero-cash Sharpe use 252 sessions/year. Linked book
 contributions are not standalone returns. Preserve each article's conventions.
 Long displays sample weekly endpoints and extremes, but statistics retain every
 daily observation. The pinned Plotly bundle loads once; SVGs are fallbacks.
+Chart data and rendering wait until the figure approaches the viewport. Opening
+a predictor list also loads its definitions immediately. This keeps the article
+opening light without dropping observations or changing the figures.
 
 Fixed-notional attribution uses additive P&L and drawdown in points, with
 arithmetic annual returns. The optimizer preserves its mean of separately
@@ -142,7 +145,7 @@ themes, test ranges and legends, and run the site checks. Scan the diff, exports
 and built site for confidential source identifiers. Keep checks, mismatches and
 page-weight comparisons in the private review, not in article prose.
 
-Every figure has light/dark SVG variants, with phone layouts where needed, drawn
+Static fallbacks have light/dark SVG variants, with phone layouts where needed, drawn
 from one composition per viewport. Renderers in `scripts/` read only the aggregate
 JSON or CSV beside the figures; an `--outputs`, `--sweep` or `--geometry` option
 first refreshes that aggregate from the research project's saved results. Install

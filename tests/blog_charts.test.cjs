@@ -3,10 +3,30 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const charts=require('../assets/js/blog-charts.js');
+const vm=require('node:vm');
 const data=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/2024-12-15-low-volatility-factor/performance.json')));
 const returns=id=>data.series.find(s=>s.id===id).values.map(v=>v/data.scale);
 const episodes=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/2024-12-15-low-volatility-factor/episodes.json')));
 const episodeReturns=id=>episodes.series.find(s=>s.id===id).values.map(v=>v/episodes.scale);
+
+test('deferred charts start once near the viewport and work without an observer',async()=>{
+  for(const supported of [true,false]) {
+    let notify,starts=0;
+    const classes=new Set(),host={classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}};
+    const document={readyState:'complete',querySelectorAll:()=>[]},window={document};
+    if(supported)window.IntersectionObserver=class {
+      constructor(callback){notify=callback;}observe(){}unobserve(){}
+    };
+    vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../assets/js/blog-charts.js'),'utf8'),{window,document});
+    window.BlogCharts.whenVisible(host,()=>{starts++;});
+    if(supported) {
+      notify([{target:host,isIntersecting:false}]);assert.equal(starts,0);
+      notify([{target:host,isIntersecting:true}]);notify([{target:host,isIntersecting:true}]);
+    }
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(starts,1);assert.equal(classes.has('chart-pending'),false);
+  }
+});
 
 test('fixed-notional P&L rebases additively, including its drawdown',()=>{
   assert.deepEqual(charts.additivePath([0,.1,-.2,.05],0,3),{equity:[0,10,-10,-5],drawdown:[0,0,-20,-15]});

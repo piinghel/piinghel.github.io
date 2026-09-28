@@ -14,7 +14,7 @@
   const icEl = root.querySelector('.pse-ic');
   const [heatHeading, icHeading] = root.querySelectorAll('.pse-heading');
   let data = null;
-  let ready=false,legendTimer,icRange=null,rendering=false,pending=false;
+  let ready=false,legendTimer,icRange=null,rendering=false,pending=false,loading;
 
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const roles=['momentum','reversal','low_volatility','size','liquidity','market','short_interest'];
@@ -234,10 +234,13 @@
   }
 
   function load() {
-    Promise.all([window.BlogCharts.plotly(), window.BlogCharts.load(root.dataset.source)])
+    if(loading)return loading;
+    loading=Promise.all([window.BlogCharts.plotly(), window.BlogCharts.load(root.dataset.source)])
       .then(([, json]) => { data = json; start(); })
       .catch(() => { root.querySelector('.pse-status').textContent = 'The interactive figure could not load.'; });
+    return loading;
   }
 
-  load();
+  document.querySelectorAll('.predictor-list').forEach(details=>details.addEventListener('toggle',()=>{if(details.open)load();}));
+  window.BlogCharts.whenVisible(root,load);
 }());

@@ -73,6 +73,19 @@
   root.BlogCharts=api;
   if (!root.document) return;
   const documents=new Map();
+  const pendingCharts=new Map();
+  const chartObserver='IntersectionObserver' in root ? new root.IntersectionObserver(entries=>{
+    for(const entry of entries)if(entry.isIntersecting) {
+      const start=pendingCharts.get(entry.target);
+      pendingCharts.delete(entry.target);chartObserver.unobserve(entry.target);
+      if(start)start();
+    }
+  },{rootMargin:'600px 0px'}) : null;
+  function whenVisible(host,start) {
+    host.classList.add('chart-pending');
+    const run=()=>Promise.resolve().then(start).finally(()=>host.classList.remove('chart-pending'));
+    if(chartObserver){pendingCharts.set(host,run);chartObserver.observe(host);}else run();
+  }
   function load(url) {
     if (!documents.has(url)) documents.set(url,fetch(url).then(r=>{
       if(!r.ok) throw new Error('Chart data unavailable'); return r.json();
@@ -548,7 +561,7 @@
     new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
-  Object.assign(api,{load,plotly});
-  function init() {document.querySelectorAll('.blog-chart').forEach(mount);}
+  Object.assign(api,{load,plotly,whenVisible});
+  function init() {document.querySelectorAll('.blog-chart').forEach(host=>whenVisible(host,()=>mount(host)));}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })(typeof window==='undefined'?globalThis:window);
