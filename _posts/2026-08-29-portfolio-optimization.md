@@ -175,12 +175,12 @@ their side.[^drift] Table 1 lists all settings.
   </tbody>
 </table>
 
-## One change at a time
+## From volatility scaling to joint sizing
 {: #development-results }
 
-Table 2 builds from the regression article's rule to the final portfolio,
-one change at a time, with the same Ridge ranking throughout. The first row
-is that article's rule: equal signal weights within each book, scaled by
+Table 2 compares four portfolio rules, from the regression article's rule to
+joint sizing with trading controls. The Ridge ranking stays the same throughout.
+The first row is that article's rule: equal signal weights within each book, scaled by
 volatility. The second gives stronger scores larger signal weights.
 The third sizes the stocks jointly. The fourth adds two trading controls,
 explained in the next section: a rank buffer that keeps existing holdings
