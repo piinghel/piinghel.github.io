@@ -208,6 +208,20 @@
       const startLabel=element('label','','From '),endLabel=element('label','','to ');
       startLabel.append(start);endLabel.append(end);dates.append(startLabel,endLabel);extra.append(dates);
       start.onchange=end.onchange=()=>{if(start.value&&end.value)setRange(start.value,end.value);};
+      const barMetrics=[
+        ['annual_return','Annual return (%)','.0%','.1%'],
+        ['sharpe','Sharpe ratio','.2f','.2f'],
+        ['volatility','Volatility (%)','.0%','.1%']
+      ];
+      let barMetric=barMetrics[0];
+      if(cfg.kind==='grouped-bars') {
+        const label=element('label','','Metric '),select=element('select');
+        for(const [key,title] of barMetrics) {
+          const option=element('option','',title);option.value=key;select.append(option);
+        }
+        select.onchange=()=>{barMetric=barMetrics.find(([key])=>key===select.value);draw();};
+        label.append(select);controls.append(label);
+      }
       let benchmarkBox;
       const benchmark=series.find(s=>s.role==='index');
       function checkbox(label,checked,change,container=dates) {
@@ -278,16 +292,17 @@
           }
           function heading(text,y) {layout.annotations.push({text,x:0,y,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:13,color:t.text}});}
           if(cfg.kind==='grouped-bars') {
+            const [metric,title,tickformat,hoverformat]=barMetric;
             layout.height=360;layout.margin.t=65;layout.barmode='group';layout.bargap=.25;
-            layout.yaxis.tickformat='.0%';layout.xaxis.title={text:'Decile (1 = lowest score)',font:{size:12}};
-            heading('Annual return (%)',1);
+            layout.yaxis.tickformat=tickformat;layout.xaxis.title={text:'Decile (1 = lowest score)',font:{size:12}};
+            heading(title,1);
             const groups=[...new Set(series.map(s=>s.group))];
             for(const group of groups) {
               const items=series.filter(s=>s.group===group);
               traces.push({type:'bar',name:group,legendgroup:items[0].id,
-                x:items.map(s=>s.category),y:items.map(s=>stats(s.returns.slice(first,last+1),data.annualization)?.annual_return),
+                x:items.map(s=>s.category),y:items.map(s=>stats(s.returns.slice(first,last+1),data.annualization)?.[metric]),
                 visible:visible.get(items[0].id)?true:'legendonly',marker:{color:color(items[0])},
-                hovertemplate:group+' · decile %{x}<br>%{y:.1%} a year<extra></extra>'});
+                hovertemplate:group+' · decile %{x}<br>'+title+': %{y:'+hoverformat+'}<extra></extra>'});
             }
           } else if(bars) {
             const shown=series.filter(s=>visible.get(s.id));

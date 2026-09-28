@@ -297,7 +297,7 @@ volatility, using equal-weighted decile portfolios before costs.
 
 {% include blog-chart.html chart="deciles" source="/assets/multiple-linear-regression/deciles.json" label="Return, volatility and Sharpe across score deciles" %}
 
-<p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Compounded annual return of equal-weighted portfolios of the stocks in each score decile, with each decile's annualized volatility and Sharpe ratio in the expandable statistics. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
+<p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Equal-weighted portfolios of the stocks in each score decile. Explore switches between compounded annual return, Sharpe ratio and annualized volatility for the selected period. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
 
 Through 2021 Ridge's deciles climb from about 3% a year to 16%, and the top
 decile's Sharpe ratio is 0.90 against 0.26 at the bottom. Equal weights reach
