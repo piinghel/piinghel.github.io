@@ -38,8 +38,8 @@ Short positions in the financial sector made 9.3 of the short book's 32.3
 points from October 2007 to October 2008; the long book lost about 34.
 Of those 9.3 points, 2.5 came during the ban itself. During that period, the book also opened
 38 new short positions in financials, 2.6% of capital; they made about half a
-point. This sector count has not been matched name by name to the changing
-ban list, so it does not establish how much of that gain was tradable.
+point. These sector-level returns assume unrestricted shorting; they do not
+measure the gain available under the ban's security-specific restrictions.
 
 </details>
 

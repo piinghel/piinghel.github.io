@@ -127,12 +127,14 @@ one-line paragraphs, repeated “I think,” or stock phrases such as “the key
 takeaway.” Neither a personal pronoun in every sentence nor extreme brevity
 makes a post more human.
 
-Keep limitations that affect the comparison, confidence or decision. Say what
-happened concretely and usually once near the result. For an abandoned test,
-state how much completed, what failed and why the author stopped. Don't promise
-future updates or call results “awaiting” when no further work is planned.
-Retain actual solver warnings and missing checks; don't replace them with vague
-status labels or erase them to make the story smoother.
+Keep limitations that affect the comparison, confidence or decision, usually
+once near the result. A failed research comparison can belong in the argument
+when it explains a substantive choice. Internal defects, solver warnings,
+missing checks and rerun status belong in the private workflow, following the
+publication rule in SKILL.md. Resolve issues affecting the evidence before
+publishing the result. Describe remaining scientific limitations through the
+method's assumptions and scope, without a task-status narrative or promises
+of future updates.
 
 Prefer numbered footnotes for secondary methodological caveats, consolidating
 repeated hindsight or sample-reuse disclosures. Keep limitations that change
@@ -151,11 +153,11 @@ Use these to judge the kind of edit, not as sentences to paste into every post.
   was held constant,” use “I kept the predictions and trading rules fixed
   because I wanted to see what the risk limits changed.” This is the concrete
   comparison principle illustrated by Halford, not a quotation from him.
-- **Report a dead end plainly.** When supported by the run record: “Only one
-  schedule finished. The next attempt hit the iteration limit. It was taking
-  too long, and the result wasn't promising enough to keep pursuing it.” The
-  useful quality in Huyen and Carver is candor about the work, not comic relief.
-  Don't turn a solver failure into a claim that no feasible solution exists.
+- **Report a research dead end plainly.** When supported by completed results:
+  “The tighter limit reduced concentration but also lowered Sharpe, so I kept
+  the original rule.” Give the outcome and judgment; keep execution failures
+  and incomplete checks in the private workflow. A solver failure is not
+  evidence that no feasible solution exists.
 - **Calibrate the interpretation.** Replace “The cap makes the portfolio
   safer” with “The cap reduces concentration under the risk model. I still
   want to understand which losses that might protect against.” Like the

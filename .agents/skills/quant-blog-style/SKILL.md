@@ -68,8 +68,14 @@ actual choices and judgments.
 Headings are statements; don't pose a question and answer it yourself. Keep
 footnotes to one or two short sentences (a source or one clarification). Don't
 hedge with "noise"; state uncertainty once, as an interval or a plain judgement.
-Keep useful accounts of failed attempts and stopping decisions; leave routine
-editing, file handling and deployment logs out of the article.
+Keep useful accounts of failed research comparisons and stopping decisions.
+Keep internal workflow out of public prose, captions, footnotes and collapsed
+details: simulation defects, saved-run handling, pending reruns, missing checks,
+repairs, bookkeeping, editing and deployment belong in the private research
+registry or engineering workflow. Resolve defects that affect results before
+publishing those results; removing a notice does not correct the evidence.
+State reader-relevant assumptions and limitations through the method and its
+scope, without narrating internal progress or promising future work.
 Explain enough method to assess the comparison, with detailed settings in a
 quiet table or research documentation. End on what the comparison establishes.
 End on the judgement the work supports, not on open questions; do not

@@ -31,9 +31,6 @@ for, which take risk without paying for it, and whether that has changed.
 
 The book is the optimizer article's final portfolio, joint sizing with trading
 controls, with its three rebalance schedules held together at equal notional.
-One defect remains in that saved simulation: a schedule rebalanced on
-11 September 2001, when the US market was closed. I retain its recorded
-holdings and costs here; correcting that execution requires a portfolio rerun.
 
 <div id="pnl-conventions" markdown="1">
 Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are
@@ -286,11 +283,8 @@ $$
 with $$\kappa_t=0.0005\sum_i|\Delta w_{i,t}|$$ the trading cost on the day's
 traded notional; two-way turnover is $$\sum_i|\Delta w_{i,t}|$$ summed over a
 year. The fifth term is the P&L of the few holdings without characteristics,
-about 1% of gross, shown as its own line. The accounting covers all 6,892 saved
-dates from January 1999. Factor timing uses valid market closes: the reopening
-on 17 September 2001 uses characteristics from 10 September. The closed-market
-11 September entry has zero gross P&L and 0.02 points of recorded costs; it
-remains in the accounting without an invented factor payoff.
+about 1% of gross, shown as its own line. Characteristics are measured at the
+previous market close.
 
 **Characteristics.** Each raw descriptor is logged if it is a skewed level or
 dispersion, or turned into $$\log(1+r)$$ if it is a return. Each day it is

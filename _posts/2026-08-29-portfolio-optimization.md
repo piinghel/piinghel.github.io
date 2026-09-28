@@ -277,7 +277,7 @@ Net Sharpe barely moves: 1.29–1.33 across trade coefficients from 0 to 5
 and 1.30–1.32 across cutoffs from 75 to 225, while turnover falls from 33× to
 19× and from 29× to 21×. The settings I use, 2.5 and 175, sit inside both
 plateaus. A larger coefficient or cutoff would cut turnover further at little
-cost in Sharpe; I keep the earlier settings rather than tune them on this run.
+cost in Sharpe.
 
 ## After 2021
 

@@ -52,6 +52,14 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   equation. Avoid formulaic process language and the word "fresh" in prose.
 - Keep revision logs, archive searches, hashes, and renderer details in project
   documentation. Article source notes should be brief and useful to the reader.
+- Keep internal workflow out of public articles, including captions, footnotes
+  and collapsed details. Do not narrate simulation defects, saved-run handling,
+  pending reruns, missing checks, repairs or bookkeeping. Manage these in the
+  private research registry and engineering workflow. Resolve defects that
+  affect results before publishing those results; deleting a notice is not a
+  correction. Keep reader-relevant assumptions and limitations as concise
+  statements about the method or evidence, without a progress report or a
+  promise of future work. Preserve useful failed research comparisons.
 - Describe what measures show and which assumptions they use. Replace repeated
   negative contrasts with direct definitions, such as observed ranges across
   schedules. Preserve material limitations through concrete scope statements.
