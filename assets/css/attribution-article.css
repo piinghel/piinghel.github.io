@@ -1,0 +1,38 @@
+/* Period explorer of the attribution series (Part 1, Figure 2). */
+.ae { margin: 1.6rem 0 0.4rem; --ae-pos: #287d70; --ae-neg: #b86642; --ae-grid: #e2e6e9; }
+html[data-theme="dark"] .ae { --ae-pos: #6ab8aa; --ae-neg: #e5a081; --ae-grid: #37414a; }
+.ae-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin-bottom: 0.6rem; }
+.ae-segments { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.ae-segments button {
+  font: inherit; font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted-ink); background: transparent; cursor: pointer;
+  border: 0; border-right: 1px solid var(--rule); padding: 0.3rem 0.55rem; font-variant-numeric: tabular-nums;
+}
+.ae-segments button:last-child { border-right: 0; }
+.ae-segments button:hover { background: var(--soft-accent); color: var(--ink); }
+.ae-segments button[aria-checked="true"] { background: var(--ink); color: var(--page-surface); font-weight: 600; }
+.ae-range { font-family: var(--font-sans); font-size: 0.85rem; color: var(--muted-ink); display: inline-flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; }
+.ae-range select {
+  font: inherit; color: var(--ink); background: var(--page-surface); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 0.15rem 0.3rem; font-variant-numeric: tabular-nums;
+}
+.ae-summary { font-family: var(--font-sans); font-size: 0.85rem; color: var(--muted-ink); margin: 0 0 0.4rem; font-variant-numeric: tabular-nums; }
+.ae-summary strong { color: var(--ink); font-weight: 600; }
+.ae-chart { width: 100%; }
+.ae-chart svg { display: block; max-width: 100%; overflow: visible; font-family: var(--font-sans); }
+.ae-chart .ae-label { fill: var(--ink); font-size: 13px; }
+.ae-chart .ae-label.ae-total { font-weight: 600; }
+.ae-chart .ae-group { fill: var(--muted-ink); font-size: 11.5px; letter-spacing: 0.02em; }
+.ae-chart .ae-value { fill: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+.ae-chart .ae-panel { fill: var(--ink); font-size: 13px; font-weight: 600; }
+.ae-chart .ae-tick { fill: var(--muted-ink); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.ae-chart .ae-gridline { stroke: var(--ae-grid); stroke-width: 1; }
+.ae-chart .ae-zero { stroke: var(--muted-ink); stroke-width: 1; opacity: 0.6; }
+.ae-chart .ae-band { fill: var(--soft-accent); }
+.ae-chart .ae-pos { fill: var(--ae-pos); }
+.ae-chart .ae-neg { fill: var(--ae-neg); }
+.ae-chart .ae-row:hover .ae-label { text-decoration: underline; }
+.ae-tip {
+  position: fixed; z-index: 10; pointer-events: none; font-family: var(--font-sans); font-size: 0.8rem; line-height: 1.4;
+  color: var(--ink); background: var(--page-surface); border: 1px solid var(--rule); border-radius: 4px; padding: 0.35rem 0.5rem;
+  font-variant-numeric: tabular-nums; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
