@@ -51,7 +51,7 @@
     const mean = S / n;
     const vol = Math.sqrt((S2 - (S * S) / n) / (n - 1)) * Math.sqrt(252);
     const costs = sum(data.lines.total['Trading costs'].s, a, b) / 1e4 / n;
-    return { ret: 100 * 252 * mean, net: 100 * 252 * (mean + costs), vol: 100 * vol, sharpe: (252 * mean) / vol, n };
+    return { ret: 100 * 252 * mean, net: 100 * 252 * (mean + costs), vol: 100 * vol, sharpe: (252 * (mean + costs)) / vol, n };
   }
 
   function rows() {
@@ -92,7 +92,7 @@
     const book = bookSummary(a, b);
     const legName = { total: 'Book', long: 'Long leg', short: 'Short leg' }[state.leg];
     summary.innerHTML = `<strong>${monthLabel(data.months[a])}–${monthLabel(data.months[b])}</strong>, ${book.n.toLocaleString('en')} sessions. `
-      + `Book: ${fmt(book.ret)}% a year before costs, ${fmt(book.net)}% after, ${book.vol.toFixed(1)}% volatility, Sharpe ${book.sharpe.toFixed(2)}.`
+      + `Book: ${fmt(book.ret)}% a year before costs, ${fmt(book.net)}% after, ${book.vol.toFixed(1)}% volatility, Sharpe after costs ${fmt(book.sharpe, 2).replace('+', '')}.`
       + (state.leg === 'total' ? '' : ` Showing the ${legName.toLowerCase()}; shares are of the book's risk.`);
 
     const list = rows().map((r) => (r.line ? { ...r, ...stats(r.line, a, b) } : r));

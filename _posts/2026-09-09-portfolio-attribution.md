@@ -57,13 +57,14 @@ tilt towards low-risk stocks. At the median, the longs have a forecast beta of
 theirs, $$L\beta_L = S\beta_S$$, which leaves the book net long by
 
 $$
-L-S = S\left(\frac{\beta_S}{\beta_L}-1\right) \approx 0.65 \times 0.26 \approx 0.17 .
+L-S = S\,(\beta_S/\beta_L-1),
 $$
 
-The rest comes from the 7% volatility target: low-risk longs use less of it per
-dollar than the shorts, so the optimizer would hold even more of them, and its
-limit of 25% on net dollars binds at more than four in five rebalances. The
-book's forecast beta stays close to zero, a median of +0.02, but its realized
+about 0.65 × 0.26 ≈ 0.17 of capital. That is two thirds of the 25%. The rest
+comes from the 7% volatility target: low-risk longs use less of it per dollar
+than the shorts, so the optimizer would hold even more of them, and its limit of
+25% on net dollars binds at more than four in five rebalances. The book's
+forecast beta stays close to zero, a median of +0.02, but its realized
 beta has been +0.07.
 
 ## Attributing P&L to the ranking's themes
