@@ -4,7 +4,7 @@ Part 1, Figure 1 (whole-history): cumulative long, short and net P&L above the
 net drawdown, with the two deepest drawdowns shaded.
 
 `--outputs` reads the attribution project's daily P&L
-(projects/performance_attribution/outputs/full_history/daily.parquet) and writes
+(projects/performance_attribution/outputs/full-history-ridge80-b3k155-20260927/daily.parquet) and writes
 the aggregate series to assets/portfolio-attribution/pnl-history.json; rendering
 reads only that file and the drawdown windows in themes.json. Longs and
 shorts are gross, net includes trading costs, all in points of fixed notional.

@@ -1,13 +1,13 @@
 """Attribution by theme of the ranking.
 
-Part 1, Figure A: full-history return and variance share of each theme.
-Part 1, Figures B and C: each theme's return and variance share per calendar
-year, with the five-year block value as a step line.
+Part 1: full-history return and variance share of each theme (the explorer's
+no-script fallback), and each theme's return per calendar year with the block value
+as a step line.
 Part 2: each theme's return inside market declines and strong rallies, and
 its P&L over the two deepest drawdowns.
 
 `--outputs` reads the theme attribution folder
-(projects/performance_attribution/outputs/theme-over-time-*) and writes
+(projects/performance_attribution/outputs/factors-composite-*) and writes
 assets/portfolio-attribution/themes.json; rendering reads only that file.
 Returns are gross, in % of capital a year (mean daily contribution x 252).
 A variance share is Cov(theme, gross P&L) / Var(gross P&L).
@@ -25,23 +25,11 @@ import matplotlib.pyplot as plt
 
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 DATA = OUTPUT / "themes.json"
-# Display order: the ranking's signal themes, the defensive package, then the rest.
-THEMES = [
-    "Short interest",
-    "Momentum",
-    "Trend",
-    "Short-term reversal",
-    "Price position",
-    "Loss frequency",
-    "Low volatility",
-    "Net market exposure",
-    "Size",
-    "Liquidity & volume",
-    "Beta & market correlation",
-    "Sector tilt",
-    "Stock-specific",
-    "Unloaded holdings",
-]
+# Display order: the ranking's signal themes, the low-risk package (subtotal first), the rest.
+SIGNALS = ["Short interest", "Short-term return", "Long-term return", "Size", "Trading activity"]
+LOW_RISK = ["Low-risk package", "Low volatility", "Beta", "Net market exposure"]
+REST = ["Sector tilt", "Stock-specific", "Unloaded holdings"]
+THEMES = [*SIGNALS, *LOW_RISK, *REST]
 FIRST_YEAR, LAST_YEAR = 1999, 2026
 
 
@@ -246,13 +234,12 @@ if __name__ == "__main__":
         ("Return (% a year)", {t: data["full"][t][0] for t in THEMES}, "{:+.1f}"),
         ("Share of risk (%)", {t: data["full"][t][1] for t in THEMES}, "{:.1f}"),
     ]
-    order = [(t, t) for t in THEMES[:6]] + [None] + [(t, t) for t in THEMES[6:10]] + [None] \
-        + [(t, t) for t in THEMES[10:]]
+    order = ([(t, t) for t in SIGNALS] + [None] + [(t, t) for t in LOW_RISK] + [None]
+             + [(t, t) for t in REST])
     for dark in (False, True):
         for mobile in (False, True):
             render(full, "theme-pnl", dark, mobile, row_order=order, wrap_labels=True)
             small_multiples(data, 0, "theme-return-years", 10, "Return, % a year", dark, mobile)
-            small_multiples(data, 1, "theme-risk-years", 40, "Share of risk, %", dark, mobile)
             regimes = [(k, v, "{:+.1f}") for k, v in data["regimes"].items()]
             render(regimes, "theme-regimes", dark, mobile, shared_scale=True,
                    row_order=[("Book net", "Whole book, net"), None] + order, wrap_labels=True)

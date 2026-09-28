@@ -81,19 +81,11 @@
   },
   "/assets/portfolio-attribution/theme-return-years": {
     "width": 720,
-    "height": 490
+    "height": 367
   },
   "/assets/portfolio-attribution/theme-return-years_mobile": {
     "width": 374,
-    "height": 781
-  },
-  "/assets/portfolio-attribution/theme-risk-years": {
-    "width": 720,
-    "height": 490
-  },
-  "/assets/portfolio-attribution/theme-risk-years_mobile": {
-    "width": 374,
-    "height": 781
+    "height": 670
   },
   "/assets/portfolio-attribution/whole-history": {
     "width": 634,

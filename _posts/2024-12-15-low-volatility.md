@@ -3,7 +3,7 @@ layout: post
 title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
-last_modified_at: 2026-09-27
+last_modified_at: 2026-09-28
 categories: ["Signals"]
 article_label: Signals · Low volatility
 permalink: /quant/2024/12/15/low-volatility-factor.html
@@ -98,7 +98,7 @@ portfolio's beta with the Russell 1000 at every rebalance, using trailing
 ex-ante betas.[^beta-check] Table 1 compares all four.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 1: Sizing with and without a beta hedge.</strong> 12 July 1995–27 May 2026, after 5 bp trading costs. Annual return is compounded and volatility annualized; the hedge is financed at no cost. Two-way stock turnover is about 19 times capital a year for equal weighting and 12 for inverse volatility; the hedge adds 1.3 and 0.6.</caption>
+  <caption><strong>Table 1: Sizing with and without a beta hedge.</strong> 12 July 1995–27 May 2026, after trading costs of 5 bp per dollar traded. Annual return is compounded and volatility annualized; the hedge is financed at no cost. Two-way stock turnover is about 19 times capital a year for equal weighting and 12 for inverse volatility; the hedge adds 1.3 and 0.6.</caption>
   <thead><tr><th>Rule</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">Unhedged</th></tr>
@@ -172,6 +172,6 @@ hedge doesn't fix that.
 
 [^windows]: The ranking averages 21-, 63- and 126-session volatility; sizing uses 60 sessions. Ex-ante beta is a stock's trailing 252-session beta; realized beta regresses daily portfolio returns on the Russell 1000.
 
-[^beta-check]: The hedge trades with the stocks at the next close. Costs are 5 bp of traded notional; funding, borrow fees and delisting returns are excluded.
+[^beta-check]: The hedge trades with the stocks at the next close. Costs are 5 bp per dollar traded; funding, borrow fees and delisting returns are excluded.
 
 [^rally-beta]: Summed daily before-cost P&L of each book net of its in-window market beta, so not directly comparable with the linked contributions in Figure 4; ex-ante betas give the same split.
