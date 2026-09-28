@@ -39,8 +39,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   conventions clear without claiming independent or untouched validation.
 - Describe implementation only when it changes the research design, evidence
   or interpretation. Keep material limitations once, where they matter.
-- Do not publish confidential sell-side reports, citations to them, Bloomberg
-  references, or licensed source data. Keep private research inputs local.
+- Do not publish confidential sell-side reports, citations to them, proprietary
+  source identifiers, or licensed source data. Keep private research inputs local.
 
 - Let the first-person voice come from actual experiments and choices: what I
   tried, what I observed, and why I chose the next step. Use Max Halford and Rob
@@ -76,13 +76,15 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Use captions above tables and below figures. Keep numeric columns aligned,
   define units and periods, and avoid repeating the same title inside an image.
 - The low-volatility performance figure combines performance and drawdown.
-- Its rally figure is one 2-by-2 image: dot-com on the left and the
+- Its rally figure has a 2-by-2 composition: dot-com on the left and the
   April 2025–May 2026 rally on the right, indexed growth above linked gross
   book contributions. Do not assign an AI or growth-factor cause without
   holdings-level attribution.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
-- Publish reproducible light and dark SVG variants from one shared figure
-  composition per viewport. Stack episode groups and other multi-panel charts
+- Use the shared interactive chart helper for finalized evidence, with quiet
+  defaults and optional controls under Explore. Keep statistics collapsed and
+  omit miniature range previews. Retain reproducible light and dark SVG fallbacks
+  from one shared composition per viewport. Stack episode groups and multi-panel charts
   on phones when needed for readable labels; preserve scales and definitions.
   Keep the same table structure at every viewport width.
 

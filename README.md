@@ -40,7 +40,8 @@ The normal build excludes drafts. Use `--drafts --unpublished` for a local previ
 ```bash
 bundle exec jekyll build
 python3 scripts/check_site.py _site
-python3 -m pytest -q tests
+python3 -m unittest discover -s tests
+node --test tests/blog_charts.test.cjs
 git diff --check
 ```
 
@@ -59,8 +60,8 @@ a framework migration would not strengthen the research.
 ### Interactive chart standard
 
 Use the shared `scripts/blog_charts.py` exporter, `assets/js/blog-charts.js`
-renderer and `blog-chart.html` include for new finalized figures. The first
-reference is the low-volatility article; other articles migrate after review.
+renderer and `blog-chart.html` include for finalized figures. The
+low-volatility article is the reference for the approved interaction design.
 Keep article prose, results and conclusions unchanged during chart conversions.
 Do not convert evidence still being rerun. Export only allowlisted, neutrally
 named portfolio aggregates, never raw inputs or their metadata.
@@ -130,7 +131,7 @@ for byte), run the renderer from this directory, then
 | | 2 | `scripts/render_mlr_training_design.py` |
 | Joint sizing | all | private portfolio-optimization project (see below) |
 | Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
-| | 2–4 | `scripts/render_attribution_themes.py` |
+| | 2–3 | `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
 
@@ -166,7 +167,7 @@ reports are historical, not interchangeable with the current article's runs.
 
 | Material | Location | Reproduction scope |
 | --- | --- | --- |
-| Site and regression figure sources | This repository | Matched Ridge figures and result tables from included aggregate evidence; correlation chart from its included matrix |
+| Site and regression figure sources | This repository | Renderers and public aggregate JSON; the CSV inputs described in the evidence README remain in the private research checkout |
 | Low-volatility sizing | [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) | Independent sizing example; full runner needs its configured inputs and dependencies |
 | Optimizer methods and evidence | [portfolio-optimization-study](https://github.com/piinghel/portfolio-optimization-study) | One-rebalance control example and figures from included portfolio results |
 | Rebalance tranching | [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) | Mixture calculations, examples and figures from included daily portfolios |
@@ -178,9 +179,9 @@ comparison.
 
 ## Site maintenance
 
-The reusable [Quant Blog Style skill](.agents/skills/quant-blog-style/SKILL.md)
-records the house conventions for prose, figures, captions, tables and mobile
-presentation. Invoke it as `$quant-blog-style` when preparing future posts.
+The locally installed Quant Blog Style skill records the house conventions for
+prose, figures, captions, tables and mobile presentation. Invoke it as
+`$quant-blog-style` when preparing future posts.
 
 `_sass/site.scss` owns layout, typography, tables, and theme tokens;
 `_sass/_figures.scss` owns figure sizing. `.compact-table` is the narrow-table
