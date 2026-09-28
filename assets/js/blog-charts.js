@@ -180,7 +180,7 @@
       const table=element('table');tableWrap.append(table);
       table.setAttribute('aria-label','Selected-window statistics');
       const head=element('thead'),hr=element('tr');head.append(hr);table.append(head);
-      ['Series','Annual return','Volatility','Sharpe','Max drawdown'].forEach(label=>{const th=element('th','',label);th.scope='col';hr.append(th);});
+      ['Series',cfg.additive?'Annual P&L / return':'Annual growth','Volatility','Sharpe','Max drawdown'].forEach(label=>{const th=element('th','',label);th.scope='col';hr.append(th);});
       const body=element('tbody');table.append(body);
       statisticsPanel.append(element('p','blog-chart-note',cfg.note));
       if(cfg.kind==='values')statisticsPanel.hidden=true;
@@ -268,7 +268,7 @@
               const ticks=[];for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
               layout.yaxis.tickmode='array';layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);
             }
-            heading(cfg.kind==='values'?cfg.unit:cfg.additive?'P&L since selected start (points)':'Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
+            heading(cfg.kind==='values'?cfg.unit:cfg.additive?(benchmark&&visible.get(benchmark.id)?'P&L (points) / market change (%)':'P&L since selected start (points)'):'Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
             if(secondary) {
               layout.yaxis2={domain:[0,.29],anchor:'x',gridcolor:t.grid,zerolinecolor:t.grid,
                 tickformat:cfg.additive?'.0f':cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
@@ -286,7 +286,7 @@
                 const values=s.additive?additivePath(s.returns,first,last):path(s.returns,first,last);
                 if(cfg.additive&&!s.additive)values.equity=values.equity.map(v=>v-100);
                 const indices=displayIndices(dates,[values.equity,values.drawdown]);
-                traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i])));
+                traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i]),cfg.additive?{hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}'+(s.additive?' points':'%')+'<extra>%{fullData.name}</extra>'}:{}));
                 if(cfg.drawdown&&s.drawdown!==false)traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.drawdown[i]),{yaxis:'y2',showlegend:false,hovertemplate:'%{x|%d %b %Y}<br>%{y'+(s.additive?':.2f} points':':.2%}')+'<extra>%{fullData.name}</extra>'}));
               }
             }
@@ -366,7 +366,8 @@
     const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
     const controls=element('div','blog-chart-controls');extra.append(controls);
     const full=[data.dates[0],data.dates.at(-1)];let range=[...full],leg='total',custom=false,busy=false,pending=false;
-    const expanded=new Set();
+    let focus=cfg.focus||null;
+    const expanded=new Set(focus?[focus]:[]),componentControls=new Map();
     const from=element('input'),to=element('input');from.type=to.type='date';
     for(const [input,label,value] of [[from,'From',full[0]],[to,'to',full[1]]]) {
       input.min=full[0];input.max=full[1];input.value=value;
@@ -393,8 +394,13 @@
         finally {select.disabled=false;}
       };choices.append(select);
     }
+    if(cfg.focus) {
+      const select=element('select');select.setAttribute('aria-label','Theme view');
+      select.add(new Option(all.get('total_'+cfg.focus).label,cfg.focus));select.add(new Option('All themes','all'));
+      select.onchange=()=>{focus=select.value==='all'?null:cfg.focus;expanded.clear();if(focus)expanded.add(focus);draw();};choices.append(select);
+    }
     for(const [key,label] of [['low_risk','Low-risk components'],['activity','Trading-activity components']]) {
-      const wrap=element('label'),box=element('input');box.type='checkbox';box.onchange=()=>{if(box.checked)expanded.add(key);else expanded.delete(key);draw();};wrap.append(box,document.createTextNode(' '+label));choices.append(wrap);
+      const wrap=element('label'),box=element('input');box.type='checkbox';box.onchange=()=>{if(box.checked)expanded.add(key);else expanded.delete(key);draw();};wrap.append(box,document.createTextNode(' '+label));choices.append(wrap);componentControls.set(key,{wrap,box});
     }
     const graph=element('div','blog-chart-plot');ui.append(graph);
     const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
@@ -414,8 +420,9 @@
       try {
         const mobile=host.clientWidth<550,dark=document.documentElement.dataset.theme==='dark';
         const ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-        const keys=cfg.series.filter(k=>cfg.kind==='attribution'||k!=='cost').flatMap(k=>expanded.has(k)?(cfg.kind==='attribution-years'?cfg.components[k]:[k,...cfg.components[k]]):[k]);
-        if(cfg.kind==='attribution-regimes')keys.unshift('book');
+        for(const [key,{wrap,box}] of componentControls){wrap.hidden=!!focus;box.checked=expanded.has(key);}
+        const keys=(focus?[focus]:cfg.series).filter(k=>cfg.kind==='attribution'||k!=='cost').flatMap(k=>expanded.has(k)?(cfg.kind==='attribution-years'?cfg.components[k]:[k,...cfg.components[k]]):[k]);
+        if(cfg.kind==='attribution-regimes'&&!focus)keys.unshift('book');
         const nested=k=>[...expanded].some(parent=>cfg.components[parent].includes(k));
         const shown=keys.map(k=>all.get(leg+'_'+k));
         const ids=indices(...range),traces=[];
@@ -438,13 +445,14 @@
             traces.push({type:'scatter',mode:'markers',x:clipped.map(j=>Number(years[j])),y:clipped.map(j=>Math.sign(values[j])*10.5),
               marker:{symbol:clipped.map(j=>values[j]>0?'triangle-up':'triangle-down'),size:6,color:clipped.map(j=>values[j]>0?COLORS.long:COLORS.short)},
               xaxis:x,yaxis:y,customdata:clipped.map(j=>values[j]),hovertemplate:'%{customdata:.2f}% a year<extra></extra>'});
-            const bx=[],by=[];
+            const bx=[],by=[],blockDates=[];
             for(const [a,b] of [[1999,2003],[2004,2008],[2009,2013],[2014,2018],[2019,2021],[2022,2026]]) {
               const block=ids.filter(j=>Number(data.dates[j].slice(0,4))>=a&&Number(data.dates[j].slice(0,4))<=b);
               if(!block.length)continue;const value=metric(s,block,'return');
               bx.push(Number(data.dates[block[0]].slice(0,4))-.4,Number(data.dates[block.at(-1)].slice(0,4))+.4,null);by.push(value,value,null);
+              const label=data.dates[block[0]]+' – '+data.dates[block.at(-1)];blockDates.push(label,label,null);
             }
-            traces.push({type:'scatter',mode:'lines',x:bx,y:by,line:{color:ink,width:1.5},xaxis:x,yaxis:y,hovertemplate:'Block: %{y:.2f}% a year<extra></extra>'});
+            traces.push({type:'scatter',mode:'lines',x:bx,y:by,customdata:blockDates,line:{color:ink,width:1.5},xaxis:x,yaxis:y,hovertemplate:'%{customdata}<br>Block: %{y:.2f}% a year<extra></extra>'});
           });
         } else {
           let specs;
@@ -452,11 +460,11 @@
           else if(cfg.kind==='attribution-drawdowns')specs=(custom?[range]:cfg.windows).map(w=>[w[0]+' – '+w[1],indices(...w,null,true),'total']);
           else specs=[['Return (% a year)',ids,'return'],['Share of book risk (%)',ids,'risk']];
           const cols=mobile?1:specs.length,rows=mobile?specs.length:1;
-          layout.height=rows*(shown.length*26+90);
+          layout.height=rows*(shown.length*26+(mobile?140:90));
           const allValues=specs.flatMap(([,ix,kind])=>shown.map(s=>metric(s,ix,kind))).filter(v=>v!==null);
           specs.forEach(([label,ix,kind],i)=>{
             const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,values=shown.map(s=>metric(s,ix,kind));
-            const xd=mobile?[0,1]:[i/cols+.02,(i+1)/cols-.08],yd=mobile?[1-(i+1)/rows+.11/rows,1-i/rows-.06/rows]:[0,1];
+            const xd=mobile?[0,1]:[i/cols+.02,(i+1)/cols-.08],yd=mobile?[1-(i+1)/rows+.22/rows,1-i/rows-.10/rows]:[0,1];
             const comparables=cfg.kind==='attribution'?values:allValues,lo=Math.min(0,...comparables),hi=Math.max(0,...comparables),pad=(hi-lo||1)*.12;
             layout['xaxis'+suffix]={domain:xd,anchor:y,range:[lo-pad,hi+pad],gridcolor:grid,zerolinecolor:grid,nticks:4};
             layout['yaxis'+suffix]={domain:yd,anchor:x,type:'category',autorange:'reversed',tickvals:shown.map(s=>s.label),
@@ -464,13 +472,13 @@
             title(label,xd[0],yd[1]+.02);
             if(!ix.length)title('No observations in this window',xd[0],(yd[0]+yd[1])/2);
             traces.push({type:'bar',orientation:'h',x:values,y:shown.map(s=>s.label),xaxis:x,yaxis:y,
-              marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long),opacity:keys.map(k=>nested(k)?.55:1)},
+              marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long),opacity:keys.map(k=>nested(k)?.8:1)},
               hovertemplate:'%{y}<br>%{x:.2f}'+(kind==='total'?' points':kind==='risk'?'% of book variance':'% a year')+'<extra></extra>'});
           });
         }
         graph.style.height=layout.height+'px';
         await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
-        windowLabel.textContent=cfg.kind==='attribution-drawdowns'&&!custom?'P&L from each peak to its trough':range[0]+' – '+range[1];
+        windowLabel.textContent=cfg.kind==='attribution-drawdowns'&&!custom?'P&L from each peak to its trough':(cfg.kind==='attribution-drawdowns'?'Selected-period P&L · ':cfg.kind==='attribution-years'&&custom?'Selected observations, annualized · ':'')+range[0]+' – '+range[1];
         host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;
       } finally {busy=false;if(pending){pending=false;draw();}}
     }

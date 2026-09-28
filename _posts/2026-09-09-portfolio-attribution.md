@@ -313,19 +313,19 @@ $$\Phi_T=\sum_tf_t$$.
 so the book's beta to the market is the sum of the themes' betas,
 $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\text{mkt}})$$.
 
-</details>
-
 I checked the method against known answers. On returns simulated from known
 payoffs and this book's actual weights, it recovers each theme's P&L to within
 about half a point a year; random long–short books with the same gross get
 theme returns near zero; and a cap-weighted market portfolio lands almost all of its
 return and risk on net market exposure.
 
+</details>
+
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
 
 {% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="4" %}
-<p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the chosen months; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
+<p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the selected dates; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
 
 Over the whole period the book earned 9.6% a year before costs. Four sources
 carried it:

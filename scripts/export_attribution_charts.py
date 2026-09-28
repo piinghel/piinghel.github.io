@@ -58,7 +58,7 @@ def export(themes: Path, history: Path, assets: Path) -> None:
     common=dict(series=[key for key,_,_,_ in FIELDS[:10]],components={"low_risk":["low_volatility","beta","market"],"activity":["turnover","volume","price_volume"]},
                 episodes=[["1999–2003",dates[0],"2003-12-31"],["2008–09","2008-01-01","2009-12-31"],["2020–21","2020-01-01","2021-12-31"],["After 2021","2022-01-01",dates[-1]]])
     charts={"themes":dict(common,kind="attribution"),"years":dict(common,kind="attribution-years"),
-            "regimes":dict(common,kind="attribution-regimes",masks=masks),
+            "regimes":dict(common,kind="attribution-regimes",masks=masks,focus="low_risk"),
             "drawdowns":dict(common,kind="attribution-drawdowns",windows=sorted(windows))}
     # Verify the exported total reproduces the existing full-period overview.
     retained=json.loads((assets / "themes.json").read_text())["full"]

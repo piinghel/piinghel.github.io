@@ -14,7 +14,7 @@
   const icEl = root.querySelector('.pse-ic');
   const [heatHeading, icHeading] = root.querySelectorAll('.pse-heading');
   let data = null;
-  let ready=false,legendTimer;
+  let ready=false,legendTimer,icRange=null,rendering=false,pending=false;
 
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const roles=['momentum','reversal','low_volatility','size','liquidity','market','short_interest'];
@@ -130,7 +130,7 @@
     const [from, to] = PERIODS[state.period];
     const rows = data.theme_ic.dates
       .map((date, t) => ({ date, values: data.theme_ic.values[t] }))
-      .filter((r) => { const y = Number(r.date.slice(0, 4)); return y >= from && y <= to; });
+      .filter((r) => { const y = Number(r.date.slice(0, 4)); return y >= from && y <= to && (!icRange || r.date >= icRange[0] && r.date <= icRange[1]); });
     const x = rows.map((r) => r.date);
     const traces = data.themes.map((theme, t) => {
       let sum = 0;
@@ -151,12 +151,14 @@
       showlegend: true, legend:{orientation:'h',x:0,y:1.15},
       hovermode: 'x unified',
       xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '' },
-      yaxis: { range, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
+      yaxis: { range, fixedrange: true, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
     });
     return { traces, layout };
   }
 
   async function render() {
+    if(rendering){pending=true;return;}rendering=true;
+    try {
     const [from, to] = PERIODS[state.period];
     const period = `${from}–${to}`;
     const years=root.querySelectorAll('.pse-years select');
@@ -171,15 +173,26 @@
       ? `Correlation between theme composites, ${period}`
       : `Correlation between the 80 predictors, ${period}`;
     window.Plotly.react(heatEl, heat.traces, heat.layout, config);
-    icHeading.textContent = `Cumulative daily IC by theme, ${period}`;
     const ic = icChart();
+    icHeading.textContent = `Cumulative sampled IC, ${icRange ? ic.traces[0].x[0]+' – '+ic.traces[0].x.at(-1) : period}`;
     icEl.style.height=ic.layout.height+'px';
     await window.Plotly.react(icEl, ic.traces, ic.layout, config);
     if(!ready) {
       ready=true;
       icEl.on('plotly_legendclick',e=>{clearTimeout(legendTimer);legendTimer=setTimeout(()=>{if(state.visible.has(e.curveNumber))state.visible.delete(e.curveNumber);else state.visible.add(e.curveNumber);render();},320);return false;});
       icEl.on('plotly_legenddoubleclick',e=>{clearTimeout(legendTimer);state.visible=state.visible.size===1&&state.visible.has(e.curveNumber)?new Set([2,3]):new Set([e.curveNumber]);render();return false;});
+      icEl.on('plotly_relayout',e=>{
+        if(rendering)return;
+        if(e['xaxis.autorange']){icRange=null;render();return;}
+        const a=e['xaxis.range[0]']||e['xaxis.range']?.[0],b=e['xaxis.range[1]']||e['xaxis.range']?.[1];
+        if(!a||!b)return;
+        const [from,to]=PERIODS[state.period];
+        const selected=data.theme_ic.dates.filter(d=>d>=String(a).slice(0,10)&&d<=String(b).slice(0,10)&&Number(d.slice(0,4))>=from&&Number(d.slice(0,4))<=to);
+        if(selected.length>=2)icRange=[selected[0],selected.at(-1)];
+        render();
+      });
     }
+    } finally {rendering=false;if(pending){pending=false;render();}}
   }
 
   function start() {
@@ -201,7 +214,7 @@
       data.years.forEach(y=>select.add(new Option(y,y)));
     }
     from.value=data.years[0];to.value=data.years.at(-1);
-    from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[6]=[Number(from.value),Number(to.value)];state.period=6;render();};
+    from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[6]=[Number(from.value),Number(to.value)];state.period=6;icRange=null;render();};
     const periods = root.querySelector('.pse-periods');
     PERIODS.forEach(([a, b], i) => {
       const button = document.createElement('button');
@@ -209,7 +222,7 @@
       button.setAttribute('role', 'radio');
       button.dataset.period = String(i);
       button.textContent = i ? `${a}–${String(b).slice(2)}` : 'All years';
-      button.addEventListener('click', () => { state.period = i; render(); });
+      button.addEventListener('click', () => { state.period = i; icRange=null;render(); });
       periods.appendChild(button);
     });
     root.querySelectorAll('[data-level]').forEach((b) => b.addEventListener('click', () => { state.level = b.dataset.level; render(); }));

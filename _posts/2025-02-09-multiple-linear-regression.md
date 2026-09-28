@@ -142,7 +142,7 @@ session, so a steadily rising line is a theme that kept ranking stocks well.
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
 
 Over the full period, volatility is the most coherent theme: its predictors
 correlate 0.71 on average. Momentum &amp; trend and size are the least
@@ -297,7 +297,7 @@ volatility, using equal-weighted decile portfolios before costs.
 
 {% include blog-chart.html chart="deciles" source="/assets/multiple-linear-regression/deciles.json" label="Return, volatility and Sharpe across score deciles" %}
 
-<p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Compounded annual return of equal-weighted portfolios of the stocks in each score decile, with each decile's annualized volatility and Sharpe ratio below. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
+<p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Compounded annual return of equal-weighted portfolios of the stocks in each score decile, with each decile's annualized volatility and Sharpe ratio in the expandable statistics. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
 
 Through 2021 Ridge's deciles climb from about 3% a year to 16%, and the top
 decile's Sharpe ratio is 0.90 against 0.26 at the bottom. Equal weights reach
@@ -346,7 +346,7 @@ about 0.2 in both periods, with 95% intervals from roughly zero to 0.4. Figure
 
 {% include blog-chart.html chart="performance" source="/assets/multiple-linear-regression/performance.json" label="Ridge and equal-weight growth and drawdowns" %}
 
-<p class="figure-caption"><strong>Figure 4: Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below; the dotted line marks the start of the later period. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+<p class="figure-caption"><strong>Figure 4: Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded (log scale), with drawdowns below; the dotted line marks the start of the later period. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
 
 Both scores lean toward larger stocks, because within the Russell 1000 larger
 mostly means lower volatility. Through 2021 the stocks Ridge selects for the

@@ -108,7 +108,7 @@ low-risk tilt and the beta limit working as one position.
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="regimes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-regimes" mobile="/assets/portfolio-attribution/theme-regimes_mobile" version="6" label="Theme-group returns in declines and rallies, with the low-risk subtotal and its indented components." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: The low-risk package combines offsetting contributions.</strong> Return in % of capital a year within each regime, January 1999–May 2026, before costs except for the whole book. The bold low-risk subtotal sums its three indented components: low volatility, beta and net market exposure. Trading activity combines turnover, volume surge and price-volume correlation.</p>
+<p class="figure-caption"><strong>Figure 1: The low-risk package combines offsetting contributions.</strong> Return in % of capital a year within each regime, January 1999–May 2026, before costs except for the whole book. The bold low-risk subtotal sums its three indented components: low volatility, beta and net market exposure. Explore reveals the other themes; trading activity combines turnover, volume surge and price-volume correlation.</p>
 
 In declines, **low volatility** earns 18% a year and made money in all 15
 episodes, while **net market exposure** loses 19% and lost in all 15. In strong

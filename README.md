@@ -92,6 +92,10 @@ An `index` role supplies market context (`benchmark: true` defaults it on).
 Keep only the central comparison visible; put optional series, dates and presets
 under Explore. Do not add miniature slider previews. Show subtotals with nested
 components rather than additive peers. Extend the helper for new chart families.
+The default view must show the comparison supporting its caption. Optional detail
+should answer a specific follow-up question, with units and period labels that
+remain accurate after selection. Attribution `focus` can open one subtotal and
+its components, with the other themes available under Explore.
 
 Performance paths rebase to 100 at the selected close; statistics use subsequent
 daily returns. Prepend a zero-return capital anchor to retain the original first
@@ -110,6 +114,8 @@ classifications; choosing a window does not reclassify the market.
 Long/short theme detail loads on demand. Correlation periods use the retained
 annual matrices, weighted by their observation counts. Keep configuration and
 calculation checks out of the article; state only the conventions a reader needs.
+IC zooms recompute the cumulative sum and mean of the sampled observations in
+that window; they leave the explicitly labelled annual correlation window intact.
 
 The exporters consume completed aggregate outputs; they never run backtests:
 

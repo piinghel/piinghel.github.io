@@ -128,7 +128,7 @@ its deep drawdowns.
 </div>
 
 
-<p class="figure-caption"><strong>Figure 3: Hedging changes the return comparison; the risk gap remains.</strong> Growth of $1 (log scale) and drawdown, July 1995–May 2026, after trading costs. The dashed line adds a Russell 1000 hedge to equal weighting at each rebalance; the inverse-volatility line is unhedged, and hedging it changes little (Table 1).</p>
+<p class="figure-caption"><strong>Figure 3: Hedging changes the return comparison; the risk gap remains.</strong> Compounded growth (log scale) and drawdown, July 1995–May 2026, after trading costs. The dashed line adds a Russell 1000 hedge to equal weighting at each rebalance; the inverse-volatility line is unhedged, and hedging it changes little (Table 1).</p>
 
 ## Losses in strong rallies
 
@@ -159,7 +159,7 @@ shortfall of about 6 points came from the long book.
 </div>
 
 
-<p class="figure-caption"><strong>Figure 4: The portfolio lost in both rallies while the market rose.</strong> Before-cost growth of $1 above linked cumulative book contributions in percentage points, gross of each book's market exposure. Episodes run 8 October 1998–9 March 2000 (Panel A continues to 3 April 2001) and 3 April 2025–27 May 2026; realized portfolio betas in the windows are −0.055 and −0.106.</p>
+<p class="figure-caption"><strong>Figure 4: The portfolio lost in both rallies while the market rose.</strong> Before-cost compounded growth above linked cumulative book contributions in percentage points, gross of each book's market exposure. Episodes run 8 October 1998–9 March 2000 (Panel A continues to 3 April 2001) and 3 April 2025–27 May 2026; realized portfolio betas in the windows are −0.055 and −0.106.</p>
 
 The dot-com loss was temporary: by April 2001 the portfolio was back to roughly
 where it started.
