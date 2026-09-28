@@ -187,7 +187,7 @@ explained in the next section: a rank buffer that keeps existing holdings
 eligible, and a penalty on trading.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 2: From volatility scaling to joint sizing.</strong> Development period, September 1998–December 2021. Means of metrics calculated separately for the three schedules, with min–max Sharpe in parentheses. Returns are geometric and annualized; Sharpe uses the arithmetic mean daily return and a zero risk-free rate; turnover is two-way and annualized, relative to strategy capital. Net results charge 5 bp per dollar traded.</caption>
+  <caption><strong>Table 2: From volatility scaling to joint sizing.</strong> Development period, September 1998–December 2021. Means of metrics calculated separately for the three schedules, with min–max Sharpe in parentheses. Returns are geometric and annualized; Sharpe uses the arithmetic mean daily return and a zero cash rate. Two-way turnover is total traded notional divided by capital and elapsed calendar years; the regression article uses 252 sessions per year. Net results charge 5 bp per dollar traded.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
   </thead>
@@ -310,7 +310,7 @@ The lead also depends on the schedule: net Sharpe is 0.96 against 0.68 and
 
 Its worst stretch is the market rebound of December 2022–February 2023, a
 7.3% drawdown for the three schedules combined: the long book made about 3.3%
-of fixed strategy notional and the short book lost 10.8%.
+of fixed capital and the short book lost 10.8%.
 
 ## Forecast beta versus realized beta
 
@@ -352,10 +352,10 @@ portfolio's P&L down by the ranking's themes.
 
 Two weaknesses remain: realized beta runs above the rebalance-time estimate
 for months at a time, and after 2021 the advantage is small relative to its
-uncertainty and depends on the rebalance schedule. Neither weakness changes my
-verdict: joint sizing with trading controls earns more per
-unit of risk than volatility scaling in both periods, by a clear margin in
-development and an unproven one after 2021, and it trades less.
+uncertainty and depends on the rebalance schedule. Joint sizing with trading
+controls has a clear Sharpe advantage in development and trades less in both
+periods. After 2021 its estimated Sharpe advantage is positive, but the
+interval includes zero.
 
 ## References
 
