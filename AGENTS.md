@@ -67,6 +67,11 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   the analysis, then `grep` every post, chart source and caption for the old
   value and update them in the same commit. The attribution uses exactly the
   80 ranking predictors, set in `descriptors.json` of the attribution study.
+- Quote a portfolio's headline return as a compounded (geometric) annual return,
+  everywhere. Attribution figures are additive averages, because theme
+  contributions only add up that way; label them as averages and state the
+  compounded headline once beside them. Themes are shown before costs, with
+  costs as a separate line.
 - Describe what measures show and which assumptions they use. Replace repeated
   negative contrasts with direct definitions, such as observed ranges across
   schedules. Preserve material limitations through concrete scope statements.

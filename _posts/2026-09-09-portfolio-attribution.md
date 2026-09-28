@@ -324,7 +324,7 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 {% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="4" %}
 <p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the selected dates; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
 
-Over the whole period the book earned 9.6% a year before costs. Four sources
+Over the whole period the book averaged 9.6% a year before costs. Four sources
 carried it:
 
 - **The low-risk package**, 2.7% a year on 31% of the risk. Low volatility,
