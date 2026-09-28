@@ -180,7 +180,7 @@ their side.[^drift] Table 1 lists all settings.
 Table 2 builds from the regression article's rule to the final portfolio,
 one change at a time, with the same Ridge ranking throughout. The first row
 is that article's rule: equal signal weights within each book, scaled by
-volatility.[^row-one] The second gives stronger scores larger signal weights.
+volatility. The second gives stronger scores larger signal weights.
 The third sizes the stocks jointly. The fourth adds two trading controls,
 explained in the next section: a rank buffer that keeps existing holdings
 eligible, and a penalty on trading.
@@ -372,4 +372,3 @@ a clear introduction to factor risk models.
 [^correlation-repair]: Before estimating correlations I cap daily returns at ±30% and set pairs with too little overlapping history to 0.50; negative eigenvalues of the result are clipped to zero.
 [^drift]: All limits apply to target weights. After next-close execution and later price moves, holdings can drift outside them until the next rebalance; the trade penalty measures changes from these drifted weights.
 [^bootstrap]: I resample the daily net returns of each rule's three schedules combined, 5,000 times in 21-session blocks shared by both rules. The combined schedules differ in Sharpe by 0.15, against 0.14 for the schedule means in Table 4.
-[^row-one]: The regression article reports arithmetic annualized returns; here they are geometric, so net returns differ slightly while Sharpe and turnover are comparable.
