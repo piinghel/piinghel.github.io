@@ -15,13 +15,13 @@ from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from .support import FigureStyle, save_figure
 
 SHORT_THEME_LABELS: dict[str, str] = {
-    "Momentum & trend": "Momentum",
-    "Short-term reversal": "Reversal",
+    "Medium- and long-term return": "Med./long ret.",
+    "Short-term return": "Short-term ret.",
     "Volatility": "Volatility",
     "Size": "Size",
-    "Liquidity & volume": "Liquidity",
+    "Trading activity": "Trading",
     "Market correlation": "Mkt corr.",
-    "Short positioning": "Shorts",
+    "Short interest": "Short int.",
 }
 
 

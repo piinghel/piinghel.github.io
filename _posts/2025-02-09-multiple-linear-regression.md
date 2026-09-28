@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-09-28
+last_modified_at: 2026-09-29
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -144,29 +144,30 @@ session, so a steadily rising line is a theme that kept ranking stocks well.
 
 <p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
 
-Over the full period, volatility is the most coherent theme: its predictors
-correlate 0.71 on average. Momentum &amp; trend and size are the least
-coherent, at 0.15. Momentum &amp; trend spans horizons from days to three
-years, and 43% of its signed pairs are negatively correlated: after the flip,
-trading well above the 10-day average counts against a stock, while a strong
-12-month return counts for it. Although there
-are 80 predictors, ten principal components carry nearly three quarters of
-their variance.
+Over the full period, size and volatility are the most coherent themes after
+the two-predictor market correlation: their predictors correlate 0.67 and 0.65
+on average. Trading activity and short interest are the least coherent, at
+0.19. The two return themes sit in between. Medium- and long-term return
+averages 0.33, and 15% of its signed pairs are negatively correlated: after the
+flip, a market value far above its six-month low counts against a stock, while
+a price far above its one-year low counts for it. Short-term return averages
+0.43. Although there are 80 predictors, ten principal components carry nearly
+three quarters of their variance.
 
 Between themes, the composites overlap more than their individual predictors
-do, because averaging removes each predictor's idiosyncratic part. Volatility
-and size correlate 0.72 on average, and between 0.56 and 0.83 in every calendar
-year, partly because the size theme's variability measures are volatility
-measures. Momentum &amp; trend and
-size average 0.55. Other relationships change sign: market correlation and
-volatility range from −0.51 to 0.37 across years.
+do, because averaging removes each predictor's idiosyncratic part. Size and
+short interest correlate 0.47 on average, and between 0.39 and 0.53 in every
+calendar year. Medium- and long-term return and volatility average 0.27, but
+range from −0.04 to 0.61. Other relationships change sign: market correlation
+and volatility range from −0.51 to 0.40 across years.
 
-Every theme ranks the target on average, but not in every period. Momentum
-&amp; trend has an IC of 0.037 in 1998–2008 and 0.040 in 2009–2021, despite a
-year of −0.060 in 2009. Short-term reversal fades from 0.021 to 0.004 across
-the same split. Volatility and size strengthen, from about 0.02 to about 0.05,
-which makes them the two strongest themes after 2009. Market correlation has a
-negative IC in 7 of the 11 years through 2008 and in only one year after.
+Every theme ranks the target on average, but not in every period. Medium- and
+long-term return has an IC of 0.021 in 1998–2008 and 0.030 in 2009–2021,
+despite a year of −0.102 in 2009. Short-term return fades from 0.027 to 0.012
+across the same split. Volatility strengthens from 0.020 to 0.052, which makes
+it the strongest theme after 2009, and size from about zero to 0.027. Market
+correlation has a negative IC in 7 of the 11 years through 2008 and in only one
+year after.
 
 A learned combination therefore has to carry weights fitted in one decade into
 the next.

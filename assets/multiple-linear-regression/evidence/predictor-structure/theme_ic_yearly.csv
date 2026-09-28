@@ -1,169 +1,169 @@
 year,theme,ic
-1998,Momentum & trend,0.080671
-1998,Short-term reversal,0.042674
-1998,Volatility,0.007219
-1998,Size,0.049964
-1998,Liquidity & volume,0.050958
-1998,Market correlation,0.054092
-1998,Short positioning,0.058111
-1999,Momentum & trend,0.039855
-1999,Short-term reversal,0.021328
-1999,Volatility,-0.047422
-1999,Size,-0.016374
-1999,Liquidity & volume,0.017026
+1998,Medium- and long-term return,0.054031
+1998,Short-term return,0.049178
+1998,Volatility,0.005964
+1998,Size,0.072979
+1998,Trading activity,0.008082
+1998,Market correlation,0.054089
+1998,Short interest,0.058109
+1999,Medium- and long-term return,0.026320
+1999,Short-term return,0.019510
+1999,Volatility,-0.049548
+1999,Size,0.026450
+1999,Trading activity,-0.001330
 1999,Market correlation,0.026504
-1999,Short positioning,0.035268
-2000,Momentum & trend,0.008423
-2000,Short-term reversal,0.029208
-2000,Volatility,0.046237
-2000,Size,0.008688
-2000,Liquidity & volume,0.017151
+1999,Short interest,0.035268
+2000,Medium- and long-term return,-0.017368
+2000,Short-term return,0.036721
+2000,Volatility,0.044510
+2000,Size,-0.017855
+2000,Trading activity,0.045411
 2000,Market correlation,-0.008013
-2000,Short positioning,0.007871
-2001,Momentum & trend,0.030054
-2001,Short-term reversal,0.045153
-2001,Volatility,0.066458
-2001,Size,0.014588
-2001,Liquidity & volume,-0.014882
+2000,Short interest,0.007871
+2001,Medium- and long-term return,-0.008015
+2001,Short-term return,0.060451
+2001,Volatility,0.066110
+2001,Size,-0.057690
+2001,Trading activity,0.032724
 2001,Market correlation,-0.038855
-2001,Short positioning,-0.004577
-2002,Momentum & trend,0.047194
-2002,Short-term reversal,0.030200
-2002,Volatility,0.033774
-2002,Size,0.027079
-2002,Liquidity & volume,-0.002149
+2001,Short interest,-0.004577
+2002,Medium- and long-term return,0.030757
+2002,Short-term return,0.037836
+2002,Volatility,0.030376
+2002,Size,-0.030226
+2002,Trading activity,0.032118
 2002,Market correlation,-0.058149
-2002,Short positioning,0.007974
-2003,Momentum & trend,-0.020118
-2003,Short-term reversal,0.007673
-2003,Volatility,0.013984
-2003,Size,-0.006273
-2003,Liquidity & volume,-0.017282
+2002,Short interest,0.007974
+2003,Medium- and long-term return,-0.031704
+2003,Short-term return,0.015791
+2003,Volatility,0.012452
+2003,Size,-0.031843
+2003,Trading activity,0.006696
 2003,Market correlation,-0.020295
-2003,Short positioning,-0.000098
-2004,Momentum & trend,0.046054
-2004,Short-term reversal,0.022672
-2004,Volatility,0.040578
-2004,Size,0.047354
-2004,Liquidity & volume,-0.007702
+2003,Short interest,-0.000098
+2004,Medium- and long-term return,0.031345
+2004,Short-term return,0.030218
+2004,Volatility,0.038473
+2004,Size,-0.009791
+2004,Trading activity,0.000815
 2004,Market correlation,-0.032479
-2004,Short positioning,0.006299
-2005,Momentum & trend,0.051938
-2005,Short-term reversal,0.007285
-2005,Volatility,-0.011995
-2005,Size,0.015967
-2005,Liquidity & volume,-0.020362
+2004,Short interest,0.006299
+2005,Medium- and long-term return,0.051193
+2005,Short-term return,0.007719
+2005,Volatility,-0.017383
+2005,Size,-0.007070
+2005,Trading activity,-0.023226
 2005,Market correlation,-0.025089
-2005,Short positioning,0.018099
-2006,Momentum & trend,0.029795
-2006,Short-term reversal,0.017180
-2006,Volatility,0.069950
-2006,Size,0.051674
-2006,Liquidity & volume,0.020172
+2005,Short interest,0.018099
+2006,Medium- and long-term return,0.009637
+2006,Short-term return,0.028568
+2006,Volatility,0.069080
+2006,Size,0.018116
+2006,Trading activity,0.019672
 2006,Market correlation,0.005627
-2006,Short positioning,0.019709
-2007,Momentum & trend,0.094691
-2007,Short-term reversal,-0.018713
-2007,Volatility,0.033215
-2007,Size,0.077249
-2007,Liquidity & volume,0.000140
+2006,Short interest,0.019709
+2007,Medium- and long-term return,0.105421
+2007,Short-term return,-0.014123
+2007,Volatility,0.026448
+2007,Size,0.015567
+2007,Trading activity,-0.004712
 2007,Market correlation,-0.000676
-2007,Short positioning,0.052887
-2008,Momentum & trend,-0.004417
-2008,Short-term reversal,0.028396
-2008,Volatility,-0.000517
-2008,Size,-0.018554
-2008,Liquidity & volume,0.023312
+2007,Short interest,0.052887
+2008,Medium- and long-term return,-0.021957
+2008,Short-term return,0.026310
+2008,Volatility,-0.002061
+2008,Size,-0.004782
+2008,Trading activity,0.037527
 2008,Market correlation,0.006649
-2008,Short positioning,0.019939
-2009,Momentum & trend,-0.059919
-2009,Short-term reversal,0.023555
-2009,Volatility,-0.024597
-2009,Size,-0.071436
-2009,Liquidity & volume,-0.005095
+2008,Short interest,0.019939
+2009,Medium- and long-term return,-0.102274
+2009,Short-term return,0.032011
+2009,Volatility,-0.031467
+2009,Size,-0.031112
+2009,Trading activity,0.018279
 2009,Market correlation,0.014203
-2009,Short positioning,-0.003320
-2010,Momentum & trend,0.040969
-2010,Short-term reversal,-0.001736
-2010,Volatility,0.045281
-2010,Size,0.044940
-2010,Liquidity & volume,0.013617
+2009,Short interest,-0.003320
+2010,Medium- and long-term return,0.036156
+2010,Short-term return,0.006654
+2010,Volatility,0.043961
+2010,Size,0.004300
+2010,Trading activity,0.018513
 2010,Market correlation,0.050950
-2010,Short positioning,0.005078
-2011,Momentum & trend,0.093823
-2011,Short-term reversal,0.004181
-2011,Volatility,0.091767
-2011,Size,0.087424
-2011,Liquidity & volume,0.029667
+2010,Short interest,0.005078
+2011,Medium- and long-term return,0.078416
+2011,Short-term return,0.019567
+2011,Volatility,0.088022
+2011,Size,0.029124
+2011,Trading activity,0.023215
 2011,Market correlation,0.017635
-2011,Short positioning,0.025066
-2012,Momentum & trend,0.056657
-2012,Short-term reversal,0.017811
-2012,Volatility,0.063705
-2012,Size,0.064311
-2012,Liquidity & volume,0.028037
+2011,Short interest,0.025066
+2012,Medium- and long-term return,0.045187
+2012,Short-term return,0.023142
+2012,Volatility,0.062885
+2012,Size,0.029358
+2012,Trading activity,0.019627
 2012,Market correlation,0.017178
-2012,Short positioning,0.033901
-2013,Momentum & trend,0.031347
-2013,Short-term reversal,0.005861
-2013,Volatility,0.048895
-2013,Size,0.045073
-2013,Liquidity & volume,0.015530
+2012,Short interest,0.033901
+2013,Medium- and long-term return,0.021003
+2013,Short-term return,0.014757
+2013,Volatility,0.051469
+2013,Size,0.008144
+2013,Trading activity,0.017366
 2013,Market correlation,0.030410
-2013,Short positioning,0.001751
-2014,Momentum & trend,0.042709
-2014,Short-term reversal,0.011354
-2014,Volatility,0.079446
-2014,Size,0.078771
-2014,Liquidity & volume,0.061327
+2013,Short interest,0.001751
+2014,Medium- and long-term return,0.032040
+2014,Short-term return,0.016239
+2014,Volatility,0.081631
+2014,Size,0.069568
+2014,Trading activity,0.035379
 2014,Market correlation,0.018134
-2014,Short positioning,0.021787
-2015,Momentum & trend,0.077938
-2015,Short-term reversal,-0.025857
-2015,Volatility,0.069492
-2015,Size,0.085825
-2015,Liquidity & volume,0.021022
+2014,Short interest,0.021787
+2015,Medium- and long-term return,0.089824
+2015,Short-term return,-0.018730
+2015,Volatility,0.066940
+2015,Size,0.023492
+2015,Trading activity,0.015702
 2015,Market correlation,0.020499
-2015,Short positioning,0.053918
-2016,Momentum & trend,-0.004997
-2016,Short-term reversal,0.025709
-2016,Volatility,0.026557
-2016,Size,0.001131
-2016,Liquidity & volume,0.023179
+2015,Short interest,0.053918
+2016,Medium- and long-term return,-0.023209
+2016,Short-term return,0.034837
+2016,Volatility,0.027156
+2016,Size,0.008670
+2016,Trading activity,0.026934
 2016,Market correlation,0.033866
-2016,Short positioning,0.022676
-2017,Momentum & trend,0.074793
-2017,Short-term reversal,-0.015751
-2017,Volatility,0.083218
-2017,Size,0.095408
-2017,Liquidity & volume,0.036375
+2016,Short interest,0.022676
+2017,Medium- and long-term return,0.079136
+2017,Short-term return,-0.002654
+2017,Volatility,0.080961
+2017,Size,0.061277
+2017,Trading activity,0.007311
 2017,Market correlation,0.067370
-2017,Short positioning,0.049055
-2018,Momentum & trend,0.019260
-2018,Short-term reversal,-0.002496
-2018,Volatility,0.035777
-2018,Size,0.012972
-2018,Liquidity & volume,0.005558
+2017,Short interest,0.049055
+2018,Medium- and long-term return,0.020065
+2018,Short-term return,-0.001304
+2018,Volatility,0.029595
+2018,Size,0.010584
+2018,Trading activity,0.000154
 2018,Market correlation,-0.027478
-2018,Short positioning,0.006059
-2019,Momentum & trend,0.075937
-2019,Short-term reversal,0.012969
-2019,Volatility,0.104304
-2019,Size,0.110216
-2019,Liquidity & volume,0.053003
+2018,Short interest,0.006059
+2019,Medium- and long-term return,0.074178
+2019,Short-term return,0.023653
+2019,Volatility,0.104323
+2019,Size,0.060216
+2019,Trading activity,0.035509
 2019,Market correlation,0.045960
-2019,Short positioning,0.038774
-2020,Momentum & trend,0.039585
-2020,Short-term reversal,-0.009768
-2020,Volatility,-0.006894
-2020,Size,0.014230
-2020,Liquidity & volume,0.002247
+2019,Short interest,0.038774
+2020,Medium- and long-term return,0.046176
+2020,Short-term return,-0.005217
+2020,Volatility,-0.010178
+2020,Size,0.012995
+2020,Trading activity,-0.004463
 2020,Market correlation,0.002586
-2020,Short positioning,0.002158
-2021,Momentum & trend,0.032942
-2021,Short-term reversal,0.002336
-2021,Volatility,0.083033
-2021,Size,0.080628
-2021,Liquidity & volume,0.083240
-2021,Market correlation,0.089102
-2021,Short positioning,0.067496
+2020,Short interest,0.002158
+2021,Medium- and long-term return,-0.004055
+2021,Short-term return,0.012914
+2021,Volatility,0.085595
+2021,Size,0.071148
+2021,Trading activity,0.071987
+2021,Market correlation,0.078115
+2021,Short interest,0.067395
