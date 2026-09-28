@@ -3,7 +3,7 @@ layout: post
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-09-27
+last_modified_at: 2026-09-28
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
@@ -225,7 +225,7 @@ article](/quants/2026/08/29/portfolio-optimization.html), where the same Ridge
 scores reach a Sharpe of 1.32 through 2021 and 0.87 after.
 
 <table class="research-table settings-table" id="portfolio-construction">
-  <caption><strong>Table 1: The portfolio rule.</strong> Identical for every score. Two-way turnover is annual traded notional divided by capital.</caption>
+  <caption><strong>Table 1: The portfolio rule.</strong> Identical for every score.</caption>
   <tbody>
     <tr><th scope="row">Holdings</th><td>Long the top 75 stocks, short the bottom 75</td></tr>
     <tr><th scope="row">Position size</th><td>20% divided by the stock's past 60-session volatility (floored at 5%); at most 4% per stock and 100% of capital per side</td></tr>
@@ -310,7 +310,7 @@ portfolio from the [low-volatility article](/quant/2024/12/15/low-volatility-fac
 through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are compounded annual returns and volatility is annualized; Sharpe uses a zero cash rate, and beta is measured against the Russell 1000.</caption>
+  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are compounded annual returns and volatility is annualized; Sharpe uses a zero cash rate, beta is measured against the Russell 1000, and two-way turnover is annual traded notional divided by capital.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>
   </thead>
