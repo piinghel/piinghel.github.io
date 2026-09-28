@@ -29,11 +29,12 @@ market exposure, lowering their expected returns.[^bab]
 ## Returns and risk across volatility deciles
 {: #what-the-ranking-selects }
 
-I rank point-in-time Russell 1000 constituents priced above $5, a liquid and
-shortable universe, by their average one-, three- and six-month volatility;
+I rank point-in-time Russell 1000 constituents priced above $5 by their
+average one-, three- and six-month volatility;
 blending horizons gives a steadier ranking and less turnover than any single
 window.[^windows] I re-form the deciles every three weeks and trade at the next
-close, so every trade uses only information available at the signal.
+close, so every trade uses only information available at the signal. The
+backtest assumes the selected shorts can be borrowed.
 
 Figure 1 shows the ten equal-weighted decile portfolios. Compounded returns are
 almost flat across the seven least volatile deciles, 10.5–11.6% a year, while
@@ -83,9 +84,9 @@ it as calculated.
 
 With a 20% reference, the long book comes in at about 97% gross, just under the
 100% limit, while the short book shrinks to 34%. Total gross falls from 200% to about
-131%, and the portfolio is about 63% net long in dollars. Both books now run at
-about 10% volatility, and because they partly offset each other, so does the
-portfolio.
+131%, and the portfolio is about 63% net long in dollars. Each book's
+standalone volatility is about 10%. Their daily P&L partly offsets, and the
+combined portfolio's volatility is also about 10%.
 
 Realized beta is nonetheless roughly zero, largely by coincidence: the
 volatility ratio between the two deciles is close to their beta ratio, so sizing
@@ -145,7 +146,8 @@ longs in the dot-com rally, and −16 against +4 in the later one. But they
 include each book's market exposure: a short book's negative market exposure
 loses when the market rises. Net
 of each book's own beta,[^rally-beta] both books did worse than their betas
-implied in the dot-com rally, the longs by more (about 24 points against 20).
+implied in the dot-com rally: the longs by about 24 points and the shorts by
+about 20.
 In the later rally the short book did roughly what its beta implied, and the
 shortfall of about 6 points came from the long book.
 
