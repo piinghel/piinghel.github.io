@@ -72,13 +72,13 @@ with the story, I say so.
   <details class="theme-card">
     <summary>Medium- and long-term return <span>26 predictors</span></summary>
     <p class="theme-measures">Returns and risk-adjusted returns over 3–12 months, slower trend (moving-average differences, price against its 252-day average, how persistently it stayed above its 200-day average), distance from past highs and lows, earlier run-ups, changes in market value, and the share of losing days over three months to three years.</p>
-    <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. I assign a return measure to this theme or the short-term one by where its information sits, not by the length of its window: it is short-term when more than half of its variation across stocks comes from the last 20 sessions' returns. The 10/21-session MACD sits on that boundary and stays here.</p>
+    <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. A return measure counts as short-term when more than half of its variation across stocks comes from the last month's returns; the 10/21-session MACD sits on that boundary and stays here.</p>
       <details class="predictor-list" data-theme="0"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
     <summary>Short-term return <span>16 predictors</span></summary>
     <p class="theme-measures">Returns over the last 1–21 sessions, price against its 10-, 21- and 63-day averages, position within Bollinger bands and against recent lows over 5–126 sessions, and the share of losing days over a month.</p>
-    <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery. Price against its 63-day average looks like a three-month measure, but it weights recent returns most, and about three quarters of its variation across stocks comes from the last month.</p>
+    <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery. Price against its 63-day average belongs here: about three quarters of its variation across stocks comes from the last month.</p>
       <details class="predictor-list" data-theme="1"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
@@ -96,7 +96,7 @@ with the story, I say so.
   <details class="theme-card">
     <summary>Trading activity <span>6 predictors</span></summary>
     <p class="theme-measures">Share turnover, volume relative to its recent maximum, and the correlation of daily returns with changes in turnover.</p>
-    <p>Heavily traded stocks have tended to earn less than lightly traded ones. The return–turnover correlation also rises with recent returns, so it overlaps the short-term return theme.</p>
+    <p>Heavily traded stocks have tended to earn less than lightly traded ones.</p>
       <details class="predictor-list" data-theme="4"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">

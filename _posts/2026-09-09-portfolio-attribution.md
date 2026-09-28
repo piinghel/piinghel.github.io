@@ -117,14 +117,11 @@ same seven themes as in the regression article; here volatility is signed
 toward stable stocks as low volatility, and beta adds an estimated beta to
 market correlation.
 
-The two return themes are split by where a predictor's information about past
-returns sits, not by the length of its window. A predictor counts as short-term
-when more than half of its variation across stocks comes from the last 20
-sessions' returns. Price against its 63-day average is short-term by this rule:
-it weights recent returns most, and about three quarters of its variation comes
-from the last month. The 10/21-session MACD sits on the boundary, with its
-weight split between the last month and the two before; it stays with the
-medium- and long-term measures.
+The two return themes are split by where a predictor's information sits, not
+by its window: a predictor is short-term when more than half of its variation
+across stocks comes from the last month's returns. Price against its 63-day
+average therefore counts as short-term; the 10/21-session MACD, on the
+boundary, does not.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 1: The attribution components.</strong> Characteristics are built from the ranking's predictors as listed; trading activity groups three factors. Net market exposure and sector tilt come from the net dollars and the sector weights.</p>
@@ -175,12 +172,10 @@ from the market-volatility states in Part 2.
 Two groups: the estimated stock beta, and stock–market correlations
 over 252 and 504 sessions. Beta uses 756-session correlation, with
 at least 252 observations, multiplied by the ratio of 21-session stock and
-index volatilities. Across stocks it therefore partly measures 21-session
-volatility, which low volatility also contains. The two groups agree only
-weakly: their median cross-sectional correlation is 0.22. The daily payoffs
-of beta and low volatility correlate at −0.31, negative because low volatility
-points toward stable stocks. This is one reason I read them together in the
-low-risk package. A higher loading means greater market sensitivity.
+index volatilities, so across stocks it partly measures 21-session volatility,
+which low volatility also contains. The two groups agree only weakly (median
+correlation 0.22), and the payoffs of beta and low volatility correlate at
+−0.31. That is one reason I read them together in the low-risk package. A higher loading means greater market sensitivity.
 
 </details>
 
@@ -201,10 +196,9 @@ return below.
 
 Three groups: the current log ratio of short interest to
 trading volume and its 63- and 252-session averages; changes over 21, 63, 126
-and 252 sessions; and variability over 63 and 252 sessions. The variability
-members are the standard deviation of log(short interest / that day's volume).
-Short interest is reported only about twice a month, so they mostly track the
-variability of daily volume. A higher loading
+and 252 sessions; and variability over 63 and 252 sessions. Short interest is
+reported only about twice a month, so its variability relative to daily volume
+mostly tracks the variability of volume. A higher loading
 means more, rising or more variable short interest. It is a stock
 characteristic, not the portfolio's short weight or a measure of borrow cost.
 
@@ -245,9 +239,8 @@ Turnover is the
 63-session turnover-level measure. Volume surge is log volume relative to its
 past maximum over 126 and 252 sessions. The factor labelled price–volume
 correlation is the correlation of daily returns with changes in turnover over
-21, 63 and 126 sessions. It rises with recent returns, so it overlaps
-short-term return. Its daily payoff correlates −0.05 with that of short-term
-return and −0.26 with that of medium- and long-term return.
+21, 63 and 126 sessions. It rises with recent returns, but its daily
+payoff is nearly uncorrelated with that of short-term return (−0.05).
 Each enters the regression separately; their P&L is added for the displayed
 trading-activity subtotal.
 
