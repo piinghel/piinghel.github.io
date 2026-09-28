@@ -6,7 +6,7 @@ description: "The portfolio's P&L by theme in market declines and strong rallies
 permalink: /quants/short-book-rebounds.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-09-28
+last_modified_at: 2026-09-29
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 2
 series_id: performance-attribution
@@ -123,22 +123,22 @@ In declines, **low volatility** earns 16% a year and made money in all 15
 episodes, while **net market exposure** loses 19% and lost in all 15. In strong
 rallies the two swap: low volatility loses 13% a year and net market exposure
 earns 15%. Adding beta gives the [low-risk package](/quants/portfolio-attribution.html#factor-definitions):
-−1.3% a year in declines and +0.9% in strong rallies. These small averages hide
+−1.4% a year in declines and +0.8% in strong rallies. These small averages hide
 variation between episodes: the package made money
 in only 4 of the 15 declines and 8 of the 16 rallies, and the 2000–01 bear
-market alone added 13.6 points to its decline total. Neither line times the market: the
+market alone added 13.9 points to its decline total. Neither line times the market: the
 net long sits at its limit, and exposure timing adds or subtracts less than a
 point a year.
 
 What kept the book positive has changed. In the declines up to 2008, short-term
-reversal made 11.8 points and the low-risk package 3.7. In the nine declines
-since 2009, the package lost 10.4 points and reversal made less than one; the
-book's 18.9 points coincided with 18.3 points in the stock-specific remainder.
-That remainder still has market exposure: its estimated beta of −0.039 to the
-model's market payoff since 2009 accounts for about 8.1 of those decline points. The 2011 decline alone
-contributed 8.5 points. These are reasons to avoid interpreting the whole line
+reversal made 13.1 points and the low-risk package 3.6. In the nine declines
+since 2009, the package lost 10.5 points and reversal made almost nothing; the
+book's 18.9 points coincided with 17.9 points in the stock-specific remainder.
+That remainder still has market exposure: its estimated beta of −0.043 to the
+model's market payoff since 2009 accounts for about 8.8 of those decline points. The 2011 decline alone
+contributed 8.2 points. These are reasons to avoid interpreting the whole line
 as stock-selection skill. In the
-rallies since 2009, reversal and short interest made 13 and 7 points.
+rallies since 2009, reversal and short interest made 17 and 7 points.
 
 ## Reversal earns more on volatile days
 
@@ -160,11 +160,11 @@ describes the sample; it is not a tested rule for changing the portfolio.
 
 | | Calm | Volatile | Difference | t |
 | :--- | ---: | ---: | ---: | ---: |
-| Short-term return | +1.3 | +4.9 | +3.6 | 4.2 |
-| Stock-specific | +4.0 | −1.2 | −5.3 | −2.4 |
-| Short interest | +0.7 | +1.4 | +0.7 | 1.1 |
-| Long-term return | +0.8 | −0.3 | −1.1 | −1.0 |
-| Low-risk package | +2.6 | +1.7 | −0.9 | −0.4 |
+| Short-term return | +1.6 | +5.7 | +4.1 | 4.2 |
+| Stock-specific | +3.8 | −1.9 | −5.7 | −2.7 |
+| Short interest | +0.7 | +1.4 | +0.7 | 1.0 |
+| Medium- and long-term return | +0.8 | −0.3 | −1.1 | −0.8 |
+| Low-risk package | +2.6 | +1.8 | −0.7 | −0.3 |
 | Book, after costs | +8.4 | +5.1 | −3.3 | −1.0 |
 {: .research-table .comparison-table .compact-table }
 </div>
@@ -173,7 +173,7 @@ Short-term reversal earns more on volatile days both before and after 2009,
 which is consistent with reversal as a payment for supplying
 liquidity when it is scarce. Stock-specific returns do the opposite over the
 whole period, but that comes from before 2009: since then calm and volatile days
-differ by about 2.6 points a year, well inside the uncertainty.
+differ by about 2.8 points a year, well inside the uncertainty.
 The low-risk package's average differs little between the two states, but the
 uncertainty is wide. The book as a whole earns less in volatile markets, by an
 amount the history can't pin down.
@@ -186,9 +186,9 @@ amount the history can't pin down.
 <p class="figure-caption"><strong>Figure 2: The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. Explore reveals the low-risk package's three components.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21 after
-costs, look alike by theme: the low-risk package lost 12.9 and 10.3, mostly through low
-volatility, short-term reversal helped, by 5.9 and 3.1, and stock-specific
-returns lost 4.6 and 9.4. They differ by leg. In 2008–09 the short book made 21
+costs, look alike by theme: the low-risk package lost 12.1 and 10.1, mostly through low
+volatility, short-term reversal helped, by 6.8 and 3.1, and stock-specific
+returns lost 4.3 and 9.5. They differ by leg. In 2008–09 the short book made 21
 points into the March 2009 low and lost 35 in the rebound, 14.3 net, while the
 longs made 1.3; in 2020–21 the loss was split evenly between the two.
 
@@ -196,7 +196,7 @@ The 2020–21 drawdown came in three steps. From February to early November 2020
 the book lost 4.1 points, mostly low volatility through the crash and its
 rebound. From the vaccine news on 9 November to the end of the year it lost
 another 4.2 in seven weeks, as stock-specific returns, trading activity and
-long-term return gave back about 5 points, while the net long's 2 points offset
+medium- and long-term return gave back about 5 points, while the net long's 2 points offset
 low volatility's loss. In January 2021, the retail short squeeze, it lost
 6.5 points in 17 sessions, to the trough on 27 January, with the package,
 reversal and stock-specific returns all losing.

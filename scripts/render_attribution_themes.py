@@ -155,7 +155,7 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
             ax.xaxis.set_major_locator(plt.MaxNLocator(3))
             ax.grid(axis="x", color=colors["grid"], linewidth=0.5)
             ax.set_axisbelow(True)
-        labels = [wrap(label) if wrap_labels and mobile and len(label) > 15 else label
+        labels = [wrap(label) if wrap_labels and len(label) > (15 if mobile else 20) else label
                   for _, label in rows]
         for ax in axes if mobile else axes[:1]:
             ax.set_yticks(positions, labels)

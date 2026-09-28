@@ -1,1818 +1,1818 @@
 {
  "full": {
   "Low volatility": [
-   0.364,
-   14.53
+   0.32,
+   14.02
   ],
   "Beta": [
-   -0.061,
-   1.86
+   -0.059,
+   1.8
   ],
   "Size": [
-   -0.245,
-   0.74
+   -0.231,
+   0.71
   ],
   "Short interest": [
-   1.387,
-   5.52
+   1.354,
+   5.33
   ],
   "Short-term return": [
-   2.831,
-   7.09
+   3.359,
+   7.8
   ],
-  "Long-term return": [
-   0.883,
-   12.15
+  "Medium- and long-term return": [
+   1.139,
+   15.83
   ],
   "Net market exposure": [
-   2.381,
-   14.51
+   2.382,
+   14.5
   ],
   "Sector tilt": [
-   -0.138,
-   5.57
+   -0.186,
+   5.39
   ],
   "Stock-specific": [
-   2.069,
-   33.43
+   1.52,
+   30.6
   ],
   "Unloaded holdings": [
    0.121,
    0.13
   ],
   "Low-risk package": [
-   2.683,
-   30.9
+   2.643,
+   30.32
   ],
   "Trading activity": [
-   0.035,
-   4.46
+   -0.091,
+   3.89
   ]
  },
  "blocks": {
   "1999-2003": {
    "Low volatility": [
-    2.382,
-    7.22
+    2.239,
+    6.88
    ],
    "Beta": [
-    0.591,
-    0.36
+    0.588,
+    0.37
    ],
    "Size": [
-    -1.051,
-    2.53
+    -1.01,
+    2.54
    ],
    "Short interest": [
-    1.634,
-    5.33
+    1.572,
+    5.37
    ],
    "Short-term return": [
-    6.737,
-    4.54
+    8.069,
+    5.56
    ],
-   "Long-term return": [
-    0.528,
-    7.19
+   "Medium- and long-term return": [
+    1.1,
+    9.64
    ],
    "Net market exposure": [
-    0.524,
+    0.527,
     26.36
    ],
    "Sector tilt": [
-    -1.021,
-    9.58
+    -1.197,
+    9.19
    ],
    "Stock-specific": [
-    -0.418,
-    30.99
+    -1.678,
+    28.64
    ],
    "Unloaded holdings": [
     0.633,
     0.18
    ],
    "Low-risk package": [
-    3.497,
-    33.95
+    3.355,
+    33.61
    ],
    "Trading activity": [
-    0.153,
-    5.71
+    -0.152,
+    5.28
    ]
   },
   "2004-2008": {
    "Low volatility": [
-    1.471,
-    -1.94
+    1.458,
+    -2.03
    ],
    "Beta": [
-    0.222,
-    0.57
+    0.273,
+    0.49
    ],
    "Size": [
-    -0.484,
-    0.5
+    -0.491,
+    0.48
    ],
    "Short interest": [
-    1.437,
-    7.13
+    1.408,
+    6.97
    ],
    "Short-term return": [
-    3.579,
-    13.75
+    4.271,
+    15.76
    ],
-   "Long-term return": [
-    0.085,
-    -0.09
+   "Medium- and long-term return": [
+    0.391,
+    1.43
    ],
    "Net market exposure": [
-    -0.051,
-    24.7
+    -0.052,
+    24.69
    ],
    "Sector tilt": [
-    -0.687,
-    6.02
+    -0.726,
+    5.93
    ],
    "Stock-specific": [
-    3.127,
-    45.27
+    2.322,
+    42.59
    ],
    "Unloaded holdings": [
     0.04,
     -0.84
    ],
    "Low-risk package": [
-    1.642,
-    23.34
+    1.68,
+    23.15
    ],
    "Trading activity": [
-    -0.139,
-    4.94
+    -0.295,
+    4.53
    ]
   },
   "2009-2013": {
    "Low volatility": [
-    -1.835,
-    19.34
+    -1.763,
+    18.81
    ],
    "Beta": [
-    -0.356,
-    3.89
+    -0.376,
+    3.77
    ],
    "Size": [
-    -0.576,
+    -0.574,
     0.88
    ],
    "Short interest": [
-    0.939,
-    4.81
+    0.908,
+    4.67
    ],
    "Short-term return": [
-    2.087,
-    4.97
+    2.756,
+    5.74
    ],
-   "Long-term return": [
-    0.247,
-    4.83
+   "Medium- and long-term return": [
+    0.102,
+    7.72
    ],
    "Net market exposure": [
-    4.75,
-    5.85
+    4.749,
+    5.84
    ],
    "Sector tilt": [
-    -0.058,
-    5.27
+    -0.076,
+    5.18
    ],
    "Stock-specific": [
-    3.783,
-    46.99
+    3.345,
+    44.58
    ],
    "Unloaded holdings": [
     0.092,
     0.28
    ],
    "Low-risk package": [
-    2.559,
-    29.08
+    2.611,
+    28.42
    ],
    "Trading activity": [
-    -0.088,
-    2.88
+    -0.18,
+    2.53
    ]
   },
   "2014-2018": {
    "Low volatility": [
-    2.66,
-    12.29
+    2.624,
+    11.78
    ],
    "Beta": [
-    -0.413,
-    1.3
+    -0.423,
+    1.27
    ],
    "Size": [
-    -0.027,
-    0.75
+    -0.015,
+    0.77
    ],
    "Short interest": [
-    1.224,
-    5.15
+    1.177,
+    4.82
    ],
    "Short-term return": [
-    1.938,
-    5.19
+    2.106,
+    5.59
    ],
-   "Long-term return": [
-    1.192,
-    15.4
+   "Medium- and long-term return": [
+    1.589,
+    19.73
    ],
    "Net market exposure": [
     1.712,
-    11.36
+    11.35
    ],
    "Sector tilt": [
-    -0.042,
-    7.71
+    -0.072,
+    7.47
    ],
    "Stock-specific": [
-    3.128,
-    36.45
+    2.764,
+    33.29
    ],
    "Unloaded holdings": [
     0.017,
     0.6
    ],
    "Low-risk package": [
-    3.958,
-    24.95
+    3.913,
+    24.4
    ],
    "Trading activity": [
-    0.133,
-    3.82
+    0.044,
+    3.33
    ]
   },
   "2019-2021": {
    "Low volatility": [
-    -1.832,
-    17.96
+    -1.805,
+    17.3
    ],
    "Beta": [
-    0.322,
-    3.23
+    0.333,
+    3.15
    ],
    "Size": [
-    0.715,
-    0.63
+    0.744,
+    0.44
    ],
    "Short interest": [
-    0.942,
-    4.35
+    0.944,
+    4.1
    ],
    "Short-term return": [
-    1.377,
-    10.21
+    1.519,
+    10.68
    ],
-   "Long-term return": [
-    0.952,
-    17.41
+   "Medium- and long-term return": [
+    0.916,
+    22.59
    ],
    "Net market exposure": [
-    5.024,
+    5.025,
     18.01
    ],
    "Sector tilt": [
-    1.028,
-    1.49
+    1.022,
+    1.36
    ],
    "Stock-specific": [
-    2.365,
-    23.01
+    2.209,
+    19.56
    ],
    "Unloaded holdings": [
     0.138,
     -0.19
    ],
    "Low-risk package": [
-    3.514,
-    39.2
+    3.552,
+    38.46
    ],
    "Trading activity": [
-    0.005,
-    3.88
+    -0.01,
+    3.01
    ]
   },
   "2022-2026": {
    "Low volatility": [
-    -1.807,
-    28.0
+    -1.964,
+    27.18
    ],
    "Beta": [
-    -0.65,
-    1.59
+    -0.665,
+    1.53
    ],
    "Size": [
-    0.418,
-    -0.39
+    0.429,
+    -0.4
    ],
    "Short interest": [
-    2.053,
-    6.62
+    2.037,
+    6.38
    ],
    "Short-term return": [
-    0.388,
-    3.78
+    0.328,
+    3.77
    ],
-   "Long-term return": [
-    2.527,
-    21.85
+   "Medium- and long-term return": [
+    2.857,
+    26.43
    ],
    "Net market exposure": [
-    3.518,
+    3.523,
     3.31
    ],
    "Sector tilt": [
-    0.494,
-    4.72
+    0.496,
+    4.57
    ],
    "Stock-specific": [
-    0.328,
-    24.33
+    0.278,
+    21.7
    ],
    "Unloaded holdings": [
     -0.23,
     0.62
    ],
    "Low-risk package": [
-    1.062,
-    32.89
+    0.894,
+    32.02
    ],
    "Trading activity": [
-    0.15,
-    5.59
+    0.101,
+    4.92
    ]
   }
  },
  "years": {
   "1999": {
    "Low volatility": [
-    -5.895,
-    2.21
+    -6.217,
+    1.74
    ],
    "Beta": [
-    -0.464,
-    -3.65
+    -0.461,
+    -3.63
    ],
    "Size": [
-    -2.092,
-    4.57
+    -2.058,
+    4.51
    ],
    "Short interest": [
-    1.672,
-    4.0
+    1.612,
+    3.95
    ],
    "Short-term return": [
-    9.751,
-    6.67
+    11.268,
+    7.22
    ],
-   "Long-term return": [
-    2.228,
-    6.43
+   "Medium- and long-term return": [
+    3.517,
+    9.44
    ],
    "Net market exposure": [
-    5.464,
+    5.468,
     33.46
    ],
    "Sector tilt": [
-    -1.021,
-    7.98
+    -1.263,
+    7.77
    ],
    "Stock-specific": [
-    -1.067,
-    35.98
+    -2.784,
+    33.63
    ],
    "Unloaded holdings": [
     0.464,
     0.22
    ],
    "Low-risk package": [
-    -0.894,
-    32.01
+    -1.21,
+    31.57
    ],
    "Trading activity": [
-    -0.423,
-    2.15
+    -0.929,
+    1.68
    ]
   },
   "2000": {
    "Low volatility": [
-    10.992,
-    -6.17
+    10.896,
+    -5.53
    ],
    "Beta": [
-    2.272,
-    -4.28
+    2.392,
+    -4.11
    ],
    "Size": [
-    -1.5,
-    1.21
+    -1.46,
+    1.19
    ],
    "Short interest": [
-    1.228,
-    3.7
+    1.155,
+    3.77
    ],
    "Short-term return": [
-    9.333,
-    2.9
+    11.002,
+    3.77
    ],
-   "Long-term return": [
-    3.239,
-    12.36
+   "Medium- and long-term return": [
+    5.24,
+    15.28
    ],
    "Net market exposure": [
-    -0.852,
-    30.63
+    -0.837,
+    30.64
    ],
    "Sector tilt": [
-    -3.32,
-    14.83
+    -3.813,
+    13.99
    ],
    "Stock-specific": [
-    -11.076,
-    37.92
+    -13.725,
+    34.5
    ],
    "Unloaded holdings": [
     0.509,
     -0.17
    ],
    "Low-risk package": [
-    12.412,
-    20.18
+    12.451,
+    21.01
    ],
    "Trading activity": [
-    2.556,
-    7.06
+    2.021,
+    6.65
    ]
   },
   "2001": {
    "Low volatility": [
-    8.167,
-    18.38
+    8.267,
+    17.93
    ],
    "Beta": [
-    1.31,
-    5.12
+    1.223,
+    4.97
    ],
    "Size": [
-    0.466,
-    0.88
+    0.479,
+    0.89
    ],
    "Short interest": [
-    2.291,
-    5.11
+    2.219,
+    5.14
    ],
    "Short-term return": [
-    6.693,
-    6.21
+    8.035,
+    7.35
    ],
-   "Long-term return": [
-    -4.053,
-    9.82
+   "Medium- and long-term return": [
+    -4.566,
+    13.12
    ],
    "Net market exposure": [
-    -2.637,
-    3.22
+    -2.638,
+    3.23
    ],
    "Sector tilt": [
-    -1.373,
-    16.21
+    -1.44,
+    15.59
    ],
    "Stock-specific": [
-    -5.588,
-    24.71
+    -6.177,
+    21.95
    ],
    "Unloaded holdings": [
     0.523,
     2.08
    ],
    "Low-risk package": [
-    6.839,
-    26.73
+    6.852,
+    26.13
    ],
    "Trading activity": [
-    -2.445,
-    8.25
+    -2.571,
+    7.73
    ]
   },
   "2002": {
    "Low volatility": [
-    5.824,
-    8.94
+    5.523,
+    8.06
    ],
    "Beta": [
-    0.613,
-    4.66
+    0.56,
+    4.58
    ],
    "Size": [
-    -0.773,
-    1.52
+    -0.695,
+    1.62
    ],
    "Short interest": [
-    1.948,
-    8.33
+    1.866,
+    8.42
    ],
    "Short-term return": [
-    4.245,
-    4.47
+    5.067,
+    5.6
    ],
-   "Long-term return": [
-    0.353,
-    4.67
+   "Medium- and long-term return": [
+    1.061,
+    6.67
    ],
    "Net market exposure": [
-    -6.099,
+    -6.096,
     38.8
    ],
    "Sector tilt": [
-    -0.554,
-    3.86
+    -0.615,
+    3.71
    ],
    "Stock-specific": [
-    6.307,
-    21.2
+    5.388,
+    19.45
    ],
    "Unloaded holdings": [
     2.025,
     -0.97
    ],
    "Low-risk package": [
-    0.339,
-    52.39
+    -0.013,
+    51.44
    ],
    "Trading activity": [
-    0.75,
-    4.53
+    0.555,
+    4.06
    ]
   },
   "2003": {
    "Low volatility": [
-    -7.108,
-    18.92
+    -7.2,
+    18.28
    ],
    "Beta": [
-    -0.769,
+    -0.768,
     0.49
    ],
    "Size": [
-    -1.339,
-    5.49
+    -1.301,
+    5.47
    ],
    "Short interest": [
-    1.037,
-    5.32
+    1.014,
+    5.35
    ],
    "Short-term return": [
-    3.661,
-    2.31
+    4.975,
+    3.95
    ],
-   "Long-term return": [
-    0.817,
-    0.7
+   "Medium- and long-term return": [
+    0.178,
+    1.16
    ],
    "Net market exposure": [
-    6.704,
+    6.703,
     17.99
    ],
    "Sector tilt": [
-    1.16,
-    5.03
+    1.143,
+    4.94
    ],
    "Stock-specific": [
-    9.274,
-    36.32
+    8.853,
+    35.21
    ],
    "Unloaded holdings": [
     -0.358,
     0.14
    ],
    "Low-risk package": [
-    -1.172,
-    37.4
+    -1.265,
+    36.76
    ],
    "Trading activity": [
-    0.295,
-    7.29
+    0.136,
+    7.02
    ]
   },
   "2004": {
    "Low volatility": [
-    -0.532,
+    -0.531,
     0.81
    ],
    "Beta": [
-    -0.297,
+    -0.303,
     3.91
    ],
    "Size": [
-    -0.748,
-    -0.12
+    -0.739,
+    -0.14
    ],
    "Short interest": [
-    0.194,
-    5.06
+    0.18,
+    5.09
    ],
    "Short-term return": [
-    2.946,
-    5.54
+    4.055,
+    7.52
    ],
-   "Long-term return": [
-    0.139,
-    -0.13
+   "Medium- and long-term return": [
+    0.002,
+    -0.09
    ],
    "Net market exposure": [
-    2.812,
+    2.811,
     12.77
    ],
    "Sector tilt": [
-    0.011,
-    11.4
+    0.013,
+    11.32
    ],
    "Stock-specific": [
-    6.989,
-    53.94
+    6.167,
+    52.23
    ],
    "Unloaded holdings": [
     0.037,
     -0.53
    ],
    "Low-risk package": [
-    1.983,
+    1.976,
     17.49
    ],
    "Trading activity": [
-    1.327,
-    7.34
+    1.187,
+    7.1
    ]
   },
   "2005": {
    "Low volatility": [
-    0.076,
-    1.18
+    0.07,
+    1.2
    ],
    "Beta": [
-    0.479,
-    1.56
+    0.467,
+    1.54
    ],
    "Size": [
-    -0.503,
-    1.41
+    -0.501,
+    1.43
    ],
    "Short interest": [
-    3.135,
-    4.83
+    3.125,
+    4.74
    ],
    "Short-term return": [
-    2.98,
-    6.28
+    3.73,
+    8.16
    ],
-   "Long-term return": [
-    0.045,
-    -0.25
+   "Medium- and long-term return": [
+    0.398,
+    0.65
    ],
    "Net market exposure": [
-    1.851,
-    17.26
+    1.85,
+    17.25
    ],
    "Sector tilt": [
-    -1.947,
-    12.05
+    -2.004,
+    11.95
    ],
    "Stock-specific": [
-    9.557,
-    46.63
+    8.735,
+    44.47
    ],
    "Unloaded holdings": [
     -0.238,
     0.11
    ],
    "Low-risk package": [
-    2.406,
+    2.387,
     20.0
    ],
    "Trading activity": [
-    0.279,
-    8.94
+    0.084,
+    8.49
    ]
   },
   "2006": {
    "Low volatility": [
-    0.175,
-    -0.28
+    0.189,
+    -0.23
    ],
    "Beta": [
-    0.354,
-    -1.86
+    0.356,
+    -1.85
    ],
    "Size": [
-    0.105,
-    0.25
+    0.113,
+    0.26
    ],
    "Short interest": [
-    0.551,
-    6.8
+    0.495,
+    6.66
    ],
    "Short-term return": [
-    3.256,
-    6.9
+    4.19,
+    9.57
    ],
-   "Long-term return": [
-    -0.128,
-    0.47
+   "Medium- and long-term return": [
+    -0.312,
+    2.0
    ],
    "Net market exposure": [
-    3.05,
-    14.49
+    3.051,
+    14.48
    ],
    "Sector tilt": [
-    -1.431,
-    7.91
+    -1.461,
+    7.62
    ],
    "Stock-specific": [
-    4.7,
-    61.6
+    4.123,
+    58.11
    ],
    "Unloaded holdings": [
     0.199,
     -0.68
    ],
    "Low-risk package": [
-    3.579,
-    12.35
+    3.596,
+    12.39
    ],
    "Trading activity": [
-    -1.526,
-    4.41
+    -1.64,
+    4.08
    ]
   },
   "2007": {
    "Low volatility": [
-    0.91,
-    0.51
+    0.809,
+    0.6
    ],
    "Beta": [
-    1.546,
-    -0.44
+    1.577,
+    -0.4
    ],
    "Size": [
     -0.291,
-    0.12
+    0.11
    ],
    "Short interest": [
-    3.143,
-    8.27
+    3.072,
+    8.21
    ],
    "Short-term return": [
-    3.392,
-    31.86
+    3.819,
+    34.31
    ],
-   "Long-term return": [
-    -0.954,
-    -3.2
+   "Medium- and long-term return": [
+    0.253,
+    -2.15
    ],
    "Net market exposure": [
     2.021,
     7.85
    ],
    "Sector tilt": [
-    -0.608,
-    3.72
+    -0.652,
+    3.63
    ],
    "Stock-specific": [
-    -3.096,
-    48.64
+    -4.325,
+    45.66
    ],
    "Unloaded holdings": [
     0.201,
     0.18
    ],
    "Low-risk package": [
-    4.477,
-    7.93
+    4.407,
+    8.04
    ],
    "Trading activity": [
-    0.144,
-    2.48
+    -0.078,
+    2.0
    ]
   },
   "2008": {
    "Low volatility": [
-    6.7,
-    -6.89
+    6.725,
+    -7.3
    ],
    "Beta": [
-    -0.965,
-    0.68
+    -0.72,
+    0.41
    ],
    "Size": [
-    -0.977,
-    0.79
+    -1.03,
+    0.73
    ],
    "Short interest": [
-    0.169,
-    8.02
+    0.174,
+    7.66
    ],
    "Short-term return": [
-    5.31,
-    6.7
+    5.554,
+    8.05
    ],
-   "Long-term return": [
-    1.314,
-    2.7
+   "Medium- and long-term return": [
+    1.605,
+    5.59
    ],
    "Net market exposure": [
-    -9.93,
-    52.19
+    -9.933,
+    52.17
    ],
    "Sector tilt": [
-    0.534,
-    2.79
+    0.468,
+    2.78
    ],
    "Stock-specific": [
-    -2.509,
-    30.72
+    -3.089,
+    28.02
    ],
    "Unloaded holdings": [
     0.001,
     -2.39
    ],
    "Low-risk package": [
-    -4.194,
-    45.97
+    -3.928,
+    45.28
    ],
    "Trading activity": [
-    -0.922,
-    4.7
+    -1.028,
+    4.28
    ]
   },
   "2009": {
    "Low volatility": [
-    -12.757,
-    64.11
+    -12.339,
+    62.51
    ],
    "Beta": [
-    0.58,
-    12.25
+    0.579,
+    11.97
    ],
    "Size": [
-    -0.312,
+    -0.327,
     0.2
    ],
    "Short interest": [
-    0.044,
-    1.94
+    0.049,
+    1.89
    ],
    "Short-term return": [
-    3.131,
-    8.07
+    4.607,
+    8.62
    ],
-   "Long-term return": [
-    -0.38,
-    2.16
+   "Medium- and long-term return": [
+    -2.257,
+    5.38
    ],
    "Net market exposure": [
-    7.567,
-    -31.18
+    7.569,
+    -31.19
    ],
    "Sector tilt": [
-    1.707,
-    4.42
+    1.674,
+    4.37
    ],
    "Stock-specific": [
-    -0.787,
-    34.23
+    -0.809,
+    32.63
    ],
    "Unloaded holdings": [
     0.145,
     0.71
    ],
    "Low-risk package": [
-    -4.61,
-    45.19
+    -4.191,
+    43.3
    ],
    "Trading activity": [
-    -0.845,
-    3.07
+    -0.797,
+    2.89
    ]
   },
   "2010": {
    "Low volatility": [
-    -0.348,
+    -0.361,
     -0.13
    ],
    "Beta": [
-    -0.47,
-    -1.41
+    -0.482,
+    -1.42
    ],
    "Size": [
-    -1.265,
-    5.07
+    -1.277,
+    5.04
    ],
    "Short interest": [
-    0.283,
-    5.07
+    0.271,
+    4.95
    ],
    "Short-term return": [
-    1.563,
-    4.09
+    2.035,
+    5.23
    ],
-   "Long-term return": [
-    -0.025,
-    4.07
+   "Medium- and long-term return": [
+    0.163,
+    5.85
    ],
    "Net market exposure": [
-    3.739,
-    25.38
+    3.736,
+    25.37
    ],
    "Sector tilt": [
-    -0.883,
-    5.38
+    -0.887,
+    5.32
    ],
    "Stock-specific": [
-    3.541,
-    49.19
+    3.024,
+    46.73
    ],
    "Unloaded holdings": [
     0.146,
     0.12
    ],
    "Low-risk package": [
-    2.921,
-    23.84
+    2.892,
+    23.82
    ],
    "Trading activity": [
-    1.798,
-    3.17
+    1.711,
+    2.95
    ]
   },
   "2011": {
    "Low volatility": [
-    4.287,
-    -2.66
+    4.301,
+    -2.78
    ],
    "Beta": [
-    -1.797,
-    1.73
+    -1.849,
+    1.62
    ],
    "Size": [
-    -0.783,
-    -0.23
+    -0.768,
+    -0.21
    ],
    "Short interest": [
-    2.232,
-    5.82
+    2.154,
+    5.7
    ],
    "Short-term return": [
-    2.92,
-    3.84
+    3.515,
+    4.82
    ],
-   "Long-term return": [
-    0.819,
-    5.2
+   "Medium- and long-term return": [
+    1.493,
+    7.63
    ],
    "Net market exposure": [
-    0.907,
-    36.79
+    0.904,
+    36.77
    ],
    "Sector tilt": [
-    -1.914,
-    5.42
+    -1.929,
+    5.41
    ],
    "Stock-specific": [
-    9.45,
-    42.46
+    8.543,
+    39.92
    ],
    "Unloaded holdings": [
     -0.018,
     0.09
    ],
    "Low-risk package": [
-    3.397,
-    35.86
+    3.355,
+    35.61
    ],
    "Trading activity": [
-    0.12,
-    1.53
+    -0.123,
+    1.03
    ]
   },
   "2012": {
    "Low volatility": [
-    -0.429,
-    11.9
+    -0.494,
+    11.4
    ],
    "Beta": [
-    -0.102,
-    3.82
+    -0.128,
+    3.71
    ],
    "Size": [
-    0.127,
-    0.13
+    0.139,
+    0.12
    ],
    "Short interest": [
-    1.657,
-    3.76
+    1.632,
+    3.54
    ],
    "Short-term return": [
-    0.864,
-    5.4
+    1.423,
+    6.38
    ],
-   "Long-term return": [
-    0.616,
-    8.28
+   "Medium- and long-term return": [
+    0.692,
+    12.53
    ],
    "Net market exposure": [
     3.891,
     1.65
    ],
    "Sector tilt": [
-    -0.605,
-    7.72
+    -0.634,
+    7.5
    ],
    "Stock-specific": [
-    9.262,
-    53.41
+    8.815,
+    49.7
    ],
    "Unloaded holdings": [
     0.61,
     0.26
    ],
    "Low-risk package": [
-    3.36,
-    17.37
+    3.269,
+    16.77
    ],
    "Trading activity": [
-    -0.035,
-    3.69
+    -0.09,
+    3.21
    ]
   },
   "2013": {
    "Low volatility": [
-    0.085,
-    6.93
+    0.087,
+    6.89
    ],
    "Beta": [
-    0.01,
-    0.4
+    0.005,
+    0.39
    ],
    "Size": [
-    -0.64,
-    0.58
+    -0.633,
+    0.56
    ],
    "Short interest": [
-    0.484,
-    7.63
+    0.442,
+    7.43
    ],
    "Short-term return": [
-    1.949,
-    3.04
+    2.188,
+    3.52
    ],
-   "Long-term return": [
-    0.207,
-    4.86
+   "Medium- and long-term return": [
+    0.426,
+    7.09
    ],
    "Net market exposure": [
     7.64,
     12.0
    ],
    "Sector tilt": [
-    1.401,
-    4.42
+    1.393,
+    4.31
    ],
    "Stock-specific": [
-    -2.51,
-    57.2
+    -2.801,
+    55.21
    ],
    "Unloaded holdings": [
     -0.418,
     0.08
    ],
    "Low-risk package": [
-    7.734,
-    19.33
+    7.732,
+    19.27
    ],
    "Trading activity": [
-    -1.477,
-    2.86
+    -1.6,
+    2.52
    ]
   },
   "2014": {
    "Low volatility": [
-    2.462,
-    1.78
+    2.515,
+    1.73
    ],
    "Beta": [
-    -1.242,
-    5.18
+    -1.257,
+    5.05
    ],
    "Size": [
-    -0.393,
-    -0.61
+    -0.387,
+    -0.6
    ],
    "Short interest": [
-    -0.251,
-    9.35
+    -0.316,
+    8.88
    ],
    "Short-term return": [
-    2.017,
-    6.72
+    2.059,
+    7.6
    ],
-   "Long-term return": [
-    -0.084,
-    9.7
+   "Medium- and long-term return": [
+    0.18,
+    13.61
    ],
    "Net market exposure": [
     1.445,
     14.89
    ],
    "Sector tilt": [
-    -2.662,
-    8.54
+    -2.681,
+    8.33
    ],
    "Stock-specific": [
-    0.958,
-    40.99
+    0.69,
+    37.66
    ],
    "Unloaded holdings": [
     0.532,
     0.58
    ],
    "Low-risk package": [
-    2.665,
-    21.85
+    2.702,
+    21.67
    ],
    "Trading activity": [
-    0.172,
-    2.89
+    0.174,
+    2.29
    ]
   },
   "2015": {
    "Low volatility": [
-    4.621,
-    9.02
+    4.518,
+    8.65
    ],
    "Beta": [
-    -0.602,
-    0.25
+    -0.616,
+    0.27
    ],
    "Size": [
-    -1.154,
-    1.48
+    -1.15,
+    1.45
    ],
    "Short interest": [
-    4.048,
-    5.51
+    3.945,
+    5.14
    ],
    "Short-term return": [
-    2.506,
-    3.73
+    2.674,
+    3.97
    ],
-   "Long-term return": [
-    2.05,
-    15.18
+   "Medium- and long-term return": [
+    3.035,
+    19.77
    ],
    "Net market exposure": [
-    0.437,
-    25.5
+    0.436,
+    25.49
    ],
    "Sector tilt": [
-    0.126,
-    11.36
+    0.052,
+    10.97
    ],
    "Stock-specific": [
-    6.458,
-    23.72
+    5.821,
+    20.61
    ],
    "Unloaded holdings": [
     0.516,
     0.09
    ],
    "Low-risk package": [
-    4.456,
-    34.77
+    4.338,
+    34.41
    ],
    "Trading activity": [
-    0.412,
-    4.15
+    0.188,
+    3.59
    ]
   },
   "2016": {
    "Low volatility": [
-    2.125,
-    31.87
+    2.162,
+    30.86
    ],
    "Beta": [
     -0.273,
-    -0.8
+    -0.79
    ],
    "Size": [
     0.148,
-    1.34
+    1.36
    ],
    "Short interest": [
-    1.469,
-    0.82
+    1.488,
+    0.72
    ],
    "Short-term return": [
-    1.258,
-    7.67
+    1.449,
+    7.86
    ],
-   "Long-term return": [
-    -2.781,
-    16.62
+   "Medium- and long-term return": [
+    -3.372,
+    21.21
    ],
    "Net market exposure": [
-    2.9,
+    2.903,
     -2.21
    ],
    "Sector tilt": [
-    -0.106,
-    0.77
+    -0.073,
+    0.7
    ],
    "Stock-specific": [
-    6.456,
-    37.28
+    6.778,
+    34.18
    ],
    "Unloaded holdings": [
     -0.084,
     0.6
    ],
    "Low-risk package": [
-    4.752,
-    28.86
+    4.792,
+    27.85
    ],
    "Trading activity": [
-    0.147,
-    6.05
+    0.131,
+    5.53
    ]
   },
   "2017": {
    "Low volatility": [
-    2.177,
-    9.72
+    2.07,
+    9.33
    ],
    "Beta": [
-    0.708,
-    1.9
+    0.692,
+    1.88
    ],
    "Size": [
-    -0.201,
-    0.31
+    -0.189,
+    0.35
    ],
    "Short interest": [
-    2.124,
-    5.08
+    2.106,
+    4.58
    ],
    "Short-term return": [
-    1.496,
-    4.05
+    1.732,
+    4.39
    ],
-   "Long-term return": [
-    3.577,
-    16.0
+   "Medium- and long-term return": [
+    4.113,
+    20.43
    ],
    "Net market exposure": [
-    4.847,
-    3.81
+    4.849,
+    3.8
    ],
    "Sector tilt": [
-    2.73,
-    12.51
+    2.738,
+    12.11
    ],
    "Stock-specific": [
-    -0.058,
-    43.36
+    -0.644,
+    40.22
    ],
    "Unloaded holdings": [
     -0.282,
     0.99
    ],
    "Low-risk package": [
-    7.732,
-    15.43
+    7.61,
+    15.01
    ],
    "Trading activity": [
-    0.056,
-    2.27
+    -0.011,
+    1.91
    ]
   },
   "2018": {
    "Low volatility": [
-    1.909,
-    1.53
+    1.851,
+    0.95
    ],
    "Beta": [
-    -0.653,
-    0.53
+    -0.658,
+    0.49
    ],
    "Size": [
-    1.472,
-    1.19
+    1.508,
+    1.29
    ],
    "Short interest": [
-    -1.275,
-    6.12
+    -1.345,
+    5.82
    ],
    "Short-term return": [
-    2.415,
-    2.69
+    2.614,
+    3.13
    ],
-   "Long-term return": [
-    3.217,
-    19.36
+   "Medium- and long-term return": [
+    4.008,
+    23.44
    ],
    "Net market exposure": [
-    -1.068,
+    -1.071,
     20.04
    ],
    "Sector tilt": [
-    -0.286,
-    8.2
+    -0.385,
+    8.02
    ],
    "Stock-specific": [
-    1.808,
-    36.73
+    1.158,
+    33.59
    ],
    "Unloaded holdings": [
     -0.599,
     0.76
    ],
    "Low-risk package": [
-    0.188,
-    22.11
+    0.122,
+    21.48
    ],
    "Trading activity": [
-    -0.124,
-    2.84
+    -0.265,
+    2.47
    ]
   },
   "2019": {
    "Low volatility": [
-    1.3,
-    13.82
+    1.258,
+    12.84
    ],
    "Beta": [
-    0.056,
-    0.64
+    0.051,
+    0.62
    ],
    "Size": [
-    0.929,
-    0.16
+    0.923,
+    0.31
    ],
    "Short interest": [
-    -0.662,
-    2.96
+    -0.619,
+    2.63
    ],
    "Short-term return": [
-    1.454,
-    8.19
+    1.681,
+    7.95
    ],
-   "Long-term return": [
-    -1.227,
-    32.7
+   "Medium- and long-term return": [
+    -1.502,
+    39.0
    ],
    "Net market exposure": [
-    6.73,
-    2.19
+    6.734,
+    2.17
    ],
    "Sector tilt": [
-    0.38,
-    3.38
+    0.35,
+    3.34
    ],
    "Stock-specific": [
-    5.824,
-    32.13
+    5.898,
+    27.96
    ],
    "Unloaded holdings": [
     0.265,
     0.04
    ],
    "Low-risk package": [
-    8.087,
-    16.65
+    8.043,
+    15.64
    ],
    "Trading activity": [
-    -0.177,
-    3.79
+    -0.168,
+    3.14
    ]
   },
   "2020": {
    "Low volatility": [
-    -10.866,
-    12.97
+    -10.874,
+    12.31
    ],
    "Beta": [
-    -0.062,
-    4.59
+    -0.012,
+    4.46
    ],
    "Size": [
-    1.551,
-    1.78
+    1.576,
+    1.44
    ],
    "Short interest": [
-    -0.495,
-    4.82
+    -0.542,
+    4.6
    ],
    "Short-term return": [
-    4.846,
-    7.87
+    4.809,
+    8.34
    ],
-   "Long-term return": [
-    2.987,
-    13.29
+   "Medium- and long-term return": [
+    3.486,
+    18.82
    ],
    "Net market exposure": [
-    3.522,
+    3.523,
     31.34
    ],
    "Sector tilt": [
-    1.596,
-    0.68
+    1.585,
+    0.56
    ],
    "Stock-specific": [
-    -3.789,
-    20.31
+    -4.233,
+    16.62
    ],
    "Unloaded holdings": [
     -0.224,
     -0.49
    ],
    "Low-risk package": [
-    -7.406,
-    48.89
+    -7.362,
+    48.1
    ],
    "Trading activity": [
-    -1.168,
-    2.85
+    -1.197,
+    2.01
    ]
   },
   "2021": {
    "Low volatility": [
-    4.107,
-    27.6
+    4.236,
+    27.14
    ],
    "Beta": [
-    0.972,
-    3.04
+    0.959,
+    2.99
    ],
    "Size": [
-    -0.339,
-    -0.62
+    -0.272,
+    -0.84
    ],
    "Short interest": [
-    3.989,
-    4.47
+    3.998,
+    4.23
    ],
    "Short-term return": [
-    -2.181,
-    15.68
+    -1.945,
+    16.62
    ],
-   "Long-term return": [
-    1.086,
-    13.17
+   "Medium- and long-term return": [
+    0.756,
+    17.15
    ],
    "Net market exposure": [
     4.825,
     9.52
    ],
    "Sector tilt": [
-    1.107,
-    1.43
+    1.13,
+    1.22
    ],
    "Stock-specific": [
-    5.085,
-    20.28
+    4.988,
+    17.61
    ],
    "Unloaded holdings": [
     0.373,
     0.06
    ],
    "Low-risk package": [
-    9.904,
-    40.16
+    10.02,
+    39.66
    ],
    "Trading activity": [
-    1.365,
-    5.38
+    1.341,
+    4.29
    ]
   },
   "2022": {
    "Low volatility": [
-    12.312,
-    59.21
+    12.522,
+    58.22
    ],
    "Beta": [
-    -2.021,
-    3.11
+    -2.033,
+    2.99
    ],
    "Size": [
-    -1.044,
-    -1.24
+    -1.039,
+    -1.34
    ],
    "Short interest": [
-    2.502,
-    4.51
+    2.528,
+    4.46
    ],
    "Short-term return": [
-    -1.136,
-    2.4
+    -1.397,
+    2.29
    ],
-   "Long-term return": [
-    -1.611,
-    16.57
+   "Medium- and long-term return": [
+    -2.046,
+    20.93
    ],
    "Net market exposure": [
-    -3.186,
-    -4.68
+    -3.191,
+    -4.66
    ],
    "Sector tilt": [
-    -0.971,
-    3.67
+    -0.934,
+    3.53
    ],
    "Stock-specific": [
-    -2.076,
-    8.56
+    -1.709,
+    6.14
    ],
    "Unloaded holdings": [
     -0.153,
     0.83
    ],
    "Low-risk package": [
-    7.105,
-    57.64
+    7.298,
+    56.55
    ],
    "Trading activity": [
-    2.209,
-    7.06
+    2.278,
+    6.59
    ]
   },
   "2023": {
    "Low volatility": [
-    -7.361,
-    31.98
+    -7.492,
+    30.65
    ],
    "Beta": [
-    -0.205,
-    1.26
+    -0.236,
+    1.18
    ],
    "Size": [
-    1.309,
-    0.9
+    1.314,
+    0.93
    ],
    "Short interest": [
-    1.59,
-    8.71
+    1.562,
+    8.48
    ],
    "Short-term return": [
-    0.955,
-    4.6
+    1.294,
+    4.47
    ],
-   "Long-term return": [
-    -0.121,
-    23.14
+   "Medium- and long-term return": [
+    -0.062,
+    28.45
    ],
    "Net market exposure": [
     6.233,
-    -1.04
+    -1.05
    ],
    "Sector tilt": [
-    0.977,
-    2.65
+    0.946,
+    2.57
    ],
    "Stock-specific": [
-    2.57,
-    21.57
+    2.446,
+    18.77
    ],
    "Unloaded holdings": [
     -0.079,
     0.57
    ],
    "Low-risk package": [
-    -1.333,
-    32.19
+    -1.496,
+    30.78
    ],
    "Trading activity": [
-    -1.327,
-    5.66
+    -1.384,
+    4.98
    ]
   },
   "2024": {
    "Low volatility": [
-    -4.503,
-    18.95
+    -4.834,
+    18.26
    ],
    "Beta": [
-    -0.495,
-    0.68
+    -0.5,
+    0.66
    ],
    "Size": [
-    1.072,
-    0.15
+    1.078,
+    0.17
    ],
    "Short interest": [
-    1.28,
-    7.28
+    1.247,
+    6.9
    ],
    "Short-term return": [
-    0.678,
-    2.39
+    0.568,
+    2.52
    ],
-   "Long-term return": [
-    4.483,
-    20.72
+   "Medium- and long-term return": [
+    5.276,
+    25.21
    ],
    "Net market exposure": [
-    6.054,
-    7.17
+    6.069,
+    7.15
    ],
    "Sector tilt": [
-    2.92,
-    3.41
+    2.925,
+    3.19
    ],
    "Stock-specific": [
-    1.242,
-    35.62
+    0.991,
+    33.01
    ],
    "Unloaded holdings": [
     -0.516,
     0.39
    ],
    "Low-risk package": [
-    1.056,
-    26.81
+    0.735,
+    26.07
    ],
    "Trading activity": [
-    -0.166,
-    3.23
+    -0.255,
+    2.54
    ]
   },
   "2025": {
    "Low volatility": [
-    -6.021,
-    18.94
+    -6.285,
+    18.56
    ],
    "Beta": [
-    -0.648,
-    0.93
+    -0.651,
+    0.9
    ],
    "Size": [
-    0.74,
-    -1.02
+    0.781,
+    -0.96
    ],
    "Short interest": [
-    2.965,
-    5.67
+    2.957,
+    5.47
    ],
    "Short-term return": [
-    1.053,
-    4.34
+    0.965,
+    4.43
    ],
-   "Long-term return": [
-    2.701,
-    21.78
+   "Medium- and long-term return": [
+    3.173,
+    25.5
    ],
    "Net market exposure": [
-    3.886,
-    6.14
+    3.889,
+    6.13
    ],
    "Sector tilt": [
-    0.912,
-    6.4
+    0.9,
+    6.17
    ],
    "Stock-specific": [
-    7.657,
-    30.17
+    7.615,
+    27.91
    ],
    "Unloaded holdings": [
     -0.215,
     0.95
    ],
    "Low-risk package": [
-    -2.783,
-    26.01
+    -3.048,
+    25.59
    ],
    "Trading activity": [
-    -0.075,
-    5.69
+    -0.174,
+    4.93
    ]
   },
   "2026": {
    "Low volatility": [
-    -6.027,
-    3.67
+    -6.463,
+    2.95
    ],
    "Beta": [
-    1.282,
-    3.52
+    1.247,
+    3.48
    ],
    "Size": [
-    -0.592,
-    -1.54
+    -0.613,
+    -1.67
    ],
    "Short interest": [
-    1.747,
-    7.06
+    1.683,
+    6.57
    ],
    "Short-term return": [
-    0.405,
-    5.73
+    0.046,
+    5.59
    ],
-   "Long-term return": [
-    14.169,
-    33.09
+   "Medium- and long-term return": [
+    15.579,
+    39.15
    ],
    "Net market exposure": [
-    6.253,
+    6.266,
     13.44
    ],
    "Sector tilt": [
-    -4.197,
-    9.15
+    -4.166,
+    9.2
    ],
    "Stock-specific": [
-    -19.866,
-    18.58
+    -20.298,
+    14.76
    ],
    "Unloaded holdings": [
     -0.114,
     -0.16
    ],
    "Low-risk package": [
-    1.508,
-    20.64
+    1.05,
+    19.87
    ],
    "Trading activity": [
-    0.035,
-    7.45
+    -0.072,
+    6.7
    ]
   }
  },
  "regimes": {
   "Declines": {
-   "Low volatility": 16.41,
-   "Beta": 0.83,
-   "Size": -0.18,
-   "Short interest": 1.5,
-   "Short-term return": 2.41,
-   "Long-term return": 1.01,
+   "Low volatility": 16.32,
+   "Beta": 0.85,
+   "Size": -0.17,
+   "Short interest": 1.44,
+   "Short-term return": 2.57,
+   "Medium- and long-term return": 1.76,
    "Net market exposure": -18.54,
-   "Sector tilt": -0.55,
-   "Stock-specific": 1.76,
+   "Sector tilt": -0.62,
+   "Stock-specific": 1.15,
    "Unloaded holdings": 1.07,
-   "Low-risk package": -1.31,
-   "Trading activity": 0.49,
+   "Low-risk package": -1.37,
+   "Trading activity": 0.36,
    "Book net": 5.21
   },
   "Strong rallies": {
-   "Low volatility": -13.22,
-   "Beta": -0.74,
-   "Size": -0.42,
-   "Short interest": 1.46,
-   "Short-term return": 4.41,
-   "Long-term return": 1.21,
+   "Low volatility": -13.29,
+   "Beta": -0.75,
+   "Size": -0.39,
+   "Short interest": 1.42,
+   "Short-term return": 5.21,
+   "Medium- and long-term return": 1.29,
    "Net market exposure": 14.87,
-   "Sector tilt": 0.74,
-   "Stock-specific": 0.16,
+   "Sector tilt": 0.71,
+   "Stock-specific": -0.45,
    "Unloaded holdings": -0.33,
-   "Low-risk package": 0.91,
-   "Trading activity": -0.82,
+   "Low-risk package": 0.83,
+   "Trading activity": -0.97,
    "Book net": 6.39
   }
  },
  "drawdowns": {
   "2020\u201321 drawdown": {
-   "Low volatility": -12.57,
-   "Beta": -0.05,
-   "Size": 0.57,
-   "Short interest": 0.25,
-   "Short-term return": 3.13,
-   "Long-term return": 1.28,
+   "Low volatility": -12.48,
+   "Beta": 0.0,
+   "Size": 0.64,
+   "Short interest": 0.24,
+   "Short-term return": 3.06,
+   "Medium- and long-term return": 1.06,
    "Net market exposure": 2.34,
-   "Sector tilt": 0.97,
-   "Stock-specific": -9.42,
+   "Sector tilt": 0.99,
+   "Stock-specific": -9.46,
    "Unloaded holdings": -0.23,
-   "Low-risk package": -10.29,
-   "Trading activity": -0.35
+   "Low-risk package": -10.14,
+   "Trading activity": -0.26
   },
   "2008\u201309 drawdown": {
-   "Low volatility": -11.48,
-   "Beta": -0.48,
-   "Size": -0.21,
-   "Short interest": -1.2,
-   "Short-term return": 5.85,
-   "Long-term return": -0.31,
+   "Low volatility": -10.89,
+   "Beta": -0.2,
+   "Size": -0.26,
+   "Short interest": -1.18,
+   "Short-term return": 6.84,
+   "Medium- and long-term return": -2.48,
    "Net market exposure": -0.97,
-   "Sector tilt": 1.6,
-   "Stock-specific": -4.6,
+   "Sector tilt": 1.54,
+   "Stock-specific": -4.27,
    "Unloaded holdings": 0.12,
-   "Low-risk package": -12.93,
-   "Trading activity": -1.35
+   "Low-risk package": -12.06,
+   "Trading activity": -1.28
   }
  },
  "windows": [
