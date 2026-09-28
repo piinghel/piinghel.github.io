@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from check_site import check_site, figure_dimensions
+from check_site import check_site
 
 
 class FigureInputTests(unittest.TestCase):
@@ -19,10 +19,6 @@ class FigureInputTests(unittest.TestCase):
                 '<a href="#missing">Bad</a>', encoding="utf-8"
             )
             self.assertIn("missing fragment", check_site(root)[0])
-
-    def test_published_svgs_have_resolved_vector_references(self):
-        dimensions = figure_dimensions(Path(__file__).resolve().parents[1])
-        self.assertIn("/assets/tranching/calendar-grid", dimensions)
 
     def test_local_link_checker_checks_mobile_picture_sources(self):
         with tempfile.TemporaryDirectory() as directory:

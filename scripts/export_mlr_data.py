@@ -110,31 +110,33 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
 
 
 def export_results(evidence: Path, predictors: Path) -> dict:
-    coefficients = pl.read_csv(evidence / "ridge_coefficients_by_refit.csv")
-    ranked = (
-        coefficients.group_by("feature")
-        .agg(pl.col("coefficient").abs().mean().alias("size"))
+    coefficients = (
+        pl.scan_csv(evidence / "ridge_coefficients_by_refit.csv")
+        .sort("fold_id")
+        .group_by("feature")
+        .agg(
+            pl.col("coefficient").abs().mean().alias("size"),
+            pl.col("coefficient"),
+            pl.col("test_date"),
+        )
         .sort(["size", "feature"], descending=[True, False])
-        .get_column("feature")
-        .to_list()
+        .collect()
     )
-    catalogue = pl.read_csv(predictors).select("predictor", "theme", "description")
+    ranked = coefficients["feature"].to_list()
+    refit_dates = coefficients["test_date"].to_list()
+    if not refit_dates or any(dates != refit_dates[0] for dates in refit_dates):
+        raise ValueError("Every predictor must cover the same refit dates")
+    catalogue = pl.scan_csv(predictors).select("predictor", "theme", "description").collect()
     info = {row["predictor"]: row for row in catalogue.iter_rows(named=True)}
-    years = [
-        int(d[:4])
-        for d in coefficients.unique("fold_id").sort("fold_id")["test_date"].to_list()
-    ]
+    years = [int(d[:4]) for d in refit_dates[0]]
     return {"version": 1, "charts": {"coefficients": {
             "kind": "matrix", "unit": "Coefficient", "defaultCount": 10,
             "columns": [str(year) for year in years],
             "rows": [SHORT_PREDICTORS.get(f, info[f]["description"]) for f in ranked],
             "descriptions": [info[f]["description"] + " · " + info[f]["theme"] for f in ranked],
             "values": [
-                [
-                    round(float(v), 4)
-                    for v in coefficients.filter(pl.col("feature") == f).sort("fold_id")["coefficient"]
-                ]
-                for f in ranked
+                [round(float(value), 4) for value in values]
+                for values in coefficients["coefficient"].to_list()
             ],
         }}}
 

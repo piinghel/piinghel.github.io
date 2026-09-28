@@ -6,9 +6,31 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from blog_charts import series, statistics, write_chart
+from export_mlr_data import export_results
 
 
 class ChartExportTests(unittest.TestCase):
+    def test_coefficients_rank_by_magnitude_and_keep_refits_aligned(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "ridge_coefficients_by_refit.csv"
+            source.write_text(
+                "feature,fold_id,test_date,coefficient\n"
+                "positive,2,2024-01-01,0.1\nnegative,2,2024-01-01,-0.3\n"
+                "positive,1,2022-01-01,0.2\nnegative,1,2022-01-01,-0.4\n"
+            )
+            catalogue = root / "predictors.csv"
+            catalogue.write_text(
+                "predictor,theme,description\npositive,Theme,Positive\nnegative,Theme,Negative\n"
+            )
+            chart = export_results(root, catalogue)["charts"]["coefficients"]
+            self.assertEqual(chart["rows"], ["Negative", "Positive"])
+            self.assertEqual(chart["columns"], ["2022", "2024"])
+            self.assertEqual(chart["values"], [[-0.4, -0.3], [0.2, 0.1]])
+            source.write_text(source.read_text().replace("negative,2,2024-01-01,-0.3\n", ""))
+            with self.assertRaisesRegex(ValueError, "same refit dates"):
+                export_results(root, catalogue)
+
     def test_rejects_invalid_returns_and_unapproved_metadata(self):
         for value in [float("nan"), float("inf"), -1]:
             with self.assertRaises(ValueError):
