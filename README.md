@@ -56,6 +56,63 @@ a framework migration would not strengthen the research.
 
 ## Figure sources
 
+### Interactive chart standard
+
+Use the shared `scripts/blog_charts.py` exporter, `assets/js/blog-charts.js`
+renderer and `blog-chart.html` include for new finalized figures. The first
+reference is the low-volatility article; other articles migrate after review.
+Keep article prose, results and conclusions unchanged during chart conversions.
+Do not convert evidence still being rerun. Export only allowlisted, neutrally
+named portfolio aggregates, never raw inputs or their metadata.
+
+Add `interactive_charts: true` to the post front matter. A minimal export:
+
+```python
+from pathlib import Path
+from scripts.blog_charts import series, write_chart
+
+write_chart(Path("assets/example/performance.json"),
+    ["2025-01-02", "2025-01-03", "2025-01-06"],
+    [series("strategy", "Strategy", "strategy", [0.0, 0.01, -0.005])],
+    {"performance": {"kind": "performance", "series": ["strategy"],
+                     "drawdown": True, "note": "After costs; zero-cash Sharpe."}})
+```
+
+Embed with a retained static fallback:
+
+```liquid
+{% raw %}{% include blog-chart.html chart="performance"
+   source="/assets/example/performance.json"
+   base="/assets/example/performance" label="Strategy growth and drawdown" %}{% endraw %}
+```
+
+Use `role` for shared colours; `episodes` are `[label, start, end]` triples.
+An `index` role supplies market context (`benchmark: true` defaults it on).
+Keep only the central comparison visible; put optional series, dates and presets
+under Explore. Do not add miniature slider previews. Show subtotals with nested
+components rather than additive peers. Extend the helper for new chart families.
+
+Performance paths rebase to 100 at the selected close; statistics use subsequent
+daily returns. Prepend a zero-return capital anchor to retain the original first
+return in Full. Bar windows include both endpoints. Return compounds; sample
+volatility and arithmetic zero-cash Sharpe use 252 sessions/year. Linked book
+contributions are not standalone returns. Preserve each article's conventions.
+Long displays sample weekly endpoints and extremes, but statistics retain every
+daily observation. The pinned Plotly bundle loads once; SVGs are fallbacks.
+
+Regenerate the reference with:
+
+```bash
+python3 scripts/export_low_vol_charts.py --baseline /path/to/completed/run --hedge /path/to/completed/hedge
+python3 -m unittest discover -s tests
+node --test tests/blog_charts.test.cjs
+```
+
+Before committing, reconcile full-window values, inspect desktop/phone and both
+themes, test ranges and legends, and run the site checks. Scan the diff, exports
+and built site for confidential source identifiers. Keep checks, mismatches and
+page-weight comparisons in the private review, not in article prose.
+
 Every figure has light/dark SVG variants, with phone layouts where needed, drawn
 from one composition per viewport. Renderers in `scripts/` read only the aggregate
 JSON or CSV beside the figures; an `--outputs`, `--sweep` or `--geometry` option

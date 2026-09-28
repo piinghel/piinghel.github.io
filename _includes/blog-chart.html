@@ -1,0 +1,9 @@
+<section class="blog-chart" data-source="{{ include.source | relative_url }}" data-chart="{{ include.chart }}" aria-label="{{ include.label | escape }}">
+  <div class="blog-chart-ui" hidden></div>
+  <p class="blog-chart-status" role="status">Interactive chart loading…</p>
+  <div class="blog-chart-fallback">
+    {% capture fallback %}{% include theme-svg-figure.html base=include.base mobile=include.mobile alt=include.label version=include.version %}{% endcapture %}
+    <template>{{ fallback }}</template>
+    <noscript>{{ fallback }}<style>.blog-chart-status { display:none; }</style></noscript>
+  </div>
+</section>

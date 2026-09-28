@@ -38,5 +38,9 @@
   {%- feed_meta -%}
 
   {%- include custom-head.html -%}
+  {% if page.interactive_charts %}
+  <link rel="stylesheet" href="{{ '/assets/css/blog-charts.css' | relative_url }}">
+  <script defer src="{{ '/assets/js/blog-charts.js' | relative_url }}"></script>
+  {% endif %}
   
 </head>
