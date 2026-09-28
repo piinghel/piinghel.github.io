@@ -240,7 +240,7 @@ Turnover is the
 past maximum over 126 and 252 sessions. The factor labelled price–volume
 correlation is the correlation of daily returns with changes in turnover over
 21, 63 and 126 sessions. It rises with recent returns, but its daily
-payoff is nearly uncorrelated with that of short-term return (−0.05).
+payoff is nearly uncorrelated with that of short-term return (−0.04).
 Each enters the regression separately; their P&L is added for the displayed
 trading-activity subtotal.
 
@@ -388,7 +388,7 @@ while medium- and long-term return gained; the two moved against each other day 
 which suggests an exposure the themes don't capture.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 2: The low-risk package and its components.</strong> The bold subtotal is the sum of low volatility, beta and net market exposure. Return before costs, % of capital a year, and share of the gross book's daily variance, %. Standard errors allow for autocorrelation up to 21 sessions. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
+<p class="table-caption"><strong>Table 2: The low-risk package and its components.</strong> The bold subtotal is the sum of low volatility, beta and net market exposure, rounded on its own, so it can differ from the rounded parts by 0.1. Return before costs, % of capital a year, and share of the gross book's daily variance, %. Standard errors allow for autocorrelation up to 21 sessions. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
 
 | | 1999–03 | 2004–08 | 2009–13 | 2014–18 | 2019–21 | 2022–26 |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |

@@ -173,7 +173,7 @@ Short-term reversal earns more on volatile days both before and after 2009,
 which is consistent with reversal as a payment for supplying
 liquidity when it is scarce. Stock-specific returns do the opposite over the
 whole period, but that comes from before 2009: since then calm and volatile days
-differ by about 2.8 points a year, well inside the uncertainty.
+differ by about 2.9 points a year, well inside the uncertainty.
 The low-risk package's average differs little between the two states, but the
 uncertainty is wide. The book as a whole earns less in volatile markets, by an
 amount the history can't pin down.
