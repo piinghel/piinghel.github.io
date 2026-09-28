@@ -109,12 +109,12 @@
 <text x="349.8" y="1318.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0.75</text>
 <line x1="443.0" y1="1295.0" x2="443.0" y2="1300.0" stroke="#D9DEE8" stroke-width="1"/>
 <text x="443.0" y="1318.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">1</text>
-<path d="M70.0,1155.0 L163.2,1131.7 L256.5,1135.0 L349.8,1161.7 L443.0,1270.0" fill="none" stroke="#378579" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="70.0" cy="1155.0" r="4" fill="#378579"/>
-<circle cx="163.2" cy="1131.7" r="4" fill="#378579"/>
-<circle cx="256.5" cy="1135.0" r="6" fill="#B98556"/>
-<circle cx="349.8" cy="1161.7" r="4" fill="#378579"/>
-<circle cx="443.0" cy="1270.0" r="4" fill="#378579"/>
+<path d="M70.0,1154.4 L163.2,1132.4 L256.5,1136.5 L349.8,1162.3 L443.0,1269.9" fill="none" stroke="#378579" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70.0" cy="1154.4" r="4" fill="#378579"/>
+<circle cx="163.2" cy="1132.4" r="4" fill="#378579"/>
+<circle cx="256.5" cy="1136.5" r="6" fill="#B98556"/>
+<circle cx="349.8" cy="1162.3" r="4" fill="#378579"/>
+<circle cx="443.0" cy="1269.9" r="4" fill="#378579"/>
 <text x="256.5" y="1345.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
 </g>
 </svg>

@@ -192,8 +192,8 @@ eligible, and a penalty on trading.
   </thead>
   <tbody>
     <tr><th scope="row">Volatility-scaled</th><td>9.42%</td><td>7.88%</td><td>8.05%</td><td>0.98<br><small>(0.89–1.16)</small></td><td>−19.8%</td><td>28.4×</td></tr>
-    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>10.57%</td><td>8.95%</td><td>8.68%</td><td>1.03<br><small>(0.96–1.17)</small></td><td>−21.6%</td><td>29.7×</td></tr>
-    <tr><th scope="row">Optimizer</th><td>11.02%</td><td>9.03%</td><td>7.06%</td><td>1.26<br><small>(1.22–1.29)</small></td><td>−15.2%</td><td>36.1×</td></tr>
+    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>10.58%</td><td>8.95%</td><td>8.68%</td><td>1.03<br><small>(0.96–1.17)</small></td><td>−21.6%</td><td>29.7×</td></tr>
+    <tr><th scope="row">Optimizer</th><td>11.02%</td><td>9.03%</td><td>7.07%</td><td>1.26<br><small>(1.22–1.29)</small></td><td>−15.2%</td><td>36.1×</td></tr>
     <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>10.65%</td><td>9.40%</td><td>7.01%</td><td>1.32<br><small>(1.26–1.36)</small></td><td>−15.5%</td><td>22.6×</td></tr>
   </tbody>
 </table>
@@ -288,9 +288,9 @@ Table 4 covers January 2022–May 2026, about four and a half years.
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Volatility-scaled</th><td>8.43%</td><td>7.11%</td><td>10.16%</td><td>0.73<br><small>(0.67–0.83)</small></td><td>−9.4%</td><td>24.3×</td></tr>
-    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>8.62%</td><td>7.19%</td><td>11.00%</td><td>0.68<br><small>(0.63–0.73)</small></td><td>−10.4%</td><td>26.4×</td></tr>
-    <tr><th scope="row">Optimizer</th><td>6.55%</td><td>5.12%</td><td>7.44%</td><td>0.70<br><small>(0.44–0.84)</small></td><td>−8.0%</td><td>26.9×</td></tr>
+    <tr><th scope="row">Volatility-scaled</th><td>8.43%</td><td>7.12%</td><td>10.16%</td><td>0.73<br><small>(0.67–0.83)</small></td><td>−9.4%</td><td>24.3×</td></tr>
+    <tr><th scope="row">Volatility-scaled, score-weighted</th><td>8.62%</td><td>7.19%</td><td>11.00%</td><td>0.69<br><small>(0.63–0.73)</small></td><td>−10.4%</td><td>26.4×</td></tr>
+    <tr><th scope="row">Optimizer</th><td>6.55%</td><td>5.12%</td><td>7.44%</td><td>0.71<br><small>(0.44–0.84)</small></td><td>−8.0%</td><td>26.9×</td></tr>
     <tr class="selected-rule"><th scope="row">Optimizer + trading controls</th><td>7.16%</td><td>6.37%</td><td>7.46%</td><td>0.87<br><small>(0.68–0.96)</small></td><td>−7.3%</td><td>14.7×</td></tr>
   </tbody>
 </table>
