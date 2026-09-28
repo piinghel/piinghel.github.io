@@ -1,5 +1,6 @@
 ---
 layout: post
+interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
@@ -68,41 +69,48 @@ might rank the target (references at the end); where the data here disagree
 with the story, I say so.
 
 <div class="theme-cards" markdown="0">
-  <section class="theme-card" style="--theme-color: var(--theme-1)">
-    <h3>Momentum &amp; trend <span>33 predictors</span></h3>
+  <details class="theme-card" style="--theme-color: var(--theme-1)">
+    <summary>Momentum &amp; trend <span>33 predictors</span></summary>
     <p class="theme-measures">Returns and risk-adjusted returns over 3–12 months, price relative to moving averages and to highs and lows, how persistently the price stayed above its 200-day average, and the share of losing days over up to three years.</p>
     <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. The theme also holds short-horizon position measures, such as price relative to its 5-day low, which work the other way.</p>
-  </section>
-  <section class="theme-card" style="--theme-color: var(--theme-2)">
-    <h3>Short-term reversal <span>4 predictors</span></h3>
+      <details class="predictor-list" data-theme="0"><summary>Predictors</summary><ul></ul></details>
+  </details>
+  <details class="theme-card" style="--theme-color: var(--theme-2)">
+    <summary>Short-term reversal <span>4 predictors</span></summary>
     <p class="theme-measures">Returns over the last 1–21 sessions.</p>
     <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery.</p>
-  </section>
-  <section class="theme-card" style="--theme-color: var(--theme-3)">
-    <h3>Volatility <span>12 predictors</span></h3>
+      <details class="predictor-list" data-theme="1"><summary>Predictors</summary><ul></ul></details>
+  </details>
+  <details class="theme-card" style="--theme-color: var(--theme-3)">
+    <summary>Volatility <span>12 predictors</span></summary>
     <p class="theme-measures">Close-to-close, downside and upside volatility and average true range, over 5–252 sessions.</p>
     <p>Low-volatility stocks have earned about as much as volatile ones with far less risk. Investors who cannot or will not use leverage bid up high-beta stocks, and some pay for lottery-like payoffs.</p>
-  </section>
-  <section class="theme-card" style="--theme-color: var(--theme-4)">
-    <h3>Size <span>10 predictors</span></h3>
+      <details class="predictor-list" data-theme="2"><summary>Predictors</summary><ul></ul></details>
+  </details>
+  <details class="theme-card" style="--theme-color: var(--theme-4)">
+    <summary>Size <span>10 predictors</span></summary>
     <p class="theme-measures">Log market capitalization, its variability (the standard deviation of log market cap over a window), and its change and position relative to recent highs and lows.</p>
     <p>The small-cap premium lives among much smaller firms and has been weak since the 1980s unless one controls for quality. Within the Russell 1000, size means large versus mega cap, and larger names rank higher on the Sharpe target because their volatility is lower. Here size is mostly a low-risk measure; its variability measures behave like volatility and its change measures like momentum.</p>
-  </section>
-  <section class="theme-card" style="--theme-color: var(--theme-5)">
-    <h3>Liquidity &amp; volume <span>10 predictors</span></h3>
+      <details class="predictor-list" data-theme="3"><summary>Predictors</summary><ul></ul></details>
+  </details>
+  <details class="theme-card" style="--theme-color: var(--theme-5)">
+    <summary>Liquidity &amp; volume <span>10 predictors</span></summary>
     <p class="theme-measures">Share turnover, Amihud illiquidity (absolute return per dollar traded), variability of trading volume, volume relative to its recent maximum, and the correlation between price and volume changes.</p>
     <p>Heavily traded stocks have tended to earn less than lightly traded ones. Illiquid stocks should compensate their holders, but here Amihud illiquidity points the other way: within the Russell 1000 it mostly marks the smaller names, which rank lower on the target.</p>
-  </section>
-  <section class="theme-card" style="--theme-color: var(--theme-6)">
-    <h3>Market correlation <span>2 predictors</span></h3>
+      <details class="predictor-list" data-theme="4"><summary>Predictors</summary><ul></ul></details>
+  </details>
+  <details class="theme-card" style="--theme-color: var(--theme-6)">
+    <summary>Market correlation <span>2 predictors</span></summary>
     <p class="theme-measures">Correlation of the stock's daily returns with the market over one and two years.</p>
     <p>Beta is correlation times relative volatility. Leverage-constrained investors bid up high-beta stocks for either reason, so high-correlation stocks should earn less even at the same volatility. The data here match this story only before 2009, and I have no convincing explanation for the reversal, which makes this the least well-founded theme.</p>
-  </section>
-  <section class="theme-card" style="--theme-color: var(--theme-7)">
-    <h3>Short positioning <span>9 predictors</span></h3>
+      <details class="predictor-list" data-theme="5"><summary>Predictors</summary><ul></ul></details>
+  </details>
+  <details class="theme-card" style="--theme-color: var(--theme-7)">
+    <summary>Short positioning <span>9 predictors</span></summary>
     <p class="theme-measures">Short interest relative to daily volume, its variability, and changes in short interest.</p>
     <p>Short sellers are often well informed, and heavily shorted stocks have tended to underperform. Short interest relative to volume, often called days to cover, also measures crowding: how long the shorts would need to buy back.</p>
-  </section>
+      <details class="predictor-list" data-theme="6"><summary>Predictors</summary><ul></ul></details>
+  </details>
 </div>
 
 ## How the predictors overlap
@@ -287,13 +295,7 @@ Through 2021 Ridge's mean IC, 0.048, is close to the equal-weight score's
 Figure 3 first shows how the Ridge and equal-weight scores order return and
 volatility, using equal-weighted decile portfolios before costs.
 
-<div class="pse-segments decile-periods" role="radiogroup" aria-label="Period">
-  <button type="button" role="radio" aria-checked="true" data-decile-period="development">1998–2021</button>
-  <button type="button" role="radio" aria-checked="false" data-decile-period="later">2022–2026</button>
-</div>
-<div class="mlr-plot" id="mlr-deciles" role="img" aria-label="Annual return of ten equal-weighted decile portfolios for the Ridge and equal-weight scores" data-source="/assets/multiple-linear-regression/regression-results.json?v=5" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
-<div class="research-table-scroll"><table class="research-table comparison-table decile-table" id="mlr-decile-table"></table></div>
-<noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
+{% include blog-chart.html chart="deciles" source="/assets/multiple-linear-regression/deciles.json" label="Return, volatility and Sharpe across score deciles" %}
 
 <p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Compounded annual return of equal-weighted portfolios of the stocks in each score decile, with each decile's annualized volatility and Sharpe ratio below. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
 
@@ -342,8 +344,7 @@ returns, averaged across the three schedules, puts Ridge's Sharpe advantage at
 about 0.2 in both periods, with 95% intervals from roughly zero to 0.4. Figure
 4 shows the two paths.
 
-<div class="mlr-plot" id="mlr-growth" role="img" aria-label="Growth of one dollar on a log scale and drawdowns for the equal-weight and Ridge scores, 1998–2026" data-source="/assets/multiple-linear-regression/regression-results.json?v=5" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
-<noscript><p>This chart needs JavaScript; Table 4 gives the same comparison.</p></noscript>
+{% include blog-chart.html chart="performance" source="/assets/multiple-linear-regression/performance.json" label="Ridge and equal-weight growth and drawdowns" %}
 
 <p class="figure-caption"><strong>Figure 4: Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded from <span class="mathjax-ignore">$1</span> (log scale), with drawdowns below; the dotted line marks the start of the later period. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
 
@@ -362,9 +363,7 @@ largest mean absolute weight. A
 positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
-<div class="mlr-plot" id="mlr-coefficients" role="img" aria-label="Heatmap of the ten largest Ridge coefficients at each of the twelve refits" data-source="/assets/multiple-linear-regression/regression-results.json?v=5" data-plotly="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@3.1.0/plotly-cartesian.min.js"></div>
-<noscript><p>This chart needs JavaScript; the text below describes it.</p></noscript>
-<script src="/assets/js/regression-results.js?v=11" defer></script>
+{% include blog-chart.html chart="coefficients" source="/assets/multiple-linear-regression/coefficients.json" label="Largest Ridge coefficients by refit" %}
 
 <p class="figure-caption"><strong>Figure 5: The ten largest Ridge coefficients by refit.</strong> Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows are ranked by mean absolute coefficient over all refits; hover for each predictor's full definition.</p>
 

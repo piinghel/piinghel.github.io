@@ -3,10 +3,8 @@
 predictor-structure.json (Figure 1) comes from evidence/predictor-structure, written by
 factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
 correlations (x 1000), the dendrogram and the per-date theme IC.
-regression-results.json (Figures 3–5) comes from evidence/results, written by
-factor_combination's sweep_review.py and prediction_deciles.py: decile statistics,
-growth and drawdown of the theme-equal and Ridge scores, and Ridge coefficients by
-refit. Only the ten largest coefficients are selected here.
+coefficients.json (Figure 5) contains the ten largest coefficients by refit.
+Performance and daily deciles are exported by export_regression_charts.py.
 """
 
 from __future__ import annotations
@@ -41,8 +39,6 @@ SHORT_PREDICTORS = {
     "X_feature_market_cap_log_std21": "Mcap variability 21d",
     "X_feature_price_atr5": "Average true range 5d",
 }
-# Article names of the compared scores, in display order.
-SCORES = {"theme_equal": "Theme-equal", "equal_weight": "Equal-weight", "ols": "OLS", "ridge_0p1": "Ridge"}
 
 
 def scaled(values, *, scale: int = 1000) -> list[int]:
@@ -114,11 +110,6 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
 
 
 def export_results(evidence: Path, predictors: Path) -> dict:
-    growth = pl.read_csv(evidence / "growth_drawdown.csv").sort("date")
-    plotted = ["equal_weight", "ridge_0p1"]
-    dates = growth.filter(pl.col("model") == plotted[0])["date"].to_list()
-    if any(growth.filter(pl.col("model") == m)["date"].to_list() != dates for m in plotted):
-        raise ValueError("the plotted scores must share their common dates")
     coefficients = pl.read_csv(evidence / "ridge_coefficients_by_refit.csv")
     top = (
         coefficients.group_by("feature")
@@ -133,28 +124,11 @@ def export_results(evidence: Path, predictors: Path) -> dict:
         int(d[:4])
         for d in coefficients.unique("fold_id").sort("fold_id")["test_date"].to_list()
     ]
-    deciles = pl.read_csv(evidence / "decile_metrics.csv")
-    return {
-        "source": "factor_combination sweep_review.py and prediction_deciles.py",
-        "dates": dates,
-        "growth": {
-            SCORES[m]: {
-                "growth": [round(float(v), 4) for v in part["growth_index"]],
-                "drawdown": [round(float(v), 2) for v in part["drawdown_pct"]],
-            }
-            for m in plotted
-            for part in [growth.filter(pl.col("model") == m)]
-        },
-        "coefficients": {
-            "refit_years": years,
-            "predictors": [
-                {
-                    "label": SHORT_PREDICTORS[f],
-                    "description": info[f]["description"],
-                    "theme": info[f]["theme"],
-                }
-                for f in top
-            ],
+    return {"version": 1, "charts": {"coefficients": {
+            "kind": "matrix", "unit": "Coefficient",
+            "columns": [str(year) for year in years],
+            "rows": [SHORT_PREDICTORS[f] for f in top],
+            "descriptions": [info[f]["description"] + " · " + info[f]["theme"] for f in top],
             "values": [
                 [
                     round(float(v), 4)
@@ -162,35 +136,21 @@ def export_results(evidence: Path, predictors: Path) -> dict:
                 ]
                 for f in top
             ],
-        },
-        "deciles": {
-            period: {
-                SCORES[m]: {
-                    metric: [
-                        round(float(v), 4)
-                        for v in deciles.filter(
-                            (pl.col("score") == ("ridge" if m == "ridge_0p1" else m))
-                            & (pl.col("period") == period)
-                        ).sort("decile")[metric]
-                    ]
-                    for metric in ("annual_return", "volatility", "sharpe")
-                }
-                for m in plotted
-            }
-            for period in ("development", "later")
-        },
-    }
+        }}}
+
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--assets", type=Path, default=ASSETS)
+    parser.add_argument("--evidence", type=Path, help="Retained aggregate CSV directory")
     args = parser.parse_args()
+    evidence = args.evidence or args.assets / "evidence"
     outputs = {
-        "predictor-structure.json": export_structure(args.assets / "evidence/predictor-structure"),
-        "regression-results.json": export_results(
-            args.assets / "evidence/results",
-            args.assets / "evidence/predictor-structure/predictors.csv",
+        "predictor-structure.json": export_structure(evidence / "predictor-structure"),
+        "coefficients.json": export_results(
+            evidence / "results",
+            evidence / "predictor-structure/predictors.csv",
         ),
     }
     for name, data in outputs.items():

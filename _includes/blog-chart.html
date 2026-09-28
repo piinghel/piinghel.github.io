@@ -2,8 +2,12 @@
   <div class="blog-chart-ui" hidden></div>
   <p class="blog-chart-status" role="status">Interactive chart loading…</p>
   <div class="blog-chart-fallback">
+    {% if include.base %}
     {% capture fallback %}{% include theme-svg-figure.html base=include.base mobile=include.mobile alt=include.label version=include.version %}{% endcapture %}
     <template>{{ fallback }}</template>
     <noscript>{{ fallback }}<style>.blog-chart-status { display:none; }</style></noscript>
+    {% else %}
+    <noscript><p>This figure needs JavaScript; its results are described in the article.</p><style>.blog-chart-status { display:none; }</style></noscript>
+    {% endif %}
   </div>
 </section>

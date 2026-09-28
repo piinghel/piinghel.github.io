@@ -14,13 +14,18 @@ html[data-theme="dark"] {
   --model-baseline: #8b949e; --model-ridge: #6eb5a5;
 }
 
-/* Theme cards */
-.theme-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.8rem; margin: 1.6rem 0; }
-.theme-card { border: 1px solid var(--rule); border-top: 4px solid var(--theme-color); border-radius: 6px; padding: 0.8rem 0.95rem; }
-.theme-card h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; font-size: 1rem; margin: 0 0 0.35rem; }
-.theme-card h3 span { color: var(--muted-ink); font-size: 0.78rem; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.theme-card p { font-size: 0.9rem; line-height: 1.5; margin: 0.35rem 0 0; }
-.theme-card .theme-measures { color: var(--muted-ink); }
+/* Theme descriptions and predictor catalogues remain optional. */
+.theme-cards { margin:1.6rem 0; }
+.theme-card { border-bottom:1px solid var(--rule); padding:.65rem 0; }
+.theme-card summary { cursor:pointer; font-family:var(--font-sans); font-size:1rem; }
+.theme-card summary span { color:var(--muted-ink); font-size:.8rem; margin-left:.6rem; }
+.theme-card p { font-size:.95rem; line-height:1.6; }
+.theme-card .theme-measures { color:var(--muted-ink); }
+.predictor-list { margin:1rem 0 0 1rem; font-size:.85rem; }
+.predictor-list summary { font-size:.85rem; color:var(--muted-ink); }
+.predictor-list li { margin:.35rem 0; }
+.pse-years,.pse-themes { font:13px var(--font-sans); }
+.pse-years select { font:inherit; color:inherit; background:var(--page-surface); }
 
 /* Explorer */
 .pse { margin: 1.8rem 0 0.6rem; }
@@ -37,12 +42,3 @@ html[data-theme="dark"] {
 .pse p.pse-heading { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; color: var(--ink); margin: 1rem 0 0.2rem; }
 .pse p.pse-heading:empty { display: none; }
 .pse-heat, .pse-ic, .mlr-plot { width: 100%; }
-.mlr-plot { margin: 1.4rem 0 0.4rem; min-height: 200px; }
-.decile-periods { margin: 1.4rem 0 0; }
-.research-table-scroll .decile-table { min-width: 0; font-size: 0.78rem; margin-top: 0.4rem; }
-.decile-table th, .decile-table td { padding: 0.25rem 0.2rem; }
-.decile-table th:first-child { white-space: nowrap; }
-@media (max-width: 480px) {
-  .research-table-scroll .decile-table { font-size: 0.7rem; }
-  .decile-table th, .decile-table td { padding: 0.25rem 0.1rem; }
-}

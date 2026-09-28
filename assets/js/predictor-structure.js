@@ -9,14 +9,16 @@
   if (!root) return;
 
   const PERIODS = [[1998, 2021], [1998, 2003], [2004, 2008], [2009, 2013], [2014, 2018], [2019, 2021]];
-  const state = { period: 0, level: 'predictor' };
+  const state = { period: 0, level: 'predictor', visible: new Set([2, 3]) };
   const heatEl = root.querySelector('.pse-heat');
   const icEl = root.querySelector('.pse-ic');
   const [heatHeading, icHeading] = root.querySelectorAll('.pse-heading');
   let data = null;
+  let ready=false,legendTimer;
 
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  const themeColor = (t) => cssVar(`--theme-${t + 1}`);
+  const roles=['momentum','reversal','low_volatility','size','liquidity','market','short_interest'];
+  const themeColor = t => window.BlogCharts.COLORS[roles[t]];
 
   // Date-weighted mean of yearly upper-triangle vectors over the selected period.
   function periodMean(yearly) {
@@ -124,71 +126,82 @@
     return { traces: [trace], layout };
   }
 
-  // Theme names at the line ends, spread to at least one label height apart with a short
-  // connector back to each line.
-  function endLabels(ends, range, plotPx) {
-    const gap = (15 * (range[1] - range[0])) / plotPx;
-    const sorted = ends.slice().sort((a, b) => b.y - a.y);
-    sorted.forEach((e, k) => { e.at = k ? Math.min(e.y, sorted[k - 1].at - gap) : e.y; });
-    const shortfall = range[0] + gap / 2 - sorted[sorted.length - 1].at;
-    if (shortfall > 0) sorted.forEach((e) => { e.at += shortfall; });
-    return sorted.map((e) => ({
-      x: e.x, y: e.y, ax: 14, ay: ((e.y - e.at) * plotPx) / (range[1] - range[0]), xanchor: 'left',
-      text: e.text, font: { size: 12, color: e.color },
-      showarrow: true, arrowhead: 0, arrowwidth: 1, arrowcolor: e.color, standoff: 2,
-    }));
-  }
-
   function icChart() {
     const [from, to] = PERIODS[state.period];
     const rows = data.theme_ic.dates
       .map((date, t) => ({ date, values: data.theme_ic.values[t] }))
       .filter((r) => { const y = Number(r.date.slice(0, 4)); return y >= from && y <= to; });
     const x = rows.map((r) => r.date);
-    const ends = [];
     const traces = data.themes.map((theme, t) => {
       let sum = 0;
       const y = rows.map((r) => { sum += r.values[t] / data.scale; return sum; });
-      ends.push({ x: x[x.length - 1], y: sum, text: theme.short, color: themeColor(t) });
       return {
-        type: 'scatter', mode: 'lines', name: theme.short, x, y, line: { color: themeColor(t), width: 2 },
+        type: 'scatter', mode: 'lines', name: theme.short, x, y, visible:state.visible.has(t)?true:'legendonly', showlegend:state.visible.has(t), line: { color: themeColor(t), width: 2 },
         hovertemplate: `${theme.short} %{y:.1f} · mean IC ${(sum / rows.length).toFixed(3)}<extra></extra>`,
       };
     });
-    const values = traces.flatMap((tr) => tr.y).concat(0);
+    const values = traces.filter((_,i)=>state.visible.has(i)).flatMap(tr=>tr.y).concat(0);
     const pad = 0.05 * (Math.max(...values) - Math.min(...values));
     const range = [Math.min(...values) - pad, Math.max(...values) + pad];
     const height = 320;
-    const margin = { l: 36, r: 82, t: 6, b: 28 };
+    const margin = { l: 40, r: 12, t: 50, b: 30 };
     const grid = cssVar('--rule');
     const layout = Object.assign(baseLayout(height), {
       margin,
-      showlegend: false,
+      showlegend: true, legend:{orientation:'h',x:0,y:1.15},
       hovermode: 'x unified',
       xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '' },
       yaxis: { range, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
-      annotations: endLabels(ends, range, height - margin.t - margin.b),
     });
     return { traces, layout };
   }
 
-  function render() {
+  async function render() {
     const [from, to] = PERIODS[state.period];
     const period = `${from}–${to}`;
+    const years=root.querySelectorAll('.pse-years select');
+    if(years.length){years[0].value=from;years[1].value=to;}
+    root.querySelectorAll('.pse-themes input').forEach((box,i)=>box.checked=state.visible.has(i));
     root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.period) === state.period)));
     root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === state.level)));
     const config = { responsive: true, displayModeBar: false };
     const heat = state.level === 'theme' ? themeHeatmap() : predictorHeatmap();
+    heatEl.style.height=heat.layout.height+'px';
     heatHeading.textContent = state.level === 'theme'
       ? `Correlation between theme composites, ${period}`
       : `Correlation between the 80 predictors, ${period}`;
     window.Plotly.react(heatEl, heat.traces, heat.layout, config);
     icHeading.textContent = `Cumulative daily IC by theme, ${period}`;
     const ic = icChart();
-    window.Plotly.react(icEl, ic.traces, ic.layout, config);
+    icEl.style.height=ic.layout.height+'px';
+    await window.Plotly.react(icEl, ic.traces, ic.layout, config);
+    if(!ready) {
+      ready=true;
+      icEl.on('plotly_legendclick',e=>{clearTimeout(legendTimer);legendTimer=setTimeout(()=>{if(state.visible.has(e.curveNumber))state.visible.delete(e.curveNumber);else state.visible.add(e.curveNumber);render();},320);return false;});
+      icEl.on('plotly_legenddoubleclick',e=>{clearTimeout(legendTimer);state.visible=state.visible.size===1&&state.visible.has(e.curveNumber)?new Set([2,3]):new Set([e.curveNumber]);render();return false;});
+    }
   }
 
   function start() {
+    document.querySelectorAll('.predictor-list').forEach(details=>{
+      const list=details.querySelector('ul');
+      for(const p of data.predictors.filter(p=>p.theme===Number(details.dataset.theme))) {
+        const item=document.createElement('li');item.textContent=p.description;list.append(item);
+      }
+    });
+    const choices=root.querySelector('.pse-themes');
+    data.themes.forEach((theme,i)=>{
+      const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.checked=state.visible.has(i);
+      box.onchange=()=>{if(box.checked)state.visible.add(i);else state.visible.delete(i);render();};
+      label.append(box,document.createTextNode(' '+theme.short));choices.append(label);
+    });
+    const yearControls=root.querySelector('.pse-years'),from=document.createElement('select'),to=document.createElement('select');
+    for(const [label,select] of [['From year ',from],['to ',to]]) {
+      const wrap=document.createElement('label');wrap.append(label,select);yearControls.append(wrap);
+      data.years.forEach(y=>select.add(new Option(y,y)));
+    }
+    from.value=data.years[0];to.value=data.years.at(-1);
+    from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[6]=[Number(from.value),Number(to.value)];state.period=6;render();};
     const periods = root.querySelector('.pse-periods');
     PERIODS.forEach(([a, b], i) => {
       const button = document.createElement('button');
@@ -203,30 +216,15 @@
     root.querySelector('.pse-status').hidden = true;
     render();
     new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  }
-
-  // Shared with the article's other Plotly figures, so the library loads once.
-  function loadPlotly(src) {
-    if (!window.__plotlyPromise) {
-      window.__plotlyPromise = window.Plotly ? Promise.resolve() : new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-    return window.__plotlyPromise;
+    let width=root.clientWidth;
+    new ResizeObserver(()=>{if(width!==root.clientWidth){width=root.clientWidth;render();}}).observe(root);
   }
 
   function load() {
-    Promise.all([loadPlotly(root.dataset.plotly), fetch(root.dataset.source).then((r) => r.json())])
+    Promise.all([window.BlogCharts.plotly(), window.BlogCharts.load(root.dataset.source)])
       .then(([, json]) => { data = json; start(); })
       .catch(() => { root.querySelector('.pse-status').textContent = 'The interactive figure could not load.'; });
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    if (entries.some((e) => e.isIntersecting)) { observer.disconnect(); load(); }
-  }, { rootMargin: '600px' });
-  observer.observe(root);
+  load();
 }());

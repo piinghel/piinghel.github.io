@@ -126,7 +126,7 @@ for byte), run the renderer from this directory, then
 | --- | --- | --- |
 | Low volatility | 1 and 3 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
 | | 2 and 4 | `python -m low_volatility_factor.article_figures` in the same repository |
-| Regression | 1 (explorer), 3–5 | `assets/js/predictor-structure.js`, `assets/js/regression-results.js`; data from `scripts/export_mlr_data.py` |
+| Regression | 1 (explorer), 3–5 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_mlr_data.py` and `scripts/export_regression_charts.py` |
 | | 1 (no-JavaScript fallback) | `scripts/render_multiple_linear_regression_figures.py` |
 | | 2 | `scripts/render_mlr_training_design.py` |
 | Joint sizing | all | private portfolio-optimization project (see below) |

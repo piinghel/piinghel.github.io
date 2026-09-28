@@ -90,16 +90,42 @@
       (percent ? (value*100).toFixed(1)+'%' : value.toFixed(2));
   }
 
+  // Fixed matrices share typography, theme handling and loading with time series.
+  async function matrix(host,cfg) {
+    const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const graph=element('div','blog-chart-plot');ui.append(graph);
+    graph.style.height='420px';
+    async function draw() {
+      const dark=document.documentElement.dataset.theme==='dark',mobile=host.clientWidth<550;
+      const limit=Math.max(...cfg.values.flat().map(Math.abs));
+      await Plotly.react(graph,[{type:'heatmap',x:cfg.columns,y:cfg.rows,z:cfg.values,
+        zmin:-limit,zmax:limit,colorscale:[[0,COLORS.short],[.5,dark?'#252c34':'#f6f6f4'],[1,COLORS.strategy]],
+        xgap:2,ygap:2,customdata:cfg.descriptions.map(label=>cfg.columns.map(()=>label)),
+        hovertemplate:'%{customdata}<br>%{x}: %{z:.3f}<extra></extra>',
+        colorbar:{orientation:'h',thickness:8,len:.5,x:1,xanchor:'right',y:-.12,outlinewidth:0,title:{text:cfg.unit,font:{size:12}}}}],
+        {height:420,margin:{l:10,r:10,t:10,b:80},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
+          paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+          xaxis:{type:'category',tickangle:0,tickvals:mobile?cfg.columns.filter((_,i)=>i%2===0):cfg.columns},
+          yaxis:{autorange:'reversed',automargin:true}}, {responsive:true,displayModeBar:false});
+    }
+    await draw();host.querySelector('.blog-chart-status').hidden=true;
+    new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    let width=host.clientWidth;
+    new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
+  }
+
   async function mount(host) {
     const status=host.querySelector('.blog-chart-status');
     try {
       const [data]=await Promise.all([load(host.dataset.source),plotly()]);
       if(data.version!==1) throw new Error('Unsupported chart version');
-      const cfg=data.charts[host.dataset.chart], bars=cfg.kind==='bars';
+      const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
+      if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
+      if(cfg.kind==='panels'){await panels(host,cfg);return;}
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
       const full=[cfg.start||data.dates[0],cfg.end||data.dates.at(-1)];
-      let range=[...full], ready=false, busy=false, pending=false;
+      let range=cfg.initialRange||[...full], ready=false, busy=false, pending=false;
       const visible=new Map(series.map(s=>[s.id,s.visible!==false && (s.role!=='index'||cfg.benchmark===true)]));
       const optionalBoxes=new Map();
       let relative=false,relativeBox,legendTimer;
@@ -149,6 +175,7 @@
       ['Series','Annual return','Volatility','Sharpe','Max drawdown'].forEach(label=>{const th=element('th','',label);th.scope='col';hr.append(th);});
       const body=element('tbody');table.append(body);
       statisticsPanel.append(element('p','blog-chart-note',cfg.note));
+      if(cfg.kind==='values')statisticsPanel.hidden=true;
       function updateTable(first,last) {
         body.replaceChildren();
         for(const s of series.filter(s=>visible.get(s.id)&&!s.contribution)) {
@@ -191,7 +218,19 @@
               hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}<extra>%{fullData.name}</extra>',...extra};
           }
           function heading(text,y) {layout.annotations.push({text,x:0,y,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:13,color:t.text}});}
-          if(bars) {
+          if(cfg.kind==='grouped-bars') {
+            layout.height=360;layout.margin.t=65;layout.barmode='group';layout.bargap=.25;
+            layout.yaxis.tickformat='.0%';layout.xaxis.title={text:'Decile (1 = lowest score)',font:{size:12}};
+            heading('Annual return (%)',1);
+            const groups=[...new Set(series.map(s=>s.group))];
+            for(const group of groups) {
+              const items=series.filter(s=>s.group===group);
+              traces.push({type:'bar',name:group,legendgroup:items[0].id,
+                x:items.map(s=>s.category),y:items.map(s=>stats(s.returns.slice(first,last+1),data.annualization)?.annual_return),
+                visible:visible.get(items[0].id)?true:'legendonly',marker:{color:color(items[0])},
+                hovertemplate:group+' · decile %{x}<br>%{y:.1%} a year<extra></extra>'});
+            }
+          } else if(bars) {
             const shown=series.filter(s=>visible.get(s.id));
             const specs=[['sharpe','Sharpe ratio','', [0.72,1]],['annual_return','Annual return (%)','.1%',[0.36,.64]],['volatility','Volatility (%)','.1%',[0,.28]]];
             for(const [panel,[key,title,format,domain]] of specs.entries()) {
@@ -216,7 +255,7 @@
               const ticks=[];for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
               layout.yaxis.tickmode='array';layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);
             }
-            heading('Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
+            heading(cfg.kind==='values'?cfg.unit:'Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
             if(secondary) {
               layout.yaxis2={domain:[0,.29],anchor:'x',gridcolor:t.grid,zerolinecolor:t.grid,
                 tickformat:cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
@@ -228,6 +267,8 @@
                 const values=linked(s.returns,all.get(s.parent).returns,first,last);
                 const indices=displayIndices(dates,[values]);
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values[i]),{yaxis:'y2',hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f} pp<extra>%{fullData.name}</extra>'}));
+              } else if(cfg.kind==='values') {
+                traces.push(trace(s,dates,s.returns.slice(first,last+1)));
               } else {
                 const values=path(s.returns,first,last),indices=displayIndices(dates,[values.equity,values.drawdown]);
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i])));
@@ -240,6 +281,7 @@
               traces.push({type:'scatter',mode:'lines',name:'Strategy / index',legendgroup:'relative',x:indices.map(i=>dates[i]),y:indices.map(i=>ratio[i]),line:{color:COLORS.strategy,dash:'dot'},hovertemplate:'%{y:.2f}<extra>Strategy / index</extra>'});
             }
             if(cfg.marker&&range[0]<=cfg.marker&&range[1]>=cfg.marker)layout.shapes=[{type:'line',xref:'x',yref:'paper',x0:cfg.marker,x1:cfg.marker,y0:0,y1:1,line:{color:t.text,width:1,dash:'dot'}}];
+            if(cfg.band)layout.shapes=[{type:'rect',xref:'paper',yref:'y',x0:0,x1:1,y0:cfg.band[0],y1:cfg.band[1],fillcolor:t.grid,opacity:.4,line:{width:0},layer:'below'}];
           }
           await Plotly.react(graph,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
@@ -254,14 +296,19 @@
             graph.on('plotly_legendclick',event=>{
               clearTimeout(legendTimer);
               const id=graph.data[event.curveNumber].legendgroup;
-              legendTimer=setTimeout(()=>{if(id==='relative')relative=false;else visible.set(id,!visible.get(id));draw();},320);
+              legendTimer=setTimeout(()=>{
+                if(id==='relative')relative=false;
+                else {const group=all.get(id)?.group,value=!visible.get(id);
+                  for(const s of series)if(s.id===id||(group&&s.group===group))visible.set(s.id,value);}
+                draw();},320);
               return false;
             });
             graph.on('plotly_legenddoubleclick',event=>{
               clearTimeout(legendTimer);
               const id=graph.data[event.curveNumber].legendgroup;
-              const isolated=series.filter(s=>visible.get(s.id)).length===1&&visible.get(id)&&!relative;
-              for(const s of series)visible.set(s.id,isolated?(s.visible!==false&&(s.role!=='index'||cfg.benchmark===true)):s.id===id);
+              const group=all.get(id)?.group;
+              const isolated=series.filter(s=>visible.get(s.id)).every(s=>s.id===id||(group&&s.group===group))&&visible.get(id)&&!relative;
+              for(const s of series)visible.set(s.id,isolated?(s.visible!==false&&(s.role!=='index'||cfg.benchmark===true)):(s.id===id||(group&&s.group===group)));
               relative=id==='relative';draw();return false;
             });
             graph.on('plotly_relayout',event=>{
@@ -297,6 +344,35 @@
       status.classList.add('blog-chart-error');
     }
   }
+  // Small fixed comparisons: hover exposes estimates and their observed ranges.
+  async function panels(host,cfg) {
+    const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const graph=element('div','blog-chart-plot');ui.append(graph);
+    async function draw() {
+      const mobile=host.clientWidth<550,cols=mobile?1:2,rows=Math.ceil(cfg.panels.length/cols);
+      const dark=document.documentElement.dataset.theme==='dark',ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
+      graph.style.height=(rows*240)+'px';
+      const layout={autosize:true,height:rows*240,margin:{l:50,r:20,t:40,b:40},showlegend:false,
+        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',annotations:[]},traces=[];
+      cfg.panels.forEach((p,i)=>{
+        const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
+        const xd=[col/cols+.02,(col+1)/cols-.06],yd=[1-(row+1)/rows+.08,1-row/rows-.06];
+        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,title:{text:p.xTitle||'',font:{size:12}},tickvals:p.x};
+        layout['yaxis'+suffix]={domain:yd,anchor:x,gridcolor:grid,zerolinecolor:grid,tickformat:p.format||'',rangemode:p.zero?'tozero':'normal'};
+        layout.annotations.push({text:p.title,x:xd[0],y:yd[1]+.01,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false});
+        traces.push({type:'scatter',mode:'lines+markers',x:p.x,y:p.y,xaxis:x,yaxis:y,
+          line:{color:COLORS.comparison,width:1},marker:{color:p.x.map(v=>v===p.selected?COLORS.strategy:COLORS.comparison),size:p.x.map(v=>v===p.selected?9:6)},
+          error_y:p.low?{type:'data',symmetric:false,array:p.high.map((v,j)=>v-p.y[j]),arrayminus:p.y.map((v,j)=>v-p.low[j]),color:COLORS.comparison,thickness:1,width:3}:undefined,
+          customdata:p.low?p.x.map((_,j)=>[p.low[j],p.high[j]]):undefined,
+          hovertemplate:(p.xTitle||'Setting')+': %{x}<br>'+p.title+': %{y:.3f}'+(p.low?'<br>Schedule range: %{customdata[0]:.3f}–%{customdata[1]:.3f}':'')+'<extra></extra>'});
+      });
+      await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
+    }
+    await draw();host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;
+    new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
+  }
+  Object.assign(api,{load,plotly});
   function init() {document.querySelectorAll('.blog-chart').forEach(mount);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })(typeof window==='undefined'?globalThis:window);

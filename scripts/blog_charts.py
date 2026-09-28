@@ -34,7 +34,7 @@ def statistics(returns: list[float], annualization: int = 252) -> dict:
 
 
 def series(key: str, label: str, role: str, returns: list[float], **options) -> dict:
-    allowed = {"dash", "visible", "contribution", "parent", "tick"}
+    allowed = {"dash", "visible", "contribution", "parent", "tick", "group", "category"}
     if options.keys() - allowed:
         raise ValueError("Unsupported series option")
     if not all(math.isfinite(x) and x > -1 for x in returns):
