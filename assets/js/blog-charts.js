@@ -99,21 +99,54 @@
   // Fixed matrices share typography, theme handling and loading with time series.
   async function matrix(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const defaults=cfg.rows.map((_,i)=>i).slice(0,cfg.defaultCount||cfg.rows.length);
+    let selected=new Set(defaults);
+    const boxes=[],rowLabels=[];
+    if(cfg.defaultCount) {
+      const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
+      const controls=element('div','blog-chart-controls');extra.append(controls);
+      const reset=element('button','','Top '+cfg.defaultCount),clear=element('button','','Clear');
+      reset.type=clear.type='button';controls.append(reset,clear);
+      const search=element('input');search.type='search';search.placeholder='Find a predictor or theme';search.setAttribute('aria-label','Find a predictor or theme');controls.append(search);
+      const choices=element('div','blog-chart-predictors');choices.setAttribute('role','group');choices.setAttribute('aria-label','Predictors to show');extra.append(choices);
+      cfg.rows.forEach((name,i)=>{
+        const label=element('label'),box=element('input');box.type='checkbox';box.checked=selected.has(i);
+        box.onchange=()=>{if(box.checked)selected.add(i);else selected.delete(i);draw();};
+        label.append(box,document.createTextNode(' '+cfg.descriptions[i]));choices.append(label);boxes.push(box);rowLabels.push(label);
+      });
+      search.oninput=()=>rowLabels.forEach((label,i)=>label.hidden=!((cfg.rows[i]+' '+cfg.descriptions[i]).toLowerCase().includes(search.value.trim().toLowerCase())));
+      reset.onclick=()=>{selected=new Set(defaults);search.value='';rowLabels.forEach(label=>label.hidden=false);draw();};
+      clear.onclick=()=>{selected.clear();draw();};
+      extra.append(element('p','blog-chart-note','Top '+cfg.defaultCount+' uses mean absolute coefficient across all refits. Colours retain the sign and the same scale across selections.'));
+    }
     const graph=element('div','blog-chart-plot');ui.append(graph);
-    graph.style.height='420px';
+    const selectionLabel=element('p','blog-chart-window');selectionLabel.setAttribute('aria-live','polite');if(cfg.defaultCount)ui.append(selectionLabel);
     async function draw() {
       const dark=document.documentElement.dataset.theme==='dark',mobile=host.clientWidth<550;
+      boxes.forEach((box,i)=>box.checked=selected.has(i));
+      const indices=cfg.rows.flatMap((_,i)=>selected.has(i)?[i]:[]);
+      selectionLabel.textContent=indices.length?'Showing '+indices.length+' of '+cfg.rows.length+' predictors':'Choose predictors under Explore.';
+      graph.hidden=!indices.length;if(!indices.length)return;
+      const height=Math.max(180,indices.length*32+110);graph.style.height=height+'px';
+      function rowLabel(text) {
+        const width=mobile?22:32,lines=[''];
+        for(const word of text.split(' ')) {
+          if(lines.at(-1).length+word.length>width&&lines.at(-1))lines.push('');
+          lines[lines.length-1]+=(lines.at(-1)?' ':'')+word;
+        }
+        return lines.slice(0,2).join('<br>')+(lines.length>2?'…':'');
+      }
       const limit=Math.max(...cfg.values.flat().map(Math.abs));
-      await Plotly.react(graph,[{type:'heatmap',x:cfg.columns,y:cfg.rows,z:cfg.values,
+      await Plotly.react(graph,[{type:'heatmap',x:cfg.columns,y:indices.map(String),z:indices.map(i=>cfg.values[i]),
         zmin:-limit,zmax:limit,colorscale:[[0,COLORS.short],[.5,dark?'#252c34':'#f6f6f4'],[1,COLORS.strategy]],
-        xgap:2,ygap:2,customdata:cfg.descriptions.map(label=>cfg.columns.map(()=>label)),
+        xgap:2,ygap:2,customdata:indices.map(i=>cfg.columns.map(()=>cfg.descriptions[i])),
         hovertemplate:'%{customdata}<br>%{x}: %{z:.3f}<extra></extra>',
-        colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-.12,yanchor:'top',
+        colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-Math.max(.12,40/(height-90)),yanchor:'top',
           tickvals:[-limit,0,limit],tickformat:'.2f',tickangle:0,outlinewidth:0,title:{text:cfg.unit,side:'top',font:{size:12}}}}],
-        {height:420,margin:{l:10,r:10,t:10,b:80},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
+        {height,margin:{l:10,r:10,t:10,b:80},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
           paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
-          xaxis:{type:'category',tickangle:0,tickvals:mobile?cfg.columns.filter((_,i)=>i%2===0):cfg.columns},
-          yaxis:{autorange:'reversed',automargin:true}}, {responsive:true,displayModeBar:false});
+          xaxis:{type:'category',tickangle:0,tickvals:mobile?[cfg.columns[0],cfg.columns[Math.floor(cfg.columns.length/2)],cfg.columns.at(-1)]:cfg.columns},
+          yaxis:{type:'category',autorange:'reversed',automargin:true,tickvals:indices.map(String),ticktext:indices.map(i=>rowLabel(cfg.rows[i]))}}, {responsive:true,displayModeBar:false});
     }
     await draw();host.querySelector('.blog-chart-status').hidden=true;
     new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});

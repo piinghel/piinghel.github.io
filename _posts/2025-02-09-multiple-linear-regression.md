@@ -358,14 +358,14 @@ and whether to keep it is a portfolio-construction question.
 ## What Ridge learned
 {: #reading-the-predictors }
 
-Figure 5 shows the Ridge weights at each refit for the ten predictors with the
-largest mean absolute weight. A
+Figure 5 initially shows the Ridge weights at each refit for the ten predictors with the
+largest mean absolute weight; Explore lets you choose from all 80. A
 positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
-{% include blog-chart.html chart="coefficients" source="/assets/multiple-linear-regression/coefficients.json" label="Largest Ridge coefficients by refit" %}
+{% include blog-chart.html chart="coefficients" source="/assets/multiple-linear-regression/coefficients.json" label="Ridge coefficients by refit, with selectable predictors" %}
 
-<p class="figure-caption"><strong>Figure 5: The ten largest Ridge coefficients by refit.</strong> Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows are ranked by mean absolute coefficient over all refits; hover for each predictor's full definition.</p>
+<p class="figure-caption"><strong>Figure 5: Ridge coefficients by refit.</strong> The ten largest by mean absolute coefficient are shown by default. Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows keep their magnitude ranking; hover for each predictor's full definition.</p>
 
 The largest weight is negative, on the 10/21-day MACD, a short-horizon trend
 measure whose own IC is close to zero. Positive weights on the

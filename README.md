@@ -96,6 +96,9 @@ The default view must show the comparison supporting its caption. Optional detai
 should answer a specific follow-up question, with units and period labels that
 remain accurate after selection. Attribution `focus` can open one subtotal and
 its components, with the other themes available under Explore.
+Selectable coefficient matrices ship all rows in magnitude order; `defaultCount`
+keeps the initial view small and enables search, row selection and a reset. Keep
+the colour scale fixed when selecting predictors.
 
 Performance paths rebase to 100 at the selected close; statistics use subsequent
 daily returns. Prepend a zero-return capital anchor to retain the original first

@@ -3,7 +3,7 @@
 predictor-structure.json (Figure 1) comes from evidence/predictor-structure, written by
 factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
 correlations (x 1000), the dendrogram and the per-date theme IC.
-coefficients.json (Figure 5) contains the ten largest coefficients by refit.
+coefficients.json (Figure 5) contains all coefficients by refit, ranked by magnitude.
 Performance and daily deciles are exported by export_regression_charts.py.
 """
 
@@ -111,11 +111,11 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
 
 def export_results(evidence: Path, predictors: Path) -> dict:
     coefficients = pl.read_csv(evidence / "ridge_coefficients_by_refit.csv")
-    top = (
+    ranked = (
         coefficients.group_by("feature")
         .agg(pl.col("coefficient").abs().mean().alias("size"))
         .sort(["size", "feature"], descending=[True, False])
-        .head(10)["feature"]
+        .get_column("feature")
         .to_list()
     )
     catalogue = pl.read_csv(predictors).select("predictor", "theme", "description")
@@ -125,16 +125,16 @@ def export_results(evidence: Path, predictors: Path) -> dict:
         for d in coefficients.unique("fold_id").sort("fold_id")["test_date"].to_list()
     ]
     return {"version": 1, "charts": {"coefficients": {
-            "kind": "matrix", "unit": "Coefficient",
+            "kind": "matrix", "unit": "Coefficient", "defaultCount": 10,
             "columns": [str(year) for year in years],
-            "rows": [SHORT_PREDICTORS[f] for f in top],
-            "descriptions": [info[f]["description"] + " · " + info[f]["theme"] for f in top],
+            "rows": [SHORT_PREDICTORS.get(f, info[f]["description"]) for f in ranked],
+            "descriptions": [info[f]["description"] + " · " + info[f]["theme"] for f in ranked],
             "values": [
                 [
                     round(float(v), 4)
                     for v in coefficients.filter(pl.col("feature") == f).sort("fold_id")["coefficient"]
                 ]
-                for f in top
+                for f in ranked
             ],
         }}}
 

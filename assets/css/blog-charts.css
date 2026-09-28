@@ -13,6 +13,9 @@
 .blog-chart-options { margin-top:-.35rem; }
 .blog-chart-statistics { border-top:1px solid #8995a130; padding-top:.6rem; }
 .blog-chart-heading { font-weight:600; font-size:14px; margin:0 0 .75rem; }
+.blog-chart-predictors { display:grid; gap:.45rem; max-height:240px; overflow-y:auto; padding:.3rem; }
+.blog-chart-predictors label { display:flex; align-items:baseline; gap:.35rem; }
+.blog-chart-predictors input { flex:none; }
 .regime-comparison-figure:has(.js-plotly-plot) { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
 @media(max-width:760px) { .regime-comparison-figure:has(.js-plotly-plot) { grid-template-columns:1fr; } }
 .blog-chart-table-wrap { overflow-x:auto; }
