@@ -65,7 +65,7 @@
 <line x1="1137.0" y1="160.4" x2="1147.0" y2="160.4" stroke="#AAB2C0" stroke-width="2"/>
 <circle cx="1142.0" cy="195.9" r="6" fill="#AAB2C0"/>
 <text x="1142.0" y="306.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">225</text>
-<text x="922.0" y="330.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Holding cutoff (75 = no buffer)</text>
+<text x="922.0" y="330.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Rank-buffer cutoff (75 = no buffer)</text>
 <text x="53.0" y="379.0" fill="#F3F4F6" font-size="21" font-weight="400" text-anchor="start">Annual turnover (× capital)</text>
 <path d="M117.0,407.4 L205.0,460.3 L337.0,504.4 L557.0,541.6" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <line x1="117.0" y1="529.5" x2="557.0" y2="529.5" stroke="#3B4250" stroke-width="1"/>
@@ -99,6 +99,6 @@
 <text x="995.3" y="601.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">175</text>
 <circle cx="1142.0" cy="522.0" r="6" fill="#AAB2C0"/>
 <text x="1142.0" y="601.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">225</text>
-<text x="922.0" y="625.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Holding cutoff (75 = no buffer)</text>
+<text x="922.0" y="625.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Rank-buffer cutoff (75 = no buffer)</text>
 </g>
 </svg>
