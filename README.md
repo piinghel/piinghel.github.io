@@ -101,6 +101,25 @@ contributions are not standalone returns. Preserve each article's conventions.
 Long displays sample weekly endpoints and extremes, but statistics retain every
 daily observation. The pinned Plotly bundle loads once; SVGs are fallbacks.
 
+Fixed-notional attribution uses additive P&L and drawdown in points, with
+arithmetic annual returns. The optimizer preserves its mean of separately
+compounded schedule paths; its window statistics describe that plotted path.
+Theme contributions use return and variance-share displays, not investment
+performance statistics. Regime selections intersect the original episode
+classifications; choosing a window does not reclassify the market.
+Long/short theme detail loads on demand. Correlation periods use the retained
+annual matrices, weighted by their observation counts. Keep configuration and
+calculation checks out of the article; state only the conventions a reader needs.
+
+The exporters consume completed aggregate outputs; they never run backtests:
+
+```bash
+python3 scripts/export_mlr_data.py --evidence /path/to/regression/evidence
+python3 scripts/export_regression_charts.py --article /path/to/regression/article
+python3 scripts/export_optimizer_charts.py --inputs /path/to/optimizer/figure_inputs
+python3 scripts/export_attribution_charts.py --themes /path/to/attribution/themes --history /path/to/attribution/history
+```
+
 Regenerate the reference with:
 
 ```bash
@@ -131,7 +150,7 @@ for byte), run the renderer from this directory, then
 | | 2 | `scripts/render_mlr_training_design.py` |
 | Joint sizing | all | `scripts/export_optimizer_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
 | Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
-| Attribution Part 2 | 1–2 | `scripts/render_attribution_themes.py` |
+| Attribution Part 2 | 1–2 | Same attribution exporter and shared helper; fallbacks from `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
 
 The regression evidence and its provenance are described in

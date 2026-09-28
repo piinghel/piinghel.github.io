@@ -337,7 +337,7 @@
             });
             graph.on('plotly_restyle',()=>{
               if(busy)return;
-              for(const s of series) {const tr=graph.data.find(t=>t.legendgroup===s.id);visible.set(s.id,tr.visible!==false&&tr.visible!=='legendonly');}
+              for(const s of series) {const tr=graph.data.find(t=>t.legendgroup===s.id||(s.group&&all.get(t.legendgroup)?.group===s.group));if(tr)visible.set(s.id,tr.visible!==false&&tr.visible!=='legendonly');}
               if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
               const a=data.dates.findIndex(d=>d>=range[0]);let b=data.dates.length-1;while(data.dates[b]>range[1])b--;
               updateTable(a,b);

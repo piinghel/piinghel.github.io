@@ -1,5 +1,6 @@
 ---
 layout: post
+interactive_charts: true
 title: "Performance Attribution, Part 2: When the Portfolio Loses"
 description: "The portfolio's P&L by theme in market declines and strong rallies: low volatility and the net long dollars trade places, and what keeps the book positive has changed."
 permalink: /quants/short-book-rebounds.html
@@ -105,7 +106,7 @@ low-risk tilt and the beta limit working as one position.
 ## The low-risk package mostly cancels in declines and rallies
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-regimes" mobile="/assets/portfolio-attribution/theme-regimes_mobile" version="6" alt="Theme-group returns in declines and rallies, with the low-risk subtotal and its indented components." %}
+  {% include blog-chart.html chart="regimes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-regimes" mobile="/assets/portfolio-attribution/theme-regimes_mobile" version="6" label="Theme-group returns in declines and rallies, with the low-risk subtotal and its indented components." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The low-risk package combines offsetting contributions.</strong> Return in % of capital a year within each regime, January 1999–May 2026, before costs except for the whole book. The bold low-risk subtotal sums its three indented components: low volatility, beta and net market exposure. Trading activity combines turnover, volume surge and price-volume correlation.</p>
 
@@ -171,7 +172,7 @@ amount the history can't pin down.
 ## The two deepest drawdowns
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="6" alt="Theme-group P&L over the 2008–09 and 2020–21 drawdowns, with the low-risk subtotal and its indented components." %}
+  {% include blog-chart.html chart="drawdowns" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="6" label="Theme-group P&L over the 2008–09 and 2020–21 drawdowns, with the low-risk subtotal and its indented components." %}
 </div>
 <p class="figure-caption"><strong>Figure 2: The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. The bold low-risk subtotal sums its three indented components.</p>
 
