@@ -19,7 +19,7 @@ In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
 changed the portfolio. Here I want to bring more information into that
 selection. Alongside volatility, I can describe a stock by its momentum,
-liquidity, size and short positioning.
+liquidity, size and short positioning, among other characteristics.
 
 With one characteristic, the ranking is the selection rule. With several, I
 need weights, and the predictors overlap. A stock with strong momentum often
@@ -398,8 +398,10 @@ Much of what both scores learn is the low-volatility effect. The Sharpe target
 asks for it, the deciles sort volatility more cleanly than return, and both
 scores lean toward larger stocks.
 
-I prefer Ridge with a light penalty as the ranking, and I treat its lean toward
-large, low-volatility stocks as an exposure to manage rather than as skill.
+OLS and lightly penalized Ridge perform similarly here. I keep the light
+penalty to shrink unstable coefficient combinations, without a demonstrated
+Sharpe advantage over OLS. I treat the ranking's lean toward large,
+low-volatility stocks as an exposure to manage rather than as skill.
 
 ## References
 
