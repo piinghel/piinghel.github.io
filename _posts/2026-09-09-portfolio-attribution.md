@@ -313,12 +313,6 @@ $$\Phi_T=\sum_tf_t$$.
 so the book's beta to the market is the sum of the themes' betas,
 $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\text{mkt}})$$.
 
-I checked the method against known answers. On returns simulated from known
-payoffs and this book's actual weights, it recovers each theme's P&L to within
-about half a point a year; random long–short books with the same gross get
-theme returns near zero; and a cap-weighted market portfolio lands almost all of its
-return and risk on net market exposure.
-
 </details>
 
 ## Low risk, short interest and short-term reversal pay
@@ -360,13 +354,13 @@ more than all of it, also +0.08 when rounded: +0.23
 from the net long dollars, −0.13 from low volatility and −0.02 from beta;
 stock-specific returns take off about 0.02.
 
-## Short-term reversal has faded
+## The book earns less from reversal
 {: #how-it-changed }
 
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="4" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: Short interest paid in every block; short-term reversal faded.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
+<p class="figure-caption"><strong>Figure 3: Short interest contributed in every block; reversal's contribution fell.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
 
 Short-term reversal made 6.0% a year in 1999–2003 and 0.2% since 2022
 (0.6% from 2023). This was a long decline, alongside a smaller position:
@@ -401,8 +395,9 @@ which suggests an exposure the themes don't capture.
 
 The package paid between 2% and 5% a year in every block to 2021, on a quarter
 to two fifths of the risk. Since 2022 it has earned 1.2% a year, more than all of it
-in 2022; since 2023 it has lost about 2 points. The uncertainty, about ±2% a year, is too wide to say
-whether it has weakened, and so is the choice of regression weights: with equal
+in 2022; since 2023 it has lost about 2 points. The standard error of the
+return since 2022 is 2.1 percentage points a year, too large to establish
+deterioration. The estimate also depends on the regression weights: with equal
 weights the package earns 2.0% a year since 2022, with market-cap weights −1.3%. Its parts move much more than the package: low
 volatility lost money in three of the six blocks, while the net long dollars
 made up the difference.
@@ -415,7 +410,7 @@ also contributes, but can contain exposures the model misses. I judge the
 low-risk position as a whole: its three components explain its behaviour,
 rather than provide three separate reasons to hold it.
 
-Reversal has faded as the book's exposure to it has shrunk. That makes it a
+Reversal's contribution has fallen alongside the book's exposure to it. That makes it a
 candidate for a controlled comparison, not evidence that reducing its ranking
 weight would improve the portfolio. The low-risk package's recent return is
 too uncertain to establish deterioration. This attribution gives me questions
