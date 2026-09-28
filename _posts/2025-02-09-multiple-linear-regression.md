@@ -13,7 +13,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<link rel="stylesheet" href="/assets/css/regression-article.css?v=9">
+<link rel="stylesheet" href="/assets/css/regression-article.css?v=10">
 
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
