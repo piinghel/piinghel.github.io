@@ -3,7 +3,7 @@ layout: post
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
-last_modified_at: 2026-09-27
+last_modified_at: 2026-09-28
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/2026/08/29/portfolio-optimization.html
