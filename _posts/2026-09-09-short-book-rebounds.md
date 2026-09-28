@@ -23,9 +23,14 @@ doing. I use two separate views: the direction of whole market episodes, then
 the size of daily market moves. A rally can be volatile, and a decline can
 contain calm days; the two classifications overlap.
 
-The book, themes and [conventions](/quants/portfolio-attribution.html#pnl-conventions)
+The book, [attribution groups](/quants/portfolio-attribution.html#factor-definitions) and [conventions](/quants/portfolio-attribution.html#pnl-conventions)
 are those of Part 1. The backtest assumes shorts can always be borrowed, for
-free. That matters in 2008: the SEC's [temporary short-sale ban](https://www.sec.gov/newsroom/press-releases/2008-211-sec-halts-short-selling-financial-stocks-protect-investors-markets)
+free.
+
+<details markdown="1">
+<summary>Short-sale assumptions in 2008</summary>
+
+That assumption matters in 2008: the SEC's [temporary short-sale ban](https://www.sec.gov/newsroom/press-releases/2008-211-sec-halts-short-selling-financial-stocks-protect-investors-markets)
 initially covered 799 financial companies from 19 September and
 [expired on 8 October](https://www.nasdaqtrader.com/TraderNews.aspx?id=RA2008-036),
 inside the 2007–08 decline.
@@ -36,13 +41,15 @@ Of those 9.3 points, 2.5 came during the ban itself. During that period, the boo
 point. This sector count has not been matched name by name to the changing
 ban list, so it does not establish how much of that gain was tradable.
 
+</details>
+
 ## Declines and rallies describe market direction
 {: #market-regimes }
 
 I define the regimes from the Russell 1000 alone, so they don't depend on the
 portfolio. A **decline** runs from a peak to the lowest close before the index
-recovers 15%, when that low is more than 15% below the peak; there are 15 since
-1999. A **strong rally** is a stretch in which the index rose more than 13% over
+recovers 15%, when that low is more than 15% below the peak; there are 15 since 1999.
+A **strong rally** is a stretch in which the index rose more than 13% over
 63 sessions, with overlapping windows merged and decline days left out; there
 are 16. These labels use later prices to identify the endpoints, so they
 describe history rather than signals available at the time.
@@ -91,7 +98,9 @@ conditions, so these counts alone do not establish a stable probability of loss.
 Each leg's P&L is its gross times the return of the stocks it holds, so with
 long gross $$L$$, short gross $$S$$ and the two sets of stocks returning
 $$g_L$$ and $$g_S$$, the book's P&L splits into the gap between the stocks and
-the net long dollars, earning the longs' return:
+the net long dollars, earning the longs' return. This net-long term uses
+the held stocks' return; the attribution model's **net market exposure**
+below uses the fitted market payoff, so their contributions differ:
 
 $$
 P \approx L g_L-S g_S=S\,(g_L-g_S)+(L-S)\,g_L .
