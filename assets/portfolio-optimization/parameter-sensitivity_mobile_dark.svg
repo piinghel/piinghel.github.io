@@ -66,7 +66,7 @@
 <circle cx="440.0" cy="797.7" r="6" fill="#AAB2C0"/>
 <text x="440.0" y="901.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">225</text>
 <text x="260.0" y="925.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">Rank-buffer cutoff (75 = no buffer)</text>
-<text x="16.0" y="401.0" fill="#F3F4F6" font-size="18" font-weight="400" text-anchor="start">Annual turnover (× capital)</text>
+<text x="16.0" y="401.0" fill="#F3F4F6" font-size="18" font-weight="400" text-anchor="start">Annual two-way turnover (× capital)</text>
 <path d="M80.0,427.8 L152.0,476.5 L260.0,517.2 L440.0,551.4" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <line x1="80.0" y1="540.2" x2="440.0" y2="540.2" stroke="#3B4250" stroke-width="1"/>
 <text x="68.0" y="545.2" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">20</text>
@@ -83,7 +83,7 @@
 <circle cx="440.0" cy="551.4" r="6" fill="#AAB2C0"/>
 <text x="440.0" y="608.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">5</text>
 <text x="260.0" y="632.0" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="middle">Coefficient c (×10⁻⁴; 0 = no penalty)</text>
-<text x="16.0" y="979.0" fill="#F3F4F6" font-size="18" font-weight="400" text-anchor="start">Annual turnover (× capital)</text>
+<text x="16.0" y="979.0" fill="#F3F4F6" font-size="18" font-weight="400" text-anchor="start">Annual two-way turnover (× capital)</text>
 <path d="M80.0,1036.3 L200.0,1070.9 L320.0,1095.2 L440.0,1111.3" fill="none" stroke="#AAB2C0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <line x1="80.0" y1="1118.2" x2="440.0" y2="1118.2" stroke="#3B4250" stroke-width="1"/>
 <text x="68.0" y="1123.2" fill="#AAB2C0" font-size="18" font-weight="400" text-anchor="end">20</text>

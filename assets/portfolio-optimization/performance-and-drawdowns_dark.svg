@@ -16,9 +16,9 @@
 <line x1="90.0" y1="525.0" x2="975.0" y2="525.0" stroke="#3B4250" stroke-width="1"/>
 <text x="78.0" y="530.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">0</text>
 <line x1="90.0" y1="620.5" x2="975.0" y2="620.5" stroke="#3B4250" stroke-width="1"/>
-<text x="78.0" y="625.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">-10</text>
+<text x="78.0" y="625.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">−10</text>
 <line x1="90.0" y1="715.9" x2="975.0" y2="715.9" stroke="#3B4250" stroke-width="1"/>
-<text x="78.0" y="720.9" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">-20</text>
+<text x="78.0" y="720.9" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">−20</text>
 <text x="138.5" y="763.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">2000</text>
 <text x="290.6" y="763.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">2004</text>
 <text x="442.7" y="763.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">2008</text>
