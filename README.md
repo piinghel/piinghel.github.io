@@ -28,8 +28,8 @@ its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological. Draft URLs reserve a future place without publishing them.
 Posts missing from the sequence appear first in Previous/Next order;
-assign their editorial position before publishing. Both layouts use the shared
-`_includes/ordered-posts.html` ordering logic. The attribution parts stay together
+assign their editorial position before publishing. The post layout uses
+`_includes/ordered-posts.html`; the homepage sorts by publication date. The attribution parts stay together
 in `_data/reading_order.yml`; `series_id` and `series_order` identify the series
 without changing publication dates.
 
@@ -83,7 +83,7 @@ The attribution aggregates come from the private `performance_attribution`
 project, on the 80-predictor Ridge optimizer book:
 `render_attribution_pnl.py --outputs` reads the whole-history ledger
 (`outputs/full-history-ridge80-b3k155-*`), and `render_attribution_themes.py
---outputs` reads the theme attribution (`outputs/theme-over-time-ridge80-b3k155-*`,
+--outputs` reads the composite theme attribution (`outputs/factors-composite-calendar-20260928`,
 study `studies/2026-09-theme-attribution-over-time`). The public files contain
 portfolio aggregates only.
 

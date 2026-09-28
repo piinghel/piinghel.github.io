@@ -49,10 +49,9 @@ to picking stocks among sector peers rather than to sector swings, and map the
 ranks into $(-1,1]$. The portfolio still selects across sectors, so it can
 take sector tilts the target never rewarded.
 
-The choice has a consequence worth keeping in mind. Future volatility is far
-easier to forecast than future return, and lower volatility alone raises a
-Sharpe ratio, so a model trained on this target will lean toward low-volatility
-stocks. The decile portfolios in the results show how strongly.
+The choice matters for what the model learns. For a given positive return,
+lower volatility raises the target. The fitted scores strongly favour
+lower-volatility stocks, as the decile portfolios below show.
 
 Each predictor is ranked across the whole universe on each date and mapped in
 the same way. Ranking puts different units on one bounded scale and limits the
@@ -310,7 +309,7 @@ portfolio from the [low-volatility article](/quant/2024/12/15/low-volatility-fac
 through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are compounded annual returns and volatility is annualized; Sharpe uses a zero cash rate, beta is measured against the Russell 1000, and two-way turnover is annual traded notional divided by capital.</caption>
+  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are compounded annual returns and volatility is annualized; Sharpe uses a zero cash rate, beta is measured against the Russell 1000, and two-way turnover is mean daily traded notional divided by capital, multiplied by 252.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>
   </thead>

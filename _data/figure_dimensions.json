@@ -60,24 +60,24 @@
     "height": 403
   },
   "/assets/portfolio-attribution/theme-drawdowns_mobile": {
-    "width": 360,
-    "height": 461
+    "width": 274,
+    "height": 828
   },
   "/assets/portfolio-attribution/theme-pnl": {
     "width": 648,
     "height": 403
   },
   "/assets/portfolio-attribution/theme-pnl_mobile": {
-    "width": 360,
-    "height": 461
+    "width": 274,
+    "height": 828
   },
   "/assets/portfolio-attribution/theme-regimes": {
     "width": 648,
     "height": 403
   },
   "/assets/portfolio-attribution/theme-regimes_mobile": {
-    "width": 360,
-    "height": 461
+    "width": 274,
+    "height": 828
   },
   "/assets/portfolio-attribution/theme-return-years": {
     "width": 720,
@@ -85,7 +85,7 @@
   },
   "/assets/portfolio-attribution/theme-return-years_mobile": {
     "width": 374,
-    "height": 670
+    "height": 558
   },
   "/assets/portfolio-attribution/whole-history": {
     "width": 634,

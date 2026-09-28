@@ -13,11 +13,11 @@
   const PRESETS = [
     ['Full history', '1999-01', null], ['1999–2003', '1999-01', '2003-12'], ['2004–08', '2004-01', '2008-12'],
     ['2009–13', '2009-01', '2013-12'], ['2014–18', '2014-01', '2018-12'], ['2019–21', '2019-01', '2021-12'],
-    ['2022–May 2026', '2022-01', null], ['2008–09 drawdown', '2008-07', '2009-09'],
-    ['2020–21 drawdown', '2020-02', '2021-01'],
+    ['2022–May 2026', '2022-01', null], ['Jul 2008–Sep 2009', '2008-07', '2009-09'],
+    ['Feb 2020–Jan 2021', '2020-02', '2021-01'],
   ];
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const state = { from: 0, to: 0, leg: 'total', preset: 0 };
+  const state = { from: 0, to: 0, leg: 'total', preset: 0, components: false };
   const chart = root.querySelector('.ae-chart');
   const summary = root.querySelector('.ae-summary');
   const fromSel = root.querySelector('.ae-from');
@@ -47,20 +47,20 @@
   function bookSummary(a, b) {
     const n = sum(data.book.n, a, b);
     const S = sum(data.book.s, a, b) / 1e4;
-    const S2 = sum(data.book.sx, a, b) / 1e4;
     const mean = S / n;
-    const vol = Math.sqrt((S2 - (S * S) / n) / (n - 1)) * Math.sqrt(252);
     const costs = sum(data.lines.total['Trading costs'].s, a, b) / 1e4 / n;
-    return { ret: 100 * 252 * mean, net: 100 * 252 * (mean + costs), vol: 100 * vol, sharpe: (252 * (mean + costs)) / vol, n };
+    return { ret: 100 * 252 * mean, net: 100 * 252 * (mean + costs), n };
   }
 
   function rows() {
     const lines = data.lines[state.leg];
     const out = [];
     data.groups.forEach((group) => {
-      out.push({ kind: 'group', label: group.label });
+      if (!group.total) out.push({ kind: 'group', label: group.label });
       if (group.total && lines[group.total]) out.push({ kind: 'total', label: group.total, line: lines[group.total] });
-      group.lines.forEach((name) => { if (lines[name]) out.push({ kind: 'line', label: name, line: lines[name], indent: !!group.total }); });
+      if (!group.total || state.components) {
+        group.lines.forEach((name) => { if (lines[name]) out.push({ kind: 'line', label: name, line: lines[name], indent: !!group.total }); });
+      }
     });
     return out;
   }
@@ -91,8 +91,8 @@
     const b = state.to;
     const book = bookSummary(a, b);
     const legName = { total: 'Book', long: 'Long leg', short: 'Short leg' }[state.leg];
-    summary.innerHTML = `<strong>${monthLabel(data.months[a])}–${monthLabel(data.months[b])}</strong>, ${book.n.toLocaleString('en')} sessions. `
-      + `Book: ${fmt(book.ret)}% a year before costs, ${fmt(book.net)}% after, ${book.vol.toFixed(1)}% volatility, Sharpe after costs ${fmt(book.sharpe, 2).replace('+', '')}.`
+    summary.innerHTML = `<strong>${monthLabel(data.months[a])}–${monthLabel(data.months[b])}</strong>, ${book.n.toLocaleString('en')} saved dates. `
+      + `Book: ${fmt(book.ret)}% a year before costs, ${fmt(book.net)}% after.`
       + (state.leg === 'total' ? '' : ` Showing the ${legName.toLowerCase()}; shares are of the book's risk.`);
 
     const list = rows().map((r) => (r.line ? { ...r, ...stats(r.line, a, b) } : r));
@@ -192,6 +192,10 @@
     };
     fromSel.addEventListener('change', byYear);
     toSel.addEventListener('change', byYear);
+    root.querySelector('.ae-components').addEventListener('change', (event) => {
+      state.components = event.target.checked;
+      render();
+    });
     root.querySelectorAll('.ae-legs button').forEach((btn) => btn.addEventListener('click', () => {
       state.leg = btn.dataset.leg;
       root.querySelectorAll('.ae-legs button').forEach((b) => b.setAttribute('aria-checked', String(b === btn)));

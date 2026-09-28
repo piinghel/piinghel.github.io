@@ -1,4 +1,12 @@
 /* Period explorer of the attribution series (Part 1, Figure 2). */
+@media (max-width: 600px) {
+  .research-table.attribution-regimes,
+  .research-table.attribution-periods { font-size: 0.78rem; }
+  .research-table.attribution-regimes th,
+  .research-table.attribution-regimes td,
+  .research-table.attribution-periods th,
+  .research-table.attribution-periods td { padding: 0.6rem 0.18rem; }
+}
 .ae { margin: 1.6rem 0 0.4rem; --ae-pos: #287d70; --ae-neg: #b86642; --ae-grid: #e2e6e9; }
 html[data-theme="dark"] .ae { --ae-pos: #6ab8aa; --ae-neg: #e5a081; --ae-grid: #37414a; }
 .ae-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin-bottom: 0.6rem; }

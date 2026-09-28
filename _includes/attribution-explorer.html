@@ -1,4 +1,4 @@
-<div class="ae" id="attribution-explorer" data-source="/assets/portfolio-attribution/attribution-months.json?v=1">
+<div class="ae" id="attribution-explorer" data-source="/assets/portfolio-attribution/attribution-months.json?v=2">
   <div class="ae-controls">
     <div class="ae-range">
       <label>Period <select class="ae-preset" aria-label="Period"></select></label>
@@ -10,9 +10,10 @@
       <button type="button" role="radio" aria-checked="false" data-leg="long">Long leg</button>
       <button type="button" role="radio" aria-checked="false" data-leg="short">Short leg</button>
     </div>
+    <label class="ae-range"><input type="checkbox" class="ae-components"> Show subtotal components</label>
   </div>
   <p class="ae-summary" role="status">Loading the interactive figure…</p>
   <div class="ae-chart" role="img" aria-label="Return and share of risk of each theme for the selected period"></div>
-  <noscript>{% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" version="3" alt="Return and share of risk of each theme, 1999–May 2026." %}</noscript>
+  <noscript>{% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" version="4" alt="Return and share of risk of non-overlapping theme groups, 1999–May 2026." %}</noscript>
 </div>
-<script src="/assets/js/attribution-explorer.js?v=4" defer></script>
+<script src="/assets/js/attribution-explorer.js?v=5" defer></script>

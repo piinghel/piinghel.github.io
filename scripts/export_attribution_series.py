@@ -21,7 +21,7 @@ import polars as pl
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 LEGS = ("total", "long", "short")
-# Display grouping of the explorer: signal themes, the low-beta package, the rest.
+# Display grouping of the explorer: signal themes, the low-risk subtotal, the rest.
 # Every name must be a line in theme_months.parquet; the package row is its subtotal.
 GROUPS = [
     {"label": "Signals", "lines": ["Short interest", "Short-term return", "Long-term return", "Size"]},

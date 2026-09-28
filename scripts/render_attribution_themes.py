@@ -13,6 +13,8 @@ Returns are gross, in % of capital a year (mean daily contribution x 252).
 A variance share is Cov(theme, gross P&L) / Var(gross P&L).
 """
 
+from __future__ import annotations
+
 import argparse
 import csv
 import json
@@ -30,6 +32,7 @@ SIGNALS = ["Short interest", "Short-term return", "Long-term return", "Size", "T
 LOW_RISK = ["Low-risk package", "Low volatility", "Beta", "Net market exposure"]
 REST = ["Sector tilt", "Stock-specific", "Unloaded holdings"]
 THEMES = [*SIGNALS, *LOW_RISK, *REST]
+OVERVIEW = [*SIGNALS, "Low-risk package", *REST]
 FIRST_YEAR, LAST_YEAR = 1999, 2026
 
 
@@ -110,14 +113,15 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
     with plt.rc_context(
         {
             "font.family": "sans-serif",
-            "font.sans-serif": ["Arial", "DejaVu Sans"],
+            "font.sans-serif": ["DejaVu Sans", "Arial"],
             "svg.fonttype": "none",
             "svg.hashsalt": "attribution-components",
         }
     ):
         fig, axes = plt.subplots(
-            1, 2, figsize=(5, 6.4) if mobile else (9, 5.6), sharey=True,
-            gridspec_kw={"wspace": 0.55 if mobile else 0.45},
+            2 if mobile else 1, 1 if mobile else 2,
+            figsize=(3.8, 11.5) if mobile else (9, 5.6), sharey=True,
+            gridspec_kw={"hspace": 0.22} if mobile else {"wspace": 0.45},
         )
         fig.set_facecolor(colors["bg"])
         every = [values[k] for _, values, _ in panels for k, _ in rows]
@@ -125,8 +129,11 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
             data = [values[k] for k, _ in rows]
             limits = every if shared_scale else data
             ax.set_facecolor(colors["bg"])
-            ax.barh(positions, data, height=0.62,
-                    color=[colors["pos"] if v >= 0 else colors["neg"] for v in data])
+            bars = ax.barh(positions, data, height=0.62,
+                           color=[colors["pos"] if v >= 0 else colors["neg"] for v in data])
+            for bar, (_, label) in zip(bars, rows, strict=True):
+                if label.startswith("↳"):
+                    bar.set_alpha(0.6)
             span = max(abs(v) for v in limits)
             for p, v in zip(positions, data, strict=True):
                 ax.annotate(fmt.format(v if abs(v) >= 0.05 else 0.0).replace("-", "\u2212"), (max(v, 0), p), xytext=(4, 0), textcoords="offset points",
@@ -144,10 +151,16 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
             ax.set_axisbelow(True)
         labels = [wrap(label) if wrap_labels and mobile and len(label) > 15 else label
                   for _, label in rows]
-        axes[0].set_yticks(positions, labels)
+        for ax in axes if mobile else axes[:1]:
+            ax.set_yticks(positions, labels)
+            ax.tick_params(labelleft=True)
+            for tick, (key, _) in zip(ax.get_yticklabels(), rows, strict=True):
+                if key == "Low-risk package":
+                    tick.set_fontweight("bold")
         axes[0].invert_yaxis()
-        left = 0.32 if mobile else (0.2 if wrap_labels else 0.17)
-        fig.subplots_adjust(left=left, right=0.97, top=0.92, bottom=0.06)
+        left = 0.43 if mobile else (0.2 if wrap_labels else 0.17)
+        fig.subplots_adjust(left=left, right=0.97, top=0.97 if mobile else 0.92,
+                            bottom=0.03 if mobile else 0.06)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = OUTPUT / f"{name}{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=colors["bg"])
@@ -167,7 +180,7 @@ def colors(dark: bool) -> dict:
 
 
 def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
-                    dark: bool, mobile: bool) -> None:
+                    dark: bool, mobile: bool, *, themes: list[str] = OVERVIEW) -> None:
     """One panel per theme: yearly bars and the five-year block value as a step line.
 
     All panels share the y-scale [-limit, limit]; bars beyond it are clipped and
@@ -175,7 +188,7 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
     """
     c = colors(dark)
     cols = 2 if mobile else 4
-    rows = -(-len(THEMES) // cols)
+    rows = -(-len(themes) // cols)
     size = 10 if mobile else 10.5
     years = list(range(FIRST_YEAR, LAST_YEAR + 1))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans"],
@@ -187,7 +200,7 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
             ax.set_facecolor(c["bg"])
             ax.spines[:].set_visible(False)
             ax.tick_params(length=0, colors=c["muted"], labelsize=size - 1.5)
-        for ax, theme in zip(axes.flat, THEMES):
+        for ax, theme in zip(axes.flat, themes):
             values = [data["years"].get(str(y), {}).get(theme, [0, 0])[index] for y in years]
             shown = [max(-limit, min(limit, v)) for v in values]
             ax.bar(years, shown, width=0.75,
@@ -205,7 +218,7 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
             ax.grid(axis="y", color=c["grid"], linewidth=0.4)
             ax.set_axisbelow(True)
             ax.set_title(theme, loc="left", color=c["ink"], fontsize=size, weight="semibold", pad=4)
-        for ax in axes.flat[len(THEMES):]:
+        for ax in axes.flat[len(themes):]:
             ax.set_visible(False)
         axes.flat[0].set_ylim(-limit * 1.12, limit * 1.12)
         axes.flat[0].set_yticks([-limit, 0, limit],
@@ -234,11 +247,13 @@ if __name__ == "__main__":
         ("Return (% a year)", {t: data["full"][t][0] for t in THEMES}, "{:+.1f}"),
         ("Share of risk (%)", {t: data["full"][t][1] for t in THEMES}, "{:.1f}"),
     ]
-    order = ([(t, t) for t in SIGNALS] + [None] + [(t, t) for t in LOW_RISK] + [None]
+    order = ([(t, t) for t in SIGNALS] + [None]
+             + [(t, t if i == 0 else "↳ " + t) for i, t in enumerate(LOW_RISK)] + [None]
              + [(t, t) for t in REST])
+    overview_order = [(t, t) for t in OVERVIEW]
     for dark in (False, True):
         for mobile in (False, True):
-            render(full, "theme-pnl", dark, mobile, row_order=order, wrap_labels=True)
+            render(full, "theme-pnl", dark, mobile, row_order=overview_order, wrap_labels=True)
             small_multiples(data, 0, "theme-return-years", 10, "Return, % a year", dark, mobile)
             regimes = [(k, v, "{:+.1f}") for k, v in data["regimes"].items()]
             render(regimes, "theme-regimes", dark, mobile, shared_scale=True,

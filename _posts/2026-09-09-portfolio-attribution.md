@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Performance Attribution, Part 1: What the Portfolio Is Paid For"
-description: "Which of the ranking's themes earn their share of the portfolio's risk, and how that has changed since 1999."
+description: "How stock characteristics and market exposure contribute to the portfolio's return and risk, and how that has changed since 1999."
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
@@ -12,13 +12,16 @@ series_id: performance-attribution
 series_order: 1
 ---
 
-<link rel="stylesheet" href="/assets/css/attribution-article.css?v=3">
+<link rel="stylesheet" href="/assets/css/attribution-article.css?v=4">
 
 The portfolio from my [optimizer
 article](/quants/2026/08/29/portfolio-optimization.html) compounded at about
 9.0% a year after costs from September 1998 to May 2026, with 6.6% volatility,
 a Sharpe ratio of 1.32 and two-way turnover of about 21 times capital a year.
-A return chart says how much it made. It doesn't say what for.
+A return chart says how much it made. It doesn't say what for. The largest
+fitted contribution here is the combined low-risk position: low volatility,
+beta and net market exposure together earned 3.1% a year before costs. Its
+net long dollars matter to that result, even with a tight forecast-beta limit.
 
 The ranking behind it combines the 80 predictors of the [regression
 article](/quants/2025/02/09/multiple-linear-regression.html). So the question I
@@ -27,6 +30,9 @@ for, which take risk without paying for it, and whether that has changed.
 
 The book is the optimizer article's final portfolio, joint sizing with trading
 controls, with its three rebalance schedules held together at equal notional.
+One defect remains in that saved simulation: a schedule rebalanced on
+11 September 2001, when the US market was closed. I retain its recorded
+holdings and costs here; correcting that execution requires a portfolio rerun.
 
 <div id="pnl-conventions" markdown="1">
 Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are
@@ -41,7 +47,7 @@ before costs and start in January 1999; costs took about 1.1 points a year.
 ## The longs carry the book
 {: #the-book }
 
-The longs made **372 points**, the shorts lost **101** and trading costs took
+From 23 September 1998, the longs made **372 points**, the shorts lost **101** and trading costs took
 **29.6**, leaving **242 points** net. The shorts lose money over the history
 even though they made money in each of the 15 declines of 15% or more since 1999
 ([Part 2](/quants/short-book-rebounds.html#market-regimes)).
@@ -61,10 +67,10 @@ $$
 L-S = S\,(\beta_S/\beta_L-1),
 $$
 
-about 0.65 × 0.26 ≈ 0.17 of capital. That is two thirds of the 25%. The rest, I
-think, comes from the 7% volatility target: low-risk longs use less of it per dollar
-than the shorts, so the optimizer would hold even more of them, and its limit of
-25% on net dollars binds at more than four in five rebalances. The book's
+about 0.65 × 0.26 ≈ 0.17 of capital. This rough calculation accounts for about
+two thirds of the 25%. It does not identify the remaining eight points: the
+forecast returns and joint constraints also affect the holdings. The 25% net
+limit binds at 82% of rebalances. The book's
 forecast beta stays close to zero, a median of +0.02, but its realized
 beta has been +0.07.
 
@@ -86,10 +92,12 @@ R_t=\sum_k E_{k,t-1}\,f_{k,t}+n_{t-1}\,f^{\text{mkt}}_t+\sum_s \tilde W_{s,t-1}\
 $$
 
 Here $$E_{k}=\sum_i w_i z_{ik}$$ is the book's exposure to characteristic $$k$$,
-$$n$$ its net dollars, $$f^{\text{mkt}}$$ the return of the cap-weighted market
+$$n$$ its net dollars, $$f^{\text{mkt}}$$ the model's market return
 and $$\tilde W_s$$ its weight in sector $$s$$ beyond the net dollars.
 
-The characteristics are the ranking's predictors, grouped by what they measure.
+The characteristics describe the same broad themes as the ranking, using a
+wider set of related descriptors. This is a model of realized stock returns,
+not a decomposition of the Ridge model's 80 coefficients.
 I use their raw values, logged where they are skewed, clipped at four standard
 deviations and standardized with a cap-weighted mean, rather than ranks. Ranks
 squeeze the tails, where many of the shorts sit: the most volatile 5% of
@@ -97,11 +105,12 @@ stocks sit about 2.7 standard deviations from the mean, but only 1.6 when
 ranked. Predictors that measure the same thing, such as the last week's return
 and the price against its 10-day average, are averaged into one characteristic
 before the regression. Estimated separately, they collide, and the regression
-hands them large payoffs of opposite sign. So each theme below is exactly one
-factor, except trading activity, which shows three small ones together.
+hands them large payoffs of opposite sign. The fitted characteristics below
+are single factors; trading activity groups three of them. Net market exposure
+and sector tilt come from the sector coefficients.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: The themes.</strong> Each theme is one characteristic built from the predictors listed; net market exposure and sector tilt come from the net dollars and the sector weights.</p>
+<p class="table-caption"><strong>Table 1: The attribution components.</strong> Characteristics are built from the predictors listed; trading activity groups three factors. Net market exposure and sector tilt come from the net dollars and the sector weights.</p>
 
 | Theme | What it measures |
 | :--- | :--- |
@@ -109,13 +118,99 @@ factor, except trading activity, which shows three small ones together.
 | Short-term return | Returns over one day to one month, price against 10- and 21-day averages and recent highs and lows, the share of losing days |
 | Long-term return | Returns over one to twelve months, trend over three months to two years, price against 52-week highs and lows, change in market value |
 | Size | Market value, and the illiquidity and volume variability that come with it |
-| Trading activity | Turnover, volume surges and the correlation of price and volume, each its own factor |
+| Trading activity | Turnover, volume surges and return–turnover correlation, each its own factor |
 | Low volatility | Stock volatility, and the variability of market value |
 | Beta | Market beta and correlation with the index |
 | Net market exposure | Net dollars times the market's return |
 | Sector tilt | Sector weights beyond the net dollars |
-{: .research-table .comparison-table .compact-table }
+{: .research-table .settings-table .compact-table }
 </div>
+
+<details markdown="1" id="factor-definitions">
+<summary>What goes into each factor</summary>
+
+The attribution uses **144 raw descriptors plus a separately estimated beta**.
+These include all 80 ranking inputs and 64 additional descriptors.
+Related descriptors are first combined into 27 groups, then into nine fitted
+style factors. Standardized descriptors receive equal weight within a group;
+standardized groups receive equal weight within their factor, with the signs
+described below. The resulting factors are standardized again. A group with
+more descriptors does not get more weight.
+These weights describe the attribution model, not the Ridge ranking weights.
+All lookbacks below are trading sessions, and characteristics precede the
+return being attributed.
+
+**Low volatility.** One group combines total, upside and downside volatility
+over 10, 21, 63, 126 and 252 sessions, plus relative average true range over 5,
+10, 21 and 126 sessions: the high–low and previous-close ranges expressed as
+ratios rather than price points. A second measures the variability of log market value over
+21, 63, 126, 252 and 504 sessions. Both are signed so a higher factor loading
+means a more stable stock. This is an individual-stock characteristic, distinct
+from the market-volatility states in Part 2.
+
+**Beta.** Two groups: the estimated stock beta, and stock–market correlations
+over 126, 252, 504 and 756 sessions. Beta uses 756-session correlation, with
+at least 252 observations, multiplied by the ratio of 21-session stock and
+index volatilities. A higher loading means greater market sensitivity.
+
+**Size.** Three groups: log market value; 21-session illiquidity, with its sign
+reversed; and variability of log trading volume over 21, 63, 126, 252 and
+504 sessions, also reversed. A higher loading describes larger, more liquid
+stocks with more stable volume. Variability of market value belongs to low
+volatility above; changes in market value belong to long-term return below.
+
+**Short interest.** Three groups: the current log ratio of short interest to
+trading volume and its 21-, 63-, 126- and 252-session averages; changes over
+those four horizons; and variability over those horizons. A higher loading
+means more, rising or more variable short interest. It is a stock
+characteristic, not the portfolio's short weight or a measure of borrow cost.
+
+**Short-term return.** Seven groups: 5-session return; 10- and 21-session
+returns; ten lagged daily returns; price relative to 10- and 21-session moving
+averages; position within Bollinger bands and relative to recent highs and lows
+over 5, 10 and 21 sessions; returns scaled by volatility over those horizons;
+and the fraction of losing days over 10 and 21 sessions, with its sign reversed.
+A higher loading means a stronger recent price move. This portfolio's negative
+exposure makes it a reversal position; the factor itself is signed toward
+recent winners.
+
+**Long-term return.** Seven groups cover returns over 30, 63, 90, 126 and
+252 sessions and a combined 20/60/125/252-session momentum measure; returns
+scaled by volatility over 63 and 126 sessions; slow trend measures (moving
+averages, moving-average differences, relative strength and trend persistence);
+position within longer bands and relative to highs and lows; earlier run-ups
+and distance from their highs over 63–252 sessions, excluding the most recent
+10 or 21 sessions; changes in log market value over 126–504 sessions and its
+position relative to past extrema; and losing-day frequency over 63–756
+sessions, reversed. A higher loading means a stronger longer-term price trend.
+
+**Trading activity contains three separate factors.** Turnover is the
+63-session turnover-level measure. Volume surge combines changes in log volume
+and volume relative to past minima and maxima over 21, 63, 126, 252 and
+504 sessions. The factor labelled price–volume correlation measures the
+correlation between daily stock returns and turnover over 21, 63 and 126 sessions.
+Each enters the regression separately; their P&L is added for the displayed
+trading-activity subtotal.
+
+**The other lines.** Net market exposure and sector tilt come from the sector
+part of the regression, not predictor composites. Stock-specific is the
+remaining P&L of holdings with characteristics, and unloaded holdings is the
+P&L of positions outside that coverage. The low-risk package adds low
+volatility, beta and net market exposure; it introduces no extra predictor.
+
+</details>
+
+I read **low volatility, beta and net market exposure together**, as the
+**low-risk package**. These are three components of the same portfolio
+position: lower-risk longs, higher-risk shorts and the net long dollars that
+partly offset their market exposure. The package is their sum, not another
+factor. Its breakdown helps explain when the position wins or loses.
+
+This follows the sizing logic in the [low-volatility
+article](/quant/2024/12/15/low-volatility-factor.html), but measures its
+contribution inside this multifactor book. The low-volatility factor here is a
+conditional attribution component, not the return of that article's decile
+portfolio.
 
 A theme's **share of risk** is the covariance of its daily P&L with the book's,
 divided by the book's variance:
@@ -124,9 +219,10 @@ $$
 \text{share}_T=\frac{\operatorname{Cov}(C_{T},R)}{\operatorname{Var}(R)}.
 $$
 
-The shares add to 100%; a theme that offsets the rest of the book gets a
-negative one, and a theme pays its way when its share of the return exceeds its
-share of risk.
+The non-overlapping components add to 100% of the gross book's variance;
+subtotals are not added again. A negative share means that component's P&L
+covaries negatively with the book. Comparing return and risk shares describes
+the existing holdings; it does not establish what changing them would earn.
 
 <details markdown="1">
 <summary>How I compute the attribution</summary>
@@ -143,18 +239,22 @@ $$
 with $$\kappa_t=0.0005\sum_i|\Delta w_{i,t}|$$ the trading cost on the day's
 traded notional; two-way turnover is $$\sum_i|\Delta w_{i,t}|$$ summed over a
 year. The fifth term is the P&L of the few holdings without characteristics,
-about 1% of gross, shown as its own line.
+about 1% of gross, shown as its own line. The accounting covers all 6,892 saved
+dates from January 1999. Factor timing uses valid market closes: the reopening
+on 17 September 2001 uses characteristics from 10 September. The closed-market
+11 September entry has zero gross P&L and 0.02 points of recorded costs; it
+remains in the accounting without an invented factor payoff.
 
 **Characteristics.** Each raw descriptor is logged if it is a skewed level or
 dispersion, or turned into $$\log(1+r)$$ if it is a return. Each day it is
 clipped at the median ± 5 × 1.4826 × the median absolute deviation, then
 standardized as $$z=(x-\bar x^{\text{cap}})/\sigma^{\text{EW}}$$, with a
-cap-weighted mean, so the market portfolio has zero exposure, and an
+cap-weighted mean, so the market portfolio has approximately zero exposure, and an
 equal-weighted standard deviation, so a few mega-caps don't set the scale. The
-result is clipped at ±4 and standardized once more. A theme's characteristic is
-the mean of its signed descriptors, standardized the same way. Beta is the
-optimizer's own: 756-day correlation with the Russell 1000 times the ratio of
-21-day volatilities.
+result is clipped at ±4, standardized once more, and clipped again. Descriptors
+are combined into groups, then factors, with standardization at each level as
+defined above. The estimated-beta input uses the optimizer's estimator;
+the fitted beta factor combines it with the market-correlation group.
 
 **Regression.** Weighted least squares with weights $$\sqrt{\text{market cap}}$$
 and eleven sector indicators, so the sector coefficients absorb the market. The
@@ -177,16 +277,16 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 I checked the method against known answers. On returns simulated from known
 payoffs and this book's actual weights, it recovers each theme's P&L to within
 about half a point a year; random long–short books with the same gross get
-theme returns near zero; and a cap-weighted market portfolio lands all of its
+theme returns near zero; and a cap-weighted market portfolio lands almost all of its
 return and risk on net market exposure.
 
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
 
 {% include attribution-explorer.html %}
-<p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Return before costs, % of capital a year, and share of the book's daily variance, for the chosen months; January 1999–May 2026 by default. The themes add up to the book, or to the chosen leg; the low-risk package and trading activity are subtotals of the themes below them.</p>
+<p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the chosen months; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
 
-Over the whole period the book earned 9.7% a year before costs. Four sources
+Over the whole period the book earned 9.6% a year before costs. Four sources
 carried it:
 
 - **The low-risk package**, 3.1% a year on 32% of the risk. Low volatility,
@@ -196,53 +296,66 @@ carried it:
   year of that return is not explained by the market, with a standard error of
   about 0.9. With the predictors kept as separate factors the package earns
   5–5.5% a year, so its level depends on the model.
-- **Short-term return**, 2.7% a year on 7% of the risk. The book is short
+- **Short-term return**, 2.6% a year on 7% of the risk. The book is short
   recent winners, so this is a reversal bet, and I call it short-term reversal
   below.
 - **Short interest**, 1.6% a year on 6% of the risk.
 - **Stock-specific returns**, 1.8% a year on a third of the risk, a Sharpe
   ratio of 0.44 on its own.
 
+The low-risk package supplied roughly a third of both return and variance.
+The short-interest and stock-specific figures, like all theme P&L here, exclude
+borrow fees; they are not estimates of what remains after obtaining the shorts.
+For scale, at short notional of 65% of capital, annual borrow fees of 1%, 3%
+or 5% of borrowed notional would take 0.65, 1.95 or 3.25 P&L points a year.
+These are cost sensitivities, not observed fee estimates; the actual cost
+depends on which names were available and their fees through time.
+
 Long-term return, which holds momentum and trend, earned 0.7% a year on 10% of
 the risk, about two standard errors from zero. Size and trading activity earned
-nothing and took little risk. The themes' betas add up to the book's beta of
-+0.07, and the low-risk package accounts for more than all of it, +0.08: +0.23
+nothing and took little risk. Over the attribution period, the themes' betas
+add up to the book's beta of +0.08. The low-risk package accounts for slightly
+more than all of it, also +0.08 when rounded: +0.23
 from the net long dollars, −0.13 from low volatility and −0.02 from beta;
-stock-specific returns take off about 0.03.
+stock-specific returns take off about 0.02.
 
-## Short-term reversal stopped paying
+## Short-term reversal has faded
 {: #how-it-changed }
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="3" alt="Each theme's return per year, 1999–2026, with block averages." %}
+  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="4" alt="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Short interest paid in every block; short-term reversal faded.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
 
-Short-term reversal made 6.1% a year in 1999–2003 and about nothing since 2022
-(0.2%); the fall is more than five standard errors. Short interest was positive in
+Short-term reversal made 6.0% a year in 1999–2003 and 0.2% since 2022
+(0.6% from 2023). This was a long decline, alongside a smaller position:
+average exposure fell from −0.29 in 2014–18 to −0.16 since 2022. The lower
+contribution reflects changes in exposure, realized payoffs and their timing;
+it does not by itself identify a better ranking weight.
+Short interest was positive in
 every block, from 1.2% to 2.3% a year. Stock-specific returns earned 2.5% a year
 from 2022 to 2025 and then lost about 8 points in the first five months of 2026,
 while long-term return gained; the two moved against each other day to day,
 which suggests an exposure the themes don't capture.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 2: The low-risk package by block.</strong> Return before costs, % of capital a year, and share of the book's daily variance, %. Standard errors allow for autocorrelation up to 21 sessions. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
+<p class="table-caption"><strong>Table 2: The low-risk package and its components.</strong> The bold subtotal is the sum of low volatility, beta and net market exposure. Return before costs, % of capital a year, and share of the gross book's daily variance, %. Standard errors allow for autocorrelation up to 21 sessions. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
 
 | | 1999–03 | 2004–08 | 2009–13 | 2014–18 | 2019–21 | 2022–26 |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
 | **Return, % a year** | | | | | | |
 | Low volatility | 3.6 | 1.9 | −1.4 | 3.0 | −2.0 | −1.7 |
 | Beta | 0.5 | 0.1 | −0.4 | −0.5 | 0.3 | −0.6 |
-| Net market exposure | 0.8 | 0.0 | 4.8 | 1.7 | 5.0 | 3.5 |
-| Low-risk package | 4.8 | 2.0 | 2.9 | 4.2 | 3.4 | 1.2 |
+| Net market exposure | 0.6 | 0.0 | 4.8 | 1.7 | 5.0 | 3.5 |
+| **Low-risk package** | **4.6** | **2.0** | **2.9** | **4.2** | **3.4** | **1.2** |
 | Standard error | 2.7 | 1.3 | 1.6 | 1.5 | 3.8 | 2.1 |
 | **Share of risk, %** | | | | | | |
 | Low volatility | 8 | −2 | 21 | 14 | 20 | 30 |
-| Beta | 1 | 1 | 4 | 2 | 4 | 2 |
+| Beta | 0 | 1 | 4 | 2 | 4 | 2 |
 | Net market exposure | 26 | 25 | 6 | 11 | 18 | 3 |
-| Low-risk package | 35 | 24 | 31 | 26 | 41 | 35 |
-| **Book return, % a year** | 11.1 | 8.6 | 9.0 | 11.5 | 11.0 | 7.2 |
-{: .research-table .comparison-table .compact-table }
+| **Low-risk package** | **35** | **24** | **31** | **26** | **41** | **35** |
+| **Book return, % a year** | 10.7 | 8.6 | 9.0 | 11.5 | 11.0 | 7.2 |
+{: .research-table .comparison-table .compact-table .attribution-periods }
 </div>
 
 The package paid between 2% and 5% a year in every block to 2021, on a quarter
@@ -253,15 +366,19 @@ weights the package earns 2.0% a year since 2022, with market-cap weights −1.3
 volatility lost money in three of the six blocks, while the net long dollars
 made up the difference.
 
-## What I'd change
+## What the attribution supports
 
-Over 27 years the book is paid for its tilt to low-risk stocks, for short
-interest and, until recently, for short-term reversal, plus stock selection that
-the themes don't explain. Size, trading activity and the individual lines of the
-low-risk package are not where the money is. The clearest change is short-term
-reversal: it paid 6% a year early on and nothing since 2022, so I would give it
-less weight in the ranking. The low-risk package is too uncertain over four years
-to cut on this evidence, so it stays.
+Over 27 years, the low-risk position, short interest and short-term reversal
+account for most of the fitted contribution. The stock-specific remainder
+also contributes, but can contain exposures the model misses. I judge the
+low-risk position as a whole: its three components explain its behaviour,
+rather than provide three separate reasons to hold it.
+
+Reversal has faded as the book's exposure to it has shrunk. That makes it a
+candidate for a controlled comparison, not evidence that reducing its ranking
+weight would improve the portfolio. The low-risk package's recent return is
+too uncertain to establish deterioration. This attribution gives me questions
+to test before changing either position.
 
 ## References
 

@@ -141,7 +141,8 @@ Net market beta explains only 2 to 7 points of either loss, depending on how
 beta is measured, so the beta hedge wouldn't have prevented them. Gross
 contributions point at the short book: roughly −27 points against −10 for the
 longs in the dot-com rally, and −16 against +4 in the later one. But they
-include each book's market exposure, and a short book loses in any rally. Net
+include each book's market exposure: a short book's negative market exposure
+loses when the market rises. Net
 of each book's own beta,[^rally-beta] both books did worse than their betas
 implied in the dot-com rally, the longs by more (about 24 points against 20).
 In the later rally the short book did roughly what its beta implied, and the
