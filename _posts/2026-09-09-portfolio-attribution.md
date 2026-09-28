@@ -16,9 +16,9 @@ series_order: 1
 <link rel="stylesheet" href="/assets/css/attribution-article.css?v=4">
 
 The portfolio from my [optimizer
-article](/quants/2026/08/29/portfolio-optimization.html) earned 8.8% a year
-after costs from September 1998 to May 2026, with 6.6% volatility, a Sharpe
-ratio of 1.32 and two-way turnover of about 21 times capital a year.
+article](/quants/2026/08/29/portfolio-optimization.html) compounded at about
+8.9% a year after costs from September 1998 to May 2026, with 6.6% volatility,
+a Sharpe ratio of 1.32 and two-way turnover of about 21 times capital a year.
 A return chart says how much it made. It doesn't say what for. The largest
 fitted contribution here is the combined low-risk position: low volatility,
 beta and net market exposure together earned 2.7% a year before costs. Its
@@ -38,10 +38,10 @@ Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are
 With fixed capital, P&L over any stretch of days is the plain sum of daily P&L,
 so no linking across periods is needed. The attribution works with average daily
 P&L, because only averages add up across themes: an annual figure is the mean
-daily P&L times 252. The book averages 8.8% a year after costs (8.6% from
-January 1999, where the theme returns start). Theme returns are before costs,
-9.6% a year in total; costs took about 1.1 points a year. Sharpe ratios use a
-zero cash rate.
+daily P&L times 252. On that basis the book averages 8.8% a year after costs
+(8.6% from January 1999, where the theme returns start), against 8.9% compounded.
+Theme returns are before costs, 9.6% a year in total; costs took about 1.1
+points a year. Sharpe ratios use a zero cash rate.
 </div>
 
 ## The longs carry the book
