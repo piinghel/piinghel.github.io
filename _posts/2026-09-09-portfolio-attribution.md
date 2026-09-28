@@ -10,9 +10,6 @@ categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
 series_order: 1
-github_repositories:
-  - label: Dashboard source code
-    url: https://github.com/piinghel/portfolio-pnl-dashboard
 ---
 
 The portfolio from my [optimizer
@@ -208,8 +205,5 @@ low-volatility tilt sized for what it earns now.
 
 Giuseppe Paleologo, [*Advanced Portfolio Management*](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/advanced-portfolio-management-978-1-119-78979-6),
 2021, Chapters 3–4 and 7–8.
-
-The [dashboard source code](https://github.com/piinghel/portfolio-pnl-dashboard)
-is available to explore your own portfolio.
 
 [^model]: Weighted by the square root of market capitalization, with 20 industries. Holdings without theme data, about 1% of gross, are shown separately.
