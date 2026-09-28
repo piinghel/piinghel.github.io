@@ -22,9 +22,11 @@ The book, themes and [conventions](/quants/portfolio-attribution.html#pnl-conven
 are those of Part 1. The backtest assumes shorts can always be borrowed, for
 free. That matters most in 2008: the SEC banned short sales of about 800
 financial stocks from 19 September to 8 October, inside the 2007–08 decline.
-Financials, by sector, made 9.3 of the short book's 32.3 points in that decline
-and 2.5 of its 9.3 points during the ban itself, when the book was cutting those
-shorts rather than adding to them.
+Financials, by sector, made 9.3 of the short book's 32.3 points from October
+2007 to October 2008, while the long book lost about 30, and 2.5 of its 9.3
+points during the ban itself. Rebalancing inside the ban, the book also opened
+38 new short positions in financials, 2.6% of capital, which a real book could
+not have done; they made about half a point.
 
 ## Market regimes
 

@@ -310,19 +310,19 @@ portfolio from the [low-volatility article](/quant/2024/12/15/low-volatility-fac
 through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are arithmetic annual means and volatility is annualized; Sharpe uses a zero cash rate, and beta is measured against the Russell 1000.</caption>
+  <caption><strong>Table 4: Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are compounded annual returns and volatility is annualized; Sharpe uses a zero cash rate, and beta is measured against the Russell 1000.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>
   </thead>
   <tbody>
     <tr class="period-heading"><th colspan="8">Development · September 1998–December 2021</th></tr>
-    <tr><th scope="row">Equal-weight</th><td>7.52%</td><td>9.20%</td><td>0.82<br><small>(0.74–0.93)</small></td><td>−24.9%</td><td>0.11</td><td>134%</td><td>25.9×</td></tr>
-    <tr><th scope="row">OLS</th><td>7.31%</td><td>7.37%</td><td>0.99<br><small>(0.90–1.05)</small></td><td>−18.7%</td><td>0.09</td><td>139%</td><td>29.0×</td></tr>
-    <tr><th scope="row">Ridge</th><td>7.90%</td><td>8.05%</td><td>0.98<br><small>(0.89–1.16)</small></td><td>−19.8%</td><td>0.10</td><td>138%</td><td>28.4×</td></tr>
+    <tr><th scope="row">Equal-weight</th><td>7.35%</td><td>9.20%</td><td>0.82<br><small>(0.74–0.93)</small></td><td>−24.9%</td><td>0.11</td><td>134%</td><td>25.9×</td></tr>
+    <tr><th scope="row">OLS</th><td>7.29%</td><td>7.37%</td><td>0.99<br><small>(0.90–1.05)</small></td><td>−18.7%</td><td>0.09</td><td>139%</td><td>29.0×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.88%</td><td>8.05%</td><td>0.98<br><small>(0.89–1.16)</small></td><td>−19.8%</td><td>0.10</td><td>138%</td><td>28.4×</td></tr>
     <tr class="period-heading"><th colspan="8">Later · January 2022–May 2026</th></tr>
-    <tr><th scope="row">Equal-weight</th><td>6.00%</td><td>11.44%</td><td>0.52<br><small>(0.45–0.61)</small></td><td>−10.7%</td><td>0.07</td><td>131%</td><td>21.4×</td></tr>
-    <tr><th scope="row">OLS</th><td>6.37%</td><td>9.18%</td><td>0.69<br><small>(0.67–0.73)</small></td><td>−8.5%</td><td>0.06</td><td>134%</td><td>25.9×</td></tr>
-    <tr><th scope="row">Ridge</th><td>7.39%</td><td>10.16%</td><td>0.73<br><small>(0.67–0.83)</small></td><td>−9.4%</td><td>0.07</td><td>132%</td><td>24.4×</td></tr>
+    <tr><th scope="row">Equal-weight</th><td>5.50%</td><td>11.44%</td><td>0.52<br><small>(0.45–0.61)</small></td><td>−10.7%</td><td>0.07</td><td>131%</td><td>21.4×</td></tr>
+    <tr><th scope="row">OLS</th><td>6.13%</td><td>9.18%</td><td>0.69<br><small>(0.67–0.73)</small></td><td>−8.5%</td><td>0.06</td><td>134%</td><td>25.9×</td></tr>
+    <tr><th scope="row">Ridge</th><td>7.12%</td><td>10.16%</td><td>0.73<br><small>(0.67–0.83)</small></td><td>−9.4%</td><td>0.07</td><td>132%</td><td>24.4×</td></tr>
   </tbody>
 </table>
 
@@ -338,7 +338,7 @@ stays near 0.1.
 
 After 2021 both Sharpe ratios fall, but the gap holds: Ridge's Sharpe is 0.73
 against 0.52, with a higher return and lower volatility. Ridge's return falls
-only slightly; its volatility rises from 8% to 10%. A block bootstrap of daily
+from 7.9% to 7.1% a year; its volatility rises from 8% to 10%. A block bootstrap of daily
 returns, averaged across the three schedules, puts Ridge's Sharpe advantage at
 about 0.2 in both periods, with 95% intervals from roughly zero to 0.4. Figure
 4 shows the two paths.

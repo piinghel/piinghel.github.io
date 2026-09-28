@@ -52,18 +52,19 @@ even though they made money in every market decline.
 
 The book is also net long, by about 25% of capital, and that follows from its
 tilt towards low-risk stocks. At the median, the longs have a forecast beta of
-0.91 and the shorts 1.23. The optimizer keeps the book's forecast beta within
+0.85 and the shorts 1.07. The optimizer keeps the book's forecast beta within
 ±0.05, so long dollars times their beta roughly equal short dollars times
 theirs, $$L\beta_L = S\beta_S$$, which leaves the book net long by
 
 $$
-L-S = S\left(\frac{\beta_S}{\beta_L}-1\right) \approx 0.65 \times 0.35 \approx 0.23 .
+L-S = S\left(\frac{\beta_S}{\beta_L}-1\right) \approx 0.65 \times 0.26 \approx 0.17 .
 $$
 
-That is close to the median net of 25%, which is also where the optimizer's
-limit on net dollars sits. The book runs at the top of both limits, +25% net and
-+0.05 forecast beta, most of the time, so its realized beta is +0.07 rather
-than zero.
+The rest comes from the 7% volatility target: low-risk longs use less of it per
+dollar than the shorts, so the optimizer would hold even more of them, and its
+limit of 25% on net dollars binds at more than four in five rebalances. The
+book's forecast beta stays close to zero, a median of +0.02, but its realized
+beta has been +0.07.
 
 ## Attributing P&L to the ranking's themes
 {: #follow-exposure-and-payoff-together }
@@ -172,7 +173,11 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 
 </details>
 
-<!-- TODO(validation): known-answer checks of the composite model — fill in from outputs/factors-composite-validation-20260928 once the run completes. -->
+I checked the method against known answers. On returns simulated from known
+payoffs and this book's actual weights, it recovers each theme's P&L to within a
+few tenths of a point a year; random long–short books with the same gross get
+theme returns near zero; and a cap-weighted market portfolio lands all of its
+return and risk on net market exposure.
 
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
@@ -239,7 +244,8 @@ which points to an exposure the themes don't capture.
 The package paid between 2% and 5% a year in every block to 2021, on a quarter
 to two fifths of the risk. Since 2022 it has earned 1.2% a year, all of it in 2022; from
 2023 it has been flat. The uncertainty, about ±2% a year, is too wide to say
-whether it has weakened. Its parts move much more than the package: low
+whether it has weakened, and so is the choice of regression weights: with equal
+weights the package earns 2.0% a year since 2022, with market-cap weights −1.3%. Its parts move much more than the package: low
 volatility lost money in three of the six blocks, while the net long dollars
 made up the difference.
 
