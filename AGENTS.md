@@ -60,6 +60,13 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   correction. Keep reader-relevant assumptions and limitations as concise
   statements about the method or evidence, without a progress report or a
   promise of future work. Preserve useful failed research comparisons.
+- Keep facts shared across articles identical everywhere: the predictor set
+  (80 ranking predictors), sample periods, cost and turnover conventions, and
+  headline returns. Take each from its configuration or saved output, never
+  from memory or another article's prose. When a shared fact changes, rerun
+  the analysis, then `grep` every post, chart source and caption for the old
+  value and update them in the same commit. The attribution uses exactly the
+  80 ranking predictors, set in `descriptors.json` of the attribution study.
 - Describe what measures show and which assumptions they use. Replace repeated
   negative contrasts with direct definitions, such as observed ranges across
   schedules. Preserve material limitations through concrete scope statements.

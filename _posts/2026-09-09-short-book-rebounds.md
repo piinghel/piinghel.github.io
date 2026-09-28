@@ -88,8 +88,8 @@ those sessions, times 252.
 </div>
 
 The long and short books swing by about 40–50% a year in both regimes and mostly
-cancel: the long book lost money in all 15 declines, the short book in 15 of
-the 16 rallies. The book's average is positive in both, but it lost in 3 of
+cancel: the long book lost money in all 15 declines and the short book made
+money in all of them, while the short book lost money in 15 of the 16 rallies. The book's average is positive in both, but it lost in 3 of
 15 declines and 5 of 16 rallies. The episodes differ in length and share market
 conditions, so these counts alone do not establish a stable probability of loss.
 
@@ -119,26 +119,26 @@ decomposition below shows where that remaining return comes from.
 </div>
 <p class="figure-caption"><strong>Figure 1: The low-risk package combines offsetting contributions.</strong> Return in % of capital a year within each regime, January 1999–May 2026, before costs except for the whole book. The bold low-risk subtotal sums its three indented components: low volatility, beta and net market exposure. Explore reveals the other themes; trading activity combines turnover, volume surge and price-volume correlation.</p>
 
-In declines, **low volatility** earns 18% a year and made money in all 15
+In declines, **low volatility** earns 16% a year and made money in all 15
 episodes, while **net market exposure** loses 19% and lost in all 15. In strong
 rallies the two swap: low volatility loses 13% a year and net market exposure
 earns 15%. Adding beta gives the [low-risk package](/quants/portfolio-attribution.html#factor-definitions):
-roughly flat in declines and +0.7% a year in strong rallies. These small averages hide
+−1.3% a year in declines and +0.9% in strong rallies. These small averages hide
 variation between episodes: the package made money
-in only 4 of the 15 declines and 8 of the 16 rallies, and its average in
-declines rests on the 2000–01 bear market. Neither line times the market: the
+in only 4 of the 15 declines and 8 of the 16 rallies, and the 2000–01 bear
+market alone added 13.6 points to its decline total. Neither line times the market: the
 net long sits at its limit, and exposure timing adds or subtracts less than a
 point a year.
 
 What kept the book positive has changed. In the declines up to 2008, short-term
-reversal made 10.4 points and the low-risk package 8.7. In the nine declines
-since 2009, the package lost 8.9 points and reversal made less than one; the
-book's 18.9 points coincided with 18.6 points in the stock-specific remainder.
-That remainder still has market exposure: its estimated beta of −0.035 to the
-model's market payoff since 2009 accounts for about 7.3 of those decline points. The 2011 decline alone
-contributed 8.6 points. These are reasons to avoid interpreting the whole line
+reversal made 11.8 points and the low-risk package 3.7. In the nine declines
+since 2009, the package lost 10.4 points and reversal made less than one; the
+book's 18.9 points coincided with 18.3 points in the stock-specific remainder.
+That remainder still has market exposure: its estimated beta of −0.039 to the
+model's market payoff since 2009 accounts for about 8.1 of those decline points. The 2011 decline alone
+contributed 8.5 points. These are reasons to avoid interpreting the whole line
 as stock-selection skill. In the
-rallies since 2009, reversal and short interest made 12 and 8 points.
+rallies since 2009, reversal and short interest made 13 and 7 points.
 
 ## Reversal earns more on volatile days
 
@@ -160,11 +160,11 @@ describes the sample; it is not a tested rule for changing the portfolio.
 
 | | Calm | Volatile | Difference | t |
 | :--- | ---: | ---: | ---: | ---: |
-| Short-term return | +1.4 | +4.4 | +3.0 | 3.9 |
-| Stock-specific | +3.7 | −1.6 | −5.3 | −2.4 |
-| Short interest | +0.6 | +1.8 | +1.2 | 1.7 |
-| Long-term return | +0.7 | −0.2 | −1.0 | −1.0 |
-| Low-risk package | +2.9 | +2.3 | −0.7 | −0.3 |
+| Short-term return | +1.3 | +4.9 | +3.6 | 4.2 |
+| Stock-specific | +4.0 | −1.2 | −5.3 | −2.4 |
+| Short interest | +0.7 | +1.4 | +0.7 | 1.1 |
+| Long-term return | +0.8 | −0.3 | −1.1 | −1.0 |
+| Low-risk package | +2.6 | +1.7 | −0.9 | −0.4 |
 | Book, after costs | +8.4 | +5.1 | −3.3 | −1.0 |
 {: .research-table .comparison-table .compact-table }
 </div>
@@ -186,9 +186,9 @@ amount the history can't pin down.
 <p class="figure-caption"><strong>Figure 2: The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. Explore reveals the low-risk package's three components.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21 after
-costs, look alike by theme: the low-risk package lost 12.4 and 11.7, mostly through low
-volatility, stock-specific returns lost 6.1 and 8.3, and short-term reversal
-helped, by 5.1 and 2.5. They differ by leg. In 2008–09 the short book made 21
+costs, look alike by theme: the low-risk package lost 12.9 and 10.3, mostly through low
+volatility, short-term reversal helped, by 5.9 and 3.1, and stock-specific
+returns lost 4.6 and 9.4. They differ by leg. In 2008–09 the short book made 21
 points into the March 2009 low and lost 35 in the rebound, 14.3 net, while the
 longs made 1.3; in 2020–21 the loss was split evenly between the two.
 
@@ -196,7 +196,7 @@ The 2020–21 drawdown came in three steps. From February to early November 2020
 the book lost 4.1 points, mostly low volatility through the crash and its
 rebound. From the vaccine news on 9 November to the end of the year it lost
 another 4.2 in seven weeks, as stock-specific returns, trading activity and
-long-term return gave back about 4 points, while the net long's 2 points offset
+long-term return gave back about 5 points, while the net long's 2 points offset
 low volatility's loss. In January 2021, the retail short squeeze, it lost
 6.5 points in 17 sessions, to the trough on 27 January, with the package,
 reversal and stock-specific returns all losing.

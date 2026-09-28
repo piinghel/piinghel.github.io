@@ -174,10 +174,10 @@ the next.
 ## Three ways to combine them
 {: #combining-them }
 
-The simplest combination gives every predictor the same weight, 1/80. The only thing this *equal-weight* score learns from data is a
-direction: each predictor enters with the sign of its correlation with the
-target in the training window, so lower volatility counts in a stock's favour
-because it did so in the past. Momentum &amp; trend then carries 33 of the 80
+The simplest combination gives every predictor the same weight, 1/80. The
+*equal-weight* score learns only a direction from the data: each predictor
+enters with the sign of its correlation with the target in the training window,
+so lower volatility counts in a stock's favour because it did so in the past. Momentum &amp; trend then carries 33 of the 80
 weights simply because it has the most predictors.
 
 The regressions learn the weights instead. Fitting them jointly makes each one
@@ -224,12 +224,12 @@ periods: development, September 1998–December 2021, and later, January
 2022–May 2026. The later period is short, about 54 non-overlapping 20-session
 windows.
 
-Every score goes through the same volatility-scaled rule (Table 1), the low-volatility article's inverse-volatility sizing with 75 names per side. Because
+Every score goes through the same volatility-scaled rule (Table 1): the low-volatility article's inverse-volatility sizing, applied to 75 names per side. Because
 volatility scaling lets each score take its own level of risk, I compare
 scores on Sharpe rather than return. Portfolio construction itself is the
 subject of the [optimizer
-article](/quants/2026/08/29/portfolio-optimization.html), where the same Ridge
-scores reach a Sharpe of 1.32 through 2021 and 0.87 after.
+article](/quants/2026/08/29/portfolio-optimization.html), where a portfolio built on the same Ridge
+scores reaches a Sharpe of 1.32 through 2021 and 0.87 after.
 
 <table class="research-table settings-table" id="portfolio-construction">
   <caption><strong>Table 1: The portfolio rule.</strong> Identical for every score.</caption>

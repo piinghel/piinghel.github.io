@@ -308,8 +308,8 @@ forecast.
 The lead also depends on the schedule: net Sharpe is 0.96 against 0.68 and
 0.96 against 0.83 on two of them, but 0.68 against 0.67 on the third.
 
-Its worst stretch is the market rebound of December 2022–February 2023, a
-7.3% drawdown for the three schedules combined: the long book made about 3.3%
+The optimizer's worst stretch after 2021 is the market rebound of December
+2022–February 2023, a 7.5-point drawdown for the three schedules combined: the long book made about 3.3%
 of fixed capital and the short book lost 10.8%.
 
 ## Forecast beta versus realized beta

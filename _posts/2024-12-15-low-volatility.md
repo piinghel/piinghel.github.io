@@ -171,8 +171,8 @@ where it started.
 
 I'd keep inverse-volatility sizing. Its Sharpe is about 0.7 with or without the
 hedge, against 0.44 for equal weighting even after hedging, with less than half
-the volatility, about half the drawdown and less turnover. At about 131% gross
-it also stays close to beta-neutral without a hedge. Free hedge financing and
+the volatility, about half the drawdown and less turnover. At about 131% gross,
+its realized beta also stays near zero without a hedge. Free hedge financing and
 the zero cash rate change the absolute returns, not that ranking. Its weak spot
 is strong rallies, where the long book lagged its beta both times, and a beta
 hedge doesn't fix that.
