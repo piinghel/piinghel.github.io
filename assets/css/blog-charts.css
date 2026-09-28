@@ -1,7 +1,7 @@
 .blog-chart { width:100%; min-width:0; margin:1rem 0; font:14px/1.5 "Bricolage Grotesque",sans-serif; }
 .blog-chart [hidden] { display:none !important; }
 .blog-chart-controls { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .6rem; margin:.75rem 0; }
-.blog-chart button,.blog-chart input { font:inherit; color:inherit; background:transparent; border:1px solid #8995a150; border-radius:4px; padding:.25rem .5rem; }
+.blog-chart button,.blog-chart input,.blog-chart select { font:inherit; color:inherit; background:var(--page-surface); border:1px solid #8995a150; border-radius:4px; padding:.25rem .5rem; }
 .blog-chart button { cursor:pointer; }
 .blog-chart button:hover,.blog-chart button:focus-visible { background:#8899aa25; }
 .blog-chart input[type=checkbox] { accent-color:#376da4; }

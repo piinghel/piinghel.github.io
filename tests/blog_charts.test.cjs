@@ -8,6 +8,34 @@ const returns=id=>data.series.find(s=>s.id===id).values.map(v=>v/data.scale);
 const episodes=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/2024-12-15-low-volatility-factor/episodes.json')));
 const episodeReturns=id=>episodes.series.find(s=>s.id===id).values.map(v=>v/episodes.scale);
 
+test('fixed-notional P&L rebases additively, including its drawdown',()=>{
+  assert.deepEqual(charts.additivePath([0,.1,-.2,.05],0,3),{equity:[0,10,-10,-5],drawdown:[0,0,-20,-15]});
+  assert.deepEqual(charts.additivePath([0,.1,-.2,.05],1,3),{equity:[0,-20,-15],drawdown:[0,-20,-15]});
+});
+
+test('non-overlapping attribution totals reconcile daily for every leg',()=>{
+  const read=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/portfolio-attribution/'+name)));
+  const theme=read('interactive-themes.json'),legs=read('interactive-legs.json');
+  assert.deepEqual(theme.dates,legs.dates);
+  const all=new Map([...theme.series,...legs.series].map(s=>[s.id,s.values]));
+  for(const leg of ['total','long','short'])for(let i=0;i<theme.dates.length;i++) {
+    const sum=theme.charts.themes.series.reduce((total,key)=>total+all.get(leg+'_'+key)[i],0);
+    assert.ok(Math.abs(sum-all.get(leg+'_book')[i])<=6,'Reconciliation failed at '+theme.dates[i]);
+  }
+});
+
+test('regime bars preserve the original classifications and rounded figures',()=>{
+  const read=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/portfolio-attribution/'+name)));
+  const theme=read('interactive-themes.json'),original=read('themes.json');
+  for(const [key,label] of [['declines','Declines'],['rallies','Strong rallies']]) {
+    const mask=theme.charts.regimes.masks[key],n=mask.reduce((a,b)=>a+b,0);
+    for(const s of theme.series)if(s.id.startsWith('total_')&&original.regimes[label][s.label]!==undefined) {
+      const annual=s.values.reduce((sum,v,i)=>sum+v*mask[i],0)/theme.scale/n*252*100;
+      assert.ok(Math.abs(annual-original.regimes[label][s.label])<.006,s.label);
+    }
+  }
+});
+
 test('a selected window excludes the return into its opening close',()=>{
   const values=[0,.1,-.2,.05];
   assert.deepEqual(charts.path(values,1,3).equity,[100,80,84]);

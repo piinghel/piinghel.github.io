@@ -194,7 +194,7 @@
             m.drawdown=Math.min(...additivePath(s.returns,first,last).drawdown)/100;
           }
           const row=element('tr'),label=element('th','',bars&&s.id.startsWith('decile_')?'Decile '+s.label:s.label);label.scope='row';row.append(label);
-          for(const key of ['annual_return','volatility','sharpe','drawdown'])row.append(element('td','',m?format(m[key],key!=='sharpe'):'—'));
+          for(const key of ['annual_return','volatility','sharpe','drawdown'])row.append(element('td','',m?(s.additive&&key==='drawdown'?(m[key]*100).toFixed(1)+' pp':format(m[key],key!=='sharpe')):'—'));
           body.append(row);
         }
         if(!body.children.length) {const row=element('tr'),td=element('td','','Show a series in the legend to see its statistics.');td.colSpan=5;row.append(td);body.append(row);}
@@ -297,6 +297,7 @@
             }
             if(cfg.marker&&range[0]<=cfg.marker&&range[1]>=cfg.marker)layout.shapes=[{type:'line',xref:'x',yref:'paper',x0:cfg.marker,x1:cfg.marker,y0:0,y1:1,line:{color:t.text,width:1,dash:'dot'}}];
             if(cfg.band)layout.shapes=[{type:'rect',xref:'paper',yref:'y',x0:0,x1:1,y0:cfg.band[0],y1:cfg.band[1],fillcolor:t.grid,opacity:.4,line:{width:0},layer:'below'}];
+            if(cfg.shade)layout.shapes=[...(layout.shapes||[]),...cfg.shade.map(([a,b])=>({type:'rect',xref:'x',yref:'paper',x0:a,x1:b,y0:0,y1:1,fillcolor:t.grid,opacity:.3,line:{width:0},layer:'below'}))];
           }
           await Plotly.react(graph,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
@@ -380,7 +381,17 @@
     const choices=element('div','blog-chart-controls');extra.append(choices);
     if(cfg.kind==='attribution') {
       const select=element('select');for(const [key,label] of [['total','Book'],['long','Long leg'],['short','Short leg']])select.add(new Option(label,key));
-      select.setAttribute('aria-label','Book or leg');select.onchange=()=>{leg=select.value;draw();};choices.append(select);
+      select.setAttribute('aria-label','Book or leg');select.onchange=async()=>{
+        const selected=select.value;select.disabled=true;
+        try {
+          if(selected!=='total'&&!all.has(selected+'_book')) {
+            const detail=await load(cfg.legSource);
+            for(const s of detail.series)all.set(s.id,{...s,returns:s.values.map(v=>v/detail.scale)});
+          }
+          leg=selected;await draw();
+        } catch {select.value=leg;const status=host.querySelector('.blog-chart-status');status.hidden=false;status.textContent='The selected leg could not load. The current view is retained.';}
+        finally {select.disabled=false;}
+      };choices.append(select);
     }
     for(const [key,label] of [['low_risk','Low-risk components'],['activity','Trading-activity components']]) {
       const wrap=element('label'),box=element('input');box.type='checkbox';box.onchange=()=>{if(box.checked)expanded.add(key);else expanded.delete(key);draw();};wrap.append(box,document.createTextNode(' '+label));choices.append(wrap);
@@ -404,6 +415,7 @@
         const mobile=host.clientWidth<550,dark=document.documentElement.dataset.theme==='dark';
         const ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
         const keys=cfg.series.filter(k=>cfg.kind==='attribution'||k!=='cost').flatMap(k=>expanded.has(k)?(cfg.kind==='attribution-years'?cfg.components[k]:[k,...cfg.components[k]]):[k]);
+        if(cfg.kind==='attribution-regimes')keys.unshift('book');
         const nested=k=>[...expanded].some(parent=>cfg.components[parent].includes(k));
         const shown=keys.map(k=>all.get(leg+'_'+k));
         const ids=indices(...range),traces=[];
@@ -448,7 +460,7 @@
             const comparables=cfg.kind==='attribution'?values:allValues,lo=Math.min(0,...comparables),hi=Math.max(0,...comparables),pad=(hi-lo||1)*.12;
             layout['xaxis'+suffix]={domain:xd,anchor:y,range:[lo-pad,hi+pad],gridcolor:grid,zerolinecolor:grid,nticks:4};
             layout['yaxis'+suffix]={domain:yd,anchor:x,type:'category',autorange:'reversed',tickvals:shown.map(s=>s.label),
-              ticktext:shown.map((s,j)=>(nested(keys[j])?'↳ ':'')+s.label),showticklabels:mobile||i===0,automargin:true};
+              ticktext:shown.map((s,j)=>nested(keys[j])?'↳ '+s.label:cfg.components[keys[j]]?'<b>'+s.label+'</b>':s.label),showticklabels:mobile||i===0,automargin:true};
             title(label,xd[0],yd[1]+.02);
             if(!ix.length)title('No observations in this window',xd[0],(yd[0]+yd[1])/2);
             traces.push({type:'bar',orientation:'h',x:values,y:shown.map(s=>s.label),xaxis:x,yaxis:y,

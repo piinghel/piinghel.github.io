@@ -130,8 +130,7 @@ for byte), run the renderer from this directory, then
 | | 1 (no-JavaScript fallback) | `scripts/render_multiple_linear_regression_figures.py` |
 | | 2 | `scripts/render_mlr_training_design.py` |
 | Joint sizing | all | `scripts/export_optimizer_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
-| Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
-| | 2–3 | `scripts/render_attribution_themes.py` |
+| Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
 

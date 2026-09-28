@@ -1,5 +1,6 @@
 ---
 layout: post
+interactive_charts: true
 title: "Performance Attribution, Part 1: What the Portfolio Is Paid For"
 description: "How stock characteristics and market exposure contribute to the portfolio's return and risk, and how that has changed since 1999."
 permalink: /quants/portfolio-attribution.html
@@ -53,7 +54,7 @@ even though they made money in each of the 15 declines of 15% or more since 1999
 ([Part 2](/quants/short-book-rebounds.html#market-regimes)).
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="6" alt="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
+  {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="6" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
 
@@ -140,7 +141,10 @@ These weights describe the attribution model, not the Ridge ranking weights.
 All lookbacks below are trading sessions, and characteristics precede the
 return being attributed.
 
-**Low volatility.** One group combines total, upside and downside volatility
+<details markdown="1">
+<summary>Low volatility.</summary>
+
+One group combines total, upside and downside volatility
 over 10, 21, 63, 126 and 252 sessions, plus relative average true range over 5,
 10, 21 and 126 sessions: the high–low and previous-close ranges expressed as
 ratios rather than price points. A second measures the variability of log market value over
@@ -148,24 +152,44 @@ ratios rather than price points. A second measures the variability of log market
 means a more stable stock. This is an individual-stock characteristic, distinct
 from the market-volatility states in Part 2.
 
-**Beta.** Two groups: the estimated stock beta, and stock–market correlations
+</details>
+
+<details markdown="1">
+<summary>Beta.</summary>
+
+Two groups: the estimated stock beta, and stock–market correlations
 over 126, 252, 504 and 756 sessions. Beta uses 756-session correlation, with
 at least 252 observations, multiplied by the ratio of 21-session stock and
 index volatilities. A higher loading means greater market sensitivity.
 
-**Size.** Three groups: log market value; 21-session illiquidity, with its sign
+</details>
+
+<details markdown="1">
+<summary>Size.</summary>
+
+Three groups: log market value; 21-session illiquidity, with its sign
 reversed; and variability of log trading volume over 21, 63, 126, 252 and
 504 sessions, also reversed. A higher loading describes larger, more liquid
 stocks with more stable volume. Variability of market value belongs to low
 volatility above; changes in market value belong to long-term return below.
 
-**Short interest.** Three groups: the current log ratio of short interest to
+</details>
+
+<details markdown="1">
+<summary>Short interest.</summary>
+
+Three groups: the current log ratio of short interest to
 trading volume and its 21-, 63-, 126- and 252-session averages; changes over
 those four horizons; and variability over those horizons. A higher loading
 means more, rising or more variable short interest. It is a stock
 characteristic, not the portfolio's short weight or a measure of borrow cost.
 
-**Short-term return.** Seven groups: 5-session return; 10- and 21-session
+</details>
+
+<details markdown="1">
+<summary>Short-term return.</summary>
+
+Seven groups: 5-session return; 10- and 21-session
 returns; ten lagged daily returns; price relative to 10- and 21-session moving
 averages; position within Bollinger bands and relative to recent highs and lows
 over 5, 10 and 21 sessions; returns scaled by volatility over those horizons;
@@ -174,7 +198,12 @@ A higher loading means a stronger recent price move. This portfolio's negative
 exposure makes it a reversal position; the factor itself is signed toward
 recent winners.
 
-**Long-term return.** Seven groups cover returns over 30, 63, 90, 126 and
+</details>
+
+<details markdown="1">
+<summary>Long-term return.</summary>
+
+Seven groups cover returns over 30, 63, 90, 126 and
 252 sessions and a combined 20/60/125/252-session momentum measure; returns
 scaled by volatility over 63 and 126 sessions; slow trend measures (moving
 averages, moving-average differences, relative strength and trend persistence);
@@ -184,7 +213,12 @@ and distance from their highs over 63–252 sessions, excluding the most recent
 position relative to past extrema; and losing-day frequency over 63–756
 sessions, reversed. A higher loading means a stronger longer-term price trend.
 
-**Trading activity contains three separate factors.** Turnover is the
+</details>
+
+<details markdown="1">
+<summary>Trading activity contains three separate factors.</summary>
+
+Turnover is the
 63-session turnover-level measure. Volume surge combines changes in log volume
 and volume relative to past minima and maxima over 21, 63, 126, 252 and
 504 sessions. The factor labelled price–volume correlation measures the
@@ -192,11 +226,18 @@ correlation between daily stock returns and turnover over 21, 63 and 126 session
 Each enters the regression separately; their P&L is added for the displayed
 trading-activity subtotal.
 
-**The other lines.** Net market exposure and sector tilt come from the sector
+</details>
+
+<details markdown="1">
+<summary>The other lines.</summary>
+
+Net market exposure and sector tilt come from the sector
 part of the regression, not predictor composites. Stock-specific is the
 remaining P&L of holdings with characteristics, and unloaded holdings is the
 P&L of positions outside that coverage. The low-risk package adds low
 volatility, beta and net market exposure; it introduces no extra predictor.
+
+</details>
 
 </details>
 
@@ -283,7 +324,7 @@ return and risk on net market exposure.
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
 
-{% include attribution-explorer.html %}
+{% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="4" %}
 <p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the chosen months; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
 
 Over the whole period the book earned 9.6% a year before costs. Four sources
@@ -323,7 +364,7 @@ stock-specific returns take off about 0.02.
 {: #how-it-changed }
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="4" alt="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
+  {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="4" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Short interest paid in every block; short-term reversal faded.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
 
