@@ -5,7 +5,7 @@ description: "The portfolio's P&L by theme in market declines and strong rallies
 permalink: /quants/short-book-rebounds.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-09-27
+last_modified_at: 2026-09-28
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 2
 series_id: performance-attribution
@@ -62,20 +62,21 @@ In declines, **low volatility** earns 16% a year and loses money in only one of
 swap: low volatility loses 9.2% a year and **size** 7.6%, and net market
 exposure earns 18%. The shorts are the high-beta, high-volatility stocks the
 ranking dislikes, which rally hardest, and the net long dollars the beta limit
-adds are what keep the book positive. **Trend** loses in both regimes; short
-interest, momentum and loss frequency change little.
+adds are what keep the book positive. Short interest, momentum and loss
+frequency change little.
 
 ## The two deepest drawdowns
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="4" alt="Each theme's P&L over the 2008–09 and 2020–21 drawdowns." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Size and reversal drove 2008–09; low volatility and trend drove 2020–21.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021.</p>
+<p class="figure-caption"><strong>Figure 2: Size and reversal drove 2008–09; low volatility drove 2020–21.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21, had
 different causes. In 2008–09 it was size and short-term reversal, down 10.0 and
 8.4 points; before costs the short book lost 14.3 points while the longs made
-1.3. In 2020–21 it was low volatility, down 15.1, and trend, down 7.7, with the
+1.3. In 2020–21 it was low volatility, down 15.1, and the price-path themes,
+down 4.6 together, with the
 loss split evenly between the long and short books. Both ran through the
 rebound after a crash: the rally from February to October 2009 cost the book
 7.1 points and the one from September 2020 to February 2021 cost 4.4.
