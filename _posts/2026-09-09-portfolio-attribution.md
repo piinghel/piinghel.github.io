@@ -43,6 +43,7 @@ so no linking across periods is needed. The attribution works with average daily
 P&L, because only averages add up across themes: the same book averages 8.8% a
 year after costs (8.6% from January 1999, where the theme returns start). Theme returns are
 before costs and start in January 1999; costs took about 1.1 points a year.
+Sharpe ratios use a zero cash rate.
 </div>
 
 ## The longs carry the book
@@ -98,7 +99,12 @@ and $$\tilde W_s$$ its weight in sector $$s$$ beyond the net dollars.
 
 The characteristics describe the same broad themes as the ranking, using a
 wider set of related descriptors. This is a model of realized stock returns,
-not a decomposition of the Ridge model's 80 coefficients.
+not a decomposition of the Ridge model's 80 coefficients. Short positioning
+appears as **short interest**, **short-term return** captures the book's
+reversal position, and **long-term return** groups momentum and trend.
+The other descriptors are regrouped in the [definitions](#factor-definitions)
+below; stock-specific P&L is the model's remainder.
+
 I use their raw values, logged where they are skewed, clipped at four standard
 deviations and standardized with a cap-weighted mean, rather than ranks. Ranks
 squeeze the tails, where many of the shorts sit: the most volatile 5% of
