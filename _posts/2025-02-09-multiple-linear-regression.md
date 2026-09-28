@@ -69,43 +69,43 @@ might rank the target (references at the end); where the data here disagree
 with the story, I say so.
 
 <div class="theme-cards" markdown="0">
-  <details class="theme-card" style="--theme-color: var(--theme-1)">
+  <details class="theme-card">
     <summary>Momentum &amp; trend <span>33 predictors</span></summary>
     <p class="theme-measures">Returns and risk-adjusted returns over 3–12 months, price relative to moving averages and to highs and lows, how persistently the price stayed above its 200-day average, and the share of losing days over up to three years.</p>
     <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. The theme also holds short-horizon position measures, such as price relative to its 5-day low, which work the other way.</p>
       <details class="predictor-list" data-theme="0"><summary>Predictors</summary><ul></ul></details>
   </details>
-  <details class="theme-card" style="--theme-color: var(--theme-2)">
+  <details class="theme-card">
     <summary>Short-term reversal <span>4 predictors</span></summary>
     <p class="theme-measures">Returns over the last 1–21 sessions.</p>
     <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery.</p>
       <details class="predictor-list" data-theme="1"><summary>Predictors</summary><ul></ul></details>
   </details>
-  <details class="theme-card" style="--theme-color: var(--theme-3)">
+  <details class="theme-card">
     <summary>Volatility <span>12 predictors</span></summary>
     <p class="theme-measures">Close-to-close, downside and upside volatility and average true range, over 5–252 sessions.</p>
     <p>Low-volatility stocks have earned about as much as volatile ones with far less risk. Investors who cannot or will not use leverage bid up high-beta stocks, and some pay for lottery-like payoffs.</p>
       <details class="predictor-list" data-theme="2"><summary>Predictors</summary><ul></ul></details>
   </details>
-  <details class="theme-card" style="--theme-color: var(--theme-4)">
+  <details class="theme-card">
     <summary>Size <span>10 predictors</span></summary>
     <p class="theme-measures">Log market capitalization, its variability (the standard deviation of log market cap over a window), and its change and position relative to recent highs and lows.</p>
     <p>The small-cap premium lives among much smaller firms and has been weak since the 1980s unless one controls for quality. Within the Russell 1000, size means large versus mega cap, and larger names rank higher on the Sharpe target because their volatility is lower. Here size is mostly a low-risk measure; its variability measures behave like volatility and its change measures like momentum.</p>
       <details class="predictor-list" data-theme="3"><summary>Predictors</summary><ul></ul></details>
   </details>
-  <details class="theme-card" style="--theme-color: var(--theme-5)">
+  <details class="theme-card">
     <summary>Liquidity &amp; volume <span>10 predictors</span></summary>
     <p class="theme-measures">Share turnover, Amihud illiquidity (absolute return per dollar traded), variability of trading volume, volume relative to its recent maximum, and the correlation between price and volume changes.</p>
     <p>Heavily traded stocks have tended to earn less than lightly traded ones. Illiquid stocks should compensate their holders, but here Amihud illiquidity points the other way: within the Russell 1000 it mostly marks the smaller names, which rank lower on the target.</p>
       <details class="predictor-list" data-theme="4"><summary>Predictors</summary><ul></ul></details>
   </details>
-  <details class="theme-card" style="--theme-color: var(--theme-6)">
+  <details class="theme-card">
     <summary>Market correlation <span>2 predictors</span></summary>
     <p class="theme-measures">Correlation of the stock's daily returns with the market over one and two years.</p>
     <p>Beta is correlation times relative volatility. Leverage-constrained investors bid up high-beta stocks for either reason, so high-correlation stocks should earn less even at the same volatility. The data here match this story only before 2009, and I have no convincing explanation for the reversal, which makes this the least well-founded theme.</p>
       <details class="predictor-list" data-theme="5"><summary>Predictors</summary><ul></ul></details>
   </details>
-  <details class="theme-card" style="--theme-color: var(--theme-7)">
+  <details class="theme-card">
     <summary>Short positioning <span>9 predictors</span></summary>
     <p class="theme-measures">Short interest relative to daily volume, its variability, and changes in short interest.</p>
     <p>Short sellers are often well informed, and heavily shorted stocks have tended to underperform. Short interest relative to volume, often called days to cover, also measures crowding: how long the shorts would need to buy back.</p>

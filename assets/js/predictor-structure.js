@@ -1,7 +1,7 @@
 /* Predictor-structure explorer (regression article), drawn with Plotly.
    A period filter scopes both charts: a correlation heatmap (80 predictors in dendrogram
    order with their theme, or the seven theme composites) and each theme's cumulative IC
-   with the target. Plotly loads only when the figure scrolls into view. */
+   with the target. Loading and colours come from the shared chart helper. */
 (function () {
   'use strict';
 
@@ -56,7 +56,7 @@
     };
   }
 
-  const colorscale = () => [[0, cssVar('--heat-neg')], [0.5, cssVar('--heat-mid')], [1, cssVar('--heat-pos')]];
+  const colorscale = () => [[0, window.BlogCharts.COLORS.short], [0.5, document.documentElement.dataset.theme==='dark'?'#252c34':'#f6f6f4'], [1, window.BlogCharts.COLORS.strategy]];
   const colorbar = {
     orientation: 'h', thickness: 8, len: 0.45, x: 1, xanchor: 'right', y: -0.02, yanchor: 'top',
     tickvals: [-1, 0, 1], outlinewidth: 0,
