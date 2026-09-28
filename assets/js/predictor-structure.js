@@ -111,7 +111,7 @@
     const names = data.themes.map((t) => t.short);
     // Phone columns use abbreviations; the rows keep the full short names.
     const narrow = heatEl.clientWidth <= 560;
-    const abbrev = { Momentum: 'Mom.', Reversal: 'Rev.', Volatility: 'Vol.', Liquidity: 'Liq.', 'Mkt corr.': 'Corr.' };
+    const abbrev = { 'Med./long ret.': 'M/L ret.', 'Short-term ret.': 'ST ret.', Volatility: 'Vol.', Trading: 'Trad.', 'Mkt corr.': 'Corr.', 'Short int.': 'SI' };
     const trace = {
       type: 'heatmap', x: names, y: names, z: matrix, zmin: -1, zmax: 1, colorscale: colorscale(), colorbar,
       texttemplate: '%{z:.2f}', xgap: 2, ygap: 2,

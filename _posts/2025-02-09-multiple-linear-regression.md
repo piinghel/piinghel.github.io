@@ -19,7 +19,7 @@ In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
 changed the portfolio. Here I want to bring more information into that
 selection. Alongside volatility, I can describe a stock by its momentum,
-liquidity, size and short positioning, among other characteristics.
+liquidity, size and short interest, among other characteristics.
 
 With one characteristic, the ranking is the selection rule. With several, I
 need weights, and the predictors overlap. A stock with strong momentum often
@@ -70,33 +70,33 @@ with the story, I say so.
 
 <div class="theme-cards" markdown="0">
   <details class="theme-card">
-    <summary>Momentum &amp; trend <span>33 predictors</span></summary>
-    <p class="theme-measures">Returns and risk-adjusted returns over 3–12 months, price relative to moving averages and to highs and lows, how persistently the price stayed above its 200-day average, and the share of losing days over up to three years.</p>
-    <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. The theme also holds short-horizon position measures, such as price relative to its 5-day low, which work the other way.</p>
+    <summary>Medium- and long-term return <span>26 predictors</span></summary>
+    <p class="theme-measures">Returns and risk-adjusted returns over 3–12 months, slower trend (moving-average differences, price against its 252-day average, how persistently it stayed above its 200-day average), distance from past highs and lows, earlier run-ups, changes in market value, and the share of losing days over three months to three years.</p>
+    <p>Stocks that did well over the past year have tended to keep doing well for a while, which is usually read as investors underreacting to news. Momentum built from many small moves has persisted longer than momentum from a few jumps. I assign a return measure to this theme or the short-term one by where its information sits, not by the length of its window: it is short-term when more than half of its variation across stocks comes from the last 20 sessions' returns. The 10/21-session MACD sits on that boundary and stays here.</p>
       <details class="predictor-list" data-theme="0"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
-    <summary>Short-term reversal <span>4 predictors</span></summary>
-    <p class="theme-measures">Returns over the last 1–21 sessions.</p>
-    <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery.</p>
+    <summary>Short-term return <span>16 predictors</span></summary>
+    <p class="theme-measures">Returns over the last 1–21 sessions, price against its 10-, 21- and 63-day averages, position within Bollinger bands and against recent lows over 5–126 sessions, and the share of losing days over a month.</p>
+    <p>Over days to a month, prices partly reverse. A common reading is compensation for providing liquidity: an investor who has to sell quickly pushes the price below fair value, and the buyer earns the recovery. Price against its 63-day average looks like a three-month measure, but it weights recent returns most, and about three quarters of its variation across stocks comes from the last month.</p>
       <details class="predictor-list" data-theme="1"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
-    <summary>Volatility <span>12 predictors</span></summary>
-    <p class="theme-measures">Close-to-close, downside and upside volatility and average true range, over 5–252 sessions.</p>
-    <p>Low-volatility stocks have earned about as much as volatile ones with far less risk. Investors who cannot or will not use leverage bid up high-beta stocks, and some pay for lottery-like payoffs.</p>
+    <summary>Volatility <span>16 predictors</span></summary>
+    <p class="theme-measures">Close-to-close, downside and upside volatility and average true range over 5–252 sessions, and the variability of log market capitalization over 21–504 sessions.</p>
+    <p>Low-volatility stocks have earned about as much as volatile ones with far less risk. Investors who cannot or will not use leverage bid up high-beta stocks, and some pay for lottery-like payoffs. The variability of market value, the standard deviation of log market cap over a window, behaves like volatility, so it sits here.</p>
       <details class="predictor-list" data-theme="2"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
-    <summary>Size <span>10 predictors</span></summary>
-    <p class="theme-measures">Log market capitalization, its variability (the standard deviation of log market cap over a window), and its change and position relative to recent highs and lows.</p>
-    <p>The small-cap premium lives among much smaller firms and has been weak since the 1980s unless one controls for quality. Within the Russell 1000, size means large versus mega cap, and larger names rank higher on the Sharpe target because their volatility is lower. Here size is mostly a low-risk measure; its variability measures behave like volatility and its change measures like momentum.</p>
+    <summary>Size <span>5 predictors</span></summary>
+    <p class="theme-measures">Log market capitalization, Amihud illiquidity (absolute return per dollar traded) and the variability of trading volume.</p>
+    <p>The small-cap premium lives among much smaller firms and has been weak since the 1980s unless one controls for quality. Within the Russell 1000, size means large versus mega cap, and larger names rank higher on the Sharpe target because their volatility is lower. Illiquidity and volume variability mostly mark the smaller names, so they sit with size; that is why Amihud illiquidity points the opposite way to the usual illiquidity premium.</p>
       <details class="predictor-list" data-theme="3"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
-    <summary>Liquidity &amp; volume <span>10 predictors</span></summary>
-    <p class="theme-measures">Share turnover, Amihud illiquidity (absolute return per dollar traded), variability of trading volume, volume relative to its recent maximum, and the correlation between price and volume changes.</p>
-    <p>Heavily traded stocks have tended to earn less than lightly traded ones. Illiquid stocks should compensate their holders, but here Amihud illiquidity points the other way: within the Russell 1000 it mostly marks the smaller names, which rank lower on the target.</p>
+    <summary>Trading activity <span>6 predictors</span></summary>
+    <p class="theme-measures">Share turnover, volume relative to its recent maximum, and the correlation of daily returns with changes in turnover.</p>
+    <p>Heavily traded stocks have tended to earn less than lightly traded ones. The return–turnover correlation also rises with recent returns, so it overlaps the short-term return theme.</p>
       <details class="predictor-list" data-theme="4"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
@@ -106,9 +106,9 @@ with the story, I say so.
       <details class="predictor-list" data-theme="5"><summary>Predictors</summary><ul></ul></details>
   </details>
   <details class="theme-card">
-    <summary>Short positioning <span>9 predictors</span></summary>
-    <p class="theme-measures">Short interest relative to daily volume, its variability, and changes in short interest.</p>
-    <p>Short sellers are often well informed, and heavily shorted stocks have tended to underperform. Short interest relative to volume, often called days to cover, also measures crowding: how long the shorts would need to buy back.</p>
+    <summary>Short interest <span>9 predictors</span></summary>
+    <p class="theme-measures">Short interest relative to trading volume and its averages, changes in short interest, and the variability of short interest relative to volume.</p>
+    <p>Short sellers are often well informed, and heavily shorted stocks have tended to underperform. Short interest relative to average volume, the idea behind days to cover, also measures crowding: how long the shorts would need to buy back. Short interest is reported only about twice a month, so the variability measures mostly track the variability of daily volume.</p>
       <details class="predictor-list" data-theme="6"><summary>Predictors</summary><ul></ul></details>
   </details>
 </div>
@@ -177,7 +177,7 @@ the next.
 The simplest combination gives every predictor the same weight, 1/80. The
 *equal-weight* score learns only a direction from the data: each predictor
 enters with the sign of its correlation with the target in the training window,
-so lower volatility counts in a stock's favour because it did so in the past. Momentum &amp; trend then carries 33 of the 80
+so lower volatility counts in a stock's favour because it did so in the past. Medium- and long-term return then carries 26 of the 80
 weights simply because it has the most predictors.
 
 The regressions learn the weights instead. Fitting them jointly makes each one
@@ -367,12 +367,13 @@ holding the other ranks fixed.
 
 <p class="figure-caption"><strong>Figure 5: Ridge coefficients by refit.</strong> The ten largest by mean absolute coefficient are shown by default. Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows keep their magnitude ranking; hover for each predictor's full definition.</p>
 
-The largest weight is negative, on the 10/21-day MACD, a short-horizon trend
-measure whose own IC is close to zero. Positive weights on the
-126-day Sharpe ratio and the 12-month return favour long, steady trends, so
-together these weights lean against the latest spurt, the same contrast
-between short and long horizons that Figure 1 shows inside Momentum &amp;
-trend. Days to cover, Amihud illiquidity and 5-day average true range get
+The largest weight is negative, on the 10/21-day MACD, a trend measure whose
+information is split between the last month and the two before, and whose own
+IC is close to zero. Positive weights on the 126-day Sharpe ratio and the
+12-month return favour long, steady trends, so together these weights lean
+against the latest spurt, the same contrast between short and long horizons
+that Figure 1 shows between the two return themes. Short interest relative to
+the day's volume, Amihud illiquidity and 5-day average true range get
 negative weights, as their own ICs suggest. Share turnover and two-year
 market-cap variability get positive weights although their own ICs are
 negative: holding correlated neighbours fixed, their conditional effect
@@ -381,8 +382,9 @@ differs from their effect alone.
 All ten keep their sign at every refit, but most shrink as the training
 history grows: the 12-month return's weight falls from 0.015 at the first
 refit to 0.003 at the last, and Amihud illiquidity's from −0.022 to −0.008.
-Momentum &amp; trend takes about 45% of the absolute weight, a little more
-than its 41% under equal weights. Ridge's score also changes faster: its rank
+Medium- and long-term return takes about 36% of the absolute weight, a little
+more than its 33% under equal weights; short-term return takes 16%, against
+20%. Ridge's score also changes faster: its rank
 correlation with itself 15 sessions later is 0.67 through 2021, against 0.76
 for equal weights, which is why it trades more.
 
@@ -405,12 +407,12 @@ low-volatility stocks as an exposure to manage rather than as skill.
 
 ## References
 
-- **Momentum:** Jegadeesh and Titman (1993), *Returns to Buying Winners and Selling Losers*; Da, Gurun and Warachka (2014), *Frog in the Pan*.
-- **Reversal:** Jegadeesh (1990), *Evidence of Predictable Behavior of Security Returns*; Lehmann (1990), *Fads, Martingales, and Market Efficiency*.
+- **Medium- and long-term return (momentum):** Jegadeesh and Titman (1993), *Returns to Buying Winners and Selling Losers*; Da, Gurun and Warachka (2014), *Frog in the Pan*.
+- **Short-term return (reversal):** Jegadeesh (1990), *Evidence of Predictable Behavior of Security Returns*; Lehmann (1990), *Fads, Martingales, and Market Efficiency*.
 - **Volatility:** Ang, Hodrick, Xing and Zhang (2006), *The Cross-Section of Volatility and Expected Returns*; Baker, Bradley and Wurgler (2011), *Benchmarks as Limits to Arbitrage*; Bali, Cakici and Whitelaw (2011), *Maxing Out*.
-- **Size:** Banz (1981), *The Relationship Between Return and Market Value of Common Stocks*; Asness et al. (2018), *Size Matters, If You Control Your Junk*.
-- **Liquidity and volume:** Amihud (2002), *Illiquidity and Stock Returns*; Lee and Swaminathan (2000), *Price Momentum and Trading Volume*.
+- **Size:** Banz (1981), *The Relationship Between Return and Market Value of Common Stocks*; Asness et al. (2018), *Size Matters, If You Control Your Junk*; Amihud (2002), *Illiquidity and Stock Returns*.
+- **Trading activity:** Lee and Swaminathan (2000), *Price Momentum and Trading Volume*.
 - **Market correlation:** Frazzini and Pedersen (2014), *Betting Against Beta*; Asness et al. (2020), *Betting Against Correlation*.
-- **Short positioning:** Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
+- **Short interest:** Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
 
 [^fitting]: I refit about every two and a half years, starting from three and a half years of history, with a one-month gap before each prediction block. Each fit averages three models trained on interleaved dates, and a missing predictor value takes its date-and-sector mean.

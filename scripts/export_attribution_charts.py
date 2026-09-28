@@ -10,7 +10,7 @@ from blog_charts import SCALE, series, write_chart
 FIELDS = [
     ("short_interest", "Short interest", "C_short_interest", "short_interest"),
     ("reversal", "Short-term return", "C_short_term_return", "reversal"),
-    ("momentum", "Long-term return", "C_long_term_return", "momentum"),
+    ("momentum", "Medium- and long-term return", "C_medium_and_long_term_return", "momentum"),
     ("size", "Size", "C_size", "size"),
     ("activity", "Trading activity", None, "liquidity"),
     ("low_risk", "Low-risk package", None, "low_risk"),

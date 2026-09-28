@@ -28,7 +28,13 @@ import matplotlib.pyplot as plt
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 DATA = OUTPUT / "themes.json"
 # Display order: the ranking's signal themes, the low-risk package (subtotal first), the rest.
-SIGNALS = ["Short interest", "Short-term return", "Long-term return", "Size", "Trading activity"]
+SIGNALS = [
+    "Short interest",
+    "Short-term return",
+    "Medium- and long-term return",
+    "Size",
+    "Trading activity",
+]
 LOW_RISK = ["Low-risk package", "Low volatility", "Beta", "Net market exposure"]
 REST = ["Sector tilt", "Stock-specific", "Unloaded holdings"]
 THEMES = [*SIGNALS, *LOW_RISK, *REST]

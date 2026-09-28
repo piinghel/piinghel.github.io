@@ -18,18 +18,18 @@ import polars as pl
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/multiple-linear-regression"
 SHORT_THEMES = {
-    "Momentum & trend": "Momentum",
-    "Short-term reversal": "Reversal",
+    "Medium- and long-term return": "Med./long ret.",
+    "Short-term return": "Short-term ret.",
     "Volatility": "Volatility",
     "Size": "Size",
-    "Liquidity & volume": "Liquidity",
+    "Trading activity": "Trading",
     "Market correlation": "Mkt corr.",
-    "Short positioning": "Shorts",
+    "Short interest": "Short int.",
 }
 # Figure 5 row labels; the full catalogue description stays in the hover.
 SHORT_PREDICTORS = {
     "X_feature_price_macd_10_21": "MACD 10/21",
-    "X_feature_short_interest_to_volume_log_ratio": "Days to cover",
+    "X_feature_short_interest_to_volume_log_ratio": "Short interest / day's volume",
     "X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling": "Sharpe 126d",
     "X_feature_pv_illiquidity_mean21": "Amihud illiquidity 21d",
     "X_feature_price_high_to_initial90_exclude10": "90d high / start price",

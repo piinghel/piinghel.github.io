@@ -99,8 +99,8 @@ The characteristics are built from the same 80 predictors as the ranking,
 regrouped into themes that suit a model of realized returns rather than a
 ranking. This is not a decomposition of the Ridge model's 80 coefficients.
 Short positioning appears as **short interest**, **short-term return**
-captures the book's reversal position, and **long-term return** groups momentum
-and trend. The [definitions](#factor-definitions) below list what each factor
+captures the book's reversal position, and **medium- and long-term return**
+groups momentum and slower trend. The [definitions](#factor-definitions) below list what each factor
 contains; stock-specific P&L is the model's remainder.
 
 I use their raw values, logged where they are skewed, clipped at four standard
@@ -112,22 +112,30 @@ and the price against its 10-day average, are averaged into one characteristic
 before the regression. Estimated separately, they collide, and the regression
 hands them large payoffs of opposite sign. The fitted characteristics below
 are single factors; trading activity groups three of them. Net market exposure
-and sector tilt come from the sector coefficients. Compared with the seven
-themes of the regression article, momentum and trend splits by horizon into
-short-term and long-term return, liquidity and volume becomes trading activity
-and size, market correlation joins beta, and the variability of market value
-moves from size to low volatility.
+and sector tilt come from the sector coefficients. The predictors sit in the
+same seven themes as in the regression article; here volatility is signed
+toward stable stocks as low volatility, and beta adds an estimated beta to
+market correlation.
+
+The two return themes are split by where a predictor's information about past
+returns sits, not by the length of its window. A predictor counts as short-term
+when more than half of its variation across stocks comes from the last 20
+sessions' returns. Price against its 63-day average is short-term by this rule:
+it weights recent returns most, and about three quarters of its variation comes
+from the last month. The 10/21-session MACD sits on the boundary, with its
+weight split between the last month and the two before; it stays with the
+medium- and long-term measures.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 1: The attribution components.</strong> Characteristics are built from the ranking's predictors as listed; trading activity groups three factors. Net market exposure and sector tilt come from the net dollars and the sector weights.</p>
 
 | Theme | What it measures |
 | :--- | :--- |
-| Short interest | Short interest relative to volume, its change and its variability |
-| Short-term return | Returns over one day to one month, price against 10- and 21-day averages and recent lows, the share of losing days |
-| Long-term return | Returns over three to twelve months, trend over three months to two years, price against 52-week highs and lows, change in market value |
+| Short interest | Short interest relative to volume, its change, and the variability of that ratio, which mostly tracks volume |
+| Short-term return | Returns over one day to one month, price against its 10-, 21- and 63-day averages, Bollinger position and recent lows, the share of losing days over a month |
+| Medium- and long-term return | Returns and risk-adjusted returns over three to twelve months, slower trend, distance from 52-week highs and lows, earlier run-ups, change in market value, losing-day frequency over three months to three years |
 | Size | Market value, and the illiquidity and volume variability that come with it |
-| Trading activity | Turnover, volume surges and return–turnover correlation, each its own factor |
+| Trading activity | Turnover, volume surges and the correlation of daily returns with changes in turnover, each its own factor |
 | Low volatility | Stock volatility, and the variability of market value |
 | Beta | Market beta and correlation with the index |
 | Net market exposure | Net dollars times the market's return |
@@ -178,7 +186,8 @@ Three groups: log market value; 21-session illiquidity, with its sign
 reversed; and variability of log trading volume over 63, 126 and
 504 sessions, also reversed. A higher loading describes larger, more liquid
 stocks with more stable volume. Variability of market value belongs to low
-volatility above; changes in market value belong to long-term return below.
+volatility above; changes in market value belong to medium- and long-term
+return below.
 
 </details>
 
