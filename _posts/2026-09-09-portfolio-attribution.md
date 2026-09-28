@@ -33,8 +33,8 @@ Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are
 5 basis points per dollar traded, excluding borrow, financing and market impact.
 With fixed capital, P&L over any stretch of days is the plain sum of daily P&L,
 so no linking across periods is needed. The attribution works with average daily
-P&L, because only averages add up across themes: the book's 8.6% a year after
-costs in this form is the same result as the 9.0% compounded. Theme returns are
+P&L, because only averages add up across themes: the same book averages 8.8% a
+year after costs (8.6% from January 1999, where the theme returns start). Theme returns are
 before costs and start in January 1999; costs took about 1.1 points a year.
 </div>
 
@@ -43,15 +43,16 @@ before costs and start in January 1999; costs took about 1.1 points a year.
 
 The longs made **372 points**, the shorts lost **101** and trading costs took
 **29.6**, leaving **242 points** net. The shorts lose money over the history
-even though they made money in every market decline.
+even though they made money in each of the 15 declines of 15% or more since 1999
+([Part 2](/quants/short-book-rebounds.html#market-regimes)).
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="6" alt="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
 
-The book is also net long, by about 25% of capital, and that follows from its
-tilt towards low-risk stocks. At the median, the longs have a forecast beta of
+The book is also net long, by about 25% of capital, and most of that follows
+from its tilt towards low-risk stocks. At the median, the longs have a forecast beta of
 0.85 and the shorts 1.07. The optimizer keeps the book's forecast beta within
 ±0.05, so long dollars times their beta roughly equal short dollars times
 theirs, $$L\beta_L = S\beta_S$$, which leaves the book net long by
@@ -60,8 +61,8 @@ $$
 L-S = S\,(\beta_S/\beta_L-1),
 $$
 
-about 0.65 × 0.26 ≈ 0.17 of capital. That is two thirds of the 25%. The rest
-comes from the 7% volatility target: low-risk longs use less of it per dollar
+about 0.65 × 0.26 ≈ 0.17 of capital. That is two thirds of the 25%. The rest, I
+think, comes from the 7% volatility target: low-risk longs use less of it per dollar
 than the shorts, so the optimizer would hold even more of them, and its limit of
 25% on net dollars binds at more than four in five rebalances. The book's
 forecast beta stays close to zero, a median of +0.02, but its realized
@@ -91,14 +92,13 @@ and $$\tilde W_s$$ its weight in sector $$s$$ beyond the net dollars.
 The characteristics are the ranking's predictors, grouped by what they measure.
 I use their raw values, logged where they are skewed, clipped at four standard
 deviations and standardized with a cap-weighted mean, rather than ranks. Ranks
-squeeze the tails, and the book's shorts live there: the most volatile 5% of
+squeeze the tails, where many of the shorts sit: the most volatile 5% of
 stocks sit about 2.7 standard deviations from the mean, but only 1.6 when
 ranked. Predictors that measure the same thing, such as the last week's return
 and the price against its 10-day average, are averaged into one characteristic
 before the regression. Estimated separately, they collide, and the regression
 hands them large payoffs of opposite sign. So each theme below is exactly one
-factor, and a factor's P&L is what the book's exposure to it earned, whether the
-ranking chose that exposure or the optimizer's limits created it.
+factor, except trading activity, which shows three small ones together.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 1: The themes.</strong> Each theme is one characteristic built from the predictors listed; net market exposure and sector tilt come from the net dollars and the sector weights.</p>
@@ -175,8 +175,8 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 </details>
 
 I checked the method against known answers. On returns simulated from known
-payoffs and this book's actual weights, it recovers each theme's P&L to within a
-few tenths of a point a year; random long–short books with the same gross get
+payoffs and this book's actual weights, it recovers each theme's P&L to within
+about half a point a year; random long–short books with the same gross get
 theme returns near zero; and a cap-weighted market portfolio lands all of its
 return and risk on net market exposure.
 
@@ -194,9 +194,11 @@ carried it:
   the market's move offsetting across lines, low volatility losing when the
   market rises and the net long dollars gaining. Together, about 2 points a
   year of that return is not explained by the market, with a standard error of
-  about 0.9.
+  about 0.9. With the predictors kept as separate factors the package earns
+  5–5.5% a year, so its level depends on the model.
 - **Short-term return**, 2.7% a year on 7% of the risk. The book is short
-  recent winners, so this is a reversal bet.
+  recent winners, so this is a reversal bet, and I call it short-term reversal
+  below.
 - **Short interest**, 1.6% a year on 6% of the risk.
 - **Stock-specific returns**, 1.8% a year on a third of the risk, a Sharpe
   ratio of 0.44 on its own.
@@ -204,8 +206,9 @@ carried it:
 Long-term return, which holds momentum and trend, earned 0.7% a year on 10% of
 the risk, about two standard errors from zero. Size and trading activity earned
 nothing and took little risk. The themes' betas add up to the book's beta of
-+0.07, and the low-risk package accounts for all of it: +0.23 from the net long
-dollars, −0.13 from low volatility and −0.02 from beta.
++0.07, and the low-risk package accounts for more than all of it, +0.08: +0.23
+from the net long dollars, −0.13 from low volatility and −0.02 from beta;
+stock-specific returns take off about 0.03.
 
 ## Short-term reversal stopped paying
 {: #how-it-changed }
@@ -220,7 +223,7 @@ Short-term reversal made 6.1% a year in 1999–2003 and about nothing since 2022
 every block, from 1.2% to 2.3% a year. Stock-specific returns earned 2.5% a year
 from 2022 to 2025 and then lost about 8 points in the first five months of 2026,
 while long-term return gained; the two moved against each other day to day,
-which points to an exposure the themes don't capture.
+which suggests an exposure the themes don't capture.
 
 <div markdown="1">
 <p class="table-caption"><strong>Table 2: The low-risk package by block.</strong> Return before costs, % of capital a year, and share of the book's daily variance, %. Standard errors allow for autocorrelation up to 21 sessions. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
@@ -243,8 +246,8 @@ which points to an exposure the themes don't capture.
 </div>
 
 The package paid between 2% and 5% a year in every block to 2021, on a quarter
-to two fifths of the risk. Since 2022 it has earned 1.2% a year, all of it in 2022; from
-2023 it has been flat. The uncertainty, about ±2% a year, is too wide to say
+to two fifths of the risk. Since 2022 it has earned 1.2% a year, more than all of it
+in 2022; since 2023 it has lost about 2 points. The uncertainty, about ±2% a year, is too wide to say
 whether it has weakened, and so is the choice of regression weights: with equal
 weights the package earns 2.0% a year since 2022, with market-cap weights −1.3%. Its parts move much more than the package: low
 volatility lost money in three of the six blocks, while the net long dollars
@@ -258,8 +261,7 @@ the themes don't explain. Size, trading activity and the individual lines of the
 low-risk package are not where the money is. The clearest change is short-term
 reversal: it paid 6% a year early on and nothing since 2022, so I would give it
 less weight in the ranking. The low-risk package is too uncertain over four years
-to cut on this evidence; what I would watch is the loss in stock-specific
-returns this year, which the themes don't yet explain.
+to cut on this evidence, so it stays.
 
 ## References
 
