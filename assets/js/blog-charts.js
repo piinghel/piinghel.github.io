@@ -39,6 +39,12 @@
     return result;
   }
 
+  function additivePath(values,first,last) {
+    let sum=0,peak=0;const equity=[0],drawdown=[0];
+    for(let i=first+1;i<=last;i++){sum+=values[i]*100;peak=Math.max(peak,sum);equity.push(sum);drawdown.push(sum-peak);}
+    return {equity,drawdown};
+  }
+
   // Weekly display only for long windows; preserve endpoints and daily extrema.
   // Statistics and drawdown calculations always use the complete daily observations.
   function displayIndices(dates, arrays) {
@@ -62,7 +68,7 @@
     return [...selected].sort((a,b)=>a-b);
   }
 
-  const api={COLORS,stats,path,linked,displayIndices};
+  const api={COLORS,stats,path,linked,additivePath,displayIndices};
   if (typeof module!=='undefined') module.exports=api;
   root.BlogCharts=api;
   if (!root.document) return;
@@ -102,7 +108,8 @@
         zmin:-limit,zmax:limit,colorscale:[[0,COLORS.short],[.5,dark?'#252c34':'#f6f6f4'],[1,COLORS.strategy]],
         xgap:2,ygap:2,customdata:cfg.descriptions.map(label=>cfg.columns.map(()=>label)),
         hovertemplate:'%{customdata}<br>%{x}: %{z:.3f}<extra></extra>',
-        colorbar:{orientation:'h',thickness:8,len:.5,x:1,xanchor:'right',y:-.12,outlinewidth:0,title:{text:cfg.unit,font:{size:12}}}}],
+        colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-.12,yanchor:'top',
+          tickvals:[-limit,0,limit],tickformat:'.2f',tickangle:0,outlinewidth:0,title:{text:cfg.unit,side:'top',font:{size:12}}}}],
         {height:420,margin:{l:10,r:10,t:10,b:80},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
           paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
           xaxis:{type:'category',tickangle:0,tickvals:mobile?cfg.columns.filter((_,i)=>i%2===0):cfg.columns},
@@ -122,6 +129,7 @@
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
+      if(cfg.kind.startsWith('attribution')){await attribution(host,data,cfg);return;}
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
       const full=[cfg.start||data.dates[0],cfg.end||data.dates.at(-1)];
@@ -180,6 +188,11 @@
         body.replaceChildren();
         for(const s of series.filter(s=>visible.get(s.id)&&!s.contribution)) {
           const m=stats(s.returns.slice(first+(bars?0:1),last+1),data.annualization);
+          if(m&&s.additive) {
+            const values=s.returns.slice(first+1,last+1);
+            m.annual_return=values.reduce((a,b)=>a+b,0)/values.length*data.annualization;
+            m.drawdown=Math.min(...additivePath(s.returns,first,last).drawdown)/100;
+          }
           const row=element('tr'),label=element('th','',bars&&s.id.startsWith('decile_')?'Decile '+s.label:s.label);label.scope='row';row.append(label);
           for(const key of ['annual_return','volatility','sharpe','drawdown'])row.append(element('td','',m?format(m[key],key!=='sharpe'):'—'));
           body.append(row);
@@ -255,12 +268,12 @@
               const ticks=[];for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
               layout.yaxis.tickmode='array';layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);
             }
-            heading(cfg.kind==='values'?cfg.unit:'Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
+            heading(cfg.kind==='values'?cfg.unit:cfg.additive?'P&L since selected start (points)':'Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
             if(secondary) {
               layout.yaxis2={domain:[0,.29],anchor:'x',gridcolor:t.grid,zerolinecolor:t.grid,
-                tickformat:cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
+                tickformat:cfg.additive?'.0f':cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
               if(cfg.contributionRange&&range[0]===full[0]&&range[1]===full[1])layout.yaxis2.range=cfg.contributionRange;
-              heading(cfg.drawdown?'Drawdown (%)':'Linked book contributions (pp)',.29);
+              heading(cfg.drawdown?(cfg.additive?'Drawdown (points)':'Drawdown (%)'):'Linked book contributions (pp)',.29);
             }
             for(const s of series) {
               if(s.contribution) {
@@ -270,9 +283,11 @@
               } else if(cfg.kind==='values') {
                 traces.push(trace(s,dates,s.returns.slice(first,last+1)));
               } else {
-                const values=path(s.returns,first,last),indices=displayIndices(dates,[values.equity,values.drawdown]);
+                const values=s.additive?additivePath(s.returns,first,last):path(s.returns,first,last);
+                if(cfg.additive&&!s.additive)values.equity=values.equity.map(v=>v-100);
+                const indices=displayIndices(dates,[values.equity,values.drawdown]);
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i])));
-                if(cfg.drawdown)traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.drawdown[i]),{yaxis:'y2',showlegend:false,hovertemplate:'%{x|%d %b %Y}<br>%{y:.2%}<extra>%{fullData.name}</extra>'}));
+                if(cfg.drawdown&&s.drawdown!==false)traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.drawdown[i]),{yaxis:'y2',showlegend:false,hovertemplate:'%{x|%d %b %Y}<br>%{y'+(s.additive?':.2f} points':':.2%}')+'<extra>%{fullData.name}</extra>'}));
               }
             }
             if(relative) {
@@ -344,6 +359,112 @@
       status.classList.add('blog-chart-error');
     }
   }
+  async function attribution(host,data,cfg) {
+    const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
+    const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
+    const controls=element('div','blog-chart-controls');extra.append(controls);
+    const full=[data.dates[0],data.dates.at(-1)];let range=[...full],leg='total',custom=false,busy=false,pending=false;
+    const expanded=new Set();
+    const from=element('input'),to=element('input');from.type=to.type='date';
+    for(const [input,label,value] of [[from,'From',full[0]],[to,'to',full[1]]]) {
+      input.min=full[0];input.max=full[1];input.value=value;
+      const wrap=element('label','',label+' ');wrap.append(input);controls.append(wrap);
+    }
+    function setRange(a,b,isCustom=true){if(a>b)return;range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b];from.value=range[0];to.value=range[1];custom=isCustom;draw();}
+    from.onchange=to.onchange=()=>{if(from.value&&to.value)setRange(from.value,to.value);};
+    const presets=element('div','blog-chart-controls');extra.append(presets);
+    for(const years of [1,3,5]){const b=element('button','',years+'Y');b.type='button';b.onclick=()=>{const d=new Date(range[1]+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()-years);setRange(d.toISOString().slice(0,10),range[1]);};presets.append(b);}
+    const reset=element('button','','Full');reset.type='button';reset.onclick=()=>setRange(...full,false);presets.append(reset);
+    for(const [label,a,b] of cfg.episodes){const button=element('button','',label);button.type='button';button.onclick=()=>setRange(a,b);presets.append(button);}
+    const choices=element('div','blog-chart-controls');extra.append(choices);
+    if(cfg.kind==='attribution') {
+      const select=element('select');for(const [key,label] of [['total','Book'],['long','Long leg'],['short','Short leg']])select.add(new Option(label,key));
+      select.setAttribute('aria-label','Book or leg');select.onchange=()=>{leg=select.value;draw();};choices.append(select);
+    }
+    for(const [key,label] of [['low_risk','Low-risk components'],['activity','Trading-activity components']]) {
+      const wrap=element('label'),box=element('input');box.type='checkbox';box.onchange=()=>{if(box.checked)expanded.add(key);else expanded.delete(key);draw();};wrap.append(box,document.createTextNode(' '+label));choices.append(wrap);
+    }
+    const graph=element('div','blog-chart-plot');ui.append(graph);
+    const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
+    function indices(a,b,mask,excludeStart=false){return data.dates.flatMap((d,i)=>d>=a&&d<=b&&(!excludeStart||d>a)&&(!mask||mask[i])?[i]:[]);}
+    function metric(s,ids,kind) {
+      if(!ids.length)return null;
+      const values=ids.map(i=>s.returns[i]),sum=values.reduce((a,b)=>a+b,0),n=ids.length;
+      if(kind==='total')return sum*100;
+      if(kind==='return')return sum/n*252*100;
+      const market=all.get('gross').returns,bs=ids.reduce((a,i)=>a+market[i],0);
+      const cross=ids.reduce((a,i)=>a+s.returns[i]*market[i],0)-sum*bs/n;
+      const variance=ids.reduce((a,i)=>a+market[i]**2,0)-bs**2/n;
+      return variance?cross/variance*100:null;
+    }
+    async function draw() {
+      if(busy){pending=true;return;}busy=true;
+      try {
+        const mobile=host.clientWidth<550,dark=document.documentElement.dataset.theme==='dark';
+        const ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
+        const keys=cfg.series.filter(k=>cfg.kind==='attribution'||k!=='cost').flatMap(k=>expanded.has(k)?(cfg.kind==='attribution-years'?cfg.components[k]:[k,...cfg.components[k]]):[k]);
+        const nested=k=>[...expanded].some(parent=>cfg.components[parent].includes(k));
+        const shown=keys.map(k=>all.get(leg+'_'+k));
+        const ids=indices(...range),traces=[];
+        const layout={autosize:true,margin:{l:mobile?145:160,r:20,t:45,b:45},
+          font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,annotations:[],barmode:'overlay'};
+        function title(text,x,y){layout.annotations.push({text,x,y,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:12}});}
+        if(cfg.kind==='attribution-years') {
+          const cols=mobile?2:3,rows=Math.ceil(shown.length/cols);layout.height=rows*(mobile?185:190)+50;layout.margin={l:40,r:10,t:35,b:30};
+          const years=[...new Set(ids.map(i=>data.dates[i].slice(0,4)))];
+          shown.forEach((s,i)=>{
+            const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
+            const xd=[col/cols+.02,(col+1)/cols-.05],yd=[1-(row+1)/rows+.25/rows,1-row/rows-.14/rows];
+            const values=years.map(year=>metric(s,ids.filter(j=>data.dates[j].startsWith(year)),'return'));
+            layout['xaxis'+suffix]={domain:xd,anchor:y,type:'linear',showgrid:false,zeroline:false,tickmode:'linear',dtick:years.length>10?10:years.length>5?5:1};
+            layout['yaxis'+suffix]={domain:yd,anchor:x,range:[-11.7,11.7],tickvals:[-10,0,10],gridcolor:grid,zerolinecolor:grid};
+            title(s.label,xd[0],yd[1]+.01);
+            traces.push({type:'bar',x:years.map(Number),y:values.map(v=>Math.max(-10,Math.min(10,v))),customdata:values,
+              marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long)},xaxis:x,yaxis:y,hovertemplate:s.label+' · %{x}<br>%{customdata:.2f}% a year<extra></extra>'});
+            const clipped=values.flatMap((v,j)=>Math.abs(v)>10?[j]:[]);
+            traces.push({type:'scatter',mode:'markers',x:clipped.map(j=>Number(years[j])),y:clipped.map(j=>Math.sign(values[j])*10.5),
+              marker:{symbol:clipped.map(j=>values[j]>0?'triangle-up':'triangle-down'),size:6,color:clipped.map(j=>values[j]>0?COLORS.long:COLORS.short)},
+              xaxis:x,yaxis:y,customdata:clipped.map(j=>values[j]),hovertemplate:'%{customdata:.2f}% a year<extra></extra>'});
+            const bx=[],by=[];
+            for(const [a,b] of [[1999,2003],[2004,2008],[2009,2013],[2014,2018],[2019,2021],[2022,2026]]) {
+              const block=ids.filter(j=>Number(data.dates[j].slice(0,4))>=a&&Number(data.dates[j].slice(0,4))<=b);
+              if(!block.length)continue;const value=metric(s,block,'return');
+              bx.push(Number(data.dates[block[0]].slice(0,4))-.4,Number(data.dates[block.at(-1)].slice(0,4))+.4,null);by.push(value,value,null);
+            }
+            traces.push({type:'scatter',mode:'lines',x:bx,y:by,line:{color:ink,width:1.5},xaxis:x,yaxis:y,hovertemplate:'Block: %{y:.2f}% a year<extra></extra>'});
+          });
+        } else {
+          let specs;
+          if(cfg.kind==='attribution-regimes')specs=[['Declines',indices(...range,cfg.masks.declines),'return'],['Strong rallies',indices(...range,cfg.masks.rallies),'return']];
+          else if(cfg.kind==='attribution-drawdowns')specs=(custom?[range]:cfg.windows).map(w=>[w[0]+' – '+w[1],indices(...w,null,true),'total']);
+          else specs=[['Return (% a year)',ids,'return'],['Share of book risk (%)',ids,'risk']];
+          const cols=mobile?1:specs.length,rows=mobile?specs.length:1;
+          layout.height=rows*(shown.length*26+90);
+          const allValues=specs.flatMap(([,ix,kind])=>shown.map(s=>metric(s,ix,kind))).filter(v=>v!==null);
+          specs.forEach(([label,ix,kind],i)=>{
+            const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,values=shown.map(s=>metric(s,ix,kind));
+            const xd=mobile?[0,1]:[i/cols+.02,(i+1)/cols-.08],yd=mobile?[1-(i+1)/rows+.11/rows,1-i/rows-.06/rows]:[0,1];
+            const comparables=cfg.kind==='attribution'?values:allValues,lo=Math.min(0,...comparables),hi=Math.max(0,...comparables),pad=(hi-lo||1)*.12;
+            layout['xaxis'+suffix]={domain:xd,anchor:y,range:[lo-pad,hi+pad],gridcolor:grid,zerolinecolor:grid,nticks:4};
+            layout['yaxis'+suffix]={domain:yd,anchor:x,type:'category',autorange:'reversed',tickvals:shown.map(s=>s.label),
+              ticktext:shown.map((s,j)=>(nested(keys[j])?'↳ ':'')+s.label),showticklabels:mobile||i===0,automargin:true};
+            title(label,xd[0],yd[1]+.02);
+            if(!ix.length)title('No observations in this window',xd[0],(yd[0]+yd[1])/2);
+            traces.push({type:'bar',orientation:'h',x:values,y:shown.map(s=>s.label),xaxis:x,yaxis:y,
+              marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long),opacity:keys.map(k=>nested(k)?.55:1)},
+              hovertemplate:'%{y}<br>%{x:.2f}'+(kind==='total'?' points':kind==='risk'?'% of book variance':'% a year')+'<extra></extra>'});
+          });
+        }
+        graph.style.height=layout.height+'px';
+        await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
+        windowLabel.textContent=cfg.kind==='attribution-drawdowns'&&!custom?'P&L from each peak to its trough':range[0]+' – '+range[1];
+        host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;
+      } finally {busy=false;if(pending){pending=false;draw();}}
+    }
+    await draw();new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
+  }
   // Small fixed comparisons: hover exposes estimates and their observed ranges.
   async function panels(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
@@ -351,14 +472,16 @@
     async function draw() {
       const mobile=host.clientWidth<550,cols=mobile?1:2,rows=Math.ceil(cfg.panels.length/cols);
       const dark=document.documentElement.dataset.theme==='dark',ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      graph.style.height=(rows*240)+'px';
-      const layout={autosize:true,height:rows*240,margin:{l:50,r:20,t:40,b:40},showlegend:false,
+      graph.style.height=(rows*270)+'px';
+      const layout={autosize:true,height:rows*270,margin:{l:50,r:20,t:35,b:40},showlegend:false,
         font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',annotations:[]},traces=[];
       cfg.panels.forEach((p,i)=>{
         const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
-        const xd=[col/cols+.02,(col+1)/cols-.06],yd=[1-(row+1)/rows+.08,1-row/rows-.06];
-        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,title:{text:p.xTitle||'',font:{size:12}},tickvals:p.x};
-        layout['yaxis'+suffix]={domain:yd,anchor:x,gridcolor:grid,zerolinecolor:grid,tickformat:p.format||'',rangemode:p.zero?'tozero':'normal'};
+        const xd=[col/cols+.02,(col+1)/cols-.06],yd=[1-(row+1)/rows+.28/rows,1-row/rows-.08/rows];
+        const comparable=cfg.panels.filter(q=>q.title===p.title).flatMap(q=>[...q.y,...q.low||[],...q.high||[]]);
+        const lo=Math.min(...comparable),hi=Math.max(...comparable),pad=(hi-lo||1)*.1;
+        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,zeroline:false,title:{text:p.xTitle||'',font:{size:12}},tickvals:p.x};
+        layout['yaxis'+suffix]={domain:yd,anchor:x,gridcolor:grid,zerolinecolor:grid,tickformat:p.format||'',range:[p.zero?Math.min(0,lo-pad):lo-pad,hi+pad]};
         layout.annotations.push({text:p.title,x:xd[0],y:yd[1]+.01,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false});
         traces.push({type:'scatter',mode:'lines+markers',x:p.x,y:p.y,xaxis:x,yaxis:y,
           line:{color:COLORS.comparison,width:1},marker:{color:p.x.map(v=>v===p.selected?COLORS.strategy:COLORS.comparison),size:p.x.map(v=>v===p.selected?9:6)},

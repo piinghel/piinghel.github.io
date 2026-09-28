@@ -1,5 +1,6 @@
 ---
 layout: post
+interactive_charts: true
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
@@ -128,7 +129,7 @@ Figure 1 runs the final portfolio, the optimizer with the trading controls
 described below, at five shrinkage values in development.
 
 <div class="research-figure rho-ladder-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" alt="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="16" %}
+  {% include blog-chart.html chart="shrinkage" source="/assets/portfolio-optimization/comparisons.json" base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="16" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> The optimizer with trading controls at five shrinkage values, development period: risk calibration, beta bias (realized minus forecast beta over the next holding period), annual turnover and net Sharpe. The chosen 0.5 is highlighted.</p>
@@ -213,7 +214,7 @@ trading controls, and drops only the correlations. Its Sharpe of 1.05 is level
 with the score-weighted rule's 1.03, so the gain comes from the correlations.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" alt="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="16" %}
+  {% include blog-chart.html chart="performance" source="/assets/portfolio-optimization/performance.json" base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" label="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="16" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Development-period growth and drawdowns.</strong> Net growth index (log scale) and drawdown after trading costs for the first and last rules in Table 2, September 1998–December 2021. Each path averages three separately compounded schedules, so its drawdowns are shallower than the per-schedule maxima in Table 2. The rules run at different volatilities; Table 2 compares Sharpe.</p>
@@ -267,7 +268,7 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 Figure 3 varies one control at a time around the chosen settings.
 
 <div class="research-figure parameter-sensitivity-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" alt="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="11" %}
+  {% include blog-chart.html chart="sensitivity" source="/assets/portfolio-optimization/comparisons.json" base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" label="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="11" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3: Sensitivity to the trading controls.</strong> Development-period net Sharpe and annual turnover across trade coefficients <i>c</i> (×10<sup>−4</sup>; 0 means no penalty) and rank-buffer cutoffs (75 means no buffer). Points are schedule means; whiskers span the three schedules. Chosen settings are highlighted.</p>
@@ -318,7 +319,7 @@ the beta of the portfolio's realized returns over a trailing year, which
 reflects holdings and market moves throughout that year.
 
 <div class="research-figure risk-beta-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/portfolio-optimization/risk-calibration-and-beta" mobile="/assets/portfolio-optimization/risk-calibration-and-beta_mobile" alt="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="15" %}
+  {% include blog-chart.html chart="beta" source="/assets/portfolio-optimization/beta.json" base="/assets/portfolio-optimization/risk-calibration-and-beta" mobile="/assets/portfolio-optimization/risk-calibration-and-beta_mobile" label="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="15" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the optimizer's ±0.05 limit, which applies to its rebalance-time estimate.</p>

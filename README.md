@@ -129,7 +129,7 @@ for byte), run the renderer from this directory, then
 | Regression | 1 (explorer), 3–5 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_mlr_data.py` and `scripts/export_regression_charts.py` |
 | | 1 (no-JavaScript fallback) | `scripts/render_multiple_linear_regression_figures.py` |
 | | 2 | `scripts/render_mlr_training_design.py` |
-| Joint sizing | all | private portfolio-optimization project (see below) |
+| Joint sizing | all | `scripts/export_optimizer_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
 | Attribution Part 1 | 1 | `scripts/render_attribution_pnl.py` |
 | | 2–3 | `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | `scripts/render_attribution_themes.py` |
