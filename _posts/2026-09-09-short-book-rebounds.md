@@ -110,6 +110,33 @@ since 2009, the package lost 8.9 points and reversal made less than one; the
 book's 18.9 points came almost entirely from stock-specific returns. In the
 rallies since 2009, reversal and short interest made 12 and 8 points.
 
+## Volatility changes reversal and stock selection
+
+Declines and rallies are known only after the fact. Market volatility over the
+previous month is known in advance, so I also split the days into thirds by the
+Russell 1000's trailing 21-session volatility.
+
+<div markdown="1">
+<p class="table-caption"><strong>Table 2: Reversal pays when markets are volatile; stock selection when they are calm.</strong> % of capital a year, before costs except for the book, January 1999–May 2026. Calm and volatile are the lowest and highest thirds of days by the index's volatility over the previous 21 sessions, below 11% and above 17% a year. The t-statistic of the difference allows for autocorrelation up to 21 sessions.</p>
+
+| | Calm | Volatile | Difference | t |
+| :--- | ---: | ---: | ---: | ---: |
+| Short-term return | +1.4 | +4.4 | +2.9 | 4.5 |
+| Stock-specific | +3.8 | −1.7 | −5.5 | −2.5 |
+| Short interest | +0.7 | +1.9 | +1.2 | 1.7 |
+| Long-term return | +0.7 | −0.3 | −1.0 | −1.0 |
+| Low-risk package | +3.0 | +2.5 | −0.5 | −0.2 |
+| Book, after costs | +8.6 | +5.3 | −3.3 | −1.0 |
+{: .research-table .comparison-table .compact-table }
+</div>
+
+Two effects are clear, and both hold before and after 2009. Short-term reversal
+earns three times as much when markets are volatile, which fits reversal as a
+payment for supplying liquidity when it is scarce. Stock-specific returns do the
+opposite: stock selection works in calm markets and loses money in volatile ones.
+The low-risk package barely depends on volatility, and the book as a whole earns
+less in volatile markets, by an amount the history can't pin down.
+
 ## The two deepest drawdowns
 
 <div class="research-figure responsive-figure">
@@ -138,6 +165,7 @@ Market direction matters much less to the book than to its long and short
 books. Low volatility and the net long dollars trade places in declines and
 rallies, so the low-risk package earns its keep in calmer markets and is a coin
 flip in stress. What protected the book in declines has shifted from short-term
-reversal and the package before 2009 to stock-specific returns since. That makes
+reversal and the package before 2009 to stock-specific returns since, and stock
+selection is the part that fails when markets turn volatile. That makes
 the book's defence in the next decline depend on stock selection the themes
 don't explain, which is the weakness I would most like to understand.
