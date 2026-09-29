@@ -114,3 +114,8 @@ Run `bundle exec jekyll build` after concrete article or asset changes, followed
 by `python3 scripts/check_site.py _site`. Check rendered references and
 `git diff --check`. Preserve any user-owned changes, especially `.DS_Store`,
 then commit and push `main` so the live page can be checked.
+
+Node comes from the conda env `blog-node`, linked into `~/.local/bin` (on
+`PATH`), so `node --test tests/blog_charts.test.cjs` runs without activating
+conda. `brew install node` fails on this Mac; if `node` is missing, restore
+the links to `~/anaconda3/envs/blog-node/bin/{node,npm,npx}`.
