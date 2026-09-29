@@ -1446,7 +1446,7 @@ L 326.782032 191.832777
 L 327.080316 191.025479
 L 328.273452 186.389316
 L 328.273452 186.389316
-" clip-path="url(#p9e1852dc02)" style="fill: none; stroke: #78a0c4; stroke-width: 1.7; stroke-linecap: square"/>
+" clip-path="url(#p9e1852dc02)" style="fill: none; stroke: #3987e5; stroke-width: 1.7; stroke-linecap: square"/>
    </g>
    <g id="text_5">
     <!-- Russell 1000 -->
@@ -1619,7 +1619,7 @@ z
    </g>
    <g id="text_6">
     <!-- Low-vol -->
-    <g style="fill: #78a0c4" transform="translate(336.327121 194.026582) scale(0.14 -0.14)">
+    <g style="fill: #3987e5" transform="translate(336.327121 194.026582) scale(0.14 -0.14)">
      <defs>
       <path id="DejaVuSans-Bold-2f" d="M 588 4666
 L 1791 4666
@@ -2737,7 +2737,7 @@ L 766.016796 212.391299
 L 768.603534 213.706905
 L 769.250219 215.00704
 L 769.250219 215.00704
-" clip-path="url(#p29b7c69b34)" style="fill: none; stroke: #78a0c4; stroke-width: 1.7; stroke-linecap: square"/>
+" clip-path="url(#p29b7c69b34)" style="fill: none; stroke: #3987e5; stroke-width: 1.7; stroke-linecap: square"/>
    </g>
    <g id="text_12">
     <!-- Russell 1000 -->
@@ -2758,7 +2758,7 @@ L 769.250219 215.00704
    </g>
    <g id="text_13">
     <!-- Low-vol -->
-    <g style="fill: #78a0c4" transform="translate(777.010434 222.644306) scale(0.14 -0.14)">
+    <g style="fill: #3987e5" transform="translate(777.010434 222.644306) scale(0.14 -0.14)">
      <use xlink:href="#DejaVuSans-Bold-2f"/>
      <use xlink:href="#DejaVuSans-Bold-52" transform="translate(63.71875 0)"/>
      <use xlink:href="#DejaVuSans-Bold-5a" transform="translate(132.421875 0)"/>

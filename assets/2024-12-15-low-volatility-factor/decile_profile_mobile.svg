@@ -490,7 +490,7 @@ L 55.371591 143.284792
 L 55.371591 26.135585
 L 31.265469 26.135585
 z
-" clip-path="url(#p7e3a1900d0)" style="fill: #4f7396"/>
+" clip-path="url(#p7e3a1900d0)" style="fill: #1baf7a"/>
    </g>
    <g id="patch_4">
     <path d="M 61.398122 143.284792
@@ -562,7 +562,7 @@ L 326.565469 143.284792
 L 326.565469 117.283469
 L 302.459346 117.283469
 z
-" clip-path="url(#p7e3a1900d0)" style="fill: #756a8e"/>
+" clip-path="url(#p7e3a1900d0)" style="fill: #eb6834"/>
    </g>
    <g id="text_16">
     <!-- Sharpe ratio -->
@@ -982,7 +982,7 @@ L 55.371591 310.451458
 L 55.371591 204.760013
 L 31.265469 204.760013
 z
-" clip-path="url(#pe0d8fb8cab)" style="fill: #4f7396"/>
+" clip-path="url(#pe0d8fb8cab)" style="fill: #1baf7a"/>
    </g>
    <g id="patch_15">
     <path d="M 61.398122 310.451458
@@ -1054,7 +1054,7 @@ L 326.565469 310.451458
 L 326.565469 306.96637
 L 302.459346 306.96637
 z
-" clip-path="url(#pe0d8fb8cab)" style="fill: #756a8e"/>
+" clip-path="url(#pe0d8fb8cab)" style="fill: #eb6834"/>
    </g>
    <g id="text_32">
     <!-- Annual return (%) -->
@@ -1387,7 +1387,7 @@ L 55.371591 477.618125
 L 55.371591 440.760239
 L 31.265469 440.760239
 z
-" clip-path="url(#pea9a289a58)" style="fill: #4f7396"/>
+" clip-path="url(#pea9a289a58)" style="fill: #1baf7a"/>
    </g>
    <g id="patch_26">
     <path d="M 61.398122 477.618125
@@ -1459,11 +1459,11 @@ L 326.565469 477.618125
 L 326.565469 360.468919
 L 302.459346 360.468919
 z
-" clip-path="url(#pea9a289a58)" style="fill: #756a8e"/>
+" clip-path="url(#pea9a289a58)" style="fill: #eb6834"/>
    </g>
    <g id="text_47">
     <!-- Low-vol -->
-    <g style="fill: #4f7396" transform="translate(31.265469 510.356328) scale(0.115 -0.115)">
+    <g style="fill: #1baf7a" transform="translate(31.265469 510.356328) scale(0.115 -0.115)">
      <defs>
       <path id="DejaVuSans-Bold-2f" d="M 588 4666
 L 1791 4666
@@ -1547,7 +1547,7 @@ z
    </g>
    <g id="text_48">
     <!-- High-vol -->
-    <g style="fill: #756a8e" transform="translate(272.46875 510.356328) scale(0.115 -0.115)">
+    <g style="fill: #eb6834" transform="translate(272.46875 510.356328) scale(0.115 -0.115)">
      <defs>
       <path id="DejaVuSans-Bold-2b" d="M 588 4666
 L 1791 4666

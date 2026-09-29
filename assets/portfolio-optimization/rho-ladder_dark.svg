@@ -22,12 +22,12 @@
 <text x="446.8" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
 <line x1="560.0" y1="300.0" x2="560.0" y2="305.0" stroke="#3B4250" stroke-width="1"/>
 <text x="560.0" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M107.0,237.2 L220.2,266.9 L333.5,268.3 L446.8,244.4 L560.0,121.3" fill="none" stroke="#6EB5A5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="237.2" r="4" fill="#6EB5A5"/>
-<circle cx="220.2" cy="266.9" r="4" fill="#6EB5A5"/>
-<circle cx="333.5" cy="268.3" r="6" fill="#C79261"/>
-<circle cx="446.8" cy="244.4" r="4" fill="#6EB5A5"/>
-<circle cx="560.0" cy="121.3" r="4" fill="#6EB5A5"/>
+<path d="M107.0,237.2 L220.2,266.9 L333.5,268.3 L446.8,244.4 L560.0,121.3" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="107.0" cy="237.2" r="4" fill="#AAB2C0"/>
+<circle cx="220.2" cy="266.9" r="4" fill="#AAB2C0"/>
+<circle cx="333.5" cy="268.3" r="6" fill="#3987E5"/>
+<circle cx="446.8" cy="244.4" r="4" fill="#AAB2C0"/>
+<circle cx="560.0" cy="121.3" r="4" fill="#AAB2C0"/>
 <text x="333.5" y="350.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
 <text x="638.0" y="43.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Beta bias</text>
 <text x="638.0" y="67.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Realized minus forecast beta, next holding period</text>
@@ -51,12 +51,12 @@
 <text x="1031.8" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
 <line x1="1145.0" y1="300.0" x2="1145.0" y2="305.0" stroke="#3B4250" stroke-width="1"/>
 <text x="1145.0" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M692.0,148.7 L805.2,142.6 L918.5,141.1 L1031.8,153.7 L1145.0,226.3" fill="none" stroke="#6EB5A5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="692.0" cy="148.7" r="4" fill="#6EB5A5"/>
-<circle cx="805.2" cy="142.6" r="4" fill="#6EB5A5"/>
-<circle cx="918.5" cy="141.1" r="6" fill="#C79261"/>
-<circle cx="1031.8" cy="153.7" r="4" fill="#6EB5A5"/>
-<circle cx="1145.0" cy="226.3" r="4" fill="#6EB5A5"/>
+<path d="M692.0,148.7 L805.2,142.6 L918.5,141.1 L1031.8,153.7 L1145.0,226.3" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="692.0" cy="148.7" r="4" fill="#AAB2C0"/>
+<circle cx="805.2" cy="142.6" r="4" fill="#AAB2C0"/>
+<circle cx="918.5" cy="141.1" r="6" fill="#3987E5"/>
+<circle cx="1031.8" cy="153.7" r="4" fill="#AAB2C0"/>
+<circle cx="1145.0" cy="226.3" r="4" fill="#AAB2C0"/>
 <text x="918.5" y="350.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
 <text x="53.0" y="403.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Annual turnover</text>
 <text x="53.0" y="427.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Two-way turnover (× capital)</text>
@@ -80,12 +80,12 @@
 <text x="446.8" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
 <line x1="560.0" y1="660.0" x2="560.0" y2="665.0" stroke="#3B4250" stroke-width="1"/>
 <text x="560.0" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M107.0,495.8 L220.2,560.2 L333.5,590.8 L446.8,599.5 L560.0,568.7" fill="none" stroke="#6EB5A5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="495.8" r="4" fill="#6EB5A5"/>
-<circle cx="220.2" cy="560.2" r="4" fill="#6EB5A5"/>
-<circle cx="333.5" cy="590.8" r="6" fill="#C79261"/>
-<circle cx="446.8" cy="599.5" r="4" fill="#6EB5A5"/>
-<circle cx="560.0" cy="568.7" r="4" fill="#6EB5A5"/>
+<path d="M107.0,495.8 L220.2,560.2 L333.5,590.8 L446.8,599.5 L560.0,568.7" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="107.0" cy="495.8" r="4" fill="#AAB2C0"/>
+<circle cx="220.2" cy="560.2" r="4" fill="#AAB2C0"/>
+<circle cx="333.5" cy="590.8" r="6" fill="#3987E5"/>
+<circle cx="446.8" cy="599.5" r="4" fill="#AAB2C0"/>
+<circle cx="560.0" cy="568.7" r="4" fill="#AAB2C0"/>
 <text x="333.5" y="710.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
 <text x="638.0" y="403.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Net Sharpe</text>
 <text x="638.0" y="427.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Mean across three schedules</text>
@@ -109,12 +109,12 @@
 <text x="1031.8" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
 <line x1="1145.0" y1="660.0" x2="1145.0" y2="665.0" stroke="#3B4250" stroke-width="1"/>
 <text x="1145.0" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M692.0,512.4 L805.2,489.2 L918.5,493.6 L1031.8,520.7 L1145.0,633.7" fill="none" stroke="#6EB5A5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="692.0" cy="512.4" r="4" fill="#6EB5A5"/>
-<circle cx="805.2" cy="489.2" r="4" fill="#6EB5A5"/>
-<circle cx="918.5" cy="493.6" r="6" fill="#C79261"/>
-<circle cx="1031.8" cy="520.7" r="4" fill="#6EB5A5"/>
-<circle cx="1145.0" cy="633.7" r="4" fill="#6EB5A5"/>
+<path d="M692.0,512.4 L805.2,489.2 L918.5,493.6 L1031.8,520.7 L1145.0,633.7" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="692.0" cy="512.4" r="4" fill="#AAB2C0"/>
+<circle cx="805.2" cy="489.2" r="4" fill="#AAB2C0"/>
+<circle cx="918.5" cy="493.6" r="6" fill="#3987E5"/>
+<circle cx="1031.8" cy="520.7" r="4" fill="#AAB2C0"/>
+<circle cx="1145.0" cy="633.7" r="4" fill="#AAB2C0"/>
 <text x="918.5" y="710.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
 </g>
 </svg>

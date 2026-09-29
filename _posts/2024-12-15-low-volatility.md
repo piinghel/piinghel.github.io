@@ -43,7 +43,7 @@ compounds at only about a third of a percent a year before costs, and Sharpe
 falls from 0.90 in decile 1 to 0.20 in decile 10.
 
 <div class="low-vol-figure decile-profile-figure responsive-figure">
-  {% include blog-chart.html chart="deciles" source="/assets/2024-12-15-low-volatility-factor/deciles.json" base="/assets/2024-12-15-low-volatility-factor/decile_profile" mobile="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile" label="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="16" %}
+  {% include blog-chart.html chart="deciles" source="/assets/2024-12-15-low-volatility-factor/deciles.json" base="/assets/2024-12-15-low-volatility-factor/decile_profile" mobile="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile" label="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="17" %}
 </div>
 
 
@@ -125,7 +125,7 @@ Figure 3 shows the paths. The hedge removes equal weighting's market bet but not
 its deep drawdowns.
 
 <div class="low-vol-figure performance-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/2024-12-15-low-volatility-factor/performance.json" base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" label="Growth and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="18" %}
+  {% include blog-chart.html chart="performance" source="/assets/2024-12-15-low-volatility-factor/performance.json" base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" label="Growth and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="19" %}
 </div>
 
 
@@ -152,7 +152,7 @@ In the later rally the short book did roughly what its beta implied, and the
 shortfall of about 6 points came from the long book.
 
 <div class="low-vol-figure regime-comparison-figure responsive-figure">
-  {% include blog-chart.html chart="rally-a" source="/assets/2024-12-15-low-volatility-factor/episodes.json" base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" label="Panel A: dot-com rally and reversal, with linked book contributions" version="20" %}
+  {% include blog-chart.html chart="rally-a" source="/assets/2024-12-15-low-volatility-factor/episodes.json" base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" label="Panel A: dot-com rally and reversal, with linked book contributions" version="21" %}
   <section class="blog-chart" data-source="{{ '/assets/2024-12-15-low-volatility-factor/episodes.json' | relative_url }}" data-chart="rally-b" aria-label="Panel B: April 2025–May 2026 rally, with linked book contributions">
     <div class="blog-chart-ui" hidden></div>
     <p class="blog-chart-status" role="status"></p>

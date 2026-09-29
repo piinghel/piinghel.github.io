@@ -57,9 +57,9 @@ def palette(dark: bool) -> dict[str, str]:
         "ink": "#e4eaf0" if dark else "#263747",
         "grid": "#43505f" if dark else "#d6dfe5",
         "shade": "#1b232d" if dark else "#f1f4f6",
-        "long": "#57bdab" if dark else "#268b7b",
-        "short": "#e69482" if dark else "#bd6559",
-        "net": "#8bb6ee" if dark else "#3a689c",
+        "long": "#199e70" if dark else "#1baf7a",
+        "short": "#d95926" if dark else "#eb6834",
+        "net": "#3987e5" if dark else "#2a78d6",
     }
 
 
