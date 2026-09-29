@@ -34,7 +34,7 @@ def export(article: Path, assets: Path, market: Path) -> None:
                 ["2008–09", "2007-12-31", "2009-12-31"], ["2020–21", "2019-12-31", "2021-12-31"]]
     write_chart(assets / "performance.json", [anchor, *dates], paths, {
         "performance": dict(kind="performance", series=[s["id"] for s in paths], log=True,
-                            drawdown=True, relative="ridge_0p1", marker="2022-01-03", episodes=episodes,
+                            drawdown=True, marker="2022-01-03", episodes=episodes,
                             note="Compounded mean daily net P&L across three schedules; zero-cash Sharpe. Table 4 reports per-schedule statistics.")})
     bars = []
     calendar = None

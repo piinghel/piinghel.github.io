@@ -90,7 +90,7 @@ def main():
     ]
     charts = {
         "performance": dict(kind="performance", series=["strategy", "equal", "hedged", "index"],
-                            drawdown=True, log=True, benchmark=False, relative="strategy", episodes=episodes,
+                            drawdown=True, log=True, benchmark=False, episodes=episodes,
                             note="After costs · growth from 100 at the selected start. Annual return compounds; Sharpe assumes zero cash return. 252 sessions/year."),
         "rally-a": dict(kind="performance", series=["gross", "index", "long", "short"],
                         heading="A · Dot-com rally, then reversal", statisticsOpen=False,

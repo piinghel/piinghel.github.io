@@ -182,7 +182,7 @@
       let range=cfg.initialRange||[...full], ready=false, busy=false, pending=false;
       const visible=new Map(series.map(s=>[s.id,s.visible!==false && (s.role!=='index'||cfg.benchmark===true)]));
       const optionalBoxes=new Map();
-      let relative=false,relativeBox,legendTimer;
+      let legendTimer;
       const ui=host.querySelector('.blog-chart-ui'); ui.hidden=false;
       if(cfg.heading)ui.append(element('p','blog-chart-heading',cfg.heading));
       const extra=element('details','blog-chart-options');
@@ -231,7 +231,6 @@
       if(benchmark) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();},controls);
       for(const s of series.filter(s=>s.visible===false))optionalBoxes.set(s.id,
         checkbox(s.label,false,value=>{visible.set(s.id,value);draw();},controls));
-      if(cfg.relative&&benchmark) relativeBox=checkbox('Strategy / index',false,value=>{relative=value;draw();});
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
       const statisticsPanel=element('details','blog-chart-statistics');statisticsPanel.open=cfg.statisticsOpen??false;
@@ -351,11 +350,6 @@
                 if(cfg.drawdown&&s.drawdown!==false)traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.drawdown[i]),{yaxis:'y2',showlegend:false,hovertemplate:'%{x|%d %b %Y}<br>%{y'+(s.additive?':.2f} points':':.2%}')+'<extra>%{fullData.name}</extra>'}));
               }
             }
-            if(relative) {
-              const a=path(all.get(cfg.relative).returns,first,last).equity,b=path(benchmark.returns,first,last).equity;
-              const ratio=a.map((v,i)=>v/b[i]*100),indices=displayIndices(dates,[ratio]);
-              traces.push({type:'scatter',mode:'lines',name:'Strategy / index',legendgroup:'relative',x:indices.map(i=>dates[i]),y:indices.map(i=>ratio[i]),line:{color:COLORS.strategy,dash:'dot'},hovertemplate:'%{y:.2f}<extra>Strategy / index</extra>'});
-            }
             if(cfg.marker&&range[0]<=cfg.marker&&range[1]>=cfg.marker)layout.shapes=[{type:'line',xref:'x',yref:'paper',x0:cfg.marker,x1:cfg.marker,y0:0,y1:1,line:{color:t.text,width:1,dash:'dot'}}];
             if(cfg.band)layout.shapes=[{type:'rect',xref:'paper',yref:'y',x0:0,x1:1,y0:cfg.band[0],y1:cfg.band[1],fillcolor:t.grid,opacity:.4,line:{width:0},layer:'below'}];
             if(cfg.shade)layout.shapes=[...(layout.shapes||[]),...cfg.shade.map(([a,b])=>({type:'rect',xref:'x',yref:'paper',x0:a,x1:b,y0:0,y1:1,fillcolor:t.grid,opacity:.3,line:{width:0},layer:'below'}))];
@@ -367,16 +361,14 @@
           windowLabel.title='Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
           for(const [id,box] of optionalBoxes)box.checked=visible.get(id);
-          if(relativeBox)relativeBox.checked=relative;
           if(!ready) {
             ready=true;
             graph.on('plotly_legendclick',event=>{
               clearTimeout(legendTimer);
               const id=graph.data[event.curveNumber].legendgroup;
               legendTimer=setTimeout(()=>{
-                if(id==='relative')relative=false;
-                else {const group=all.get(id)?.group,value=!visible.get(id);
-                  for(const s of series)if(s.id===id||(group&&s.group===group))visible.set(s.id,value);}
+                const group=all.get(id)?.group,value=!visible.get(id);
+                for(const s of series)if(s.id===id||(group&&s.group===group))visible.set(s.id,value);
                 draw();},320);
               return false;
             });
@@ -384,9 +376,9 @@
               clearTimeout(legendTimer);
               const id=graph.data[event.curveNumber].legendgroup;
               const group=all.get(id)?.group;
-              const isolated=series.filter(s=>visible.get(s.id)).every(s=>s.id===id||(group&&s.group===group))&&visible.get(id)&&!relative;
+              const isolated=series.filter(s=>visible.get(s.id)).every(s=>s.id===id||(group&&s.group===group))&&visible.get(id);
               for(const s of series)visible.set(s.id,isolated?(s.visible!==false&&(s.role!=='index'||cfg.benchmark===true)):(s.id===id||(group&&s.group===group)));
-              relative=id==='relative';draw();return false;
+              draw();return false;
             });
             graph.on('plotly_relayout',event=>{
               if(busy||bars)return;
