@@ -1,14 +1,15 @@
 <div class="pse" id="predictor-structure-explorer"
      data-source="/assets/multiple-linear-regression/predictor-structure.json?v=2">
   <details class="blog-chart-options"><summary>Explore</summary>
-  <div class="pse-controls">
-    <div class="pse-segments pse-periods" role="radiogroup" aria-label="Period"></div>
-    <div class="pse-segments" role="radiogroup" aria-label="Heatmap">
-      <button type="button" role="radio" aria-checked="true" data-level="predictor">80 predictors</button>
-      <button type="button" role="radio" aria-checked="false" data-level="theme">7 themes</button>
-    </div>
-  </div>
-  <div class="pse-controls pse-years"></div><div class="pse-controls pse-themes"></div>
+    <div class="blog-chart-row"><span class="blog-chart-row-label">Periods</span>
+      <div class="blog-chart-controls"><div class="blog-chart-segments pse-periods" role="radiogroup" aria-label="Period"></div></div></div>
+    <div class="blog-chart-row"><span class="blog-chart-row-label">Years</span><div class="blog-chart-controls pse-years"></div></div>
+    <div class="blog-chart-row"><span class="blog-chart-row-label">Heatmap</span>
+      <div class="blog-chart-controls"><div class="blog-chart-segments" role="radiogroup" aria-label="Heatmap">
+        <button type="button" role="radio" aria-checked="true" data-level="predictor">80 predictors</button>
+        <button type="button" role="radio" aria-checked="false" data-level="theme">7 themes</button>
+      </div></div></div>
+    <div class="blog-chart-row"><span class="blog-chart-row-label">Themes</span><div class="blog-chart-controls pse-themes"></div></div>
   </details>
   <p class="pse-status" role="status">Loading the interactive figure…</p>
   <p class="pse-heading"></p>
@@ -16,4 +17,4 @@
   <p class="pse-heading"></p>
   <div class="pse-ic" role="img" aria-label="Cumulative IC of each theme with the target for the selected period"></div>
 </div>
-<script src="/assets/js/predictor-structure.js?v=6" defer></script>
+<script src="/assets/js/predictor-structure.js?v=7" defer></script>

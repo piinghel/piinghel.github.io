@@ -137,7 +137,7 @@
       let sum = 0;
       const y = rows.map((r) => { sum += r.values[t] / data.scale; return sum; });
       return {
-        type: 'scatter', mode: 'lines', name: theme.short, x, y, visible:state.visible.has(t)?true:'legendonly', showlegend:state.visible.has(t), line: { color: themeColor(t), width: 2 },
+        type: 'scatter', mode: 'lines', name: theme.short, x, y, visible:state.visible.has(t)?true:'legendonly', line: { color: themeColor(t), width: 2 },
         hovertemplate: `${theme.short} %{y:.1f} · mean IC ${(sum / rows.length).toFixed(3)}<extra></extra>`,
       };
     });
@@ -205,15 +205,15 @@
     });
     const choices=root.querySelector('.pse-themes');
     data.themes.forEach((theme,i)=>{
-      const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.checked=state.visible.has(i);
+      const label=document.createElement('label'),box=document.createElement('input'),text=document.createElement('span');
+      label.className='blog-chart-check';box.type='checkbox';box.checked=state.visible.has(i);box.style.setProperty('--swatch',themeColor(i));
       box.onchange=()=>{if(box.checked)state.visible.add(i);else state.visible.delete(i);render();};
-      label.append(box,document.createTextNode(' '+theme.short));choices.append(label);
+      text.textContent=theme.short;label.append(box,text);choices.append(label);
     });
-    const yearControls=root.querySelector('.pse-years'),from=document.createElement('select'),to=document.createElement('select');
-    for(const [label,select] of [['From year ',from],['to ',to]]) {
-      const wrap=document.createElement('label');wrap.append(label,select);yearControls.append(wrap);
-      data.years.forEach(y=>select.add(new Option(y,y)));
-    }
+    const years=document.createElement('div'),dash=document.createElement('span'),from=document.createElement('select'),to=document.createElement('select');
+    years.className='blog-chart-range';dash.className='blog-chart-range-sep';dash.textContent='–';
+    for(const [label,select] of [['From year',from],['To year',to]]) {select.setAttribute('aria-label',label);data.years.forEach(y=>select.add(new Option(y,y)));}
+    years.append(from,dash,to);root.querySelector('.pse-years').append(years);
     from.value=data.years[0];to.value=data.years.at(-1);
     from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[6]=[Number(from.value),Number(to.value)];state.period=6;icRange=null;render();};
     const periods = root.querySelector('.pse-periods');

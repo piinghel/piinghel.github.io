@@ -13,7 +13,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<link rel="stylesheet" href="/assets/css/regression-article.css?v=10">
+<link rel="stylesheet" href="/assets/css/regression-article.css?v=11">
 
 In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
@@ -142,7 +142,7 @@ session, so a steadily rising line is a theme that kept ranking stocks well.
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period and click a legend entry to show or hide it. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
 
 Over the full period, size and volatility are the most coherent themes after
 the two-predictor market correlation: their predictors correlate 0.67 and 0.65

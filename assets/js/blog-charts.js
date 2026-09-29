@@ -104,6 +104,47 @@
     const el=document.createElement(tag); if(className) el.className=className;
     if(text!==undefined) el.textContent=text; return el;
   }
+  // Explore panels share one layout: a captioned row per group of controls.
+  function controlRow(parent,caption) {
+    const row=element('div','blog-chart-row'),body=element('div','blog-chart-controls');
+    row.append(element('span','blog-chart-row-label',caption),body);parent.append(row);return body;
+  }
+  function segments(parent,label) {
+    const group=element('div','blog-chart-segments');group.setAttribute('role','group');group.setAttribute('aria-label',label);
+    parent.append(group);return group;
+  }
+  function dateRange(parent,start,end) {
+    const wrap=element('div','blog-chart-range');
+    start.setAttribute('aria-label','Start date');end.setAttribute('aria-label','End date');
+    wrap.append(start,element('span','blog-chart-range-sep','–'),end);parent.append(wrap);
+  }
+  function checkControl(parent,label,checked,change) {
+    const wrap=element('label','blog-chart-check'),box=element('input');box.type='checkbox';box.checked=checked;
+    box.onchange=()=>change(box.checked);wrap.append(box,element('span','',label));parent.append(wrap);return {wrap,box};
+  }
+  // Window and period presets. Returns mark(range,custom), which presses the preset the chart shows:
+  // the one clicked if it still applies, else the last matching one. Full resets a custom view, so it
+  // never shows as pressed while that view is on.
+  function rangePresets(parent,full,episodes,current,apply) {
+    const presets=[],clamp=([a,b])=>[a<full[0]?full[0]:a,b>full[1]?full[1]:b];let chosen=null;
+    function add(group,label,target,isCustom=true) {
+      const button=element('button','',label),preset={button,target,isCustom};button.type='button';
+      button.onclick=()=>{chosen=preset;apply(...target(),isCustom);};group.append(button);presets.push(preset);
+    }
+    const windows=segments(controlRow(parent,'Window'),'Window length');
+    for(const years of [1,3,5]) add(windows,years+'Y',()=>{
+      const end=current()[1],d=new Date(end+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()-years);return clamp([d.toISOString().slice(0,10),end]);});
+    add(windows,'Full',()=>[...full],false);
+    if(episodes?.length) {
+      const periods=segments(controlRow(parent,'Periods'),'Periods');
+      for(const [label,a,b] of episodes) add(periods,label,()=>clamp([a,b]));
+    }
+    return (range,custom=false)=>{
+      const shows=preset=>{const [a,b]=preset.target();return a===range[0]&&b===range[1]&&(preset.isCustom||!custom);};
+      const pressed=chosen&&shows(chosen)?chosen:presets.filter(shows).at(-1);
+      for(const preset of presets)preset.button.setAttribute('aria-pressed',String(preset===pressed));
+    };
+  }
   function format(value,percent=false) {
     return value===null || !Number.isFinite(value) ? '—' :
       (percent ? (value*100).toFixed(1)+'%' : value.toFixed(2));
@@ -117,15 +158,14 @@
     const boxes=[],rowLabels=[];
     if(cfg.defaultCount) {
       const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
-      const controls=element('div','blog-chart-controls');extra.append(controls);
+      const controls=controlRow(extra,'Select');
       const reset=element('button','','Top '+cfg.defaultCount),clear=element('button','','Clear');
       reset.type=clear.type='button';controls.append(reset,clear);
       const search=element('input');search.type='search';search.placeholder='Find a predictor or theme';search.setAttribute('aria-label','Find a predictor or theme');controls.append(search);
       const choices=element('div','blog-chart-predictors');choices.setAttribute('role','group');choices.setAttribute('aria-label','Predictors to show');extra.append(choices);
       cfg.rows.forEach((name,i)=>{
-        const label=element('label'),box=element('input');box.type='checkbox';box.checked=selected.has(i);
-        box.onchange=()=>{if(box.checked)selected.add(i);else selected.delete(i);draw();};
-        label.append(box,document.createTextNode(' '+cfg.descriptions[i]));choices.append(label);boxes.push(box);rowLabels.push(label);
+        const {wrap:label,box}=checkControl(choices,cfg.descriptions[i],selected.has(i),checked=>{if(checked)selected.add(i);else selected.delete(i);draw();});
+        boxes.push(box);rowLabels.push(label);
       });
       search.oninput=()=>rowLabels.forEach((label,i)=>label.hidden=!((cfg.rows[i]+' '+cfg.descriptions[i]).toLowerCase().includes(search.value.trim().toLowerCase())));
       reset.onclick=()=>{selected=new Set(defaults);search.value='';rowLabels.forEach(label=>label.hidden=false);draw();};
@@ -187,26 +227,14 @@
       if(cfg.heading)ui.append(element('p','blog-chart-heading',cfg.heading));
       const extra=element('details','blog-chart-options');
       extra.append(element('summary','','Explore'));ui.append(extra);
-      const controls=element('div','blog-chart-controls'); extra.append(controls);
       const start=element('input'),end=element('input'); start.type=end.type='date';
-      start.setAttribute('aria-label','Start date'); end.setAttribute('aria-label','End date');
       [start,end].forEach(input=>{input.min=full[0];input.max=full[1];});
       function setRange(a,b) {
         if(a>b || b<full[0] || a>full[1]) {start.value=range[0];end.value=range[1];return;}
         range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b]; draw();
       }
-      for(const years of [1,3,5]) {
-        const button=element('button','',years+'Y'); button.type='button'; controls.append(button);
-        button.onclick=()=>{const d=new Date(range[1]+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()-years);setRange(d.toISOString().slice(0,10),range[1]);};
-      }
-      const reset=element('button','','Full'); reset.type='button';reset.onclick=()=>setRange(...full);controls.append(reset);
-      const episodes=element('div','blog-chart-controls');extra.append(episodes);
-      for(const [label,a,b] of cfg.episodes||[]) {
-        const button=element('button','',label); button.type='button';button.onclick=()=>setRange(a,b);episodes.append(button);
-      }
-      const dates=element('div','blog-chart-controls');
-      const startLabel=element('label','','From '),endLabel=element('label','','to ');
-      startLabel.append(start);endLabel.append(end);dates.append(startLabel,endLabel);extra.append(dates);
+      const markPresets=rangePresets(extra,full,cfg.episodes,()=>range,(a,b)=>setRange(a,b));
+      dateRange(controlRow(extra,'Dates'),start,end);
       start.onchange=end.onchange=()=>{if(start.value&&end.value)setRange(start.value,end.value);};
       const barMetrics=[
         ['annual_return','Annual return (%)','.0%','.1%'],
@@ -215,22 +243,22 @@
       ];
       let barMetric=barMetrics[0];
       if(cfg.kind==='grouped-bars') {
-        const label=element('label','','Metric '),select=element('select');
+        const select=element('select');select.setAttribute('aria-label','Metric');
         for(const [key,title] of barMetrics) {
           const option=element('option','',title);option.value=key;select.append(option);
         }
         select.onchange=()=>{barMetric=barMetrics.find(([key])=>key===select.value);draw();};
-        label.append(select);controls.append(label);
+        controlRow(extra,'Metric').append(select);
       }
       let benchmarkBox;
       const benchmark=series.find(s=>s.role==='index');
-      function checkbox(label,checked,change,container=dates) {
-        const wrap=element('label'),box=element('input'); box.type='checkbox';box.checked=checked;
-        box.onchange=()=>change(box.checked);wrap.append(box,document.createTextNode(' '+label));container.append(wrap);return box;
+      let show=null;
+      function checkbox(label,checked,change) {
+        show??=controlRow(extra,'Show');return checkControl(show,label,checked,change).box;
       }
-      if(benchmark) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();},controls);
+      if(benchmark) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
       for(const s of series.filter(s=>s.visible===false))optionalBoxes.set(s.id,
-        checkbox(s.label,false,value=>{visible.set(s.id,value);draw();},controls));
+        checkbox(s.label,false,value=>{visible.set(s.id,value);draw();}));
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
       const statisticsPanel=element('details','blog-chart-statistics');statisticsPanel.open=cfg.statisticsOpen??false;
@@ -265,7 +293,7 @@
       async function draw() {
         if(busy){pending=true;return;} busy=true;
         try {
-          start.value=range[0];end.value=range[1];
+          start.value=range[0];end.value=range[1];markPresets(range);
           const first=data.dates.findIndex(d=>d>=range[0]);
           let last=data.dates.length-1;while(last>=0&&data.dates[last]>range[1])last--;
           if(first<0||last<=first) {
@@ -417,22 +445,17 @@
     const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
     const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
-    const controls=element('div','blog-chart-controls');extra.append(controls);
     const full=[data.dates[0],data.dates.at(-1)];let range=[...full],leg='total',custom=false,busy=false,pending=false;
     let focus=cfg.focus||null;
     const expanded=new Set(focus?[focus]:[]),componentControls=new Map();
     const from=element('input'),to=element('input');from.type=to.type='date';
-    for(const [input,label,value] of [[from,'From',full[0]],[to,'to',full[1]]]) {
-      input.min=full[0];input.max=full[1];input.value=value;
-      const wrap=element('label','',label+' ');wrap.append(input);controls.append(wrap);
-    }
-    function setRange(a,b,isCustom=true){if(a>b)return;range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b];from.value=range[0];to.value=range[1];custom=isCustom;draw();}
+    for(const [input,value] of [[from,full[0]],[to,full[1]]]){input.min=full[0];input.max=full[1];input.value=value;}
+    function setRange(a,b,isCustom=true){if(a>b)return;range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b];from.value=range[0];to.value=range[1];custom=isCustom;markPresets(range,custom);draw();}
     from.onchange=to.onchange=()=>{if(from.value&&to.value)setRange(from.value,to.value);};
-    const presets=element('div','blog-chart-controls');extra.append(presets);
-    for(const years of [1,3,5]){const b=element('button','',years+'Y');b.type='button';b.onclick=()=>{const d=new Date(range[1]+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()-years);setRange(d.toISOString().slice(0,10),range[1]);};presets.append(b);}
-    const reset=element('button','','Full');reset.type='button';reset.onclick=()=>setRange(...full,false);presets.append(reset);
-    for(const [label,a,b] of cfg.episodes){const button=element('button','',label);button.type='button';button.onclick=()=>setRange(a,b);presets.append(button);}
-    const choices=element('div','blog-chart-controls');extra.append(choices);
+    const markPresets=rangePresets(extra,full,cfg.episodes,()=>range,setRange);
+    dateRange(controlRow(extra,'Dates'),from,to);
+    markPresets(range,custom);
+    const choices=controlRow(extra,'Show');
     if(cfg.kind==='attribution') {
       const select=element('select');for(const [key,label] of [['total','Book'],['long','Long leg'],['short','Short leg']])select.add(new Option(label,key));
       select.setAttribute('aria-label','Book or leg');select.onchange=async()=>{
@@ -453,7 +476,7 @@
       select.onchange=()=>{focus=select.value==='all'?null:cfg.focus;expanded.clear();if(focus)expanded.add(focus);draw();};choices.append(select);
     }
     for(const [key,label] of [['low_risk','Low-risk components'],['activity','Trading-activity components']]) {
-      const wrap=element('label'),box=element('input');box.type='checkbox';box.onchange=()=>{if(box.checked)expanded.add(key);else expanded.delete(key);draw();};wrap.append(box,document.createTextNode(' '+label));choices.append(wrap);componentControls.set(key,{wrap,box});
+      componentControls.set(key,checkControl(choices,label,false,checked=>{if(checked)expanded.add(key);else expanded.delete(key);draw();}));
     }
     const graph=element('div','blog-chart-plot');ui.append(graph);
     const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
