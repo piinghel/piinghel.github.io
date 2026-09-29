@@ -666,7 +666,7 @@ L 77.916141 150.573984
 L 77.916141 26.48269
 L 29.261563 26.48269
 z
-" clip-path="url(#p9f337dcb4c)" style="fill: #78a0c4"/>
+" clip-path="url(#p9f337dcb4c)" style="fill: #199e70"/>
    </g>
    <g id="patch_4">
     <path d="M 90.079785 150.573984
@@ -738,7 +738,7 @@ L 625.280147 150.573984
 L 625.280147 123.031861
 L 576.625568 123.031861
 z
-" clip-path="url(#p9f337dcb4c)" style="fill: #a093b8"/>
+" clip-path="url(#p9f337dcb4c)" style="fill: #d95926"/>
    </g>
    <g id="text_16">
     <!-- Sharpe ratio -->
@@ -1126,7 +1126,7 @@ L 77.916141 338.973984
 L 77.916141 227.019421
 L 29.261563 227.019421
 z
-" clip-path="url(#p9f12c1057b)" style="fill: #78a0c4"/>
+" clip-path="url(#p9f12c1057b)" style="fill: #199e70"/>
    </g>
    <g id="patch_15">
     <path d="M 90.079785 338.973984
@@ -1198,7 +1198,7 @@ L 625.280147 338.973984
 L 625.280147 335.282375
 L 576.625568 335.282375
 z
-" clip-path="url(#p9f12c1057b)" style="fill: #a093b8"/>
+" clip-path="url(#p9f12c1057b)" style="fill: #d95926"/>
    </g>
    <g id="text_32">
     <!-- Annual return (%) -->
@@ -1545,7 +1545,7 @@ L 77.916141 527.373984
 L 77.916141 488.331955
 L 29.261563 488.331955
 z
-" clip-path="url(#p4691590268)" style="fill: #78a0c4"/>
+" clip-path="url(#p4691590268)" style="fill: #199e70"/>
    </g>
    <g id="patch_26">
     <path d="M 90.079785 527.373984
@@ -1617,7 +1617,7 @@ L 625.280147 527.373984
 L 625.280147 403.28269
 L 576.625568 403.28269
 z
-" clip-path="url(#p4691590268)" style="fill: #a093b8"/>
+" clip-path="url(#p4691590268)" style="fill: #d95926"/>
    </g>
    <g id="text_47">
     <!-- Volatility (%) -->
