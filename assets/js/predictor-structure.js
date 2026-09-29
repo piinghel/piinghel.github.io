@@ -51,7 +51,7 @@
       height,
       margin: { l: 10, r: 10, t: 6, b: 40 },
       paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: cssVar('--page-surface'),
       font: { family: cssVar('--font-sans'), size: 12, color: cssVar('--muted-ink') },
       hoverlabel: { bgcolor: cssVar('--page-surface'), bordercolor: cssVar('--rule'), font: { color: ink } },
     };
@@ -151,7 +151,7 @@
       margin,
       showlegend: true, legend:{orientation:'h',x:0,y:1.15},
       hovermode: 'x unified',
-      xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '' },
+      xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '', spikecolor: cssVar('--muted-ink'), spikethickness: 1, spikedash: 'solid' },
       yaxis: { range, fixedrange: true, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
     });
     return { traces, layout };
@@ -164,7 +164,7 @@
     const period = `${from}–${to}`;
     const years=root.querySelectorAll('.pse-years select');
     if(years.length){years[0].value=from;years[1].value=to;}
-    root.querySelectorAll('.pse-themes input').forEach((box,i)=>box.checked=state.visible.has(i));
+    root.querySelectorAll('.pse-themes input').forEach((box,i)=>{box.checked=state.visible.has(i);box.style.setProperty('--swatch',themeColor(i));});
     root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.period) === state.period)));
     root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === state.level)));
     const config = { responsive: true, displayModeBar: false };

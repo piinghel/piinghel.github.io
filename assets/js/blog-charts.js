@@ -1,11 +1,28 @@
 /* Shared static chart renderer. Daily observations remain authoritative. */
 (function (root) {
   'use strict';
-  const COLORS = Object.freeze({strategy:'#376da4', comparison:'#8997a5', hedged:'#c47a26',
-    long:'#248577', short:'#bd6045', index:'#78669b', cash:'#7e825a',
-    low_risk:'#376da4', low_volatility:'#248577', beta:'#b89147',
-    market:'#78669b', size:'#ac6986', liquidity:'#5e8c8d', momentum:'#aa703e',
-    reversal:'#bf684e', short_interest:'#458f70', sector:'#85835b', residual:'#7c7e87'});
+  // Each role keeps one hue; dark mode uses its own step of that hue, validated against the page
+  // surface (#fff light, #0d1117 dark) for contrast and colour-blind separation. The index and
+  // comparison series are neutral greys, told apart by lightness. Figure 1's seven themes take the
+  // hues in their legend order, which is the order that validates.
+  const PALETTE = {
+    strategy:['#2a78d6','#3987e5'], long:['#1baf7a','#199e70'], short:['#eb6834','#d95926'],
+    hedged:['#eda100','#c98500'], index:['#57606a','#b1bac4'], comparison:['#a3acb5','#636c76'], cash:['#008300','#008300'],
+    momentum:['#2a78d6','#3987e5'], reversal:['#eb6834','#d95926'], low_volatility:['#1baf7a','#199e70'],
+    size:['#eda100','#c98500'], liquidity:['#e87ba4','#d55181'], market:['#008300','#008300'], short_interest:['#4a3aa7','#9085e9'],
+    low_risk:['#2a78d6','#3987e5'], beta:['#4a3aa7','#9085e9'], sector:['#a3acb5','#636c76'], residual:['#57606a','#b1bac4']};
+  const isDark=()=>typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';
+  const COLORS = Object.freeze(Object.defineProperties({},Object.fromEntries(Object.entries(PALETTE).map(
+    ([role,[light,dark]])=>[role,{enumerable:true,get:()=>isDark()?dark:light}]))));
+  // The plot area is painted in the page colour: Plotly outlines its hover line in the plot colour,
+  // and a transparent plot is treated as white, which drew a bright line in dark mode.
+  const plotSurface=()=>isDark()?'#0d1117':'#ffffff';
+  // Plotly's default hover box is white; match it to the page in both themes.
+  function hoverStyle() {
+    const dark=isDark();
+    return {bgcolor:dark?'#161b22':'#ffffff',bordercolor:dark?'#30363d':'#d0d7de',
+      font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'}};
+  }
 
   function stats(values, annualization=252) {
     if (values.length < 2) return null;
@@ -197,7 +214,7 @@
         colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-Math.max(.12,40/(height-90)),yanchor:'top',
           tickvals:[-limit,0,limit],tickformat:'.2f',tickangle:0,outlinewidth:0,title:{text:cfg.unit,side:'top',font:{size:12}}}}],
         {height,margin:{l:10,r:10,t:10,b:80},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
-          paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+          paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
           xaxis:{type:'category',tickangle:0,tickvals:mobile?[cfg.columns[0],cfg.columns[Math.floor(cfg.columns.length/2)],cfg.columns.at(-1)]:cfg.columns},
           yaxis:{type:'category',autorange:'reversed',automargin:true,tickvals:indices.map(String),ticktext:indices.map(i=>rowLabel(cfg.rows[i]))}}, {responsive:true,displayModeBar:false});
     }
@@ -305,10 +322,11 @@
           const mobile=host.clientWidth<550;
           const layout={autosize:true,height:bars?540:cfg.drawdown||cfg.contributions?560:420,
             margin:{l:55,r:15,t:bars?35:mobile?100:75,b:45},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11:13,color:t.text},
-            paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',hovermode:bars?'closest':'x unified',
+            paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),hovermode:bars?'closest':'x unified',
             modebar:{color:t.text,bgcolor:'rgba(0,0,0,0)',activecolor:COLORS.strategy},
             dragmode:'zoom',showlegend:true,legend:{orientation:'h',y:1.16,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
-            xaxis:{type:bars?'category':'date',gridcolor:t.grid,showgrid:false,automargin:true},
+            xaxis:{type:bars?'category':'date',gridcolor:t.grid,showgrid:false,automargin:true,
+              spikecolor:isDark()?'#8b949e':'#6e7681',spikethickness:1,spikedash:'solid'},
             yaxis:{gridcolor:t.grid,zerolinecolor:t.grid,automargin:true},annotations:[]};
           const color=s=>COLORS[s.role]||COLORS.comparison;
           function trace(s,x,y,extra={}) {
@@ -503,7 +521,7 @@
         const shown=keys.map(k=>all.get(leg+'_'+k));
         const ids=indices(...range),traces=[];
         const layout={autosize:true,margin:{l:mobile?145:160,r:20,t:45,b:45},
-          font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,annotations:[],barmode:'overlay'};
+          font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),showlegend:false,annotations:[],barmode:'overlay'};
         function title(text,x,y){layout.annotations.push({text,x,y,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:12}});}
         if(cfg.kind==='attribution-years') {
           const cols=mobile?2:3,rows=Math.ceil(shown.length/cols);layout.height=rows*(mobile?185:190)+50;layout.margin={l:40,r:10,t:35,b:30};
@@ -570,7 +588,7 @@
       const dark=document.documentElement.dataset.theme==='dark',ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
       graph.style.height=(rows*270)+'px';
       const layout={autosize:true,height:rows*270,margin:{l:50,r:20,t:35,b:40},showlegend:false,
-        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',annotations:[]},traces=[];
+        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),annotations:[]},traces=[];
       cfg.panels.forEach((p,i)=>{
         const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
         const xd=[col/cols+.02,(col+1)/cols-.06],yd=[1-(row+1)/rows+.28/rows,1-row/rows-.08/rows];
