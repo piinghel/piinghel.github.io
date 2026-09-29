@@ -16,7 +16,7 @@
 .post-content .blog-chart th,.post-content .blog-chart td { padding:.3rem .55rem; text-align:right; white-space:nowrap; }
 .post-content .blog-chart th:first-child { text-align:left; white-space:normal; }
 .blog-chart-plot { width:100%; min-width:0; }
-.blog-chart-error { color:#a33f34; }
+.blog-chart-error { color:var(--ink); font-weight:600; }
 @media(max-width:600px) { .blog-chart { font-size:12px; } }
 
 /* Explore panels: captioned rows of same-height controls on a 28px rhythm. */

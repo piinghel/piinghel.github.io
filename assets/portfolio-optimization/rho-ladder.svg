@@ -25,7 +25,7 @@
 <path d="M107.0,237.2 L220.2,266.9 L333.5,268.3 L446.8,244.4 L560.0,121.3" fill="none" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="107.0" cy="237.2" r="4" fill="#64748B"/>
 <circle cx="220.2" cy="266.9" r="4" fill="#64748B"/>
-<circle cx="333.5" cy="268.3" r="6" fill="#2A78D6"/>
+<circle cx="333.5" cy="268.3" r="6" fill="#24292F"/>
 <circle cx="446.8" cy="244.4" r="4" fill="#64748B"/>
 <circle cx="560.0" cy="121.3" r="4" fill="#64748B"/>
 <text x="333.5" y="350.0" fill="#667085" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
@@ -54,7 +54,7 @@
 <path d="M692.0,148.7 L805.2,142.6 L918.5,141.1 L1031.8,153.7 L1145.0,226.3" fill="none" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="692.0" cy="148.7" r="4" fill="#64748B"/>
 <circle cx="805.2" cy="142.6" r="4" fill="#64748B"/>
-<circle cx="918.5" cy="141.1" r="6" fill="#2A78D6"/>
+<circle cx="918.5" cy="141.1" r="6" fill="#24292F"/>
 <circle cx="1031.8" cy="153.7" r="4" fill="#64748B"/>
 <circle cx="1145.0" cy="226.3" r="4" fill="#64748B"/>
 <text x="918.5" y="350.0" fill="#667085" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
@@ -83,7 +83,7 @@
 <path d="M107.0,495.8 L220.2,560.2 L333.5,590.8 L446.8,599.5 L560.0,568.7" fill="none" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="107.0" cy="495.8" r="4" fill="#64748B"/>
 <circle cx="220.2" cy="560.2" r="4" fill="#64748B"/>
-<circle cx="333.5" cy="590.8" r="6" fill="#2A78D6"/>
+<circle cx="333.5" cy="590.8" r="6" fill="#24292F"/>
 <circle cx="446.8" cy="599.5" r="4" fill="#64748B"/>
 <circle cx="560.0" cy="568.7" r="4" fill="#64748B"/>
 <text x="333.5" y="710.0" fill="#667085" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
@@ -112,7 +112,7 @@
 <path d="M692.0,512.4 L805.2,489.2 L918.5,493.6 L1031.8,520.7 L1145.0,633.7" fill="none" stroke="#64748B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="692.0" cy="512.4" r="4" fill="#64748B"/>
 <circle cx="805.2" cy="489.2" r="4" fill="#64748B"/>
-<circle cx="918.5" cy="493.6" r="6" fill="#2A78D6"/>
+<circle cx="918.5" cy="493.6" r="6" fill="#24292F"/>
 <circle cx="1031.8" cy="520.7" r="4" fill="#64748B"/>
 <circle cx="1145.0" cy="633.7" r="4" fill="#64748B"/>
 <text x="918.5" y="710.0" fill="#667085" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>

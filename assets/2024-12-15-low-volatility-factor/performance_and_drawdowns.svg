@@ -2449,7 +2449,7 @@ L 532.877772 73.132737
 L 533.635696 75.989857
 L 533.814031 74.683081
 L 534.170701 75.951574
-" clip-path="url(#p8a692229bb)" style="fill: none; stroke: #2a78d6; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p8a692229bb)" style="fill: none; stroke: #24292f; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_14">
     <path d="M 31.399781 222.797339
@@ -3648,11 +3648,11 @@ L 533.769447 47.429959
 L 533.947782 48.074114
 L 534.170701 49.695386
 L 534.170701 49.695386
-" clip-path="url(#p8a692229bb)" style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #eda100; stroke-width: 1.5"/>
+" clip-path="url(#p8a692229bb)" style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #7447c9; stroke-width: 1.5"/>
    </g>
    <g id="text_6">
     <!-- Hedged -->
-    <g style="fill: #eda100" transform="translate(540.189507 45.951734) scale(0.11 -0.11)">
+    <g style="fill: #7447c9" transform="translate(540.189507 45.951734) scale(0.11 -0.11)">
      <defs>
       <path id="DejaVuSans-2b" d="M 628 4666
 L 1259 4666
@@ -3763,7 +3763,7 @@ z
      <use xlink:href="#DejaVuSans-47" transform="translate(325.234375 0)"/>
     </g>
     <!-- equal-weight -->
-    <g style="fill: #eda100" transform="translate(540.189507 59.154742) scale(0.11 -0.11)">
+    <g style="fill: #7447c9" transform="translate(540.189507 59.154742) scale(0.11 -0.11)">
      <defs>
       <path id="DejaVuSans-54" d="M 947 1747
 Q 947 1113 1208 752
@@ -3946,7 +3946,7 @@ z
    </g>
    <g id="text_7">
     <!-- Inverse-volatility -->
-    <g style="fill: #2a78d6" transform="translate(540.189507 82.553238) scale(0.11 -0.11)">
+    <g style="fill: #24292f" transform="translate(540.189507 82.553238) scale(0.11 -0.11)">
      <defs>
       <path id="DejaVuSans-2c" d="M 628 4666
 L 1259 4666
@@ -22683,7 +22683,7 @@ L 532.877772 348.506457
 L 533.635696 353.49566
 L 533.814031 351.238176
 L 534.170701 353.430105
-" clip-path="url(#p6eaf1d7d42)" style="fill: none; stroke: #2a78d6; stroke-width: 1.5; stroke-linecap: square"/>
+" clip-path="url(#p6eaf1d7d42)" style="fill: none; stroke: #24292f; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="line2d_28">
     <path d="M 31.399781 335.651104
@@ -23881,7 +23881,7 @@ L 533.769447 359.230071
 L 533.947782 360.27707
 L 534.170701 362.871339
 L 534.170701 362.871339
-" clip-path="url(#p6eaf1d7d42)" style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #eda100; stroke-width: 1.5"/>
+" clip-path="url(#p6eaf1d7d42)" style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #7447c9; stroke-width: 1.5"/>
    </g>
    <g id="text_21">
     <!-- Drawdown (%) -->

@@ -39,7 +39,7 @@ def render(*, dark: bool, mobile: bool) -> None:
         "ink": "#e4e7ea" if dark else "#25313a",
         "muted": "#9aa6af" if dark else "#5d6b76",
         "train": "#2c4a63" if dark else "#d6e4f0",
-        "predict": "#199e70" if dark else "#1baf7a",
+        "predict": "#3987e5" if dark else "#2a78d6",
         "test": "#1b222b" if dark else "#f1f3f5",
     }
     # Point sizes that render at roughly 12-13 CSS px at each viewport's display width.

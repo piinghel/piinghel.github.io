@@ -104,8 +104,8 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
         "bg": "#0d1117" if dark else "#ffffff",
         "ink": "#e4e7ea" if dark else "#25313a",
         "grid": "#37414a" if dark else "#e2e6e9",
-        "pos": "#199e70" if dark else "#1baf7a",
-        "neg": "#d95926" if dark else "#eb6834",
+        "pos": "#3987e5" if dark else "#2a78d6",
+        "neg": "#8b949e" if dark else "#6e7781",
     }
     size = 10.5 if mobile else 11
     rows, y, positions = [], 0.0, []
@@ -180,8 +180,8 @@ def colors(dark: bool) -> dict:
         "ink": "#e4e7ea" if dark else "#25313a",
         "muted": "#9aa4ad" if dark else "#66737d",
         "grid": "#37414a" if dark else "#e2e6e9",
-        "pos": "#199e70" if dark else "#1baf7a",
-        "neg": "#d95926" if dark else "#eb6834",
+        "pos": "#3987e5" if dark else "#2a78d6",
+        "neg": "#8b949e" if dark else "#6e7781",
     }
 
 

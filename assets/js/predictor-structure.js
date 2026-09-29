@@ -57,7 +57,7 @@
     };
   }
 
-  const colorscale = () => [[0, window.BlogCharts.COLORS.short], [0.5, document.documentElement.dataset.theme==='dark'?'#252c34':'#f6f6f4'], [1, window.BlogCharts.COLORS.strategy]];
+  const colorscale = () => [[0, window.BlogCharts.COLORS.short], [0.5, document.documentElement.dataset.theme==='dark'?'#252c34':'#f6f6f4'], [1, window.BlogCharts.COLORS.long]];
   const colorbar = {
     orientation: 'h', thickness: 8, len: 0.45, x: 1, xanchor: 'right', y: -0.02, yanchor: 'top',
     tickvals: [-1, 0, 1], outlinewidth: 0,

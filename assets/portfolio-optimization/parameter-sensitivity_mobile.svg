@@ -26,7 +26,7 @@
 <line x1="260.0" y1="259.7" x2="260.0" y2="188.1" stroke="#64748B" stroke-width="2"/>
 <line x1="255.0" y1="259.7" x2="265.0" y2="259.7" stroke="#64748B" stroke-width="2"/>
 <line x1="255.0" y1="188.1" x2="265.0" y2="188.1" stroke="#64748B" stroke-width="2"/>
-<circle cx="260.0" cy="217.2" r="6" fill="#2A78D6"/>
+<circle cx="260.0" cy="217.2" r="6" fill="#24292F"/>
 <text x="260.0" y="323.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">2.5</text>
 <line x1="440.0" y1="268.3" x2="440.0" y2="207.2" stroke="#64748B" stroke-width="2"/>
 <line x1="435.0" y1="268.3" x2="445.0" y2="268.3" stroke="#64748B" stroke-width="2"/>
@@ -58,7 +58,7 @@
 <line x1="320.0" y1="837.7" x2="320.0" y2="766.1" stroke="#64748B" stroke-width="2"/>
 <line x1="315.0" y1="837.7" x2="325.0" y2="837.7" stroke="#64748B" stroke-width="2"/>
 <line x1="315.0" y1="766.1" x2="325.0" y2="766.1" stroke="#64748B" stroke-width="2"/>
-<circle cx="320.0" cy="795.2" r="6" fill="#2A78D6"/>
+<circle cx="320.0" cy="795.2" r="6" fill="#24292F"/>
 <text x="320.0" y="901.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">175</text>
 <line x1="440.0" y1="848.9" x2="440.0" y2="765.6" stroke="#64748B" stroke-width="2"/>
 <line x1="435.0" y1="848.9" x2="445.0" y2="848.9" stroke="#64748B" stroke-width="2"/>
@@ -78,7 +78,7 @@
 <text x="80.0" y="608.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">0</text>
 <circle cx="152.0" cy="476.5" r="6" fill="#64748B"/>
 <text x="152.0" y="608.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">1</text>
-<circle cx="260.0" cy="517.2" r="6" fill="#2A78D6"/>
+<circle cx="260.0" cy="517.2" r="6" fill="#24292F"/>
 <text x="260.0" y="608.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">2.5</text>
 <circle cx="440.0" cy="551.4" r="6" fill="#64748B"/>
 <text x="440.0" y="608.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">5</text>
@@ -95,7 +95,7 @@
 <text x="80.0" y="1186.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">75</text>
 <circle cx="200.0" cy="1070.9" r="6" fill="#64748B"/>
 <text x="200.0" y="1186.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">125</text>
-<circle cx="320.0" cy="1095.2" r="6" fill="#2A78D6"/>
+<circle cx="320.0" cy="1095.2" r="6" fill="#24292F"/>
 <text x="320.0" y="1186.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">175</text>
 <circle cx="440.0" cy="1111.3" r="6" fill="#64748B"/>
 <text x="440.0" y="1186.0" fill="#667085" font-size="18" font-weight="400" text-anchor="middle">225</text>

@@ -135,10 +135,10 @@ session, so a steadily rising line is a theme that kept ranking stocks well.
 
 <noscript markdown="0">
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/predictor-correlation" mobile="/assets/multiple-linear-regression/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="3" %}
+    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/predictor-correlation" mobile="/assets/multiple-linear-regression/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="4" %}
   </div>
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-ic-by-year" mobile="/assets/multiple-linear-regression/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2021." version="3" %}
+    {% include theme-svg-figure.html base="/assets/multiple-linear-regression/theme-ic-by-year" mobile="/assets/multiple-linear-regression/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2021." version="4" %}
   </div>
 </noscript>
 
@@ -215,7 +215,7 @@ shifts in Figure 1, but with less data per fit its weights would move more
 between refits; I prefer stable weights.[^fitting]
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="8" %}
+  {% include theme-svg-figure.html base="/assets/multiple-linear-regression/expanding-walk-forward" mobile="/assets/multiple-linear-regression/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="9" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the later period; the month-long gap between training and predictions is too short to see at this scale.</p>

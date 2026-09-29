@@ -13,7 +13,7 @@ class FigureStyle:
     ink: str = "#33404b"
     muted: str = "#6a7883"
     white: str = "#ffffff"
-    heat_negative: str = "#9A4E22"
+    heat_negative: str = "#57606A"
     heat_positive: str = "#2E5B82"
     output_suffix: str = ""
 
@@ -24,7 +24,7 @@ def dark_figure_style() -> FigureStyle:
         ink="#C9D1D9",
         muted="#8B949E",
         white="#0D1117",
-        heat_negative="#E3A574",
+        heat_negative="#8B949E",
         heat_positive="#8DB8DE",
         output_suffix="_dark",
     )

@@ -1,16 +1,17 @@
 /* Shared static chart renderer. Daily observations remain authoritative. */
 (function (root) {
   'use strict';
-  // Each role keeps one hue; dark mode uses its own step of that hue, validated against the page
-  // surface (#fff light, #0d1117 dark) for contrast and colour-blind separation. The index and
-  // comparison series are neutral greys, told apart by lightness. Figure 1's seven themes take the
-  // hues in their legend order, which is the order that validates.
+  // No red, orange or green. Long and positive values are blue, short and negative values slate;
+  // the strategy or net line is ink, comparisons grey, the index gold and the hedged book violet.
+  // Each role has its own light and dark step, validated against the page surface (#fff light,
+  // #0d1117 dark) for contrast and colour-blind separation. Figure 1's seven themes take a
+  // validated order of blue, magenta, violet, gold and cyan, with slate and ink.
   const PALETTE = {
-    strategy:['#2a78d6','#3987e5'], long:['#1baf7a','#199e70'], short:['#eb6834','#d95926'],
-    hedged:['#eda100','#c98500'], index:['#57606a','#b1bac4'], comparison:['#a3acb5','#636c76'], cash:['#008300','#008300'],
-    momentum:['#2a78d6','#3987e5'], reversal:['#eb6834','#d95926'], low_volatility:['#1baf7a','#199e70'],
-    size:['#eda100','#c98500'], liquidity:['#e87ba4','#d55181'], market:['#008300','#008300'], short_interest:['#4a3aa7','#9085e9'],
-    low_risk:['#2a78d6','#3987e5'], beta:['#4a3aa7','#9085e9'], sector:['#a3acb5','#636c76'], residual:['#57606a','#b1bac4']};
+    strategy:['#24292f','#c9d1d9'], long:['#2a78d6','#3987e5'], short:['#6e7781','#8b949e'],
+    comparison:['#a3acb5','#545d68'], index:['#b58900','#a8891a'], hedged:['#7447c9','#9085e9'], cash:['#0e8fad','#2aa3c4'],
+    momentum:['#2a78d6','#3987e5'], reversal:['#c2458a','#cc5aa3'], low_volatility:['#7447c9','#9085e9'],
+    size:['#b58900','#a8891a'], liquidity:['#0e8fad','#2aa3c4'], market:['#6e7781','#8b949e'], short_interest:['#24292f','#c9d1d9'],
+    low_risk:['#2a78d6','#3987e5'], beta:['#7447c9','#9085e9'], sector:['#a3acb5','#545d68'], residual:['#6e7781','#8b949e']};
   const isDark=()=>typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';
   const COLORS = Object.freeze(Object.defineProperties({},Object.fromEntries(Object.entries(PALETTE).map(
     ([role,[light,dark]])=>[role,{enumerable:true,get:()=>isDark()?dark:light}]))));
@@ -208,7 +209,7 @@
       }
       const limit=Math.max(...cfg.values.flat().map(Math.abs));
       await Plotly.react(graph,[{type:'heatmap',x:cfg.columns,y:indices.map(String),z:indices.map(i=>cfg.values[i]),
-        zmin:-limit,zmax:limit,colorscale:[[0,COLORS.short],[.5,dark?'#252c34':'#f6f6f4'],[1,COLORS.strategy]],
+        zmin:-limit,zmax:limit,colorscale:[[0,COLORS.short],[.5,dark?'#252c34':'#f6f6f4'],[1,COLORS.long]],
         xgap:2,ygap:2,customdata:indices.map(i=>cfg.columns.map(()=>cfg.descriptions[i])),
         hovertemplate:'%{customdata}<br>%{x}: %{z:.3f}<extra></extra>',
         colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-Math.max(.12,40/(height-90)),yanchor:'top',

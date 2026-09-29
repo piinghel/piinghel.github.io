@@ -13,7 +13,7 @@ series_id: performance-attribution
 series_order: 1
 ---
 
-<link rel="stylesheet" href="/assets/css/attribution-article.css?v=4">
+<link rel="stylesheet" href="/assets/css/attribution-article.css?v=5">
 
 The portfolio from my [optimizer
 article](/quants/2026/08/29/portfolio-optimization.html) compounded at about
@@ -54,7 +54,7 @@ even though they made money in each of the 15 declines of 15% or more since 1999
 ([Part 2](/quants/short-book-rebounds.html#market-regimes)).
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="7" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
+  {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="8" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
 
@@ -333,7 +333,7 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
 
-{% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="5" %}
+{% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="6" %}
 <p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the selected dates; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
 
 Over the whole period the book averaged 9.6% a year before costs. Four sources
@@ -372,7 +372,7 @@ from low volatility and −0.02 from beta; stock-specific returns take off about
 {: #how-it-changed }
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="5" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
+  {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="6" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Short interest contributed in every block; reversal's contribution fell.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
 
@@ -387,24 +387,44 @@ from 2022 to 2025 and then lost about 8 points in the first five months of 2026,
 while medium- and long-term return gained; the two moved against each other day to day,
 which suggests an exposure the themes don't capture.
 
-<div markdown="1">
-<p class="table-caption"><strong>Table 2: The low-risk package and its components.</strong> The bold subtotal is the sum of low volatility, beta and net market exposure, rounded on its own, so it can differ from the rounded parts by 0.1. Return before costs, % of capital a year, and share of the gross book's daily variance, %. Standard errors allow for autocorrelation up to 21 sessions. Blocks are five years to 2018, then 2019–21 and 2022–May 2026.</p>
+<p class="table-caption"><strong>Table 2: What each theme earned, and the risk it took, in each period.</strong> Average return before costs and each theme’s share of the gross book’s daily variance. The low-risk package is the sum of low volatility, beta and net market exposure, rounded on its own; the themes add up to the book and the risk shares to 100, up to rounding. The standard error allows for autocorrelation up to 21 sessions. Periods are five years to 2018, then 2019–21 and 2022–May 2026.</p>
 
-| | 1999–03 | 2004–08 | 2009–13 | 2014–18 | 2019–21 | 2022–26 |
-| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
-| **Return, % a year** | | | | | | |
-| Low volatility | 2.2 | 1.5 | −1.8 | 2.6 | −1.8 | −2.0 |
-| Beta | 0.6 | 0.3 | −0.4 | −0.4 | 0.3 | −0.7 |
-| Net market exposure | 0.5 | −0.1 | 4.7 | 1.7 | 5.0 | 3.5 |
-| **Low-risk package** | **3.4** | **1.7** | **2.6** | **3.9** | **3.6** | **0.9** |
-| Standard error | 2.6 | 1.3 | 1.5 | 1.4 | 3.5 | 2.0 |
-| **Share of risk, %** | | | | | | |
-| Low volatility | 7 | −2 | 19 | 12 | 17 | 27 |
-| Beta | 0 | 0 | 4 | 1 | 3 | 2 |
-| Net market exposure | 26 | 25 | 6 | 11 | 18 | 3 |
-| **Low-risk package** | **34** | **23** | **28** | **24** | **38** | **32** |
-| **Book return, % a year** | 10.7 | 8.6 | 9.0 | 11.5 | 11.0 | 7.2 |
-{: .research-table .comparison-table .compact-table .attribution-periods }
+<div class="research-table-scroll">
+  <table class="research-table comparison-table theme-periods">
+    <thead><tr><td></td><th scope="col">1999–03</th><th scope="col">2004–08</th><th scope="col">2009–13</th><th scope="col">2014–18</th><th scope="col">2019–21</th><th scope="col">2022–26</th></tr></thead>
+    <tbody>
+      <tr class="section"><th scope="rowgroup" colspan="7">Return before costs, % of capital a year</th></tr>
+      <tr><th scope="row">Short interest</th><td>1.6</td><td>1.4</td><td>0.9</td><td>1.2</td><td>0.9</td><td>2.0</td></tr>
+      <tr><th scope="row">Short-term return</th><td>8.1</td><td>4.3</td><td>2.8</td><td>2.1</td><td>1.5</td><td>0.3</td></tr>
+      <tr><th scope="row">Medium- and long-term return</th><td>1.1</td><td>0.4</td><td>0.1</td><td>1.6</td><td>0.9</td><td>2.9</td></tr>
+      <tr><th scope="row">Size</th><td>−1.0</td><td>−0.5</td><td>−0.6</td><td>0.0</td><td>0.7</td><td>0.4</td></tr>
+      <tr><th scope="row">Trading activity</th><td>−0.2</td><td>−0.3</td><td>−0.2</td><td>0.0</td><td>0.0</td><td>0.1</td></tr>
+      <tr class="package"><th scope="row">Low-risk package</th><td>3.4</td><td>1.7</td><td>2.6</td><td>3.9</td><td>3.6</td><td>0.9</td></tr>
+      <tr class="part"><th scope="row">Low volatility</th><td>2.2</td><td>1.5</td><td>−1.8</td><td>2.6</td><td>−1.8</td><td>−2.0</td></tr>
+      <tr class="part"><th scope="row">Beta</th><td>0.6</td><td>0.3</td><td>−0.4</td><td>−0.4</td><td>0.3</td><td>−0.7</td></tr>
+      <tr class="part"><th scope="row">Net market exposure</th><td>0.5</td><td>−0.1</td><td>4.7</td><td>1.7</td><td>5.0</td><td>3.5</td></tr>
+      <tr class="se"><th scope="row">Package standard error</th><td>2.6</td><td>1.3</td><td>1.5</td><td>1.4</td><td>3.5</td><td>2.0</td></tr>
+      <tr><th scope="row">Sector tilt</th><td>−1.2</td><td>−0.7</td><td>−0.1</td><td>−0.1</td><td>1.0</td><td>0.5</td></tr>
+      <tr><th scope="row">Stock-specific</th><td>−1.7</td><td>2.3</td><td>3.3</td><td>2.8</td><td>2.2</td><td>0.3</td></tr>
+      <tr><th scope="row">Unloaded holdings</th><td>0.6</td><td>0.0</td><td>0.1</td><td>0.0</td><td>0.1</td><td>−0.2</td></tr>
+      <tr class="total"><th scope="row">Book</th><td>10.7</td><td>8.6</td><td>9.0</td><td>11.5</td><td>11.0</td><td>7.2</td></tr>
+    </tbody>
+    <tbody>
+      <tr class="section"><th scope="rowgroup" colspan="7">Share of the book’s risk, %</th></tr>
+      <tr><th scope="row">Short interest</th><td>5</td><td>7</td><td>5</td><td>5</td><td>4</td><td>6</td></tr>
+      <tr><th scope="row">Short-term return</th><td>6</td><td>16</td><td>6</td><td>6</td><td>11</td><td>4</td></tr>
+      <tr><th scope="row">Medium- and long-term return</th><td>10</td><td>1</td><td>8</td><td>20</td><td>23</td><td>26</td></tr>
+      <tr><th scope="row">Size</th><td>3</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+      <tr><th scope="row">Trading activity</th><td>5</td><td>5</td><td>3</td><td>3</td><td>3</td><td>5</td></tr>
+      <tr class="package"><th scope="row">Low-risk package</th><td>34</td><td>23</td><td>28</td><td>24</td><td>38</td><td>32</td></tr>
+      <tr class="part"><th scope="row">Low volatility</th><td>7</td><td>−2</td><td>19</td><td>12</td><td>17</td><td>27</td></tr>
+      <tr class="part"><th scope="row">Beta</th><td>0</td><td>0</td><td>4</td><td>1</td><td>3</td><td>2</td></tr>
+      <tr class="part"><th scope="row">Net market exposure</th><td>26</td><td>25</td><td>6</td><td>11</td><td>18</td><td>3</td></tr>
+      <tr><th scope="row">Sector tilt</th><td>9</td><td>6</td><td>5</td><td>7</td><td>1</td><td>5</td></tr>
+      <tr><th scope="row">Stock-specific</th><td>29</td><td>43</td><td>45</td><td>33</td><td>20</td><td>22</td></tr>
+      <tr><th scope="row">Unloaded holdings</th><td>0</td><td>−1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+    </tbody>
+  </table>
 </div>
 
 The package paid between 1.7% and 3.9% a year in every block to 2021, on roughly
@@ -416,6 +436,11 @@ with equal weights the package earns 1.4% a year since 2022, with market-cap
 weights −1.1%. Its parts move much more than the package: low
 volatility lost money in three of the six blocks, while the net long dollars
 made up the difference.
+
+The risk moved elsewhere too. Medium- and long-term return's share of the
+risk rose from 1% in 2004–08 to 26% since 2022, while the stock-specific share
+fell from 45% in 2009–13 to 20% in 2019–21 and 22% since 2022. Short interest
+earned in every period on 4% to 7% of the risk.
 
 ## What the attribution supports
 
