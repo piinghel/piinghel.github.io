@@ -9,7 +9,8 @@
   if (!root) return;
 
   const PERIODS = [[1998, 2021], [1998, 2003], [2004, 2008], [2009, 2013], [2014, 2018], [2019, 2021]];
-  const state = { period: 0, level: 'predictor', visible: new Set([2, 3]) };
+  const DEFAULT_VISIBLE = [0, 1, 2, 3, 4, 5, 6];
+  const state = { period: 0, level: 'predictor', visible: new Set(DEFAULT_VISIBLE) };
   const heatEl = root.querySelector('.pse-heat');
   const icEl = root.querySelector('.pse-ic');
   const [heatHeading, icHeading] = root.querySelectorAll('.pse-heading');
@@ -180,7 +181,7 @@
     if(!ready) {
       ready=true;
       icEl.on('plotly_legendclick',e=>{clearTimeout(legendTimer);legendTimer=setTimeout(()=>{if(state.visible.has(e.curveNumber))state.visible.delete(e.curveNumber);else state.visible.add(e.curveNumber);render();},320);return false;});
-      icEl.on('plotly_legenddoubleclick',e=>{clearTimeout(legendTimer);state.visible=state.visible.size===1&&state.visible.has(e.curveNumber)?new Set([2,3]):new Set([e.curveNumber]);render();return false;});
+      icEl.on('plotly_legenddoubleclick',e=>{clearTimeout(legendTimer);state.visible=state.visible.size===1&&state.visible.has(e.curveNumber)?new Set(DEFAULT_VISIBLE):new Set([e.curveNumber]);render();return false;});
       icEl.on('plotly_relayout',e=>{
         if(rendering)return;
         if(e['xaxis.autorange']){icRange=null;render();return;}
