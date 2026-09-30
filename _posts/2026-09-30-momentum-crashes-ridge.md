@@ -179,12 +179,12 @@ the adjusted scores exactly as before.
 **Learned interactions.** Here I refit the regression with fifteen extra
 terms, each trend predictor times a market-stress state, so the model can learn
 its own momentum weight for turbulent markets. This state is a composite
-rather than momentum volatility alone: the average of a market-volatility ramp,
-a bear-market indicator (negative two-year market return) and a
-momentum-volatility ramp. Each ramp goes smoothly from 0, when volatility is at
-or below its historical median, to 1 at its 90th percentile (market volatility
-over 21 sessions, WML volatility over 126), and all three use past data only,
-lagged and smoothed like $$g_t$$. Two details matter. I centre the state on its
+rather than momentum volatility alone: the average of three scores between 0
+and 1. Two measure how high volatility is, for the market over 21 sessions and
+for the WML portfolio over 126: 0 when it's at or below its historical median,
+1 at its 90th percentile or above, and in between otherwise. The third is 1 in
+a bear market, when the two-year market return is negative. All three use past
+data only, lagged and smoothed like $$g_t$$. Two details matter. I centre the state on its
 training mean, and I rescale each interaction to the spread of its base
 predictor, fold by fold on training data only. Without that, the common
 penalty shrinks the interactions far harder than the predictors. With it, the
@@ -285,7 +285,7 @@ about 1 point, and then made 3.5 points in the vaccine week.
 
 Most of the details don't matter much. A 63-session window, a rolling
 three-year median instead of the expanding one, and 12-0 instead of 12-1
-momentum all give 1.53, and using the market-volatility ramp as the state gives
+momentum all give 1.53, and using the market-volatility score as the state gives
 1.54. Two versions are weaker: volatility scaling (1.48), because it removes
 less, and measuring the lean against 6-1 momentum (1.43), because 6-1 overlaps
 much less with what the ranking actually holds.
