@@ -181,7 +181,10 @@ terms, each trend predictor times a market-stress state, so the model can learn
 its own momentum weight for turbulent markets. This state is a composite
 rather than momentum volatility alone: the average of a market-volatility ramp,
 a bear-market indicator (negative two-year market return) and a
-momentum-volatility ramp. Two details matter. I centre the state on its
+momentum-volatility ramp. Each ramp goes smoothly from 0, when volatility is at
+or below its historical median, to 1 at its 90th percentile (market volatility
+over 21 sessions, WML volatility over 126), and all three use past data only,
+lagged and smoothed like $$g_t$$. Two details matter. I centre the state on its
 training mean, and I rescale each interaction to the spread of its base
 predictor, fold by fold on training data only. Without that, the common
 penalty shrinks the interactions far harder than the predictors. With it, the
@@ -291,24 +294,52 @@ much less with what the ranking actually holds.
 
 The learned model gets to the same Sharpe as the overlay by a different route.
 Because the state is centred, the model can raise its momentum weight in calm
-markets while cutting it in turbulent ones, and the score's calm-market
-momentum lean goes up from about 0.36 to 0.50. It earns more than the overlay,
-but with higher volatility and a deeper drawdown. The worst drawdown moves to
-autumn 2008, when the composite state cut momentum while it was still earning,
-and 2007 and 2009 account for 72% of the gain.
+markets while cutting it in turbulent ones, and the book's calm-market momentum
+tilt goes up from 0.33 to 0.45. It earns more than the overlay, but with higher
+volatility and a deeper drawdown. The worst drawdown moves to autumn 2008, when
+the composite state cut momentum while it was still earning.
 
-It also depends a lot on the state. With market volatility or momentum
-volatility alone it reaches 1.42 and 1.45, with the Daniel–Moskowitz bear ×
-volatility state 1.39, and I picked the composite after comparing the four. A
-single momentum × state term instead of fifteen trend terms doesn't work here
-(1.30–1.35).
+What made me hesitate is that it adds value more steadily. In Figure 5 the
+learned model and the combination beat the baseline in 15 and 16 of the 24
+calendar years, against 12 for the overlay, whose gain sits mostly in 2009 and
+2020. So I looked at what the learned model does with each state I tried.
+
+<table class="research-table comparison-table">
+  <caption><strong>Table 3: Learned interactions by state.</strong> Development period, net of 5 bp, schedule means with min–max Sharpe in parentheses. Momentum tilt is the book's gross-relative tilt toward the sector-demeaned 12-1 rank, averaged over calm days (market-volatility state at zero) and over the 2009 rebound (10 March–16 September). The states are the ones described under "How each approach works"; momentum variance is the share the overlay removes, 1 − 1/g².</caption>
+  <thead><tr><th>Rule</th><th>Net Sharpe</th><th>Tilt, calm days</th><th>Tilt, 2009 rebound</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Baseline</th><td>1.32<br><small>(1.26–1.36)</small></td><td>0.33</td><td>0.45</td></tr>
+    <tr class="selected-rule"><th scope="row">Score overlay</th><td>1.54<br><small>(1.44–1.61)</small></td><td>0.26</td><td>−0.12</td></tr>
+    <tr><th scope="row">Learned, composite state</th><td>1.55<br><small>(1.48–1.61)</small></td><td>0.45</td><td>0.08</td></tr>
+    <tr><th scope="row">Learned, momentum volatility</th><td>1.45<br><small>(1.38–1.53)</small></td><td>0.37</td><td>0.41</td></tr>
+    <tr><th scope="row">Learned, market volatility</th><td>1.42<br><small>(1.39–1.48)</small></td><td>0.46</td><td>0.31</td></tr>
+    <tr><th scope="row">Learned, bear × volatility</th><td>1.39<br><small>(1.29–1.45)</small></td><td>0.42</td><td>−0.10</td></tr>
+    <tr><th scope="row">Learned, momentum variance</th><td>1.35<br><small>(1.31–1.37)</small></td><td>0.33</td><td>0.37</td></tr>
+  </tbody>
+</table>
+
+Two things stand out. Every learned version raises the calm-market tilt or
+keeps it, whatever the state: once the interaction terms can explain the crash
+losses, the ordinary trend weights drift up. That's a second bet, more momentum
+when markets are quiet, on top of the crash fix. And most versions don't cut
+momentum much in the 2009 rebound at all; only the composite and the bear ×
+volatility state do. The typical learned model lands around 1.42, below the
+overlay, and the 1.55 is the best of five states, with the composite picked
+after I'd seen the results. A single momentum × state term instead of fifteen
+trend terms doesn't work either (1.30–1.35).
+
+If I wanted a learned version I'd trust, I'd take that freedom away. Keep the
+baseline weights fixed, use momentum volatility as the state, and let the model
+learn only how much to cut each trend weight as the state rises, never to add.
+It then answers the same question as the overlay, how much momentum to remove
+and when, rather than adding a bet on calm markets.
 
 Stacking the overlay on the learned scores gives the best Sharpe in Table 2,
 1.67. I wouldn't take that at face value. I tried this combination after
 seeing the single-layer results, and among about 40 variants the best will
 look good partly by selection. It also makes 9.9 points on crash days, yet its
 average momentum tilt there is close to the overlay's (−0.13 in the 2009
-rebound and −0.18 in the vaccine week, against −0.12 and −0.14). That suggests
+rebound and −0.18 after the vaccine news, against −0.12 and −0.14). That suggests
 a bigger short-momentum position isn't what earns the extra, but it doesn't
 tell me what does, so I wouldn't count on it.
 
@@ -330,17 +361,15 @@ and the state was off throughout 2020. Neutralizing only the loser leg adds
 0.08, less than the symmetric version at the same strength (+0.10).
 
 <details class="research-details" markdown="0">
-<summary>Other variants I tried (Table 3)</summary>
+<summary>Other variants I tried (Table 4)</summary>
 
 <table class="research-table comparison-table">
-  <caption><strong>Table 3: Other variants.</strong> Variants not shown in Figure 3. Development period, net of 5 bp, mean Sharpe over the three schedules; the baseline is 1.32. The first three overlays use half strength.</caption>
+  <caption><strong>Table 4: Other variants.</strong> Variants not shown in Figure 3 or Table 3. Development period, net of 5 bp, mean Sharpe over the three schedules; the baseline is 1.32. The first three overlays use half strength.</caption>
   <thead><tr><th>Variant</th><th>Net Sharpe</th></tr></thead>
   <tbody>
     <tr><th scope="row">Overlay, bear market × market volatility</th><td>1.35</td></tr>
     <tr><th scope="row">Overlay, loser leg only</th><td>1.40</td></tr>
     <tr><th scope="row">Overlay on all 17 trend characteristics</th><td>1.41</td></tr>
-    <tr><th scope="row">Learned, market-volatility state</th><td>1.42</td></tr>
-    <tr><th scope="row">Learned, momentum-volatility state</th><td>1.45</td></tr>
     <tr><th scope="row">Overlay, volatility scaling</th><td>1.48</td></tr>
     <tr><th scope="row">Hand-set shrink of the fifteen trend bets</th><td>1.48</td></tr>
   </tbody>
@@ -357,9 +386,11 @@ About 0.09 of the Sharpe gain comes from holding less momentum and 0.13 from
 timing, mostly in 2009 and 2020, so I'd expect something like 0.1 to 0.15
 outside this sample rather than the full 0.22. That preference also came out of
 comparing many rules, which differ both in where they act and in which state
-they use. The learned model and the combination earn more by taking a
-different bet, and the cap gives a smaller but steady improvement that works
-well as a guardrail.
+they use. The learned model and the combination add value more steadily and
+earn more, but they do it with a second bet, more momentum in calm markets, and
+their results depend on a state I picked after comparing several. I'd rather
+keep the rule I fixed in advance. The cap gives a smaller but steady
+improvement that works well as a guardrail.
 
 ## References
 
