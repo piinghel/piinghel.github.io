@@ -245,6 +245,7 @@
       if(cfg.heading)ui.append(element('p','blog-chart-heading',cfg.heading));
       const extra=element('details','blog-chart-options');
       extra.append(element('summary','','Explore'));ui.append(extra);
+      if(cfg.exploreOpen)extra.open=true;
       const start=element('input'),end=element('input'); start.type=end.type='date';
       [start,end].forEach(input=>{input.min=full[0];input.max=full[1];});
       function setRange(a,b) {
@@ -396,6 +397,20 @@
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i]),cfg.additive?{hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}'+(s.additive?' points':'%')+'<extra>%{fullData.name}</extra>'}:{}));
                 if(cfg.drawdown&&s.drawdown!==false)traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.drawdown[i]),{yaxis:'y2',showlegend:false,hovertemplate:'%{x|%d %b %Y}<br>%{y'+(s.additive?':.2f} points':':.2%}')+'<extra>%{fullData.name}</extra>'}));
               }
+            }
+            // Optional direct labels: each visible line named at its last point, nudged apart when close.
+            if(cfg.directLabels) {
+              layout.margin.r=mobile?92:128;
+              const ends=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true&&tr.y.length)
+                .map(tr=>({x:tr.x.at(-1),y:tr.y.at(-1),name:tr.name,color:tr.line.color}));
+              const values=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true).flatMap(tr=>tr.y);
+              const lo=Math.min(...values),hi=Math.max(...values),plotHeight=layout.height-layout.margin.t-layout.margin.b;
+              const perUnit=plotHeight*(secondary?.57:1)/((hi-lo)*1.1||1),gap=15;
+              ends.sort((a,b)=>a.y-b.y);
+              let previous=-Infinity;
+              for(const e of ends){e.px=e.y*perUnit;if(e.px-previous<gap)e.px=previous+gap;previous=e.px;}
+              for(const e of ends)layout.annotations.push({x:e.x,y:e.y,text:e.name,xref:'x',yref:'y',xanchor:'left',yanchor:'middle',
+                xshift:6,yshift:e.px-e.y*perUnit,showarrow:false,font:{size:mobile?11:12,color:e.color}});
             }
             if(cfg.marker&&range[0]<=cfg.marker&&range[1]>=cfg.marker)layout.shapes=[{type:'line',xref:'x',yref:'paper',x0:cfg.marker,x1:cfg.marker,y0:0,y1:1,line:{color:t.text,width:1,dash:'dot'}}];
             if(cfg.band)layout.shapes=[{type:'rect',xref:'paper',yref:'y',x0:0,x1:1,y0:cfg.band[0],y1:cfg.band[1],fillcolor:t.grid,opacity:.4,line:{width:0},layer:'below'}];
