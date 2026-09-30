@@ -10,19 +10,28 @@ categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 ---
 
-The Ridge strategy of the earlier articles ranks the Russell 1000 with a
+Momentum strategies buy the stocks that rose most over the past year and sell
+the ones that fell most. Most of the time that pays. A momentum crash is the
+exception: after a long market decline, the market turns sharply up, and the
+past losers the strategy is short rally hardest. The strategy then loses in a
+few weeks what it earned over years. The spring of 2009 is the textbook case.
+From 9 March to 29 May, a 12-1 winner-minus-loser portfolio in the Russell
+1000 lost 57% while its losers rose 134%.
+
+That matters for the Ridge strategy of the earlier articles. It ranks the
+Russell 1000 with a
 [Ridge regression on 80 predictors](/quants/2025/02/09/multiple-linear-regression.html)
 and sizes the ranking with the
 [joint optimizer and its trading controls](/quants/2026/08/29/portfolio-optimization.html),
 for a development-period Sharpe ratio of 1.32: the last row of
-[Table 2 in that article](/quants/2026/08/29/portfolio-optimization.html#development-results). The
-[attribution series](/quants/short-book-rebounds.html) showed where that book
-loses: its two deepest drawdowns came mostly from the low-volatility tilt, and
-in March 2009 the high-volatility stocks it was short were also the past
-losers. That rebound was a momentum crash, and the ranking carries a lot of
-momentum.
+[Table 2 in that article](/quants/2026/08/29/portfolio-optimization.html#development-results).
+Many of its predictors are trend measures, so the book leans toward past
+winners. The [attribution series](/quants/short-book-rebounds.html) showed its
+two deepest drawdowns came mostly from the low-volatility tilt, but in March
+2009 the high-volatility stocks it was short were also the past losers. On the
+30 worst days for momentum since 1998 the book loses 15.5 points of capital.
 
-In this article I start from why momentum crashes happen and why a linear
+In this article I explain why momentum crashes happen and why a linear
 ranking is exposed to them, then try three ways to take the exposure out of
 the same Ridge strategy. Each acts at a different point between the Ridge
 predictions and the portfolio.
@@ -51,7 +60,7 @@ rebalance schedules starting a week apart, next-close execution and 5 bp per
 dollar traded. Numbers cover September 1998 to December 2021 and are means
 over the three schedules, with the lowest and highest schedule in parentheses.
 
-## Momentum crashes when the losers rebound
+## Why momentum crashes when the losers rebound
 
 Momentum buys the stocks that rose most over the past year, skipping the last
 month, and sells those that fell most. It earns a solid premium over long
@@ -81,10 +90,11 @@ inverse of its recent variance.
 
 The Russell 1000 shows the same pattern, just less forgivingly. An
 equal-weight 12-1 decile WML portfolio inside the index has a Sharpe ratio of
-only 0.21 over 1998–2021, with daily skewness of −1.1. Figure 1 follows it
-through the 2009 rebound: from 9 March to 29 May the losers rose 134% and the
-long–short portfolio lost 57%. In the week of 9 November 2020, the vaccine
-rotation, it lost another 24%.
+only 0.21 over 1998–2021, with daily skewness of −1.1. Figure 1 shows the
+2009 crash in context: through the 2008 sell-off momentum was volatile but
+still up 8% by the March 2009 low, then lost more than half its value once the
+market turned. In the week of 9 November 2020, the
+vaccine rotation, it lost another 24%.
 
 <div class="research-figure">
   {% include blog-chart.html chart="crash" source="/assets/momentum-crashes/crash-2009.json?v=3" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on 2008–09." %}
@@ -104,8 +114,8 @@ A linear model gives each predictor one coefficient, fitted across all market
 states, so the momentum weight averages a regime where momentum pays and one
 where it crashes. The ranking keeps that average in exactly the state where it
 is most wrong, and the book leans slightly harder into momentum, because the
-losers are volatile and the winners defensive. On the 30 worst WML days in the
-sample the baseline book loses 15.5 points of capital.
+losers are volatile and the winners defensive. That is where the 15.5-point
+loss on momentum's worst days comes from.
 
 A LightGBM ranking on the same predictors loses only 1.8 points on those days;
 its splits can already let the trend effect depend on volatility. For Ridge
