@@ -1,7 +1,7 @@
 ---
 layout: post
 interactive_charts: true
-title: "Momentum Crashes in a Ridge Ranking"
+title: "Managing Momentum Crashes: A Comparison of Different Approaches"
 description: "The regression strategy from the previous articles leans toward past winners and earns much less once momentum turns volatile. Three ways to take that exposure out, and what each one costs."
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
@@ -18,8 +18,11 @@ In the previous articles I built a long-short Russell 1000 strategy: a
 ranks the stocks, and the
 [joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html)
 sizes them, for a Sharpe ratio of 1.32 over 1998–2021. About fifteen of those
-predictors are trend measures, so the book leans toward past winners. I wanted
-to see what that lean costs when momentum turns dangerous.
+predictors are trend measures, so the book leans toward past winners. Measured
+as the book's gross-relative tilt toward the sector-demeaned 12-1 momentum rank,
+that lean is about 0.33 in calm markets and 0.36 in volatile ones, so it doesn't
+back off when momentum gets risky. I wanted to see what it costs when momentum
+turns dangerous.
 
 So I split the trading days by how volatile the momentum portfolio had been
 going in, measured up to the previous day. Up to about twice its usual
@@ -107,10 +110,8 @@ it lost another 24%.
 
 Nothing in the model asks for momentum. It comes from about fifteen trend
 predictors (past returns over several horizons, distance to highs,
-moving-average gaps), which together tilt the book toward past winners.
-Measured as the book's gross-relative tilt toward the sector-demeaned 12-1
-momentum rank, that tilt is about 0.33 in calm markets, 0.36 in volatile ones
-and 0.45 in the months after the March 2009 low.
+moving-average gaps), which together tilt the book toward past winners. In the
+months after the March 2009 low that tilt reached 0.45.
 
 A linear model gives each predictor one coefficient across all market states,
 so the momentum weight is an average of a regime where momentum pays and one
@@ -172,7 +173,7 @@ $$
 
 It's one-sided. When the scores lean toward winners ($$\beta_t>0$$),
 $$s_t=1$$ removes that linear lean completely; a lean toward losers is left
-alone. Everything else in the ranking stays as it was, and the optimizer sizes
+alone. I leave the remaining score component unchanged, and the optimizer sizes
 the adjusted scores exactly as before.
 
 **Learned interactions.** Here I refit the regression with fifteen extra
@@ -250,7 +251,7 @@ Figure 4 covers the whole period. It opens on the baseline and the overlay;
 under Explore you can change the window and add the other rules.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/momentum-crashes/performance.json?v=4" label="Net growth and drawdown of the baseline and the score overlay, 1998–2021, with the other rules available under Explore." %}
+  {% include blog-chart.html chart="performance" source="/assets/momentum-crashes/performance.json?v=5" label="Net growth and drawdown of the baseline and the score overlay, 1998–2021, with the other rules available under Explore." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: Growth and drawdown, 1998–2021.</strong> Net growth index (log scale) and drawdown after 5 bp costs. Each path averages three separately compounded schedules, so its drawdowns are shallower than the per-schedule maxima in Table 2. The rules run at slightly different volatilities; Table 2 compares Sharpe.</p>
 
@@ -318,10 +319,11 @@ maximum drawdown in Table 2, and its gain is even across schedules (+0.14 to
 +0.17). But it adds less Sharpe than the overlay, still loses about 8 points on
 crash days, and adds nothing once the overlay is in place (1.54 with both).
 Limiting how much momentum the book holds isn't the same as removing the
-momentum lean from the scores the optimizer ranks on. Here that makes the cap a
-guardrail more than a fix.
+momentum lean from the scores the optimizer ranks on. Still, going from 1.32 to
+1.47 with the shallowest drawdown is a real improvement; the cap just works
+better as a guardrail next to the overlay than as the main fix.
 
-Two ideas from the literature didn't help. A Daniel–Moskowitz state, bear market
+Two other ideas helped less. A Daniel–Moskowitz state, bear market
 times market volatility, adds only 0.04 as an overlay: the two-year market
 return was negative on about a fifth of the days (in 2001–2003 and 2008–2010),
 and the state was off throughout 2020. Neutralizing only the loser leg adds
@@ -356,7 +358,8 @@ timing, mostly in 2009 and 2020, so I'd expect something like 0.1 to 0.15
 outside this sample rather than the full 0.22. That preference also came out of
 comparing many rules, which differ both in where they act and in which state
 they use. The learned model and the combination earn more by taking a
-different bet, and the cap is a useful guardrail rather than a fix.
+different bet, and the cap gives a smaller but steady improvement that works
+well as a guardrail.
 
 ## References
 
