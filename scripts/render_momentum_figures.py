@@ -1,7 +1,7 @@
 """Static figures for the momentum-crash article (development period, 1998-09 to 2021-12).
 
 Sharpe and maximum drawdown by rule use the verified schedule means and lowest/highest
-schedule Sharpe ratios (data/momentum_crash_layers_review_20260930/out/ridge_stats.csv,
+schedule Sharpe ratios (projects/momentum_crashes/evidence/review/ridge_stats.csv,
 review_ridge_stats.csv). Sharpe by momentum-risk bucket is computed from the portfolio-level
 evidence exported for the public study (projects/momentum_crashes_public/outputs/evidence).
 """
