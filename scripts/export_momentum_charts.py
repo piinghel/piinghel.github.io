@@ -51,12 +51,16 @@ def export(assets: Path) -> None:
         note="Statistics of the plotted mean wealth path. Each schedule compounds separately; Table 1 reports means of per-schedule statistics. Zero-cash Sharpe.")})
 
     wml = (pl.read_parquet(STUDY / "states/wml_returns.parquet")
-           .filter(pl.col("date").is_between(dt.date(2009, 3, 6), dt.date(2009, 8, 31))).sort("date"))
+           .filter(pl.col("date").is_between(START, END)).sort("date"))
     dates = [d.isoformat() for d in wml["date"]]
-    crash = [series(k, label, role, [0.0, *wml[k].cast(pl.Float64).to_list()[1:]])
+    crash = [series(k, label, role, [0.0, *wml[k].cast(pl.Float64).fill_null(0.0).to_list()[1:]])
              for k, label, role in (("winners", "Winners", "comparison"), ("losers", "Losers", "short"), ("wml", "Long–short (WML)", "strategy"))]
+    episodes = [["2000–02", "2000-06-30", "2002-12-31"], ["2008–09", "2008-01-02", "2009-12-31"],
+                ["2016", "2015-06-30", "2016-12-30"], ["2020–21", "2019-12-31", "2021-06-30"]]
     write_chart(assets / "crash-2009.json", dates, crash, {"crash": dict(kind="performance", series=[s["id"] for s in crash],
-        shade=[["2009-03-09", "2009-05-29"]], note="Equal-weight 12-1 momentum deciles within the Russell 1000, formed at month ends.")})
+        initialRange=["2008-01-02", "2009-12-31"], episodes=episodes,
+        shade=[["2009-03-09", "2009-05-29"], ["2020-11-09", "2020-11-13"]],
+        note="Equal-weight 12-1 momentum deciles within the Russell 1000, formed at month ends.")})
     base = schedule_mean(STUDY / "runs_ridge/saved")
     rules = (("overlay", "Score overlay", "long", STUDY / "runs_ridge/s_bsc_var_l100", {}),
              ("learned", "Learned interactions", "size", STUDY / "runs_ridge/m_ixc_composite", {}),
@@ -70,6 +74,7 @@ def export(assets: Path) -> None:
         dates = [d.isoformat() for d in diff["date"]]
         added.append(series(key, label, role, [0.0, *values[1:]], additive=True, drawdown=False, **opts))
     write_chart(assets / "value-added.json", dates, added, {"added": dict(kind="performance", series=[s["id"] for s in added], additive=True,
+        episodes=[["2008–09", "2007-12-31", "2009-12-31"], ["2020–21", "2019-12-31", "2021-12-31"]],
         shade=[["2009-01-01", "2009-12-31"], ["2020-01-01", "2020-12-31"]],
         note="Sum of daily net return differences against the baseline, mean of the three schedules, points of capital.")})
 

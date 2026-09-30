@@ -87,9 +87,9 @@ long–short portfolio lost 57%. In the week of 9 November 2020, the vaccine
 rotation, it lost another 24%.
 
 <div class="research-figure">
-  {% include blog-chart.html chart="crash" source="/assets/momentum-crashes/crash-2009.json?v=2" label="Growth of 12-1 momentum winners, losers and the long–short portfolio from 6 March to August 2009." %}
+  {% include blog-chart.html chart="crash" source="/assets/momentum-crashes/crash-2009.json?v=3" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on 2008–09." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: In 2009 the losers crashed up.</strong> Growth of equal-weight top-decile winners, bottom-decile losers and the long–short WML portfolio from the 6 March 2009 close, 12-1 momentum within the Russell 1000, formed at month ends. Shaded: 9 March to 29 May.</p>
+<p class="figure-caption"><strong>Figure 1: In 2009 the losers crashed up.</strong> Growth of equal-weight top-decile winners, bottom-decile losers and the long–short WML portfolio, 12-1 momentum within the Russell 1000, formed at month ends, indexed to 100 at the start of the window. The chart opens on 2008–09; Explore covers 1998–2021 and the other crashes. Shaded: 9 March to 29 May 2009 and the week of 9 November 2020.</p>
 
 ## A linear ranking cannot make its momentum weight conditional
 
@@ -227,7 +227,7 @@ baseline with the score overlay; under Explore you can change the window and
 add the other rules.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/momentum-crashes/performance.json?v=2" label="Net growth and drawdown of the Ridge baseline and the score overlay, 1998–2021, with the other rules available under Explore." %}
+  {% include blog-chart.html chart="performance" source="/assets/momentum-crashes/performance.json?v=3" label="Net growth and drawdown of the Ridge baseline and the score overlay, 1998–2021, with the other rules available under Explore." %}
 </div>
 <p class="figure-caption"><strong>Figure 3: Growth and drawdown, 1998–2021.</strong> Net growth index (log scale) and drawdown after 5 bp costs. Each path averages three separately compounded schedules, so its drawdowns are shallower than the per-schedule maxima in Table 2. The rules run at slightly different volatilities; Table 2 compares Sharpe.</p>
 
@@ -241,7 +241,7 @@ five-year block it improves 1998–2002, 2008–2012, 2013–2017 and 2018–202
 is flat in 2003–2007, when the state was mostly off.
 
 <div class="research-figure">
-  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=2" label="Cumulative value added against the Ridge baseline by each rule, 1998–2021." %}
+  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=3" label="Cumulative value added against the Ridge baseline by each rule, 1998–2021." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: Value added against the baseline.</strong> Cumulative sum of daily net return differences, points of capital, mean of the three schedules. The constant shrink removes the overlay's average share on every date. Shaded: 2009 and 2020.</p>
 
