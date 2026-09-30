@@ -6,6 +6,7 @@ description: "The regression strategy from the previous articles leans toward pa
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
+last_modified_at: 2026-10-01
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -18,10 +19,11 @@ In the previous articles I built a long-short Russell 1000 strategy: a
 ranks the stocks, and the
 [joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html)
 sizes them, for a Sharpe ratio of 1.32 over 1998–2021. About fifteen of those
-predictors are trend measures, so the book leans toward past winners. Measured
-as the book's gross-relative tilt toward the sector-demeaned 12-1 momentum rank,
-that lean is about 0.33 in calm markets and 0.36 in volatile ones, so it doesn't
-back off when momentum gets risky. I wanted to see what it costs when momentum
+predictors are trend measures, so the book leans toward past winners. I measure
+that lean as the book's momentum tilt: the position-weighted average of the
+stocks' momentum ranks (from −1 to 1 within each sector) per unit of gross
+exposure. It's about 0.33 in calm markets and 0.36 in volatile ones, so it
+doesn't back off when momentum gets risky. I wanted to see what it costs when momentum
 turns dangerous.
 
 So I split the trading days by how volatile the momentum portfolio had been
@@ -54,7 +56,7 @@ Table 1 sums up the trade-offs.
   <thead><tr><th>Approach</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
   <tbody>
     <tr><th scope="row">Score overlay<br><small>between the predictions and the optimizer</small></th><td>No tuned strength coefficient; transparent; applies to any score; removes the scores' positive linear momentum lean</td><td>Relies on a slow, backward-looking state; also removes momentum when it still pays after a volatility spike</td></tr>
-    <tr><th scope="row">Learned interactions<br><small>inside the regression</small></th><td>The model decides how much to cut, predictor by predictor, and can raise momentum in calm markets</td><td>Learns from a handful of crashes; needs careful scaling; depends on the chosen state; changes the bet</td></tr>
+    <tr><th scope="row">Learned interactions<br><small>inside the regression</small></th><td>The model decides how much to cut, predictor by predictor</td><td>Learns from a handful of crashes; depends on the chosen state; also raises momentum in calm markets, a second bet</td></tr>
     <tr><th scope="row">Optimizer cap<br><small>inside the joint optimizer</small></th><td>A hard limit on the book's exposure; scores untouched; steady</td><td>Limits the size of the tilt, not which stocks carry it; bound calibrated on the baseline; smaller gain</td></tr>
   </tbody>
 </table>
@@ -139,7 +141,7 @@ g_t=\max\!\left(\frac{\hat\sigma_t}{\operatorname{median}_{s\le t}\hat\sigma_s},
 $$
 
 compares current momentum volatility with its own history, floored at one.
-I lag it one session and smooth it over five, so the ranking on day $$t$$ only
+I lag it one session and smooth it over five sessions, so the ranking on day $$t$$ only
 uses WML returns up to $$t-1$$. At the end of 2008, $$g_t$$ was 4.0.
 
 If momentum's variance has risen by a factor $$g_t^2$$ and its expected return
@@ -176,24 +178,26 @@ $$s_t=1$$ removes that linear lean completely; a lean toward losers is left
 alone. I leave the remaining score component unchanged, and the optimizer sizes
 the adjusted scores exactly as before.
 
-**Learned interactions.** Here I refit the regression with fifteen extra
-terms, each trend predictor times a market-stress state, so the model can learn
-its own momentum weight for turbulent markets. This state is a composite
+**Learned interactions.** Here I refit the regression with the same target,
+predictors, penalty and walk-forward folds as the baseline, plus fifteen extra
+terms: each trend predictor times a state $$s_t$$. Each trend weight then
+becomes $$\beta_k+\gamma_k(s_t-\bar s)$$, so the model can learn its own
+momentum weight for turbulent markets. This state is a composite
 rather than momentum volatility alone: the average of three scores between 0
 and 1. Two measure how high volatility is, for the market over 21 sessions and
 for the WML portfolio over 126: 0 when it's at or below its historical median,
 1 at its 90th percentile or above, and in between otherwise. The third is 1 in
 a bear market, when the two-year market return is negative. All three use past
-data only, lagged and smoothed like $$g_t$$. Two details matter. I centre the state on its
-training mean, and I rescale each interaction to the spread of its base
-predictor, fold by fold on training data only. Without that, the common
-penalty shrinks the interactions far harder than the predictors. With it, the
-model does learn to cut momentum: the implied reduction of the trend weights
-per unit of state goes from about 0.2 in the first walk-forward fold to 1.6 in
-the fold that predicts 2008–2010, before 2009 is in the training data.
+data only, lagged and smoothed like $$g_t$$. Two details matter. I centre the
+state on its training mean $$\bar s$$, and I rescale each interaction to the
+spread of its base predictor, fold by fold on training data only. Without that,
+the common penalty shrinks the interactions far harder than the predictors.
+With it, the model does learn to cut momentum: per unit of the state, the trend
+weights fall by about 0.2 times their calm-market size in the first
+walk-forward fold and by 1.6 times in the fold that predicts 2008–2010, before
+2009 is in the training data.
 
-**Optimizer cap.** Inside the optimizer I bound the book's gross-relative tilt
-toward momentum:
+**Optimizer cap.** Inside the optimizer I bound the book's momentum tilt:
 
 $$
 \left|\frac{\sum_i w_{i,t}\,m_{i,t}}{\sum_i |w_{i,t}|}\right|\le\frac{B}{g_t^2},
@@ -293,8 +297,9 @@ much less with what the ranking actually holds.
 ## The learned model buys return with a different bet
 
 The learned model gets to the same Sharpe as the overlay by a different route.
-Because the state is centred, the model can raise its momentum weight in calm
-markets while cutting it in turbulent ones, and the book's calm-market momentum
+Because the state is centred, $$s_t-\bar s$$ is negative in calm markets, so
+the model can raise its momentum weight there while cutting it in turbulent
+ones, and the book's calm-market momentum
 tilt goes up from 0.33 to 0.45. It earns more than the overlay, but with higher
 volatility and a deeper drawdown. The worst drawdown moves to autumn 2008, when
 the composite state cut momentum while it was still earning.
@@ -310,7 +315,7 @@ score, the bear-market indicator times the market-volatility score (the
 Daniel–Moskowitz state), or the share the overlay removes, 1 − 1/g².
 
 <table class="research-table comparison-table">
-  <caption><strong>Table 3: Learned interactions by state.</strong> Development period, net of 5 bp, schedule means with min–max Sharpe in parentheses. Momentum tilt is the book's gross-relative tilt toward the sector-demeaned 12-1 rank, averaged over calm days (market-volatility state at zero) and over the 2009 rebound (10 March–16 September).</caption>
+  <caption><strong>Table 3: Learned interactions by state.</strong> Development period, net of 5 bp, schedule means with min–max Sharpe in parentheses. Momentum tilt as defined in the introduction, averaged over calm days (market-volatility score at zero) and over the 2009 rebound (10 March–16 September).</caption>
   <thead><tr><th>Rule</th><th>Net Sharpe</th><th>Tilt, calm days</th><th>Tilt, 2009 rebound</th></tr></thead>
   <tbody>
     <tr><th scope="row">Baseline</th><td>1.32<br><small>(1.26–1.36)</small></td><td>0.33</td><td>0.45</td></tr>
