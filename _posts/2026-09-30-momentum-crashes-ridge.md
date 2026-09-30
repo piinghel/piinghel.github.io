@@ -10,23 +10,21 @@ categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 ---
 
-Momentum strategies buy the stocks that rose most over the past year and sell
-the ones that fell most. Most of the time that pays. A momentum crash is the
-exception: after a long market decline, the market turns sharply up, and the
-past losers the strategy is short rally hardest. The strategy then loses in a
-few weeks what it earned over years. The spring of 2009 is the textbook case.
+My Ridge ranking carries a momentum tilt even though I never explicitly ask it
+to hold momentum. That becomes a problem when past losers rebound sharply.
+Momentum buys the stocks that rose most over the past year and sells those
+that fell most. Most of the time that pays. A momentum crash is the exception:
+after a long market decline the market turns sharply up, and the past losers
+the strategy is short rally hardest. The spring of 2009 is the textbook case.
 From 9 March to 29 May, a 12-1 winner-minus-loser portfolio in the Russell
 1000 lost 57% while its losers rose 134%.
 
-That matters for the Ridge strategy of the earlier articles. It ranks the
-Russell 1000 with a
-[Ridge regression on 80 predictors](/quants/2025/02/09/multiple-linear-regression.html)
-and sizes the ranking with the
-[joint optimizer and its trading controls](/quants/2026/08/29/portfolio-optimization.html),
-for a development-period Sharpe ratio of 1.32: the last row of
-[Table 2 in that article](/quants/2026/08/29/portfolio-optimization.html#development-results).
-Many of its predictors are trend measures, so the book leans toward past
-winners. The [attribution series](/quants/short-book-rebounds.html) showed its
+The ranking is the one from the earlier articles: a
+[Ridge regression on 80 predictors](/quants/2025/02/09/multiple-linear-regression.html),
+sized by the
+[joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html),
+with a development-period Sharpe ratio of 1.32. Many of its predictors are
+trend measures, so the book leans toward past winners. The [attribution series](/quants/short-book-rebounds.html) showed its
 two deepest drawdowns came mostly from the low-volatility tilt, but in March
 2009 the high-volatility stocks it was short were also the past losers. On the
 30 worst days for momentum since 1998 the book loses 15.5 points of capital.
@@ -58,9 +56,9 @@ over the three schedules, with the lowest and highest schedule in parentheses.
 
 ## Why momentum crashes when the losers rebound
 
-Momentum buys the stocks that rose most over the past year, skipping the last
-month, and sells those that fell most. It earns a solid premium over long
-samples, but its return distribution has a long left tail: Daniel and
+Momentum, here measured over the past year skipping the last month (12-1),
+earns a solid premium over long samples, but its return distribution has a
+long left tail: Daniel and
 Moskowitz measure a monthly skewness of −4.7 for US winner-minus-loser (WML)
 deciles over 1927–2013. The worst months are not random. Fourteen of the 15
 worst WML months follow a negative two-year market return, and all 15 come in
@@ -118,8 +116,10 @@ explicitly.
 
 ## Measuring momentum risk with the momentum portfolio itself
 
-All three fixes need a state that says when momentum is dangerous. Following
-Barroso and Santa-Clara, I use the WML portfolio's own realized volatility.
+Each fix needs a state that says when momentum is dangerous. For the overlay
+and the cap I follow Barroso and Santa-Clara and use the WML portfolio's own
+realized volatility; the learned model uses a composite state, described
+below.
 With $$\hat\sigma_t$$ its annualized volatility over the last 126 sessions,
 
 $$
@@ -193,6 +193,9 @@ scores stay as they are; only the portfolio is constrained.
 
 ## The overlay improves return and risk together
 
+Table 2 adds one control: a constant shrink, which removes the overlay's
+average share of the momentum lean, 0.35, on every date, without timing.
+
 <table class="research-table comparison-table">
   <caption><strong>Table 2: The Ridge strategy by rule.</strong> Development period, September 1998–December 2021, net of 5 bp. Means of metrics calculated separately for the three schedules, with min–max Sharpe in parentheses. Returns are geometric and annualized; maximum drawdown is compounded. Crash days: P&amp;L on the 30 worst WML days, points of capital.</caption>
   <thead>
@@ -208,29 +211,25 @@ scores stay as they are; only the portfolio is constrained.
   </tbody>
 </table>
 
-Table 2 shows that the overlay does what it was designed to do. On crash days
-the book barely loses (1.9 points against 15.5), the 2009 rebound turns from a
-6.1-point loss into a 3.5-point gain, and the book's momentum tilt in the
-months after the March 2009 low is −0.12 instead of +0.45. The overlay reduces
-the scores' positive linear exposure to momentum; selection and joint sizing
-can still produce a negative portfolio tilt, as they do in the 2009 rebound. The maximum
-drawdown falls from 15.5% to 11.9%, the worst month from −6.8% to −5.4%, and
-daily skewness from −0.46 to −0.23. Sharpe rises from 1.32 to 1.54, by 0.19
-to 0.25 on each schedule. Turnover barely changes, so the gain survives higher
-costs: 1.36 against 1.15 at 10 bp, and 1.00 against 0.82 at 20 bp.
+Table 2 shows that the overlay does what it was designed to do. On momentum's
+worst days the book now barely loses, and it earns more with a smaller
+drawdown, on every schedule. The overlay reduces the scores' positive linear
+exposure to momentum; selection and joint sizing can still produce a negative
+portfolio tilt, as they do in the 2009 rebound (−0.12 against +0.45 for the
+baseline). Turnover barely changes, so the gain holds at 10 and 20 bp.
 
 <div class="research-figure">
   {% include theme-svg-figure.html base="/assets/momentum-crashes/sharpe-by-rule" mobile="/assets/momentum-crashes/sharpe-by-rule_mobile" alt="Net Sharpe ratio and maximum drawdown of the Ridge strategy by rule, schedule means with lowest-to-highest schedule ranges." version="2" %}
 </div>
 <p class="figure-caption"><strong>Figure 2: Sharpe ratio and maximum drawdown by rule.</strong> Points are means of the three rebalance schedules; lines span the lowest and highest schedule, an observed range rather than a confidence interval. Net of 5 bp; drawdowns compounded per schedule, with shallower drawdowns to the right. Dotted lines mark the baseline. Marker shapes group the approaches: optimizer caps, score overlay, learned interactions and combinations.</p>
 
-Part of the gain is simply holding less momentum. The constant shrink removes
-the overlay's average share, 0.35, on every date and reaches 1.41, so the
-ranking carries more momentum than it should on average. Timing is worth the
-other 0.13, between 0.10 and 0.17 on each schedule. The overlay also beats
-simpler ways of de-risking the whole book: scaling the entire baseline book by
-$$1-s_t$$, targeting its own volatility, or hedging it with the WML portfolio
-reach only 1.36–1.38, so the problem is specific to momentum.
+Part of the gain is simply holding less momentum: the constant shrink reaches
+1.41, so holding less momentum improved this backtest. Timing is worth the
+other 0.13, between 0.10 and 0.17 on each schedule. The overlay also beats the
+whole-book controls I tested: scaling the entire baseline book by $$1-s_t$$,
+targeting its own volatility, or hedging it with the WML portfolio reach only
+1.36–1.38. Targeting momentum in the scores did better than de-risking the
+whole book.
 
 Figure 3 shows the whole development period. By default it compares the
 baseline with the score overlay; under Explore you can change the window and
@@ -292,13 +291,12 @@ state 1.39, and I chose the composite after comparing four. A single momentum
 Putting the overlay on top of the learned scores gives the best Sharpe in
 Table 2, 1.67. I would not take that number at face value: I tried this
 combination after seeing the single-layer results, and among about 40 Ridge
-variants the best should look good by selection alone. The expected maximum of
-40 variants with this spread is about 1.52. The combination also makes 9.9
+variants the best will look good partly by selection. The combination also makes 9.9
 points on crash days. Its measured momentum tilt there is close to the
 overlay's (−0.13 in the 2009 rebound, −0.18 in the vaccine week, against −0.12
-and −0.14), so the extra gain comes from other exposures in the learned scores
-that happened to pay on those days, not from a larger short in momentum. I
-would not count on it.
+and −0.14). The similar measured tilts suggest that a larger short-momentum
+position does not explain the combination's extra gain. I would not count on
+it.
 
 ## The optimizer cap is the steadiest and the smallest
 
@@ -307,9 +305,9 @@ tilt would exceed the bound, it has the shallowest maximum drawdown in Table 2
 (11.4%), and its gain is even across schedules (+0.14 to +0.17). But it adds
 0.13 to 0.15 in Sharpe, cuts crash-day losses only to 8 points, and adds
 nothing once the overlay is in place (1.54 with both). Here it works as a
-guardrail on the portfolio. Part of its gap to the overlay may come from the
-state as much as from where it acts: the cap and the overlay share the same
-state, but the cap only limits the size of the tilt.
+guardrail on the portfolio. The cap and the overlay use the same state; the
+difference is how they use it. The overlay changes the scores that the
+optimizer sizes, while the cap only limits the portfolio's momentum exposure.
 
 Two ideas from the literature did not help here. A Daniel–Moskowitz state,
 bear market times market volatility, adds only 0.04 as an overlay: the
@@ -343,8 +341,9 @@ has no tuned strength coefficient, its formula was specified before its run,
 it sits between the Ridge predictions and the optimizer without touching
 either, and it improves return and risk together: Sharpe from 1.32 to 1.54, maximum drawdown from 15.5% to
 11.9%, and almost no loss when momentum crashes. About 0.09 of the gain comes
-from holding less momentum and 0.13 from timing, most of it in 2009 and 2020,
-so I would plan on a gain nearer 0.1 to 0.15 than 0.22. The preference itself
+from holding less momentum and 0.13 from timing, most of it in 2009 and 2020.
+My judgement is that a gain nearer 0.1 to 0.15 is more realistic outside this
+sample than 0.22. The preference itself
 came out of comparing many rules, and the comparisons change both where each
 rule acts and which state it uses. The learned model and the combination earn
 more return by taking a different, more concentrated bet, and the optimizer
