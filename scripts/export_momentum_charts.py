@@ -34,10 +34,11 @@ def mean_wealth_returns(folder: Path) -> tuple[list[str], list[float]]:
 
 def export(assets: Path) -> None:
     rules = (("baseline", "Baseline", "comparison", STUDY / "runs_ridge/saved", {}),
-             ("overlay", "Score overlay", "strategy", STUDY / "runs_ridge/s_bsc_var_l100", {}),
+             ("overlay", "Score overlay", "long", STUDY / "runs_ridge/s_bsc_var_l100", {}),
              ("constant", "Constant shrink", "short", REVIEW / "runs/ridge/const_348", {"visible": False, "dash": "dot"}),
-             ("learned", "Learned interactions", "hedged", STUDY / "runs_ridge/m_ixc_composite", {"visible": False}),
-             ("cap", "Optimizer cap", "cash", STUDY / "runs_ridge/r_mom_bound_mom2", {"visible": False}))
+             ("learned", "Learned interactions", "size", STUDY / "runs_ridge/m_ixc_composite", {"visible": False}),
+             ("cap", "Optimizer cap", "cash", STUDY / "runs_ridge/r_mom_bound_mom2", {"visible": False}),
+             ("combined", "Learned + overlay", "hedged", STUDY / "runs_ridge/xv_ixc_composite_bscvar", {"visible": False}))
     paths, dates = [], None
     for key, label, role, folder, opts in rules:
         current, returns = mean_wealth_returns(folder)
@@ -53,11 +54,14 @@ def export(assets: Path) -> None:
            .filter(pl.col("date").is_between(dt.date(2009, 3, 6), dt.date(2009, 8, 31))).sort("date"))
     dates = [d.isoformat() for d in wml["date"]]
     crash = [series(k, label, role, [0.0, *wml[k].cast(pl.Float64).to_list()[1:]])
-             for k, label, role in (("winners", "Winners", "long"), ("losers", "Losers", "short"), ("wml", "Long–short (WML)", "strategy"))]
+             for k, label, role in (("winners", "Winners", "comparison"), ("losers", "Losers", "short"), ("wml", "Long–short (WML)", "strategy"))]
     write_chart(assets / "crash-2009.json", dates, crash, {"crash": dict(kind="performance", series=[s["id"] for s in crash],
         shade=[["2009-03-09", "2009-05-29"]], note="Equal-weight 12-1 momentum deciles within the Russell 1000, formed at month ends.")})
     base = schedule_mean(STUDY / "runs_ridge/saved")
-    rules = (("overlay", "Score overlay", "strategy", STUDY / "runs_ridge/s_bsc_var_l100", {}),
+    rules = (("overlay", "Score overlay", "long", STUDY / "runs_ridge/s_bsc_var_l100", {}),
+             ("learned", "Learned interactions", "size", STUDY / "runs_ridge/m_ixc_composite", {}),
+             ("combined", "Learned + overlay", "hedged", STUDY / "runs_ridge/xv_ixc_composite_bscvar", {}),
+             ("cap", "Optimizer cap", "cash", STUDY / "runs_ridge/r_mom_bound_mom2", {}),
              ("constant", "Constant shrink", "comparison", REVIEW / "runs/ridge/const_348", {"dash": "dot"}))
     added = []
     for key, label, role, folder, opts in rules:
