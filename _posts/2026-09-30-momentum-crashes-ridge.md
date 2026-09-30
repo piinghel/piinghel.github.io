@@ -303,9 +303,14 @@ What made me hesitate is that it adds value more steadily. In Figure 5 the
 learned model and the combination beat the baseline in 15 and 16 of the 24
 calendar years, against 12 for the overlay, whose gain sits mostly in 2009 and
 2020. So I looked at what the learned model does with each state I tried.
+Every row in Table 3 is the same model; only the state it's given changes. The
+composite is the average of the three scores described above. The other rows
+use a single ingredient: the momentum-volatility score, the market-volatility
+score, the bear-market indicator times the market-volatility score (the
+Daniel–Moskowitz state), or the share the overlay removes, 1 − 1/g².
 
 <table class="research-table comparison-table">
-  <caption><strong>Table 3: Learned interactions by state.</strong> Development period, net of 5 bp, schedule means with min–max Sharpe in parentheses. Momentum tilt is the book's gross-relative tilt toward the sector-demeaned 12-1 rank, averaged over calm days (market-volatility state at zero) and over the 2009 rebound (10 March–16 September). The states are the ones described under "How each approach works"; momentum variance is the share the overlay removes, 1 − 1/g².</caption>
+  <caption><strong>Table 3: Learned interactions by state.</strong> Development period, net of 5 bp, schedule means with min–max Sharpe in parentheses. Momentum tilt is the book's gross-relative tilt toward the sector-demeaned 12-1 rank, averaged over calm days (market-volatility state at zero) and over the 2009 rebound (10 March–16 September).</caption>
   <thead><tr><th>Rule</th><th>Net Sharpe</th><th>Tilt, calm days</th><th>Tilt, 2009 rebound</th></tr></thead>
   <tbody>
     <tr><th scope="row">Baseline</th><td>1.32<br><small>(1.26–1.36)</small></td><td>0.33</td><td>0.45</td></tr>
