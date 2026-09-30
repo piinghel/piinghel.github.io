@@ -197,23 +197,23 @@ Table 2 adds one control: a constant shrink, which removes the overlay's
 average share of the momentum lean, 0.35, on every date, without timing.
 
 <table class="research-table comparison-table">
-  <caption><strong>Table 2: The Ridge strategy by rule.</strong> Development period, September 1998–December 2021, net of 5 bp. Means of metrics calculated separately for the three schedules, with min–max Sharpe in parentheses. Returns are geometric and annualized; maximum drawdown is compounded. Crash days: P&amp;L on the 30 worst WML days, points of capital.</caption>
+  <caption><strong>Table 2: The Ridge strategy by rule.</strong> Development period, September 1998–December 2021, net of 5 bp. Means of metrics calculated separately for the three schedules, with min–max Sharpe in parentheses. Returns are geometric and annualized; maximum drawdown is compounded; skewness is of daily net returns. Crash days: P&amp;L on the 30 worst WML days, points of capital.</caption>
   <thead>
-    <tr><th>Rule</th><th>Net Sharpe</th><th>Net return</th><th>Net vol.</th><th>Max drawdown</th><th>Crash days</th></tr>
+    <tr><th>Rule</th><th>Net Sharpe</th><th>Net return</th><th>Net vol.</th><th>Max drawdown</th><th>Skewness</th><th>Crash days</th></tr>
   </thead>
   <tbody>
-    <tr><th scope="row">Baseline</th><td>1.32<br><small>(1.26–1.36)</small></td><td>9.4%</td><td>7.0%</td><td>−15.5%</td><td>−15.5</td></tr>
-    <tr><th scope="row">Constant shrink</th><td>1.41<br><small>(1.34–1.45)</small></td><td>9.8%</td><td>6.8%</td><td>−13.4%</td><td>−11.1</td></tr>
-    <tr><th scope="row">Optimizer cap</th><td>1.47<br><small>(1.41–1.52)</small></td><td>10.1%</td><td>6.7%</td><td>−11.4%</td><td>−8.2</td></tr>
-    <tr class="selected-rule"><th scope="row">Score overlay</th><td>1.54<br><small>(1.44–1.61)</small></td><td>10.6%</td><td>6.7%</td><td>−11.9%</td><td>−1.9</td></tr>
-    <tr><th scope="row">Learned interactions</th><td>1.55<br><small>(1.48–1.61)</small></td><td>11.5%</td><td>7.2%</td><td>−13.3%</td><td>+2.6</td></tr>
-    <tr><th scope="row">Learned + overlay</th><td>1.67<br><small>(1.57–1.74)</small></td><td>12.3%</td><td>7.1%</td><td>−13.5%</td><td>+9.9</td></tr>
+    <tr><th scope="row">Baseline</th><td>1.32<br><small>(1.26–1.36)</small></td><td>9.4%</td><td>7.0%</td><td>−15.5%</td><td>−0.46</td><td>−15.5</td></tr>
+    <tr><th scope="row">Constant shrink</th><td>1.41<br><small>(1.34–1.45)</small></td><td>9.8%</td><td>6.8%</td><td>−13.4%</td><td>−0.36</td><td>−11.1</td></tr>
+    <tr><th scope="row">Optimizer cap</th><td>1.47<br><small>(1.41–1.52)</small></td><td>10.1%</td><td>6.7%</td><td>−11.4%</td><td>−0.21</td><td>−8.2</td></tr>
+    <tr class="selected-rule"><th scope="row">Score overlay</th><td>1.54<br><small>(1.44–1.61)</small></td><td>10.6%</td><td>6.7%</td><td>−11.9%</td><td>−0.23</td><td>−1.9</td></tr>
+    <tr><th scope="row">Learned interactions</th><td>1.55<br><small>(1.48–1.61)</small></td><td>11.5%</td><td>7.2%</td><td>−13.3%</td><td>−0.27</td><td>+2.6</td></tr>
+    <tr><th scope="row">Learned + overlay</th><td>1.67<br><small>(1.57–1.74)</small></td><td>12.3%</td><td>7.1%</td><td>−13.5%</td><td>−0.26</td><td>+9.9</td></tr>
   </tbody>
 </table>
 
 Table 2 shows that the overlay does what it was designed to do. On momentum's
-worst days the book now barely loses, and it earns more with a smaller
-drawdown, on every schedule. The overlay reduces the scores' positive linear
+worst days the book now barely loses, it earns more with a smaller drawdown
+on every schedule, and its daily returns are about half as negatively skewed. The overlay reduces the scores' positive linear
 exposure to momentum; selection and joint sizing can still produce a negative
 portfolio tilt, as they do in the 2009 rebound (−0.12 against +0.45 for the
 baseline). Turnover barely changes, so the gain holds at 10 and 20 bp.
