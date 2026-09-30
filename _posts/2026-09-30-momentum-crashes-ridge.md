@@ -127,7 +127,12 @@ Table 1 shows that the overlay does what it was designed to do. On crash days
 the book barely loses (1.9 points against 15.5), the maximum drawdown falls
 from 15.5% to 11.9%, and Sharpe rises from 1.32 to 1.54, improving on every
 schedule. In the 2009 rebound its momentum tilt is −0.12 instead of +0.45.
-Turnover barely changes.
+Turnover barely changes. Figure 2 shows the full development-period paths; under Explore you can change the window and add the other rules.
+
+<div class="research-figure performance-figure responsive-figure">
+  {% include blog-chart.html chart="performance" source="/assets/momentum-crashes/performance.json" label="Net growth and drawdown of the Ridge baseline and the score overlay, 1998–2021, with the other rules available under Explore." %}
+</div>
+<p class="figure-caption"><strong>Figure 2: Growth and drawdown, 1998–2021.</strong> Net growth index (log scale) and drawdown after 5 bp costs. Each path averages three separately compounded schedules, so its drawdowns are shallower than the per-schedule maxima in Table 1. The constant shrink, learned interactions and optimizer cap can be shown under Explore.</p>
 
 Part of this is simply holding less momentum. The constant shrink removes the
 overlay's average share, 0.35, on every date and gets 1.41; timing is worth
@@ -136,7 +141,7 @@ works because it targets momentum.
 
 ## Timing pays in a few crashes
 
-Figure 2 shows where the value comes from. The overlay adds 24 points over 23
+Figure 3 shows where the value comes from. The overlay adds 24 points over 23
 years, and 2009 alone contributes 15 of them. Without 2009 and 2020 the Sharpe
 gain is +0.07; leaving out any single year keeps it positive. That is what a
 crash hedge should look like, but it also means the evidence rests on a
@@ -147,7 +152,7 @@ about 0.10 per schedule, and the timing part about 0.08.
   {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json" label="Cumulative value added against the Ridge baseline by the score overlay and a constant shrink, 1998–2021." %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Value added against the baseline.</strong> Cumulative sum of daily net return differences, points of capital, mean of the three schedules. The constant shrink removes the overlay's average share on every date. Shaded: 2009 and 2020.</p>
+<p class="figure-caption"><strong>Figure 3: Value added against the baseline.</strong> Cumulative sum of daily net return differences, points of capital, mean of the three schedules. The constant shrink removes the overlay's average share on every date. Shaded: 2009 and 2020.</p>
 
 A slow state also has a cost. The overlay gave up about 3.5 points in 2008,
 cutting a momentum lean that was still earning. In 2020 momentum volatility

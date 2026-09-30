@@ -19,7 +19,36 @@ def schedule_mean(folder: Path) -> pl.DataFrame:
     return frame.select("date", ((pl.col("o0") + pl.col("o1") + pl.col("o2")) / 3).alias("r"))
 
 
+def mean_wealth_returns(folder: Path) -> tuple[list[str], list[float]]:
+    """Daily returns of the mean of the three separately compounded schedule wealth paths."""
+    arm = next(p for p in (folder / "replay").glob("*") if (p / "manifest.json").exists())
+    parts = [pl.read_csv(arm / "calendars" / o / "returns.csv", try_parse_dates=True)
+             .with_columns(pl.col("date").cast(pl.Date)).filter(pl.col("date").is_between(START, END))
+             .select("date", pl.col("long_short_net").alias(o)) for o in ("o0", "o1", "o2")]
+    frame = parts[0].join(parts[1], on="date").join(parts[2], on="date").sort("date")
+    wealth = frame.select("date", sum((1 + pl.col(o)).cum_prod() for o in ("o0", "o1", "o2")).alias("w") / 3)
+    w = [1.0, *wealth["w"].to_list()]
+    first = (wealth["date"][0] - dt.timedelta(days=1)).isoformat()
+    return [first, *[d.isoformat() for d in wealth["date"]]], [0.0, *[b / a - 1 for a, b in zip(w, w[1:])]]
+
+
 def export(assets: Path) -> None:
+    rules = (("baseline", "Baseline", "comparison", STUDY / "runs_ridge/saved", {}),
+             ("overlay", "Score overlay", "strategy", STUDY / "runs_ridge/s_bsc_var_l100", {}),
+             ("constant", "Constant shrink", "short", REVIEW / "runs/ridge/const_348", {"visible": False, "dash": "dot"}),
+             ("learned", "Learned interactions", "hedged", STUDY / "runs_ridge/m_ixc_composite", {"visible": False}),
+             ("cap", "Optimizer cap", "cash", STUDY / "runs_ridge/r_mom_bound_mom2", {"visible": False}))
+    paths, dates = [], None
+    for key, label, role, folder, opts in rules:
+        current, returns = mean_wealth_returns(folder)
+        if dates is not None and dates != current:
+            raise ValueError("Calendars differ")
+        dates = current
+        paths.append(series(key, label, role, returns, **opts))
+    write_chart(assets / "performance.json", dates, paths, {"performance": dict(kind="performance", series=[p["id"] for p in paths],
+        log=True, drawdown=True, episodes=[["2008–09", "2007-12-31", "2009-12-31"], ["2020–21", "2019-12-31", "2021-12-31"]],
+        note="Statistics of the plotted mean wealth path. Each schedule compounds separately; Table 1 reports means of per-schedule statistics. Zero-cash Sharpe.")})
+
     wml = (pl.read_parquet(STUDY / "states/wml_returns.parquet")
            .filter(pl.col("date").is_between(dt.date(2009, 3, 6), dt.date(2009, 8, 31))).sort("date"))
     dates = [d.isoformat() for d in wml["date"]]
