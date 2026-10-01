@@ -260,7 +260,7 @@ drawdown. It limits the exposure the optimizer can take, whereas the overlay
 changes the scores used to select and size stocks. Those are different
 interventions, even though they use the same momentum-volatility state.
 
-## The test period changes the preference
+## The test period shows the cost of reducing exposure
 
 I kept the three specifications fixed for the January 2022–May 2026
 comparison, continuing the original walk-forward estimation and trading rules.
@@ -269,9 +269,9 @@ Figure 4 shows the accumulated difference against the baseline throughout the
 history; the shaded region marks the test period.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=5" base="/assets/momentum-crashes/value-added" mobile="/assets/momentum-crashes/value-added_mobile" label="Cumulative net P&amp;L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
+  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=6" base="/assets/momentum-crashes/value-added" mobile="/assets/momentum-crashes/value-added_mobile" version="2" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Value added against the Ridge baseline.</strong> Cumulative sum of daily net return differences, in points of capital, averaged across the three schedules after 5 bp trading costs. Zero is the baseline. The axis begins in 1995; strategy P&amp;L starts in September 1998 after training and feature warm-up. Each schedule retains its first trading day, with cash before its inception. Shading marks January 2022–27 May 2026; the cumulative paths continue across that boundary. Choose the test period under Explore to view its gains and losses separately.</p>
+<p class="figure-caption"><strong>Figure 4: Value added against the Ridge baseline.</strong> Cumulative daily net return differences, in points of capital, averaged across three schedules after 5 bp trading costs. Zero is the baseline. Training precedes the first trades in September 1998; all subsequent P&amp;L is retained. Shading marks January 2022–27 May 2026. Under Explore, choose the test period to rebase the comparison at the end of 2021.</p>
 
 <table class="research-table comparison-table compact-table">
   <caption><strong>Table 3: Test-period performance.</strong> 3 January 2022–27 May 2026, after costs of 5 bp per dollar traded. Means of metrics calculated separately for the three schedules. Returns are geometric and annualized; maximum drawdown is compounded. Added P&amp;L sums daily net return differences against the baseline over this period, in points of capital.</caption>
@@ -284,23 +284,72 @@ history; the shaded region marks the test period.
   </tbody>
 </table>
 
-The overlay and cap still reduce average maximum drawdown, but both lower
-Sharpe and give up about 6.5 points against the baseline. Their development
-gains do not carry into this period. The learned interactions improve Sharpe
+The overlay and cap underperform the baseline in this period. Both give up
+about 6.5 points and lower Sharpe, despite smaller average maximum drawdowns.
+The learned interactions improve Sharpe
 on all three schedules and maximum drawdown on two, adding 7.42 points on
 average. Much of that gain comes from 2023: 6.67 points, while 2022 and 2025
-detract. The improvement is meaningful, but concentrated.
+detract. These are four and a half years, and the three schedules share the
+same market history. That is a short basis for judging protection against
+infrequent momentum crashes, or for declaring the learned specification a
+reliable replacement.
 
-## Let the regression learn the conditional exposure
+Momentum also performed strongly in this later sample. The same Russell 1000
+12–1 winner-minus-loser portfolio earned about 16.1% a year before costs,
+against 2.1% in the development period. Cutting momentum exposure therefore
+had an opportunity cost. That is consistent with the overlay's underperformance,
+although the factor return alone cannot explain every change in the optimized
+portfolio.
 
-The development period made the overlay look attractive: a transparent rule,
-higher Sharpe and smaller drawdowns. The test period changes my preference.
-Among these three approaches, learned interactions provide the strongest case
-for extending the Ridge baseline. They improve return, Sharpe and average
-maximum drawdown in both periods, although the later gain rests heavily on one
-year. I find that enough to favour the learned specification in this research
-comparison, while remaining cautious about interpreting it as reliable crash
-protection.
+## Reducing shorts in past losers preserves more return
+
+The crash mechanism suggests a narrower change: reduce shorts in past losers
+when momentum risk rises, while leaving the long-side scores alone. I tried
+that using the same state and adjustment strength. Only stocks with a negative
+Ridge score and negative sector-relative momentum receive an upward score
+adjustment, capped at zero. The optimizer still sizes both legs jointly, so
+unchanged long scores do not imply identical long holdings.
+
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 4: Restricting the overlay to short-side past losers.</strong> January 2022–27 May 2026. Same net metrics and three-schedule averaging as Table 3; added P&amp;L is in points of capital.</caption>
+  <thead><tr><th>Rule</th><th>Net Sharpe</th><th>Net return</th><th>Max drawdown</th><th>Added P&amp;L</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Baseline</th><td>0.87</td><td>6.37%</td><td>−7.31%</td><td>0.00</td></tr>
+    <tr><th scope="row">Original overlay</th><td>0.71</td><td>4.85%</td><td>−6.89%</td><td>−6.50</td></tr>
+    <tr><th scope="row">Short losers only</th><td>0.83</td><td>6.03%</td><td>−6.74%</td><td>−1.47</td></tr>
+  </tbody>
+</table>
+
+The narrower rule gives up much less return in the later period, but still
+underperforms the baseline. The short leg accounts for −1.80 points and the
+long leg for +0.33. In the development period it raises Sharpe from 1.32 to
+1.36 and reduces maximum drawdown from 15.5% to 14.4%, a smaller benefit than
+the original overlay. During the 10 March–16 September 2009 rebound it adds
+4.51 points, of which 3.89 come from the short leg.
+
+The holdings move in the intended direction. In the later period's high-risk
+state ($$g_t\ge2$$), past losers fall from 73% to 49% of short gross exposure,
+while the long book's average momentum rank stays close to 0.49. The rule
+changes which stocks are shorted; it does not impose a smaller total short
+book. It is a more targeted form of protection, with a smaller observed
+return cost and less protection in the development sample.
+
+## Momentum protection has a return cost
+
+The development period made the overlay look attractive: higher Sharpe and
+smaller drawdowns, with much of its benefit concentrated in 2009 and 2020.
+It has since underperformed. Reducing exposure also gives up returns when
+momentum continues to pay, and a volatility signal cannot know when a reversal
+will arrive. The later losses make that trade-off visible; the short sample
+does not settle its value over a full cycle.
+
+I would keep both results in view. The learned interactions have performed
+better in the later period, but their gain is concentrated in 2023. Restricting
+the overlay to short-side past losers preserves more return, yet still lowers
+Sharpe in that period. I find that narrower intervention worth studying, but
+these results do not justify calling it an improvement over the baseline.
+Momentum protection has to earn its cost across both reversals and prolonged
+trends; four and a half years cannot settle that judgement.
 
 ## References
 

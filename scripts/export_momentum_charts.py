@@ -48,9 +48,14 @@ def export(assets: Path) -> None:
         added.append(series(key, label, role, values, additive=True, drawdown=False))
     write_chart(assets / "value-added.json", dates, added, {"added": dict(
         kind="performance", series=[s["id"] for s in added], additive=True,
+        unit="Added P&L vs baseline (points)", statistics=False, zeroReference=True,
+        dateTicks=["1995-01-01", "2000-01-01", "2005-01-01", "2010-01-01", "2015-01-01", "2020-01-01", dates[-1]],
+        mobileDateTicks=["1995-01-01", "2005-01-01", "2015-01-01", dates[-1]],
+        periodLabels=[dict(date="1996-09-01", text="Training", mobileText="Training", y=.96),
+                      dict(date="2024-03-01", text="Test: 2022–2026", mobileText="Test", y=.03)],
         start="1995-01-01", marker="2022-01-01", shade=[["2022-01-01", dates[-1]]],
         episodes=[["Development", dates[0], "2021-12-31"], ["Test: 2022–2026", "2021-12-31", dates[-1]]],
-        note="Sum of daily net return differences against Ridge, mean of three schedules, points of capital. No strategy P&L before September 1998. Shaded: 2022–May 2026. Statistics here describe relative returns; Table 3 reports portfolio Sharpe and drawdown.")})
+        note="Sum of daily net return differences against Ridge, mean of three schedules, points of capital. No strategy P&L before September 1998. Shaded: 2022–May 2026. Table 3 reports portfolio Sharpe and drawdown.")})
 
 
 if __name__ == "__main__":

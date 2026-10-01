@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="591.505pt" height="335.250281pt" viewBox="0 0 591.505 335.250281" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="604.23pt" height="335.250281pt" viewBox="0 0 604.23 335.250281" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
@@ -21,8 +21,8 @@
  <g id="figure_1">
   <g id="patch_1">
    <path d="M 0 335.250281
-L 591.505 335.250281
-L 591.505 -0
+L 604.23 335.250281
+L 604.23 -0
 L 0 -0
 z
 " style="fill: #0d1117"/>
@@ -84,7 +84,7 @@ z
     <g id="xtick_7">
      <g id="line2d_7"/>
      <g id="text_7">
-      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #9ba5af" x="558.003373" y="324.207937" transform="rotate(-0 558.003373 324.207937)">2025</text>
+      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #9ba5af" x="582.865" y="324.207937" transform="rotate(-0 582.865 324.207937)">2026</text>
      </g>
     </g>
    </g>
@@ -159,7 +159,7 @@ L 582.865 76.312663
    <g id="line2d_20">
     <path d="M 24.865 274.761472
 L 582.865 274.761472
-" clip-path="url(#p55fd598058)" style="fill: none; stroke: #9ba5af; stroke-width: 0.8; stroke-linecap: square"/>
+" clip-path="url(#p55fd598058)" style="fill: none; stroke: #e4e7ea; stroke-width: 0.8; stroke-linecap: square"/>
    </g>
    <g id="line2d_21">
     <path d="M 504.679805 313.110281
@@ -9662,13 +9662,13 @@ L 582.865 245.602582
 " clip-path="url(#p55fd598058)" style="fill: none; stroke: #2aa3c4; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
    <g id="text_14">
-    <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #9ba5af" x="540.196415" y="59.158412" transform="rotate(-0 540.196415 59.158412)">Test</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #e4e7ea" x="543.115589" y="302.964812" transform="rotate(-0 543.115589 302.964812)">Test: 2022–2026</text>
    </g>
    <g id="text_15">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #9ba5af" x="54.49461" y="302.465801" transform="rotate(-0 54.49461 302.465801)">Training</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #9ba5af" x="54.49461" y="57.642761" transform="rotate(-0 54.49461 57.642761)">Training</text>
    </g>
    <g id="text_16">
-    <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #e4e7ea" x="24.865" y="16.998281" transform="rotate(-0 24.865 16.998281)">Added net P&amp;L (points)</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #e4e7ea" x="24.865" y="16.998281" transform="rotate(-0 24.865 16.998281)">Added P&amp;L vs baseline (points)</text>
    </g>
    <g id="legend_1">
     <g id="line2d_25">

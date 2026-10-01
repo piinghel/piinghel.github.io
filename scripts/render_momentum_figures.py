@@ -11,7 +11,6 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("svg")
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import polars as pl
 from export_momentum_charts import HOLDOUT, DISPLAY_RULES
 
@@ -146,7 +145,7 @@ def render_added(out: Path, dark: bool, mobile: bool) -> None:
                          "svg.fonttype": "none", "svg.hashsalt": "momentum-added"}):
         fig, ax = plt.subplots(figsize=(4.4, 4.5) if mobile else (10, 4.8))
         fig.set_facecolor(c["bg"]); ax.set_facecolor(c["bg"])
-        ax.axhline(0, color=c["muted"], lw=0.8)
+        ax.axhline(0, color=c["ink"], lw=0.8)
         ax.axvspan(dt.date(2022, 1, 1), end, color=c["grid"], alpha=0.55, zorder=0)
         ax.axvline(dt.date(2022, 1, 1), color=c["muted"], lw=0.8, ls=":")
         for key, rule, label, _ in DISPLAY_RULES:
@@ -155,13 +154,13 @@ def render_added(out: Path, dark: bool, mobile: bool) -> None:
             ax.plot([anchor, *frame["date"].to_list()], [0.0, *frame["points"].to_list()],
                     label=label, color=c[key], lw=1.6)
         ax.set_xlim(dt.date(1995, 1, 1), end)
-        ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-        ax.set_title("Added net P&L (points)", loc="left", color=c["ink"], fontsize=11, pad=38 if mobile else 30)
-        ax.text(dt.date(2024, 1, 1), .98, "Test", transform=ax.get_xaxis_transform(),
-                ha="center", va="top", fontsize=9, color=c["muted"])
-        ax.text(dt.date(1996, 9, 1), .04, "Training", transform=ax.get_xaxis_transform(),
-                ha="center", fontsize=8, color=c["muted"], rotation=90 if mobile else 0)
+        years = (1995, 2005, 2015) if mobile else (1995, 2000, 2005, 2010, 2015, 2020)
+        ax.set_xticks([dt.date(year, 1, 1) for year in years] + [end], [str(year) for year in years] + ["2026"])
+        ax.set_title("Added P&L vs baseline (points)", loc="left", color=c["ink"], fontsize=11, pad=38 if mobile else 30)
+        ax.text(dt.date(2024, 3, 1), .03, "Test" if mobile else "Test: 2022–2026", transform=ax.get_xaxis_transform(),
+                ha="center", va="bottom", fontsize=9, color=c["ink"])
+        ax.text(dt.date(1996, 9, 1), .96, "Training", transform=ax.get_xaxis_transform(),
+                ha="center", fontsize=8, color=c["muted"])
         ax.tick_params(length=0, colors=c["muted"], labelsize=10)
         ax.grid(axis="y", color=c["grid"], lw=.7); ax.set_axisbelow(True)
         for spine in ax.spines.values(): spine.set_visible(False)

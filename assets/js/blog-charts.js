@@ -289,7 +289,7 @@
       ['Series',cfg.additive?'Annual P&L / return':'Annual growth','Volatility','Sharpe','Max drawdown'].forEach(label=>{const th=element('th','',label);th.scope='col';hr.append(th);});
       const body=element('tbody');table.append(body);
       statisticsPanel.append(element('p','blog-chart-note',cfg.note));
-      if(cfg.kind==='values')statisticsPanel.hidden=true;
+      if(cfg.kind==='values'||cfg.statistics===false)statisticsPanel.hidden=true;
       function updateTable(first,last) {
         body.replaceChildren();
         for(const s of series.filter(s=>visible.get(s.id)&&!s.contribution)) {
@@ -376,7 +376,11 @@
               const ticks=[];for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
               layout.yaxis.tickmode='array';layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);
             }
-            heading(cfg.kind==='values'?cfg.unit:cfg.additive?(benchmark&&visible.get(benchmark.id)?'P&L (points) / market change (%)':'P&L since selected start (points)'):'Growth · 100 at selected start'+(cfg.log?' (log scale)':''),1);
+            heading(cfg.unit||(cfg.kind==='values'?cfg.unit:cfg.additive?(benchmark&&visible.get(benchmark.id)?'P&L (points) / market change (%)':'P&L since selected start (points)'):'Growth · 100 at selected start'+(cfg.log?' (log scale)':'')),1);
+            if(cfg.dateTicks&&range[0]===full[0]&&range[1]===full[1]) {
+              const ticks=mobile?(cfg.mobileDateTicks||cfg.dateTicks):cfg.dateTicks;
+              layout.xaxis.tickmode='array';layout.xaxis.tickvals=ticks;layout.xaxis.ticktext=ticks.map(d=>d.slice(0,4));
+            }
             if(secondary) {
               layout.yaxis2={domain:[0,.29],anchor:'x',gridcolor:t.grid,zerolinecolor:t.grid,
                 tickformat:cfg.additive?'.0f':cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
@@ -415,6 +419,15 @@
             if(cfg.marker&&range[0]<=cfg.marker&&range[1]>=cfg.marker)layout.shapes=[{type:'line',xref:'x',yref:'paper',x0:cfg.marker,x1:cfg.marker,y0:0,y1:1,line:{color:t.text,width:1,dash:'dot'}}];
             if(cfg.band)layout.shapes=[{type:'rect',xref:'paper',yref:'y',x0:0,x1:1,y0:cfg.band[0],y1:cfg.band[1],fillcolor:t.grid,opacity:.4,line:{width:0},layer:'below'}];
             if(cfg.shade)layout.shapes=[...(layout.shapes||[]),...cfg.shade.map(([a,b])=>({type:'rect',xref:'x',yref:'paper',x0:a,x1:b,y0:0,y1:1,fillcolor:t.grid,opacity:.3,line:{width:0},layer:'below'}))];
+            for(const label of cfg.periodLabels||[]) {
+              if(label.date<range[0]||label.date>range[1])continue;
+              layout.annotations.push({x:label.date,y:label.y??.03,xref:'x',yref:'paper',
+                text:mobile?(label.mobileText||label.text):label.text,showarrow:false,xanchor:'center',yanchor:'bottom',
+                font:{size:mobile?10:11,color:t.text},bgcolor:t.paper,borderpad:2});
+            }
+            if(cfg.zeroReference) {
+              layout.yaxis.zeroline=true;layout.yaxis.zerolinecolor=t.text;layout.yaxis.zerolinewidth=1;
+            }
           }
           await Plotly.react(graph,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});

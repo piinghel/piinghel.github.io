@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="279.025pt" height="326.618281pt" viewBox="0 0 279.025 326.618281" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="291.75pt" height="326.618281pt" viewBox="0 0 291.75 326.618281" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
@@ -21,8 +21,8 @@
  <g id="figure_1">
   <g id="patch_1">
    <path d="M 0 326.618281
-L 279.025 326.618281
-L 279.025 0
+L 291.75 326.618281
+L 291.75 0
 L 0 0
 z
 " style="fill: #ffffff"/>
@@ -48,101 +48,107 @@ z
     <g id="xtick_1">
      <g id="line2d_1"/>
      <g id="text_1">
-      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="63.954678" y="315.575938" transform="rotate(-0 63.954678 315.575938)">2000</text>
+      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="24.865" y="315.575938" transform="rotate(-0 24.865 315.575938)">1995</text>
      </g>
     </g>
     <g id="xtick_2">
      <g id="line2d_2"/>
      <g id="text_2">
-      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="142.155442" y="315.575938" transform="rotate(-0 142.155442 315.575938)">2010</text>
+      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="103.065764" y="315.575938" transform="rotate(-0 103.065764 315.575938)">2005</text>
      </g>
     </g>
     <g id="xtick_3">
      <g id="line2d_3"/>
      <g id="text_3">
-      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="220.334799" y="315.575938" transform="rotate(-0 220.334799 315.575938)">2020</text>
+      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="181.24512" y="315.575938" transform="rotate(-0 181.24512 315.575938)">2015</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4"/>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="270.385" y="315.575938" transform="rotate(-0 270.385 315.575938)">2026</text>
      </g>
     </g>
    </g>
    <g id="matplotlib.axis_2">
     <g id="ytick_1">
-     <g id="line2d_4">
+     <g id="line2d_5">
       <path d="M 24.865 268.526272
 L 270.385 268.526272
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #e2e6e9; stroke-width: 0.7; stroke-linecap: square"/>
      </g>
-     <g id="line2d_5"/>
-     <g id="text_4">
+     <g id="line2d_6"/>
+     <g id="text_5">
       <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: end; fill: #59636e" x="21.365" y="272.3251" transform="rotate(-0 21.365 272.3251)">0</text>
      </g>
     </g>
     <g id="ytick_2">
-     <g id="line2d_6">
+     <g id="line2d_7">
       <path d="M 24.865 231.317121
 L 270.385 231.317121
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #e2e6e9; stroke-width: 0.7; stroke-linecap: square"/>
      </g>
-     <g id="line2d_7"/>
-     <g id="text_5">
+     <g id="line2d_8"/>
+     <g id="text_6">
       <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: end; fill: #59636e" x="21.365" y="235.115949" transform="rotate(-0 21.365 235.115949)">10</text>
      </g>
     </g>
     <g id="ytick_3">
-     <g id="line2d_8">
+     <g id="line2d_9">
       <path d="M 24.865 194.107969
 L 270.385 194.107969
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #e2e6e9; stroke-width: 0.7; stroke-linecap: square"/>
      </g>
-     <g id="line2d_9"/>
-     <g id="text_6">
+     <g id="line2d_10"/>
+     <g id="text_7">
       <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: end; fill: #59636e" x="21.365" y="197.906797" transform="rotate(-0 21.365 197.906797)">20</text>
      </g>
     </g>
     <g id="ytick_4">
-     <g id="line2d_10">
+     <g id="line2d_11">
       <path d="M 24.865 156.898817
 L 270.385 156.898817
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #e2e6e9; stroke-width: 0.7; stroke-linecap: square"/>
      </g>
-     <g id="line2d_11"/>
-     <g id="text_7">
+     <g id="line2d_12"/>
+     <g id="text_8">
       <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: end; fill: #59636e" x="21.365" y="160.697646" transform="rotate(-0 21.365 160.697646)">30</text>
      </g>
     </g>
     <g id="ytick_5">
-     <g id="line2d_12">
+     <g id="line2d_13">
       <path d="M 24.865 119.689666
 L 270.385 119.689666
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #e2e6e9; stroke-width: 0.7; stroke-linecap: square"/>
      </g>
-     <g id="line2d_13"/>
-     <g id="text_8">
+     <g id="line2d_14"/>
+     <g id="text_9">
       <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: end; fill: #59636e" x="21.365" y="123.488494" transform="rotate(-0 21.365 123.488494)">40</text>
      </g>
     </g>
     <g id="ytick_6">
-     <g id="line2d_14">
+     <g id="line2d_15">
       <path d="M 24.865 82.480514
 L 270.385 82.480514
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #e2e6e9; stroke-width: 0.7; stroke-linecap: square"/>
      </g>
-     <g id="line2d_15"/>
-     <g id="text_9">
+     <g id="line2d_16"/>
+     <g id="text_10">
       <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: end; fill: #59636e" x="21.365" y="86.279342" transform="rotate(-0 21.365 86.279342)">50</text>
      </g>
     </g>
    </g>
-   <g id="line2d_16">
+   <g id="line2d_17">
     <path d="M 24.865 268.526272
 L 270.385 268.526272
-" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #59636e; stroke-width: 0.8; stroke-linecap: square"/>
+" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #25313a; stroke-width: 0.8; stroke-linecap: square"/>
    </g>
-   <g id="line2d_17">
+   <g id="line2d_18">
     <path d="M 235.983514 304.478281
 L 235.983514 54.998281
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke-dasharray: 0.8,1.32; stroke-dashoffset: 0; stroke: #59636e; stroke-width: 0.8"/>
    </g>
-   <g id="line2d_18">
+   <g id="line2d_19">
     <path d="M 53.679188 268.526272
 L 53.807631 268.586234
 L 53.893261 268.296925
@@ -2050,7 +2056,7 @@ L 270.363593 201.65652
 L 270.385 201.641486
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
-   <g id="line2d_19">
+   <g id="line2d_20">
     <path d="M 53.679188 268.526272
 L 53.807631 268.985098
 L 53.829039 268.85779
@@ -5043,7 +5049,7 @@ L 270.385 71.6202
 L 270.385 71.6202
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #b58900; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
-   <g id="line2d_20">
+   <g id="line2d_21">
     <path d="M 53.679188 268.526272
 L 53.871853 268.434184
 L 53.957482 268.274045
@@ -6984,41 +6990,41 @@ L 270.363593 241.57884
 L 270.385 241.189813
 " clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #0e8fad; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
-   <g id="text_10">
-    <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="251.610823" y="66.825772" transform="rotate(-0 251.610823 66.825772)">Test</text>
-   </g>
    <g id="text_11">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Arial', sans-serif; fill: #59636e" transform="translate(39.980466 296.420956) rotate(-90)">Training</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #25313a" x="252.895259" y="294.831772" transform="rotate(-0 252.895259 294.831772)">Test</text>
    </g>
    <g id="text_12">
-    <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="24.865" y="16.998281" transform="rotate(-0 24.865 16.998281)">Added net P&amp;L (points)</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #59636e" x="37.902029" y="64.977481" transform="rotate(-0 37.902029 64.977481)">Training</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="24.865" y="16.998281" transform="rotate(-0 24.865 16.998281)">Added P&amp;L vs baseline (points)</text>
    </g>
    <g id="legend_1">
-    <g id="line2d_21">
+    <g id="line2d_22">
      <path d="M 28.0546 25.590669
 L 35.2546 25.590669
 L 42.4546 25.590669
 " style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
     </g>
-    <g id="text_13">
+    <g id="text_14">
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="49.6546" y="28.740669" transform="rotate(-0 49.6546 28.740669)">Score overlay</text>
     </g>
-    <g id="line2d_22">
+    <g id="line2d_23">
      <path d="M 28.0546 39.091372
 L 35.2546 39.091372
 L 42.4546 39.091372
 " style="fill: none; stroke: #b58900; stroke-width: 1.6; stroke-linecap: square"/>
     </g>
-    <g id="text_14">
+    <g id="text_15">
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="49.6546" y="42.241372" transform="rotate(-0 49.6546 42.241372)">Learned interactions</text>
     </g>
-    <g id="line2d_23">
+    <g id="line2d_24">
      <path d="M 160.284288 25.590669
 L 167.484287 25.590669
 L 174.684288 25.590669
 " style="fill: none; stroke: #0e8fad; stroke-width: 1.6; stroke-linecap: square"/>
     </g>
-    <g id="text_15">
+    <g id="text_16">
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="181.884287" y="28.740669" transform="rotate(-0 181.884287 28.740669)">Optimizer cap</text>
     </g>
    </g>
