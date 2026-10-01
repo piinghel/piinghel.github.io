@@ -301,39 +301,6 @@ had an opportunity cost. That is consistent with the overlay's underperformance,
 although the factor return alone cannot explain every change in the optimized
 portfolio.
 
-## Reducing shorts in past losers preserves more return
-
-The crash mechanism suggests a narrower change: reduce shorts in past losers
-when momentum risk rises, while leaving the long-side scores alone. I tried
-that using the same state and adjustment strength. Only stocks with a negative
-Ridge score and negative sector-relative momentum receive an upward score
-adjustment, capped at zero. The optimizer still sizes both legs jointly, so
-unchanged long scores do not imply identical long holdings.
-
-<table class="research-table comparison-table compact-table">
-  <caption><strong>Table 4: Restricting the overlay to short-side past losers.</strong> January 2022–27 May 2026. Same net metrics and three-schedule averaging as Table 3; added P&amp;L is in points of capital.</caption>
-  <thead><tr><th>Rule</th><th>Net Sharpe</th><th>Net return</th><th>Max drawdown</th><th>Added P&amp;L</th></tr></thead>
-  <tbody>
-    <tr><th scope="row">Baseline</th><td>0.87</td><td>6.37%</td><td>−7.31%</td><td>0.00</td></tr>
-    <tr><th scope="row">Original overlay</th><td>0.71</td><td>4.85%</td><td>−6.89%</td><td>−6.50</td></tr>
-    <tr><th scope="row">Short losers only</th><td>0.83</td><td>6.03%</td><td>−6.74%</td><td>−1.47</td></tr>
-  </tbody>
-</table>
-
-The narrower rule gives up much less return in the later period, but still
-underperforms the baseline. The short leg accounts for −1.80 points and the
-long leg for +0.33. In the development period it raises Sharpe from 1.32 to
-1.36 and reduces maximum drawdown from 15.5% to 14.4%, a smaller benefit than
-the original overlay. During the 10 March–16 September 2009 rebound it adds
-4.51 points, of which 3.89 come from the short leg.
-
-The holdings move in the intended direction. In the later period's high-risk
-state ($$g_t\ge2$$), past losers fall from 73% to 49% of short gross exposure,
-while the long book's average momentum rank stays close to 0.49. The rule
-changes which stocks are shorted; it does not impose a smaller total short
-book. It is a more targeted form of protection, with a smaller observed
-return cost and less protection in the development sample.
-
 ## Momentum protection has a return cost
 
 The development period made the overlay look attractive: higher Sharpe and
@@ -344,10 +311,7 @@ will arrive. The later losses make that trade-off visible; the short sample
 does not settle its value over a full cycle.
 
 I would keep both results in view. The learned interactions have performed
-better in the later period, but their gain is concentrated in 2023. Restricting
-the overlay to short-side past losers preserves more return, yet still lowers
-Sharpe in that period. I find that narrower intervention worth studying, but
-these results do not justify calling it an improvement over the baseline.
+better in the later period, but their gain is concentrated in 2023.
 Momentum protection has to earn its cost across both reversals and prolonged
 trends; four and a half years cannot settle that judgement.
 
