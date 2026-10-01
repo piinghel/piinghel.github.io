@@ -32,12 +32,12 @@
     "height": 794
   },
   "/assets/momentum-crashes/sharpe-by-rule": {
-    "width": 699,
-    "height": 277
+    "width": 661,
+    "height": 200
   },
   "/assets/momentum-crashes/sharpe-by-rule_mobile": {
-    "width": 386,
-    "height": 515
+    "width": 344,
+    "height": 354
   },
   "/assets/momentum-crashes/sharpe-by-state": {
     "width": 690,
@@ -46,6 +46,14 @@
   "/assets/momentum-crashes/sharpe-by-state_mobile": {
     "width": 376,
     "height": 380
+  },
+  "/assets/momentum-crashes/value-added": {
+    "width": 592,
+    "height": 335
+  },
+  "/assets/momentum-crashes/value-added_mobile": {
+    "width": 279,
+    "height": 327
   },
   "/assets/multiple-linear-regression/expanding-walk-forward": {
     "width": 605,

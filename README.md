@@ -164,6 +164,15 @@ for byte), run the renderer from this directory, then
 | Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | Same attribution exporter and shared helper; fallbacks from `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
+| Momentum crashes | 1 and 3 | `scripts/render_momentum_figures.py` |
+| | 2 and 4 | `scripts/export_momentum_charts.py`; Figure 4 SVG fallbacks from `scripts/render_momentum_figures.py` |
+
+The momentum figures use portfolio-level development evidence in
+`projects/momentum_crashes_public/outputs/evidence` and the verified Ridge
+continuation's `data/momentum_crash_holdout_20261001/chart_added_pnl.csv`.
+Run both momentum scripts from the blog directory, then update figure dimensions.
+The continuation chart preserves all first-trade P&L and the three-schedule
+denominator; it includes only the three standalone approaches used in the article.
 
 The regression evidence and its provenance are described in
 [`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence/README.md).

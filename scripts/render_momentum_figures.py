@@ -1,4 +1,4 @@
-"""Static figures for the momentum-crash article (development period, 1998-09 to 2021-12).
+"""Static figures for the momentum-crash article, with full-history relative P&L.
 
 Sharpe and maximum drawdown by rule use the verified schedule means and lowest/highest
 schedule Sharpe ratios (projects/momentum_crashes/evidence/review/ridge_stats.csv,
@@ -11,7 +11,9 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("svg")
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import polars as pl
+from export_momentum_charts import HOLDOUT, DISPLAY_RULES
 
 EVIDENCE = Path("/Users/pjinghelbrecht/Documents/quant_research/projects/momentum_crashes_public/outputs/evidence")
 END = dt.date(2021, 12, 31)
@@ -23,23 +25,19 @@ BUCKETS = (("Calm", "g = 1", 1.0, 1.0001), ("Elevated", "1 < g < 1.5", 1.0001, 1
 # label, Sharpe mean/low/high, compounded max drawdown % mean/low/high (per schedule), family
 ROWS = [
     ("Baseline", 1.317, 1.256, 1.358, 15.5, 14.9, 16.0, "base"),
-    ("Constant shrink (no timing)", 1.409, 1.339, 1.450, 13.4, 12.6, 14.5, "control"),
-    ("Optimizer cap 0.45/g", 1.449, 1.388, 1.495, 11.9, 10.9, 12.6, "cap"),
-    ("Optimizer cap 0.45/g²", 1.469, 1.411, 1.525, 11.4, 10.6, 12.2, "cap"),
     ("Score overlay", 1.541, 1.441, 1.612, 11.9, 10.8, 12.6, "overlay"),
     ("Learned interactions", 1.547, 1.481, 1.613, 13.3, 12.0, 14.7, "learned"),
-    ("Learned + cap", 1.596, 1.551, 1.658, 13.1, 12.0, 14.1, "combo"),
-    ("Learned + overlay", 1.666, 1.570, 1.743, 13.5, 11.6, 15.9, "combo"),
+    ("Optimizer cap", 1.469, 1.411, 1.525, 11.4, 10.6, 12.2, "cap"),
 ]
-MARKER = {"base": "o", "control": "o", "cap": "s", "overlay": "^", "learned": "D", "combo": "*"}
+MARKER = {"base": "o", "cap": "s", "overlay": "^", "learned": "D"}
 
 
 def palette(dark: bool) -> dict[str, str]:
     return {"bg": "#0d1117" if dark else "#ffffff", "ink": "#e4e7ea" if dark else "#25313a",
             "muted": "#9ba5af" if dark else "#59636e", "grid": "#37414a" if dark else "#e2e6e9",
-            "base": "#6e7681" if dark else "#a3acb5", "control": "#8b949e" if dark else "#6e7781",
+            "base": "#6e7681" if dark else "#a3acb5",
             "cap": "#2aa3c4" if dark else "#0e8fad", "overlay": "#3987e5" if dark else "#2a78d6",
-            "learned": "#a8891a" if dark else "#b58900", "combo": "#9085e9" if dark else "#7447c9"}
+            "learned": "#a8891a" if dark else "#b58900"}
 
 
 def render(out: Path, dark: bool, mobile: bool) -> None:
@@ -47,13 +45,13 @@ def render(out: Path, dark: bool, mobile: bool) -> None:
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "momentum-sharpe"}):
         if mobile:
-            fig, axes = plt.subplots(2, 1, figsize=(3.9, 8.4), gridspec_kw={"hspace": 0.38})
+            fig, axes = plt.subplots(2, 1, figsize=(3.9, 5.5), gridspec_kw={"hspace": 0.5})
         else:
-            fig, axes = plt.subplots(1, 2, figsize=(9.4, 4.1), sharey=True, gridspec_kw={"wspace": 0.12, "width_ratios": [1.2, 1]})
+            fig, axes = plt.subplots(1, 2, figsize=(9.4, 2.7), sharey=True, gridspec_kw={"wspace": 0.12, "width_ratios": [1.2, 1]})
         fig.set_facecolor(c["bg"])
         ys = list(range(len(ROWS)))[::-1]
         # Drawdowns are plotted as negative numbers so that right means better in both panels.
-        panels = [("Net Sharpe ratio", lambda r: (r[1], r[2], r[3]), (1.2, 1.8), [1.2, 1.4, 1.6, 1.8] if mobile else [1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8]),
+        panels = [("Net Sharpe ratio", lambda r: (r[1], r[2], r[3]), (1.2, 1.65), [1.2, 1.4, 1.6] if mobile else [1.2, 1.3, 1.4, 1.5, 1.6]),
                   ("Maximum drawdown (%)", lambda r: (-r[4], -r[6], -r[5]), (-17, -9), [-16, -14, -12, -10])]
         for k, (ax, (title, get, lim, ticks)) in enumerate(zip(axes, panels)):
             ax.set_facecolor(c["bg"])
@@ -62,8 +60,7 @@ def render(out: Path, dark: bool, mobile: bool) -> None:
             for y, row in zip(ys, ROWS):
                 fam = row[-1]; m, lo, hi = get(row)
                 ax.plot([lo, hi], [y, y], color=c[fam], lw=2.0, solid_capstyle="butt", zorder=2)
-                size = 11 if fam == "combo" else 7.5
-                ax.plot(m, y, MARKER[fam], ms=size, mfc=c["bg"] if fam == "control" else c[fam], mec=c[fam], mew=1.4, zorder=3)
+                ax.plot(m, y, MARKER[fam], ms=7.5, mfc=c[fam], mec=c[fam], mew=1.4, zorder=3)
             ax.set_xlim(*lim); ax.set_xticks(ticks)
             if k == 1:
                 ax.set_xticklabels([f"{abs(t)}" if t else "0" for t in ticks])
@@ -75,7 +72,7 @@ def render(out: Path, dark: bool, mobile: bool) -> None:
             if k == 0 or mobile:
                 ax.set_yticks(ys, [r[0] for r in ROWS])
                 for tick, row in zip(ax.get_yticklabels(), ROWS):
-                    tick.set_color(c["ink"]); tick.set_fontweight("bold" if row[0] == "Score overlay" else "normal")
+                    tick.set_color(c["ink"])
             else:
                 ax.tick_params(axis="y", labelleft=False)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
@@ -139,6 +136,45 @@ def render_state(out: Path, dark: bool, mobile: bool) -> None:
         path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
 
 
+def render_added(out: Path, dark: bool, mobile: bool) -> None:
+    """Fallback for the same saved cumulative differences as the interactive chart."""
+    c = palette(dark)
+    data = pl.scan_csv(HOLDOUT / "chart_added_pnl.csv", try_parse_dates=True).filter(
+        pl.col("variant").is_in([rule for _, rule, _, _ in DISPLAY_RULES])).collect()
+    end = data["date"].max()
+    with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
+                         "svg.fonttype": "none", "svg.hashsalt": "momentum-added"}):
+        fig, ax = plt.subplots(figsize=(4.4, 4.5) if mobile else (10, 4.8))
+        fig.set_facecolor(c["bg"]); ax.set_facecolor(c["bg"])
+        ax.axhline(0, color=c["muted"], lw=0.8)
+        ax.axvspan(dt.date(2022, 1, 1), end, color=c["grid"], alpha=0.55, zorder=0)
+        ax.axvline(dt.date(2022, 1, 1), color=c["muted"], lw=0.8, ls=":")
+        for key, rule, label, _ in DISPLAY_RULES:
+            frame = data.filter(pl.col("variant") == rule).sort("date")
+            anchor = frame["date"][0] - dt.timedelta(days=1)
+            ax.plot([anchor, *frame["date"].to_list()], [0.0, *frame["points"].to_list()],
+                    label=label, color=c[key], lw=1.6)
+        ax.set_xlim(dt.date(1995, 1, 1), end)
+        ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+        ax.set_title("Added net P&L (points)", loc="left", color=c["ink"], fontsize=11, pad=38 if mobile else 30)
+        ax.text(dt.date(2024, 1, 1), .98, "Test", transform=ax.get_xaxis_transform(),
+                ha="center", va="top", fontsize=9, color=c["muted"])
+        ax.text(dt.date(1996, 9, 1), .04, "Training", transform=ax.get_xaxis_transform(),
+                ha="center", fontsize=8, color=c["muted"], rotation=90 if mobile else 0)
+        ax.tick_params(length=0, colors=c["muted"], labelsize=10)
+        ax.grid(axis="y", color=c["grid"], lw=.7); ax.set_axisbelow(True)
+        for spine in ax.spines.values(): spine.set_visible(False)
+        legend = ax.legend(loc="lower left", bbox_to_anchor=(-.02, 1.01), ncol=2 if mobile else 3,
+                           frameon=False, fontsize=9, handlelength=1.6)
+        for item in legend.get_texts(): item.set_color(c["ink"])
+        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+        path = out / f"value-added{suffix}.svg"
+        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"], bbox_inches="tight", pad_inches=.12)
+        plt.close(fig)
+        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+
+
 if __name__ == "__main__":
     out = Path(__file__).resolve().parents[1] / "assets/momentum-crashes"
     out.mkdir(parents=True, exist_ok=True)
@@ -146,3 +182,4 @@ if __name__ == "__main__":
         for mobile in (False, True):
             render(out, dark, mobile)
             render_state(out, dark, mobile)
+            render_added(out, dark, mobile)
