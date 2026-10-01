@@ -6,7 +6,7 @@ description: "Three ways to make a Ridge strategy's momentum exposure depend on 
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
-last_modified_at: 2026-10-01
+last_modified_at: 2026-10-02
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -269,7 +269,7 @@ Figure 4 shows the accumulated difference against the baseline throughout the
 history; the shaded region marks the test period.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=6" base="/assets/momentum-crashes/value-added" mobile="/assets/momentum-crashes/value-added_mobile" version="2" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
+  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=7" base="/assets/momentum-crashes/value-added" mobile="/assets/momentum-crashes/value-added_mobile" version="3" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: Value added against the Ridge baseline.</strong> Cumulative daily net return differences, in points of capital, averaged across three schedules after 5 bp trading costs. Zero is the baseline. Training precedes the first trades in September 1998; all subsequent P&amp;L is retained. Shading marks January 2022–27 May 2026. Under Explore, choose the test period to rebase the comparison at the end of 2021.</p>
 

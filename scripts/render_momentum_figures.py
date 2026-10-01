@@ -140,6 +140,7 @@ def render_added(out: Path, dark: bool, mobile: bool) -> None:
     c = palette(dark)
     data = pl.scan_csv(HOLDOUT / "chart_added_pnl.csv", try_parse_dates=True).filter(
         pl.col("variant").is_in([rule for _, rule, _, _ in DISPLAY_RULES])).collect()
+    start = data["date"].min() - dt.timedelta(days=1)
     end = data["date"].max()
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "momentum-added"}):
@@ -153,13 +154,14 @@ def render_added(out: Path, dark: bool, mobile: bool) -> None:
             anchor = frame["date"][0] - dt.timedelta(days=1)
             ax.plot([anchor, *frame["date"].to_list()], [0.0, *frame["points"].to_list()],
                     label=label, color=c[key], lw=1.6)
-        ax.set_xlim(dt.date(1995, 1, 1), end)
-        years = (1995, 2005, 2015) if mobile else (1995, 2000, 2005, 2010, 2015, 2020)
-        ax.set_xticks([dt.date(year, 1, 1) for year in years] + [end], [str(year) for year in years] + ["2026"])
+        years = (2005, 2015) if mobile else (2005, 2010, 2015, 2020)
+        ax.set_xticks([start, *[dt.date(year, 1, 1) for year in years], end],
+                      [str(start.year), *[str(year) for year in years], str(end.year)])
+        ax.set_xlim(start, end)
         ax.set_title("Added P&L vs baseline (points)", loc="left", color=c["ink"], fontsize=11, pad=38 if mobile else 30)
         ax.text(dt.date(2024, 3, 1), .03, "Test" if mobile else "Test: 2022–2026", transform=ax.get_xaxis_transform(),
                 ha="center", va="bottom", fontsize=9, color=c["ink"])
-        ax.text(dt.date(1996, 9, 1), .96, "Training", transform=ax.get_xaxis_transform(),
+        ax.text(dt.date(2000, 1, 1), .96, "Training", transform=ax.get_xaxis_transform(),
                 ha="center", fontsize=8, color=c["muted"])
         ax.tick_params(length=0, colors=c["muted"], labelsize=10)
         ax.grid(axis="y", color=c["grid"], lw=.7); ax.set_axisbelow(True)
