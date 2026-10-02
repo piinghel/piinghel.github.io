@@ -9,14 +9,16 @@ date: 2025-05-10
 last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
-permalink: /quants/2025/05/10/rebalancing-luck.html
-home_after: /quants/2026/08/29/portfolio-optimization.html
+permalink: /quants/rebalancing-luck.html
+redirect_from:
+  - /quants/2025/05/10/rebalancing-luck.html
+home_after: _posts/2026-08-29-joint-sizing.md
 github_repositories:
   - label: Research code
     url: https://github.com/piinghel/rebalance-tranching
 ---
 
-The allocation approach in [From Volatility Scaling to Joint Sizing](/quants/2026/08/29/portfolio-optimization.html)
+The allocation approach in [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %})
 rebalances every three weeks. That still leaves a starting date to choose: this
 Friday, next Friday, or the Friday after. The model is the same in each case,
 but a week's difference in timing can leave me with quite different returns.
@@ -35,12 +37,12 @@ and look at the benefit after trading costs.
 
 Figure 1 shows the three Friday schedules from January 2022 to May 2026.
 They use the same Ridge regression on 80 ranking predictors and the same
-[joint sizing rules](/quants/2026/08/29/portfolio-optimization.html),
+[joint sizing rules]({% link _posts/2026-08-29-joint-sizing.md %}),
 including the rank buffer and trade penalty. Orders execute at the next
 trading session's close after the signal date. All returns include 5 bp
 per dollar traded. This comparison retains the earlier **1.18 volatility
 multiplier**, versus the development-calibrated **1.55** in the
-[joint-sizing article](/quants/2026/08/29/portfolio-optimization.html#covariance-and-risk-forecasts);
+[joint-sizing article]({% link _posts/2026-08-29-joint-sizing.md %}#covariance-and-risk-forecasts);
 both use a 7% forecast risk budget, so the portfolios here take more risk.
 
 Over this period, annualized net return ranges from **5.73% to 8.95%**.
@@ -50,7 +52,7 @@ which week would win, and I wouldn't want the whole portfolio exposed to
 the one that earned 5.73%.
 
 <div class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="schedules" source="/assets/tranching/ridge-paths.json?v=2" base="/assets/tranching/ridge-paths" mobile="/assets/tranching/ridge-paths_mobile" label="Net growth of three Friday rebalance schedules and their equal-notional combination, January 2022 to May 2026." version="2" %}
+  {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=2" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="Net growth of three Friday rebalance schedules and their equal-notional combination, January 2022 to May 2026." version="2" %}
 </div>
 <p class="figure-caption"><strong>Figure 1: Less dependence on one starting week.</strong> Friday signal schedules, January 2022–May 2026, indexed to 100 at the 31 December 2021 close, on a log scale. Grey lines show the individual schedules; blue combines them at one third of notional each. Each line compounds daily net P&amp;L per unit of fixed notional.</p>
 
@@ -151,7 +153,7 @@ roughly halved in development and fallen by three quarters later.
 Order counts rise with each additional tranche.
 
 <div class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="calendars" source="/assets/tranching/ridge-calendars.json?v=4" base="/assets/tranching/ridge-calendars" mobile="/assets/tranching/ridge-calendars_mobile" label="Observed calendar return spread declines and annual order counts rise from one to three tranches, in development and the later period." version="4" %}
+  {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=4" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="Observed calendar return spread declines and annual order counts rise from one to three tranches, in development and the later period." version="4" %}
 </div>
 <p class="figure-caption"><strong>Figure 2: Less calendar spread, more orders.</strong> Range of annualized geometric net returns and mean annual order count across 15 single schedules, 15 pairs and five three-tranche portfolios. Each combination uses equal notional and a common weekday. Two tranches alternate one- and two-week rebalance gaps; three rebalance weekly. The ranges describe these calendar choices, whose number changes across the comparison.</p>
 

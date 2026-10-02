@@ -22,7 +22,7 @@
       region.appendChild(table);
     });
     const scrollRegions = Array.from(article.querySelectorAll(
-      ".research-table-scroll, .research-figure, .low-vol-figure"
+      ".research-table-scroll, .research-figure"
     ));
     article.querySelectorAll(".research-table caption").forEach((caption) => {
       const content = document.createElement("span");

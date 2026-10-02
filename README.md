@@ -18,22 +18,23 @@ bundle exec jekyll serve
 
 Every article lives at `/quants/<slug>.html`, where the slug matches the title and the
 post file name. Retired URLs stay in the target post's `redirect_from` list
-(`jekyll-redirect-from`), so old links keep working. Asset folders under
-`assets/` keep their original names because the figure exporters write there.
+(`jekyll-redirect-from`), so old links keep working. Asset folders use the article
+slug, and exporter defaults and reproduction commands use the same path.
+Static assets have no redirects; renamed asset URLs are intentionally retired.
 
 ## Article reading order
 
-`_data/reading_order.yml` defines the research sequence used by Previous/Next links:
-low-volatility sizing → regression → portfolio construction → rebalancing luck →
-P&L attribution 1–2 → momentum crashes → resources.
-The homepage lists posts newest first, with the publication date and topic on
+`_data/reading_order.yml` is the authoritative sequence used by Previous/Next links.
+Entries are source post paths, so permalink changes do not change membership.
+The homepage lists posts newest first, with explicit `home_after` source paths
+placing continuations beside their prerequisite, and the publication date and topic on
 every entry; posts published on the same day list the latest part first (Part 2,
 then 1). Resources (`navigation: false`) stays in the header rather than the list.
 Previous/Next links follow the sequence from
 its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
 remain chronological.
-Posts missing from the sequence appear first in Previous/Next order;
+The validator rejects missing or repeated sequence entries;
 assign their editorial position before publishing. The post layout uses
 `_includes/ordered-posts.html`; the homepage sorts by publication date. The attribution parts stay together
 in `_data/reading_order.yml`; `series_id` and `series_order` identify the series
@@ -44,8 +45,8 @@ without changing publication dates.
 The normal build excludes drafts. Use `--drafts --unpublished` for a local preview.
 
 ```bash
-bundle exec jekyll build
-python3 scripts/check_site.py _site
+python3 -m pip install -r requirements-checks.txt
+python3 scripts/build_site.py
 python3 -m unittest discover -s tests
 node --test tests/blog_charts.test.cjs
 git diff --check
@@ -53,7 +54,14 @@ git diff --check
 
 The checker validates local links and fragments, SVG XML references, matching
 theme dimensions, image descriptions, and exclusion of development
-files. After regenerating figures, run
+files. It also checks post slugs, URL collisions, redirects, navigation and
+homepage membership, series order and source references in this guide and AGENTS.
+The build wrapper checks source metadata before Jekyll writes output, then checks
+the rendered pages. GitHub Pages uses a branch build; its plugin whitelist
+does not run this Python validator. Run the full local checks before pushing.
+The Validate site workflow repeats them on pushes and pull requests. It reports
+failures independently of Pages; branch-build deployment is not gated by it.
+After regenerating figures, run
 `python3 scripts/check_site.py --update-dimensions` to refresh their intrinsic
 sizes before rebuilding the site.
 
@@ -132,16 +140,16 @@ that window; they leave the explicitly labelled annual correlation window intact
 The exporters consume completed aggregate outputs; they never run backtests:
 
 ```bash
-python3 scripts/export_mlr_data.py --evidence /path/to/regression/evidence
-python3 scripts/export_regression_charts.py --article /path/to/regression/article
-python3 scripts/export_optimizer_charts.py --inputs /path/to/optimizer/figure_inputs
+python3 scripts/export_predictor_data.py --evidence /path/to/regression/evidence
+python3 scripts/export_combining_predictors_charts.py --article /path/to/regression/article
+python3 scripts/export_joint_sizing_charts.py --inputs /path/to/optimizer/figure_inputs
 python3 scripts/export_attribution_charts.py --themes /path/to/attribution/themes --history /path/to/attribution/history
 ```
 
 Regenerate the reference with:
 
 ```bash
-python3 scripts/export_low_vol_charts.py --baseline /path/to/completed/run --hedge /path/to/completed/hedge
+python3 scripts/export_low_volatility_sizing_charts.py --baseline /path/to/completed/run --hedge /path/to/completed/hedge
 python3 -m unittest discover -s tests
 node --test tests/blog_charts.test.cjs
 ```
@@ -163,10 +171,10 @@ for byte), run the renderer from this directory, then
 | --- | --- | --- |
 | Low volatility | 1 and 3 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
 | | 2 and 4 | `python -m low_volatility_factor.article_figures` in the same repository |
-| Regression | 1 (explorer), 3–5 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_mlr_data.py` and `scripts/export_regression_charts.py` |
-| | 1 (no-JavaScript fallback) | `scripts/render_multiple_linear_regression_figures.py` |
-| | 2 | `scripts/render_mlr_training_design.py` |
-| Joint sizing | all | `scripts/export_optimizer_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
+| Regression | 1 (explorer), 3–5 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_predictor_data.py` and `scripts/export_combining_predictors_charts.py` |
+| | 1 (no-JavaScript fallback) | `scripts/render_predictor_structure.py` |
+| | 2 | `scripts/render_predictor_training_design.py` |
+| Joint sizing | all | `scripts/export_joint_sizing_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
 | Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | Same attribution exporter and shared helper; fallbacks from `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–2 | `rebalance_tranching.ridge_figures` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
@@ -181,7 +189,7 @@ The continuation chart preserves all first-trade P&L and the three-schedule
 denominator; it includes only the three standalone approaches used in the article.
 
 The regression evidence and its provenance are described in
-[`assets/multiple-linear-regression/evidence`](assets/multiple-linear-regression/evidence/README.md).
+[`assets/combining-predictors/evidence`](assets/combining-predictors/evidence/README.md).
 The attribution aggregates come from the private `performance_attribution`
 project, on the 80-predictor Ridge optimizer book:
 `render_attribution_pnl.py --outputs` reads the whole-history ledger
@@ -192,13 +200,13 @@ portfolio aggregates only.
 
 The tranching calculations and renderer live in rebalance-tranching. Export
 the matched Ridge-80 figures and interactive data directly to this blog's
-`assets/tranching/` directory. From the research repository:
+`assets/rebalancing-luck/` directory. From the research repository:
 
 ```bash
 uv sync --locked
 uv run python -m rebalance_tranching.ridge_figures \
   --input data/ridge80_calendar_daily.parquet \
-  --output /path/to/piinghel.github.io/assets/tranching \
+  --output /path/to/piinghel.github.io/assets/rebalancing-luck \
   --blog /path/to/piinghel.github.io
 ```
 
@@ -225,6 +233,20 @@ different portfolio specification cannot substitute for a matched model
 comparison.
 
 ## Site maintenance
+
+| Source | Owns |
+| --- | --- |
+| `_posts/` front matter | Article identity, public metadata and redirect history |
+| `_data/reading_order.yml` | Editorial Previous/Next sequence |
+| `_layouts/` and `_includes/` | Page structure and shared components |
+| `_sass/`, `assets/css/`, `assets/js/` | Shared presentation and browser behaviour |
+| `scripts/` and `tests/` | Figure exports, reproducible renderers and validation |
+
+Use Liquid source links between articles. Rename a source file, its asset folder
+and all exporter/documentation callers together; keep old public article URLs
+only in `redirect_from`. Do not add internal aliases for retired names. Inspect
+callers before removing unused material, and preserve the documented evidence
+bundle and `assets/css/style.scss` entry point. Read AGENTS before concurrent work.
 
 The locally installed Quant Blog Style skill records the house conventions for
 prose, figures, captions, tables and mobile presentation. Invoke it as

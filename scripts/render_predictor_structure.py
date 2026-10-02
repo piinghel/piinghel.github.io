@@ -1,7 +1,7 @@
 """Render the regression article's static predictor-structure figures.
 
 They are the no-JavaScript fallback of the interactive Figure 1 and read the compact
-evidence in assets/multiple-linear-regression/evidence/predictor-structure.
+evidence in assets/combining-predictors/evidence/predictor-structure.
 """
 
 from __future__ import annotations
@@ -10,10 +10,10 @@ import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from mlr_figures.structure import load_structure, plot_structure_figures
-from mlr_figures.support import FigureStyle, dark_figure_style
+from predictor_figures.structure import load_structure, plot_structure_figures
+from predictor_figures.support import FigureStyle, dark_figure_style
 
-ASSETS = Path(__file__).resolve().parents[1] / "assets" / "multiple-linear-regression"
+ASSETS = Path(__file__).resolve().parents[1] / "assets" / "combining-predictors"
 
 
 def figure_context(style: FigureStyle) -> dict[str, object]:

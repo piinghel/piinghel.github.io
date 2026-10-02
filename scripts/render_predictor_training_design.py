@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "assets" / "multiple-linear-regression"
+OUT = ROOT / "assets" / "combining-predictors"
 WINDOWS = OUT / "evidence/results/chosen_penalty_by_refit.csv"
 TRAIN_START = dt.date(1995, 1, 12)
 LAST_DATE = dt.date(2026, 5, 27)

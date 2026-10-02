@@ -7,16 +7,17 @@ date: 2026-08-29
 last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
-permalink: /quants/2026/08/29/portfolio-optimization.html
+permalink: /quants/joint-sizing.html
 redirect_from:
+  - /quants/2026/08/29/portfolio-optimization.html
   - /quants/2026/09/05/risk-concentration.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-In the articles on [low-volatility sizing](/quants/low-volatility-sizing.html)
-and [regression](/quants/combining-predictors.html),
+In the articles on [low-volatility sizing]({% link _posts/2024-12-15-low-volatility-sizing.md %})
+and [regression]({% link _posts/2025-02-09-combining-predictors.md %}),
 I sized positions one stock at a time: scale each by its own volatility and
 cap it. That simple rule worked well. Here I want to see whether sizing the
 stocks together, taking into account how they move with each other, does
@@ -27,7 +28,7 @@ that look safer than they are, and it can trade a lot in response to small
 changes in its inputs. I use correlation shrinkage for the first and a rank
 buffer plus a trade penalty for the second.
 
-The setup follows the [regression article](/quants/combining-predictors.html#portfolio-construction):
+The setup follows the [regression article]({% link _posts/2025-02-09-combining-predictors.md %}#portfolio-construction):
 the same universe and Ridge ranking, 75 long and 75 short names, three
 rebalance schedules that each trade every three weeks starting a week apart,
 and next-close execution. I charge 5 bp per dollar traded and ignore borrow,
@@ -131,7 +132,7 @@ Figure 1 runs the final portfolio, the optimizer with the trading controls
 described below, at five shrinkage values in development.
 
 <div class="research-figure rho-ladder-figure responsive-figure">
-  {% include blog-chart.html chart="shrinkage" source="/assets/portfolio-optimization/comparisons.json" base="/assets/portfolio-optimization/rho-ladder" mobile="/assets/portfolio-optimization/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="18" %}
+  {% include blog-chart.html chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="18" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 1: Correlation shrinkage.</strong> The optimizer with trading controls at five shrinkage values, development period: risk calibration, beta bias (realized minus forecast beta over the next holding period), annual turnover and net Sharpe. The chosen 0.5 is highlighted.</p>
@@ -216,7 +217,7 @@ trading controls, and drops only the correlations. Its Sharpe of 1.05 is level
 with the score-weighted rule's 1.03, so the gain comes from the correlations.
 
 <div class="research-figure performance-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/portfolio-optimization/performance.json" base="/assets/portfolio-optimization/performance-and-drawdowns" mobile="/assets/portfolio-optimization/performance-and-drawdowns_mobile" label="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="18" %}
+  {% include blog-chart.html chart="performance" source="/assets/joint-sizing/performance.json" base="/assets/joint-sizing/performance-and-drawdowns" mobile="/assets/joint-sizing/performance-and-drawdowns_mobile" label="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="18" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 2: Development-period growth and drawdowns.</strong> Net growth index (log scale) and drawdown after trading costs for the first and last rules in Table 2, September 1998–December 2021. Each path averages three separately compounded schedules, so its drawdowns are shallower than the per-schedule maxima in Table 2. The rules run at different volatilities; Table 2 compares Sharpe.</p>
@@ -270,7 +271,7 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 Figure 3 varies one control at a time around the chosen settings.
 
 <div class="research-figure parameter-sensitivity-figure responsive-figure">
-  {% include blog-chart.html chart="sensitivity" source="/assets/portfolio-optimization/comparisons.json" base="/assets/portfolio-optimization/parameter-sensitivity" mobile="/assets/portfolio-optimization/parameter-sensitivity_mobile" label="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="13" %}
+  {% include blog-chart.html chart="sensitivity" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/parameter-sensitivity" mobile="/assets/joint-sizing/parameter-sensitivity_mobile" label="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="13" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 3: Sensitivity to the trading controls.</strong> Development-period net Sharpe and annual turnover across trade coefficients <i>c</i> (×10<sup>−4</sup>; 0 means no penalty) and rank-buffer cutoffs (75 means no buffer). Points are schedule means; whiskers span the three schedules. Chosen settings are highlighted.</p>
@@ -321,7 +322,7 @@ the beta of the portfolio's realized returns over a trailing year, which
 reflects holdings and market moves throughout that year.
 
 <div class="research-figure risk-beta-figure responsive-figure">
-  {% include blog-chart.html chart="beta" source="/assets/portfolio-optimization/beta.json" base="/assets/portfolio-optimization/risk-calibration-and-beta" mobile="/assets/portfolio-optimization/risk-calibration-and-beta_mobile" label="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="17" %}
+  {% include blog-chart.html chart="beta" source="/assets/joint-sizing/beta.json" base="/assets/joint-sizing/risk-calibration-and-beta" mobile="/assets/joint-sizing/risk-calibration-and-beta_mobile" label="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="17" %}
 </div>
 
 <p class="figure-caption"><strong>Figure 4: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the optimizer's ±0.05 limit, which applies to its rebalance-time estimate.</p>
@@ -349,9 +350,9 @@ less than volatility scaling, so higher costs widen its lead. It does run at
 about 160% average gross against 138% in development, so the borrow,
 financing and impact costs left out here weigh more on it.
 
-In [Reducing Rebalancing Luck](/quants/2025/05/10/rebalancing-luck.html),
+In [Reducing Rebalancing Luck]({% link _posts/2025-05-10-rebalancing-luck.md %}),
 I combine the three starting weeks at one third of notional each and
-measure the diversification benefit. The [attribution series](/quants/portfolio-attribution.html)
+measure the diversification benefit. The [attribution series]({% link _posts/2026-09-09-portfolio-attribution.md %})
 then breaks the portfolio's P&L down by the ranking's themes.
 
 Two weaknesses remain: realized beta runs above the rebalance-time estimate

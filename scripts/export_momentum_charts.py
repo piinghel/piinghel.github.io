@@ -59,4 +59,4 @@ def export(assets: Path) -> None:
 
 
 if __name__ == "__main__":
-    export(Path("assets/momentum-crashes"))
+    export(Path("assets/momentum-crashes-ridge"))

@@ -15,17 +15,17 @@ series_id: performance-attribution
 series_order: 2
 ---
 
-<link rel="stylesheet" href="/assets/css/attribution-article.css?v=5">
+<link rel="stylesheet" href="/assets/css/performance-attribution.css?v=5">
 
 Averages over whole periods hide when the money is made and lost. For a book
 that is long low-risk stocks and short high-risk ones, the market's direction
 should matter a lot, so here I split [Part
-1](/quants/portfolio-attribution.html)'s theme P&L by what the market was
+1]({% link _posts/2026-09-09-portfolio-attribution.md %})'s theme P&L by what the market was
 doing. I use two separate views: the direction of whole market episodes, then
 the size of daily market moves. A rally can be volatile, and a decline can
 contain calm days; the two classifications overlap.
 
-The book, [attribution groups](/quants/portfolio-attribution.html#factor-definitions) and [conventions](/quants/portfolio-attribution.html#pnl-conventions)
+The book, [attribution groups]({% link _posts/2026-09-09-portfolio-attribution.md %}#factor-definitions) and [conventions]({% link _posts/2026-09-09-portfolio-attribution.md %}#pnl-conventions)
 are those of Part 1. The backtest assumes shorts can always be borrowed, for
 free.
 
@@ -124,7 +124,7 @@ decomposition below shows where that remaining return comes from.
 In declines, **low volatility** earns 16% a year and made money in all 15
 episodes, while **net market exposure** loses 19% and lost in all 15. In strong
 rallies the two swap: low volatility loses 13% a year and net market exposure
-earns 15%. Adding beta gives the [low-risk package](/quants/portfolio-attribution.html#factor-definitions):
+earns 15%. Adding beta gives the [low-risk package]({% link _posts/2026-09-09-portfolio-attribution.md %}#factor-definitions):
 −1.4% a year in declines and +0.8% in strong rallies. These small averages hide
 variation between episodes: the package made money
 in only 4 of the 15 declines and 8 of the 16 rallies, and the 2000–01 bear

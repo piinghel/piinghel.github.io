@@ -15,8 +15,9 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Give every article the same structure: header, the small Contents list, an
   introduction that opens with the concrete problem, the analysis sections, a
   closing section with the judgement, then references if any. Never add a
-  summary in any form. List articles newest first everywhere, and never show
-  unpublished or unfinished articles on the site.
+  summary in any form. The homepage is newest first with explicit `home_after`
+  continuations; Previous/Next follows `_data/reading_order.yml`. RSS remains
+  chronological. Never show unpublished or unfinished articles on the site.
 - Headings are statements. Don't pose a question and answer it yourself, and end
   on the judgement rather than on open questions.
 - Keep footnotes to one or two short sentences: a source or one clarification.
@@ -113,10 +114,32 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   on phones when needed for readable labels; preserve scales and definitions.
   Keep the same table structure at every viewport width.
 
+## Site structure and concurrent work
+
+- Post front matter owns title, description, category, permalink and redirects.
+  Use `{% link _posts/<file>.md %}` for article links, with anchors after the tag.
+  Reading order, `home_after` and header links use source post paths, never URLs.
+- Keep permalink and asset folder slugs aligned with post filenames. Shared
+  assets can use their shared topic, such as performance attribution. Update
+  exporters, callers, tests and documentation in the same change as a rename.
+  Preserve SVG hash salts: they identify deterministic rendering, not articles.
+- Layouts own page structure; includes own shared components; Sass owns shared
+  styling; article CSS contains only styles specific to its content. Keep classic
+  Sass `@import` while GitHub Pages uses its supported branch build.
+- Before editing, inspect git status and coordinate ownership with active agents.
+  Work in a separate worktree when another agent has uncommitted changes. Never
+  stage, stash, revert or overwrite another agent's work. Integrate its committed
+  changes before final verification and use a fast-forward merge.
+- Trace callers and generated outputs before removing unused code. Preserve
+  evidence bundles, reproducible inputs and stylesheet entry points. Avoid
+  compatibility wrappers for retired internal names; old public URLs remain
+  redirects. Ask before deleting tracked files, changing dates or site settings.
+
 ## Verification and delivery
 
-Run `bundle exec jekyll build` after concrete article or asset changes, followed
-by `python3 scripts/check_site.py _site`. Check rendered references and
+Run `python3 scripts/build_site.py` after concrete article or asset changes; it
+validates source metadata, builds Jekyll, then checks rendered references. Run
+`python3 -m unittest discover -s tests` and the Node tests below. Check
 `git diff --check`. Preserve any user-owned changes, especially `.DS_Store`,
 then commit and push `main` so the live page can be checked.
 

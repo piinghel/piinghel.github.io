@@ -65,7 +65,7 @@ def export(article: Path, assets: Path, market: Path) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--article", required=True, type=Path)
-    parser.add_argument("--assets", type=Path, default=Path("assets/multiple-linear-regression"))
-    parser.add_argument("--market", type=Path, default=Path("assets/2024-12-15-low-volatility-factor/performance.json"))
+    parser.add_argument("--assets", type=Path, default=Path("assets/combining-predictors"))
+    parser.add_argument("--market", type=Path, default=Path("assets/low-volatility-sizing/performance.json"))
     args = parser.parse_args()
     export(args.article, args.assets, args.market)

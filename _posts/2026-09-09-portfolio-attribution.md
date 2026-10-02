@@ -13,10 +13,10 @@ series_id: performance-attribution
 series_order: 1
 ---
 
-<link rel="stylesheet" href="/assets/css/attribution-article.css?v=5">
+<link rel="stylesheet" href="/assets/css/performance-attribution.css?v=5">
 
 The portfolio in [From Volatility Scaling to Joint
-Sizing](/quants/2026/08/29/portfolio-optimization.html) compounded at about
+Sizing]({% link _posts/2026-08-29-joint-sizing.md %}) compounded at about
 8.9% a year after costs from September 1998 to May 2026, with 6.6% volatility,
 a Sharpe ratio of 1.32 and two-way turnover of about 21 times capital a year.
 A return chart says how much it made. It doesn't say what for. After
@@ -26,7 +26,7 @@ earned 2.6% a year before costs. Its
 net long dollars matter to that result, even with a tight forecast-beta limit.
 
 The ranking behind it combines the 80 predictors of the [regression
-article](/quants/combining-predictors.html). So the question I
+article]({% link _posts/2025-02-09-combining-predictors.md %}). So the question I
 want to answer is which of the ranking's themes the portfolio is actually paid
 for, which take risk without paying for it, and whether that has changed.
 
@@ -51,7 +51,7 @@ points a year. Sharpe ratios use a zero cash rate.
 From 23 September 1998, the longs made **372 points**, the shorts lost **101** and trading costs took
 **29.6**, leaving **242 points** net. The shorts lose money over the history
 even though they made money in each of the 15 declines of 15% or more since 1999
-([Part 2](/quants/short-book-rebounds.html#market-regimes)).
+([Part 2]({% link _posts/2026-09-09-short-book-rebounds.md %}#market-regimes)).
 
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="8" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
@@ -266,7 +266,7 @@ partly offset their market exposure. The package is their sum, not another
 factor. Its breakdown helps explain when the position wins or loses.
 
 This follows the sizing logic in the [low-volatility
-article](/quants/low-volatility-sizing.html), but measures its
+article]({% link _posts/2024-12-15-low-volatility-sizing.md %}), but measures its
 contribution inside this multifactor book. The low-volatility factor here is a
 conditional attribution component, not the return of that article's decile
 portfolio.

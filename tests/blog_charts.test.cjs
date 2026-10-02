@@ -4,9 +4,9 @@ const fs=require('node:fs');
 const path=require('node:path');
 const charts=require('../assets/js/blog-charts.js');
 const vm=require('node:vm');
-const data=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/2024-12-15-low-volatility-factor/performance.json')));
+const data=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/low-volatility-sizing/performance.json')));
 const returns=id=>data.series.find(s=>s.id===id).values.map(v=>v/data.scale);
-const episodes=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/2024-12-15-low-volatility-factor/episodes.json')));
+const episodes=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/low-volatility-sizing/episodes.json')));
 const episodeReturns=id=>episodes.series.find(s=>s.id===id).values.map(v=>v/episodes.scale);
 
 test('deferred charts start once near the viewport and work without an observer',async()=>{

@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from blog_charts import series, statistics, write_chart
-from export_mlr_data import export_results
+from export_predictor_data import export_results
 
 
 class ChartExportTests(unittest.TestCase):
@@ -46,7 +46,7 @@ class ChartExportTests(unittest.TestCase):
 
     def test_decile_full_window_matches_article(self):
         root = Path(__file__).resolve().parents[1]
-        data = json.loads((root / "assets/2024-12-15-low-volatility-factor/deciles.json").read_text())
+        data = json.loads((root / "assets/low-volatility-sizing/deciles.json").read_text())
         values = [statistics([v / data["scale"] for v in s["values"]]) for s in data["series"] if s["id"].startswith("decile_")]
         self.assertEqual([f'{values[i]["sharpe"]:.2f}' for i in [0, 9]], ["0.90", "0.20"])
         self.assertEqual(f'{values[-1]["annual_return"] * 100:.1f}', "0.3")

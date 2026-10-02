@@ -18,7 +18,7 @@ layout: base
     {%- for post in day_posts -%}
       {%- unless post.home_after -%}
         {%- assign current_post = listed | where: "url", post.url -%}
-        {%- assign following_posts = listed | where: "home_after", post.url -%}
+        {%- assign following_posts = listed | where: "home_after", post.path -%}
         {%- assign home_posts = home_posts | concat: current_post | concat: following_posts -%}
       {%- endunless -%}
     {%- endfor -%}

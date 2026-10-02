@@ -1,0 +1,32 @@
+name: Validate site
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: |
+          bundle lock --add-platform x86_64-linux
+          bundle install
+          python -m pip install -r requirements-checks.txt -r requirements-figures.txt
+      - name: Validate, build and test
+        run: |
+          python scripts/build_site.py
+          python -m unittest discover -s tests
+          node --test tests/blog_charts.test.cjs
+          git diff --check

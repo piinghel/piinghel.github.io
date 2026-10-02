@@ -1,6 +1,5 @@
 // One composition per figure, with a local scroll region on small screens.
-.post-content .research-figure,
-.post-content .low-vol-figure {
+.post-content .research-figure {
   width: 100%;
   margin: 2rem auto 0.5rem;
   overflow-x: auto;
@@ -15,6 +14,6 @@ html[data-theme="dark"] {
   .theme-svg-figure--dark { display: block; }
 }
 @media (max-width: 768px) {
-  .research-figure picture, .low-vol-figure picture { min-width: 760px; }
+  .research-figure picture { min-width: 760px; }
   .responsive-figure picture { min-width: 0; }
 }

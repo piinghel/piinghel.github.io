@@ -45,8 +45,8 @@ volatility nearly doubles. Beyond that, returns fall: the most volatile decile
 compounds at only about a third of a percent a year before costs, and Sharpe
 falls from 0.90 in decile 1 to 0.20 in decile 10.
 
-<div class="low-vol-figure decile-profile-figure responsive-figure">
-  {% include blog-chart.html chart="deciles" source="/assets/2024-12-15-low-volatility-factor/deciles.json" base="/assets/2024-12-15-low-volatility-factor/decile_profile" mobile="/assets/2024-12-15-low-volatility-factor/decile_profile_mobile" label="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="18" %}
+<div class="research-figure decile-profile-figure responsive-figure">
+  {% include blog-chart.html chart="deciles" source="/assets/low-volatility-sizing/deciles.json" base="/assets/low-volatility-sizing/decile_profile" mobile="/assets/low-volatility-sizing/decile_profile_mobile" label="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="18" %}
 </div>
 
 
@@ -61,8 +61,8 @@ than three times the long book's standalone volatility and almost three times
 its ex-ante beta. The portfolio's realized beta is −1.12: equal capital makes
 it a large short position in the market.
 
-<div class="low-vol-figure naive-leg-risk-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/2024-12-15-low-volatility-factor/naive_leg_risk" mobile="/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile" alt="Realized volatility and average beta of the low- and high-volatility deciles" version="13" %}
+<div class="research-figure naive-leg-risk-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/low-volatility-sizing/naive_leg_risk" mobile="/assets/low-volatility-sizing/naive_leg_risk_mobile" alt="Realized volatility and average beta of the low- and high-volatility deciles" version="13" %}
 </div>
 
 
@@ -127,8 +127,8 @@ that to 4.6%, while inverse volatility, with its small hedge, barely changes.
 Figure 3 shows the paths. The hedge removes equal weighting's market bet but not
 its deep drawdowns.
 
-<div class="low-vol-figure performance-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/2024-12-15-low-volatility-factor/performance.json" base="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns" mobile="/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile" label="Growth and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="20" %}
+<div class="research-figure performance-figure responsive-figure">
+  {% include blog-chart.html chart="performance" source="/assets/low-volatility-sizing/performance.json" base="/assets/low-volatility-sizing/performance_and_drawdowns" mobile="/assets/low-volatility-sizing/performance_and_drawdowns_mobile" label="Growth and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="20" %}
 </div>
 
 
@@ -154,9 +154,9 @@ about 20.
 In the later rally the short book did roughly what its beta implied, and the
 shortfall of about 6 points came from the long book.
 
-<div class="low-vol-figure regime-comparison-figure responsive-figure">
-  {% include blog-chart.html chart="rally-a" source="/assets/2024-12-15-low-volatility-factor/episodes.json" base="/assets/2024-12-15-low-volatility-factor/regime_comparison" mobile="/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile" label="Panel A: dot-com rally and reversal, with linked book contributions" version="22" %}
-  <section class="blog-chart" data-source="{{ '/assets/2024-12-15-low-volatility-factor/episodes.json' | relative_url }}" data-chart="rally-b" aria-label="Panel B: April 2025–May 2026 rally, with linked book contributions">
+<div class="research-figure regime-comparison-figure responsive-figure">
+  {% include blog-chart.html chart="rally-a" source="/assets/low-volatility-sizing/episodes.json" base="/assets/low-volatility-sizing/regime_comparison" mobile="/assets/low-volatility-sizing/regime_comparison_mobile" label="Panel A: dot-com rally and reversal, with linked book contributions" version="22" %}
+  <section class="blog-chart" data-source="{{ '/assets/low-volatility-sizing/episodes.json' | relative_url }}" data-chart="rally-b" aria-label="Panel B: April 2025–May 2026 rally, with linked book contributions">
     <div class="blog-chart-ui" hidden></div>
     <p class="blog-chart-status" role="status"></p>
     <div class="blog-chart-fallback"></div>

@@ -1,83 +1,115 @@
 {
-  "/assets/2024-12-15-low-volatility-factor/decile_profile": {
-    "width": 627,
-    "height": 558
-  },
-  "/assets/2024-12-15-low-volatility-factor/decile_profile_mobile": {
-    "width": 329,
-    "height": 515
-  },
-  "/assets/2024-12-15-low-volatility-factor/naive_leg_risk": {
-    "width": 629,
-    "height": 184
-  },
-  "/assets/2024-12-15-low-volatility-factor/naive_leg_risk_mobile": {
-    "width": 328,
-    "height": 328
-  },
-  "/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns": {
-    "width": 634,
-    "height": 482
-  },
-  "/assets/2024-12-15-low-volatility-factor/performance_and_drawdowns_mobile": {
-    "width": 337,
-    "height": 427
-  },
-  "/assets/2024-12-15-low-volatility-factor/regime_comparison": {
-    "width": 880,
-    "height": 584
-  },
-  "/assets/2024-12-15-low-volatility-factor/regime_comparison_mobile": {
-    "width": 389,
-    "height": 794
-  },
-  "/assets/momentum-crashes/sharpe-by-rule": {
-    "width": 661,
-    "height": 200
-  },
-  "/assets/momentum-crashes/sharpe-by-rule_mobile": {
-    "width": 344,
-    "height": 354
-  },
-  "/assets/momentum-crashes/sharpe-by-state": {
-    "width": 690,
-    "height": 343
-  },
-  "/assets/momentum-crashes/sharpe-by-state_mobile": {
-    "width": 376,
-    "height": 380
-  },
-  "/assets/momentum-crashes/value-added": {
-    "width": 604,
-    "height": 335
-  },
-  "/assets/momentum-crashes/value-added_mobile": {
-    "width": 292,
-    "height": 326
-  },
-  "/assets/multiple-linear-regression/expanding-walk-forward": {
+  "/assets/combining-predictors/expanding-walk-forward": {
     "width": 605,
     "height": 288
   },
-  "/assets/multiple-linear-regression/expanding-walk-forward_mobile": {
+  "/assets/combining-predictors/expanding-walk-forward_mobile": {
     "width": 346,
     "height": 353
   },
-  "/assets/multiple-linear-regression/predictor-correlation": {
+  "/assets/combining-predictors/predictor-correlation": {
     "width": 588,
     "height": 430
   },
-  "/assets/multiple-linear-regression/predictor-correlation_mobile": {
+  "/assets/combining-predictors/predictor-correlation_mobile": {
     "width": 350,
     "height": 306
   },
-  "/assets/multiple-linear-regression/theme-ic-by-year": {
+  "/assets/combining-predictors/theme-ic-by-year": {
     "width": 641,
     "height": 214
   },
-  "/assets/multiple-linear-regression/theme-ic-by-year_mobile": {
+  "/assets/combining-predictors/theme-ic-by-year_mobile": {
     "width": 358,
     "height": 215
+  },
+  "/assets/joint-sizing/parameter-sensitivity": {
+    "width": 1200,
+    "height": 660
+  },
+  "/assets/joint-sizing/parameter-sensitivity_mobile": {
+    "width": 480,
+    "height": 1240
+  },
+  "/assets/joint-sizing/performance-and-drawdowns": {
+    "width": 1200,
+    "height": 780
+  },
+  "/assets/joint-sizing/performance-and-drawdowns_mobile": {
+    "width": 480,
+    "height": 650
+  },
+  "/assets/joint-sizing/rho-ladder": {
+    "width": 1200,
+    "height": 740
+  },
+  "/assets/joint-sizing/rho-ladder_mobile": {
+    "width": 480,
+    "height": 1365
+  },
+  "/assets/joint-sizing/risk-calibration-and-beta": {
+    "width": 1200,
+    "height": 520
+  },
+  "/assets/joint-sizing/risk-calibration-and-beta_mobile": {
+    "width": 480,
+    "height": 560
+  },
+  "/assets/low-volatility-sizing/decile_profile": {
+    "width": 627,
+    "height": 558
+  },
+  "/assets/low-volatility-sizing/decile_profile_mobile": {
+    "width": 329,
+    "height": 515
+  },
+  "/assets/low-volatility-sizing/naive_leg_risk": {
+    "width": 629,
+    "height": 184
+  },
+  "/assets/low-volatility-sizing/naive_leg_risk_mobile": {
+    "width": 328,
+    "height": 328
+  },
+  "/assets/low-volatility-sizing/performance_and_drawdowns": {
+    "width": 634,
+    "height": 482
+  },
+  "/assets/low-volatility-sizing/performance_and_drawdowns_mobile": {
+    "width": 337,
+    "height": 427
+  },
+  "/assets/low-volatility-sizing/regime_comparison": {
+    "width": 880,
+    "height": 584
+  },
+  "/assets/low-volatility-sizing/regime_comparison_mobile": {
+    "width": 389,
+    "height": 794
+  },
+  "/assets/momentum-crashes-ridge/sharpe-by-rule": {
+    "width": 661,
+    "height": 200
+  },
+  "/assets/momentum-crashes-ridge/sharpe-by-rule_mobile": {
+    "width": 344,
+    "height": 354
+  },
+  "/assets/momentum-crashes-ridge/sharpe-by-state": {
+    "width": 690,
+    "height": 343
+  },
+  "/assets/momentum-crashes-ridge/sharpe-by-state_mobile": {
+    "width": 376,
+    "height": 380
+  },
+  "/assets/momentum-crashes-ridge/value-added": {
+    "width": 604,
+    "height": 335
+  },
+  "/assets/momentum-crashes-ridge/value-added_mobile": {
+    "width": 292,
+    "height": 326
   },
   "/assets/portfolio-attribution/theme-drawdowns": {
     "width": 648,
@@ -119,51 +151,19 @@
     "width": 288,
     "height": 403
   },
-  "/assets/portfolio-optimization/parameter-sensitivity": {
-    "width": 1200,
-    "height": 660
-  },
-  "/assets/portfolio-optimization/parameter-sensitivity_mobile": {
-    "width": 480,
-    "height": 1240
-  },
-  "/assets/portfolio-optimization/performance-and-drawdowns": {
-    "width": 1200,
-    "height": 780
-  },
-  "/assets/portfolio-optimization/performance-and-drawdowns_mobile": {
-    "width": 480,
-    "height": 650
-  },
-  "/assets/portfolio-optimization/rho-ladder": {
-    "width": 1200,
-    "height": 740
-  },
-  "/assets/portfolio-optimization/rho-ladder_mobile": {
-    "width": 480,
-    "height": 1365
-  },
-  "/assets/portfolio-optimization/risk-calibration-and-beta": {
-    "width": 1200,
-    "height": 520
-  },
-  "/assets/portfolio-optimization/risk-calibration-and-beta_mobile": {
-    "width": 480,
-    "height": 560
-  },
-  "/assets/tranching/ridge-calendars": {
+  "/assets/rebalancing-luck/ridge-calendars": {
     "width": 720,
     "height": 302
   },
-  "/assets/tranching/ridge-calendars_mobile": {
+  "/assets/rebalancing-luck/ridge-calendars_mobile": {
     "width": 374,
     "height": 547
   },
-  "/assets/tranching/ridge-paths": {
+  "/assets/rebalancing-luck/ridge-paths": {
     "width": 648,
     "height": 324
   },
-  "/assets/tranching/ridge-paths_mobile": {
+  "/assets/rebalancing-luck/ridge-paths_mobile": {
     "width": 374,
     "height": 302
   }

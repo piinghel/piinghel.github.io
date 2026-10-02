@@ -7,8 +7,8 @@ __pycache__/
 .ruff_cache/
 *.py[cod]
 *.csv
-!assets/portfolio-optimization/period-comparison.csv
-!assets/portfolio-optimization/parameter-sensitivity.csv
+!assets/joint-sizing/period-comparison.csv
+!assets/joint-sizing/parameter-sensitivity.csv
 *.parquet
 *.tmp
 *.bak

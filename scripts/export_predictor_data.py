@@ -4,7 +4,7 @@ predictor-structure.json (Figure 1) comes from evidence/predictor-structure, wri
 factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
 correlations (x 1000), the dendrogram and the per-date theme IC.
 coefficients.json (Figure 5) contains all coefficients by refit, ranked by magnitude.
-Performance and daily deciles are exported by export_regression_charts.py.
+Performance and daily deciles are exported by export_combining_predictors_charts.py.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from pathlib import Path
 import polars as pl
 
 ROOT = Path(__file__).resolve().parents[1]
-ASSETS = ROOT / "assets/multiple-linear-regression"
+ASSETS = ROOT / "assets/combining-predictors"
 SHORT_THEMES = {
     "Medium- and long-term return": "Med./long ret.",
     "Short-term return": "Short-term ret.",

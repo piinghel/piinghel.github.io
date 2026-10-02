@@ -1,6 +1,6 @@
 """Export finalized portfolio aggregates for the low-volatility article.
 
-Usage: python scripts/export_low_vol_charts.py --baseline /path/to/saved/run
+Usage: python scripts/export_low_volatility_sizing_charts.py --baseline /path/to/saved/run
        --hedge /path/to/saved/hedge
 """
 from __future__ import annotations
@@ -64,7 +64,7 @@ def main():
     parser.add_argument("--baseline", required=True, type=Path)
     parser.add_argument("--hedge", required=True, type=Path)
     parser.add_argument("--output", type=Path,
-                        default=Path("assets/2024-12-15-low-volatility-factor"))
+                        default=Path("assets/low-volatility-sizing"))
     args = parser.parse_args()
     base = args.baseline / "stage_daily.parquet"
     frames = [

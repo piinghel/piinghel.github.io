@@ -56,5 +56,5 @@ correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
 - `low_vol_overlap.csv`: correlation with, and returns next to, the low-volatility
   article's portfolio (`low_vol_overlap.py`).
 
-`scripts/export_mlr_data.py` turns both folders into the JSON files the interactive
+`scripts/export_predictor_data.py` turns both folders into the JSON files the interactive
 figures read.

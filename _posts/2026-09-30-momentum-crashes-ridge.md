@@ -15,9 +15,9 @@ github_repositories:
 ---
 
 In the previous articles I built a long-short Russell 1000 strategy: a
-[Ridge regression on 80 predictors](/quants/combining-predictors.html)
+[Ridge regression on 80 predictors]({% link _posts/2025-02-09-combining-predictors.md %})
 ranks the stocks, and the
-[joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html)
+[joint optimizer with its trading controls]({% link _posts/2026-08-29-joint-sizing.md %})
 sizes them, for a Sharpe ratio of 1.32 over 1998–2021. It works well on
 average, but it has one weakness I want to look at here: momentum crashes.
 
@@ -44,7 +44,7 @@ Above that, which is a quarter of the days, the Sharpe drops to 0.69 and the
 strategy earns about half its usual return (the grey bars in Figure 1).
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/momentum-crashes/sharpe-by-state" mobile="/assets/momentum-crashes/sharpe-by-state_mobile" alt="Net Sharpe ratio of the baseline and the score overlay by level of lagged momentum volatility: similar below twice normal volatility, much lower for the baseline above it." version="1" %}
+  {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-state" mobile="/assets/momentum-crashes-ridge/sharpe-by-state_mobile" alt="Net Sharpe ratio of the baseline and the score overlay by level of lagged momentum volatility: similar below twice normal volatility, much lower for the baseline above it." version="1" %}
 </div>
 <p class="figure-caption"><strong>Figure 1: The strategy earns much less once momentum has been volatile.</strong> Net Sharpe ratio by level of the momentum-risk state g: the 12-1 winner-minus-loser portfolio's volatility over the last 126 sessions relative to its expanding median, floored at one and known the day before. Sharpe is computed within each bucket for each of the three rebalance schedules, then averaged; September 1998–December 2021, net of 5 bp. Labels give the share of trading days. The blue bars are the score overlay described below.</p>
 
@@ -115,7 +115,7 @@ value in under three months once the losers rallied. In the vaccine-rotation
 week of 9 November 2020 it lost another 24%.
 
 <div class="research-figure">
-  {% include blog-chart.html chart="crash" source="/assets/momentum-crashes/crash-2009.json?v=5" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on July 2007 to June 2010." %}
+  {% include blog-chart.html chart="crash" source="/assets/momentum-crashes-ridge/crash-2009.json?v=5" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on July 2007 to June 2010." %}
 </div>
 <p class="figure-caption"><strong>Figure 2: In 2009 the losers crashed up.</strong> Growth of equal-weight top-decile winners, bottom-decile losers and the long–short WML portfolio, 12-1 momentum within the Russell 1000, formed at month ends, indexed to 100 at the start of the window. It opens on July 2007–June 2010: momentum rises through the sell-off, then collapses when the losers rally from March 2009 (shaded). Drag across the chart to zoom into a period, double-click to reset, or pick another crash under Periods.</p>
 
@@ -137,7 +137,7 @@ and the book even leans a bit harder into momentum there, because the losers
 are volatile and the winners defensive. The tilt is the obvious suspect for the
 15.5 points lost on momentum's worst days, but exposure alone doesn't put all
 of that on momentum: in the
-[attribution series](/quants/short-book-rebounds.html) the deepest drawdowns
+[attribution series]({% link _posts/2026-09-09-short-book-rebounds.md %}) the deepest drawdowns
 came mostly from the low-volatility tilt, and in March 2009 the
 high-volatility stocks the book was short were also the past losers. Either
 way, if I want the momentum weight to depend on the market state, I have to
@@ -248,7 +248,7 @@ against +0.45 for the baseline). Turnover barely changes, so the gain holds at
 10 and 20 bp.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/momentum-crashes/sharpe-by-rule" mobile="/assets/momentum-crashes/sharpe-by-rule_mobile" alt="Development-period Sharpe ratio and maximum drawdown for the baseline, score overlay, learned interactions and optimizer cap, with ranges across schedules." version="3" %}
+  {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-rule" mobile="/assets/momentum-crashes-ridge/sharpe-by-rule_mobile" alt="Development-period Sharpe ratio and maximum drawdown for the baseline, score overlay, learned interactions and optimizer cap, with ranges across schedules." version="3" %}
 </div>
 <p class="figure-caption"><strong>Figure 3: The development gains hold across schedules.</strong> September 1998–December 2021. Points are means of the three rebalance schedules; lines span the lowest and highest schedule, an observed range rather than a confidence interval. After 5 bp trading costs; drawdowns compounded per schedule, with shallower drawdowns to the right. Dotted lines mark the baseline.</p>
 
@@ -283,7 +283,7 @@ Figure 4 shows the accumulated difference against the baseline throughout the
 history; the shaded region marks the test period.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="added" source="/assets/momentum-crashes/value-added.json?v=7" base="/assets/momentum-crashes/value-added" mobile="/assets/momentum-crashes/value-added_mobile" version="3" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
+  {% include blog-chart.html chart="added" source="/assets/momentum-crashes-ridge/value-added.json?v=7" base="/assets/momentum-crashes-ridge/value-added" mobile="/assets/momentum-crashes-ridge/value-added_mobile" version="3" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: Value added against the Ridge baseline.</strong> Cumulative daily net return differences, in points of capital, averaged across three schedules after 5 bp trading costs. Zero is the baseline. Training precedes the first trades in September 1998; all subsequent P&amp;L is retained. Shading marks January 2022–27 May 2026. Under Explore, choose the test period to rebase the comparison at the end of 2021.</p>
 

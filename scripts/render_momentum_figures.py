@@ -177,7 +177,7 @@ def render_added(out: Path, dark: bool, mobile: bool) -> None:
 
 
 if __name__ == "__main__":
-    out = Path(__file__).resolve().parents[1] / "assets/momentum-crashes"
+    out = Path(__file__).resolve().parents[1] / "assets/momentum-crashes-ridge"
     out.mkdir(parents=True, exist_ok=True)
     for dark in (False, True):
         for mobile in (False, True):

@@ -1,14 +1,14 @@
 # A reading sequence, independent of publication dates. Keep series together.
 # Start with individual sizing, then learn a stock ranking.
-- /quants/low-volatility-sizing.html
-- /quants/combining-predictors.html
+- _posts/2024-12-15-low-volatility-sizing.md
+- _posts/2025-02-09-combining-predictors.md
 # Build and implement the portfolio.
-- /quants/2026/08/29/portfolio-optimization.html
-- /quants/2025/05/10/rebalancing-luck.html
+- _posts/2026-08-29-joint-sizing.md
+- _posts/2025-05-10-rebalancing-luck.md
 # Diagnose the resulting portfolio: what it is paid for and where it loses.
-- /quants/portfolio-attribution.html
-- /quants/short-book-rebounds.html
+- _posts/2026-09-09-portfolio-attribution.md
+- _posts/2026-09-09-short-book-rebounds.md
 # Then manage the largest single risk the diagnosis exposes.
-- /quants/momentum-crashes-ridge.html
+- _posts/2026-09-30-momentum-crashes-ridge.md
 # Reference material closes the sequence.
-- /quants/resources.html
+- _posts/2025-04-20-resources.md
