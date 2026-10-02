@@ -19,15 +19,22 @@ In the previous articles I built a long-short Russell 1000 strategy: a
 ranks the stocks, and the
 [joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html)
 sizes them, for a Sharpe ratio of 1.32 over 1998–2021. About fifteen of those
-predictors are trend measures, so the book leans toward past winners. I measure
-that lean as the book's momentum tilt: the position-weighted average of the
-stocks' momentum ranks (from −1 to 1 within each sector) per unit of gross
-exposure. It's about 0.33 in calm markets and 0.36 in volatile ones, so it
-doesn't back off when momentum gets risky. I wanted to see what it costs when momentum
-turns dangerous.
+predictors are trend measures, so the book leans toward past winners. In other
+words, it holds momentum.
 
-So I split the trading days by how volatile the momentum portfolio had been
-going in, measured up to the previous day. Up to about twice its usual
+Momentum has a well-known weak spot. When a market that has fallen for a long
+time turns sharply up, the past losers rally hardest, and a book that is short
+them gives back a lot in a few weeks. Spring 2009 is the textbook case. My
+strategy felt it: on the 30 worst days for momentum since 1998, it lost 15.5
+points of capital. So I wanted to know how big this problem is, and what to do
+about it.
+
+The lean doesn't back off when momentum gets risky. I measure it as the book's
+momentum tilt: the position-weighted average of the stocks' momentum ranks
+(from −1 to 1 within each sector) per unit of gross exposure. It's about 0.33
+in calm markets and 0.36 in volatile ones. To see what that costs beyond those
+30 days, I split all trading days by how volatile the momentum portfolio had
+been going in, measured up to the previous day. Up to about twice its usual
 volatility the strategy hardly notices, with a Sharpe ratio around 1.5–1.6.
 Above that, which is a quarter of the days, the Sharpe drops to 0.69 and the
 strategy earns about half its usual return (the grey bars in Figure 1).
@@ -71,8 +78,7 @@ schedules. The comparison focuses on these three approaches, each used on its ow
 
 ## Why momentum crashes when the losers rebound
 
-A momentum crash is what happens when a market that has fallen for a long time
-turns sharply up. By momentum I mean the 12-1 return (the past year, skipping
+By momentum I mean the 12-1 return (the past year, skipping
 the last month), and the winner-minus-loser (WML) portfolio is long the top
 decile and short the bottom one. It earns a solid premium over long samples,
 but with a nasty left tail. Daniel and Moskowitz measure a monthly skewness of
@@ -120,9 +126,9 @@ A linear model gives each predictor one coefficient across all market states,
 so the momentum weight is an average of a regime where momentum pays and one
 where it crashes. The ranking keeps that average exactly where it's most wrong,
 and the book even leans a bit harder into momentum there, because the losers
-are volatile and the winners defensive. On momentum's 30 worst days since 1998
-the book lost 15.5 points of capital. The tilt is the obvious suspect, but
-exposure alone doesn't put all of that on momentum: in the
+are volatile and the winners defensive. The tilt is the obvious suspect for the
+15.5 points lost on momentum's worst days, but exposure alone doesn't put all
+of that on momentum: in the
 [attribution series](/quants/short-book-rebounds.html) the deepest drawdowns
 came mostly from the low-volatility tilt, and in March 2009 the
 high-volatility stocks the book was short were also the past losers. Either
