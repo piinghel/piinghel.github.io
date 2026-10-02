@@ -6,7 +6,7 @@ description: "How stock characteristics and market exposure contribute to the po
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-09-29
+last_modified_at: 2026-10-03
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
@@ -15,8 +15,8 @@ series_order: 1
 
 <link rel="stylesheet" href="/assets/css/attribution-article.css?v=5">
 
-The portfolio from my [optimizer
-article](/quants/2026/08/29/portfolio-optimization.html) compounded at about
+The portfolio in [From Volatility Scaling to Joint
+Sizing](/quants/2026/08/29/portfolio-optimization.html) compounded at about
 8.9% a year after costs from September 1998 to May 2026, with 6.6% volatility,
 a Sharpe ratio of 1.32 and two-way turnover of about 21 times capital a year.
 A return chart says how much it made. It doesn't say what for. After

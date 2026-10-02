@@ -184,7 +184,7 @@ Equal expected returns are an assumption of this test, rather than a
 conclusion from it. The observed spread gives me little reason to choose
 the historical winner over a combination of schedules.
 
-## Smaller trades spread through time
+## Smaller trades, more rebalance cycles
 {: #what-it-takes-to-implement }
 
 The execution changes as well. Three books submit smaller
@@ -201,6 +201,12 @@ The proportional cost deduction is therefore the same: **0.94 percentage
 points a year** later and **1.29 points** in development, measured as the
 annualized average of daily costs. With a proportional charge, the amount
 traded determines the cost.
+
+Trading every week also means **three rebalance cycles instead of one**
+over each three-week period. Each cycle needs execution oversight and
+post-trade reconciliation, so operational work and costs can rise even
+when total traded notional stays the same. These costs are outside the
+5 bp charge; they do not necessarily triple with the number of rebalances.
 
 For an institutional portfolio, the smaller trade size is another reason
 to consider tranching. Rebalancing a third of the portfolio each week

@@ -6,7 +6,7 @@ description: "Three ways to make a Ridge strategy's momentum exposure depend on 
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
-last_modified_at: 2026-10-02
+last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -29,15 +29,15 @@ short them gives back months of gains in a few weeks. From 9 March to 29 May
 2009, a winners-minus-losers portfolio in the Russell 1000 lost 57% while its
 losers rose 134%.
 
-My strategy never asks for momentum, but about fifteen of its 80 predictors are
-trend measures, so it ends up holding past winners and shorting past losers
+The Ridge model does not explicitly target momentum, but about fifteen of its
+80 predictors are trend measures, so the portfolio holds past winners and shorts past losers
 anyway. And it shows. On the 30 worst days for momentum since 1998, the
 strategy lost 15.5 points of capital. That's more than a year and a half of its
 average return (9.4% a year), lost on 30 days out of almost 6,000.
 
 These crashes don't come out of nowhere, though: they tend to arrive when
-momentum itself has already become volatile. To see whether that holds for my
-strategy, I split all trading days by how volatile the momentum portfolio had
+momentum itself has already become volatile. To see whether that holds for the
+Ridge portfolio, I split all trading days by how volatile the momentum portfolio had
 been going in, measured up to the previous day. Up to about twice its usual
 volatility the strategy hardly notices, with a Sharpe ratio around 1.5–1.6.
 Above that, which is a quarter of the days, the Sharpe drops to 0.69 and the

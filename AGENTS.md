@@ -46,6 +46,11 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   tried, what I observed, and why I chose the next step. Use Max Halford and Rob
   Carver as broad references for conversational technical writing; avoid forced
   anecdotes, jokes, and academic scaffolding. Keep Resources mostly links.
+- Avoid possessive model and portfolio labels such as "my Ridge strategy",
+  "my strategy", "my portfolio", or "our model" across all articles. Use
+  "the Ridge model", "the portfolio", or the specific method's name. Keep
+  first person for research choices and judgments, such as "I tested" or
+  "I prefer"; refer to related articles by their title or topic.
 - Write for a systematic-equity reader: use "two-way turnover", "traded
   notional", and other normal domain terms. Define the convention once.
 - Use short, natural headings and introduce each practical problem before its
