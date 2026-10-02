@@ -14,6 +14,13 @@ bundle install
 bundle exec jekyll serve
 ```
 
+## Article URLs
+
+Every article lives at `/quants/<slug>.html`, where the slug matches the title and the
+post file name. Retired URLs stay in the target post's `redirect_from` list
+(`jekyll-redirect-from`), so old links keep working. Asset folders under
+`assets/` keep their original names because the figure exporters write there.
+
 ## Article reading order
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:

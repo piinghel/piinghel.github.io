@@ -26,7 +26,7 @@ earned 2.6% a year before costs. Its
 net long dollars matter to that result, even with a tight forecast-beta limit.
 
 The ranking behind it combines the 80 predictors of the [regression
-article](/quants/2025/02/09/multiple-linear-regression.html). So the question I
+article](/quants/combining-predictors.html). So the question I
 want to answer is which of the ranking's themes the portfolio is actually paid
 for, which take risk without paying for it, and whether that has changed.
 
@@ -266,7 +266,7 @@ partly offset their market exposure. The package is their sum, not another
 factor. Its breakdown helps explain when the position wins or loses.
 
 This follows the sizing logic in the [low-volatility
-article](/quants/2024/12/15/low-volatility-factor.html), but measures its
+article](/quants/low-volatility-sizing.html), but measures its
 contribution inside this multifactor book. The low-volatility factor here is a
 conditional attribution component, not the return of that article's decile
 portfolio.

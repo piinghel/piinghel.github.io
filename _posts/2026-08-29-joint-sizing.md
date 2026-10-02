@@ -15,8 +15,8 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-In the articles on [low-volatility sizing](/quants/2024/12/15/low-volatility-factor.html)
-and [regression](/quants/2025/02/09/multiple-linear-regression.html),
+In the articles on [low-volatility sizing](/quants/low-volatility-sizing.html)
+and [regression](/quants/combining-predictors.html),
 I sized positions one stock at a time: scale each by its own volatility and
 cap it. That simple rule worked well. Here I want to see whether sizing the
 stocks together, taking into account how they move with each other, does
@@ -27,7 +27,7 @@ that look safer than they are, and it can trade a lot in response to small
 changes in its inputs. I use correlation shrinkage for the first and a rank
 buffer plus a trade penalty for the second.
 
-The setup follows the [regression article](/quants/2025/02/09/multiple-linear-regression.html#portfolio-construction):
+The setup follows the [regression article](/quants/combining-predictors.html#portfolio-construction):
 the same universe and Ridge ranking, 75 long and 75 short names, three
 rebalance schedules that each trade every three weeks starting a week apart,
 and next-close execution. I charge 5 bp per dollar traded and ignore borrow,

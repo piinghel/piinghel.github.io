@@ -31,7 +31,7 @@ header_pages:
 
 header_links:
   - label: Resources
-    url: /quants/2025/04/20/reading-and-tools.html
+    url: /quants/resources.html
 
 # Add MathJax support
 markdown: kramdown

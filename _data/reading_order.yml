@@ -1,7 +1,7 @@
 # A reading sequence, independent of publication dates. Keep series together.
 # Start with individual sizing, then learn a stock ranking.
-- /quants/2024/12/15/low-volatility-factor.html
-- /quants/2025/02/09/multiple-linear-regression.html
+- /quants/low-volatility-sizing.html
+- /quants/combining-predictors.html
 # Build and implement the portfolio.
 - /quants/2026/08/29/portfolio-optimization.html
 - /quants/2025/05/10/rebalancing-luck.html
@@ -11,4 +11,4 @@
 # Then manage the largest single risk the diagnosis exposes.
 - /quants/momentum-crashes-ridge.html
 # Reference material closes the sequence.
-- /quants/2025/04/20/reading-and-tools.html
+- /quants/resources.html

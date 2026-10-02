@@ -15,7 +15,7 @@ github_repositories:
 ---
 
 In the previous articles I built a long-short Russell 1000 strategy: a
-[Ridge regression on 80 predictors](/quants/2025/02/09/multiple-linear-regression.html)
+[Ridge regression on 80 predictors](/quants/combining-predictors.html)
 ranks the stocks, and the
 [joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html)
 sizes them, for a Sharpe ratio of 1.32 over 1998–2021. It works well on

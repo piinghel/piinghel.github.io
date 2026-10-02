@@ -7,9 +7,10 @@ last_modified_at: 2026-09-28
 interactive_charts: true
 categories: ["Signals"]
 article_label: Signals · Low volatility
-permalink: /quants/2024/12/15/low-volatility-factor.html
+permalink: /quants/low-volatility-sizing.html
 redirect_from:
   - /quant/2024/12/15/low-volatility-factor.html
+  - /quants/2024/12/15/low-volatility-factor.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/low-vol-to-portfolio
