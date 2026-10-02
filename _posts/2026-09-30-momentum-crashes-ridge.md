@@ -18,22 +18,26 @@ In the previous articles I built a long-short Russell 1000 strategy: a
 [Ridge regression on 80 predictors](/quants/2025/02/09/multiple-linear-regression.html)
 ranks the stocks, and the
 [joint optimizer with its trading controls](/quants/2026/08/29/portfolio-optimization.html)
-sizes them, for a Sharpe ratio of 1.32 over 1998–2021. About fifteen of those
-predictors are trend measures, so the book leans toward past winners. In other
-words, it holds momentum.
+sizes them, for a Sharpe ratio of 1.32 over 1998–2021. It works well on
+average, but it has one weakness I want to look at here: momentum crashes.
 
-Momentum has a well-known weak spot. When a market that has fallen for a long
-time turns sharply up, the past losers rally hardest, and a book that is short
-them gives back a lot in a few weeks. Spring 2009 is the textbook case. My
-strategy felt it: on the 30 worst days for momentum since 1998, it lost 15.5
-points of capital. So I wanted to know how big this problem is, and what to do
-about it.
+Momentum means buying the stocks that went up over the past year and shorting
+the ones that went down. It pays most of the time, and then occasionally loses
+a lot very fast. That happens when a market that has fallen for a long time
+turns sharply up: the stocks that fell the most rally the hardest, and anyone
+short them gives back months of gains in a few weeks. From 9 March to 29 May
+2009, a winners-minus-losers portfolio in the Russell 1000 lost 57% while its
+losers rose 134%.
 
-The lean doesn't back off when momentum gets risky. I measure it as the book's
-momentum tilt: the position-weighted average of the stocks' momentum ranks
-(from −1 to 1 within each sector) per unit of gross exposure. It's about 0.33
-in calm markets and 0.36 in volatile ones. To see what that costs beyond those
-30 days, I split all trading days by how volatile the momentum portfolio had
+My strategy never asks for momentum, but about fifteen of its 80 predictors are
+trend measures, so it ends up holding past winners and shorting past losers
+anyway. And it shows. On the 30 worst days for momentum since 1998, the
+strategy lost 15.5 points of capital. That's more than a year and a half of its
+average return (9.4% a year), lost on 30 days out of almost 6,000.
+
+These crashes don't come out of nowhere, though: they tend to arrive when
+momentum itself has already become volatile. To see whether that holds for my
+strategy, I split all trading days by how volatile the momentum portfolio had
 been going in, measured up to the previous day. Up to about twice its usual
 volatility the strategy hardly notices, with a Sharpe ratio around 1.5–1.6.
 Above that, which is a quarter of the days, the Sharpe drops to 0.69 and the
@@ -78,7 +82,7 @@ schedules. The comparison focuses on these three approaches, each used on its ow
 
 ## Why momentum crashes when the losers rebound
 
-By momentum I mean the 12-1 return (the past year, skipping
+To be precise, by momentum I mean the 12-1 return (the past year, skipping
 the last month), and the winner-minus-loser (WML) portfolio is long the top
 decile and short the bottom one. It earns a solid premium over long samples,
 but with a nasty left tail. Daniel and Moskowitz measure a monthly skewness of
@@ -106,9 +110,9 @@ idea to scaling any factor by the inverse of its recent variance.
 The Russell 1000 is even less forgiving. An equal-weight 12-1 decile WML
 portfolio has a Sharpe ratio of only 0.21 over 1998–2021, with daily skewness
 of −1.1. Figure 2 puts 2009 in context. Through the 2008 sell-off momentum was
-volatile but still up 8% by the March low; from 9 March to 29 May it then lost
-57% while the losers rose 134%. In the vaccine-rotation week of 9 November 2020
-it lost another 24%.
+volatile but still up 8% by the March low; it then lost more than half its
+value in under three months once the losers rallied. In the vaccine-rotation
+week of 9 November 2020 it lost another 24%.
 
 <div class="research-figure">
   {% include blog-chart.html chart="crash" source="/assets/momentum-crashes/crash-2009.json?v=5" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on July 2007 to June 2010." %}
@@ -119,8 +123,12 @@ it lost another 24%.
 
 Nothing in the model asks for momentum. It comes from about fifteen trend
 predictors (past returns over several horizons, distance to highs,
-moving-average gaps), which together tilt the book toward past winners. In the
-months after the March 2009 low that tilt reached 0.45.
+moving-average gaps), which together tilt the book toward past winners. I
+measure that as the book's momentum tilt: the position-weighted average of the
+stocks' momentum ranks (from −1 to 1 within each sector) per unit of gross
+exposure. It's about 0.33 in calm markets, 0.36 in volatile ones and 0.45 in
+the months after the March 2009 low, so the lean doesn't back off when momentum
+gets risky.
 
 A linear model gives each predictor one coefficient across all market states,
 so the momentum weight is an average of a regime where momentum pays and one
