@@ -233,7 +233,7 @@
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
-      if(cfg.kind==='calendar-comparison'){await calendarComparison(host,cfg);return;}
+      if(cfg.kind==='tranche-tradeoff'){await trancheTradeoff(host,cfg);return;}
       if(cfg.kind.startsWith('attribution')){await attribution(host,data,cfg);return;}
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
@@ -646,36 +646,35 @@
     new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
-  async function calendarComparison(host,cfg) {
+  async function trancheTradeoff(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
     const graph=element('div','blog-chart-plot');ui.append(graph);
     async function draw() {
       const mobile=host.clientWidth<550,dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      const values=cfg.panels.flatMap(p=>p.points.map(q=>q.net_cagr));
-      const lo=Math.min(...values),hi=Math.max(...values),pad=(hi-lo||1)*.08;
-      const height=mobile?590:310,traces=[],layout={autosize:true,height,
-        margin:{l:28,r:12,t:40,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
+      const height=mobile?720:390,traces=[],layout={autosize:true,height,
+        margin:{l:48,r:15,t:75,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
         font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},hoverlabel:hoverStyle(),
-        dragmode:false,showlegend:false,annotations:[],shapes:[]};
+        dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:mobile?1.14:1.26,itemclick:false,itemdoubleclick:false},
+        annotations:[]};
       graph.style.height=height+'px';
-      cfg.panels.forEach((panel,i)=>{
-        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.55,i*.55+.45],yd=mobile?[i?0:.61,i?.39:1]:[0,1];
-        layout['xaxis'+s]={domain:xd,anchor:y,range:[lo-pad,hi+pad],fixedrange:true,gridcolor:grid,zeroline:false,dtick:2,title:{text:'Annualized net return (%)',font:{size:12}}};
-        layout['yaxis'+s]={domain:yd,anchor:x,range:[-.4,1.65],fixedrange:true,showticklabels:false,showgrid:false,zeroline:false};
-        layout.annotations.push({text:panel.title,x:xd[0],y:yd[1]+.045,xref:'paper',yref:'paper',showarrow:false,xanchor:'left',font:{size:14}});
-        [[false,1,'One schedule'],[true,0,'⅓ each week']].forEach(([blend,row,label])=>{
-          const points=panel.points.filter(p=>(p.schedules==='1+2+3')===blend).sort((a,b)=>a.net_cagr-b.net_cagr);
-          const returns=points.map(p=>p.net_cagr),low=Math.min(...returns),high=Math.max(...returns),color=blend?COLORS.long:COLORS.short;
-          layout.shapes.push({type:'line',xref:x,yref:y,x0:low,x1:high,y0:row,y1:row,line:{color,width:3},opacity:.45,layer:'below'});
-          layout.annotations.push(
-            {text:'<b>'+label+'</b>',x:xd[0],y:row+.3,xref:'paper',yref:y,showarrow:false,xanchor:'left',font:{size:12,color:ink}},
-            {text:(high-low).toFixed(2)+' pp spread',x:xd[1],y:row+.3,xref:'paper',yref:y,showarrow:false,xanchor:'right',font:{size:12,color}}
-          );
-          traces.push({type:'scatter',mode:'markers',name:label,
-            x:returns,y:points.map((p,j)=>row+(j%3-1)*.07),xaxis:x,yaxis:y,
-            customdata:points.map(p=>['Monday','Tuesday','Wednesday','Thursday','Friday'][p.weekday-1]+(blend?' · three tranches':' · Week '+p.schedules)),
-            marker:{symbol:'circle',size:8,color},
-            hovertemplate:'%{customdata}<br>Net return: %{x:.2f}%<extra>'+panel.title+'</extra>'});
+      [['spread_pp','Calendar spread (pp)'],['annual_orders','Orders per year']].forEach(([metric,title],i)=>{
+        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.57,i*.57+.43],yd=mobile?[i?0:.61,i?.39:1]:[0,1];
+        const maximum=Math.max(...cfg.periods.flatMap(p=>p.points.map(q=>q[metric])));
+        layout['xaxis'+s]={domain:xd,anchor:y,range:[.75,3.25],tickvals:[1,2,3],fixedrange:true,showgrid:false,zeroline:false,title:{text:'Number of tranches',font:{size:12}}};
+        layout['yaxis'+s]={domain:yd,anchor:x,range:[0,maximum*1.18],fixedrange:true,gridcolor:grid,zeroline:false,nticks:5,tickformat:metric==='annual_orders'?',.0f':'.1f'};
+        layout.annotations.push({text:title,x:xd[0],y:yd[1]+.035,xref:'paper',yref:'paper',showarrow:false,xanchor:'left',font:{size:14}});
+        cfg.periods.forEach((period,j)=>{
+          const color=j?COLORS.long:COLORS.short,values=period.points.map(p=>p[metric]);
+          traces.push({type:'scatter',mode:'lines+markers',name:period.title,legendgroup:period.title,showlegend:i===0,
+            x:period.points.map(p=>p.sleeves),y:values,xaxis:x,yaxis:y,
+            line:{color,width:2,dash:j?'solid':'dash'},marker:{size:8,color},
+            customdata:period.points.map(p=>p.calendar_count),
+            hovertemplate:'%{x} tranches · %{customdata} calendars<br>'+title+': %{y'+(metric==='annual_orders'?':,.0f':':.2f')+'}<extra>'+period.title+'</extra>'});
+          period.points.forEach((p,k)=>{
+            const above=p[metric]>=cfg.periods[1-j].points[k][metric];
+            layout.annotations.push({text:metric==='annual_orders'?Math.round(p[metric]).toLocaleString('en-US'):p[metric].toFixed(2),
+              x:p.sleeves,y:p[metric],xref:x,yref:y,showarrow:false,yshift:above?13:-15,font:{size:12,color}});
+          });
         });
       });
       await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
