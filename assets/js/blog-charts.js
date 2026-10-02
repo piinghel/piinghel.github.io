@@ -233,6 +233,7 @@
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
+      if(cfg.kind==='calendar-comparison'){await calendarComparison(host,cfg);return;}
       if(cfg.kind.startsWith('attribution')){await attribution(host,data,cfg);return;}
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
@@ -276,8 +277,8 @@
         show??=controlRow(extra,'Show');return checkControl(show,label,checked,change).box;
       }
       if(benchmark) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
-      for(const s of series.filter(s=>s.visible===false))optionalBoxes.set(s.id,
-        checkbox(s.label,false,value=>{visible.set(s.id,value);draw();}));
+      for(const s of series.filter(s=>s.visible===false||cfg.showLegend===false))optionalBoxes.set(s.id,
+        checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
       const statisticsPanel=element('details','blog-chart-statistics');statisticsPanel.open=cfg.statisticsOpen??false;
@@ -323,10 +324,10 @@
           const dates=data.dates.slice(first,last+1),t=theme(),traces=[];
           const mobile=host.clientWidth<550;
           const layout={autosize:true,height:bars?540:cfg.drawdown||cfg.contributions?560:420,
-            margin:{l:55,r:15,t:bars?35:mobile?100:75,b:45},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11:13,color:t.text},
+            margin:{l:55,r:15,t:bars?35:cfg.showLegend===false?40:mobile?100:75,b:45},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11:13,color:t.text},
             paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),hovermode:bars?'closest':'x unified',
             modebar:{color:t.text,bgcolor:'rgba(0,0,0,0)',activecolor:COLORS.strategy},
-            dragmode:'zoom',showlegend:true,legend:{orientation:'h',y:1.16,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
+            dragmode:'zoom',showlegend:cfg.showLegend!==false,legend:{orientation:'h',y:1.16,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
             xaxis:{type:bars?'category':'date',gridcolor:t.grid,showgrid:false,automargin:true,
               spikecolor:isDark()?'#8b949e':'#6e7681',spikethickness:1,spikedash:'solid'},
             yaxis:{gridcolor:t.grid,zerolinecolor:t.grid,automargin:true},annotations:[]};
@@ -433,7 +434,7 @@
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
           updateTable(first,last);
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
-          windowLabel.title='Click a legend entry to toggle; double-click to isolate.';
+          windowLabel.title=cfg.showLegend===false?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
           for(const [id,box] of optionalBoxes)box.checked=visible.get(id);
           if(!ready) {
@@ -631,6 +632,43 @@
           error_y:p.low?{type:'data',symmetric:false,array:p.high.map((v,j)=>v-p.y[j]),arrayminus:p.y.map((v,j)=>v-p.low[j]),color:COLORS.comparison,thickness:1,width:3}:undefined,
           customdata:p.low?p.x.map((_,j)=>[p.low[j],p.high[j]]):undefined,
           hovertemplate:(p.xTitle||'Setting')+': %{x}<br>'+p.title+': %{y:.3f}'+(p.low?'<br>Schedule range: %{customdata[0]:.3f}–%{customdata[1]:.3f}':'')+'<extra></extra>'});
+      });
+      await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
+    }
+    await draw();host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;
+    new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
+  }
+  async function calendarComparison(host,cfg) {
+    const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const graph=element('div','blog-chart-plot');ui.append(graph);
+    async function draw() {
+      const mobile=host.clientWidth<550,dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
+      const values=cfg.panels.flatMap(p=>p.points.map(q=>q.net_cagr));
+      const lo=Math.min(...values),hi=Math.max(...values),pad=(hi-lo||1)*.12;
+      const height=mobile?740:400,traces=[],layout={autosize:true,height,
+        margin:{l:88,r:15,t:85,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
+        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},hoverlabel:hoverStyle(),
+        dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:1.2,font:{size:11},itemclick:false,itemdoubleclick:false},annotations:[],shapes:[]};
+      graph.style.height=height+'px';
+      cfg.panels.forEach((panel,i)=>{
+        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.56,i*.56+.44],yd=mobile?[i?0:.60,i?.40:1]:[0,1];
+        layout['xaxis'+s]={domain:xd,anchor:y,range:[lo-pad,hi+pad],fixedrange:true,gridcolor:grid,zeroline:false,title:{text:'Annualized net return (%)',font:{size:12}}};
+        layout['yaxis'+s]={domain:yd,anchor:x,range:[5.6,.5],fixedrange:true,tickvals:[1,2,3,4,5],ticktext:['Monday','Tuesday','Wednesday','Thursday','Friday'],showgrid:false,zeroline:false};
+        layout.annotations.push({text:panel.title,x:xd[0],y:yd[1]+.045,xref:'paper',yref:'paper',showarrow:false,xanchor:'left',font:{size:14}});
+        for(let day=1;day<=5;day++) {
+          const singles=panel.points.filter(p=>p.weekday===day&&p.schedules!=='1+2+3').map(p=>p.net_cagr);
+          layout.shapes.push({type:'line',xref:x,yref:y,x0:Math.min(...singles),x1:Math.max(...singles),y0:day,y1:day,
+            line:{color:COLORS.comparison,width:1},opacity:.45,layer:'below'});
+        }
+        [['1','Week 1','circle',-.11],['2','Week 2','square',0],['3','Week 3','triangle-up',.11],['1+2+3','Three tranches','diamond',.27]].forEach(([key,name,symbol,shift])=>{
+          const points=panel.points.filter(p=>p.schedules===key),blend=key==='1+2+3';
+          traces.push({type:'scatter',mode:'markers',name,legendgroup:key,showlegend:i===0,
+            x:points.map(p=>p.net_cagr),y:points.map(p=>p.weekday+shift),xaxis:x,yaxis:y,
+            customdata:points.map(p=>['Monday','Tuesday','Wednesday','Thursday','Friday'][p.weekday-1]),
+            marker:{symbol,size:blend?10:8,color:blend?COLORS.long:COLORS.short},
+            hovertemplate:'%{customdata} · '+name+'<br>Net return: %{x:.2f}%<extra>'+panel.title+'</extra>'});
+        });
       });
       await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
     }

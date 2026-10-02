@@ -151,28 +151,20 @@
     "width": 480,
     "height": 560
   },
-  "/assets/tranching/calendar-grid": {
-    "width": 612,
-    "height": 274
+  "/assets/tranching/ridge-calendars": {
+    "width": 720,
+    "height": 353
   },
-  "/assets/tranching/calendar-grid_mobile": {
-    "width": 331,
-    "height": 266
-  },
-  "/assets/tranching/calendar-return-risk": {
-    "width": 648,
-    "height": 245
-  },
-  "/assets/tranching/calendar-return-risk_mobile": {
-    "width": 346,
-    "height": 418
-  },
-  "/assets/tranching/schedule-performance": {
-    "width": 648,
-    "height": 346
-  },
-  "/assets/tranching/schedule-performance_mobile": {
+  "/assets/tranching/ridge-calendars_mobile": {
     "width": 374,
-    "height": 403
+    "height": 576
+  },
+  "/assets/tranching/ridge-paths": {
+    "width": 648,
+    "height": 324
+  },
+  "/assets/tranching/ridge-paths_mobile": {
+    "width": 374,
+    "height": 302
   }
 }
