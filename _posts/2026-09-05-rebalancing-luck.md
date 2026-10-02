@@ -5,7 +5,7 @@ interactive_charts: true
 toc: true
 title: "Reducing Rebalancing Luck"
 description: "Combining Ridge rebalance schedules preserves mean return while reducing volatility and the risk of choosing an unlucky starting week."
-date: 2025-05-10
+date: 2026-09-05
 last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing

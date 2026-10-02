@@ -18,6 +18,10 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   summary in any form. The homepage is newest first with explicit `home_after`
   continuations; Previous/Next follows `_data/reading_order.yml`. RSS remains
   chronological. Never show unpublished or unfinished articles on the site.
+- The author's requested article order takes precedence over publication dates.
+  Adjust dates when needed to support that order; date changes alone do not
+  require further approval. Keep homepage placement and Previous/Next consistent
+  with the requested sequence.
 - Headings are statements. Don't pose a question and answer it yourself, and end
   on the judgement rather than on open questions.
 - Keep footnotes to one or two short sentences: a source or one clarification.
@@ -134,7 +138,7 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   evidence bundles, reproducible inputs and stylesheet entry points. Avoid
   compatibility wrappers, redirects and aliases for retired names and URLs.
   Remove obsolete code and references at their source; preserve research evidence
-  and Git history. Ask before deleting tracked files, changing dates or site settings.
+  and Git history. Ask before deleting tracked files or changing site settings.
 
 ## Verification and delivery
 

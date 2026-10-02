@@ -347,7 +347,7 @@ less than volatility scaling, so higher costs widen its lead. It does run at
 about 160% average gross against 138% in development, so the borrow,
 financing and impact costs left out here weigh more on it.
 
-In [Reducing Rebalancing Luck]({% link _posts/2025-05-10-rebalancing-luck.md %}),
+In [Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %}),
 I combine the three starting weeks at one third of notional each and
 measure the diversification benefit. The [attribution series]({% link _posts/2026-09-09-portfolio-attribution.md %})
 then breaks the portfolio's P&L down by the ranking's themes.
