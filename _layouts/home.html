@@ -5,18 +5,28 @@ layout: base
 <div class="home">
   <h1 class="home-title">Research notes</h1>
   {%- comment -%}
-    Newest first. Posts published on the same day list the latest part first (Part 2, then 1).
+    Newest first, with explicit home_after links for article continuations.
+    Posts published on the same day list the latest part first (Part 2, then 1).
     Resources (navigation: false) stays in the header.
   {%- endcomment -%}
   {%- assign listed = site.posts | where_exp: "post", "post.navigation != false" -%}
   {%- assign by_day = listed | group_by_exp: "post", "post.date | date: '%Y-%m-%d'" -%}
   {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
+  {%- assign home_posts = "" | split: "," -%}
+  {%- for day in by_day -%}
+    {%- assign day_posts = day.items | sort: "series_order", "first" | reverse -%}
+    {%- for post in day_posts -%}
+      {%- unless post.home_after -%}
+        {%- assign current_post = listed | where: "url", post.url -%}
+        {%- assign following_posts = listed | where: "home_after", post.url -%}
+        {%- assign home_posts = home_posts | concat: current_post | concat: following_posts -%}
+      {%- endunless -%}
+    {%- endfor -%}
+  {%- endfor -%}
 
   {%- if listed.size > 0 -%}
     <ul class="post-list">
-      {%- for day in by_day -%}
-      {%- assign day_posts = day.items | sort: "series_order", "first" | reverse -%}
-      {%- for post in day_posts -%}
+      {%- for post in home_posts -%}
       <li>
         <h2>
           <a class="post-link" href="{{ post.url | relative_url }}">
@@ -34,7 +44,6 @@ layout: base
           {{ post.excerpt }}
         {%- endif -%}
       </li>
-      {%- endfor -%}
       {%- endfor -%}
     </ul>
   {%- endif -%}

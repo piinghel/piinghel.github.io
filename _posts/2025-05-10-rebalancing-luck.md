@@ -6,24 +6,25 @@ toc: true
 title: "Reducing Rebalancing Luck"
 description: "Combining Ridge rebalance schedules preserves mean return while reducing volatility and the risk of choosing an unlucky starting week."
 date: 2025-05-10
-last_modified_at: 2026-10-02
+last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/2025/05/10/rebalancing-luck.html
+home_after: /quants/2026/08/29/portfolio-optimization.html
 github_repositories:
   - label: Research code
     url: https://github.com/piinghel/rebalance-tranching
 ---
 
-My [Ridge strategy](/quants/2025/02/09/multiple-linear-regression.html)
-rebalances every three weeks. I still have to choose a starting date: this
+The allocation approach in [From Volatility Scaling to Joint Sizing](/quants/2026/08/29/portfolio-optimization.html)
+rebalances every three weeks. That still leaves a starting date to choose: this
 Friday, next Friday, or the Friday after. The model is the same in each case,
 but a week's difference in timing can leave me with quite different returns.
 
-In the other articles I report results across three starting weeks. Here I
-combine them, with one third of the notional in each. I want the
-diversification benefit—lower volatility and a higher Sharpe ratio at the
-same average return—and less dependence on picking a fortunate starting week.
+In the other articles I calculate each schedule's metrics separately and
+report their mean. Here I combine them, with one third of the notional in
+each. I want lower volatility and a higher Sharpe ratio at the same average
+return, with less dependence on picking a fortunate starting week.
 
 [Newfound Research](https://www.thinknewfound.com/rebalance-timing-luck)
 and [Concretum's tranching study](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
@@ -35,9 +36,17 @@ and look at the benefit after trading costs.
 Figure 1 shows the three Friday schedules from January 2022 to May 2026.
 They use the same Ridge regression on 80 ranking predictors and the same
 [joint sizing rules](/quants/2026/08/29/portfolio-optimization.html),
-including the rank buffer and trade penalty.[^calibration] Each schedule
-trades at the close after its signal date. All returns include 5 bp per
-dollar traded.
+including the rank buffer and trade penalty. Each schedule trades at the
+close after its signal date. All returns include 5 bp per dollar traded.
+
+There is one difference from that article: this comparison retains the
+earlier **1.18 volatility multiplier**, while joint sizing uses **1.55**.
+The higher multiplier corrected an underestimate of risk on the 80-predictor
+model: pooled 1998–2021 holding-period volatility was about 8.8% against
+a 7% forecast at 1.18; at 1.55, it was about 7.1%. Both articles keep the
+7% forecast risk budget, so the portfolios here take more risk. Within
+this article, every standalone schedule and its combination use the same
+settings. A higher desired risk level is a separate choice of risk budget.
 
 Over this period, annualized net return ranges from **5.73% to 8.95%**.
 That is a 3.22 percentage point gap from choosing a different starting
@@ -46,14 +55,14 @@ which week would win, and I wouldn't want the whole portfolio exposed to
 the one that earned 5.73%.
 
 <div class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="schedules" source="/assets/tranching/ridge-paths.json?v=1" base="/assets/tranching/ridge-paths" mobile="/assets/tranching/ridge-paths_mobile" label="Net growth of three Friday rebalance schedules and their equal-notional combination, January 2022 to May 2026." version="1" %}
+  {% include blog-chart.html chart="schedules" source="/assets/tranching/ridge-paths.json?v=2" base="/assets/tranching/ridge-paths" mobile="/assets/tranching/ridge-paths_mobile" label="Net growth of three Friday rebalance schedules and their equal-notional combination, January 2022 to May 2026." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 1: Less dependence on one starting week.</strong> Friday signal schedules, January 2022–May 2026, indexed to 100 at the 31 December 2021 close. Grey lines show the individual schedules; blue combines them at one third of notional each. Each line compounds daily net P&amp;L per unit of fixed notional. Explore gives access to the longer history.</p>
+<p class="figure-caption"><strong>Figure 1: Less dependence on one starting week.</strong> Friday signal schedules, January 2022–May 2026, indexed to 100 at the 31 December 2021 close, on a log scale. Grey lines show the individual schedules; blue combines them at one third of notional each. Each line compounds daily net P&amp;L per unit of fixed notional. Explore gives access to the longer history.</p>
 
 ## Split the portfolio across three weeks
 
 I implement the combination as three separate books, or tranches, each
-with one third of the strategy's notional. Each still rebalances every
+with one third of the total notional. Each still rebalances every
 three weeks, but one of them trades each week (Table 1). This spreads the
 portfolio changes over time while preserving each book's holding period.
 
@@ -79,6 +88,18 @@ costs included. The small differences in geometric return come from
 compounding the combined daily returns. I keep total notional unchanged
 throughout the comparison.
 
+Sharpe needs a different calculation. The mean of three standalone Sharpe
+ratios describes the average schedule; the Sharpe of the combined portfolio
+uses the mean and volatility of its blended daily returns. That second
+calculation captures the diversification between starting weeks.
+
+For the three Friday schedules here, mean Sharpe is **1.30 in development
+and 0.81 later**; combining their daily returns gives **1.39 and 0.85**.
+The joint-sizing article's **1.32 and 0.87** are means of standalone
+Sharpes at its 1.55 calibration. Blending those same books gives **1.41
+and 0.90**. Both comparisons show the diversification benefit, but the
+different risk calibration means their levels need not match.
+
 ## The diversification benefit
 
 The three books use the same model at different dates, so their returns
@@ -99,7 +120,7 @@ starting weeks: 0.88 on average, against 0.80 in development. There is less
 to diversify when the books move more closely together.
 
 <table class="research-table comparison-table risk-performance-table">
-  <caption><strong>Table 2: Diversification improves Sharpe.</strong> Mean of each statistic across fifteen single schedules or five three-tranche portfolios. Returns are geometric; return, volatility and drawdown are percentages. Annualization uses 252 sessions and Sharpe a zero cash rate.</caption>
+  <caption><strong>Table 2: Diversification improves Sharpe.</strong> Mean statistics across fifteen standalone schedules and five combined portfolios. Each combined portfolio first averages three schedules' daily returns; its statistics are then calculated and averaged across weekdays. Returns are geometric; return, volatility and drawdown are percentages. Annualization uses 252 sessions and Sharpe a zero cash rate.</caption>
   <thead><tr><th>Metric</th><th>Single<br>schedule</th><th>Three<br>tranches</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="3">September 1998–December 2021</th></tr>
@@ -123,10 +144,10 @@ portfolio limits, as well as financing costs.
 
 ## Less dependence on the calendar
 
-Lower daily volatility is one benefit; less dependence on the calendar
-is the other. Figure 2 compares all fifteen schedules with the five
-combined portfolios. Each row holds the signal weekday fixed, so I can
-see how much the starting week changes the result.
+Rebalancing one third each week already removes much of the dependence
+on a single starting date. Figure 2 compares the fifteen standalone
+outcomes with the five weekly combinations. The two rows make the
+best-to-worst spread visible directly.
 
 The return spread falls from **2.65 to 1.26 percentage points** in the
 development period, and from **3.77 to 0.95 points** later. The combined
@@ -134,16 +155,13 @@ portfolios are closer together, although the choice of weekday still
 makes a difference.
 
 <div class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="calendars" source="/assets/tranching/ridge-calendars.json?v=1" base="/assets/tranching/ridge-calendars" mobile="/assets/tranching/ridge-calendars_mobile" label="Annualized net returns for fifteen single calendars and five three-tranche portfolios in 1998–2021 and 2022–May 2026, on a common scale." version="1" %}
+  {% include blog-chart.html chart="calendars" source="/assets/tranching/ridge-calendars.json?v=2" base="/assets/tranching/ridge-calendars" mobile="/assets/tranching/ridge-calendars_mobile" label="Annualized net returns for fifteen single calendars and five three-tranche portfolios in 1998–2021 and 2022–May 2026, on a common scale." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Combining starting weeks leaves the weekday choice.</strong> Annualized geometric net return, with the same horizontal scale in both periods. Circles, squares and triangles identify the three starting weeks; diamonds combine them at one third of notional each. The thin lines span the three observed schedule returns within a weekday.</p>
+<p class="figure-caption"><strong>Figure 2: Weekly thirds narrow the range of outcomes.</strong> Each dot is an annualized geometric net return: fifteen standalone schedules above, five three-tranche portfolios below. Lines show the observed minimum-to-maximum range; labels give its width in percentage points. Both periods use the same horizontal scale. Hover identifies each calendar.</p>
 
-Combining starting weeks leaves five calendars instead of fifteen. If I
-instead fix one starting week and compare only the five weekdays, the
-improvement is less uniform: Week 1 has a narrower spread than the
-combination in development, 1.03 versus 1.26 points. Later, the combined
-spread is smaller than for any fixed starting week. I reduce dependence
-on the starting date, while retaining some weekday risk.
+The combination still leaves a weekday to choose. It spreads exposure
+across all three starting weeks, so the whole portfolio no longer depends
+on picking one of them correctly.
 
 ## Putting the spread in context
 
@@ -166,45 +184,50 @@ Equal expected returns are an assumption of this test, rather than a
 conclusion from it. The observed spread gives me little reason to choose
 the historical winner over a combination of schedules.
 
-## More orders, similar traded notional
+## Smaller trades spread through time
 {: #what-it-takes-to-implement }
 
-The trade-off is in execution. I have three books submitting smaller
+The execution changes as well. Three books submit smaller
 orders, so their order counts add up while traded notional averages to
 that of the standalone schedules. Here, two-way turnover means purchases
 plus sales divided by strategy notional.
 
 Over the later period, a single schedule averages about **2,429 orders a
 year**, against **7,288** for three tranches. Two-way turnover averages
-**18.83 times notional a year** in both cases. At USD 5 million total
-notional, that means an average order of roughly USD 38,800 for one
-schedule and USD 12,900 for three tranches.
+**18.83 times notional a year** in both cases. Three times as many orders,
+each about a third of the size, leaves the amount traded unchanged.
 
 The proportional cost deduction is therefore the same: **0.94 percentage
 points a year** later and **1.29 points** in development, measured as the
 annualized average of daily costs. With a proportional charge, the amount
 traded determines the cost.
 
-The comparison scales each standalone book to one third of its size and
-charges costs to each book separately. Fixed ticket charges, borrow,
-financing and market impact are outside the calculation. Zarattini and Pagani's
-[tranching study](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
-shows why the answer can change with portfolio size: smaller
-orders can reduce impact, but minimum commissions can make the extra
-tickets expensive.
+For an institutional portfolio, the smaller trade size is another reason
+to consider tranching. Rebalancing a third of the portfolio each week
+spreads demand for liquidity across dates. At comparable liquidity and
+execution horizons, smaller orders should reduce market impact. The
+benefit depends on participation rates and how the original orders would
+have been worked; splitting a rebalance into child orders already captures
+some of it.
+
+Zarattini and Pagani's [tranching study](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf)
+examines both retail and institutional portfolio sizes. Minimum commissions
+penalize its smallest accounts, while lower impact makes tranching more
+attractive at larger sizes. My focus here is the latter setting. The 5 bp
+charge holds costs proportional to traded notional, so the reported gains
+come from diversification; any saving from lower market impact would be
+additional. Borrow and financing are also outside the calculation.
 
 ## What I would keep
 
-For Ridge, I prefer the three starting weeks under the proportional costs
-used here. The Sharpe improvement is modest, especially after 2021, but it
-comes with less dependence on a calendar I have little reason to favour
-in advance. I'd rather accept the average across starting weeks than
+I would rebalance one third each week while keeping each book's three-week
+holding cycle. That reduces the dependence on the starting week and
+improves Sharpe in both periods, although the later improvement is modest.
+I'd rather share the notional across starting weeks than
 commit the whole portfolio to one and risk ending up at the bottom of
 the range.
 
 ## References
 
 - Corey Hoffstein, Justin Sibears and Nathan Faber, *Rebalancing Timing Luck: The Difference between Hired and Fired*, summarized in [Newfound Research's rebalance timing luck overview](https://www.thinknewfound.com/rebalance-timing-luck).
-- Carlo Zarattini and Alberto Pagani, [*The Tranching Dilemma: A Cost-Aware Approach to Mitigate Rebalance Timing Luck in Factor Portfolios*](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf), 14 November 2025 version, PDF pp. 9–12.
-
-[^calibration]: Stock-volatility estimates are multiplied by 1.18 here, compared with 1.55 in the joint-sizing article. All fifteen calendars use the same multiplier.
+- Carlo Zarattini and Alberto Pagani, [*The Tranching Dilemma: A Cost-Aware Approach to Mitigate Rebalance Timing Luck in Factor Portfolios*](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf), 14 November 2025 version, PDF pp. 9–14.

@@ -4,7 +4,7 @@ interactive_charts: true
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
-last_modified_at: 2026-09-28
+last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/2026/08/29/portfolio-optimization.html
@@ -347,8 +347,10 @@ less than volatility scaling, so higher costs widen its lead. It does run at
 about 160% average gross against 138% in development, so the borrow,
 financing and impact costs left out here weigh more on it.
 
-The [attribution series](/quants/portfolio-attribution.html) breaks this
-portfolio's P&L down by the ranking's themes.
+In [Reducing Rebalancing Luck](/quants/2025/05/10/rebalancing-luck.html),
+I combine the three starting weeks at one third of notional each and
+measure the diversification benefit. The [attribution series](/quants/portfolio-attribution.html)
+then breaks the portfolio's P&L down by the ranking's themes.
 
 Two weaknesses remain: realized beta runs above the rebalance-time estimate
 for months at a time, and after 2021 the advantage is small relative to its

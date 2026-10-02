@@ -409,13 +409,20 @@
               const ends=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true&&tr.y.length)
                 .map(tr=>({x:tr.x.at(-1),y:tr.y.at(-1),name:tr.name,color:tr.line.color}));
               const values=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true).flatMap(tr=>tr.y);
-              const lo=Math.min(...values),hi=Math.max(...values),plotHeight=layout.height-layout.margin.t-layout.margin.b;
+              const coordinate=y=>cfg.log?Math.log10(y):y;
+              const lo=coordinate(Math.min(...values)),hi=coordinate(Math.max(...values)),plotHeight=layout.height-layout.margin.t-layout.margin.b;
+              if(cfg.log&&hi-lo<Math.log10(2)) {
+                const low=Math.min(...values),high=Math.max(...values),rough=(high-low)/4;
+                const power=10**Math.floor(Math.log10(rough||1)),step=Math.ceil(rough/power)*power||1;
+                const ticks=Array.from({length:Math.ceil((high-low)/step)+2},(_,i)=>(Math.floor(low/step)+i)*step).filter(x=>x>0);
+                layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(x=>String(+x.toPrecision(6)));
+              }
               const perUnit=plotHeight*(secondary?.57:1)/((hi-lo)*1.1||1),gap=15;
               ends.sort((a,b)=>a.y-b.y);
               let previous=-Infinity;
-              for(const e of ends){e.px=e.y*perUnit;if(e.px-previous<gap)e.px=previous+gap;previous=e.px;}
-              for(const e of ends)layout.annotations.push({x:e.x,y:e.y,text:e.name,xref:'x',yref:'y',xanchor:'left',yanchor:'middle',
-                xshift:6,yshift:e.px-e.y*perUnit,showarrow:false,font:{size:mobile?11:12,color:e.color}});
+              for(const e of ends){e.px=coordinate(e.y)*perUnit;if(e.px-previous<gap)e.px=previous+gap;previous=e.px;}
+              for(const e of ends)layout.annotations.push({x:e.x,y:coordinate(e.y),text:e.name,xref:'x',yref:'y',xanchor:'left',yanchor:'middle',
+                xshift:6,yshift:e.px-coordinate(e.y)*perUnit,showarrow:false,font:{size:mobile?11:12,color:e.color}});
             }
             if(cfg.marker&&range[0]<=cfg.marker&&range[1]>=cfg.marker)layout.shapes=[{type:'line',xref:'x',yref:'paper',x0:cfg.marker,x1:cfg.marker,y0:0,y1:1,line:{color:t.text,width:1,dash:'dot'}}];
             if(cfg.band)layout.shapes=[{type:'rect',xref:'paper',yref:'y',x0:0,x1:1,y0:cfg.band[0],y1:cfg.band[1],fillcolor:t.grid,opacity:.4,line:{width:0},layer:'below'}];
@@ -645,29 +652,30 @@
     async function draw() {
       const mobile=host.clientWidth<550,dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
       const values=cfg.panels.flatMap(p=>p.points.map(q=>q.net_cagr));
-      const lo=Math.min(...values),hi=Math.max(...values),pad=(hi-lo||1)*.12;
-      const height=mobile?740:400,traces=[],layout={autosize:true,height,
-        margin:{l:88,r:15,t:85,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
+      const lo=Math.min(...values),hi=Math.max(...values),pad=(hi-lo||1)*.08;
+      const height=mobile?590:310,traces=[],layout={autosize:true,height,
+        margin:{l:28,r:12,t:40,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
         font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},hoverlabel:hoverStyle(),
-        dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:1.2,font:{size:11},itemclick:false,itemdoubleclick:false},annotations:[],shapes:[]};
+        dragmode:false,showlegend:false,annotations:[],shapes:[]};
       graph.style.height=height+'px';
       cfg.panels.forEach((panel,i)=>{
-        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.56,i*.56+.44],yd=mobile?[i?0:.60,i?.40:1]:[0,1];
-        layout['xaxis'+s]={domain:xd,anchor:y,range:[lo-pad,hi+pad],fixedrange:true,gridcolor:grid,zeroline:false,title:{text:'Annualized net return (%)',font:{size:12}}};
-        layout['yaxis'+s]={domain:yd,anchor:x,range:[5.6,.5],fixedrange:true,tickvals:[1,2,3,4,5],ticktext:['Monday','Tuesday','Wednesday','Thursday','Friday'],showgrid:false,zeroline:false};
+        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.55,i*.55+.45],yd=mobile?[i?0:.61,i?.39:1]:[0,1];
+        layout['xaxis'+s]={domain:xd,anchor:y,range:[lo-pad,hi+pad],fixedrange:true,gridcolor:grid,zeroline:false,dtick:2,title:{text:'Annualized net return (%)',font:{size:12}}};
+        layout['yaxis'+s]={domain:yd,anchor:x,range:[-.4,1.65],fixedrange:true,showticklabels:false,showgrid:false,zeroline:false};
         layout.annotations.push({text:panel.title,x:xd[0],y:yd[1]+.045,xref:'paper',yref:'paper',showarrow:false,xanchor:'left',font:{size:14}});
-        for(let day=1;day<=5;day++) {
-          const singles=panel.points.filter(p=>p.weekday===day&&p.schedules!=='1+2+3').map(p=>p.net_cagr);
-          layout.shapes.push({type:'line',xref:x,yref:y,x0:Math.min(...singles),x1:Math.max(...singles),y0:day,y1:day,
-            line:{color:COLORS.comparison,width:1},opacity:.45,layer:'below'});
-        }
-        [['1','Week 1','circle',-.11],['2','Week 2','square',0],['3','Week 3','triangle-up',.11],['1+2+3','Three tranches','diamond',.27]].forEach(([key,name,symbol,shift])=>{
-          const points=panel.points.filter(p=>p.schedules===key),blend=key==='1+2+3';
-          traces.push({type:'scatter',mode:'markers',name,legendgroup:key,showlegend:i===0,
-            x:points.map(p=>p.net_cagr),y:points.map(p=>p.weekday+shift),xaxis:x,yaxis:y,
-            customdata:points.map(p=>['Monday','Tuesday','Wednesday','Thursday','Friday'][p.weekday-1]),
-            marker:{symbol,size:blend?10:8,color:blend?COLORS.long:COLORS.short},
-            hovertemplate:'%{customdata} · '+name+'<br>Net return: %{x:.2f}%<extra>'+panel.title+'</extra>'});
+        [[false,1,'One schedule'],[true,0,'⅓ each week']].forEach(([blend,row,label])=>{
+          const points=panel.points.filter(p=>(p.schedules==='1+2+3')===blend).sort((a,b)=>a.net_cagr-b.net_cagr);
+          const returns=points.map(p=>p.net_cagr),low=Math.min(...returns),high=Math.max(...returns),color=blend?COLORS.long:COLORS.short;
+          layout.shapes.push({type:'line',xref:x,yref:y,x0:low,x1:high,y0:row,y1:row,line:{color,width:3},opacity:.45,layer:'below'});
+          layout.annotations.push(
+            {text:'<b>'+label+'</b>',x:xd[0],y:row+.3,xref:'paper',yref:y,showarrow:false,xanchor:'left',font:{size:12,color:ink}},
+            {text:(high-low).toFixed(2)+' pp spread',x:xd[1],y:row+.3,xref:'paper',yref:y,showarrow:false,xanchor:'right',font:{size:12,color}}
+          );
+          traces.push({type:'scatter',mode:'markers',name:label,
+            x:returns,y:points.map((p,j)=>row+(j%3-1)*.07),xaxis:x,yaxis:y,
+            customdata:points.map(p=>['Monday','Tuesday','Wednesday','Thursday','Friday'][p.weekday-1]+(blend?' · three tranches':' · Week '+p.schedules)),
+            marker:{symbol:'circle',size:8,color},
+            hovertemplate:'%{customdata}<br>Net return: %{x:.2f}%<extra>'+panel.title+'</extra>'});
         });
       });
       await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
