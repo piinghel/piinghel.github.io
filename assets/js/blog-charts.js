@@ -317,6 +317,7 @@
           const first=data.dates.findIndex(d=>d>=range[0]);
           let last=data.dates.length-1;while(last>=0&&data.dates[last]>range[1])last--;
           if(first<0||last<=first) {
+            windowLabel.hidden=false;
             windowLabel.textContent='Choose a window containing at least two observations.';
             body.replaceChildren();graph.hidden=true;return;
           }
@@ -369,6 +370,7 @@
             layout.barmode='overlay';layout.legend.y=1.10;
           } else {
             layout.xaxis.range=range;layout.xaxis.autorange=false;
+            layout.xaxis.ticklabelstandoff=cfg.dateLabelSpacing??0;
             const secondary=cfg.drawdown||cfg.contributions;
             layout.xaxis.anchor=secondary?'y2':'y';
             layout.yaxis.domain=secondary?[.43,1]:[0,1];layout.yaxis.type=cfg.log?'log':'linear';
@@ -440,6 +442,7 @@
           await Plotly.react(graph,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
           updateTable(first,last);
+          windowLabel.hidden=cfg.showWindow===false;
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
           windowLabel.title=cfg.showLegend===false?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);

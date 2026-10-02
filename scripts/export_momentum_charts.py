@@ -49,6 +49,7 @@ def export(assets: Path) -> None:
     write_chart(assets / "value-added.json", dates, added, {"added": dict(
         kind="performance", series=[s["id"] for s in added], additive=True,
         unit="Added P&L vs baseline (points)", statistics=False, zeroReference=True,
+        showWindow=False, dateLabelSpacing=10,
         dateTicks=[dates[0], "2005-01-01", "2010-01-01", "2015-01-01", "2020-01-01", dates[-1]],
         mobileDateTicks=[dates[0], "2005-01-01", "2015-01-01", dates[-1]],
         periodLabels=[dict(date="2000-01-01", text="Training", mobileText="Training", y=.96),
