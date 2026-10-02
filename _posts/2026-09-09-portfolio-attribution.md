@@ -266,7 +266,7 @@ partly offset their market exposure. The package is their sum, not another
 factor. Its breakdown helps explain when the position wins or loses.
 
 This follows the sizing logic in the [low-volatility
-article](/quant/2024/12/15/low-volatility-factor.html), but measures its
+article](/quants/2024/12/15/low-volatility-factor.html), but measures its
 contribution inside this multifactor book. The low-volatility factor here is a
 conditional attribution component, not the return of that article's decile
 portfolio.

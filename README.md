@@ -17,16 +17,15 @@ bundle exec jekyll serve
 ## Article reading order
 
 `_data/reading_order.yml` defines the research sequence used by Previous/Next links:
-low-volatility sizing → regression → portfolio construction → P&L attribution 1–2
-→ resources. The tranching article is unpublished (`published: false`) and out of
-the sequence until it is rebuilt; its assets stay in place.
+low-volatility sizing → regression → portfolio construction → rebalancing luck →
+P&L attribution 1–2 → momentum crashes → resources.
 The homepage lists posts newest first, with the publication date and topic on
 every entry; posts published on the same day list the latest part first (Part 2,
 then 1). Resources (`navigation: false`) stays in the header rather than the list.
 Previous/Next links follow the sequence from
 its beginning. Place new articles beside their prerequisites and follow-ups;
 keep numbered series consecutive, in part order. Publication dates and RSS
-remain chronological. Draft URLs reserve a future place without publishing them.
+remain chronological.
 Posts missing from the sequence appear first in Previous/Next order;
 assign their editorial position before publishing. The post layout uses
 `_includes/ordered-posts.html`; the homepage sorts by publication date. The attribution parts stay together

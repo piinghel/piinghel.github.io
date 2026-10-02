@@ -8,6 +8,8 @@ last_modified_at: 2026-09-29
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/2025/02/09/multiple-linear-regression.html
+redirect_from:
+  - /quants/2025/02/09/ridge.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/systematic-equity-research
@@ -15,7 +17,7 @@ github_repositories:
 
 <link rel="stylesheet" href="/assets/css/regression-article.css?v=11">
 
-In the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html),
+In the [low-volatility article](/quants/2024/12/15/low-volatility-factor.html),
 I selected stocks using one characteristic and examined how position sizing
 changed the portfolio. Here I want to bring more information into that
 selection. Alongside volatility, I can describe a stock by its momentum,
@@ -308,7 +310,7 @@ in decile 10: as the target suggested, much of what these scores learn is a
 volatility sort. After 2021 the return ordering almost disappears above decile
 3, and most of the spread comes from the bottom decile. The volatility sort
 remains. Ridge's daily returns correlate 0.62 with the volatility-scaled
-portfolio from the [low-volatility article](/quant/2024/12/15/low-volatility-factor.html)
+portfolio from the [low-volatility article](/quants/2024/12/15/low-volatility-factor.html)
 through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">

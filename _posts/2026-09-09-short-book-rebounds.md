@@ -4,6 +4,8 @@ interactive_charts: true
 title: "Performance Attribution, Part 2: When the Portfolio Loses"
 description: "The portfolio's P&L by theme in market declines and strong rallies: low volatility and the net long dollars trade places, and what keeps the book positive has changed."
 permalink: /quants/short-book-rebounds.html
+redirect_from:
+  - /quants/managing-rebound-risk.html
 toc: true
 date: 2026-09-09
 last_modified_at: 2026-09-29

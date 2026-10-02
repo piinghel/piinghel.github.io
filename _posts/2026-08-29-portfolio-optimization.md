@@ -8,12 +8,14 @@ last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/2026/08/29/portfolio-optimization.html
+redirect_from:
+  - /quants/2026/09/05/risk-concentration.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-In the articles on [low-volatility sizing](/quant/2024/12/15/low-volatility-factor.html)
+In the articles on [low-volatility sizing](/quants/2024/12/15/low-volatility-factor.html)
 and [regression](/quants/2025/02/09/multiple-linear-regression.html),
 I sized positions one stock at a time: scale each by its own volatility and
 cap it. That simple rule worked well. Here I want to see whether sizing the
