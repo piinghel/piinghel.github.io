@@ -33,6 +33,12 @@ and [Concretum's tranching study](https://concretumgroup.com/wp-content/uploads/
 discuss this approach to rebalance timing risk. Here I apply it to Ridge
 and look at the benefit after trading costs.
 
+I reuse the Ridge model's walk-forward predictions, reporting September
+1998–December 2021 and January 2022–May 2026 separately. This is a comparison
+of calendars on an existing backtest: the later sample shows whether timing
+sensitivity changes across periods, while the model and sizing choices come
+from the preceding research.
+
 ## The starting week matters
 
 Figure 1 shows the three Friday schedules from January 2022 to May 2026.
@@ -112,9 +118,7 @@ The empirical question is how much risk this removes after costs.
 
 To see how much this helps beyond Friday, I repeat the comparison for
 every weekday. Three starting weeks across five weekdays give fifteen
-single schedules and five combined portfolios. I report September
-1998–December 2021, the development period, and January 2022–May 2026,
-the later period, separately.
+single schedules and five combined portfolios.
 
 Table 2 shows the expected diversification benefit. Average volatility
 falls from **8.75% to 8.15%** in development and from **9.65% to 9.26%**

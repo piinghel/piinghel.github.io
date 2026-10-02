@@ -284,7 +284,7 @@ z
 " style="fill: #3987e5; stroke: #3987e5; stroke-linejoin: miter"/>
     </g>
     <g id="text_7">
-     <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #e4e7ea" x="33.168" y="46.9698" transform="rotate(-0 33.168 46.9698)">Out-of-sample predictions</text>
+     <text style="font-size: 12px; font-family: 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #e4e7ea" x="33.168" y="46.9698" transform="rotate(-0 33.168 46.9698)">Walk-forward predictions</text>
     </g>
    </g>
   </g>

@@ -32,6 +32,12 @@ and next-close execution. I charge 5 bp per dollar traded and ignore borrow,
 financing and market impact. I report September 1998–December 2021, the
 development period, and January 2022–May 2026, the later period, separately.
 
+The Ridge scores are [walk-forward predictions]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios),
+but choosing sizing and trading rules on those returns makes the earlier
+history development data. The later comparison checks how the same rules
+behave in a different period; its four and a half years give limited evidence
+about their durability.
+
 ## Sizing under a volatility budget
 
 Start with the unconstrained problem. With expected excess returns

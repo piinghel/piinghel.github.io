@@ -32,6 +32,9 @@ for, which take risk without paying for it, and whether that has changed.
 
 The book is the optimizer article's final portfolio, joint sizing with trading
 controls, with its three rebalance schedules held together at equal notional.
+I use the full history here to understand its exposures and payoffs. This is
+an explanation of the backtest; changes suggested by the attribution still
+need a separate comparison with the portfolio rules fixed in advance.
 
 <div id="pnl-conventions" markdown="1">
 Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are

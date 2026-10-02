@@ -38,10 +38,16 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   the comparison. In the low-volatility article, retain the decile bar plot
   beside the discussion of return, volatility and Sharpe across deciles.
 - Open conversationally with the concrete problem and what the article will
-  try to resolve. Do not add or reintroduce boilerplate about having inspected,
-  reused or learned from the later/test period, including paraphrases such as
-  "both periods shaped the strategy." Keep reporting dates and calculation
-  conventions clear without claiming independent or untouched validation.
+  try to resolve. Explain the evaluation design naturally where it matters:
+  development returns can be walk-forward out of sample relative to each fit,
+  while repeated research choices still adapt to that history. A separate later
+  test evaluates fixed specifications; scheduled refits may incorporate earlier
+  observations from that period once their outcomes are known. Check the actual
+  study's history before describing a test as untouched. Explain the distinction
+  fully in the modelling article, with brief study-specific context in related
+  articles rather than repeating a standard disclaimer in every post. Descriptive
+  attribution and full-history sizing examples need their own framing, not an
+  invented training/test split.
 - Describe implementation only when it changes the research design, evidence
   or interpretation. Keep material limitations once, where they matter.
 - Do not publish confidential sell-side reports, citations to them, proprietary

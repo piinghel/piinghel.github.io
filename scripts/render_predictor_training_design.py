@@ -68,10 +68,10 @@ def render(*, dark: bool, mobile: bool) -> None:
                         (TEST_START + (LAST_DATE - TEST_START) / 2, "Later")):
             ax.annotate(text, (num(x), -0.9), ha="center", va="bottom", fontsize=label - 0.5,
                         color=c["muted"], annotation_clip=False)
-        # A compact key: every green block is out of sample, in both periods.
+        # Predictions follow each fit; the reporting split concerns research choices.
         ax.legend(
             handles=[Patch(color=c["train"], label="Training window"),
-                     Patch(color=c["predict"], label="Out-of-sample predictions")],
+                     Patch(color=c["predict"], label="Walk-forward predictions")],
             loc="lower left", bbox_to_anchor=(0, 1.05), ncol=1 if mobile else 2,
             frameon=False, fontsize=label, labelcolor=c["ink"], borderaxespad=0,
             handlelength=1.0, handleheight=0.9, handletextpad=0.5, columnspacing=1.6,

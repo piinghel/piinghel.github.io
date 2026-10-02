@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-09-29
+last_modified_at: 2026-10-03
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
@@ -31,6 +31,16 @@ Before fitting anything, I want to understand the predictors: what they
 measure, how much they overlap and whether their usefulness is stable. Then I
 compare equal weights with weights learned by ordinary least squares (OLS) and
 Ridge, judged by the Sharpe ratio of the same long–short portfolio.
+
+I use September 1998–December 2021 for development and report January
+2022–May 2026 separately. The development returns come from walk-forward
+predictions: each model is fitted only on earlier observations. I still use
+those returns to choose predictors and settings, so repeated comparisons can
+overfit the research choices to this history. Keeping later history aside helps
+test those choices. That protection lasts only until I use its results to
+revise the design; the later years here have already been examined in related
+research. A stronger check needs new observations and enough time to cover
+different market conditions.
 
 ## Setup
 {: #what-i-ask-the-model-to-predict }
@@ -215,15 +225,18 @@ shifts in Figure 1, but with less data per fit its weights would move more
 between refits; I prefer stable weights.[^fitting]
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/combining-predictors/expanding-walk-forward" mobile="/assets/combining-predictors/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="9" %}
+  {% include theme-svg-figure.html base="/assets/combining-predictors/expanding-walk-forward" mobile="/assets/combining-predictors/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="10" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. The shaded area is the later period; the month-long gap between training and predictions is too short to see at this scale.</p>
+<p class="figure-caption"><strong>Figure 2: Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Shading marks the separately reported January 2022–May 2026 period. The month-long gap between training and predictions is too short to see at this scale.</p>
 
-Every prediction is made by a model that has not seen that date. I report two
-periods: development, September 1998–December 2021, and later, January
-2022–May 2026. The later period is short, about 54 non-overlapping 20-session
-windows.
+The blue blocks are out of sample relative to each fit, in both reporting
+periods. Refitting continues after 2021, and observations from the later
+period enter subsequent training windows once their outcomes are known.
+A separate test can therefore use an expanding training window: the research
+specification is what stays fixed for that comparison. The later period is
+short, about 54 non-overlapping 20-session windows, which also limits how much
+confidence I can place in a difference between models.
 
 Every score goes through the same volatility-scaled rule (Table 1): the low-volatility article's inverse-volatility sizing, applied to 75 names per side. Because
 volatility scaling lets each score take its own level of risk, I compare

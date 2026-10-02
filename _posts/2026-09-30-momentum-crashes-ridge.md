@@ -80,6 +80,11 @@ separate the September 1998–December 2021 development period from the
 January 2022–May 2026 test period, averaging each statistic over the three
 schedules. The comparison focuses on these three approaches, each used on its own.
 
+I used the development results to choose these controls. The underlying
+predictions are walk-forward, but the controls also reflect what I learned
+from comparing their historical returns. The later test carries those choices
+forward with the specifications fixed and the scheduled model refits continuing.
+
 ## Why momentum crashes when the losers rebound
 
 To be precise, by momentum I mean the 12-1 return (the past year, skipping
@@ -279,6 +284,8 @@ interventions, even though they use the same momentum-volatility state.
 I kept the three specifications fixed for the January 2022–May 2026
 comparison, continuing the original walk-forward estimation and trading rules.
 The portfolios continue across the boundary with their existing holdings.
+The baseline's later history was already familiar from related research, so
+this test adds evidence about the fixed controls on that history.
 Figure 4 shows the accumulated difference against the baseline throughout the
 history; the shaded region marks the test period.
 
