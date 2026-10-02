@@ -59,26 +59,24 @@ def check_source(root: Path) -> list[str]:
             errors.append(
                 f"{identity}: permalink must match file slug: /quants/{slug}.html"
             )
-        redirects = post.get("redirect_from", [])
-        if not isinstance(redirects, list):
-            errors.append(f"{identity}: redirect_from must be a list")
-            redirects = []
-        for url in [permalink, *redirects]:
-            if (
-                not isinstance(url, str)
-                or not url.startswith("/")
-                or urlsplit(url).netloc
-                or urlsplit(url).query
-                or urlsplit(url).fragment
-            ):
-                errors.append(f"{identity}: invalid local URL {url!r}")
-                continue
-            normalized = unquote(url).removesuffix("index.html").rstrip("/")
-            if normalized in urls:
-                errors.append(
-                    f"{identity}: URL collision {url} with {urls[normalized]}"
-                )
-            urls[normalized] = identity
+        if "redirect_from" in post or "redirect_to" in post:
+            errors.append(f"{identity}: compatibility redirects are not permitted")
+        url = permalink
+        if (
+            not isinstance(url, str)
+            or not url.startswith("/")
+            or urlsplit(url).netloc
+            or urlsplit(url).query
+            or urlsplit(url).fragment
+        ):
+            errors.append(f"{identity}: invalid local URL {url!r}")
+            continue
+        normalized = unquote(url).removesuffix("index.html").rstrip("/")
+        if normalized in urls:
+            errors.append(
+                f"{identity}: URL collision {url} with {urls[normalized]}"
+            )
+        urls[normalized] = identity
         target = post.get("home_after")
         if target and (
             target not in posts
@@ -122,6 +120,8 @@ def check_source(root: Path) -> list[str]:
         ):
             errors.append(f"{name}: series must be consecutive in reading_order")
     config = yaml.safe_load((root / "_config.yml").read_text())
+    if "jekyll-redirect-from" in config.get("plugins", []):
+        errors.append("Remove the compatibility redirect plugin")
     for link in config.get("header_links", []):
         if link.get("post") not in posts:
             errors.append(f"header_links: unknown post {link.get('post')}")
@@ -140,28 +140,24 @@ def check_source(root: Path) -> list[str]:
 
 
 def check_post_output(source: Path, destination: Path) -> list[str]:
-    """Verify redirects and homepage membership against the source catalogue."""
+    """Verify canonical pages and homepage membership against the source catalogue."""
     errors = []
     homepage = Page((destination / "index.html").read_text())
-    for identity, post in read_posts(source).items():
+    posts = read_posts(source)
+    expected = {destination / post["permalink"].lstrip("/") for post in posts.values()}
+    for folder in ("quants", "quant"):
+        for path in (destination / folder).rglob("*.html"):
+            if path not in expected:
+                errors.append(f"Obsolete article output: {path.relative_to(destination)}")
+    if (destination / "redirects.json").exists():
+        errors.append("Obsolete redirect manifest was published")
+    for identity, post in posts.items():
         url = post["permalink"]
         target = destination / url.lstrip("/")
         if not target.is_file():
             errors.append(f"{identity}: canonical page missing: {url}")
         if post.get("navigation") is not False and url not in homepage.links:
             errors.append(f"{identity}: missing from homepage")
-        for redirect in post.get("redirect_from", []):
-            path = destination / redirect.lstrip("/")
-            if path.is_dir():
-                path /= "index.html"
-            if not path.is_file():
-                errors.append(f"{identity}: redirect missing: {redirect}")
-            elif url not in [
-                urlsplit(link).path for link in Page(path.read_text()).links
-            ]:
-                errors.append(
-                    f"{identity}: redirect does not resolve to {url}: {redirect}"
-                )
     return errors
 
 

@@ -17,10 +17,9 @@ bundle exec jekyll serve
 ## Article URLs
 
 Every article lives at `/quants/<slug>.html`, where the slug matches the title and the
-post file name. Retired URLs stay in the target post's `redirect_from` list
-(`jekyll-redirect-from`), so old links keep working. Asset folders use the article
-slug, and exporter defaults and reproduction commands use the same path.
-Static assets have no redirects; renamed asset URLs are intentionally retired.
+post file name. Keep only canonical URLs: retired article and asset URLs return
+404. Do not add redirects, compatibility aliases or legacy stubs. Asset folders
+use the article slug, and exporters and reproduction commands use the same path.
 
 ## Article reading order
 
@@ -54,7 +53,7 @@ git diff --check
 
 The checker validates local links and fragments, SVG XML references, matching
 theme dimensions, image descriptions, and exclusion of development
-files. It also checks post slugs, URL collisions, redirects, navigation and
+files. It also checks post slugs, URL collisions, obsolete output, navigation and
 homepage membership, series order and source references in this guide and AGENTS.
 The build wrapper checks source metadata before Jekyll writes output, then checks
 the rendered pages. GitHub Pages uses a branch build; its plugin whitelist
@@ -236,15 +235,15 @@ comparison.
 
 | Source | Owns |
 | --- | --- |
-| `_posts/` front matter | Article identity, public metadata and redirect history |
+| `_posts/` front matter | Article identity and public metadata |
 | `_data/reading_order.yml` | Editorial Previous/Next sequence |
 | `_layouts/` and `_includes/` | Page structure and shared components |
 | `_sass/`, `assets/css/`, `assets/js/` | Shared presentation and browser behaviour |
 | `scripts/` and `tests/` | Figure exports, reproducible renderers and validation |
 
 Use Liquid source links between articles. Rename a source file, its asset folder
-and all exporter/documentation callers together; keep old public article URLs
-only in `redirect_from`. Do not add internal aliases for retired names. Inspect
+and all exporter/documentation callers together; remove retired URLs and names
+instead of adding compatibility aliases. Inspect
 callers before removing unused material, and preserve the documented evidence
 bundle and `assets/css/style.scss` entry point. Read AGENTS before concurrent work.
 

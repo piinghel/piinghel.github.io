@@ -10,8 +10,6 @@ last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/rebalancing-luck.html
-redirect_from:
-  - /quants/2025/05/10/rebalancing-luck.html
 home_after: _posts/2026-08-29-joint-sizing.md
 github_repositories:
   - label: Research code

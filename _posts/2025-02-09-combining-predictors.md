@@ -8,9 +8,6 @@ last_modified_at: 2026-09-29
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
-redirect_from:
-  - /quants/2025/02/09/ridge.html
-  - /quants/2025/02/09/multiple-linear-regression.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/systematic-equity-research

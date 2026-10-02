@@ -116,7 +116,7 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 
 ## Site structure and concurrent work
 
-- Post front matter owns title, description, category, permalink and redirects.
+- Post front matter owns title, description, category and canonical permalink.
   Use `{% link _posts/<file>.md %}` for article links, with anchors after the tag.
   Reading order, `home_after` and header links use source post paths, never URLs.
 - Keep permalink and asset folder slugs aligned with post filenames. Shared
@@ -132,8 +132,9 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   changes before final verification and use a fast-forward merge.
 - Trace callers and generated outputs before removing unused code. Preserve
   evidence bundles, reproducible inputs and stylesheet entry points. Avoid
-  compatibility wrappers for retired internal names; old public URLs remain
-  redirects. Ask before deleting tracked files, changing dates or site settings.
+  compatibility wrappers, redirects and aliases for retired names and URLs.
+  Remove obsolete code and references at their source; preserve research evidence
+  and Git history. Ask before deleting tracked files, changing dates or site settings.
 
 ## Verification and delivery
 

@@ -7,8 +7,6 @@ last_modified_at: 2026-09-05
 categories: ["Resources"]
 article_label: Resources · Research and software
 permalink: /quants/resources.html
-redirect_from:
-  - /quants/2025/04/20/reading-and-tools.html
 navigation: false
 ---
 

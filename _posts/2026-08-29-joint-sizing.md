@@ -8,9 +8,6 @@ last_modified_at: 2026-10-03
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/joint-sizing.html
-redirect_from:
-  - /quants/2026/08/29/portfolio-optimization.html
-  - /quants/2026/09/05/risk-concentration.html
 github_repositories:
   - label: Research materials
     url: https://github.com/piinghel/portfolio-optimization-study

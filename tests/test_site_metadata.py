@@ -28,18 +28,11 @@ class SiteMetadataTests(unittest.TestCase):
         (self.root / "_data/reading_order.yml").write_text(yaml.safe_dump(identities))
 
     def post(self, identity, body="", **changes):
-        data = dict(
-            title="Title",
-            description="Description",
-            article_label="Research",
-            categories=["Research"],
-            date=identity[7:17],
-            permalink=f"/quants/{Path(identity).name[11:-3]}.html",
-        )
+        data = dict(title="Title", description="Description", article_label="Research",
+                    categories=["Research"], date=identity[7:17],
+                    permalink=f"/quants/{Path(identity).name[11:-3]}.html")
         data.update(changes)
-        (self.root / identity).write_text(
-            "---\n" + yaml.safe_dump(data) + "---\n" + body
-        )
+        (self.root / identity).write_text("---\n" + yaml.safe_dump(data) + "---\n" + body)
 
     def errors(self):
         return "\n".join(check_source(self.root))
@@ -56,10 +49,19 @@ class SiteMetadataTests(unittest.TestCase):
     def test_slug_and_url_collisions(self):
         self.post(self.first, permalink="/quants/wrong.html")
         self.assertIn("permalink must match", self.errors())
-        self.post(self.first, redirect_from=["/quants/second.html"])
+        self.post(self.first, permalink="/quants/second.html")
         self.assertIn("URL collision", self.errors())
-        self.post(self.first, redirect_from=["/old.html", "/old.html"])
+
+    def test_post_cannot_overwrite_a_standalone_page(self):
+        (self.root / "about.md").write_text("---\npermalink: /quants/first.html\n---\nAbout")
         self.assertIn("URL collision", self.errors())
+
+    def test_compatibility_metadata_and_plugin_are_rejected(self):
+        self.post(self.first, redirect_from=["/retired.html"])
+        self.assertIn("compatibility redirects", self.errors())
+        self.post(self.first)
+        (self.root / "_config.yml").write_text("plugins: [jekyll-redirect-from]")
+        self.assertIn("compatibility redirect plugin", self.errors())
 
     def test_home_after_rejects_stale_targets_and_cycles(self):
         self.post(self.second, home_after=self.first)
@@ -70,18 +72,11 @@ class SiteMetadataTests(unittest.TestCase):
         self.post(self.second, home_after="/quants/first.html")
         self.assertIn("home_after", self.errors())
 
-    def test_redirect_cannot_overwrite_a_standalone_page(self):
-        (self.root / "about.md").write_text("---\npermalink: /about/\n---\nAbout")
-        self.post(self.first, redirect_from=["/about/index.html"])
-        self.assertIn("URL collision", self.errors())
-
     def test_article_links_use_source_paths(self):
         for url in ("/quant/2020/01/01/first.html", "/quants/first.html"):
             self.post(self.second, body=f"[First]({url})")
             self.assertIn("Liquid link", self.errors())
-        self.post(
-            self.second, body="[First]({% link _posts/2020-01-01-first.md %}#section)"
-        )
+        self.post(self.second, body="[First]({% link _posts/2020-01-01-first.md %}#section)")
         self.assertEqual(self.errors(), "")
 
     def test_cross_article_fragment_validation(self):
@@ -96,18 +91,15 @@ class SiteMetadataTests(unittest.TestCase):
         self.order([self.second, self.first])
         self.assertIn("series must be consecutive", self.errors())
 
-    def test_redirect_target_and_homepage_membership(self):
-        self.post(self.first, redirect_from=["/old.html"])
-        (self.root / "index.html").write_text(
-            '<a href="/quants/second.html">Second</a>'
-        )
+    def test_obsolete_output_and_homepage_membership(self):
+        (self.root / "index.html").write_text('<a href="/quants/second.html">Second</a>')
         (self.root / "quants").mkdir()
         for slug in ("first", "second"):
             (self.root / f"quants/{slug}.html").write_text("Article")
-        (self.root / "old.html").write_text('<a href="/quants/second.html">Wrong</a>')
+        (self.root / "quants/retired.html").write_text("Obsolete")
         errors = "\n".join(check_post_output(self.root, self.root))
         self.assertIn("missing from homepage", errors)
-        self.assertIn("redirect does not resolve", errors)
+        self.assertIn("Obsolete article output", errors)
 
 
 if __name__ == "__main__":
