@@ -163,7 +163,7 @@ for byte), run the renderer from this directory, then
 | Joint sizing | all | `scripts/export_optimizer_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
 | Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | Same attribution exporter and shared helper; fallbacks from `scripts/render_attribution_themes.py` |
-| Rebalancing luck | 1–3 | `rebalance_tranching.grid_figures` and `.performance` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
+| Rebalancing luck | 1–2 | `rebalance_tranching.ridge_figures` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
 | Momentum crashes | 1 and 3 | `scripts/render_momentum_figures.py` |
 | | 2 and 4 | `scripts/export_momentum_charts.py`; Figure 4 SVG fallbacks from `scripts/render_momentum_figures.py` |
 
@@ -184,14 +184,16 @@ project, on the 80-predictor Ridge optimizer book:
 study `studies/2026-09-theme-attribution-over-time`). The public files contain
 portfolio aggregates only.
 
-The tranching calculations and renderers live only in rebalance-tranching; copy
-the reviewed SVGs into `assets/tranching/` rather than maintaining a second
-renderer. From that repository:
+The tranching calculations and renderer live in rebalance-tranching. Export
+the matched Ridge-80 figures and interactive data directly to this blog's
+`assets/tranching/` directory. From the research repository:
 
 ```bash
 uv sync --locked
-uv run python -m rebalance_tranching.grid_figures --input output/calendar --output output
-uv run python -m rebalance_tranching.performance
+uv run python -m rebalance_tranching.ridge_figures \
+  --input data/ridge80_calendar_daily.parquet \
+  --output /path/to/piinghel.github.io/assets/tranching \
+  --blog /path/to/piinghel.github.io
 ```
 
 The low-volatility figures are rendered from the retained September 2026 run
