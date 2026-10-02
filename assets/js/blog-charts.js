@@ -657,7 +657,7 @@
         dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:mobile?1.14:1.26,itemclick:false,itemdoubleclick:false},
         annotations:[]};
       graph.style.height=height+'px';
-      [['spread_pp','Calendar spread (pp)'],['annual_orders','Orders per year']].forEach(([metric,title],i)=>{
+      [['sd_pp','Return dispersion (pp)'],['annual_orders','Orders per year']].forEach(([metric,title],i)=>{
         const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.57,i*.57+.43],yd=mobile?[i?0:.61,i?.39:1]:[0,1];
         const maximum=Math.max(...cfg.periods.flatMap(p=>p.points.map(q=>q[metric])));
         layout['xaxis'+s]={domain:xd,anchor:y,range:[.75,3.25],tickvals:[1,2,3],fixedrange:true,showgrid:false,zeroline:false,title:{text:'Number of tranches',font:{size:12}}};

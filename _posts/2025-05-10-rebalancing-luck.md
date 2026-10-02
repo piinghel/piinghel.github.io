@@ -20,6 +20,8 @@ The allocation approach in [From Volatility Scaling to Joint Sizing]({% link _po
 rebalances every three weeks. That still leaves a starting date to choose: this
 Friday, next Friday, or the Friday after. The model is the same in each case,
 but a week's difference in timing can leave me with quite different returns.
+That matters especially after 2021, when the joint-sizing comparison's
+advantage varies with the rebalance schedule.
 
 In the other articles I calculate each schedule's metrics separately and
 report their mean. Here I combine them, with one third of the notional in
@@ -60,6 +62,9 @@ I implement the combination as three separate books, or tranches, each
 with one third of the total notional. Each still rebalances every
 three weeks, but one of them trades each week (Table 1). This spreads the
 portfolio changes over time while preserving each book's holding period.
+Reoptimizing a single book every week would refresh the entire portfolio
+weekly and change the holding-cycle and turnover comparison. Here I keep
+each book's three-week cycle fixed.
 
 <table class="research-table sleeve-schedule">
   <caption><strong>Table 1: Three books, one rebalance each week.</strong> W1–W6 denote weeks; ● marks a rebalance and — means hold.</caption>
@@ -80,13 +85,17 @@ $$
 
 Its arithmetic mean is exactly the average of the three schedules' means,
 costs included. The slightly higher geometric return reflects the lower
-volatility drag when compounding the combined daily returns. I keep total notional unchanged
-throughout the comparison.
+volatility drag when compounding the combined daily returns. I keep total
+notional unchanged throughout the comparison.
 
 Sharpe needs a different calculation. The mean of three standalone Sharpe
 ratios describes the average schedule; the Sharpe of the combined portfolio
 uses the mean and volatility of its blended daily returns. That second
 calculation captures the diversification between starting weeks.
+For each portfolio I calculate Sharpe as $$\sqrt{252}\,\bar r/s_r$$,
+using the arithmetic mean and sample standard deviation of daily net
+returns and a zero cash rate. I then average those Sharpe ratios across
+the relevant calendars.
 
 ## The diversification benefit
 
@@ -115,6 +124,9 @@ Average correlation between starting weeks is 0.80 in development and
 respectively, almost exactly the reductions in the table. The books have
 similar standalone volatilities, so the equal-volatility approximation
 works well here.
+With the average arithmetic return preserved, the Sharpe improvement comes
+from this reduction in volatility. The calendars share the same market
+history and overlapping holdings.
 
 <table class="research-table comparison-table risk-performance-table">
   <caption><strong>Table 2: Diversification improves Sharpe.</strong> Mean statistics across fifteen standalone schedules and five combined portfolios. Each combined portfolio first averages three schedules' daily returns; its statistics are then calculated and averaged across weekdays. Returns are geometric; return, volatility and drawdown are percentages. Annualization uses 252 sessions and Sharpe a zero cash rate.</caption>
@@ -133,35 +145,60 @@ works well here.
   </tbody>
 </table>
 
+Drawdowns remain similar, especially in the later period.
 A lower-volatility blend also leaves room for more notional at the same
 risk level, subject to gross-exposure limits and financing costs.
 
-## Less spread, more trading
-{: #less-dependence-on-the-calendar }
+## Less calendar dispersion, more trading
+
+I measure calendar dispersion as the population standard deviation of
+annualized returns across the available choices, giving each choice equal
+weight. Weekly thirds remove the starting-week choice, but leave a weekday
+to choose. Among five weekdays in development, the combined return dispersion
+is **0.50 percentage points**: below Weeks 2 and 3, but above Week 1's
+**0.34 points**. Later, its **0.31 points** is below all three standalone
+weekday dispersions of **0.49–1.48 points**. The improvement in weekday
+sensitivity is more consistent in the later period.
 
 I like how Figure 2 in [Concretum's study](https://concretumgroup.com/wp-content/uploads/2026/02/The-Tranching-Dilemma.pdf#page=10)
 puts the reduction in timing luck beside the extra trading it requires.
-The same comparison here stops at three tranches: one third rebalanced
-each week is a practical cadence I would be comfortable with.
+Figure 2 follows that idea for one, two and three tranches.
 
-Going from one to two to three tranches brings the development return
-spread from **2.65 to 1.83 to 1.26 percentage points**. Later, it falls
-from **3.77 to 2.03 to 0.95 points**. By three, the observed spread has
-roughly halved in development and fallen by three quarters later.
-Order counts rise with each additional tranche.
+From one to two to three tranches, dispersion falls from **0.75 to 0.58
+to 0.50 points** in development and **1.11 to 0.62 to 0.31 points** later.
+Weekly thirds reduce it by about a third in development and 72% later,
+while tripling order counts. That is a substantial reduction at a practical
+weekly cadence.
 
 <div class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=4" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="Observed calendar return spread declines and annual order counts rise from one to three tranches, in development and the later period." version="4" %}
+  {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=5" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="Cross-calendar return dispersion declines and annual order counts rise from one to three tranches, in development and the later period." version="5" %}
 </div>
-<p class="figure-caption"><strong>Figure 2: Less calendar spread, more orders.</strong> Range of annualized geometric net returns and mean annual order count across 15 single schedules, 15 pairs and five three-tranche portfolios. Each combination uses equal notional and a common weekday. Two tranches alternate one- and two-week rebalance gaps; three rebalance weekly. The ranges describe these calendar choices, whose number changes across the comparison.</p>
+<p class="figure-caption"><strong>Figure 2: Less calendar dispersion, more orders.</strong> Population standard deviation of annualized geometric net returns and mean annual order count across 15 single schedules, 15 pairs and five three-tranche portfolios. Each calendar choice has equal weight within its group. Combinations use equal notional and a common weekday. Two tranches alternate one- and two-week rebalance gaps; three rebalance weekly.</p>
 
-Weekly thirds remove the starting-week choice, but leave a weekday to
-choose. Holding the number of weekday choices at five gives a useful
-check: in development, the combined spread of **1.26 points** is narrower
-than Week 2 and Week 3, but wider than Week 1's **1.03 points**. Later,
-the combined **0.95 points** is below all three standalone weekday ranges
-of **1.34–3.69 points**. The reduction in weekday sensitivity is therefore
-more consistent in the later period.
+## The week and weekday interact
+
+I expected the starting week to matter more than the exact weekday.
+To check that, I separate the fifteen standalone returns into an average
+weekday effect, an average starting-week effect and their interaction.
+The interaction captures how a starting week's relative performance
+changes with the weekday.
+
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 3: Timing depends on the combination of week and weekday.</strong> Share of squared deviations in annualized geometric net returns across the fifteen standalone calendars (%). Weekday effects average across starting weeks; starting-week effects average across weekdays. The unrounded components sum to 100% in each period.</caption>
+  <thead><tr><th>Component</th><th>1998–2021</th><th>2022–May 2026</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Weekday</th><td>45.2</td><td>7.7</td></tr>
+    <tr><th scope="row">Starting week</th><td>23.1</td><td>0.2</td></tr>
+    <tr><th scope="row">Week × weekday</th><td>31.7</td><td>92.0</td></tr>
+  </tbody>
+</table>
+
+The weekday component is larger in development. Later, almost all the
+variation is in the interaction: the better starting week depends on the
+weekday. There is no starting week to select once all three are held.
+Figure 2 measures the resulting reduction using the combined portfolios
+themselves. I would combine starting weeks and keep the remaining weekday
+sensitivity in view.
 
 ## Putting the spread in context
 
@@ -185,7 +222,6 @@ Under that assumption, the observed spread gives me little reason to choose
 the historical winner over a combination of schedules.
 
 ## Smaller trades, more rebalance cycles
-{: #what-it-takes-to-implement }
 
 The execution changes as well. Three books submit smaller
 orders, so their order counts add up while traded notional averages to
