@@ -2,8 +2,8 @@
 
 predictor-structure.json (Figure 1) comes from evidence/predictor-structure, written by
 factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
-correlations (x 1000), the dendrogram, the per-date theme IC and, when the evidence
-holds predictor_ic_daily.csv, each predictor's per-date IC in its signed direction.
+correlations (x 1000), the dendrogram, the per-date theme IC and each predictor's
+per-date IC in its signed direction.
 coefficients.json contains all coefficients by refit, ranked by magnitude (Figure 5),
 and how the coefficient vector changes from one refit to the next (Figure 6).
 Performance and daily deciles are exported by export_combining_predictors_charts.py.
@@ -83,15 +83,12 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
     counts = daily.group_by(pl.col("date").str.slice(0, 4).cast(pl.Int64)).len()
     dates_per_year = dict(zip(counts["date"], counts["len"]))
 
-    predictor_ic = {}
-    if (evidence / "predictor_ic_daily.csv").exists():
-        raw = pl.read_csv(evidence / "predictor_ic_daily.csv").sort("date")
-        if raw.columns != ["date", *order] or raw["date"].to_list() != daily["date"].to_list():
-            raise ValueError("predictor IC must follow the predictor order and the theme IC dates")
-        if raw.null_count().sum_horizontal().item():
-            raise ValueError("every sampled date needs an IC for every predictor")
-        signs = dict(zip(order, predictors.get_column("sign").to_list()))
-        predictor_ic = {"predictor_ic": [scaled(raw[name] * signs[name]) for name in order]}
+    raw = pl.read_csv(evidence / "predictor_ic_daily.csv").sort("date")
+    if raw.columns != ["date", *order] or raw["date"].to_list() != daily["date"].to_list():
+        raise ValueError("predictor IC must follow the predictor order and the theme IC dates")
+    if raw.null_count().sum_horizontal().item():
+        raise ValueError("every sampled date needs an IC for every predictor")
+    signs = dict(zip(order, predictors.get_column("sign").to_list()))
 
     return {
         "source": "factor_combination/predictor_structure.py; every fifth session",
@@ -122,7 +119,7 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
             "dates": daily["date"].to_list(),
             "values": [scaled(row) for row in daily.select(themes).iter_rows()],
         },
-        **predictor_ic,
+        "predictor_ic": [scaled(raw[name] * signs[name]) for name in order],
     }
 
 

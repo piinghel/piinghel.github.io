@@ -503,3 +503,108 @@ year,theme_a,theme_b,rho
 2021,Trading activity,Market correlation,0.365282
 2021,Trading activity,Short interest,0.270206
 2021,Market correlation,Short interest,0.294435
+2022,Medium- and long-term return,Short-term return,-0.184528
+2022,Medium- and long-term return,Volatility,0.510184
+2022,Medium- and long-term return,Size,0.292740
+2022,Medium- and long-term return,Trading activity,0.104841
+2022,Medium- and long-term return,Market correlation,-0.088201
+2022,Medium- and long-term return,Short interest,0.236548
+2022,Short-term return,Volatility,0.004981
+2022,Short-term return,Size,-0.014499
+2022,Short-term return,Trading activity,0.180675
+2022,Short-term return,Market correlation,0.044803
+2022,Short-term return,Short interest,-0.004627
+2022,Volatility,Size,0.293821
+2022,Volatility,Trading activity,0.315679
+2022,Volatility,Market correlation,-0.043551
+2022,Volatility,Short interest,0.240556
+2022,Size,Trading activity,0.362192
+2022,Size,Market correlation,0.170182
+2022,Size,Short interest,0.579349
+2022,Trading activity,Market correlation,0.178005
+2022,Trading activity,Short interest,0.268010
+2022,Market correlation,Short interest,0.135336
+2023,Medium- and long-term return,Short-term return,-0.177941
+2023,Medium- and long-term return,Volatility,0.398582
+2023,Medium- and long-term return,Size,0.230973
+2023,Medium- and long-term return,Trading activity,-0.021224
+2023,Medium- and long-term return,Market correlation,0.132563
+2023,Medium- and long-term return,Short interest,0.201995
+2023,Short-term return,Volatility,0.123011
+2023,Short-term return,Size,0.008370
+2023,Short-term return,Trading activity,0.236363
+2023,Short-term return,Market correlation,-0.079318
+2023,Short-term return,Short interest,0.022625
+2023,Volatility,Size,0.365437
+2023,Volatility,Trading activity,0.361617
+2023,Volatility,Market correlation,0.051177
+2023,Volatility,Short interest,0.318680
+2023,Size,Trading activity,0.304000
+2023,Size,Market correlation,0.161724
+2023,Size,Short interest,0.538382
+2023,Trading activity,Market correlation,0.098546
+2023,Trading activity,Short interest,0.270504
+2023,Market correlation,Short interest,0.118217
+2024,Medium- and long-term return,Short-term return,-0.283841
+2024,Medium- and long-term return,Volatility,0.280238
+2024,Medium- and long-term return,Size,0.263800
+2024,Medium- and long-term return,Trading activity,-0.007869
+2024,Medium- and long-term return,Market correlation,0.216439
+2024,Medium- and long-term return,Short interest,0.233161
+2024,Short-term return,Volatility,0.045801
+2024,Short-term return,Size,-0.024757
+2024,Short-term return,Trading activity,0.206924
+2024,Short-term return,Market correlation,-0.021782
+2024,Short-term return,Short interest,-0.017247
+2024,Volatility,Size,0.373513
+2024,Volatility,Trading activity,0.333207
+2024,Volatility,Market correlation,-0.040681
+2024,Volatility,Short interest,0.230453
+2024,Size,Trading activity,0.336878
+2024,Size,Market correlation,0.113084
+2024,Size,Short interest,0.450886
+2024,Trading activity,Market correlation,0.105317
+2024,Trading activity,Short interest,0.239931
+2024,Market correlation,Short interest,0.133116
+2025,Medium- and long-term return,Short-term return,-0.229967
+2025,Medium- and long-term return,Volatility,0.261133
+2025,Medium- and long-term return,Size,0.251005
+2025,Medium- and long-term return,Trading activity,-0.021196
+2025,Medium- and long-term return,Market correlation,0.143318
+2025,Medium- and long-term return,Short interest,0.237983
+2025,Short-term return,Volatility,0.092207
+2025,Short-term return,Size,-0.014725
+2025,Short-term return,Trading activity,0.217207
+2025,Short-term return,Market correlation,-0.060488
+2025,Short-term return,Short interest,-0.018030
+2025,Volatility,Size,0.362002
+2025,Volatility,Trading activity,0.337146
+2025,Volatility,Market correlation,-0.156207
+2025,Volatility,Short interest,0.164865
+2025,Size,Trading activity,0.349340
+2025,Size,Market correlation,0.045010
+2025,Size,Short interest,0.467728
+2025,Trading activity,Market correlation,0.049278
+2025,Trading activity,Short interest,0.213920
+2025,Market correlation,Short interest,0.109192
+2026,Medium- and long-term return,Short-term return,-0.279588
+2026,Medium- and long-term return,Volatility,0.240193
+2026,Medium- and long-term return,Size,0.259821
+2026,Medium- and long-term return,Trading activity,-0.092073
+2026,Medium- and long-term return,Market correlation,0.189869
+2026,Medium- and long-term return,Short interest,0.296449
+2026,Short-term return,Volatility,0.090735
+2026,Short-term return,Size,0.005930
+2026,Short-term return,Trading activity,0.233395
+2026,Short-term return,Market correlation,-0.074986
+2026,Short-term return,Short interest,-0.011588
+2026,Volatility,Size,0.380511
+2026,Volatility,Trading activity,0.318199
+2026,Volatility,Market correlation,-0.168926
+2026,Volatility,Short interest,0.088755
+2026,Size,Trading activity,0.316146
+2026,Size,Market correlation,0.038006
+2026,Size,Short interest,0.461463
+2026,Trading activity,Market correlation,0.033626
+2026,Trading activity,Short interest,0.121361
+2026,Market correlation,Short interest,0.144488

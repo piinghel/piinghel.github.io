@@ -126,35 +126,39 @@ with the story, I say so.
 ## How the predictors overlap
 {: #correlation-structure }
 
-On every fifth session from 1998 through 2021, once every predictor has enough
-history, I compute the rank correlation between every pair of predictors and
-between each predictor and the target. First I flip the sign of each predictor
-whose average IC is negative. Lower volatility predicts a higher target, for
-example, so I use negative volatility. After the flip, a positive correlation
-means two predictors favour the same stocks.
+On every fifth session from 1998 through April 2026, once every predictor has
+enough history, I compute the rank correlation between every pair of
+predictors and between each predictor and the target. First I flip the sign of
+each predictor whose average IC over 1998–2021 is negative. Lower volatility
+predicts a higher target, for example, so I use negative volatility. After the
+flip, a positive correlation means two predictors favour the same stocks.
 
 To follow whole themes, I also combine each theme into one composite: the
 equal-weight sum of its signed, standardized predictor ranks. Figure 1 lets
 you pick a period and switch between all 80 predictors and the seven theme
 composites. The predictors are ordered by a dendrogram, which joins the most
 similar predictors first, and the colour strip shows each one's theme. The
-lower panel adds up each composite's IC with the target, sampled every fifth
-session, so a steadily rising line is a theme that kept ranking stocks well.
+signs and the dendrogram are fitted on 1998–2021 and reused unchanged for
+2022–2026, so the later years show how relationships fixed in development held
+up. The lower panel adds up each composite's IC with the target, sampled every
+fifth session, so a steadily rising line is a theme that kept ranking stocks
+well. It can also show the predictors of one theme: thin lines are the
+predictors, the heavy line is their composite, and hovering names a line.
 
 {% include predictor-structure-explorer.html %}
 
 <noscript markdown="0">
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/combining-predictors/predictor-correlation" mobile="/assets/combining-predictors/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="4" %}
+    {% include theme-svg-figure.html base="/assets/combining-predictors/predictor-correlation" mobile="/assets/combining-predictors/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="5" %}
   </div>
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/combining-predictors/theme-ic-by-year" mobile="/assets/combining-predictors/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2021." version="4" %}
+    {% include theme-svg-figure.html base="/assets/combining-predictors/theme-ic-by-year" mobile="/assets/combining-predictors/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2026." version="5" %}
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, with each predictor signed so that its 1998–2021 average IC is positive; blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted once on 1998–2021 so that periods stay comparable. The lower panel is each theme composite's cumulative IC; hover for its mean over the period and click a legend entry to show or hide it. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
+<p class="figure-caption"><strong>Figure 1: How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, on every fifth session from 1998 through April 2026; the figure opens on 1998–2021. Each predictor is signed so that its 1998–2021 average IC is positive, and blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted on the same years. Signs and dendrogram are reused unchanged for 2022–2026, so periods stay comparable. The lower panel is the cumulative IC of the theme composites or, under IC lines, of one theme's predictors: thin lines are the predictors, the heavy line is their composite, and hovering names a line and gives its mean IC over the period. With the composites, click a legend entry to show or hide a theme. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
 
-Over the full period, size and volatility are the most coherent themes after
+Over 1998–2021, size and volatility are the most coherent themes after
 the two-predictor market correlation: their predictors correlate 0.67 and 0.65
 on average. Trading activity and short interest are the least coherent, at
 0.19. The two return themes sit in between. Medium- and long-term return
@@ -167,9 +171,9 @@ three quarters of their variance.
 Between themes, the composites overlap more than their individual predictors
 do, because averaging removes each predictor's idiosyncratic part. Size and
 short interest correlate 0.47 on average, and between 0.39 and 0.53 in every
-calendar year. Medium- and long-term return and volatility average 0.27, but
-range from −0.04 to 0.61. Other relationships change sign: market correlation
-and volatility range from −0.51 to 0.40 across years.
+calendar year through 2021. Medium- and long-term return and volatility average
+0.27, but range from −0.04 to 0.61. Other relationships change sign: market
+correlation and volatility range from −0.51 to 0.40 across years.
 
 Every theme ranks the target on average, but not in every period. Medium- and
 long-term return has an IC of 0.021 in 1998–2008 and 0.030 in 2009–2021,
@@ -178,6 +182,12 @@ across the same split. Volatility strengthens from 0.020 to 0.052, which makes
 it the strongest theme after 2009, and size from about zero to 0.027. Market
 correlation has a negative IC in 7 of the 11 years through 2008 and in only one
 year after.
+
+From 2022 through April 2026, with the signs still those of 1998–2021, six of
+the seven composites keep a positive IC. Medium- and long-term return, at
+0.047, and short interest, at 0.034, rank the target best, and volatility
+falls to 0.024 with a negative 2025. Short-term return turns negative, at
+−0.016, and is negative in every year from 2022.
 
 A learned combination therefore has to carry weights fitted in one decade into
 the next.

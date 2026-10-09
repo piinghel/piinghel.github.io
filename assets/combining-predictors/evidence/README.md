@@ -7,22 +7,25 @@ The Linear Case*. Security-level data stay in the research project.
 
 The section on how the 80 predictors overlap (Figure 1). Written by
 `projects/factor_combination/predictor_structure.py` on the normalized research panel,
-every fifth session from 1998 to 2021; the predictor set is the default of the feature
-organization (core + standard of every family plus 21-day loss frequency).
+every fifth session from 1998 to the last one with a complete 20-session target
+(24 April 2026; targets end on 28 April); the predictor set is the default of the
+feature organization (core + standard of every family plus 21-day loss frequency).
+Signs, predictor order, the full-period matrix and the dendrogram are fitted on
+1998–2021 (`--base-end` in the script, `BASE_PERIOD` in the exporter); 2022–2026 reuse
+them, and adding years leaves every 1998–2021 value as it was.
 
-- `predictors.csv`: theme, family, sign (of the average IC), mean IC, catalogue
-  description and dendrogram leaf position of each predictor, in theme order.
+- `predictors.csv`: theme, family, sign (of the 1998–2021 average IC), that mean IC,
+  catalogue description and dendrogram leaf position of each predictor, in theme order.
 - `predictor_correlation.csv`, `predictor_correlation_yearly.csv`: IC-signed average
-  rank correlations, full period and by year (upper triangle).
-- `predictor_dendrogram.csv`: average-linkage tree on 1 − |ρ| of the full-period matrix.
+  rank correlations, 1998–2021 and by year through 2026 (upper triangle).
+- `predictor_dendrogram.csv`: average-linkage tree on 1 − |ρ| of the 1998–2021 matrix.
 - `theme_correlation_yearly.csv`, `theme_ic_yearly.csv`, `theme_ic_daily.csv`:
   correlations and IC of the seven theme composites.
-- `predictor_ic_daily.csv` (optional): rank IC of each predictor with the target on the
-  dates of `theme_ic_daily.csv`, one column per predictor in `predictors.csv` order,
-  unsigned. With it, the explorer can draw one theme's predictors in the IC panel.
-
-Years after 2021 can be appended to the yearly and daily files. Signs, the full-period
-matrix and the dendrogram stay fitted on 1998–2021 (`BASE_PERIOD` in the exporter).
+- `predictor_ic_daily.csv`: rank IC of each predictor with the target on the dates of
+  `theme_ic_daily.csv`, one column per predictor in `predictors.csv` order, unsigned;
+  the exporter applies the signs. The explorer draws one theme's predictors from it.
+  A predictor that is constant across stocks on a date has no rank IC and is written
+  as 0, as in the composite (17 cells, all before 2007).
 
 ## results/
 

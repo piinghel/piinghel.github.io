@@ -115,7 +115,7 @@
     const names = data.themes.map((t) => t.short);
     // Phone columns use abbreviations; the rows keep the full short names.
     const narrow = heatEl.clientWidth <= 560;
-    const abbrev = { 'Med./long ret.': 'M/L ret.', 'Short-term ret.': 'ST ret.', Volatility: 'Vol.', Trading: 'Trad.', 'Mkt corr.': 'Corr.', 'Short int.': 'SI' };
+    const abbrev = { 'Med./long ret.': 'M/L', 'Short-term ret.': 'ST', Volatility: 'Vol.', Trading: 'Trad.', 'Mkt corr.': 'Corr.', 'Short int.': 'SI' };
     const trace = {
       type: 'heatmap', x: names, y: names, z: matrix, zmin: -1, zmax: 1, colorscale: colorscale(), colorbar,
       texttemplate: '%{z:.2f}', xgap: 2, ygap: 2,
@@ -123,7 +123,7 @@
       hovertemplate: '<b>ρ = %{z:.2f}</b><br>%{customdata}<extra></extra>',
     };
     const layout = Object.assign(baseLayout(narrow ? 360 : 440), {
-      margin: { l: 76, r: 10, t: 6, b: 60 },
+      margin: { l: 92, r: 10, t: 6, b: 60 },
       yaxis: { autorange: 'reversed', ticks: '', showgrid: false, zeroline: false, color: cssVar('--ink') },
       xaxis: { ticks: '', showgrid: false, zeroline: false, tickangle: 0, color: cssVar('--ink'), tickvals: names, ticktext: narrow ? names.map((n) => abbrev[n] || n) : names },
     });
@@ -167,9 +167,11 @@
     const pad = 0.05 * (Math.max(...values) - Math.min(...values));
     const range = [Math.min(...values) - pad, Math.max(...values) + pad];
     const grid = cssVar('--rule');
-    const layout = Object.assign(baseLayout(theme < 0 ? 320 : 340), {
-      margin: { l: 40, r: 12, t: theme < 0 ? 50 : 10, b: 30 },
-      showlegend: theme < 0, legend:{orientation:'h',x:0,y:1.15},
+    // The legend sits above the plot; on a phone it wraps to four rows and needs the room.
+    const top = theme >= 0 ? 10 : icEl.clientWidth <= 560 ? 96 : 50;
+    const layout = Object.assign(baseLayout(theme < 0 ? 270 + top : 340), {
+      margin: { l: 40, r: 12, t: top, b: 30 },
+      showlegend: theme < 0, legend:{orientation:'h',x:0,y:1.02,yanchor:'bottom'},
       hovermode: theme < 0 ? 'x unified' : 'closest',
       xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '', spikecolor: cssVar('--muted-ink'), spikethickness: 1, spikedash: 'solid', showspikes: theme < 0 },
       yaxis: { range, fixedrange: true, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
@@ -226,8 +228,10 @@
         const a=e['xaxis.range[0]']||e['xaxis.range']?.[0],b=e['xaxis.range[1]']||e['xaxis.range']?.[1];
         if(!a||!b)return;
         const [from,to]=PERIODS[state.period];
-        const selected=data.theme_ic.dates.filter(d=>d>=String(a).slice(0,10)&&d<=String(b).slice(0,10)&&Number(d.slice(0,4))>=from&&Number(d.slice(0,4))<=to);
-        if(selected.length>=2)icRange=[selected[0],selected.at(-1)];
+        const inPeriod=data.theme_ic.dates.filter(d=>Number(d.slice(0,4))>=from&&Number(d.slice(0,4))<=to);
+        const selected=inPeriod.filter(d=>d>=String(a).slice(0,10)&&d<=String(b).slice(0,10));
+        // Zooming back out to the whole period is no zoom: the heading names the period again.
+        if(selected.length>=2)icRange=selected.length===inPeriod.length?null:[selected[0],selected.at(-1)];
         render();
       });
     }
