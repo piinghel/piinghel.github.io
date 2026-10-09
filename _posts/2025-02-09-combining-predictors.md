@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-10-03
+last_modified_at: 2026-10-09
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
@@ -13,7 +13,7 @@ github_repositories:
     url: https://github.com/piinghel/systematic-equity-research
 ---
 
-<link rel="stylesheet" href="/assets/css/combining-predictors.css?v=11">
+<link rel="stylesheet" href="/assets/css/combining-predictors.css?v=12">
 
 In the [low-volatility article]({% link _posts/2024-12-15-low-volatility-sizing.md %}),
 I selected stocks using one characteristic and examined how position sizing
@@ -393,14 +393,55 @@ market-cap variability get positive weights although their own ICs are
 negative: holding correlated neighbours fixed, their conditional effect
 differs from their effect alone.
 
-All ten keep their sign at every refit, but most shrink as the training
-history grows: the 12-month return's weight falls from 0.015 at the first
-refit to 0.003 at the last, and Amihud illiquidity's from −0.022 to −0.008.
 Medium- and long-term return takes about 36% of the absolute weight, a little
 more than its 33% under equal weights; short-term return takes 16%, against
 20%. Ridge's score also changes faster: its rank
 correlation with itself 15 sessions later is 0.67 through 2021, against 0.76
 for equal weights, which is why it trades more.
+
+## The weights settle as the history grows
+{: #coefficient-stability }
+
+A weight that changes sign between refits is hard to read as something the
+model learned about its predictor, so I also look at how much the whole fit
+moves. Figure 6 compares the 80 coefficients at each refit with those at the
+refit before, using the cosine similarity of the two coefficient vectors: 1
+means the same relative weights, whatever their size. The second panel tracks
+that size, the length of the coefficient vector.
+
+{% include blog-chart.html chart="stability" source="/assets/combining-predictors/coefficients.json" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
+
+<p class="figure-caption"><strong>Figure 6: The Ridge coefficient vector across refits.</strong> The first panel is the cosine similarity between the 80 coefficients at each refit and at the previous one; the second is the length of the coefficient vector relative to the first refit. The year is the start of each prediction block.</p>
+
+The mix of weights settles quickly. The second refit has a similarity of 0.85
+with the first, and from the 2012 refit on each one stays within 0.98–0.99 of
+its predecessor. The one step back is the 2010 refit, at 0.93: it is the first
+whose training window contains the 2008 crisis and the 2009 reversal in
+medium- and long-term return. Measured against the last refit, the first has
+a similarity of 0.71 and the 2010 refit 0.92, so the weights of the early
+2000s were a visibly different mix from the later ones.
+
+The signs are steadier than that drift suggests. Of the 80 coefficients, 52
+keep their sign at all twelve refits, and they carry about four fifths of the
+absolute weight. The 28 that change sign at least once are about half the
+size of the others, and from the 2010 refit on about 95% of the signs match
+the last refit's.
+
+The coefficients also shrink: the vector at the last refit is about half as
+long as at the first. The 12-month return's weight falls from 0.015 to 0.003
+and Amihud illiquidity's from −0.022 to −0.008. The penalty is fixed relative
+to the sample size, so the shrinkage comes from the data: a relationship that
+held in part of the history is averaged with the years in which it was weaker.
+The composition moves the way Figure 1 would suggest. Volatility's share of
+the absolute weight rises from 16% at the first refit to 25% at the last, and
+short-term return's falls from 19% to 14%.
+
+Much of this stability is built into the expanding window. The second
+training window is two thirds longer than the first, while the last refit adds
+less than a tenth to its history, so late refits could not move far even if a
+relationship changed. That is the trade-off I accepted in Figure 2: weights
+that move slowly and are easy to read, and that would be slow to follow a
+relationship that changed.
 
 ## What learning the weights buys
 

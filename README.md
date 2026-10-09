@@ -170,7 +170,7 @@ for byte), run the renderer from this directory, then
 | --- | --- | --- |
 | Low volatility | 1 and 3 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
 | | 2 and 4 | `python -m low_volatility_factor.article_figures` in the same repository |
-| Regression | 1 (explorer), 3–5 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_predictor_data.py` and `scripts/export_combining_predictors_charts.py` |
+| Regression | 1 (explorer), 3–6 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_predictor_data.py` and `scripts/export_combining_predictors_charts.py` |
 | | 1 (no-JavaScript fallback) | `scripts/render_predictor_structure.py` |
 | | 2 | `scripts/render_predictor_training_design.py` |
 | Joint sizing | all | `scripts/export_joint_sizing_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |

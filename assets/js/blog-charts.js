@@ -634,7 +634,7 @@
         const xd=[col/cols+.02,(col+1)/cols-.06],yd=[1-(row+1)/rows+.28/rows,1-row/rows-.08/rows];
         const comparable=cfg.panels.filter(q=>q.title===p.title).flatMap(q=>[...q.y,...q.low||[],...q.high||[]]);
         const lo=Math.min(...comparable),hi=Math.max(...comparable),pad=(hi-lo||1)*.1;
-        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,zeroline:false,title:{text:p.xTitle||'',font:{size:12}},tickvals:p.x};
+        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,zeroline:false,title:{text:p.xTitle||'',font:{size:12}},tickvals:p.ticks||p.x};
         layout['yaxis'+suffix]={domain:yd,anchor:x,gridcolor:grid,zerolinecolor:grid,tickformat:p.format||'',range:[p.zero?Math.min(0,lo-pad):lo-pad,hi+pad]};
         layout.annotations.push({text:p.title,x:xd[0],y:yd[1]+.01,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false});
         traces.push({type:'scatter',mode:'lines+markers',x:p.x,y:p.y,xaxis:x,yaxis:y,

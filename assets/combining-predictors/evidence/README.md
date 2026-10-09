@@ -17,6 +17,12 @@ organization (core + standard of every family plus 21-day loss frequency).
 - `predictor_dendrogram.csv`: average-linkage tree on 1 − |ρ| of the full-period matrix.
 - `theme_correlation_yearly.csv`, `theme_ic_yearly.csv`, `theme_ic_daily.csv`:
   correlations and IC of the seven theme composites.
+- `predictor_ic_daily.csv` (optional): rank IC of each predictor with the target on the
+  dates of `theme_ic_daily.csv`, one column per predictor in `predictors.csv` order,
+  unsigned. With it, the explorer can draw one theme's predictors in the IC panel.
+
+Years after 2021 can be appended to the yearly and daily files. Signs, the full-period
+matrix and the dendrogram stay fitted on 1998–2021 (`BASE_PERIOD` in the exporter).
 
 ## results/
 
@@ -42,7 +48,8 @@ correlation with the target; Ridge runs a penalty grid c = 0.01, 0.1, 1, 10, 100
 - `growth_drawdown.csv`: mean daily net P&L of the three schedules, compounded, with
   drawdowns; the equal-weight and c = 0.1 Ridge rows of the sweep output.
 - `ridge_coefficients_by_refit.csv`: c = 0.1 Ridge coefficients per refit (mean of the
-  three subsample fits).
+  three subsample fits). Figure 6 (similarity to the previous refit and
+  coefficient size) is computed from this file by the exporter.
 - `score_rank_autocorrelation.csv`, `ols_ridge_score_correlation.csv`: score persistence
   over 15 sessions and the daily OLS–Ridge score correlation.
 - `spectrum_by_fit.csv`: eigenvalues of the training covariance per fit (penalty section),

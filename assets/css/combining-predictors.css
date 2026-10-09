@@ -11,6 +11,7 @@
 
 /* Explorer */
 .pse { margin: 1.8rem 0 0.6rem; }
+.pse [hidden] { display: none !important; }
 .pse-status { color: var(--muted-ink); font-size: 0.9rem; }
 .pse p.pse-heading { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; color: var(--ink); margin: 1rem 0 0.2rem; }
 .pse p.pse-heading:empty { display: none; }

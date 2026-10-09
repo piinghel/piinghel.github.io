@@ -1,5 +1,5 @@
 <div class="pse" id="predictor-structure-explorer"
-     data-source="/assets/combining-predictors/predictor-structure.json?v=2">
+     data-source="/assets/combining-predictors/predictor-structure.json?v=3">
   <details class="blog-chart-options"><summary>Explore</summary>
     <div class="blog-chart-row"><span class="blog-chart-row-label">Periods</span>
       <div class="blog-chart-controls"><div class="blog-chart-segments pse-periods" role="radiogroup" aria-label="Period"></div></div></div>
@@ -9,12 +9,13 @@
         <button type="button" role="radio" aria-checked="true" data-level="predictor">80 predictors</button>
         <button type="button" role="radio" aria-checked="false" data-level="theme">7 themes</button>
       </div></div></div>
+    <div class="blog-chart-row" hidden><span class="blog-chart-row-label">IC lines</span><div class="blog-chart-controls pse-lines"></div></div>
     <div class="blog-chart-row"><span class="blog-chart-row-label">Themes</span><div class="blog-chart-controls pse-themes"></div></div>
   </details>
   <p class="pse-status" role="status">Loading the interactive figure…</p>
   <p class="pse-heading"></p>
   <div class="pse-heat" role="img" aria-label="Correlation heatmap for the selected period"></div>
   <p class="pse-heading"></p>
-  <div class="pse-ic" role="img" aria-label="Cumulative IC of each theme with the target for the selected period"></div>
+  <div class="pse-ic" role="img" aria-label="Cumulative IC with the target for the selected period"></div>
 </div>
-<script src="/assets/js/predictor-structure.js?v=9" defer></script>
+<script src="/assets/js/predictor-structure.js?v=10" defer></script>

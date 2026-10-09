@@ -1,7 +1,8 @@
 /* Predictor-structure explorer (regression article), drawn with Plotly.
    A period filter scopes both charts: a correlation heatmap (80 predictors in dendrogram
-   order with their theme, or the seven theme composites) and each theme's cumulative IC
-   with the target. Loading and colours come from the shared chart helper. */
+   order with their theme, or the seven theme composites) and the cumulative IC with the
+   target of the theme composites or of one theme's predictors. Years after the base period
+   keep its signs and dendrogram. Loading and colours come from the shared chart helper. */
 (function () {
   'use strict';
 
@@ -9,8 +10,10 @@
   if (!root) return;
 
   const PERIODS = [[1998, 2021], [1998, 2003], [2004, 2008], [2009, 2013], [2014, 2018], [2019, 2021]];
+  let custom = PERIODS.length; // slot of the period set with the year controls
   const DEFAULT_VISIBLE = [0, 1, 2, 3, 4, 5, 6];
-  const state = { period: 0, level: 'predictor', visible: new Set(DEFAULT_VISIBLE) };
+  // icTheme: -1 draws the theme composites, otherwise the predictors of that theme.
+  const state = { period: 0, level: 'predictor', visible: new Set(DEFAULT_VISIBLE), icTheme: -1 };
   const heatEl = root.querySelector('.pse-heat');
   const icEl = root.querySelector('.pse-ic');
   const [heatHeading, icHeading] = root.querySelectorAll('.pse-heading');
@@ -20,6 +23,7 @@
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const roles=['momentum','reversal','low_volatility','size','liquidity','market','short_interest'];
   const themeColor = t => window.BlogCharts.COLORS[roles[t]];
+  const label = (i) => `${data.predictors[i].sign < 0 ? '− ' : ''}${data.predictors[i].description}`;
 
   // Date-weighted mean of yearly upper-triangle vectors over the selected period.
   function periodMean(yearly) {
@@ -68,7 +72,6 @@
     const matrix = square(periodMean(data.predictor_pairs), n);
     const order = data.predictors.map((_, i) => i).sort((a, b) => data.predictors[a].leaf - data.predictors[b].leaf);
     const pos = order.map((_, k) => 5 + 10 * k); // scipy's leaf coordinates
-    const label = (i) => `${data.predictors[i].sign < 0 ? '− ' : ''}${data.predictors[i].description}`;
     const themes = order.map((i) => data.predictors[i].theme);
     const k = data.themes.length;
     const strip = data.themes.flatMap((_, t) => [[t / k, themeColor(t)], [(t + 1) / k, themeColor(t)]]);
@@ -129,32 +132,59 @@
 
   function icChart() {
     const [from, to] = PERIODS[state.period];
-    const rows = data.theme_ic.dates
-      .map((date, t) => ({ date, values: data.theme_ic.values[t] }))
-      .filter((r) => { const y = Number(r.date.slice(0, 4)); return y >= from && y <= to && (!icRange || r.date >= icRange[0] && r.date <= icRange[1]); });
-    const x = rows.map((r) => r.date);
-    const traces = data.themes.map((theme, t) => {
-      let sum = 0;
-      const y = rows.map((r) => { sum += r.values[t] / data.scale; return sum; });
-      return {
-        type: 'scatter', mode: 'lines', name: theme.short, x, y, visible:state.visible.has(t)?true:'legendonly', line: { color: themeColor(t), width: 2 },
-        hovertemplate: `${theme.short} %{y:.1f} · mean IC ${(sum / rows.length).toFixed(3)}<extra></extra>`,
-      };
+    const dates = data.theme_ic.dates;
+    const rows = [];
+    dates.forEach((date, i) => {
+      const y = Number(date.slice(0, 4));
+      if (y >= from && y <= to && (!icRange || date >= icRange[0] && date <= icRange[1])) rows.push(i);
     });
-    const values = traces.filter((_,i)=>state.visible.has(i)).flatMap(tr=>tr.y).concat(0);
+    const x = rows.map((i) => dates[i]);
+    const line = (name, value, style) => {
+      let sum = 0;
+      const y = rows.map((i) => { sum += value(i) / data.scale; return sum; });
+      return Object.assign({
+        type: 'scatter', mode: 'lines', x, y,
+        hovertemplate: `${name}${style.detail ? '<br>cumulative IC ' : ' '}%{y:.1f} · mean IC ${(sum / rows.length).toFixed(3)}<extra></extra>`,
+      }, style.trace);
+    };
+    const theme = state.icTheme;
+    let traces;
+    if (theme < 0) {
+      traces = data.themes.map((t, k) => line(t.short, (i) => data.theme_ic.values[i][k], {
+        trace: { name: t.short, visible: state.visible.has(k) ? true : 'legendonly', line: { color: themeColor(k), width: 2 } },
+      }));
+    } else {
+      // Thin lines are the theme's predictors; the heavy line is its composite.
+      const color = themeColor(theme);
+      traces = data.predictors.flatMap((p, k) => (p.theme !== theme ? [] : [line(label(k), (i) => data.predictor_ic[k][i], {
+        detail: true, trace: { opacity: 0.55, line: { color, width: 1.1 } },
+      })]));
+      traces.push(line(`${data.themes[theme].name} composite`, (i) => data.theme_ic.values[i][theme], {
+        detail: true, trace: { line: { color: cssVar('--ink'), width: 2.4 } },
+      }));
+    }
+    const values = traces.filter((tr) => tr.visible !== 'legendonly').flatMap((tr) => tr.y).concat(0);
     const pad = 0.05 * (Math.max(...values) - Math.min(...values));
     const range = [Math.min(...values) - pad, Math.max(...values) + pad];
-    const height = 320;
-    const margin = { l: 40, r: 12, t: 50, b: 30 };
     const grid = cssVar('--rule');
-    const layout = Object.assign(baseLayout(height), {
-      margin,
-      showlegend: true, legend:{orientation:'h',x:0,y:1.15},
-      hovermode: 'x unified',
-      xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '', spikecolor: cssVar('--muted-ink'), spikethickness: 1, spikedash: 'solid' },
+    const layout = Object.assign(baseLayout(theme < 0 ? 320 : 340), {
+      margin: { l: 40, r: 12, t: theme < 0 ? 50 : 10, b: 30 },
+      showlegend: theme < 0, legend:{orientation:'h',x:0,y:1.15},
+      hovermode: theme < 0 ? 'x unified' : 'closest',
+      xaxis: { range: [x[0], x[x.length - 1]], showgrid: false, linecolor: grid, ticks: '', spikecolor: cssVar('--muted-ink'), spikethickness: 1, spikedash: 'solid', showspikes: theme < 0 },
       yaxis: { range, fixedrange: true, gridcolor: grid, zerolinecolor: cssVar('--muted-ink') },
     });
     return { traces, layout };
+  }
+
+  // In the predictor view the line under the pointer stands out from its theme.
+  function emphasize(curve) {
+    if (state.icTheme < 0) return;
+    const last = icEl.data.length - 1;
+    window.Plotly.restyle(icEl, {
+      opacity: icEl.data.map((_, i) => (i === last ? 1 : curve === null ? 0.55 : i === curve ? 1 : 0.25)),
+      'line.width': icEl.data.map((_, i) => (i === last ? 2.4 : i === curve ? 2 : 1.1)),
+    });
   }
 
   async function render() {
@@ -164,6 +194,9 @@
     const period = `${from}–${to}`;
     const years=root.querySelectorAll('.pse-years select');
     if(years.length){years[0].value=from;years[1].value=to;}
+    const pick=root.querySelector('.pse-lines select');
+    if(pick)pick.value=String(state.icTheme);
+    root.querySelector('.pse-themes').closest('.blog-chart-row').hidden=state.icTheme>=0;
     root.querySelectorAll('.pse-themes input').forEach((box,i)=>{box.checked=state.visible.has(i);box.style.setProperty('--swatch',themeColor(i));});
     root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.period) === state.period)));
     root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === state.level)));
@@ -175,13 +208,18 @@
       : `Correlation between the 80 predictors, ${period}`;
     window.Plotly.react(heatEl, heat.traces, heat.layout, config);
     const ic = icChart();
-    icHeading.textContent = `Cumulative sampled IC, ${icRange ? ic.traces[0].x[0]+' – '+ic.traces[0].x.at(-1) : period}`;
+    const span = icRange ? ic.traces[0].x[0]+' – '+ic.traces[0].x.at(-1) : period;
+    icHeading.textContent = state.icTheme < 0
+      ? `Cumulative sampled IC of the theme composites, ${span}`
+      : `Cumulative sampled IC of the ${ic.traces.length - 1} ${data.themes[state.icTheme].name.toLowerCase()} predictors, ${span}`;
     icEl.style.height=ic.layout.height+'px';
     await window.Plotly.react(icEl, ic.traces, ic.layout, config);
     if(!ready) {
       ready=true;
       icEl.on('plotly_legendclick',e=>{clearTimeout(legendTimer);legendTimer=setTimeout(()=>{if(state.visible.has(e.curveNumber))state.visible.delete(e.curveNumber);else state.visible.add(e.curveNumber);render();},320);return false;});
       icEl.on('plotly_legenddoubleclick',e=>{clearTimeout(legendTimer);state.visible=state.visible.size===1&&state.visible.has(e.curveNumber)?new Set(DEFAULT_VISIBLE):new Set([e.curveNumber]);render();return false;});
+      icEl.on('plotly_hover',e=>{const n=e.points[0].curveNumber;emphasize(n===icEl.data.length-1?null:n);});
+      icEl.on('plotly_unhover',()=>emphasize(null));
       icEl.on('plotly_relayout',e=>{
         if(rendering)return;
         if(e['xaxis.autorange']){icRange=null;render();return;}
@@ -214,15 +252,26 @@
     years.className='blog-chart-range';dash.className='blog-chart-range-sep';dash.textContent='–';
     for(const [label,select] of [['From year',from],['To year',to]]) {select.setAttribute('aria-label',label);data.years.forEach(y=>select.add(new Option(y,y)));}
     years.append(from,dash,to);root.querySelector('.pse-years').append(years);
-    from.value=data.years[0];to.value=data.years.at(-1);
-    from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[6]=[Number(from.value),Number(to.value)];state.period=6;icRange=null;render();};
+    from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[custom]=[Number(from.value),Number(to.value)];state.period=custom;icRange=null;render();};
+    // Years after the base period get their own preset; the default view stays on the base period.
+    const base=data.base_period,last=data.years.at(-1),later=last>base[1];
+    PERIODS[0]=[...base];
+    if(later){PERIODS.push([base[1]+1,last]);custom=PERIODS.length;}
+    from.value=base[0];to.value=base[1];
+    if(data.predictor_ic) {
+      const pick=document.createElement('select');pick.setAttribute('aria-label','Lines in the IC panel');
+      pick.add(new Option('Theme composites','-1'));
+      data.themes.forEach((theme,i)=>pick.add(new Option(`${theme.name} predictors`,String(i))));
+      pick.onchange=()=>{state.icTheme=Number(pick.value);render();};
+      const lines=root.querySelector('.pse-lines');lines.append(pick);lines.closest('.blog-chart-row').hidden=false;
+    }
     const periods = root.querySelector('.pse-periods');
     PERIODS.forEach(([a, b], i) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.setAttribute('role', 'radio');
       button.dataset.period = String(i);
-      button.textContent = i ? `${a}–${String(b).slice(2)}` : 'All years';
+      button.textContent = i || later ? `${a}–${String(b).slice(2)}` : 'All years';
       button.addEventListener('click', () => { state.period = i; icRange=null;render(); });
       periods.appendChild(button);
     });

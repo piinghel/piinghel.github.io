@@ -27,6 +27,9 @@ class ChartExportTests(unittest.TestCase):
             self.assertEqual(chart["rows"], ["Negative", "Positive"])
             self.assertEqual(chart["columns"], ["2022", "2024"])
             self.assertEqual(chart["values"], [[-0.4, -0.3], [0.2, 0.1]])
+            direction, size = export_results(root, catalogue)["charts"]["stability"]["panels"]
+            self.assertEqual((direction["x"], direction["y"]), ([2024], [0.99]))
+            self.assertEqual((size["x"], size["y"]), ([2022, 2024], [1.0, 0.707]))
             source.write_text(source.read_text().replace("negative,2,2024-01-01,-0.3\n", ""))
             with self.assertRaisesRegex(ValueError, "same refit dates"):
                 export_results(root, catalogue)

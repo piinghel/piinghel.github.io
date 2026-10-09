@@ -2,8 +2,10 @@
 
 predictor-structure.json (Figure 1) comes from evidence/predictor-structure, written by
 factor_combination/predictor_structure.py: yearly IC-signed predictor and theme
-correlations (x 1000), the dendrogram and the per-date theme IC.
-coefficients.json (Figure 5) contains all coefficients by refit, ranked by magnitude.
+correlations (x 1000), the dendrogram, the per-date theme IC and, when the evidence
+holds predictor_ic_daily.csv, each predictor's per-date IC in its signed direction.
+coefficients.json contains all coefficients by refit, ranked by magnitude (Figure 5),
+and how the coefficient vector changes from one refit to the next (Figure 6).
 Performance and daily deciles are exported by export_combining_predictors_charts.py.
 """
 
@@ -13,10 +15,13 @@ import argparse
 import json
 from pathlib import Path
 
+import numpy as np
 import polars as pl
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/combining-predictors"
+# Signs and the dendrogram are fitted on these years; later years reuse them.
+BASE_PERIOD = (1998, 2021)
 SHORT_THEMES = {
     "Medium- and long-term return": "Med./long ret.",
     "Short-term return": "Short-term ret.",
@@ -78,8 +83,19 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
     counts = daily.group_by(pl.col("date").str.slice(0, 4).cast(pl.Int64)).len()
     dates_per_year = dict(zip(counts["date"], counts["len"]))
 
+    predictor_ic = {}
+    if (evidence / "predictor_ic_daily.csv").exists():
+        raw = pl.read_csv(evidence / "predictor_ic_daily.csv").sort("date")
+        if raw.columns != ["date", *order] or raw["date"].to_list() != daily["date"].to_list():
+            raise ValueError("predictor IC must follow the predictor order and the theme IC dates")
+        if raw.null_count().sum_horizontal().item():
+            raise ValueError("every sampled date needs an IC for every predictor")
+        signs = dict(zip(order, predictors.get_column("sign").to_list()))
+        predictor_ic = {"predictor_ic": [scaled(raw[name] * signs[name]) for name in order]}
+
     return {
         "source": "factor_combination/predictor_structure.py; every fifth session",
+        "base_period": list(BASE_PERIOD),
         "years": [int(y) for y in years],
         "dates_per_year": [int(dates_per_year[int(y)]) for y in years],
         "scale": 1000,
@@ -106,7 +122,21 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
             "dates": daily["date"].to_list(),
             "values": [scaled(row) for row in daily.select(themes).iter_rows()],
         },
+        **predictor_ic,
     }
+
+
+def stability_panels(values: np.ndarray, years: list[int]) -> list[dict]:
+    """Direction and size of the coefficient vector (predictors x refits) across refits."""
+    size = np.linalg.norm(values, axis=0)
+    unit = values / size
+    previous = (unit[:, 1:] * unit[:, :-1]).sum(axis=0)
+    return [
+        {"title": "Similarity to the previous refit", "xTitle": "Refit", "x": years[1:],
+         "ticks": years[1::2], "format": ".2f", "y": [round(float(v), 3) for v in previous]},
+        {"title": "Coefficient size, first refit = 1", "xTitle": "Refit", "x": years,
+         "ticks": years[::2], "format": ".1f", "y": [round(float(v), 3) for v in size / size[0]]},
+    ]
 
 
 def export_results(evidence: Path, predictors: Path) -> dict:
@@ -129,7 +159,9 @@ def export_results(evidence: Path, predictors: Path) -> dict:
     catalogue = pl.scan_csv(predictors).select("predictor", "theme", "description").collect()
     info = {row["predictor"]: row for row in catalogue.iter_rows(named=True)}
     years = [int(d[:4]) for d in refit_dates[0]]
-    return {"version": 1, "charts": {"coefficients": {
+    stability = stability_panels(np.array(coefficients["coefficient"].to_list()), years)
+    return {"version": 1, "charts": {"stability": {"kind": "panels", "panels": stability},
+        "coefficients": {
             "kind": "matrix", "unit": "Coefficient", "defaultCount": 10,
             "columns": [str(year) for year in years],
             "rows": [SHORT_PREDICTORS.get(f, info[f]["description"]) for f in ranked],
