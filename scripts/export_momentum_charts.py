@@ -10,8 +10,8 @@ from pathlib import Path
 import polars as pl
 from blog_charts import series, write_chart
 
-EVIDENCE = Path("/Users/pjinghelbrecht/Documents/quant_research/projects/momentum_crashes_public/outputs/evidence")
-HOLDOUT = Path("/Users/pjinghelbrecht/Documents/quant_research/data/momentum_crash_holdout_20261001")
+EVIDENCE = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/momentum_crashes_public/outputs/evidence")
+HOLDOUT = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/data/momentum_crash_holdout_20261001")
 START, END = dt.date(1998, 9, 1), dt.date(2021, 12, 31)
 DISPLAY_RULES = (
     ("overlay", "score_overlay", "Score overlay", "long"),

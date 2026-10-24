@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import polars as pl
 from export_momentum_charts import HOLDOUT, DISPLAY_RULES
 
-EVIDENCE = Path("/Users/pjinghelbrecht/Documents/quant_research/projects/momentum_crashes_public/outputs/evidence")
+EVIDENCE = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/momentum_crashes_public/outputs/evidence")
 END = dt.date(2021, 12, 31)
 # Lagged momentum-risk state g (WML volatility over its expanding median, floored at 1); thresholds fixed before plotting.
 # The five-session smoothing lets g decay towards 1, so "calm" allows 1e-4 (a removed share below 0.0002).
