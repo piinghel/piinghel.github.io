@@ -331,13 +331,15 @@ The development period made the overlay look attractive: higher Sharpe and
 smaller drawdowns, with much of its benefit concentrated in 2009 and 2020.
 It has since underperformed. Reducing exposure also gives up returns when
 momentum continues to pay, and a volatility signal cannot know when a reversal
-will arrive. The later losses make that trade-off visible; the short sample
-does not settle its value over a full cycle.
+will arrive. The later losses make that trade-off visible.
 
-I would keep both results in view. The learned interactions have performed
-better in the later period, but their gain is concentrated in 2023.
-Momentum protection has to earn its cost across both reversals and prolonged
-trends; four and a half years cannot settle that judgement.
+The learned interactions did better in the later period, but I wouldn't read
+that as better protection yet. Their gain is concentrated in 2023, and the
+model also raises momentum in calm markets, from a tilt of 0.33 to 0.45 in
+development. That second bet pays when momentum trends, and momentum earned
+about 16% a year in the test period. So my judgement is: the overlay is reasonable insurance whose
+cost is now visible, the cap a weaker version of it, and the learned
+interactions promising until they show they cut momentum in an actual crash.
 
 ## References
 

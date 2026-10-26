@@ -6,7 +6,7 @@ toc: true
 title: "Reducing Rebalancing Luck"
 description: "Combining Ridge rebalance schedules preserves mean return while reducing volatility and the risk of choosing an unlucky starting week."
 date: 2026-09-05
-last_modified_at: 2026-10-03
+last_modified_at: 2026-10-26
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/rebalancing-luck.html
@@ -265,7 +265,7 @@ charge holds costs proportional to traded notional, so the reported gains
 come from diversification; any saving from lower market impact would be
 additional. Borrow and financing are also outside the calculation.
 
-## What I would keep
+## Combining starting weeks is the better default
 
 I would rebalance one third each week while keeping each book's three-week
 holding cycle. That reduces the dependence on the starting week and

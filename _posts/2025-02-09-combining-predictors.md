@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-10-09
+last_modified_at: 2026-10-26
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
@@ -457,9 +457,10 @@ relationship that changed.
 
 Fitting the weights jointly beats giving every predictor 1/80. Ridge's Sharpe
 is 0.16 higher than the equal-weight score's through 2021 and 0.21 higher
-after, for a little more trading. The gain comes from the joint fit, not the
-penalty: OLS does as well, and a heavy penalty pushes Ridge back toward equal
-weights.
+after, for a little more trading. The bootstrap intervals run from about zero
+to 0.4, so the advantage is probably real but modest.
+The gain comes from the joint fit, not the penalty: OLS does as well, and a
+heavy penalty pushes Ridge back toward equal weights.
 
 Much of what both scores learn is the low-volatility effect. The Sharpe target
 asks for it, the deciles sort volatility more cleanly than return, and both

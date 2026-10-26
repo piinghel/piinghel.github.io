@@ -4,7 +4,7 @@ interactive_charts: true
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
-last_modified_at: 2026-10-03
+last_modified_at: 2026-10-26
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/joint-sizing.html
@@ -129,7 +129,8 @@ risk as well. I correct both with a multiplier on the volatility forecasts in
 $$D_t$$. *Risk calibration* is the square root of mean realized
 holding-period variance divided by mean forecast variance; one means forecast
 and realized risk agree. I set the multiplier to 1.55, where development
-calibration is 1.01.
+calibration is 1.01. That match holds by construction, so the real check is
+the later period, where calibration is 1.06.
 
 Figure 1 runs the final portfolio, the optimizer with the trading controls
 described below, at five shrinkage values in development.
@@ -339,9 +340,9 @@ estimate understates the portfolio's beta by about 0.06.
 
 ## Joint sizing pays once trading is controlled
 
-In development, joint sizing with trading controls raises net return from
-7.9% to 9.4% while cutting volatility from about 8% to 7%, so Sharpe rises
-from 0.98 for the regression article's rule to 1.32. Most of that comes from
+In development, joint sizing with trading controls raises Sharpe from 0.98
+for the regression article's rule to 1.32: volatility falls from about 8% to
+7% while net return rises from 7.9% to 9.4%. Most of that comes from
 the correlations: shrink them away and Sharpe falls back to 1.05.
 
 The cost is complexity and, without controls, turnover. The optimizer needs a
@@ -359,11 +360,10 @@ measure the diversification benefit. The [attribution series]({% link _posts/202
 then breaks the portfolio's P&L down by the ranking's themes.
 
 Two weaknesses remain: realized beta runs above the rebalance-time estimate
-for months at a time, and after 2021 the advantage is small relative to its
-uncertainty and depends on the rebalance schedule. Joint sizing with trading
-controls has a clear Sharpe advantage in development and trades less in both
-periods. After 2021 its estimated Sharpe advantage is positive, but the
-interval includes zero.
+for months at a time, and after 2021 the Sharpe advantage is positive but its
+interval includes zero and it depends on the rebalance schedule. I'd still
+choose joint sizing with trading controls: a clear Sharpe advantage in
+development, lower volatility and less trading in both periods.
 
 ## References
 
