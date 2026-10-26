@@ -77,18 +77,18 @@ def render_diagram(out: Path, dark: bool, mobile: bool) -> None:
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-diagram"}):
         if mobile:
-            fig, ax = plt.subplots(figsize=(4.4, 7.4)); ax.set_xlim(0, 4.4); ax.set_ylim(0, 7.4)
-            w, h, x0 = 3.5, 0.62, 0.45
+            fig, ax = plt.subplots(figsize=(4.4, 6.0)); ax.set_xlim(0, 4.4); ax.set_ylim(0, 6.0)
+            w, h, x0 = 3.5, 0.5, 0.45
             steps = [("Ridge forecast", "plain"), ("Fit sectors and six styles,\neach date", "plain"),
                      ("Subtract \u03bb \u00d7 style part", "dial"), ("Select 75 long, 75 short", "plain"),
                      ("Size to the 7% volatility target", "plain"), ("Book weights w", "plain")]
-            ys = [6.55 - i * 0.92 for i in range(len(steps))]
+            ys = [5.3 - i * 0.72 for i in range(len(steps))]
             for (text, kind), y in zip(steps, ys):
-                box(ax, c, x0, y, w, h, text, kind, 9.5)
+                box(ax, c, x0, y, w, h, text.replace("\n", " "), kind, 9.2)
             for upper, lower in zip(ys, ys[1:]):
                 arrow(ax, c, (x0 + w / 2, upper), (x0 + w / 2, lower + h))
-            ax.text(0.0, 7.3, "Input: the forecast", fontsize=9.5, color=c["muted"], va="center")
-            ax.text(0.0, 1.75, "Output: the book's P&L", fontsize=9.5, color=c["muted"], va="center")
+            ax.text(0.0, 5.92, "Input: the forecast", fontsize=9.5, color=c["muted"], va="center")
+            ax.text(0.0, 1.5, "Output: the book's P&L", fontsize=9.5, color=c["muted"], va="center")
             gy = 0.15
             box(ax, c, 0.05, gy, 2.05, 0.95, "Style P&L\nand variance\n(exposure X\u2032w)", "style", 9.2)
             box(ax, c, 2.3, gy, 2.05, 0.95, "Stock-specific\nP&L and variance\n(w\u2032e)", "specific", 9.2)
@@ -140,31 +140,7 @@ def render_shares(out: Path, dark: bool, mobile: bool) -> None:
         ax.set_xticks([1999, 2005, 2010, 2015, 2020, 2025] if not mobile else [1999, 2010, 2020])
         for text, x, y, colour in (("Style", 2013, 22, "#ffffff"), ("Stock-specific", 2013, 72, c["ink"])):
             ax.text(x, y, text, ha="center", va="center", fontsize=10.5, color=colour)
-        ax.set_title("Share of forecast cross-sectional variance", loc="left", fontsize=11, color=c["ink"], pad=10)
         save(fig, out / f"forecast-style-share{suffix(dark, mobile)}.svg", c)
-
-
-def render_variance(out: Path, dark: bool, mobile: bool) -> None:
-    """Realized variance of the book by share of style removed, split into factor and non-factor parts."""
-    c = palette(dark)
-    order = ["P0", "P25", "P50", "P75", "P100"]
-    rows = {r["arm"]: r for r in pl.read_csv(DATA / "inputs/q2_excess_variance.csv").iter_rows(named=True)}
-    labels = ["None", "25%", "50%", "75%", "100%"]
-    with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
-                         "svg.fonttype": "none", "svg.hashsalt": "style-removal-variance"}):
-        fig, ax = plt.subplots(figsize=(4.4, 3.5) if mobile else (6.8, 3.4))
-        fig.set_facecolor(c["bg"]); style(ax, c, mobile)
-        for i, arm in enumerate(order):
-            factor, rest = rows[arm]["ols_factor_var"], rows[arm]["ols_resid_var"]
-            ax.bar(i, factor, 0.62, color=c["style"], zorder=2)
-            ax.bar(i, rest, 0.62, bottom=factor, color=c["base"], zorder=2)
-            ax.text(i, factor / 2, f"{factor:.0f}", ha="center", va="center", fontsize=10, color="#ffffff", zorder=3)
-            ax.text(i, factor + rest / 2, f"{rest:.0f}", ha="center", va="center", fontsize=10, color=c["ink"] if dark else "#25313a", zorder=3)
-            ax.text(i, factor + rest + 1.5, f"{rows[arm]['net_vol']:.1f}% vol.", ha="center", va="bottom", fontsize=9.5, color=c["muted"])
-        ax.set_xticks(range(5), labels); ax.set_ylim(0, 95); ax.set_yticks([0, 20, 40, 60, 80])
-        ax.set_xlim(-0.5, 4.5)
-        ax.set_title("Realized variance (%\u00b2 a year) by share of style removed", loc="left", fontsize=11, color=c["ink"], pad=10)
-        save(fig, out / f"variance-split{suffix(dark, mobile)}.svg", c)
 
 
 def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
@@ -198,8 +174,6 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
             ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
         axes[0].text(0.22, table[("pca25", "early")]["lo"] - 0.07, "PCA", ha="center", va="top", fontsize=9.5, color=c["pca"])
         axes[0].text(-0.22, table[("si25", "early")]["hi"] + 0.07, "SI", ha="center", va="bottom", fontsize=9.5, color=c["si"])
-        fig.text(0.0 if mobile else 0.125, 0.99 if mobile else 1.0, "Net Sharpe difference against no removal, 95% interval",
-                 fontsize=11, color=c["ink"], va="bottom")
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
@@ -208,28 +182,33 @@ ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%"
 
 
 def gap_series() -> tuple[list[str], list[dict]]:
-    """Daily difference against no removal, mean of three calendars, anchored at zero the day before."""
+    """Daily return difference against no removal at equal volatility, mean of three schedules, anchored at zero.
+
+    Each arm is scaled per schedule to the full-sample volatility of no removal, so the cumulative gap
+    accumulates the Sharpe difference rather than a difference in risk taken.
+    """
     frame = returns().sort("date")
     first = (frame["date"][0] - dt.timedelta(days=1)).isoformat()
     dates = [first, *[d.isoformat() for d in frame["date"]]]
     data = []
     for arm, label, role, _ in ARMS_SHOWN:
-        diff = sum(frame[f"{arm}_o{k}"] - frame[f"none_o{k}"] for k in range(3)) / 3
+        diff = sum(frame[f"{arm}_o{k}"] * (frame[f"none_o{k}"].std() / frame[f"{arm}_o{k}"].std()) - frame[f"none_o{k}"]
+                   for k in range(3)) / 3
         data.append(series(arm, label, role, [0.0, *diff.to_list()], additive=True, drawdown=False))
     return dates, data
 
 
 def export_gap_chart(assets: Path) -> None:
     dates, data = gap_series()
-    write_chart(assets / "cumulative-gap.json", dates, data, {"gap": dict(
+    write_chart(assets / "equal-vol-gap.json", dates, data, {"gap": dict(
         kind="performance", series=[s["id"] for s in data], additive=True,
-        unit="Cumulative net return vs no removal (points)", statistics=False, zeroReference=True,
+        unit="Net return vs no removal at equal volatility (points)", statistics=False, zeroReference=True,
         showWindow=False, dateLabelSpacing=10,
         dateTicks=[dates[0], "2005-01-01", "2010-01-01", "2015-01-01", "2020-01-01", dates[-1]],
         mobileDateTicks=[dates[0], "2005-01-01", "2015-01-01", dates[-1]],
         start=dates[0], marker=f"{SPLIT_YEAR}-01-01", shade=[[f"{SPLIT_YEAR}-01-01", dates[-1]]],
         episodes=[["1999–2018", dates[0], "2018-12-31"], ["2019–2026", "2018-12-31", dates[-1]]],
-        note="Sum of daily net return differences against no removal, mean of three rebalance calendars, points of capital. Shaded: 2019 onward.")})
+        note="Sum of daily net return differences against no removal, each variant scaled to the volatility of no removal, mean of three rebalance schedules, points of capital. Shaded: 2019 onward.")})
 
 
 def render_gap(out: Path, dark: bool, mobile: bool) -> None:
@@ -253,8 +232,7 @@ def render_gap(out: Path, dark: bool, mobile: bool) -> None:
         ax.set_xlim(x[0], x[-1] + dt.timedelta(days=(900 if mobile else 1000)))
         ticks = (2005, 2015) if mobile else (2005, 2010, 2015, 2020)
         ax.set_xticks([x[0], *[dt.date(y, 1, 1) for y in ticks]], [str(x[0].year), *map(str, ticks)])
-        ax.set_title("Cumulative net return vs no removal (points of capital)", loc="left", fontsize=11, color=c["ink"], pad=10)
-        save(fig, out / f"cumulative-gap{suffix(dark, mobile)}.svg", c)
+        save(fig, out / f"equal-vol-gap{suffix(dark, mobile)}.svg", c)
 
 
 def export(assets: Path) -> None:
@@ -262,7 +240,7 @@ def export(assets: Path) -> None:
     export_gap_chart(assets)
     for dark in (False, True):
         for mobile in (False, True):
-            for render in (render_diagram, render_shares, render_variance, render_deltas, render_gap):
+            for render in (render_diagram, render_shares, render_deltas, render_gap):
                 render(assets, dark, mobile)
 
 

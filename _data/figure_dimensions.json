@@ -167,29 +167,29 @@
     "width": 374,
     "height": 302
   },
-  "/assets/ridge-style-removal/cumulative-gap": {
-    "width": 577,
-    "height": 266
-  },
-  "/assets/ridge-style-removal/cumulative-gap_mobile": {
-    "width": 345,
-    "height": 271
-  },
   "/assets/ridge-style-removal/delta-sharpe": {
     "width": 571,
-    "height": 266
+    "height": 241
   },
   "/assets/ridge-style-removal/delta-sharpe_mobile": {
-    "width": 324,
-    "height": 409
+    "width": 291,
+    "height": 368
+  },
+  "/assets/ridge-style-removal/equal-vol-gap": {
+    "width": 568,
+    "height": 251
+  },
+  "/assets/ridge-style-removal/equal-vol-gap_mobile": {
+    "width": 313,
+    "height": 255
   },
   "/assets/ridge-style-removal/forecast-style-share": {
     "width": 575,
-    "height": 243
+    "height": 229
   },
   "/assets/ridge-style-removal/forecast-style-share_mobile": {
     "width": 295,
-    "height": 248
+    "height": 234
   },
   "/assets/ridge-style-removal/removal-diagram": {
     "width": 542,
@@ -197,14 +197,6 @@
   },
   "/assets/ridge-style-removal/removal-diagram_mobile": {
     "width": 263,
-    "height": 428
-  },
-  "/assets/ridge-style-removal/variance-split": {
-    "width": 414,
-    "height": 238
-  },
-  "/assets/ridge-style-removal/variance-split_mobile": {
-    "width": 343,
-    "height": 243
+    "height": 350
   }
 }
