@@ -88,6 +88,90 @@ rows mark what the evidence here covers and what it leaves open.
   </tbody>
 </table>
 
+## The book comes from five earlier articles, and each leaves a weakness
+
+The removal inherits everything upstream of it, so it is worth stating what the
+earlier articles built and where each is weak.
+
+**The forecast.** [Combining Multiple Predictors]({% link _posts/2025-02-09-combining-predictors.md %})
+ranks stocks with 80 predictors in seven themes: medium- and long-term return (26),
+short-term return (16), volatility (16), size (5), trading activity (6), market
+correlation (2) and short interest (9). Each is ranked across the Russell 1000 on
+each date. A Ridge regression with penalty 0.1 predicts the forward 20-session
+Sharpe ratio of each stock, ranked within its date and sector, and it is refit
+about every two and a half years on an expanding window, with a one-month gap
+between training and prediction and three models fit on interleaved dates and
+averaged. The weak points matter here. The penalty was chosen on development IC,
+and Sharpe barely moves for penalties up to 0.1, so the joint fit is what counts
+and not the penalty; Ridge has no demonstrated Sharpe advantage over OLS in
+development (0.98 against 0.99); the gain over equal weights has a bootstrap
+interval from roughly zero to 0.4; and the later period is not a clean holdout,
+because refits continue into it and the settings were chosen on development.
+Most of what the model learns is low volatility, with daily returns correlated 0.62
+to 0.78 with a plain low-volatility portfolio. The target is a forward Sharpe ratio,
+which tends to favour low-volatility stocks, so part of the style content of the
+forecast may be built in by the target and not only learned.
+
+**The sizing.** [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %})
+turns the forecast into weights with an optimizer that maximizes the score times
+each stock's volatility under a 7% risk constraint, with position, net (±25%),
+beta (±0.05) and sector limits and a trade penalty. Its development Sharpe ratio is
+1.32 against 0.98 for volatility scaling, and 0.87 against 0.73 later, where the
+net return is lower (6.4% against 7.1%) and the interval for the difference
+includes zero. The weak points: the volatility multiplier of 1.55 was estimated on
+development data, so its calibration of 1.01 there is true by construction and
+the real check is 1.06 later; the shrinkage, penalty, cutoff and limits were all
+chosen on development and varied one at a time; the net limit binds at 82% of
+rebalances, so the optimized book is partly a constrained net-long low-risk book;
+and trailing realized beta exceeds the ±0.05 limit at 77% of development
+month-ends. The trade penalty is in score units. Removal cuts the forecast's variance
+by about a fifth at 25%, and the penalty is not rescaled. Turnover rises with
+removal, so this does not explain the gain, but I have not isolated it.
+
+**The schedules.** [Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %})
+holds the same book on three start weeks, each rebalancing every three weeks, and
+shows that combining them lowers volatility without changing the mean return. Its
+Sharpe gains are small (+0.10 in development, +0.03 later) with no interval, and
+its test shows the spread across calendars is consistent with luck, which is not
+evidence that combining is better. It also uses the earlier 1.18 volatility
+multiplier, not 1.55, which is why its portfolios take more risk: development
+volatility of 8.75% and return of 11.7%, against 7.0% and 9.4% for the book of the
+sizing article. This article uses the 1.18 version and reports the mean of the
+three schedules, not their combination.
+
+**The attribution.** [Part 1]({% link _posts/2026-09-09-portfolio-attribution.md %})
+and [Part 2]({% link _posts/2026-09-09-short-book-rebounds.md %}) split the book's
+return with a daily cross-sectional regression of stock returns on the previous
+evening's characteristics and eleven sector indicators, weighted by the square root
+of market capitalization. The characteristics are the 80 predictors in raw form,
+averaged into nine style factors, and the book's return splits exactly into
+exposure times payoff, market, sector and a stock-specific remainder. The weak
+points: the characteristics come from the same predictors that rank the stocks, so
+the exposures are built into the book; the low-risk package was grouped after
+seeing that low volatility and net market exposure offset; its return since 2022
+has a standard error of 2.0 points and flips sign with the weighting (1.4% with
+equal weights against −1.1% with capitalization weights); the stock-specific
+remainder can hold exposures the model misses; and the regime counts in Part 2
+rest on 15 declines, where 2000–01 and 2011 dominate and shorts are assumed
+borrowable at no cost. The six styles used for removal here are a smaller,
+standard set and not the nine attribution factors, so the two decompositions
+overlap but are not identical.
+
+**The momentum overlay.** [Managing Momentum Crashes]({% link _posts/2026-09-30-momentum-crashes-ridge.md %})
+is the same idea for one style: it removes a state-dependent share of the
+forecast's momentum lean. It helped in development (Sharpe 1.54 against 1.32) and
+lost in the 2022–2026 test (0.71 against 0.87). The evidence was concentrated: 2009
+and 2020 gave 85% of the overlay's development gain, and 2023 gave 6.67 of the
+learned model's 7.42 test points. No interval is given, and the rank order of the
+fixes flips between periods. This article shows the same pattern for a fixed share
+of all styles.
+
+Three weaknesses run through all five. The development and later periods are not
+independent, because refits and repeated research choices reach into the later
+years. Costs are a linear 5 basis points, with no borrow, financing or impact, at a
+gross exposure near 160%. And the books differ in multiplier, period and return
+convention, so numbers cannot be carried between articles without checking.
+
 ## Half of the forecast is style
 
 On each date I split the forecast's cross-sectional variance into a sector part,
