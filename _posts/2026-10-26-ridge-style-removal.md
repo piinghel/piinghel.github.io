@@ -391,9 +391,9 @@ it is 1.20, the same as no removal.
 Two limits come with that choice. The results describe a risk model that
 shrinks correlations; a model that priced style risk directly could close part
 of the gap that removal closes here. And the direction, not the size, is what
-carries over: the LightGBM forecast on the same data points the same way, with a
-lower best strength because only 28% of its variance is style. The more of a
-forecast is style, the more there is to remove and the more of it was earning.
+carries over. The more of a forecast is style, the more there is to remove and
+the more of it was earning, so the right strength is a property of the
+forecast and not a constant.
 
 ## References
 
