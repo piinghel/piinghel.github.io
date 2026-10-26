@@ -36,7 +36,7 @@ the book's P&L.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/removal-diagram" mobile="/assets/ridge-style-removal/removal-diagram_mobile" alt="Flow from the Ridge forecast through a split into sector, style and stock-specific parts, subtraction of a share of the style part, selection of 75 long and 75 short names and sizing, ending in book weights, whose P&L splits into a style part and a stock-specific part." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 1: Removal acts on the forecast, and attribution reads the result in the book.</strong> The dial $$\lambda$$ is the share of the fitted style part subtracted from the forecast. The book's style exposure $$X'w$$ is inherited from the forecast; the stock-specific part $$w'e$$ is what remains.</p>
+<p class="figure-caption"><strong>Figure 1: Removal acts on the forecast, and attribution reads the result in the book.</strong> The dial λ is the share of the fitted style part subtracted from the forecast. The book's style exposure X′w is inherited from the forecast; the stock-specific part w′e is what remains.</p>
 
 The idea is not new. Giuseppe Paleologo's *Advanced Portfolio Management*
 regresses a fundamental investor's alphas on factor loadings and sizes from the
