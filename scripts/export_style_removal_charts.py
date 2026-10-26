@@ -77,70 +77,107 @@ def render_diagram(out: Path, dark: bool, mobile: bool) -> None:
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-diagram"}):
         if mobile:
-            fig, ax = plt.subplots(figsize=(4.4, 6.0)); ax.set_xlim(0, 4.4); ax.set_ylim(0, 6.0)
-            w, h, x0 = 3.5, 0.5, 0.45
-            steps = [("Ridge forecast", "plain"), ("Fit sectors and six styles,\neach date", "plain"),
-                     ("Subtract \u03bb \u00d7 style part", "dial"), ("Select 75 long, 75 short", "plain"),
-                     ("Size to the 7% volatility target", "plain"), ("Book weights w", "plain")]
-            ys = [5.3 - i * 0.72 for i in range(len(steps))]
+            steps = [("Ridge forecast", "plain"), ("Regress on sectors and styles,\neach date", "plain"),
+                     ("Subtract λ × style part", "dial"),
+                     ("Portfolio optimizer:\n75 long, 75 short, 7% volatility", "plain"), ("Book", "plain")]
+            fig, ax = plt.subplots(figsize=(4.4, 5.6)); ax.set_xlim(0, 4.4); ax.set_ylim(0, 5.6)
+            w, h, x0 = 3.7, 0.58, 0.35
+            ys = [4.85 - i * 0.8 for i in range(len(steps))]
             for (text, kind), y in zip(steps, ys):
-                box(ax, c, x0, y, w, h, text.replace("\n", " "), kind, 9.2)
+                box(ax, c, x0, y, w, h, text, kind, 9.0)
             for upper, lower in zip(ys, ys[1:]):
                 arrow(ax, c, (x0 + w / 2, upper), (x0 + w / 2, lower + h))
-            ax.text(0.0, 5.92, "Input: the forecast", fontsize=9.5, color=c["muted"], va="center")
-            ax.text(0.0, 1.5, "Output: the book's P&L", fontsize=9.5, color=c["muted"], va="center")
-            gy = 0.15
-            box(ax, c, 0.05, gy, 2.05, 0.95, "Style P&L\nand variance\n(exposure X\u2032w)", "style", 9.2)
-            box(ax, c, 2.3, gy, 2.05, 0.95, "Stock-specific\nP&L and variance\n(w\u2032e)", "specific", 9.2)
-            arrow(ax, c, (x0 + w / 2, ys[-1]), (x0 + w / 2, gy + 1.15))
-            ax.plot([1.075, 3.325], [gy + 1.15, gy + 1.15], color=c["muted"], lw=1.3)
-            arrow(ax, c, (1.075, gy + 1.15), (1.075, gy + 0.95)); arrow(ax, c, (3.325, gy + 1.15), (3.325, gy + 0.95))
+            gy = 0.1
+            box(ax, c, 0.05, gy, 2.05, 0.7, "Style P&L", "style", 9.2)
+            box(ax, c, 2.3, gy, 2.05, 0.7, "Stock-specific P&L", "specific", 9.2)
+            mid = x0 + w / 2
+            arrow(ax, c, (mid, ys[-1]), (mid, gy + 0.95))
+            ax.plot([1.075, 3.325], [gy + 0.95, gy + 0.95], color=c["muted"], lw=1.3)
+            arrow(ax, c, (1.075, gy + 0.95), (1.075, gy + 0.7)); arrow(ax, c, (3.325, gy + 0.95), (3.325, gy + 0.7))
         else:
-            fig, ax = plt.subplots(figsize=(9.4, 4.5)); ax.set_xlim(0, 9.4); ax.set_ylim(0, 4.5)
-            w, h = 1.36, 1.0
-            xs = [0.0, 1.608, 3.216, 4.824, 6.432, 8.04]
-            steps = [("Ridge\nforecast", "plain"), ("Fit sectors and\nsix styles,\neach date", "plain"),
-                     ("Subtract\n\u03bb \u00d7 style part", "dial"), ("Select 75 long\nand 75 short\nnames", "plain"),
-                     ("Size to the 7%\nvolatility\ntarget", "plain"), ("Book\nweights w", "plain")]
-            y = 3.2
-            ax.text(0.0, 4.4, "Input: what the forecast hands the portfolio", fontsize=10.5, color=c["muted"], va="center")
-            for (text, kind), x in zip(steps, xs):
-                box(ax, c, x, y, w, h, text, kind, 9.6)
+            labels = [("Ridge\nforecast", "plain"), ("Regress on\nsectors and\nstyles, each date", "plain"),
+                      ("Subtract\nλ × style part", "dial"),
+                      ("Portfolio\noptimizer: 75 + 75\nnames, 7% vol.", "plain"), ("Book", "plain")]
+            fig, ax = plt.subplots(figsize=(9.4, 3.9)); ax.set_xlim(0, 9.4); ax.set_ylim(0, 3.9)
+            w, h, gap = 1.66, 1.1, 0.27
+            xs = [i * (w + gap) for i in range(len(labels))]
+            y = 2.6
+            for (text, kind), x in zip(labels, xs):
+                box(ax, c, x, y, w, h, text, kind, 9.2)
             for x in xs[:-1]:
-                arrow(ax, c, (x + w + 0.02, y + h / 2), (x + 1.608 - 0.02, y + h / 2))
-            gy = 0.3
-            ax.text(0.0, gy + 0.5, "Output: attribution\nof the book's P&L\nand variance", fontsize=10.5,
-                    color=c["muted"], va="center", linespacing=1.3)
-            box(ax, c, 2.5, gy, 2.9, 0.95, "Style P&L and variance\nfrom the exposure X\u2032w", "style", 10)
-            box(ax, c, 5.9, gy, 2.9, 0.95, "Stock-specific P&L and\nvariance from w\u2032e", "specific", 10)
+                arrow(ax, c, (x + w + 0.02, y + h / 2), (x + w + gap - 0.02, y + h / 2))
+            gy = 0.25
+            box(ax, c, 3.2, gy, 2.6, 0.8, "Style P&L", "style", 10)
+            box(ax, c, 6.4, gy, 2.6, 0.8, "Stock-specific P&L", "specific", 10)
             fx = xs[-1] + w / 2
-            arrow(ax, c, (fx, y), (fx, 2.1)); ax.plot([4.95, fx], [2.1, 2.1], color=c["muted"], lw=1.3)
-            ax.plot([7.35, 7.35], [2.1, 1.25], color=c["muted"], lw=1.3)
-            arrow(ax, c, (4.95, 2.1), (4.95, gy + 0.95)); arrow(ax, c, (7.35, 2.1), (7.35, gy + 0.95))
-            arrow(ax, c, (xs[2] + w / 2, y), (3.45, gy + 0.95), color=c["style"], ls=(0, (3, 2)))
-            ax.text(3.38, 2.2, "\u03bb moves\nthis", fontsize=9.5, color=c["style"], ha="right", va="center", linespacing=1.2)
+            arrow(ax, c, (fx, y), (fx, 1.65)); ax.plot([4.5, fx], [1.65, 1.65], color=c["muted"], lw=1.3)
+            ax.plot([7.7, 7.7], [1.65, 1.05], color=c["muted"], lw=1.3)
+            arrow(ax, c, (4.5, 1.65), (4.5, gy + 0.8)); arrow(ax, c, (7.7, 1.65), (7.7, gy + 0.8))
+            arrow(ax, c, (xs[2] + w / 2, y), (3.75, gy + 0.8), color=c["style"], ls=(0, (3, 2)))
+            ax.text(3.95, 2.0, "λ shrinks\nthis", fontsize=9.5, color=c["style"], ha="right", va="center", linespacing=1.2)
         ax.axis("off")
         fig.set_facecolor(c["bg"])
         save(fig, out / f"removal-diagram{suffix(dark, mobile)}.svg", c)
 
 
 def render_shares(out: Path, dark: bool, mobile: bool) -> None:
+    """Variance shares that add to 100%: style, stock-specific, and sector plus the style-sector overlap."""
     c = palette(dark)
     shares = (pl.read_csv(DATA / "inputs/q1_variance_shares_by_year.csv").filter(pl.col("model") == "ridge")
               .sort("year").with_columns(other=pl.col("sh_sec") + pl.col("sh_cross")))
     years = shares["year"].to_list()
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-shares"}):
-        fig, ax = plt.subplots(figsize=(4.4, 3.6) if mobile else (9.4, 3.5))
+        fig, ax = plt.subplots(figsize=(4.4, 3.4) if mobile else (9.4, 3.4))
         fig.set_facecolor(c["bg"]); style(ax, c, mobile)
         ax.stackplot(years, shares["sh_style"] * 100, shares["sh_resid"] * 100, shares["other"] * 100,
                      colors=[c["style"], c["base"], c["other"]], alpha=0.9, lw=0)
         ax.set_xlim(years[0], years[-1]); ax.set_ylim(0, 100)
         ax.set_yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", "100%"])
-        ax.set_xticks([1999, 2005, 2010, 2015, 2020, 2025] if not mobile else [1999, 2010, 2020])
-        for text, x, y, colour in (("Style", 2013, 22, "#ffffff"), ("Stock-specific", 2013, 72, c["ink"])):
-            ax.text(x, y, text, ha="center", va="center", fontsize=10.5, color=colour)
+        ax.set_xticks([2000, 2010, 2020] if mobile else [2000, 2005, 2010, 2015, 2020, 2025])
+        ax.text(2012, 24, "Style", ha="center", va="center", fontsize=10.5, color="#ffffff")
+        ax.text(2012, 72, "Stock-specific", ha="center", va="center", fontsize=10.5, color=c["ink"])
+        ax.text(1.01, 0.99, "Sector and\noverlap", transform=ax.transAxes, ha="left", va="top", fontsize=9, color=c["muted"], linespacing=1.15)
         save(fig, out / f"forecast-style-share{suffix(dark, mobile)}.svg", c)
+
+
+def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
+    """Realized volatility and net Sharpe ratio for every variant, mean of three schedules."""
+    c = palette(dark)
+    m = {r["arm"]: r for r in pl.read_csv(DATA / "outputs/evidence/table_metrics.csv").iter_rows(named=True)}
+    rows = [("none", "No removal", "base"), ("style25", "Style 25%", "style"), ("style50", "Style 50%", "style"),
+            ("style75", "Style 75%", "style"), ("style100", "Style 100%", "style"),
+            ("si25", "Style 25% + SI", "si"), ("pca25", "PCA 25%", "pca"), ("pca50", "PCA 50%", "pca")]
+    ys = list(range(len(rows)))[::-1]
+    with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
+                         "svg.fonttype": "none", "svg.hashsalt": "style-removal-risk-return"}):
+        if mobile:
+            fig, axes = plt.subplots(2, 1, figsize=(4.4, 6.4), gridspec_kw={"hspace": 0.45})
+        else:
+            fig, axes = plt.subplots(1, 2, figsize=(9.4, 3.6), sharey=True, gridspec_kw={"wspace": 0.1})
+        fig.set_facecolor(c["bg"])
+        panels = (("Volatility (% a year)", "vol_pct", (6.8, 9.4), [7, 8, 9], "{:.1f}"),
+                  ("Net Sharpe ratio", "net_sharpe", (1.1, 1.52), [1.1, 1.2, 1.3, 1.4, 1.5], "{:.2f}"))
+        for k, (ax, (title, col, lim, ticks, fmt)) in enumerate(zip(axes, panels)):
+            style(ax, c, mobile, grid="x")
+            ax.axvline(m["none"][col], color=c["muted"], lw=0.8, ls=(0, (2, 3)), zorder=1)
+            for y, (arm, label, colour) in zip(ys, rows):
+                v = m[arm][col]
+                ax.plot([m["none"][col], v], [y, y], color=c[colour], lw=1.4, alpha=0.5, zorder=2)
+                ax.plot(v, y, "o", ms=7, color=c[colour], zorder=3)
+                left = v < m["none"][col] - 1e-9
+                off = (lim[1] - lim[0]) * 0.025
+                ax.text(v - off if left else v + off, y, fmt.format(v), va="center", ha="right" if left else "left",
+                        fontsize=9, color=c["ink"])
+            ax.set_xlim(*lim); ax.set_xticks(ticks)
+            ax.set_title(title, loc="left", fontsize=10.5, color=c["ink"], pad=8)
+            if k == 0 or mobile:
+                ax.set_yticks(ys, [r[1] for r in rows])
+                for tick in ax.get_yticklabels():
+                    tick.set_color(c["ink"])
+            else:
+                ax.tick_params(axis="y", labelleft=False)
+        save(fig, out / f"risk-return{suffix(dark, mobile)}.svg", c)
 
 
 def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
@@ -240,7 +277,7 @@ def export(assets: Path) -> None:
     export_gap_chart(assets)
     for dark in (False, True):
         for mobile in (False, True):
-            for render in (render_diagram, render_shares, render_deltas, render_gap):
+            for render in (render_diagram, render_shares, render_risk_return, render_deltas, render_gap):
                 render(assets, dark, mobile)
 
 

@@ -184,19 +184,27 @@
     "height": 255
   },
   "/assets/ridge-style-removal/forecast-style-share": {
-    "width": 575,
-    "height": 229
+    "width": 629,
+    "height": 223
   },
   "/assets/ridge-style-removal/forecast-style-share_mobile": {
-    "width": 295,
-    "height": 234
+    "width": 346,
+    "height": 223
   },
   "/assets/ridge-style-removal/removal-diagram": {
     "width": 542,
-    "height": 267
+    "height": 233
   },
   "/assets/ridge-style-removal/removal-diagram_mobile": {
     "width": 263,
-    "height": 350
+    "height": 328
+  },
+  "/assets/ridge-style-removal/risk-return": {
+    "width": 624,
+    "height": 247
+  },
+  "/assets/ridge-style-removal/risk-return_mobile": {
+    "width": 341,
+    "height": 401
   }
 }
