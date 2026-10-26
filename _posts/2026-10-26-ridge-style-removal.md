@@ -258,6 +258,14 @@ costs. From 50% to 75% the return falls from 11.9% to 11.2% while volatility
 keeps falling, so a good share of the Sharpe improvement at 75% is a lower
 denominator.
 
+Volatility falls at every strength, from 8.9% to 8.7%, 8.4%, 7.8% and 7.3%, on
+all three schedules and in at least 24 of 28 calendar years. Before 2019 that
+comes with higher return: scaled to the unadjusted book's volatility, removal
+adds 1.0, 2.6 and 3.2 points a year at 25%, 50% and 75%. From 2019 it does not.
+Volatility still falls (10.6% to 9.9% at 50%), but at matched volatility the
+return is about 0.2, 1.2 and 2.0 points a year lower. The risk reduction is the
+robust effect, and whether it is a better trade-off depends on the period.
+
 The gains are not even across schedules. The baseline's third schedule is its
 weakest (Sharpe 1.10 against 1.23 and 1.26) and carries the largest gain, +0.32
 at 50% against +0.13 and +0.11, so without it the 50% gain is about +0.12.
