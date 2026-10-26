@@ -54,14 +54,62 @@ forecast volatility target and its position, sector and beta limits, with the
 [Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %}).
 Results are means over its three rebalance schedules, after 5 bp per dollar
 traded, from January 1999 to April 2026; intervals are paired 120-session
-block-bootstrap 95% intervals against no removal. I judge each variant by its net
-Sharpe ratio: a lower return is fine if volatility falls by more.
+block-bootstrap 95% intervals against no removal. Costs are linear, with no borrow
+or financing. I judge each variant by its net Sharpe ratio: a lower return is fine
+if volatility falls by more.
+
+## The style part comes from a weighted regression on each date
+
+On each date I take the cross-section of Ridge forecasts, about 1,000 stocks, and
+regress it on eleven sector indicators and six style exposures:
+
+$$
+y_i=\sum_{s}\gamma_s D_{is}+\sum_{k}\beta_k x_{ik}+e_i ,
+$$
+
+where $$D_{is}$$ is 1 when stock $$i$$ is in sector $$s$$ (the indicators also
+carry the intercept) and $$x_{ik}$$ is its exposure to style $$k$$, defined in
+Table 1. Every exposure uses prices up to that day's close. Each is standardized
+across stocks the same way: winsorized at five median absolute deviations from
+the median, centred so that its capitalization-weighted average is zero and
+scaled to an equal-weighted standard deviation of one. A missing value of the
+first five styles is set to the capitalization-weighted average.
+
+<table class="research-table settings-table">
+  <caption><strong>Table 1: The six styles, and short interest in one variant.</strong> Each is measured per stock on each date and then standardized across stocks.</caption>
+  <thead><tr><th>Style</th><th>Measure</th><th>Window</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Beta</th><td>Slope of the stock's daily returns on the Russell 1000, shrunk toward 1 by its sampling variance (prior variance 0.25), clipped at ±4</td><td>252 sessions, at least 126</td></tr>
+    <tr><th scope="row">Residual volatility</th><td>Log standard deviation of that regression's residuals, made orthogonal to beta and size</td><td>252 sessions</td></tr>
+    <tr><th scope="row">Momentum</th><td>Sum of daily log returns, leaving out the latest 21 sessions</td><td>252 sessions</td></tr>
+    <tr><th scope="row">Size</th><td>Log market capitalization</td><td>That day</td></tr>
+    <tr><th scope="row">Liquidity</th><td>Log of the median daily dollar volume divided by market capitalization</td><td>63 sessions</td></tr>
+    <tr><th scope="row">Short-term reversal</th><td>Minus the stock's return</td><td>21 sessions</td></tr>
+    <tr><th scope="row">Short interest (variant only)</th><td>Log of short interest times price over market capitalization, the share of shares outstanding sold short; a plain z-score, with no short interest scored zero</td><td>Lagged 21 sessions</td></tr>
+  </tbody>
+</table>
+
+The regression is weighted by the square root of market capitalization, as in the
+attribution articles, so large stocks count more without a few of them dominating,
+and it is solved jointly on each date. Each $$\hat\beta_k$$ is the forecast's
+tilt toward style $$k$$ that day, holding sectors and the other styles fixed. The
+style part is $$\sum_k\hat\beta_k x_{ik}$$; removal subtracts a share
+$$\lambda$$ of it and keeps the sector part and the remainder:
+
+$$
+y'_i=y_i-\lambda\sum_{k}\hat\beta_k\,x_{ik}.
+$$
+
+The adjusted scores go through selection and the optimizer unchanged, in their
+native units and without re-ranking. I run $$\lambda$$ = 25%, 50%, 75% and 100%.
+At 25% the forecast's variance falls by about a fifth, $$\lambda(2-\lambda)$$
+times the style share. Momentum is the style that matters most: leaving it out of
+the removal at 50% costs 0.10 of Sharpe and adds 0.5 points of volatility.
 
 ## Half of the forecast is style
 
-On each date I split the forecast's cross-sectional variance into a sector part, a
-style part (beta, residual volatility, momentum, size, liquidity and short-term
-reversal) and a stock-specific remainder. Style carries 50% on average and 58%
+The same regression splits the forecast's cross-sectional variance into a sector
+part, a style part and a stock-specific remainder. Style carries 50% on average and 58%
 after 2019 (Figure 2). Part of that may be built in by the target: the model predicts
 a forward 20-session Sharpe ratio, which favours low-volatility stocks.
 
@@ -90,28 +138,10 @@ names. So removal pays only while the names it adds earn stock-specific return.
 Before 2019 the unadjusted book's stock-specific P&L had a Sharpe ratio of 0.63;
 since then it is 0.10. That is the shape of everything that follows.
 
-## Removal subtracts a share of the fitted style part
-
-On each date I regress the forecast across stocks on sector dummies and the six
-style exposures, standardized that day, with square-root-of-market-cap weights. I
-subtract a share $$\lambda$$ of the fitted style part, keep the sector part and
-leave the rest:
-
-$$
-y'_i=y_i-\lambda\sum_{k\in\text{styles}}\hat\beta_k\,x_{ik}.
-$$
-
-The adjusted scores go through selection and the optimizer unchanged, in their
-native units. I run $$\lambda$$ = 25%, 50%, 75% and 100%. At 25% the forecast's
-variance falls by about a fifth, $$\lambda(2-\lambda)$$ times the style share,
-which is the variance the bias–variance trade buys. Momentum is the style that
-matters most: leaving it out of the removal at 50% costs 0.10 of Sharpe and
-0.5 points of extra volatility.
-
 ## Moderate removal raises the Sharpe ratio, almost all of it before 2019
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 1: Removal lowers volatility at every strength and raises the Sharpe ratio up to 75%.</strong> January 1999–April 2026, mean of three schedules, net of 5 bp per dollar traded. Δ is the Sharpe difference against no removal, with a 95% interval for the full period. Turnover is two-way, as a multiple of capital a year.</caption>
+  <caption><strong>Table 2: Removal lowers volatility at every strength and raises the Sharpe ratio up to 75%.</strong> January 1999–April 2026, mean of three schedules, net of 5 bp per dollar traded. Δ is the Sharpe difference against no removal, with a 95% interval for the full period. Turnover is two-way, as a multiple of capital a year.</caption>
   <thead>
     <tr><th>Removal</th><th>Net Sharpe</th><th>Δ full [95%]</th><th>Δ 1999–2018</th><th>Δ 2019–2026</th><th>Vol.</th><th>Turnover</th></tr>
   </thead>
@@ -131,7 +161,7 @@ The Sharpe ratio rises from 1.20 to 1.38 at 50% and 1.41 at 75%, and falls back 
 1.20 at full removal. Volatility falls at every step, from 8.9% to 7.3%, and up to
 75% the return does not fall with it, so the risk reduction is where most of the
 gain comes from. Among the strengths only the 50% gain has an interval clear of
-zero; it is the best of the variants in Table 1, and adjusting for all of them
+zero; it is the best of the variants in Table 2, and adjusting for all of them
 with a max-t bootstrap gives a p-value of about 0.09. The gain is uneven across
 schedules (+0.13, +0.11 and +0.32 at 50%), and turnover rises by up to six turns,
 which the net Sharpe already pays for.
@@ -170,22 +200,23 @@ separated which of the two produces it.
 
 ## Adding short interest to the removal does best and fades less
 
-One variant adds a seventh column to the removal regression: the log ratio of
-short interest to trading volume, lagged 21 sessions so that every value is
-published before it is used. Everything else is as in plain 25% removal.
+One variant adds a seventh column to the removal regression: the share of shares
+outstanding sold short (Table 1). Short interest is reported twice a month and
+published about eight business days after its settlement date, so I lag it 21
+sessions. Everything else is as in plain 25% removal.
 
 It is the strongest result in the study: a Sharpe ratio of 1.34, +0.15
 [+0.06, +0.24] against no removal and +0.07 [+0.04, +0.11] against plain 25%,
 positive on all three schedules, at the same volatility as plain 25%. It is the
-only variant whose gain survives adjustment for the others in Table 1 (max-t
+only variant whose gain survives adjustment for the others in Table 2 (max-t
 p ≈ 0.002). Before 2019 it adds +0.21 [+0.11, +0.32], and it beats plain 25% in
 every five-year block. From 2019 it is +0.02 [−0.16, +0.15], so it fades too
 (−0.18 [−0.39, −0.03] against the early period), but at equal volatility it keeps
 most of its accumulated gain (Figure 4).
 
 What I know about why is limited to four facts. The book is a bet against heavily
-shorted stocks: its short leg sits at the 74th percentile of the short-interest
-ratio and its long leg at the 29th. The change is small: 93% of the weight is
+shorted stocks: its short leg sits at the 66th percentile of short interest as a
+share of shares outstanding and its long leg at the 33rd. The change is small: 93% of the weight is
 shared with plain 25%. The gain is stock-specific, with the factor share of book
 variance unchanged. And since 2019 it comes entirely from the short leg, where
 plain removal loses most, recovering about half of that loss. Two readings fit:
@@ -215,36 +246,14 @@ the empty book. The 150 names are chosen from the forecast before the optimizer
 weights them, so a limit on weights cannot undo a selection that leans one way;
 removal changes the selection.
 
-## The earlier articles leave weaknesses that carry over
+## Related work acts on style in the optimizer and the finished book
 
-<table class="research-table settings-table">
-  <caption><strong>Table 2: Each earlier article supplies part of the book and a weakness this result inherits.</strong></caption>
-  <thead><tr><th>Article</th><th>What it supplies</th><th>Weakness that carries over</th></tr></thead>
-  <tbody>
-    <tr><th scope="row"><a href="{% link _posts/2025-02-09-combining-predictors.md %}">Combining Multiple Predictors</a></th><td>Ridge on 80 predictors, forward 20-session Sharpe target, refit on an expanding window</td><td>Gain over equal weights has an interval from about zero to 0.4; no Sharpe edge over OLS; the target favours low volatility</td></tr>
-    <tr><th scope="row"><a href="{% link _posts/2026-08-29-joint-sizing.md %}">From Volatility Scaling to Joint Sizing</a></th><td>Optimizer, shrunk covariance, limits and trade penalty</td><td>Multiplier, shrinkage and limits chosen on development data; the net limit binds at 82% of rebalances; the trade penalty is in score units and is not rescaled when removal shrinks the scores</td></tr>
-    <tr><th scope="row"><a href="{% link _posts/2026-09-05-rebalancing-luck.md %}">Reducing Rebalancing Luck</a></th><td>Three schedules and the 1.18 multiplier used here</td><td>Calendar spread is consistent with luck; not run at the 1.55 calibration</td></tr>
-    <tr><th scope="row"><a href="{% link _posts/2026-09-09-portfolio-attribution.md %}">Performance Attribution</a></th><td>The exposure-times-payoff split</td><td>Characteristics come from the same predictors; recent package returns depend on the weighting</td></tr>
-    <tr><th scope="row"><a href="{% link _posts/2026-09-30-momentum-crashes-ridge.md %}">Managing Momentum Crashes</a></th><td>The same operator for momentum alone</td><td>Development gain concentrated in 2009 and 2020; lost in the 2022–2026 test</td></tr>
-  </tbody>
-</table>
-
-Two weaknesses run through all of them: the earlier and later periods share refits
-and research choices, and costs are a linear 5 bp with no borrow or financing at
-about 160% gross.
-
-## Related work removes style at other points
-
-Blitz, Huij and Martens rank momentum on residual rather than total returns, which
-cuts its time-varying factor exposure and roughly doubles its risk-adjusted
-profit; that is removal in the predictors.[^blitz] Recent machine-learning alpha
-work trains on a target residualized on Barra styles, removal in the target.[^alphanet]
 Clarke, de Silva and Thorley show how constraints limit the transfer of a signal
-into weights, which the infeasible caps here illustrate.[^clarke] Daniel, Mota,
-Rottke and Santos hedge the unpriced risk of characteristic portfolios with
-covariance estimated from past returns and nearly double the squared Sharpe ratio
-of their combination, a stronger version of the overlay tested here.[^daniel] None
-of these was tested on this book.
+into portfolio weights, which the infeasible caps here illustrate.[^clarke]
+Daniel, Mota, Rottke and Santos hedge the unpriced risk of characteristic
+portfolios with covariance estimated from past returns and nearly double the
+squared Sharpe ratio of their combination, a stronger version of the overlay
+tested here.[^daniel] Neither was tested on this book.
 
 ## Light removal is the least regret, and short interest the lead
 
@@ -273,9 +282,6 @@ Mark Horvath, Dominik Zvara and Mihaly Berndt,
 [*Constructing Portfolios from Published Equity Research*](https://www.msci.com/research-and-insights/blog-post/constructing-portfolios-from-published-equity-research),
 MSCI Research, 7 October 2026.
 
-David Blitz, Joop Huij and Martin Martens, *Residual Momentum*, Journal of
-Empirical Finance 18, 2011, 506–521.
-
 Roger Clarke, Harindra de Silva and Steven Thorley,
 *Portfolio Constraints and the Fundamental Law of Active Management*, Financial
 Analysts Journal 58(5), 2002, 48–66.
@@ -287,7 +293,5 @@ Review of Financial Studies 33(5), 2020, 1927–1979.
 [^book]: Paleologo (2021), Chapter 6, Procedure 6.3; Chapter 8 uses the same factor decomposition to separate style from idiosyncratic P&L.
 [^numerai]: See also Numerai's [feature-neutral correlation](https://docs.numer.ai/numerai-tournament/scoring/feature-neutral-correlation), which uses full removal.
 [^msci]: The average post-publication information ratio of a signal rises from 0.17 raw to 0.28 style-neutral; these are signals, not a model's forecast.
-[^blitz]: They regress each stock's returns on three factors over 36 months and rank on the residuals.
-[^alphanet]: AlphaNetV4 (arXiv 2411.04409) puts the Barra-residual target in its loss function.
 [^clarke]: The transfer coefficient is 1 when the signal reaches the weights unconstrained; constrained managers typically sit between 0.3 and 0.8.
 [^daniel]: The squared Sharpe ratio of five characteristic portfolios rises from 1.16 to 2.16, per the authors' abstract.
