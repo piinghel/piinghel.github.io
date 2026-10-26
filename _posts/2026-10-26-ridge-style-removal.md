@@ -66,14 +66,29 @@ Turnover is two-way: purchases plus sales, as a multiple of capital per year.
 Intervals are paired 120-session block-bootstrap 95% intervals against no
 removal.
 
+Style can come out at several points of the pipeline (Table 1). I test the
+forecast, because it needs no refit and the strength stays adjustable; the other
+rows mark what the evidence here covers and what it leaves open.
+
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 1: Style can be removed at six points, and this article tests the forecast.</strong> Where the removal acts, what it does, and what the evidence here says.</caption>
+  <thead><tr><th>Where</th><th>What it does</th><th>Evidence here</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Training target</th><td>Residualizes the label on the styles before fitting</td><td>Not tested for Ridge</td></tr>
+    <tr><th scope="row">Input predictors</th><td>Orthogonalizes each feature to the styles</td><td>Not tested; many predictors are styles themselves</td></tr>
+    <tr><th scope="row">Forecast</th><td>Subtracts a share of the fitted style part after prediction</td><td>The subject of this article</td></tr>
+    <tr><th scope="row">Statistical factors</th><td>The same, with principal components in place of styles</td><td>Weaker than styles before 2019</td></tr>
+    <tr><th scope="row">Optimizer risk model</th><td>Prices style risk with explicit factors or a soft penalty</td><td>Not tested</td></tr>
+    <tr><th scope="row">Optimizer caps and overlays</th><td>Limits exposure in the optimizer or on the finished book</td><td>Caps infeasible in April 2009; overlay −0.13 against 25% removal</td></tr>
+  </tbody>
+</table>
+
 ## Half of the forecast is style
 
 On each date I split the forecast's cross-sectional variance into a sector part,
 a style part (beta, residual volatility, momentum, size, liquidity and
 short-term reversal) and a stock-specific remainder. Style carries 50% of the
-variance on average and 58% after 2019 (Figure 2). For a LightGBM forecast on
-the same data it is 28%, so the Ridge forecast is the more style-driven of the
-two.
+variance on average and 58% after 2019 (Figure 2).
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/forecast-style-share" mobile="/assets/ridge-style-removal/forecast-style-share_mobile" alt="Stacked shares of the Ridge forecast's cross-sectional variance by year: style between 40% and 65%, stock-specific most of the rest." version="1" %}
@@ -153,15 +168,15 @@ $$
 
 Style has to earn a smaller share of the book's return than it contributes to
 its risk. Selection and the optimizer change this picture, which is why the full
-book is tested below. Table 1 lists what that statement assumes and where I look for each
+book is tested below. Table 2 lists what that statement assumes and where I look for each
 assumption failing.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 1: The argument fails in four ways, and each has a test.</strong> What removal needs to be true and the evidence in the sections below.</caption>
+  <caption><strong>Table 2: The argument fails in four ways, and each has a test.</strong> What removal needs to be true and the evidence in the sections below.</caption>
   <thead><tr><th>Assumption</th><th>If it fails</th><th>Where it is tested</th></tr></thead>
   <tbody>
-    <tr><th scope="row">Style's return share is below its risk share</th><td>Removal lowers return as much as risk</td><td>Stand-alone Sharpe above; Table 2</td></tr>
-    <tr><th scope="row">Style premia are stable enough for a historical return share to carry forward</th><td>The share flips and removal costs return</td><td>Split at 2019; Table 3, Figure 4</td></tr>
+    <tr><th scope="row">Style's return share is below its risk share</th><td>Removal lowers return as much as risk</td><td>Stand-alone Sharpe above; Table 3</td></tr>
+    <tr><th scope="row">Style premia are stable enough for a historical return share to carry forward</th><td>The share flips and removal costs return</td><td>Split at 2019; Table 4, Figure 4</td></tr>
     <tr><th scope="row">The style projection separates style from stock-specific information</th><td>Removal also takes out stock-specific return</td><td>Return change by removal step</td></tr>
     <tr><th scope="row">The risk model does not already price the style risk</th><td>Little is left to remove</td><td>PCA variant; controls on the book</td></tr>
   </tbody>
@@ -183,9 +198,8 @@ $$
 
 The adjusted scores then go through selection and the optimizer exactly as
 before; I don't re-rank. This removes the style part from the forecast, after
-prediction; removing it from the training target is a different intervention, and
-for LightGBM it gave a smaller gain than removing it from the forecast, +0.03
-against +0.07 at 25%. The Numerai and Paleologo rule is $$\lambda=1$$. I run
+prediction; removing it from the training target is a different intervention.
+The Numerai and Paleologo rule is $$\lambda=1$$. I run
 $$\lambda=0.25,\,0.5,\,0.75$$ and $$1$$ and compare each with no removal.
 
 $$\lambda$$ is a bias–variance dial. Subtracting the style part gives up
@@ -209,14 +223,14 @@ variance falls from 55 to 46, and realized volatility falls from 8.9% to 7.3%
 </div>
 <p class="figure-caption"><strong>Figure 3: Most of the variance that removal takes out is factor variance.</strong> Annualized variance of the book's daily gross return in %², split by a time-series regression on same-day market, sector and style factor returns, 1999–April 2026. Blue is factor variance and grey the rest; the label above each bar is realized net volatility.</p>
 
-Table 2 reports the full history. Sharpe rises to 1.38 at 50% and 1.41 at 75%,
+Table 3 reports the full history. Sharpe rises to 1.38 at 50% and 1.41 at 75%,
 then falls back to 1.20 at 100%, where volatility is lowest but the return has
 dropped to 8.7%. Only the 50% gain has an interval clear of zero, +0.19
 [+0.02, +0.36]. The 25% gain of +0.07 [−0.01, +0.16] and the 75% gain of +0.22
 [−0.06, +0.47] do not, and the 100% result is zero with an interval of ±0.4.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 2: Removing style raises Sharpe at moderate strength and costs drawdown and turnover.</strong> Ridge forecast, 1999-01-26 to 2026-04-28, mean of three rebalance schedules, after 5 bp per dollar traded. Δ is the paired Sharpe difference against no removal with a block-bootstrap 95% interval; the last column gives it by schedule. Returns are geometric and annualized; turnover is two-way as a multiple of capital a year.</caption>
+  <caption><strong>Table 3: Removing style raises Sharpe at moderate strength and costs drawdown and turnover.</strong> Ridge forecast, 1999-01-26 to 2026-04-28, mean of three rebalance schedules, after 5 bp per dollar traded. Δ is the paired Sharpe difference against no removal with a block-bootstrap 95% interval; the last column gives it by schedule. Returns are geometric and annualized; turnover is two-way as a multiple of capital a year.</caption>
   <thead>
     <tr><th>Removal</th><th>Net Sharpe</th><th>Δ [95%]</th><th>Return</th><th>Vol.</th><th>Max DD</th><th>Turnover</th><th>Δ by schedule</th></tr>
   </thead>
@@ -257,7 +271,7 @@ ICIR is highest and the Sharpe ratio no better than doing nothing.
 
 ## The gain belongs to the early history
 
-Table 2 averages two different regimes. Figure 4 splits the Sharpe ratio at
+Table 3 averages two different regimes. Figure 4 splits the Sharpe ratio at
 2019: before it, every strength up to 100% beats no removal, with the peak at
 75% (1.73 against 1.34). From 2019 onward the ordering reverses, and the loss
 grows with strength, down to 0.39 at 100% against 0.93 with no removal.
@@ -268,7 +282,7 @@ grows with strength, down to 0.39 at 100% against 0.93 with no removal.
 <p class="figure-caption"><strong>Figure 4: The best strength depends on the period.</strong> Net Sharpe ratio by share of style removed, mean of three schedules, split at 2019. Diamonds are the PCA variants at 25% and 50%, with the same split.</p>
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 3: Removal up to 75% helps in every subperiod before 2019 and hurts from 2019.</strong> Difference in net Sharpe ratio against no removal by subperiod, mean of three schedules.</caption>
+  <caption><strong>Table 4: Removal up to 75% helps in every subperiod before 2019 and hurts from 2019.</strong> Difference in net Sharpe ratio against no removal by subperiod, mean of three schedules.</caption>
   <thead>
     <tr><th>Removal</th><th>1999–2003</th><th>2004–2008</th><th>2009–2013</th><th>2014–2018</th><th>2019–2026</th></tr>
   </thead>
@@ -285,10 +299,8 @@ more than no removal before 2019 and 1.72 points a year less afterwards, and
 almost all of that swing is stock-specific return rather than style return. In
 the recent bull market the style component of the forecast carried
 stock-specific return that the adjusted scores no longer hold, which is what the
-third assumption in Table 1 failing would look like. The attribution describes
-the books and does not prove the mechanism: in the LightGBM books, the sign of
-such stock-specific return differences changed when trailing instead of
-full-sample betas were used.
+third assumption in Table 2 failing would look like. The attribution describes
+the books and does not prove the mechanism.
 
 One result does not fit that story neatly. A plain score-weighted portfolio of
 the forecast, with no optimizer and a 15-session hold, improves at every
@@ -317,7 +329,7 @@ with the first 10 principal components of the trailing 252 days of stock
 returns, refit every 21 days, and removed 25% and 50% of their fitted part
 the same way.
 
-The result is a weaker version of the same thing (Table 2). The PCA variants
+The result is a weaker version of the same thing (Table 3). The PCA variants
 lower volatility by about as much, but they do not shorten the drawdowns
 (−23.3% and −21.5% against −19.9%), and the Sharpe differences of −0.01
 [−0.08, +0.07] and +0.04 [−0.12, +0.19] both have intervals that include zero.
