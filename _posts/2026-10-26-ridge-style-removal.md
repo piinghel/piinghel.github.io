@@ -262,12 +262,51 @@ for characteristic portfolios.[^daniel] I haven't tried that here.
 
 ## What I take from this
 
-Removing part of the style component is a reasonable cleaning step for a
-style-heavy forecast. It reliably lowers volatility, and over most of the history
-it also raised the Sharpe ratio. A quarter of the style part is the setting I'd
-pick: it captures part of the early gain, gives back very little since 2019 and
-costs about one turn of turnover a year. Stronger removal did better before 2019
-and worse since, and full removal, the rule most sources use, adds nothing here.
+Taking part of the style out of the forecast is a sensible cleaning step for this
+book, but I'd see it mainly as a risk tool rather than a source of return. The
+lower volatility is the solid part: it shows up at every strength and follows
+from the mechanism above, a covariance that charges too little for shared style.
+The Sharpe gain over 27 years is moderate, borderline once you account for the
+variants I tried, and most of it was earned before 2019. That's a good
+result that the recent data hasn't confirmed yet, not a free improvement.
+
+For running the book, that still counts for something. Realized volatility moves
+from 8.9% toward the 7% target as removal goes up, so the risk the optimizer
+thinks it takes gets closer to the risk it actually takes, which makes sizing
+and risk budgeting more trustworthy. The P&L leans less on a handful of styles
+that can turn together, the kind of exposure behind the
+[momentum crashes]({% link _posts/2026-09-30-momentum-crashes-ridge.md %}).
+That's why I'd run a quarter rather than nothing: little cost in any period, and
+a book whose risk is more what it claims to be.
+
+Removal has a limit worth being clear about. It moves risk into the
+stock-specific part of the forecast; it can't make that part better. Here style
+has paid more than stock picking, and since 2019 the stock-specific P&L has paid
+little. The bigger lever for this book is the stock-specific edge of the
+forecast itself, not the setting of $$\lambda$$.
+
+What I'd look at next, roughly in order of how much I expect from it:
+
+- **A factor risk model in the optimizer.** Removal does by hand what a
+  covariance $$B\Omega_fB'+\Omega_\epsilon$$ would do inside the optimizer. With
+  the six styles in $$\Omega_f$$, style risk is priced directly, and the real
+  question becomes whether removal still adds anything on top.
+- **Treating styles separately.** Not all style is unintended. The
+  low-volatility tilt comes from the target, and momentum accounts for much of
+  what removal gains. Choosing per style what to remove, and keeping the bets the book is
+  meant to make, is a sharper tool than one $$\lambda$$ for all six.
+- **A style budget instead of a fixed share.** The style share of the forecast
+  moves over time. Removing just enough to keep it under a set level would act
+  harder when style dominates and leave the forecast alone when it doesn't.
+- **Smoother style estimates.** The daily $$\hat x$$ are noisy. Averaging them
+  over a few weeks should give back part of the extra turnover.
+- **Removing style from the target.** Training the Ridge on a style-neutral
+  target, instead of cleaning its output, would stop it spending capacity on
+  style it is going to lose anyway.
+
+All but the last work on the existing forecast, so they're cheap to try. The
+real test is the years ahead, and a quarter removal is a reasonable default
+while that evidence comes in.
 
 ## References
 
