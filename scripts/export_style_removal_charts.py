@@ -22,7 +22,7 @@ PCA = (("pca25", 25), ("pca50", 50))
 def palette(dark: bool) -> dict[str, str]:
     return {"bg": "#0d1117" if dark else "#ffffff", "ink": "#e4e7ea" if dark else "#25313a",
             "muted": "#9ba5af" if dark else "#59636e", "grid": "#37414a" if dark else "#e2e6e9",
-            "base": "#6e7681" if dark else "#a3acb5", "style": "#3987e5" if dark else "#2a78d6",
+            "base": "#6e7681" if dark else "#a3acb5", "style": "#3987e5" if dark else "#2a78d6", "si": "#9085e9" if dark else "#7447c9",
             "style50": "#a8891a" if dark else "#b58900", "pca": "#2aa3c4" if dark else "#0e8fad",
             "other": "#4b565f" if dark else "#d3d9de"}
 
@@ -190,16 +190,21 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
                 r = table[(arm, key)]
                 ax.vlines(x + 0.22, r["lo"], r["hi"], color=c["pca"], lw=1.6, zorder=2)
                 ax.plot(x + 0.22, r["delta"], "D", ms=6, mfc=c["bg"], mec=c["pca"], mew=1.5, zorder=3)
+            r = table[("si25", key)]
+            ax.vlines(-0.22, r["lo"], r["hi"], color=c["si"], lw=1.8, zorder=2)
+            ax.plot(-0.22, r["delta"], "s", ms=6.5, color=c["si"], zorder=3)
             ax.set_xlim(-0.5, 3.5); ax.set_xticks(range(4), ["25%", "50%", "75%", "100%"])
             ax.set_ylim(-1.45, 0.85); ax.set_yticks([-1.0, -0.5, 0, 0.5])
             ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
-        axes[0].text(0.22, table[("pca25", "early")]["hi"] + 0.07, "PCA", ha="center", va="bottom", fontsize=9.5, color=c["pca"])
+        axes[0].text(0.22, table[("pca25", "early")]["lo"] - 0.07, "PCA", ha="center", va="top", fontsize=9.5, color=c["pca"])
+        axes[0].text(-0.22, table[("si25", "early")]["hi"] + 0.07, "SI", ha="center", va="bottom", fontsize=9.5, color=c["si"])
         fig.text(0.0 if mobile else 0.125, 0.99 if mobile else 1.0, "Net Sharpe difference against no removal, 95% interval",
                  fontsize=11, color=c["ink"], va="bottom")
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
-ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%", "size", "style50"), ("style75", "Style 75%", "cash", "pca"))
+ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%", "size", "style50"),
+              ("si25", "25% + SI", "hedged", "si"), ("pca50", "PCA 50%", "cash", "pca"))
 
 
 def gap_series() -> tuple[list[str], list[dict]]:

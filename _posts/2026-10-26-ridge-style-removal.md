@@ -28,7 +28,8 @@ the Sharpe ratio, but the gain is an early-history result: from 2019 the point
 estimates turn negative at every strength, mostly in 2021 and 2024–2026, and no
 later difference is distinguishable from zero. A statistical alternative
 (principal components) is weaker, and a portfolio-level limit I tried was behind
-forecast removal.
+forecast removal. Adding lagged short interest to the removal regression does best
+of the variants I tried, and it fades as well.
 
 Figure 1 shows where the removal sits. The forecast is split on each date into a
 sector part, a style part and a stock-specific remainder, a share of the style
@@ -190,19 +191,32 @@ paid, so I read them as a trade-off and not as an optimum.
 
 ## Removal takes out a share of the fitted style part
 
-Each date I regress the forecast on sector dummies and the six style exposures,
-subtract a share $$\lambda$$ of the fitted style part, keep the sector part and
-leave the remainder as it is:
+On each date I take the cross-section of the Ridge forecast and regress it on
+sector dummies and six style exposures: beta, residual volatility, momentum, size,
+liquidity and short-term reversal, each standardized across stocks that day. The
+regression is weighted by the square root of market capitalization, which keeps
+large stocks influential without letting a few dominate. I subtract a share
+$$\lambda$$ of the fitted style part, keep the sector part, and leave the
+remainder as it is:
 
 $$
 y'_i=y_i-\lambda\sum_{k\in\text{styles}}\hat\beta_k\,x_{ik}.
 $$
 
 The adjusted scores then go through selection and the optimizer exactly as
-before; I don't re-rank. This removes the style part from the forecast, after
-prediction; removing it from the training target is a different intervention.
-The Numerai and Paleologo rule is $$\lambda=1$$. I run
-$$\lambda=0.25,\,0.5,\,0.75$$ and $$1$$ and compare each with no removal.
+before; I leave the forecast in its native units and do not re-rank. Keeping the
+sector part matters: the optimizer already limits sector exposure, and the sector
+part carries almost none of the forecast's variance (about 4%). This removes the
+style part from the forecast, after prediction. Removing it from the training
+target is a different intervention. The Numerai and Paleologo rule is
+$$\lambda=1$$. I run $$\lambda=0.25,\,0.5,\,0.75$$ and $$1$$ and compare each
+with no removal.
+
+The choice of styles is not neutral. At 50% removal, leaving residual volatility
+out of the removal basis changes little (−0.02 Sharpe, interval including zero),
+while leaving momentum out costs −0.10 [−0.21, +0.01] and raises volatility by
+0.5 points. Momentum is the style whose removal matters most for risk in this
+book, and dropping a style that pays does not improve on the six-style basis.
 
 $$\lambda$$ is a bias–variance dial. Subtracting the style part gives up
 whatever information it carries, which is the bias. In exchange the forecast's
@@ -228,10 +242,10 @@ variance falls from 55 to 46, and realized volatility falls from 8.9% to 7.3%
 
 Table 3 reports the full history. Sharpe rises to 1.38 at 50% and 1.41 at 75%,
 then falls back to 1.20 at 100%, where volatility is lowest but the return has
-dropped to 8.8%. Only the 50% gain has an interval clear of zero, +0.19
+dropped to 8.8%. Among the strengths only the 50% gain has an interval clear of zero, +0.19
 [+0.02, +0.36], and it is the best of the strengths and PCA variants compared;
-adjusting for those with a max-t bootstrap gives a p-value of about 0.05–0.1,
-depending on which variants count. The 25% gain of +0.07 [−0.01, +0.16] and the 75% gain of +0.22
+adjusting for all the variants in the table with a max-t bootstrap gives a p-value
+of about 0.09. The 25% gain of +0.07 [−0.01, +0.16] and the 75% gain of +0.22
 [−0.06, +0.47] do not, and the 100% result is zero with an interval of ±0.4.
 
 <table class="research-table comparison-table compact-table">
@@ -247,6 +261,7 @@ depending on which variants count. The 25% gain of +0.07 [−0.01, +0.16] and th
     <tr><th scope="row">Style 100%</th><td>1.20</td><td>0.00 [−0.39, +0.40]</td><td>8.8%</td><td>7.29%</td><td>−15.5%</td><td>30.2x</td><td>+0.03 / −0.19 / +0.15</td></tr>
     <tr><th scope="row">PCA, 10 factors, 25%</th><td>1.19</td><td>−0.01 [−0.08, +0.07]</td><td>10.4%</td><td>8.67%</td><td>−21.5%</td><td>25.6x</td><td>+0.03 / −0.04 / −0.01</td></tr>
     <tr><th scope="row">PCA, 10 factors, 50%</th><td>1.23</td><td>+0.04 [−0.12, +0.19]</td><td>10.5%</td><td>8.38%</td><td>−19.9%</td><td>26.4x</td><td>+0.03 / −0.01 / +0.08</td></tr>
+    <tr><th scope="row">Style 25% + short interest</th><td>1.34</td><td>+0.15 [+0.06, +0.24]</td><td>12.0%</td><td>8.71%</td><td>−18.1%</td><td>26.0x</td><td>+0.12 / +0.08 / +0.25</td></tr>
   </tbody>
 </table>
 
@@ -301,10 +316,10 @@ change from the early period is clear at 50% (−0.43 [−0.78, −0.15]) and 75
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/delta-sharpe" mobile="/assets/ridge-style-removal/delta-sharpe_mobile" alt="Net Sharpe difference against no removal by strength with 95% intervals: clearly positive for 25 to 75 percent before 2019, and intervals spanning zero with negative point estimates from 2019." version="1" %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Before 2019 the gain is clear for 25–75%; from 2019 no difference is.</strong> Net Sharpe difference against no removal, mean of three schedules, with paired 120-session block-bootstrap 95% intervals. Diamonds are the PCA variants at 25% and 50%.</p>
+<p class="figure-caption"><strong>Figure 4: Before 2019 the gain is clear for 25–75%; from 2019 no difference is.</strong> Net Sharpe difference against no removal, mean of three schedules, with paired 120-session block-bootstrap 95% intervals. The square is 25% removal plus short interest (SI) and the diamonds are the PCA variants at 25% and 50%.</p>
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 4: Removal up to 75% helps in every subperiod before 2019 and is lower from 2019.</strong> Difference in net Sharpe ratio against no removal by subperiod, mean of three schedules.</caption>
+  <caption><strong>Table 4: Style removal up to 75% helps in every subperiod before 2019 and is lower from 2019.</strong> Difference in net Sharpe ratio against no removal by subperiod, mean of three schedules.</caption>
   <thead>
     <tr><th>Removal</th><th>1999–2003</th><th>2004–2008</th><th>2009–2013</th><th>2014–2018</th><th>2019–2026</th></tr>
   </thead>
@@ -313,6 +328,9 @@ change from the early period is clear at 50% (−0.43 [−0.78, −0.15]) and 75
     <tr><th scope="row">Style 50%</th><td>+0.23</td><td>+0.23</td><td>+0.50</td><td>+0.35</td><td>−0.11</td></tr>
     <tr><th scope="row">Style 75%</th><td>+0.35</td><td>+0.26</td><td>+0.49</td><td>+0.47</td><td>−0.18</td></tr>
     <tr><th scope="row">Style 100%</th><td>+0.38</td><td>−0.03</td><td>+0.34</td><td>+0.16</td><td>−0.54</td></tr>
+    <tr><th scope="row">PCA 25%</th><td>−0.02</td><td>−0.12</td><td>+0.11</td><td>−0.03</td><td>−0.01</td></tr>
+    <tr><th scope="row">PCA 50%</th><td>−0.03</td><td>−0.23</td><td>+0.41</td><td>−0.13</td><td>+0.09</td></tr>
+    <tr><th scope="row">25% + short interest</th><td>+0.17</td><td>+0.22</td><td>+0.22</td><td>+0.22</td><td>+0.02</td></tr>
   </tbody>
 </table>
 
@@ -340,17 +358,89 @@ and 75 short names and sized by the optimizer, and I have not separated which of
 those two steps produces it.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/cumulative-gap.json?v=2" base="/assets/ridge-style-removal/cumulative-gap" mobile="/assets/ridge-style-removal/cumulative-gap_mobile" version="2" label="Cumulative net return of style 25%, 50% and 75% against no removal, 1999 to April 2026, with 2019 onward shaded." %}
+  {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/cumulative-gap.json?v=3" base="/assets/ridge-style-removal/cumulative-gap" mobile="/assets/ridge-style-removal/cumulative-gap_mobile" version="3" label="Cumulative net return of style 25%, style 50%, 25% plus short interest and PCA 50% against no removal, 1999 to April 2026, with 2019 onward shaded." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: Most of the accumulated gain was in by 2019, and part of it was given back.</strong> Cumulative daily net return difference against no removal, mean of three schedules, in points of capital. Shaded: 2019 onward.</p>
+<p class="figure-caption"><strong>Figure 5: Most of the accumulated gain was in by 2019, and part of it was given back.</strong> Cumulative daily net return difference against no removal, mean of three schedules, in points of capital. SI is lagged short interest added to the 25% removal. PCA 50% lowers volatility as much as style 50%, so its lower cumulative return is not by itself worse on Sharpe. Shaded: 2019 onward.</p>
 
 Figure 5 shows what the choice of strength cost. A 50% removal was ahead by about
 38 points of capital at the end of 2018, peaked near 40 in February 2019 and ends
 the sample at 25. The 25% removal was ahead by 14 at the end of 2018, peaked at 16
-in February 2020 and ends at 11; the 75% removal peaked at 37 in June 2011 and
-ends at 9. By hit rate no strength is more consistent: 25% gains in 17 of 28
-calendar years, 50% in 19 and 75% in 15. What differs is the shape of the regret.
-25% earns 37% of the 50% gain before 2019 and takes 16% of its loss since.
+in February 2020 and ends at 11. The short-interest variant was ahead by 29 at the
+end of 2018, peaked at 34 in 2023 and ends at 29, so it gave back almost nothing,
+and PCA 50% sits below zero for most of the sample, ending at −9 points. By hit
+rate no strength is more consistent: 25% gains in 17 of 28 calendar years, 50% in
+19 and 75% in 15. What differs is the shape of the regret. 25% earns 37% of the 50%
+gain before 2019 and takes 16% of its loss since.
+
+## Adding short interest to the removal helps more and still fades
+
+One variant adds a seventh column to the removal regression: the log ratio of
+short interest to trading volume. Short interest is reported about twice a month
+and published roughly eight business days after its settlement date, so I use it
+lagged 21 sessions, which puts every value after its publication. Everything else
+is as in plain 25% removal. I found it by trying additions to the removal basis,
+about 28 arms in the study, so it is a lead and not a result.
+
+Its Sharpe ratio is 1.34, +0.15 [+0.06, +0.24] against no removal and +0.07
+[+0.04, +0.11] against plain 25%, positive on all three schedules (+0.12, +0.08
+and +0.25 against no removal). It does this at the same volatility as plain 25%,
+8.71%, with a shallower maximum drawdown than either (−18.1% against −18.7% with no
+removal and −19.5% at plain 25%) and one more turn of turnover (26.0x). Adjusting
+for all the Ridge variants in Table 3 with a max-t bootstrap gives p ≈ 0.002 for
+this arm, against 0.09 for the 50% removal; a wider family of ten Ridge arms in
+the study gives 0.006–0.008. At matched volatility its return is 1.3 points a
+year higher over the full history, 1.7 before 2019 and 0.2 since.
+
+Over time it looks like the other variants with a smaller fade. Before 2019 it
+adds between +0.17 and +0.22 in every block, +0.21 [+0.11, +0.32] over 1999–2018,
+and it is ahead of plain 25% in every block. From 2019 it is +0.02
+[−0.16, +0.15]: +0.10 in 2019–2023 and −0.15 in 2024–2026, with its worst years
+against no removal in 2021 (−3.0 points) and 2025 (−4.0). The change from the
+early period is −0.18 [−0.39, −0.03], so the fade is real here too. Against plain
+25% it stays ahead since 2019, by +0.04 [−0.04, +0.10], which is not
+distinguishable from zero.
+
+Why it works in this book is only partly understood. Four facts are solid. The
+book is a bet against heavily shorted stocks: its short leg holds names at the 74th
+percentile of the short-interest ratio on average and its long leg at the 29th.
+The change is small: 93% of notional overlaps with plain 25%, and the short leg's
+average short-interest percentile moves from 0.75 to 0.73 and the long leg's from
+0.29 to 0.30. The gain is stock-specific and not factor return: the factor share
+of book variance is unchanged (28.5% against 28.2%) while residual return is 9.2%
+against 8.5%. And both legs contribute: against plain 25% the long leg adds 0.27
+points a year and the short leg 0.39, and since 2019 the whole edge is on the
+short leg (+0.35 against +0.04). That is also where plain removal loses after
+2019, −0.69 points a year against no removal, so short interest recovers about
+half of that loss. A study check finds that tail days and about ten names carry
+much of the edge over plain 25%.
+
+I have not isolated the mechanism. Two readings fit. Heavily shorted stocks carry
+squeeze and borrow risk that the forecast does not price, and trimming the part of
+the forecast aligned with short interest reduces that exposure at little cost.
+Or a Ridge fit learns a noisy short-interest loading from the same history, and
+projecting part of it out regularizes the forecast. The attribution articles found
+the book earns about 2.2 points a year from the short-interest theme, 3.2 since
+2022, so the gain cannot be that the tilt does not pay. If either reading is
+right, the part removed paid less than it cost, and the evidence cannot yet
+separate them.
+
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 5: The short-interest variant would not help in several situations, and the evidence covers few of them.</strong> What would break it and what is known here.</caption>
+  <thead><tr><th>Situation</th><th>Why it matters</th><th>Evidence here</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Short interest is stale, mis-dated or unavailable</th><td>The regression removes noise, or a look-ahead inflates the result</td><td>An early build used settlement dates; the lagged version is the one reported</td></tr>
+    <tr><th scope="row">The short-interest lean pays</th><td>Trimming it gives up return</td><td>Attribution shows the theme paying 3.2 points a year since 2022; the edge over plain 25% is +0.04 since 2019</td></tr>
+    <tr><th scope="row">The forecast has no such lean</th><td>Nothing to remove</td><td>Not tested</td></tr>
+    <tr><th scope="row">Another universe or market, or another reporting regime</th><td>Short-interest dynamics and borrow costs differ</td><td>Not tested</td></tr>
+    <tr><th scope="row">The edge rests on a few names and tail days</th><td>A different sample of stocks may not repeat it</td><td>About ten names and tail days carry much of the edge over plain 25%</td></tr>
+    <tr><th scope="row">Selection and shared history</th><td>The best of many additions overstates what to expect</td><td>One of about 28 arms; same data and period throughout; no held-out universe or period</td></tr>
+  </tbody>
+</table>
+
+The last row is the one that matters most. The variant is the strongest in the
+study and survives a family-wise correction over the arms I compared, and it was
+still designed after looking at results on this history. I treat it as the lead to
+confirm on data it has not seen.
 
 ## Statistical factors are a weaker substitute
 
@@ -358,7 +448,7 @@ Named styles require choosing a factor model, and a reasonable objection is
 that the statistical alternative makes no such choice. I replaced the styles
 with the first 10 principal components of the trailing 252 days of stock
 returns, refit every 21 days, and removed 25% and 50% of their fitted part
-the same way. The components only start in early 2002, so before then the PCA
+the same way (the lines for PCA 50% in Figure 5 and the squares and diamonds in Figure 4). The components only start in early 2002, so before then the PCA
 books equal no removal, and equal $$\lambda$$ removes different amounts of
 forecast variance, so the comparison is between settings and not between matched
 removals.
@@ -406,6 +496,49 @@ to 0.35 and 0.28 for momentum, from 0.27 to 0.23 and 0.16 for size, and from
 0.26 to 0.21 and 0.14 for residual volatility, as removal goes from none to 25%
 and 50%.
 
+## Related work removes style at other points, and each choice has a price
+
+Other work removes style or factor exposure at different points of the pipeline,
+and the evidence here does not rank them.
+
+**In the predictors.** Blitz, Huij and Martens rank stocks on residual returns
+instead of total returns for momentum, which lowers the strategy's time-varying
+exposure to the Fama–French factors; they report risk-adjusted profits about
+double those of total-return momentum, and steadier over time.[^blitz] The same
+logic applied to every predictor would orthogonalize them to the styles before the
+model sees them. The price is that several of the 80 predictors are the styles
+themselves, so the step would delete signal along with exposure.
+
+**In the target.** Recent machine-learning alpha work regresses the training target
+on Barra style factors and trains on the residual, so that the model finds factors
+with low correlation to the styles.[^alphanet] It needs a refit for every strength
+and it fixes the strength at training time. I did not test it for Ridge.
+
+**In the forecast.** This article, Paleologo's alpha sizing and Numerai's
+neutralization proportion. It is cheap, adjustable and easy to attribute, and it is
+linear: it removes everything correlated with the styles, including real
+stock-specific information.
+
+**In the optimizer.** Clarke, de Silva and Thorley show that constraints reduce how
+much of a signal reaches the weights, with practical transfer coefficients between
+0.3 and 0.8.[^clarke] The infeasible style caps here are the extreme case. A softer
+design, a penalty on style exposure or a risk model with explicit style factors,
+would price the bets directly. I have not tested either, and the second could
+capture part of the gain reported here.
+
+**On the finished book.** Daniel, Mota, Rottke and Santos hedge the unpriced risk
+of characteristic portfolios using covariance estimated from past returns, and the
+squared Sharpe ratio of the optimal combination of five characteristic portfolios
+rises from 1.16 to 2.16.[^daniel] The overlay here was a simple style-beta limit
+and lost to forecast removal by 0.13 Sharpe; a hedge built from estimated
+covariance is a different and stronger test.
+
+**With the strength tied to the state.** The
+[momentum-crash article]({% link _posts/2026-09-30-momentum-crashes-ridge.md %})
+removes momentum only when it is risky, following volatility-managed portfolio
+work. It helped in development and lost in the 2022–2026 test, so a state-dependent
+strength trades a smaller average removal for a dependence on a slow signal.
+
 ## Light removal costs little, and the case for more is early history
 
 If I removed anything from a style-heavy linear forecast it would be a quarter of
@@ -418,14 +551,19 @@ change, so its paired difference has the least room to swing.
 
 Stronger removal buys more Sharpe, but it is an early-history result. The 50%
 gain has an interval clear of zero on its own, and it is the best of the strengths
-and PCA variants compared, so adjusting for them leaves a p-value of about
-0.05–0.1. It also reverses: the change from before 2019 is clear at 50% and 75%,
-the losses sit mostly in 2021 and 2024–2026, and nothing in this study says which
-regime comes next. I do not read the peak at 75% as an optimum. Full removal, the
-first rule in the book and in Numerai's scoring, adds no Sharpe at all here: at
-100% it is 1.20, the same as no removal.
+and PCA variants compared, so adjusting for them leaves a p-value of about 0.09. It
+also reverses: the change from before 2019 is clear at 50% and 75%, the losses sit
+mostly in 2021 and 2024–2026, and nothing in this study says which regime comes
+next. I do not read the peak at 75% as an optimum. Full removal, the first rule in
+the book and in Numerai's scoring, adds no Sharpe at all here: at 100% it is 1.20,
+the same as no removal.
 
-Three limits come with that choice. The results describe a risk model that
+Adding lagged short interest to the 25% removal is the strongest variant. It beats
+plain 25% in every period, keeps most of its gain through 2023 and still fades,
+and it is the best of many additions found on this history, so I hold it as a lead
+and not as a conclusion.
+
+Three limits come with these choices. The results describe a risk model that
 shrinks correlations and a 1.18 volatility multiplier; I have not repeated them at
 the 1.55 calibration of the joint-sizing article, and a model that priced style
 risk directly could close part of the gap that removal closes here. The strengths
@@ -450,6 +588,16 @@ Numerai,
 [*Feature Neutral Correlation (FNC)*](https://docs.numer.ai/numerai-tournament/scoring/feature-neutral-correlation),
 Numerai Docs.
 
+David Blitz, Joop Huij and Martin Martens, *Residual Momentum*, Journal of Empirical Finance 18, 2011, 506–521.
+
+Roger Clarke, Harindra de Silva and Steven Thorley,
+*Portfolio Constraints and the Fundamental Law of Active Management*,
+Financial Analysts Journal 58(5), 2002, 48–66.
+
+Kent Daniel, Lira Mota, Simon Rottke and Tano Santos,
+[*The Cross-Section of Risk and Returns*](https://doi.org/10.1093/rfs/hhaa021),
+Review of Financial Studies 33(5), 2020, 1927–1979.
+
 Mark Horvath, Dominik Zvara and Mihaly Berndt,
 [*Constructing Portfolios from Published Equity Research*](https://www.msci.com/research-and-insights/blog-post/constructing-portfolios-from-published-equity-research),
 MSCI Research, 7 October 2026.
@@ -457,4 +605,8 @@ MSCI Research, 7 October 2026.
 [^book]: Paleologo (2021), Chapter 6, Procedure 6.3; Chapter 8 uses the same factor decomposition to separate style from idiosyncratic P&L.
 [^numerai]: Numerai's scoring documentation defines feature-neutral correlation with full removal; the forum posts describe a tunable proportion.
 [^msci]: Mean post-publication information ratio across the signals in the MSCI study; the style-neutral version orthogonalizes eight style factors, with no strength given.
+[^blitz]: Blitz, Huij and Martens (2011) regress each stock's returns on three factors over 36 months and rank on the residuals.
+[^alphanet]: AlphaNetV4 (arXiv 2411.04409) puts the Barra-residual target in its loss function.
+[^clarke]: Clarke, de Silva and Thorley (2002); the transfer coefficient is 1 when the signal reaches the weights unconstrained.
+[^daniel]: Daniel, Mota, Rottke and Santos (2020), five Fama–French characteristic portfolios; the figures are from the authors' abstract.
 [^vt]: With each book scaled to constant trailing realized volatility, the Sharpe ordering of none, 25% and 50% is unchanged in both periods (1.34, 1.47 and 1.69 before 2019).
