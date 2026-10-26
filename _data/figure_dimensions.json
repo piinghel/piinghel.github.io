@@ -166,5 +166,45 @@
   "/assets/rebalancing-luck/ridge-paths_mobile": {
     "width": 374,
     "height": 302
+  },
+  "/assets/ridge-style-removal/cumulative-gap": {
+    "width": 568,
+    "height": 266
+  },
+  "/assets/ridge-style-removal/cumulative-gap_mobile": {
+    "width": 337,
+    "height": 271
+  },
+  "/assets/ridge-style-removal/forecast-style-share": {
+    "width": 575,
+    "height": 243
+  },
+  "/assets/ridge-style-removal/forecast-style-share_mobile": {
+    "width": 295,
+    "height": 248
+  },
+  "/assets/ridge-style-removal/removal-diagram": {
+    "width": 542,
+    "height": 267
+  },
+  "/assets/ridge-style-removal/removal-diagram_mobile": {
+    "width": 263,
+    "height": 428
+  },
+  "/assets/ridge-style-removal/strength-curve": {
+    "width": 495,
+    "height": 254
+  },
+  "/assets/ridge-style-removal/strength-curve_mobile": {
+    "width": 282,
+    "height": 259
+  },
+  "/assets/ridge-style-removal/variance-split": {
+    "width": 414,
+    "height": 238
+  },
+  "/assets/ridge-style-removal/variance-split_mobile": {
+    "width": 343,
+    "height": 243
   }
 }

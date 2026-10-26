@@ -6,7 +6,7 @@ description: "How stock characteristics and market exposure contribute to the po
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-10-03
+last_modified_at: 2026-10-26
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
@@ -458,6 +458,8 @@ candidate for a controlled comparison, not evidence that reducing its ranking
 weight would improve the portfolio. The low-risk package's recent return is
 too uncertain to establish deterioration. The attribution shows where to look
 in the ranking, and each change needs its own controlled test.
+[Removing Style Bets from a Ridge Forecast]({% link _posts/2026-10-26-ridge-style-removal.md %})
+is one such test, for the style content of the forecast itself.
 
 ## References
 

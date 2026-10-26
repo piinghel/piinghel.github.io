@@ -6,7 +6,7 @@ description: "Three ways to make a Ridge strategy's momentum exposure depend on 
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
-last_modified_at: 2026-10-03
+last_modified_at: 2026-10-26
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -197,6 +197,9 @@ It's one-sided. When the scores lean toward winners ($$\beta_t>0$$),
 $$s_t=1$$ removes that linear lean completely; a lean toward losers is left
 alone. I leave the remaining score component unchanged, and the optimizer sizes
 the adjusted scores exactly as before.
+[Removing Style Bets from a Ridge Forecast]({% link _posts/2026-10-26-ridge-style-removal.md %})
+applies the same projection to six styles at a fixed share, not a
+state-dependent one.
 
 **Learned interactions.** Here I refit the regression with the same target,
 predictors, penalty and walk-forward folds as the baseline, plus fifteen extra
