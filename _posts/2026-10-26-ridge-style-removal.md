@@ -65,29 +65,43 @@ traded, from January 1999 to April 2026. Intervals are paired 120-session
 block-bootstrap 95% intervals against no removal. I judge each variant on its
 net Sharpe ratio: a lower return is fine if volatility falls by more.
 
-## The style part comes from a regression on each date
+## A fundamental factor model splits the forecast into style and the rest
 
-On each date I take the Ridge forecasts for about 1,000 stocks and regress them
-on eleven sector indicators and six style exposures:
+The tool is the one a fundamental risk model is built on, used on the forecast
+instead of on returns. On each date I build a loadings matrix $$B$$ for the
+roughly 1,000 stocks in the universe: eleven sector loadings, 1 for the stock's
+sector and 0 otherwise (BICS level-one sectors, with the classification held
+fixed), and six style loadings (Table 1). Then I regress the forecast on it:
 
 $$
-y_i=\sum_{s}\gamma_s D_{is}+\sum_{k}\beta_k x_{ik}+e_i .
+y = Bx + \epsilon .
 $$
 
-$$D_{is}$$ is 1 when stock $$i$$ is in sector $$s$$, and the sector indicators
-also carry the intercept. $$x_{ik}$$ is the stock's exposure to style $$k$$
-(Table 1). Each exposure uses prices up to that day's close and is standardized
-across stocks the same way: winsorized at five median absolute deviations,
-centred so that the capitalization-weighted average is zero, and scaled to an
-equal-weighted standard deviation of one. If one of the first five styles is
-missing, the stock gets the capitalization-weighted average.
+This is Paleologo's Procedure 6.3 with the forecast in place of the alpha
+vector. $$x$$ holds the forecast's exposure to each sector and style that day,
+and $$\epsilon$$ is the part no factor explains. A risk model runs the same
+regression with returns on the left, and then $$x$$ is the day's factor returns;
+the attribution articles do exactly that for the book's P&L.
+
+How the loadings are estimated matters. Each raw characteristic in Table 1 uses
+data up to that day's close. Then, on every date and across all stocks, each
+style is put on a common scale in four steps:
+
+1. Winsorize at five median absolute deviations from the median (the MAD scaled by 1.4826, so it matches a standard deviation for normal data).
+2. Fill a missing value of the first five styles with the capitalization-weighted average.
+3. Centre it so that the capitalization-weighted average is zero, which means the cap-weighted market has no style exposure.
+4. Scale it to an equal-weighted standard deviation of one, so one unit is one cross-sectional standard deviation for every style.
+
+Residual volatility gets one more step: it is regressed on beta and size and only
+the residual is kept, because volatile stocks also tend to be small and high-beta,
+and without this it would partly duplicate those two.
 
 <table class="research-table settings-table">
-  <caption><strong>Table 1: The six styles.</strong> Each is measured per stock on each date and then standardized across stocks.</caption>
-  <thead><tr><th>Style</th><th>Measure</th><th>Window</th></tr></thead>
+  <caption><strong>Table 1: The six style loadings.</strong> Raw characteristic per stock and date, before standardization.</caption>
+  <thead><tr><th>Style</th><th>Raw characteristic</th><th>Window</th></tr></thead>
   <tbody>
-    <tr><th scope="row">Beta</th><td>Slope of the stock's daily returns on the Russell 1000, shrunk toward 1 by its sampling variance (prior variance 0.25), clipped at ±4</td><td>252 sessions, at least 126</td></tr>
-    <tr><th scope="row">Residual volatility</th><td>Log standard deviation of that regression's residuals, made orthogonal to beta and size</td><td>252 sessions</td></tr>
+    <tr><th scope="row">Beta</th><td>Slope of the stock's daily returns on the Russell 1000, shrunk toward 1 in proportion to its sampling variance (prior variance 0.25), clipped at ±4</td><td>252 sessions, at least 126</td></tr>
+    <tr><th scope="row">Residual volatility</th><td>Log standard deviation of that regression's residuals</td><td>252 sessions</td></tr>
     <tr><th scope="row">Momentum</th><td>Sum of daily log returns, leaving out the latest 21 sessions</td><td>252 sessions</td></tr>
     <tr><th scope="row">Size</th><td>Log market capitalization</td><td>That day</td></tr>
     <tr><th scope="row">Liquidity</th><td>Log of the median daily dollar volume divided by market capitalization</td><td>63 sessions</td></tr>
@@ -95,14 +109,18 @@ missing, the stock gets the capitalization-weighted average.
   </tbody>
 </table>
 
-The regression is weighted by the square root of market capitalization, as in the
-attribution articles, so large stocks count more without a few of them taking
-over. Each $$\hat\beta_k$$ is how much the forecast leans toward style $$k$$ that
-day, holding sectors and the other styles fixed. Removal subtracts a share of
-that lean and leaves the sector part and the rest of the forecast alone:
+The regression is weighted least squares with weights equal to the square root of
+market capitalization. The ideal weights would be the inverse of each stock's
+idiosyncratic variance; that variance falls with size, and the square root of
+market cap is the usual proxy for it.[^wls] Because every stock has exactly one
+sector loading of 1, the sector columns together act as the intercept and no
+separate market column is needed.
+
+Removal subtracts a share $$\lambda$$ of the fitted style part and keeps the
+sector part and the residual:
 
 $$
-y'_i=y_i-\lambda\sum_{k}\hat\beta_k\,x_{ik}.
+y'_i=y_i-\lambda\sum_{k\in\text{styles}}B_{ik}\,\hat x_k .
 $$
 
 The adjusted forecasts go into the optimizer as they are, without re-ranking. I
@@ -122,16 +140,35 @@ which naturally favours low-volatility stocks.
 </div>
 <p class="figure-caption"><strong>Figure 2: Style is about half of the Ridge forecast.</strong> Share of each year's cross-sectional forecast variance. The three parts add to 100%: style, the stock-specific remainder, and a thin band for sectors plus the overlap between the sector and style parts, which are fitted together and are not perfectly independent.</p>
 
-## The optimizer's risk model discounts style risk
+## The optimizer's risk model is a shrunk covariance, not a factor model
 
-The optimizer sees risk through $$\Sigma=DCD$$: each stock's 21-session
-volatility times the multiplier in $$D$$, and correlations over 756 sessions
-shrunk halfway to zero in $$C$$. Shrinking correlations makes the optimizer more
-robust, but it also understates common risk, because halving every correlation
-halves their average. With the 1.18 multiplier, that is why this book realizes
-8.9% volatility against its 7% target. The level itself doesn't matter for
-Sharpe. What matters is the mix: style bets carry exactly the common risk that
-shrinkage discounts, so they get through the optimizer a little too cheaply.
+The optimizer needs a covariance matrix to size positions, and it does not use a
+factor model for it. It uses a sample covariance estimated directly from stock
+returns:
+
+$$
+\Sigma = D\,C\,D,\qquad C=\tfrac{1}{2}\hat R+\tfrac{1}{2}I .
+$$
+
+$$D$$ holds each stock's volatility: the sample standard deviation of its last 21
+daily returns, floored at 5% a year (20% when there isn't enough history), times
+a multiplier of 1.18. $$\hat R$$ is the correlation matrix of
+volatility-standardized daily returns over the last 756 sessions, with at least
+252 observations per pair, daily returns capped at ±30% and negative eigenvalues
+set to zero. Shrinking it halfway to the identity, as in the
+[joint-sizing article]({% link _posts/2026-08-29-joint-sizing.md %}#covariance-and-risk-forecasts),
+keeps the optimizer from leaning on correlation estimates that are mostly noise.
+
+A factor risk model would write the covariance as
+$$B\Omega_fB'+\Omega_\epsilon$$, with the style risk in the factor covariance
+$$\Omega_f$$, where it stays however you treat the idiosyncratic part. A shrunk
+sample covariance has no such separation. Halving every correlation also halves
+the correlation that comes from shared styles, so the optimizer sees a book full
+of the same style as less risky than it is. Together with the 1.18 multiplier,
+that is why the book realizes 8.9% volatility against its 7% target. The level
+doesn't matter for Sharpe; the mix does. Style bets get through the optimizer too
+cheaply, and taking part of them out of the forecast does by hand what a factor
+risk model would do inside the optimizer.
 
 This also says how removal should help. It isn't that style is a poor bet; in the
 unadjusted book the style P&L has a Sharpe ratio of 0.93, against 0.49 for the
@@ -256,5 +293,6 @@ Review of Financial Studies 33(5), 2020, 1927–1979.
 [^book]: Paleologo (2021), Chapter 6, Procedure 6.3; Chapter 8 uses the same factor decomposition to separate style from idiosyncratic P&L.
 [^numerai]: See also Numerai's [feature-neutral correlation](https://docs.numer.ai/numerai-tournament/scoring/feature-neutral-correlation).
 [^msci]: Mean post-publication information ratio across the signals; these are neutralized signals, not a model's forecast.
+[^wls]: Paleologo (2021), Appendix 11.1.2; he averages market cap over about 21 days, here it is the day's value.
 [^clarke]: Their transfer coefficient is 1 when the signal reaches the weights unconstrained; constrained managers typically sit between 0.3 and 0.8.
 [^daniel]: The squared Sharpe ratio of their five characteristic portfolios rises from 1.16 to 2.16, per the authors' abstract.
