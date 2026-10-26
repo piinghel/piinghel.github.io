@@ -1,6 +1,6 @@
 """Figures for the Ridge style-removal article.
 
-Reads the staged aggregates in data/ridge_style_removal_blog_20261026 (see its README) and writes
+Reads the evidence of projects/ridge_style_removal (see its README) and writes
 static light/dark/mobile SVGs plus the interactive cumulative-gap chart into assets/ridge-style-removal.
 Statistics are computed per rebalance calendar and then averaged; only portfolio aggregates are exported.
 """
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import polars as pl
 from blog_charts import series, write_chart
 
-DATA = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/data/ridge_style_removal_blog_20261026")
+DATA = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/ridge_style_removal")
 SPLIT_YEAR = 2019
 STRENGTHS = (("none", 0), ("style25", 25), ("style50", 50), ("style75", 75), ("style100", 100))
 PCA = (("pca25", 25), ("pca50", 50))
@@ -33,7 +33,7 @@ def sharpe(frame: pl.DataFrame, arm: str) -> float:
 
 
 def returns() -> pl.DataFrame:
-    return pl.read_parquet(DATA / "derived/daily_net_returns.parquet")
+    return pl.read_parquet(DATA / "outputs/evidence/daily_net_returns.parquet")
 
 
 def save(fig, path: Path, c: dict) -> None:
@@ -146,7 +146,7 @@ def render_shares(out: Path, dark: bool, mobile: bool) -> None:
 def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
     """Net Sharpe difference against no removal by strength, with paired block-bootstrap intervals, before and from 2019."""
     c = palette(dark)
-    table = {(r["arm"], r["period"]): r for r in pl.read_csv(DATA / "derived/delta_sharpe_intervals.csv").iter_rows(named=True)}
+    table = {(r["arm"], r["period"]): r for r in pl.read_csv(DATA / "outputs/evidence/delta_sharpe_intervals.csv").iter_rows(named=True)}
     periods = (("early", "1999\u20132018"), ("late", "2019\u20132026"))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-deltas"}):
@@ -202,7 +202,7 @@ def export_gap_chart(assets: Path) -> None:
     dates, data = gap_series()
     write_chart(assets / "equal-vol-gap.json", dates, data, {"gap": dict(
         kind="performance", series=[s["id"] for s in data], additive=True,
-        unit="Net return vs no removal at equal volatility (points)", statistics=False, zeroReference=True,
+        unit="Points vs no removal, equal volatility", statistics=False, zeroReference=True,
         showWindow=False, dateLabelSpacing=10,
         dateTicks=[dates[0], "2005-01-01", "2010-01-01", "2015-01-01", "2020-01-01", dates[-1]],
         mobileDateTicks=[dates[0], "2005-01-01", "2015-01-01", dates[-1]],

@@ -155,7 +155,7 @@ The 50% removal was 54 points ahead at the end of 2018, peaked at 57 in 2021 and
 ends at 45. Plain 25% gained less and gave back less, ending at 18.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=1" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="1" label="Cumulative net return against no removal at equal volatility for style 25%, style 50%, 25% plus short interest and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
+  {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=2" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="1" label="Cumulative net return against no removal at equal volatility for style 25%, style 50%, 25% plus short interest and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
 </div>
 <p class="figure-caption"><strong>Figure 4: The style gains were made before 2019; short interest kept most of its gain.</strong> Cumulative daily net return difference against no removal, in points of capital, with each variant scaled to the full-period volatility of no removal; mean of three schedules. Shaded: 2019 onward.</p>
 
@@ -217,7 +217,7 @@ removal changes the selection.
 
 ## The earlier articles leave weaknesses that carry over
 
-<table class="research-table comparison-table compact-table">
+<table class="research-table settings-table">
   <caption><strong>Table 2: Each earlier article supplies part of the book and a weakness this result inherits.</strong></caption>
   <thead><tr><th>Article</th><th>What it supplies</th><th>Weakness that carries over</th></tr></thead>
   <tbody>
