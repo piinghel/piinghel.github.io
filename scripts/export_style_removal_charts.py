@@ -167,34 +167,39 @@ def render_variance(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"variance-split{suffix(dark, mobile)}.svg", c)
 
 
-def curve_points(frame: pl.DataFrame) -> dict[str, dict[str, float]]:
-    early = frame.filter(pl.col("date").dt.year() < SPLIT_YEAR)
-    late = frame.filter(pl.col("date").dt.year() >= SPLIT_YEAR)
-    return {arm: {"early": sharpe(early, arm), "late": sharpe(late, arm)} for arm, _ in STRENGTHS + PCA}
-
-
-def render_curve(out: Path, dark: bool, mobile: bool) -> None:
+def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
+    """Net Sharpe difference against no removal by strength, with paired block-bootstrap intervals, before and from 2019."""
     c = palette(dark)
-    points = curve_points(returns())
-    xs = [x for _, x in STRENGTHS]
+    table = {(r["arm"], r["period"]): r for r in pl.read_csv(DATA / "derived/delta_sharpe_intervals.csv").iter_rows(named=True)}
+    periods = (("early", "1999\u20132018"), ("late", "2019\u20132026"))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
-                         "svg.fonttype": "none", "svg.hashsalt": "style-removal-curve"}):
-        fig, ax = plt.subplots(figsize=(4.4, 3.8) if mobile else (8.2, 3.7))
-        fig.set_facecolor(c["bg"]); style(ax, c, mobile)
-        for key, colour in (("early", c["style"]), ("late", c["style50"])):
-            ax.plot(xs, [points[arm][key] for arm, _ in STRENGTHS], color=colour, lw=2.0, marker="o", ms=5.5, zorder=3)
-            ax.plot([x for _, x in PCA], [points[arm][key] for arm, _ in PCA], ls="none", marker="D", ms=6.5,
-                    mfc=c["bg"], mec=c["pca"], mew=1.6, zorder=4)
-        ax.text(104, points["style100"]["early"], "1999–2018", va="center", fontsize=10.5, color=c["style"])
-        ax.text(104, points["style100"]["late"], "2019–2026", va="center", fontsize=10.5, color=c["style50"])
-        ax.text(52, points["pca50"]["early"] - 0.09, "PCA, 10 factors", ha="center", va="top", fontsize=9.5, color=c["pca"])
-        ax.set_xlim(-3, 128 if not mobile else 140); ax.set_xticks(xs, ["None", "25%", "50%", "75%", "100%"])
-        ax.set_ylim(0.3, 1.85); ax.set_yticks([0.4, 0.8, 1.2, 1.6])
-        ax.set_title("Net Sharpe ratio by share of style removed", loc="left", fontsize=11, color=c["ink"], pad=10)
-        save(fig, out / f"strength-curve{suffix(dark, mobile)}.svg", c)
+                         "svg.fonttype": "none", "svg.hashsalt": "style-removal-deltas"}):
+        fig, axes = plt.subplots(2, 1, figsize=(4.4, 5.8), sharey=True, gridspec_kw={"hspace": 0.45}) if mobile else \
+            plt.subplots(1, 2, figsize=(9.4, 3.5), sharey=True, gridspec_kw={"wspace": 0.08})
+        fig.set_facecolor(c["bg"])
+        strengths = (("style25", 0), ("style50", 1), ("style75", 2), ("style100", 3))
+        pca = (("pca25", 0), ("pca50", 1))
+        for ax, (key, title) in zip(axes, periods):
+            style(ax, c, mobile)
+            ax.axhline(0, color=c["ink"], lw=0.8, zorder=1)
+            for arm, x in strengths:
+                r = table[(arm, key)]
+                ax.vlines(x, r["lo"], r["hi"], color=c["style"], lw=2.2, zorder=2)
+                ax.plot(x, r["delta"], "o", ms=7, color=c["style"], zorder=3)
+            for arm, x in pca:
+                r = table[(arm, key)]
+                ax.vlines(x + 0.22, r["lo"], r["hi"], color=c["pca"], lw=1.6, zorder=2)
+                ax.plot(x + 0.22, r["delta"], "D", ms=6, mfc=c["bg"], mec=c["pca"], mew=1.5, zorder=3)
+            ax.set_xlim(-0.5, 3.5); ax.set_xticks(range(4), ["25%", "50%", "75%", "100%"])
+            ax.set_ylim(-1.45, 0.85); ax.set_yticks([-1.0, -0.5, 0, 0.5])
+            ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
+        axes[0].text(0.22, table[("pca25", "early")]["hi"] + 0.07, "PCA", ha="center", va="bottom", fontsize=9.5, color=c["pca"])
+        fig.text(0.0 if mobile else 0.125, 0.99 if mobile else 1.0, "Net Sharpe difference against no removal, 95% interval",
+                 fontsize=11, color=c["ink"], va="bottom")
+        save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
-ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%", "size", "style50"))
+ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%", "size", "style50"), ("style75", "Style 75%", "cash", "pca"))
 
 
 def gap_series() -> tuple[list[str], list[dict]]:
@@ -252,7 +257,7 @@ def export(assets: Path) -> None:
     export_gap_chart(assets)
     for dark in (False, True):
         for mobile in (False, True):
-            for render in (render_diagram, render_shares, render_variance, render_curve, render_gap):
+            for render in (render_diagram, render_shares, render_variance, render_deltas, render_gap):
                 render(assets, dark, mobile)
 
 

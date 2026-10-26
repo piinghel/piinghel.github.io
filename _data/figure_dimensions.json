@@ -175,6 +175,14 @@
     "width": 337,
     "height": 271
   },
+  "/assets/ridge-style-removal/delta-sharpe": {
+    "width": 571,
+    "height": 266
+  },
+  "/assets/ridge-style-removal/delta-sharpe_mobile": {
+    "width": 324,
+    "height": 409
+  },
   "/assets/ridge-style-removal/forecast-style-share": {
     "width": 575,
     "height": 243
@@ -190,14 +198,6 @@
   "/assets/ridge-style-removal/removal-diagram_mobile": {
     "width": 263,
     "height": 428
-  },
-  "/assets/ridge-style-removal/strength-curve": {
-    "width": 495,
-    "height": 254
-  },
-  "/assets/ridge-style-removal/strength-curve_mobile": {
-    "width": 282,
-    "height": 259
   },
   "/assets/ridge-style-removal/variance-split": {
     "width": 414,
