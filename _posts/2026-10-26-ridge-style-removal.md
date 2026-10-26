@@ -71,6 +71,23 @@ Intervals are paired 120-session block-bootstrap 95% intervals against no
 removal. Forecast-level statistics (variance shares, IC, stand-alone Sharpe) are
 daily, gross and use all stocks.
 
+Style can come out at several points of the pipeline (Table 1). I test the
+forecast, because it needs no refit and the strength stays adjustable; the other
+rows mark what the evidence here covers and what it leaves open.
+
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 1: Style can be removed at six points, and this article tests the forecast.</strong> Where the removal acts, what it does, and what the evidence here says.</caption>
+  <thead><tr><th>Where</th><th>What it does</th><th>Evidence here</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Training target</th><td>Residualizes the label on the styles before fitting</td><td>Not tested for Ridge</td></tr>
+    <tr><th scope="row">Input predictors</th><td>Orthogonalizes each feature to the styles</td><td>Not tested; many predictors are styles themselves</td></tr>
+    <tr><th scope="row">Forecast</th><td>Subtracts a share of the fitted style part after prediction</td><td>The subject of this article</td></tr>
+    <tr><th scope="row">Statistical factors</th><td>The same, with principal components in place of styles</td><td>Weaker than styles before 2019</td></tr>
+    <tr><th scope="row">Optimizer risk model</th><td>Prices style risk with explicit factors or a soft penalty</td><td>Not tested</td></tr>
+    <tr><th scope="row">Optimizer caps and overlays</th><td>Limits exposure in the optimizer or on the finished book</td><td>Caps infeasible in April 2009; overlay −0.13 against 25% removal</td></tr>
+  </tbody>
+</table>
+
 ## Half of the forecast is style
 
 On each date I split the forecast's cross-sectional variance into a sector part,
