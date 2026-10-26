@@ -103,7 +103,7 @@ def render_state(out: Path, dark: bool, mobile: bool) -> None:
     series = (("baseline", "Baseline", c["base"]), ("score_overlay", "Score overlay", c["overlay"]))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "momentum-state"}):
-        fig, ax = plt.subplots(figsize=(6.1, 5.2) if mobile else (11.7, 4.5))
+        fig, ax = plt.subplots(figsize=(4.6, 4.8) if mobile else (11.7, 4.5))
         fig.set_facecolor(c["bg"]); ax.set_facecolor(c["bg"])
         width = 0.38 if mobile else 0.36
         for k, (rule, name, colour) in enumerate(series):

@@ -52,7 +52,7 @@ def export(assets: Path) -> None:
         showWindow=False, dateLabelSpacing=10,
         dateTicks=[dates[0], "2005-01-01", "2010-01-01", "2015-01-01", "2020-01-01", dates[-1]],
         mobileDateTicks=[dates[0], "2005-01-01", "2015-01-01", dates[-1]],
-        periodLabels=[dict(date="2000-01-01", text="Training", mobileText="Training", y=.96),
+        periodLabels=[dict(date="2000-01-01", text="Training", mobileText="Training", y=.03),
                       dict(date="2024-03-01", text="Test: 2022–2026", mobileText="Test", y=.03)],
         start=dates[0], marker="2022-01-01", shade=[["2022-01-01", dates[-1]]],
         episodes=[["Development", dates[0], "2021-12-31"], ["Test: 2022–2026", "2021-12-31", dates[-1]]],

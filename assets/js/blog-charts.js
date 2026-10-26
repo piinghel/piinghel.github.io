@@ -339,7 +339,7 @@
               line:{color:color(s),width:s.role==='index'?1.3:1.8,dash:s.dash||'solid'},
               hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}<extra>%{fullData.name}</extra>',...extra};
           }
-          function heading(text,y) {layout.annotations.push({text,x:0,y,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:13,color:t.text}});}
+          function heading(text,y,yshift=0) {layout.annotations.push({text,x:0,y,yshift,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:13,color:t.text}});}
           if(cfg.kind==='grouped-bars') {
             const [metric,title,tickformat,hoverformat]=barMetric;
             layout.height=360;layout.margin.t=65;layout.barmode='group';layout.bargap=.25;
@@ -388,7 +388,7 @@
               layout.yaxis2={domain:[0,.29],anchor:'x',gridcolor:t.grid,zerolinecolor:t.grid,
                 tickformat:cfg.additive?'.0f':cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
               if(cfg.contributionRange&&range[0]===full[0]&&range[1]===full[1])layout.yaxis2.range=cfg.contributionRange;
-              heading(cfg.drawdown?(cfg.additive?'Drawdown (points)':'Drawdown (%)'):'Linked book contributions (pp)',.29);
+              heading(cfg.drawdown?(cfg.additive?'Drawdown (points)':'Drawdown (%)'):'Linked book contributions (pp)',.29,8);
             }
             for(const s of series) {
               if(s.contribution) {
@@ -407,9 +407,10 @@
             }
             // Optional direct labels: each visible line named at its last point, nudged apart when close.
             if(cfg.directLabels) {
-              layout.margin.r=mobile?92:128;
               const ends=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true&&tr.y.length)
                 .map(tr=>({x:tr.x.at(-1),y:tr.y.at(-1),name:tr.name,color:tr.line.color}));
+              // Leave room for the longest label so it isn't cut off at the right edge.
+              layout.margin.r=Math.max(mobile?92:128,...ends.map(e=>e.name.length*(mobile?6.6:7.4)+14));
               const values=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true).flatMap(tr=>tr.y);
               const coordinate=y=>cfg.log?Math.log10(y):y;
               const lo=coordinate(Math.min(...values)),hi=coordinate(Math.max(...values)),plotHeight=layout.height-layout.margin.t-layout.margin.b;
@@ -439,7 +440,7 @@
               layout.yaxis.zeroline=true;layout.yaxis.zerolinecolor=t.text;layout.yaxis.zerolinewidth=1;
             }
           }
-          await Plotly.react(graph,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClickDelay:300,
+          await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:mobile?false:'hover',displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
           updateTable(first,last);
           windowLabel.hidden=cfg.showWindow===false;
@@ -572,7 +573,7 @@
             const values=years.map(year=>metric(s,ids.filter(j=>data.dates[j].startsWith(year)),'return'));
             layout['xaxis'+suffix]={domain:xd,anchor:y,type:'linear',showgrid:false,zeroline:false,tickmode:'linear',dtick:years.length>10?10:years.length>5?5:1};
             layout['yaxis'+suffix]={domain:yd,anchor:x,range:[-11.7,11.7],tickvals:[-10,0,10],gridcolor:grid,zerolinecolor:grid};
-            title(s.label,xd[0],yd[1]+.01);
+            title(mobile?s.label.replace('Medium- and long-term','Med./long-term'):s.label,xd[0],yd[1]+.01);
             traces.push({type:'bar',x:years.map(Number),y:values.map(v=>Math.max(-10,Math.min(10,v))),customdata:values,
               marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long)},xaxis:x,yaxis:y,hovertemplate:s.label+' · %{x}<br>%{customdata:.2f}% a year<extra></extra>'});
             const clipped=values.flatMap((v,j)=>Math.abs(v)>10?[j]:[]);
