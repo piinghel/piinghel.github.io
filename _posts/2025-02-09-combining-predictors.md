@@ -16,9 +16,9 @@ github_repositories:
 <link rel="stylesheet" href="/assets/css/combining-predictors.css?v=12">
 
 In the [low-volatility article]({% link _posts/2024-12-15-low-volatility-sizing.md %}),
-I selected stocks using one characteristic and examined how position sizing
-changed the portfolio. Here I want to bring more information into that
-selection. Alongside volatility, I can describe a stock by its momentum,
+I picked stocks on a single characteristic and spent the whole article on
+sizing. Here I want to give the selection more to work with. Alongside
+volatility, I can describe a stock by its momentum,
 liquidity, size and short interest, among other characteristics.
 
 With one characteristic, the ranking is the selection rule. With several, I
@@ -27,20 +27,21 @@ also has low volatility, and several momentum horizons repeat much of the same
 information. Each predictor's weight has to reflect what the others already
 say.
 
-Before fitting anything, I want to understand the predictors: what they
-measure, how much they overlap and whether their usefulness is stable. Then I
-compare equal weights with weights learned by ordinary least squares (OLS) and
-Ridge, judged by the Sharpe ratio of the same long–short portfolio.
+Before fitting anything, I want to get to know the predictors: what they
+measure, how much they overlap and whether their usefulness is stable. Then
+comes the real question: do weights learned by ordinary least squares (OLS) or
+Ridge beat simply giving everything the same weight? I judge that by the Sharpe
+ratio of the same long–short portfolio.
 
 I use September 1998–December 2021 for development and report January
 2022–May 2026 separately. The development returns come from walk-forward
-predictions: each model is fitted only on earlier observations. I still use
-those returns to choose predictors and settings, so repeated comparisons can
-overfit the research choices to this history. Keeping later history aside helps
-test those choices. That protection lasts only until I use its results to
-revise the design; the later years here have already been examined in related
-research. A stronger check needs new observations and enough time to cover
-different market conditions.
+predictions: each model is fitted only on earlier observations. That sounds
+clean, but I still use those returns to choose predictors and settings, and
+every comparison I run nudges the research a little closer to this particular
+history. Keeping later years aside helps, but only until I use them to revise
+the design, and the later years here have already been examined in related
+research. The real check is new data, over enough time to see different
+markets.
 
 ## Setup
 {: #what-i-ask-the-model-to-predict }
@@ -189,13 +190,13 @@ the seven composites keep a positive IC. Medium- and long-term return, at
 falls to 0.024 with a negative 2025. Short-term return turns negative, at
 −0.016, and is negative in every year from 2022.
 
-A learned combination therefore has to carry weights fitted in one decade into
-the next.
+That's the catch for any learned combination: it has to carry weights fitted
+in one decade into the next.
 
 ## Three ways to combine them
 {: #combining-them }
 
-The simplest combination gives every predictor the same weight, 1/80. The
+The simplest thing to do is give every predictor the same weight, 1/80. The
 *equal-weight* score learns only a direction from the data: each predictor
 enters with the sign of its correlation with the target in the training window,
 so lower volatility counts in a stock's favour because it did so in the past. Medium- and long-term return then carries 26 of the 80
@@ -327,8 +328,8 @@ Through 2021 Ridge's deciles climb from about 3% a year to 16%, and the top
 decile's Sharpe ratio is 0.90 against 0.26 at the bottom. Equal weights reach
 almost the same top-decile Sharpe, 0.89, with less return and less volatility.
 For both scores volatility falls steadily from around 30% in decile 1 to 16–18%
-in decile 10: as the target suggested, much of what these scores learn is a
-volatility sort. After 2021 the return ordering almost disappears above decile
+in decile 10. So, just as the target hinted, much of what these scores learn
+is a volatility sort. After 2021 the return ordering almost disappears above decile
 3, and most of the spread comes from the bottom decile. The volatility sort
 remains. Ridge's daily returns correlate 0.62 with the volatility-scaled
 portfolio from the [low-volatility article]({% link _posts/2024-12-15-low-volatility-sizing.md %})
@@ -391,7 +392,8 @@ holding the other ranks fixed.
 
 <p class="figure-caption"><strong>Figure 5: Ridge coefficients by refit.</strong> The ten largest by mean absolute coefficient are shown by default. Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows keep their magnitude ranking; hover for each predictor's full definition.</p>
 
-The largest weight is negative, on the 10/21-day MACD, a trend measure whose
+The largest weight is a bit of a surprise. It's negative, on the 10/21-day
+MACD, a trend measure whose
 information is split between the last month and the two before, and whose own
 IC is close to zero. Positive weights on the 126-day Sharpe ratio and the
 12-month return favour long, steady trends, so together these weights lean
@@ -462,13 +464,13 @@ to 0.4, so the advantage is probably real but modest.
 The gain comes from the joint fit, not the penalty: OLS does as well, and a
 heavy penalty pushes Ridge back toward equal weights.
 
-Much of what both scores learn is the low-volatility effect. The Sharpe target
-asks for it, the deciles sort volatility more cleanly than return, and both
+It's worth being clear about what that gain is made of, though: much of what
+both scores learn is the low-volatility effect. The Sharpe target asks for it, the deciles sort volatility more cleanly than return, and both
 scores lean toward larger stocks.
 
-OLS and lightly penalized Ridge perform similarly here. I keep the light
-penalty to shrink unstable coefficient combinations, without a demonstrated
-Sharpe advantage over OLS. I treat the ranking's lean toward large,
+OLS and lightly penalized Ridge end up in about the same place. I keep the
+light penalty anyway, because it shrinks unstable coefficient combinations,
+even though it doesn't buy any Sharpe over OLS here. And I treat the ranking's lean toward large,
 low-volatility stocks as an exposure to manage rather than as skill.
 
 ## References

@@ -3,7 +3,7 @@ layout: post
 title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
-last_modified_at: 2026-09-28
+last_modified_at: 2026-10-26
 interactive_charts: true
 categories: ["Signals"]
 article_label: Signals · Low volatility
@@ -15,11 +15,11 @@ github_repositories:
 
 Ranking stocks by volatility is the easy part of a
 [low-volatility](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
-long–short portfolio. I also have to decide how to size the two books, and the
-obvious choice, equal weights and equal capital, turns out to be a large bet on
-the market. In this article I compare equal weighting with inverse-volatility
-sizing, and use a market hedge to separate the sizing from the market exposure
-it creates.
+long–short portfolio. Then I still have to decide how big each position is, and
+the obvious choice, equal weights and equal capital on both sides, quietly turns
+the whole thing into a large bet on the market. So in this article I put equal
+weighting next to inverse-volatility sizing, and use a market hedge to pull the
+sizing apart from the market exposure it creates.
 
 The low-volatility effect is the tendency of low-volatility stocks to earn
 about as much as volatile ones with far less risk. Frazzini and Pedersen offer
@@ -36,9 +36,10 @@ window.[^windows] I re-form the deciles every three weeks and trade at the next
 close, so every trade uses only information available at the signal. The
 backtest assumes the selected shorts can be borrowed.
 
-Figure 1 shows the ten equal-weighted decile portfolios. Compounded returns are
-almost flat across the seven least volatile deciles, 10.5–11.6% a year, while
-volatility nearly doubles. Beyond that, returns fall: the most volatile decile
+Figure 1 shows the ten equal-weighted decile portfolios, and the pattern is
+hard to miss. Compounded returns are almost flat across the seven least volatile
+deciles, 10.5–11.6% a year, while volatility nearly doubles. After that, returns
+drop off: the most volatile decile
 compounds at only about a third of a percent a year before costs, and Sharpe
 falls from 0.90 in decile 1 to 0.20 in decile 10.
 
@@ -55,8 +56,9 @@ The portfolio buys the lowest-volatility decile and shorts the highest, roughly
 100 names each. I start with equal weights within each book and 100% of capital
 on each side, for 200% gross exposure. As Figure 2 shows, the short book has more
 than three times the long book's standalone volatility and almost three times
-its ex-ante beta. The portfolio's realized beta is −1.12: equal capital makes
-it a large short position in the market.
+its ex-ante beta. The portfolio's realized beta is −1.12. So with equal
+capital, what I meant as a low-volatility portfolio is mostly a big short on
+the market.
 
 <div class="research-figure naive-leg-risk-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/low-volatility-sizing/naive_leg_risk" mobile="/assets/low-volatility-sizing/naive_leg_risk_mobile" alt="Realized volatility and average beta of the low- and high-volatility deciles" version="13" %}
@@ -88,9 +90,9 @@ With a 20% reference, the long book comes in at about 97% gross, just under the
 standalone volatility is about 10%. Their daily P&L partly offsets, and the
 combined portfolio's volatility is also about 10%.
 
-Realized beta is nonetheless roughly zero, largely by coincidence: the
-volatility ratio between the two deciles is close to their beta ratio, so sizing
-by volatility almost offsets beta.
+Realized beta comes out at roughly zero, which is nice but mostly luck: the
+volatility ratio between the two deciles happens to be close to their beta
+ratio, so sizing by volatility almost offsets beta.
 
 ## Comparing the portfolios with a beta hedge
 {: #what-improves }
@@ -117,8 +119,9 @@ exposure explains much of its weakness, but inverse volatility still reaches
 0.70, with 40% of the volatility and about half the drawdown. The hedge
 brings realized beta close to zero for both rules.
 
-Hedged equal weighting compounds faster, 8.0% a year against 6.6%, only because
-its large long index hedge is financed for free; charging 3% a year on it cuts
+Hedged equal weighting does compound faster, 8.0% a year against 6.6%, but
+don't be fooled: that's only because its large long index hedge is financed
+for free; charging 3% a year on it cuts
 that to 4.6%, while inverse volatility, with its small hedge, barely changes.
 
 Figure 3 shows the paths. The hedge removes equal weighting's market bet but not
@@ -133,8 +136,9 @@ its deep drawdowns.
 
 ## Losses in strong rallies
 
-The inverse-volatility portfolio's worst periods came in strong rallies.
-Figure 4 follows it from its high before two of them. The first window, October
+Low-volatility books have a well-known enemy, and it isn't a crash: the
+inverse-volatility portfolio's worst periods came in strong rallies. Figure 4
+follows it from its high before two of them. The first window, October
 1998 to March 2000, is also its deepest drawdown: the portfolio lost about 38%
 before costs while the market rose about 52%. In the second, April 2025 to May
 2026, it lost about 12% while the market rose about 39%.
@@ -169,13 +173,13 @@ where it started.
 ## Inverse-volatility sizing is the better rule
 {: #from-individual-weights-to-joint-construction }
 
-I'd keep inverse-volatility sizing. Its Sharpe is about 0.7 with or without the
-hedge, against 0.44 for equal weighting even after hedging, with less than half
+This one isn't close: I'd keep inverse-volatility sizing. Its Sharpe is about
+0.7 with or without the hedge, against 0.44 for equal weighting even after hedging, with less than half
 the volatility, about half the drawdown and less turnover. At about 131% gross,
 its realized beta also stays near zero without a hedge. Free hedge financing and
-the zero cash rate change the absolute returns, not that ranking. Its weak spot
-is strong rallies, where the long book lagged its beta both times, and a beta
-hedge doesn't fix that.
+the zero cash rate change the absolute returns, not that ranking. The thing to
+live with is strong rallies: the long book lagged its beta both times, and a
+beta hedge doesn't fix that.
 
 [^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, *Journal of Financial Economics*, 2014 ([author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2)). Their mechanism concerns market beta; this article ranks total volatility.
 

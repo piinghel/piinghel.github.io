@@ -16,11 +16,12 @@ github_repositories:
 In the articles on [low-volatility sizing]({% link _posts/2024-12-15-low-volatility-sizing.md %})
 and [regression]({% link _posts/2025-02-09-combining-predictors.md %}),
 I sized positions one stock at a time: scale each by its own volatility and
-cap it. That simple rule worked well. Here I want to see whether sizing the
-stocks together, taking into account how they move with each other, does
-better once trading costs are included.
+cap it. That simple rule worked surprisingly well, which makes it a good
+benchmark to beat. Here I want to see whether sizing the stocks together,
+taking into account how they move with each other, actually does better once
+trading costs are included.
 
-Joint sizing brings two new problems. The optimizer can lean on combinations
+Joint sizing comes with two well-known headaches. The optimizer can lean on combinations
 that look safer than they are, and it can trade a lot in response to small
 changes in its inputs. I use correlation shrinkage for the first and a rank
 buffer plus a trade penalty for the second.
@@ -54,7 +55,8 @@ of the portfolio open. Portfolio limits break that separation: scaling from
 5% to 7% forecast volatility turns a 4% position into 5.6% and breaches the
 name cap. So I put the volatility budget inside the optimization.
 
-I don't have calibrated expected returns. The Ridge target is a sector-ranked
+There's a practical snag: I don't have calibrated expected returns. The Ridge
+target is a sector-ranked
 forward Sharpe ratio, so I multiply each prediction $$s_{i,t}$$ by the stock's
 estimated daily volatility $$\widehat\sigma_{i,t}$$ to get a return-like
 *sizing score* $$\mu_{i,t}=s_{i,t}\widehat\sigma_{i,t}$$. With signed weights $$w_t$$, I solve
@@ -213,7 +215,8 @@ of 8.7%, which lifts Sharpe to 1.26; the maximum drawdown falls from about
 controls keep almost all of the gross return and bring turnover down to
 23×, below either volatility-scaled rule, for a Sharpe of **1.32**.
 
-Several things change at once between the second and third rows:
+That comparison isn't perfectly clean, because several things change at once
+between the second and third rows:
 correlations, 21-session instead of 60-session volatility, the volatility
 multiplier, a linear instead of logistic score, the volatility target and the
 limits. The full-shrinkage point in Figure 1 keeps all of these, plus the
@@ -233,9 +236,9 @@ It shows most in the two large drawdowns, about 13% against 18% in 2008–09 and
 
 ## Trading controls
 
-At each rebalance, the optimizer without controls starts from the newly selected
-stocks. A small change in rank or covariance can trigger a replacement whose
-benefit is smaller than its cost.
+Left alone, the optimizer is a nervous trader. At each rebalance it starts from
+the newly selected stocks, so a small change in rank or covariance can trigger a
+replacement whose benefit is smaller than its cost.
 
 Take a long stock whose rank slips from 60 to 110. The optimizer without controls drops
 it, because only the top 75 enter the new selection. With a *rank buffer*,
@@ -280,7 +283,7 @@ Figure 3 varies one control at a time around the chosen settings.
 
 <p class="figure-caption"><strong>Figure 3: Sensitivity to the trading controls.</strong> Development-period net Sharpe and annual turnover across trade coefficients <i>c</i> (×10<sup>−4</sup>; 0 means no penalty) and rank-buffer cutoffs (75 means no buffer). Points are schedule means; whiskers span the three schedules. Chosen settings are highlighted.</p>
 
-Net Sharpe barely moves: 1.29–1.33 across trade coefficients from 0 to 5
+The nice part is that net Sharpe barely moves: 1.29–1.33 across trade coefficients from 0 to 5
 and 1.30–1.32 across cutoffs from 75 to 225, while turnover falls from 33× to
 19× and from 29× to 21×. The settings I use, 2.5 and 175, sit inside both
 plateaus. A larger coefficient or cutoff would cut turnover further at little
@@ -303,7 +306,8 @@ Table 4 covers January 2022–May 2026, about four and a half years.
   </tbody>
 </table>
 
-All four rules earn less than in development. The optimizer on its own no
+All four rules earn less than in development, which is about what you'd expect
+once you leave the period the rules were chosen on. The optimizer on its own no
 longer beats volatility scaling. With the trading controls it has the higher
 Sharpe, 0.87 against 0.73, but the lower net return, 6.4% against 7.1%,
 because it runs at 7.5% volatility instead of 10.2%. It also has the smaller
@@ -345,7 +349,7 @@ for the regression article's rule to 1.32: volatility falls from about 8% to
 7% while net return rises from 7.9% to 9.4%. Most of that comes from
 the correlations: shrink them away and Sharpe falls back to 1.05.
 
-The cost is complexity and, without controls, turnover. The optimizer needs a
+The price is complexity and, without controls, turnover. The optimizer needs a
 covariance estimate, a shrinkage choice, a risk multiplier and a set of
 limits, and on its own it trades 36× capital a year against 28× for
 volatility scaling; at about 22 bp per dollar traded its advantage would be

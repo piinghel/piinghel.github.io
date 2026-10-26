@@ -80,10 +80,11 @@ separate the September 1998–December 2021 development period from the
 January 2022–May 2026 test period, averaging each statistic over the three
 schedules. The comparison focuses on these three approaches, each used on its own.
 
-I used the development results to choose these controls. The underlying
-predictions are walk-forward, but the controls also reflect what I learned
-from comparing their historical returns. The later test carries those choices
-forward with the specifications fixed and the scheduled model refits continuing.
+One thing to be upfront about: I chose these controls by looking at the
+development results. The predictions are walk-forward, but the controls
+themselves reflect what I learned from comparing historical returns. The later
+test carries those choices forward unchanged, with the scheduled model refits
+continuing.
 
 ## Why momentum crashes when the losers rebound
 
@@ -308,8 +309,9 @@ history; the shaded region marks the test period.
   </tbody>
 </table>
 
-The overlay and cap underperform the baseline in this period. Both give up
-about 6.5 points and lower Sharpe, despite smaller average maximum drawdowns.
+Then the test period turns things around. The overlay and cap both trail the
+baseline: each gives up about 6.5 points and ends with a lower Sharpe, despite
+smaller average maximum drawdowns.
 The learned interactions improve Sharpe
 on all three schedules and maximum drawdown on two, adding 7.42 points on
 average. Much of that gain comes from 2023: 6.67 points, while 2022 and 2025
@@ -327,9 +329,9 @@ portfolio.
 
 ## Momentum protection has a return cost
 
-The development period made the overlay look attractive: higher Sharpe and
-smaller drawdowns, with much of its benefit concentrated in 2009 and 2020.
-It has since underperformed. Reducing exposure also gives up returns when
+In development the overlay looked like a clear win: higher Sharpe and smaller
+drawdowns, with much of its benefit concentrated in 2009 and 2020. Since then
+it has lagged. Reducing exposure also gives up returns when
 momentum continues to pay, and a volatility signal cannot know when a reversal
 will arrive. The later losses make that trade-off visible.
 

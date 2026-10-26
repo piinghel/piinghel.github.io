@@ -128,9 +128,10 @@ Average correlation between starting weeks is 0.80 in development and
 respectively, almost exactly the reductions in the table. The books have
 similar standalone volatilities, so the equal-volatility approximation
 works well here.
-With the average arithmetic return preserved, the Sharpe improvement comes
-from this reduction in volatility. The calendars share the same market
-history and overlapping holdings.
+With the average arithmetic return unchanged, the whole Sharpe improvement
+comes from the lower volatility. It's plain diversification: the calendars
+share the same market history and overlapping holdings, but they don't move
+in perfect lockstep.
 
 <table class="research-table comparison-table risk-performance-table">
   <caption><strong>Table 2: Diversification improves Sharpe.</strong> Mean statistics across fifteen standalone schedules and five combined portfolios. Each combined portfolio first averages three schedules' daily returns; its statistics are then calculated and averaged across weekdays. Returns are geometric; return, volatility and drawdown are percentages. Annualization uses 252 sessions and Sharpe a zero cash rate.</caption>
@@ -197,9 +198,9 @@ changes with the weekday.
   </tbody>
 </table>
 
-The weekday component is larger in development. Later, almost all the
-variation is in the interaction: the better starting week depends on the
-weekday. There is no starting week to select once all three are held.
+So my expectation was wrong: the weekday component is larger than the
+starting-week one in both periods. Later, almost all the variation is in the
+interaction: the better starting week depends on the weekday. There is no starting week to select once all three are held.
 Figure 2 measures the resulting reduction using the combined portfolios
 themselves. I would combine starting weeks and keep the remaining weekday
 sensitivity in view.

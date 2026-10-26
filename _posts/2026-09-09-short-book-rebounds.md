@@ -6,7 +6,7 @@ description: "The portfolio's P&L by theme in market declines and strong rallies
 permalink: /quants/short-book-rebounds.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-09-29
+last_modified_at: 2026-10-26
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 2
 series_id: performance-attribution
@@ -16,8 +16,8 @@ series_order: 2
 <link rel="stylesheet" href="/assets/css/performance-attribution.css?v=5">
 
 Averages over whole periods hide when the money is made and lost. For a book
-that is long low-risk stocks and short high-risk ones, the market's direction
-should matter a lot, so here I split [Part
+that is long low-risk stocks and short high-risk ones, I'd expect the market's
+direction to matter a lot, so here I split [Part
 1]({% link _posts/2026-09-09-portfolio-attribution.md %})'s theme P&L by what the market was
 doing. I use two separate views: the direction of whole market episodes, then
 the size of daily market moves. A rally can be volatile, and a decline can
@@ -203,11 +203,12 @@ reversal and stock-specific returns all losing.
 
 ## What the regimes say
 
-Market direction matters much less to the book than to its long and short
-books. Within the low-risk package, low volatility and the net long dollars
+The reassuring part is that market direction matters much less to the book
+than to its long and short books. Within the low-risk package, low volatility and the net long dollars
 largely trade places, with beta completing the subtotal. Its gains concentrate
 in the base regime; it was positive in only 4 of 15 declines and 8 of 16 strong
-rallies. The small regime averages do not make it reliable protection in stress.
+rallies. So I wouldn't count on it as protection in stress: the small regime
+averages hide a lot of variation from one episode to the next.
 
 Since 2009, the positive contribution in declines appears mostly in the
 stock-specific remainder. Its negative market exposure and concentration in

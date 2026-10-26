@@ -26,9 +26,9 @@ earned 2.6% a year before costs. Its
 net long dollars matter to that result, even with a tight forecast-beta limit.
 
 The ranking behind it combines the 80 predictors of the [regression
-article]({% link _posts/2025-02-09-combining-predictors.md %}). So the question I
-want to answer is which of the ranking's themes the portfolio is actually paid
-for, which take risk without paying for it, and whether that has changed.
+article]({% link _posts/2025-02-09-combining-predictors.md %}). So what I really
+want to know is which of the ranking's themes the portfolio is actually paid
+for, which ones take risk without paying for it, and whether that has changed.
 
 The book is the optimizer article's final portfolio, joint sizing with trading
 controls, with its three rebalance schedules held together at equal notional.
@@ -61,8 +61,9 @@ even though they made money in each of the 15 declines of 15% or more since 1999
 </div>
 <p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
 
-The book is also net long, by about 25% of capital, and most of that follows
-from its tilt towards low-risk stocks. At the median, the longs have a forecast beta of
+The book is also net long, by about 25% of capital. That sounds odd for a book
+with a tight beta limit, until you look at the betas: most of it follows from
+the tilt towards low-risk stocks. At the median, the longs have a forecast beta of
 0.85 and the shorts 1.07. The optimizer keeps the book's forecast beta within
 ±0.05, so long dollars times their beta roughly equal short dollars times
 theirs, $$L\beta_L = S\beta_S$$, which leaves the book net long by
@@ -447,15 +448,15 @@ earned in every period on 4% to 7% of the risk.
 
 ## What the attribution supports
 
-Over 27 years, the low-risk position, short interest and short-term reversal
-account for most of the fitted contribution. The stock-specific remainder
+Over 27 years, the book has mostly been paid for three things: the low-risk
+position, short interest and short-term reversal. The stock-specific remainder
 also contributes, but can contain exposures the model misses. I judge the
 low-risk position as a whole: its three components explain how it behaves,
 and they are not three separate sources of return.
 
-Reversal's contribution has fallen alongside the book's exposure to it. That makes it a
-candidate for a controlled comparison, not evidence that reducing its ranking
-weight would improve the portfolio. The low-risk package's recent return is
+Reversal's contribution has fallen alongside the book's exposure to it. That's
+tempting to act on, but it's a reason to run a controlled comparison, not
+evidence that cutting its ranking weight would help. The low-risk package's recent return is
 too uncertain to establish deterioration. The attribution shows where to look
 in the ranking, and each change needs its own controlled test.
 [Removing Style Bets from a Ridge Forecast]({% link _posts/2026-10-26-ridge-style-removal.md %})
