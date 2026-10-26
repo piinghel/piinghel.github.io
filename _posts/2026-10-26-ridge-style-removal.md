@@ -2,7 +2,7 @@
 layout: post
 interactive_charts: true
 title: "Removing Style Bets from a Ridge Forecast"
-description: "Half of the Ridge forecast is style. Taking part of it out before the portfolio is built lowers volatility at every strength and raised the Sharpe ratio before 2019; adding short interest to the removal does best."
+description: "Half of the Ridge forecast is style. Taking part of it out before the portfolio is built lowers volatility at every strength and raised the Sharpe ratio before 2019."
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
@@ -24,8 +24,7 @@ The short version: half of the
 [Ridge forecast]({% link _posts/2025-02-09-combining-predictors.md %}) is style.
 Taking some of it out lowers the book's volatility at every strength I tried,
 and up to a removal of about three quarters it raises the Sharpe ratio. That gain
-was earned before 2019; since then it has mostly disappeared. Adding short
-interest to the removal works best of everything I tried.
+was earned before 2019; since then it has mostly disappeared.
 
 ## Why take style out of a forecast at all
 
@@ -84,7 +83,7 @@ equal-weighted standard deviation of one. If one of the first five styles is
 missing, the stock gets the capitalization-weighted average.
 
 <table class="research-table settings-table">
-  <caption><strong>Table 1: The six styles, plus short interest in one variant.</strong> Each is measured per stock on each date and then standardized across stocks.</caption>
+  <caption><strong>Table 1: The six styles.</strong> Each is measured per stock on each date and then standardized across stocks.</caption>
   <thead><tr><th>Style</th><th>Measure</th><th>Window</th></tr></thead>
   <tbody>
     <tr><th scope="row">Beta</th><td>Slope of the stock's daily returns on the Russell 1000, shrunk toward 1 by its sampling variance (prior variance 0.25), clipped at ±4</td><td>252 sessions, at least 126</td></tr>
@@ -93,7 +92,6 @@ missing, the stock gets the capitalization-weighted average.
     <tr><th scope="row">Size</th><td>Log market capitalization</td><td>That day</td></tr>
     <tr><th scope="row">Liquidity</th><td>Log of the median daily dollar volume divided by market capitalization</td><td>63 sessions</td></tr>
     <tr><th scope="row">Short-term reversal</th><td>Minus the stock's return</td><td>21 sessions</td></tr>
-    <tr><th scope="row">Short interest (variant only)</th><td>Log of short interest times price over market capitalization, the share of shares outstanding sold short; a plain z-score, with no short interest scored zero</td><td>Lagged 21 sessions</td></tr>
   </tbody>
 </table>
 
@@ -152,9 +150,9 @@ and 1.41 at 75%. At full removal the return gives way and the Sharpe ratio is ba
 at 1.20.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/ridge-style-removal/risk-return" mobile="/assets/ridge-style-removal/risk-return_mobile" alt="Volatility and net Sharpe ratio for each variant: volatility falls with every step of style removal, and the Sharpe ratio rises to 1.38 at 50% and 1.41 at 75% before falling back to 1.20 at full removal; style 25% plus short interest reaches 1.34." version="1" %}
+  {% include theme-svg-figure.html base="/assets/ridge-style-removal/risk-return" mobile="/assets/ridge-style-removal/risk-return_mobile" alt="Volatility and net Sharpe ratio for each variant: volatility falls with every step of style removal, and the Sharpe ratio rises to 1.38 at 50% and 1.41 at 75% before falling back to 1.20 at full removal." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 3: Less style means less volatility, and up to 75% a higher Sharpe ratio.</strong> Realized volatility and net Sharpe ratio, January 1999–April 2026, mean of three rebalance schedules. The dotted line is no removal; SI is short interest.</p>
+<p class="figure-caption"><strong>Figure 3: Less style means less volatility, and up to 75% a higher Sharpe ratio.</strong> Realized volatility and net Sharpe ratio, January 1999–April 2026, mean of three rebalance schedules. The dotted line is no removal.</p>
 
 <table class="research-table comparison-table compact-table">
   <caption><strong>Table 2: The Sharpe gain is concentrated before 2019.</strong> Net Sharpe ratio and its difference against no removal, with a 95% interval for the full period, January 1999–April 2026.</caption>
@@ -167,14 +165,13 @@ at 1.20.
     <tr><th scope="row">Style 50%</th><td>1.38</td><td>+0.19 [+0.02, +0.36]</td><td>+0.32</td><td>−0.11</td></tr>
     <tr><th scope="row">Style 75%</th><td>1.41</td><td>+0.22 [−0.06, +0.47]</td><td>+0.39</td><td>−0.18</td></tr>
     <tr><th scope="row">Style 100%</th><td>1.20</td><td>0.00 [−0.39, +0.40]</td><td>+0.21</td><td>−0.54</td></tr>
-    <tr><th scope="row">25% + short interest</th><td>1.34</td><td>+0.15 [+0.06, +0.24]</td><td>+0.21</td><td>+0.02</td></tr>
     <tr><th scope="row">PCA 25%</th><td>1.19</td><td>−0.01 [−0.08, +0.07]</td><td>−0.01</td><td>−0.01</td></tr>
     <tr><th scope="row">PCA 50%</th><td>1.23</td><td>+0.04 [−0.12, +0.19]</td><td>0.00</td><td>+0.09</td></tr>
   </tbody>
 </table>
 
 The 50% gain has an interval clear of zero; adjusted for all the variants in the
-table it has a p-value of about 0.09. Turnover rises with removal, from 24.7 to
+table it has a p-value of about 0.07. Turnover rises with removal, from 24.7 to
 27.2 times capital a year at 50%, and the net Sharpe ratio already pays for it.
 
 ## The Sharpe gain was earned before 2019
@@ -187,9 +184,9 @@ split after looking at the data, and with a split at 2016 the later period is
 slightly positive, so the boundary is soft.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/ridge-style-removal/delta-sharpe" mobile="/assets/ridge-style-removal/delta-sharpe_mobile" alt="Net Sharpe difference against no removal by strength with 95% intervals: clearly positive for 25 to 75 percent before 2019, and intervals spanning zero from 2019; the short-interest variant is positive before 2019 and near zero after." version="2" %}
+  {% include theme-svg-figure.html base="/assets/ridge-style-removal/delta-sharpe" mobile="/assets/ridge-style-removal/delta-sharpe_mobile" alt="Net Sharpe difference against no removal by strength with 95% intervals: clearly positive for 25 to 75 percent before 2019, and intervals spanning zero from 2019." version="3" %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Before 2019 the gain is clear for 25–75%; since then it is about zero.</strong> Net Sharpe difference against no removal, mean of three schedules, with paired block-bootstrap 95% intervals. Circles are style removal, the square adds short interest (SI) and diamonds are PCA.</p>
+<p class="figure-caption"><strong>Figure 4: Before 2019 the gain is clear for 25–75%; since then it is about zero.</strong> Net Sharpe difference against no removal, mean of three schedules, with paired block-bootstrap 95% intervals. Circles are style removal and diamonds are PCA.</p>
 
 Figure 5 shows when the gain built up. Every variant is scaled to the volatility of
 no removal, so the gap tracks the Sharpe difference rather than extra risk taken.
@@ -197,9 +194,9 @@ The 50% removal was 54 points ahead at the end of 2018 and ends at 45; 25% gaine
 less and kept most of it.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=2" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="1" label="Cumulative net return against no removal at equal volatility for style 25%, style 50%, 25% plus short interest and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
+  {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=3" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="2" label="Cumulative net return against no removal at equal volatility for style 25%, style 50% and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: The style gains were built before 2019; short interest kept most of its gain.</strong> Cumulative daily net return difference against no removal, in points of capital, with each variant scaled to the full-period volatility of no removal; mean of three schedules. Shaded: 2019 onward.</p>
+<p class="figure-caption"><strong>Figure 5: The gains were built before 2019.</strong> Cumulative daily net return difference against no removal, in points of capital, with each variant scaled to the full-period volatility of no removal; mean of three schedules. Shaded: 2019 onward.</p>
 
 Why the fade? Removal shifts risk from style bets to stock-specific ones, and since
 2019 the book's stock-specific P&L has paid much less (a Sharpe ratio of 0.10,
@@ -208,29 +205,6 @@ risk into stops paying, the trade stops working. Interestingly, a plain
 score-weighted portfolio of the adjusted forecast, with no optimizer, still
 improves at every strength after 2019, so the fade comes in somewhere in
 selection or sizing.
-
-## Adding short interest to the removal does best
-
-One variant adds short interest to the removal regression, as a seventh column:
-the share of shares outstanding sold short (Table 1), lagged 21 sessions because
-it is published about eight business days after its settlement date. Everything
-else is as in plain 25% removal.
-
-It is the best result in the study: a Sharpe ratio of 1.34, +0.15 [+0.06, +0.24]
-against no removal and +0.07 [+0.04, +0.11] against plain 25%, at the same
-volatility and on all three schedules. It is also the only variant whose gain holds
-up after adjusting for the others in Table 2 (p ≈ 0.002). Before 2019 it adds
-+0.21, and it beats plain 25% in every five-year block. Since 2019 its edge over no
-removal is small (+0.02), but at equal volatility it kept most of what it had built
-(Figure 5).
-
-The book leans against heavily shorted stocks: its short leg sits at the 66th
-percentile of short interest and its long leg at the 33rd. The change from adding
-short interest is small, with 93% of the weight shared with plain 25%, and the
-extra return is stock-specific. Since 2019 it comes from the short leg, where plain
-removal struggles most. I found this variant after trying several additions to the
-regression, so I treat it as the lead to confirm on new data rather than a settled
-result.
 
 ## PCA and portfolio-level limits do less
 
@@ -257,11 +231,6 @@ it also raised the Sharpe ratio. A quarter of the style part is the setting I'd
 pick: it captures part of the early gain, gives back very little since 2019 and
 costs about one turn of turnover a year. Stronger removal did better before 2019
 and worse since, and full removal, the rule most sources use, adds nothing here.
-
-Adding short interest is the most promising variant: a higher Sharpe ratio at the
-same volatility, a gain that survives adjusting for the variants tried, and a
-smaller fade. Because I found it after trying several additions, it still needs
-data it hasn't seen.
 
 ## References
 

@@ -147,7 +147,7 @@ def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
     m = {r["arm"]: r for r in pl.read_csv(DATA / "outputs/evidence/table_metrics.csv").iter_rows(named=True)}
     rows = [("none", "No removal", "base"), ("style25", "Style 25%", "style"), ("style50", "Style 50%", "style"),
             ("style75", "Style 75%", "style"), ("style100", "Style 100%", "style"),
-            ("si25", "Style 25% + SI", "si"), ("pca25", "PCA 25%", "pca"), ("pca50", "PCA 50%", "pca")]
+            ("pca25", "PCA 25%", "pca"), ("pca50", "PCA 50%", "pca")]
     ys = list(range(len(rows)))[::-1]
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-risk-return"}):
@@ -203,19 +203,15 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
                 r = table[(arm, key)]
                 ax.vlines(x + 0.22, r["lo"], r["hi"], color=c["pca"], lw=1.6, zorder=2)
                 ax.plot(x + 0.22, r["delta"], "D", ms=6, mfc=c["bg"], mec=c["pca"], mew=1.5, zorder=3)
-            r = table[("si25", key)]
-            ax.vlines(-0.22, r["lo"], r["hi"], color=c["si"], lw=1.8, zorder=2)
-            ax.plot(-0.22, r["delta"], "s", ms=6.5, color=c["si"], zorder=3)
             ax.set_xlim(-0.5, 3.5); ax.set_xticks(range(4), ["25%", "50%", "75%", "100%"])
             ax.set_ylim(-1.45, 0.85); ax.set_yticks([-1.0, -0.5, 0, 0.5])
             ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
         axes[0].text(0.22, table[("pca25", "early")]["lo"] - 0.07, "PCA", ha="center", va="top", fontsize=9.5, color=c["pca"])
-        axes[0].text(-0.22, table[("si25", "early")]["hi"] + 0.07, "SI", ha="center", va="bottom", fontsize=9.5, color=c["si"])
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
 ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%", "size", "style50"),
-              ("si25", "25% + SI", "hedged", "si"), ("pca50", "PCA 50%", "cash", "pca"))
+              ("pca50", "PCA 50%", "cash", "pca"))
 
 
 def gap_series() -> tuple[list[str], list[dict]]:
