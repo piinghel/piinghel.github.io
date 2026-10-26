@@ -14,6 +14,17 @@ bundle install
 bundle exec jekyll serve
 ```
 
+## Visitor analytics
+
+Visitor statistics are available at [GoatCounter](https://piinghel.goatcounter.com/)
+after signing in. The account name is configured as `goatcounter` in `_config.yml`;
+the shared head loads its script only when `JEKYLL_ENV=production`, as on GitHub
+Pages. Ordinary local previews do not send pageviews. Analytics start when the
+tracker is published and do not recover earlier visits.
+
+To exclude your own visits, follow GoatCounter's
+[browser exclusion instructions](https://www.goatcounter.com/help/skip-dev).
+
 ## Article URLs
 
 Every article lives at `/quants/<slug>.html`, where the slug matches the title and the

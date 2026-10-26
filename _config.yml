@@ -6,6 +6,9 @@ description: >
 # Preview unfinished articles only with `jekyll serve --drafts`.
 show_drafts: false
 
+# GoatCounter account name; tracking is enabled only in production builds.
+goatcounter: piinghel
+
 exclude:
   - AGENTS.md
   - README.md
