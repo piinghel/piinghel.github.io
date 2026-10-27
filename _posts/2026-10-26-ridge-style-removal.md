@@ -2,7 +2,7 @@
 layout: post
 interactive_charts: true
 title: "Removing Style Bets from a Ridge Forecast"
-description: "Half of the Ridge forecast is style. Taking part of it out before the portfolio is built lowers volatility at every strength and raised the Sharpe ratio before 2019."
+description: "Where to deal with style exposure, and what happens when part of it is removed from a Ridge forecast."
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
@@ -20,29 +20,23 @@ Here I wanted to go one step earlier, to the forecast the book is built from,
 and see what happens if part of its style content comes out before the
 portfolio is formed.
 
-The short version: half of the
-[Ridge forecast]({% link _posts/2025-02-09-combining-predictors.md %}) is style.
-Taking some of it out lowers the book's volatility at every strength I tried,
-and up to a removal of about three quarters it raises the Sharpe ratio. That gain
-was earned before 2019; since then it has mostly disappeared.
-
-I don't see a style bet as a problem by itself. Momentum or low volatility can
-be worth owning; I want to know which bets I am taking and how much risk they
-carry. Some investors may prefer inexpensive access to familiar styles over
-paying active fees for them; others may value them differently. A practical
-starting point, including for smaller investors, is a
-[P&L decomposition]({% link _posts/2026-09-09-portfolio-attribution.md %})
-that makes those exposures visible.
+About half of the [Ridge forecast]({% link _posts/2025-02-09-combining-predictors.md %})
+is explained by the styles I use here. Taking some of that out lowers the
+book's volatility in this backtest, and improves the full-period Sharpe ratio at
+some strengths. But the improvement was earned before 2019. More importantly,
+removing style is a choice, not an obvious improvement: momentum or low
+volatility may be bets I want to keep.
 
 ## Why take style out of a forecast at all
 
 A stock-ranking forecast mixes two kinds of bets. Some are on characteristics
 that many stocks share: low volatility, momentum, size. Others are on what is
 specific to a company. Both can pay, but they behave very differently in a
-portfolio. Style bets bring common risk. When momentum turns, stocks with
-similar momentum exposure can move together, so holding more names gives less
-protection against that shared move. Stock-specific bets mostly cancel out
-across 150 positions.
+portfolio. When momentum turns, stocks with similar momentum exposure can move
+together, so holding more names gives less protection against that shared move.
+Company-specific bets can diversify, but 150 positions do not guarantee it:
+their returns can still be correlated, including through exposures the factor
+model misses. And a shared style bet can earn enough to justify its risk.
 
 One way to understand and adjust those exposures is to separate the style part
 of the forecast. Giuseppe Paleologo's
@@ -53,13 +47,19 @@ study there finds that it adds bias and takes away variance.[^numerai]
 MSCI evaluates published equity signals after neutralizing them to eight style
 factors, and the average signal's information ratio rises from 0.17 to 0.28.[^msci]
 
-The benefits are easy to state. A forecast with less style in it gives a book
-with less common risk, so at the same risk budget more of the risk goes into
-stock-specific bets. The signal also becomes steadier from day to day. The cost
-is that you give up style premia that do pay, and you trade a bit more. Most of
-these sources remove the style part completely. A Ridge forecast learns part of
-its style content from returns, so I treat the share removed as a dial,
-$$\lambda$$, and measure what each setting does.
+There are several places to make that choice. I could remove style from the
+predictors or the training target, adjust the forecast after fitting, or limit
+exposures when building the portfolio. Each changes a different part of the
+problem: cleaning the target changes what the model learns; adjusting the
+forecast can change which stocks are selected; portfolio limits control the
+resulting book but can restrict sizing. A factor risk model offers another route:
+keep the forecast and let the optimizer account for estimated style risk.
+None guarantees a better portfolio, and each depends on how style is measured.
+
+Here I adjust the forecast after fitting, treating the share removed as a dial,
+$$\lambda$$. The hope is to reduce unwanted common risk without giving up too
+much return. Whether that happens, how the remaining risk behaves, and what it
+costs in turnover are things to measure, not properties of removal itself.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/removal-diagram" mobile="/assets/ridge-style-removal/removal-diagram_mobile" alt="Flow from the Ridge forecast through a regression on sectors and styles, subtraction of a share of the style part and the portfolio optimizer to the book, whose P&L splits into a style part and a stock-specific part." version="3" %}
@@ -175,21 +175,23 @@ keeps the optimizer from leaning on correlation estimates that are mostly noise.
 A factor risk model would write the covariance as
 $$B\Omega_fB'+\Omega_\epsilon$$, with the style risk in the factor covariance
 $$\Omega_f$$, where it stays however you treat the idiosyncratic part. A shrunk
-sample covariance has no such separation. Halving every correlation also halves
-the correlation that comes from shared styles, so the optimizer sees a book full
-of the same style as less risky than it is. Together with the 1.18 multiplier,
-that is why the book realizes 8.9% volatility against its 7% target. The level
-doesn't matter for Sharpe; the mix does. Style bets get through the optimizer too
-cheaply, and taking part of them out of the forecast does by hand what a factor
-risk model would do inside the optimizer.
+sample covariance has no such separation. Halving every estimated off-diagonal
+correlation also reduces correlations associated with shared styles. That can
+make concentrated common exposures look too cheap, although the effect depends
+on the estimates and the book. The unadjusted book realizes 8.9% volatility
+against its 7% target; shrinkage is a plausible contributor, not a complete
+explanation of the gap. A factor risk model would represent these exposures
+differently, but it would still need good estimates, including of residual risk.
+Removing style from forecasts is not equivalent to changing the covariance used
+for sizing.
 
-This also says how removal should help. It isn't that style is a poor bet; in the
+The attribution helps put the trade-off in perspective. In the
 unadjusted book the style P&L has a Sharpe ratio of 0.93, against 0.49 for the
 stock-specific P&L. Removal changes which stocks are held. The unadjusted book's
 names carrying the 50%-removal book's style exposures would have earned a Sharpe
 ratio of 1.19, the same as doing nothing, while the actual 50% book earned 1.38;
-about a third of its weight sits in different names. So removal works when the
-stocks it brings in earn stock-specific return.
+about a third of its weight sits in different names. That comparison suggests
+selection matters here, though it does not establish a general mechanism.
 
 ## Removal lowers volatility at every strength and raises the Sharpe ratio up to 75%
 
@@ -202,7 +204,7 @@ at 1.20.
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/risk-return" mobile="/assets/ridge-style-removal/risk-return_mobile" alt="Volatility and net Sharpe ratio for each variant: volatility falls with every step of style removal, and the Sharpe ratio rises to 1.38 at 50% and 1.41 at 75% before falling back to 1.20 at full removal." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 3: Less style means less volatility, and up to 75% a higher Sharpe ratio.</strong> Realized volatility and net Sharpe ratio, January 1999–April 2026, mean of three rebalance schedules. The dotted line is no removal.</p>
+<p class="figure-caption"><strong>Figure 3: Volatility falls with removal in this backtest.</strong> Realized volatility and net Sharpe ratio, January 1999–April 2026, mean of three rebalance schedules. The dotted line is no removal.</p>
 
 <table class="research-table comparison-table compact-table">
   <caption><strong>Table 2: The Sharpe gain is concentrated before 2019.</strong> Net Sharpe ratio and its difference against no removal, with a 95% interval for the full period, January 1999–April 2026.</caption>
@@ -248,13 +250,13 @@ less and kept most of it.
 </div>
 <p class="figure-caption"><strong>Figure 5: The gains were built before 2019.</strong> Cumulative daily net return difference against no removal, in points of capital, with each variant scaled to the full-period volatility of no removal; mean of three schedules. Shaded: 2019 onward.</p>
 
-Why the fade? Removal shifts risk from style bets to stock-specific ones, and since
-2019 the book's stock-specific P&L has paid much less (a Sharpe ratio of 0.10,
-against 0.63 before) while the style P&L kept paying. When the part you are moving
-risk into stops paying, the trade stops working. Interestingly, a plain
+One possible explanation is that the trade-off changed: since 2019 the book's
+stock-specific P&L has paid much less (a Sharpe ratio of 0.10, against 0.63
+before) while the style P&L kept paying. That is consistent with the fade, but
+doesn't establish its cause. Interestingly, a plain
 score-weighted portfolio of the adjusted forecast, with no optimizer, still
-improves at every strength after 2019, so the fade comes in somewhere in
-selection or sizing.
+improves at every strength after 2019. The comparison points toward selection or
+sizing as part of the difference, though both portfolios change in other ways too.
 
 ## PCA and portfolio-level limits do less
 
@@ -275,60 +277,23 @@ for characteristic portfolios.[^daniel] I haven't tried that here.
 
 ## What I take from this
 
-For this book, taking part of the style out of the forecast is a useful risk
-tool. I would not make removal a goal for every forecast: style exposure can be
-intentional, and the style part may be worth keeping when its return justifies
-the risk. The important step is to measure the exposure and decide how much of
-it the book should carry. The
-lower volatility is the solid part: it shows up at every strength and follows
-from the mechanism above, a covariance that charges too little for shared style.
-The Sharpe gain over 27 years is moderate, borderline once you account for the
-variants I tried, and most of it was earned before 2019. That's a good
-result that the recent data hasn't confirmed yet, not a free improvement.
+For this book, forecast removal is one way to change the mix of bets. Volatility
+fell at every strength tested and moved closer to the 7% target, but that alone
+doesn't establish better risk forecasts in other periods or portfolios. The
+full-period Sharpe gain is uncertain after accounting for the variants tried,
+and the recent results don't support the same improvement as the earlier ones.
 
-In this backtest, that still counts for something. Realized volatility moves
-from 8.9% toward the 7% target as removal goes up, so the risk the optimizer
-thinks it takes gets closer to the risk it actually takes, which makes sizing
-and risk budgeting more trustworthy. The P&L leans less on a handful of styles
-that can turn together, the kind of exposure behind the
-[momentum crashes]({% link _posts/2026-09-30-momentum-crashes-ridge.md %}).
-For this experiment, I prefer a quarter removal as a starting point: it leaves
-room for style bets while bringing the book's risk closer to what the optimizer
-expects. The right amount depends on the forecast, the risk model and the style
-exposures one wants to keep.
+I would start with a quarter removal if reducing this book's style exposure were
+the goal, while keeping no removal as a serious alternative. A style bet may be
+deliberate and well rewarded; removing it may also leave correlated residual
+bets or discard useful stock selection. A comparison at matched risk, after
+costs and across periods, matters more than making the forecast look neutral.
 
-Removal has a limit worth being clear about. It moves risk into the
-stock-specific part of the forecast; it can't make that part better. Here style
-has paid more than stock picking, and since 2019 the stock-specific P&L has paid
-little. The bigger lever for this book is the stock-specific edge of the
-forecast itself, not the setting of $$\lambda$$.
-
-If stock-specific bets are sufficiently independent, diversification can make
-their combined return more consistent. That is an assumption to check: removing
-the styles in this model does not guarantee independent residuals or an edge.
-
-What I'd look at next, roughly in order of how much I expect from it:
-
-- **A factor risk model in the optimizer.** Removal does by hand what a
-  covariance $$B\Omega_fB'+\Omega_\epsilon$$ would do inside the optimizer. With
-  the six styles in $$\Omega_f$$, style risk is priced directly, and the real
-  question becomes whether removal still adds anything on top.
-- **Treating styles separately.** Not all style is unintended. The
-  low-volatility tilt comes from the target, and momentum accounts for much of
-  what removal gains. Choosing per style what to remove, and keeping the bets the book is
-  meant to make, is a sharper tool than one $$\lambda$$ for all six.
-- **A style budget instead of a fixed share.** The style share of the forecast
-  moves over time. Removing just enough to keep it under a set level would act
-  harder when style dominates and leave the forecast alone when it doesn't.
-- **Smoother style estimates.** The daily $$\hat x$$ are noisy. Averaging them
-  over a few weeks should give back part of the extra turnover.
-- **Removing style from the target.** Training the Ridge on a style-neutral
-  target, instead of cleaning its output, would stop it spending capacity on
-  style it is going to lose anyway.
-
-All but the last work on the existing forecast, so they're cheap to try. My
-preference is to keep the exposures I understand and want, and size them with a
-clear view of the common risk they bring.
+The next comparison I'd want is a factor risk model in the optimizer, followed
+by separate decisions for each style and a style-adjusted training target.
+Those approaches may keep useful exposure while handling its risk differently;
+they need their own tests. For now, the result argues for measuring the bets and
+their costs, not for treating style removal as the default.
 
 ## References
 
