@@ -26,23 +26,13 @@ Taking some of it out lowers the book's volatility at every strength I tried,
 and up to a removal of about three quarters it raises the Sharpe ratio. That gain
 was earned before 2019; since then it has mostly disappeared.
 
-I don't see a style bet as a problem by itself. A deliberate tilt toward
-momentum or low volatility can be a useful part of a forecast. What matters to
-me is knowing which styles the book is exposed to, how much risk they carry,
-and whether those exposures are the ones I intended to take.
-
-Some investors can obtain well-known style exposures elsewhere at a lower cost
-and may be reluctant to pay active fees for a forecast that largely reproduces
-them. Others may value those same exposures, especially when access, constraints
-or implementation costs differ. Measuring the style component helps clarify
-what the forecast adds and what might be available through another route.
-
-Not every investor or allocator, especially a smaller one, will know how much
-of a portfolio's P&L comes from familiar styles. A practical starting point is
-to estimate the portfolio's factor exposures and combine them with factor
-returns, as I did in the [attribution article]({% link _posts/2026-09-09-portfolio-attribution.md %}).
-The decomposition is an estimate that depends on the factors and methods
-chosen, but it can make those bets easier to see and discuss.
+I don't see a style bet as a problem by itself. Momentum or low volatility can
+be worth owning; I want to know which bets I am taking and how much risk they
+carry. Some investors may prefer inexpensive access to familiar styles over
+paying active fees for them; others may value them differently. A practical
+starting point, including for smaller investors, is a
+[P&L decomposition]({% link _posts/2026-09-09-portfolio-attribution.md %})
+that makes those exposures visible.
 
 ## Why take style out of a forecast at all
 
@@ -155,10 +145,8 @@ parts. Style carries 50% of it on average and 58% since 2019 (Figure 2). Part of
 that comes from the target: the model predicts a forward 20-session Sharpe ratio,
 which naturally favours low-volatility stocks.
 
-That split depends on the model I chose. Another set of styles, estimation
-windows, regression weights or treatment of missing values can assign a different
-part of the forecast to style. The residual is what this particular model does
-not explain; it can still contain common exposures that the six styles miss.
+That split depends on subjective choices: the predictors, styles and estimation
+methods. The residual can still contain common exposures that this model misses.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/forecast-style-share" mobile="/assets/ridge-style-removal/forecast-style-share_mobile" alt="Stacked shares of the Ridge forecast's cross-sectional variance by year, adding to 100%: style between 40% and 65%, stock-specific most of the rest, and a thin band for sectors and overlap." version="3" %}
@@ -315,12 +303,9 @@ has paid more than stock picking, and since 2019 the stock-specific P&L has paid
 little. The bigger lever for this book is the stock-specific edge of the
 forecast itself, not the setting of $$\lambda$$.
 
-There is a reason to hope that stock-specific bets will be more consistent:
-if they are sufficiently independent across companies, their risks can
-diversify as the book holds more names. That is an assumption to check, not a
-guarantee that the residual forecasts are independent or that they earn a
-steadier return. The outcome depends on the predictors as well as the style
-model used to separate common and stock-specific exposures.
+If stock-specific bets are sufficiently independent, diversification can make
+their combined return more consistent. That is an assumption to check: removing
+the styles in this model does not guarantee independent residuals or an edge.
 
 What I'd look at next, roughly in order of how much I expect from it:
 
