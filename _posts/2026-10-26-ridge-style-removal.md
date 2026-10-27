@@ -26,16 +26,23 @@ Taking some of it out lowers the book's volatility at every strength I tried,
 and up to a removal of about three quarters it raises the Sharpe ratio. That gain
 was earned before 2019; since then it has mostly disappeared.
 
+I don't see a style bet as a problem by itself. A deliberate tilt toward
+momentum or low volatility can be a useful part of a forecast. What matters to
+me is knowing which styles the book is exposed to, how much risk they carry,
+and whether those exposures are the ones I intended to take.
+
 ## Why take style out of a forecast at all
 
 A stock-ranking forecast mixes two kinds of bets. Some are on characteristics
 that many stocks share: low volatility, momentum, size. Others are on what is
 specific to a company. Both can pay, but they behave very differently in a
-portfolio. Style bets are common risk. When momentum turns, every past winner
-in the book turns together, and holding more names doesn't help. Stock-specific
-bets mostly cancel out across 150 positions.
+portfolio. Style bets bring common risk. When momentum turns, stocks with
+similar momentum exposure can move together, so holding more names gives less
+protection against that shared move. Stock-specific bets mostly cancel out
+across 150 positions.
 
-That is why people clean forecasts before using them. Giuseppe Paleologo's
+One way to understand and adjust those exposures is to separate the style part
+of the forecast. Giuseppe Paleologo's
 *Advanced Portfolio Management* regresses a fundamental investor's alphas on
 factor loadings and sizes positions from the residual.[^book] Numerai subtracts
 part of the fitted feature exposure from machine-learning predictions; a forum
@@ -262,22 +269,27 @@ for characteristic portfolios.[^daniel] I haven't tried that here.
 
 ## What I take from this
 
-Taking part of the style out of the forecast is a sensible cleaning step for this
-book, but I'd see it mainly as a risk tool rather than a source of return. The
+For this book, taking part of the style out of the forecast is a useful risk
+tool. I would not make removal a goal for every forecast: style exposure can be
+intentional, and the style part may be worth keeping when its return justifies
+the risk. The important step is to measure the exposure and decide how much of
+it the book should carry. The
 lower volatility is the solid part: it shows up at every strength and follows
 from the mechanism above, a covariance that charges too little for shared style.
 The Sharpe gain over 27 years is moderate, borderline once you account for the
 variants I tried, and most of it was earned before 2019. That's a good
 result that the recent data hasn't confirmed yet, not a free improvement.
 
-For running the book, that still counts for something. Realized volatility moves
+In this backtest, that still counts for something. Realized volatility moves
 from 8.9% toward the 7% target as removal goes up, so the risk the optimizer
 thinks it takes gets closer to the risk it actually takes, which makes sizing
 and risk budgeting more trustworthy. The P&L leans less on a handful of styles
 that can turn together, the kind of exposure behind the
 [momentum crashes]({% link _posts/2026-09-30-momentum-crashes-ridge.md %}).
-That's why I'd run a quarter rather than nothing: little cost in any period, and
-a book whose risk is more what it claims to be.
+For this experiment, I prefer a quarter removal as a starting point: it leaves
+room for style bets while bringing the book's risk closer to what the optimizer
+expects. The right amount depends on the forecast, the risk model and the style
+exposures one wants to keep.
 
 Removal has a limit worth being clear about. It moves risk into the
 stock-specific part of the forecast; it can't make that part better. Here style
@@ -304,9 +316,9 @@ What I'd look at next, roughly in order of how much I expect from it:
   target, instead of cleaning its output, would stop it spending capacity on
   style it is going to lose anyway.
 
-All but the last work on the existing forecast, so they're cheap to try. The
-real test is the years ahead, and a quarter removal is a reasonable default
-while that evidence comes in.
+All but the last work on the existing forecast, so they're cheap to try. My
+preference is to keep the exposures I understand and want, and size them with a
+clear view of the common risk they bring.
 
 ## References
 
