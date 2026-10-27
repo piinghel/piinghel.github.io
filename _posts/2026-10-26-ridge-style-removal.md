@@ -293,9 +293,17 @@ smaller and its intervals include zero, but it stays positive where removing
 the six styles alone lost. The LightGBM forecast gives the same answer: +0.06
 at 25% and +0.12 at 50%, with intervals above zero. So the Ridge forecast leans on
 crowding much as it leans on momentum or size, and taking part of that out
-helps as well. I added short interest after seeing the six-style results, among
-about 28 removal variants I tried on the same history, so I treat it as a
-candidate seventh style, not an established one.
+helps as well.
+
+The five years to April 2026 don't share that result. Adding short
+interest changed the Sharpe ratio by −0.02 at 25% and +0.04 at 50% in Ridge,
+and by −0.01 at both strengths in LightGBM, all with intervals spanning zero.
+Removing half the style part trailed no removal in both models over the same
+window, by 0.22 in Ridge (0.18 with short interest) and 0.13 in LightGBM; a
+quarter was level in Ridge and slightly ahead in LightGBM. Five years only resolve differences of about 0.2, but
+the gain is clearly an earlier-history result. I added short interest after
+seeing the six-style results, among about 28 removal variants I tried on the same
+history, so I treat it as a candidate seventh style, not an established one.
 
 ## PCA and portfolio-level limits do less
 
