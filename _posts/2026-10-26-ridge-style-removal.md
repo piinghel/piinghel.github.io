@@ -37,6 +37,13 @@ them. Others may value those same exposures, especially when access, constraints
 or implementation costs differ. Measuring the style component helps clarify
 what the forecast adds and what might be available through another route.
 
+Not every investor or allocator, especially a smaller one, will know how much
+of a portfolio's P&L comes from familiar styles. A practical starting point is
+to estimate the portfolio's factor exposures and combine them with factor
+returns, as I did in the [attribution article]({% link _posts/2026-09-09-portfolio-attribution.md %}).
+The decomposition is an estimate that depends on the factors and methods
+chosen, but it can make those bets easier to see and discuss.
+
 ## Why take style out of a forecast at all
 
 A stock-ranking forecast mixes two kinds of bets. Some are on characteristics
