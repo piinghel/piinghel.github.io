@@ -6,7 +6,7 @@ description: "Where to deal with style exposure, and what happens when part of i
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
-last_modified_at: 2026-10-27
+last_modified_at: 2026-10-28
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Style removal
 ---
@@ -228,8 +228,8 @@ at 1.20.
   </tbody>
 </table>
 
-The 50% gain has an interval clear of zero; adjusted for all the variants in the
-table it has a p-value of about 0.07. Turnover rises with removal, from 24.7 to
+The 50% gain has an interval clear of zero; adjusted for all the removal
+variants in Tables 2 and 3 it has a p-value of about 0.09. Turnover rises with removal, from 24.7 to
 27.2 times capital a year at 50%; the net Sharpe ratio includes the assumed
 5 bp per dollar traded. Different costs would change the comparison. I looked
 at these results when judging the strengths, so the full history isn't an
@@ -267,6 +267,35 @@ doesn't tell me how much it caused. A plain
 score-weighted portfolio of the adjusted forecast, with no optimizer, still
 improves at every strength after 2019. The comparison points toward selection or
 sizing as part of the difference, though both portfolios change in other ways too.
+
+## Short interest adds to the six styles at both strengths
+
+The six styles are the ones the risk model uses, and crowding is an obvious
+exposure they leave out. So I added a seventh loading: the log of short interest
+as a share of market capitalization, standardized like the others. Short
+interest is reported twice a month and published about eight business days
+later, so the loading uses the value from 21 sessions earlier. I compared it
+with the six styles at the same two strengths, 25% and 50%.
+
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 3: Short interest adds to the six styles.</strong> Net Sharpe ratio, and the difference from removing the six styles alone at the same strength with a 95% interval, January 1999–April 2026, mean of three rebalance schedules.</caption>
+  <thead>
+    <tr><th>Removal</th><th>Six styles</th><th>With short interest</th><th>Δ full [95%]</th><th>Δ 1999–2018</th><th>Δ 2019–2026</th></tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">25%</th><td>1.27</td><td>1.35</td><td>+0.07 [+0.04, +0.11]</td><td>+0.09</td><td>+0.04</td></tr>
+    <tr><th scope="row">50%</th><td>1.38</td><td>1.49</td><td>+0.11 [+0.06, +0.17]</td><td>+0.13</td><td>+0.08</td></tr>
+  </tbody>
+</table>
+
+The gain is positive on every schedule at both strengths. Since 2019 it is
+smaller and its intervals include zero, but it stays positive where removing
+the six styles alone lost. The LightGBM forecast gives the same answer: +0.06
+at 25% and +0.12 at 50%, with intervals above zero. So the Ridge forecast leans on
+crowding much as it leans on momentum or size, and taking part of that out
+helps as well. I added short interest after seeing the six-style results, among
+about 28 removal variants I tried on the same history, so I treat it as a
+candidate seventh style, not an established one.
 
 ## PCA and portfolio-level limits do less
 

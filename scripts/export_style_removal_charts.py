@@ -183,7 +183,8 @@ def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
 def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
     """Net Sharpe difference against no removal by strength, with paired block-bootstrap intervals, before and from 2019."""
     c = palette(dark)
-    table = {(r["arm"], r["period"]): r for r in pl.read_csv(DATA / "outputs/evidence/delta_sharpe_intervals.csv").iter_rows(named=True)}
+    intervals = pl.read_csv(DATA / "outputs/evidence/delta_sharpe_intervals.csv").filter(pl.col("base") == "none")
+    table = {(r["arm"], r["period"]): r for r in intervals.iter_rows(named=True)}
     periods = (("early", "1999\u20132018"), ("late", "2019\u20132026"))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-deltas"}):
