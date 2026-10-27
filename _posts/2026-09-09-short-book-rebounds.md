@@ -186,7 +186,7 @@ amount the history can't pin down.
 <p class="figure-caption"><strong>Figure 2: The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. Explore reveals the low-risk package's three components.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21 after
-costs, look alike by theme: the low-risk package lost 12.1 and 10.1, mostly through low
+costs (13.2% and 14.3% compounded), look alike by theme: the low-risk package lost 12.1 and 10.1, mostly through low
 volatility, short-term reversal helped, by 6.8 and 3.1, and stock-specific
 returns lost 4.3 and 9.5. They differ by leg. In 2008–09 the short book made 21
 points into the March 2009 low and lost 35 in the rebound, 14.3 net, while the

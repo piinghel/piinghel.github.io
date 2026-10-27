@@ -88,6 +88,16 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   contributions only add up that way; label them as averages and state the
   compounded headline once beside them. Themes are shown before costs, with
   costs as a separate line.
+- Drawdowns follow one rule. A reported maximum drawdown is compounded,
+  calculated within each schedule and then averaged over schedules, as
+  `financial_evaluation.reference_book.schedule_metrics` does. A drawdown chart
+  shows the compounded mean daily return of the schedules, and its caption says
+  so. Attribution keeps additive points, labelled as points, with the compounded
+  figure stated once beside them.
+- Books that rebuild a published baseline are checked against it with
+  `tools/book_parity.py` before their results are written up. A book that runs
+  at a different risk level says so once, in plain terms (realized volatility),
+  without dwelling on configuration settings.
 - Describe what measures show and which assumptions they use. Replace repeated
   negative contrasts with direct definitions, such as observed ranges across
   schedules. Preserve material limitations through concrete scope statements.

@@ -68,6 +68,11 @@ The book is the joint-sizing optimizer: 75 long and 75 short names, a 7%
 forecast volatility target, and its position, sector and beta limits, with the
 1.18 volatility multiplier of
 [Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %}).
+It takes more risk than the books in
+[joint sizing]({% link _posts/2026-08-29-joint-sizing.md %}) and
+[momentum crashes]({% link _posts/2026-09-30-momentum-crashes-ridge.md %}): it realizes
+about 8.9% volatility instead of 7%, so its returns and drawdowns are about a quarter
+larger, while its Sharpe ratio over the same dates is close to theirs, 1.20 against 1.23.
 All results are means over its three rebalance schedules, after 5 bp per dollar
 traded, from January 1999 to April 2026. Intervals are paired 120-session
 block-bootstrap 95% intervals against no removal. I compare net Sharpe ratios:
