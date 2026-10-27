@@ -9,44 +9,37 @@ categories: ["Research methods"]
 article_label: Research methods · Multiple testing
 ---
 
-When I research a quantitative idea, there are usually several reasonable ways
-to express it: a different signal, a different lookback, a different way to
-build the portfolio. AI makes it easier to explore those variations. It can help
-write the code and suggest the next comparison while I concentrate on the
-research question.
+When I research a quantitative idea, there are usually several ways to express
+it: a different signal, lookback or portfolio construction. AI makes it easier
+to explore those variations and suggest the next comparison.
 
-The problem is that the best result becomes more impressive as the search gets
-larger, even if the underlying ideas have no edge. I wanted to see how much a
-few familiar corrections change that picture, and what they cost in terms of
-the signals they miss.
+The problem is familiar: the best result becomes more impressive as the search
+gets larger, even if the ideas have no edge. Multiple testing and research
+selection have been studied extensively for decades. AI makes this discipline
+more important by making it easier to try and refine more ideas on the same
+limited history.
 
 ## A larger search produces better-looking winners
 
-Suppose I test 100 unrelated strategies and none has a real edge. Each gets a
-valid one-sided test at the 5% level. The chance that at least one looks
+Suppose I test 100 strategies using independent, valid one-sided tests at the
+5% level, and none has a real edge. The chance that at least one looks
 significant is
 
 $$
 1-(1-0.05)^{100} \approx 99.4\%.
 $$
 
-The issue is not that the individual test was calculated incorrectly. It is
-that I selected a result after looking at many tests. The other attempts belong
-in the interpretation too.
+The selected result needs to be interpreted in light of the other attempts.
 
-In practice, strategies are related. A 20-day and a 21-day lookback do not
-provide two independent shots at a discovery. In a simulation with 100 null
-tests and a pairwise correlation of 0.5, at least one passed the ordinary 5%
-threshold in 56% of the simulated research exercises. That is less than the
-99% for independent tests, but it still happens often.
+Strategies are often related: a 20-day and a 21-day lookback do not provide two
+independent shots. With a pairwise correlation of 0.5, my simulation found at
+least one false discovery in 56% of exercises instead of 99%.
 
 ## Corrections trade discoveries for confidence
 
-I simulated 20,000 research exercises, each with 100 one-sided Gaussian tests.
-First all 100 hypotheses are false ideas: their true effects are zero. Then 10
-have a positive effect, represented by a shift of 2.5 standard errors in the
-test statistic; the other 90 remain null. The table reports the independent
-case. Every method uses a nominal 5% level.
+I simulated 20,000 exercises with 100 independent one-sided Gaussian tests.
+First all true effects are zero. Then 10 are positive, shifting their test
+statistics by 2.5 standard errors. Every method uses a nominal 5% level.
 
 | Method | All null: at least one false discovery | 10 real signals: at least one false discovery | 10 real signals: false discovery rate | 10 real signals: power |
 |:--|--:|--:|--:|--:|
@@ -60,109 +53,95 @@ Here **power** is the average fraction of the 10 real signals detected. The
 false, counting an exercise with no selections as zero. It is different from
 the probability of making even one false discovery.
 
-Bonferroni and Holm aim to control that latter probability, the family-wise
-error rate. Benjamini–Hochberg instead controls the expected proportion of
-false discoveries under suitable dependence assumptions. In this example it
-detects more genuine signals, while allowing a false discovery in more of the
-individual exercises. Neither choice is automatically right: it depends on
-whether a discovery is a candidate for more research or a decision with a
-high cost of being wrong.
+Bonferroni and Holm aim to control the probability of any false discovery.
+Benjamini–Hochberg controls the expected proportion under suitable dependence
+assumptions. Here it detects more real signals but permits a false discovery
+in more individual exercises. The choice depends on the decision and the cost
+of being wrong.
 
-With pairwise correlation of 0.5, the all-null false-discovery probability was
-56.2% without correction, 2.6% for Bonferroni and Holm, and 3.2% for
-Benjamini–Hochberg. With 10 real signals, power was 21.8%, 22.1% and 37.1%
-for the three adjusted methods respectively; their false discovery rates were
-0.4%, 0.5% and 3.9%. Dependence changes the result, and the correlations in a
-real strategy family will not all be equal.
-
-These are deliberately simple simulations. They assume valid test statistics,
-known standard errors, a fixed family of tests and no leakage or transaction
-costs. A real backtest can violate those assumptions. The experiment illustrates
-the trade-off; it does not tell us which method will be best for a portfolio.
+The simulations assume valid test statistics, known standard errors and a fixed
+family, without leakage or costs. They illustrate a trade-off, not which method
+will be best for a portfolio.
 
 ## Counting the trials is harder than it sounds
 
-In the simulation I know the answer: I tested exactly 100 ideas. In actual
-research, where does one idea end and another begin? Changing a lookback by one
-day is not the same as testing an unrelated signal. But choosing a time period,
-metric, universe or model after looking at the results is also part of the
-search, even if it never appears in a parameter grid.
+What counts as a trial? A different lookback, universe or metric chosen after
+seeing the data can all be part of the search. Related variants are not
+independent, and previous work may have used the same market history. There is
+no universal way to turn all those choices into an exact number of independent
+tests. I would record what I can and check sensitivity to plausible assumptions,
+while recognizing that an unknown search cannot be fully corrected after the
+fact. Gelman and Loken call this the
+[*garden of forking paths*](https://stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf):
+even a single reported analysis can reflect choices that depended on the data.
 
-The search may extend beyond one researcher. A strategy inspired by a paper or
-an earlier project inherits choices made using the same market history. Those
-attempts are usually impossible to reconstruct completely. The number of
-independent trials is therefore often an estimate, not a fact we can read from
-a log. Correlation matters, but there is no universal conversion from a list of
-related tests to an exact effective count.
+## Confirmation depends on what is independent
 
-My practical answer is to log observable choices, define the family relevant
-to the decision, and show how the conclusion changes under plausible trial
-counts or dependence assumptions. That sensitivity analysis does not correct
-for unknown searches by itself. It makes the uncertainty visible. It also
-helps to reserve independent data for confirmation, because a retrospective
-count cannot recover every unrecorded choice.
+In another 20,000 exercises, I select the strongest of 100 independent null
+ideas if it passes a one-sided 5% test, then test that idea once more.
+
+| Confirmation test | Selected null ideas passing confirmation |
+|:--|--:|
+| Independent test statistic | 4.9% |
+| Test statistic correlated 0.7 with its discovery statistic | 55.5% |
+
+The second row models shared variation; it does not measure overlap between
+real universes. Two universes can share stocks, dates and market shocks. Even
+independent confirmation has a 5% false-positive rate for this one selected
+idea; selecting again on that test introduces another search.
 
 ## Accounting for a family of strategies
 
-Classical corrections work with p-values. Other methods use the behavior of the
-candidate strategies directly. White's Reality Check asks whether the best
-strategy found in a search beats a benchmark after accounting for that search.
-Hansen's Superior Predictive Ability test addresses the same broad comparison
-with a different construction. Both need an appropriate benchmark and a
-resampling method suited to the time series.
+White's **Reality Check** and Hansen's **Superior Predictive Ability** test
+compare a family of strategies with a benchmark while accounting for the
+search. Bailey and López de Prado's **Deflated Sharpe Ratio** adjusts the
+interpretation of a selected Sharpe for multiple trials and non-normal returns.
+Their work with co-authors on the **probability of backtest overfitting** asks
+whether the in-sample winner ranks poorly in held-out partitions.
 
-David Bailey and Marcos López de Prado's **Deflated Sharpe Ratio** asks whether
-a selected Sharpe is exceptional after allowing for selection among trials and
-non-normal returns. Its answer depends on how the trials and their dependence
-are represented, and on the return assumptions. Their work with co-authors on
-the **probability of backtest overfitting** takes another angle: does the
-in-sample winner tend to rank poorly in held-out partitions? That is a useful
-selection-stability diagnostic, although partition-based cross-validation does
-not replace a forward-looking test when markets change over time.
+Paleologo's **Rademacher Anti-Serum** uses random sign changes to estimate the
+complexity of a strategy family and incorporate it into a performance bound.
+Similar strategies add less complexity than very different ones. Each method
+depends on the family and assumptions supplied to it; none can repair an
+unknown search or leakage. The simulations above test the simpler corrections,
+not these methods.
 
-Giuseppe “Gappy” Paleologo's Rademacher Anti-Serum is another approach. It
-uses random sign changes to estimate how well the best member of a strategy
-family could align with random variation, then incorporates that complexity
-into a performance bound. Similar strategies contribute less additional
-complexity than very different ones. The method's guarantees depend on its
-assumptions, including how dependence over time and the strategy family are
-handled; its bound can be conservative. The simulation above does not test it.
+## A few questions before trusting a result
 
-## The same problem appears outside finance
+The statistical adjustment is one part of the decision. These are the questions
+I want to carry into an AI-assisted research process:
 
-The decisions do not have to be trading strategies. In psychology, Simmons,
-Nelson and Simonsohn showed how choices about outcomes, sample size and
-controls can raise the false-positive rate when researchers report only the
-successful analysis. In machine learning, repeatedly selecting models against
-the same benchmark or holdout can also adapt the research to that data. A
-holdout remains useful only insofar as the decisions being evaluated have not
-already been tuned to its feedback.
+1. **What did I expect, and why?** Write down the mechanism, a simple baseline
+   and what would make the idea worth pursuing. What result would make me
+   reconsider the explanation?
+2. **What was tried?** Record failed variants, data choices and AI iterations,
+   including changes made after seeing results. Define the family being
+   assessed and show how sensitive the conclusion is to the assumed search.
+3. **How much evidence is there?** Report the effect and its uncertainty, and
+   use an adjustment appropriate to the decision. A paired interval for a
+   selected winner does not automatically account for all the variants tried.
+4. **Does the result hold up?** Check reasonable alternative definitions,
+   periods, sectors and universes; inspect concentration in a few names or
+   dates. Use a placebo where it can expose a specific failure. Small subsets
+   may be too imprecise to settle the question, and choosing the best of many
+   checks starts another search.
+5. **Is it useful?** Compare with a simple baseline at matched risk. Look at
+   net return, volatility, drawdowns, two-way turnover, liquidity and costs.
+   A stronger Sharpe alone does not tell me whether the result is practical.
 
-## A protocol for a faster research process
+Those questions depend on sound data: point-in-time inputs, valid timing and a
+test not used to choose the idea. In machine learning, Cawley and Talbot show
+that repeatedly optimizing a validation measure can overfit the validation
+process itself. In finance, Harvey, Liu and Zhu argue that a long history of
+factor searches calls for a higher hurdle. Chen and Zimmermann reproduce many
+published predictors, a reminder that selection concerns do not make every
+result false; historical reproduction and future usefulness remain different
+questions.
 
-The correction is only one part of the work. I find the following habits just
-as important:
-
-- **Write the question and baseline down first.** Define the comparison, the
-  primary measure and what would make the idea worth pursuing.
-- **Keep the unsuccessful attempts.** Record variants, data choices and
-  changes made after seeing results. A correction can only address the search
-  represented in the analysis.
-- **Separate exploration from confirmation.** Exploration can be broad; an
-  idea chosen from that exploration needs a subsequent evaluation that was not
-  used to choose it. Keep model selection inside each validation split.
-- **Respect time and data availability.** Use point-in-time inputs and
-  time-ordered evaluation; account for overlapping labels and dependence.
-- **Protect the final test.** Repeatedly choosing variants based on a holdout
-  turns it into development data. A later period can provide additional
-  evidence, though it also has its own market conditions.
-- **Look beyond significance.** Effect size, uncertainty, economic rationale,
-  costs, capacity and risk all matter to the eventual decision.
-
-AI can help with both sides of this process: it can explore more ideas and help
-document the choices that produced them. The important discipline is to carry
-the full search into the evaluation. Faster experiments are valuable when they
-lead to better-calibrated conclusions, not just more impressive winners.
+I do not want every idea to pass every conceivable test. I want the evidence to
+match the decision. AI can make exploration faster, but it cannot supply more
+independent market history. The useful habit is to keep the search visible,
+challenge the explanation and judge the result on more than its best number.
 
 ## References
 
@@ -184,3 +163,9 @@ Joseph P. Simmons, Leif D. Nelson and Uri Simonsohn, [*False-Positive Psychology
 
 Cynthia Dwork and co-authors, [*The Reusable Holdout: Preserving Validity in
 Adaptive Data Analysis*](https://pubmed.ncbi.nlm.nih.gov/26250683/), 2015.
+
+Gavin C. Cawley and Nicola L. C. Talbot, [*On Over-fitting in Model Selection*](https://jmlr.csail.mit.edu/beta/papers/v11/cawley10a.html), 2010.
+
+Campbell R. Harvey, Yan Liu and Heqing Zhu, [*... and the Cross-Section of Expected Returns*](https://doi.org/10.1093/rfs/hhv059), 2016.
+
+Andrew Y. Chen and Tom Zimmermann, [*Open Source Cross-Sectional Asset Pricing*](https://doi.org/10.1561/104.00000112), 2022.

@@ -1,4 +1,4 @@
-"""Illustrate false discoveries and power under simple correlated z-tests.
+"""Illustrate multiple testing and confirmation with correlated z-tests.
 
 Run with: python3 scripts/simulate_multiple_testing.py
 Requires NumPy and SciPy. Each scenario has 20,000 independent repetitions.
@@ -35,6 +35,22 @@ def summarize(p_values: np.ndarray, true_effects: int) -> None:
         print(f"{name:19s} any false={any_false:.4f}  FDR={fdr:.4f}  power={power:.4f}")
 
 
+def confirmation_example() -> None:
+    """Test a selected null winner using independent or correlated evidence."""
+    rng = np.random.default_rng(20261028)
+    repetitions, n_tests = 20_000, 100
+    discovery = rng.standard_normal((repetitions, n_tests))
+    winner = discovery.max(axis=1)
+    passes_discovery = winner > norm.isf(0.05)
+    innovation = rng.standard_normal(repetitions)
+    print("\nConfirmation of the selected null winner")
+    print(f"Discovery pass rate={passes_discovery.mean():.4f}")
+    for rho in (0.0, 0.7):
+        confirmation = rho * winner + np.sqrt(1 - rho**2) * innovation
+        pass_rate = (confirmation[passes_discovery] > norm.isf(0.05)).mean()
+        print(f"discovery-confirmation correlation={rho}: confirmation pass={pass_rate:.4f}")
+
+
 def main() -> None:
     rng = np.random.default_rng(20261027)
     repetitions, n_tests = 20_000, 100
@@ -46,6 +62,7 @@ def main() -> None:
             z[:, :true_effects] += 2.5
             print(f"\nrho={rho}, true signals={true_effects}")
             summarize(norm.sf(z), true_effects)
+    confirmation_example()
 
 
 if __name__ == "__main__":
