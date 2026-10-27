@@ -6,7 +6,7 @@ description: "Half of the Ridge forecast is style. Taking part of it out before 
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
-last_modified_at: 2026-10-26
+last_modified_at: 2026-10-27
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Style removal
 ---
@@ -70,8 +70,8 @@ net Sharpe ratio: a lower return is fine if volatility falls by more.
 The tool is the one a fundamental risk model is built on, used on the forecast
 instead of on returns. On each date I build a loadings matrix $$B$$ for the
 roughly 1,000 stocks in the universe: eleven sector loadings, 1 for the stock's
-sector and 0 otherwise (BICS level-one sectors, with the classification held
-fixed), and six style loadings (Table 1). Then I regress the forecast on it:
+sector and 0 otherwise (with the sector classification held fixed), and six
+style loadings (Table 1). Then I regress the forecast on it:
 
 $$
 y = Bx + \epsilon .
