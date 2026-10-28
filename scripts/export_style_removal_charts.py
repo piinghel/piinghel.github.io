@@ -218,8 +218,10 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
-ARMS_SHOWN = (("style25", "Style 25%", "long", "style"), ("style50", "Style 50%", "size", "style50"),
-              ("pca50", "PCA 50%", "cash", "pca"))
+# (arm, label, interactive role, static colour, dash): short interest is purple, as in Figures 3 and 4.
+ARMS_SHOWN = (("style25", "Style 25%", "long", "style", "solid"), ("style50", "Style 50%", "size", "style50", "solid"),
+              ("si25", "Style + SI 25%", "hedged", "si", "dash"), ("si50", "Style + SI 50%", "hedged", "si", "solid"),
+              ("pca50", "PCA 50%", "cash", "pca", "solid"))
 
 
 def gap_series() -> tuple[list[str], list[dict]]:
@@ -232,10 +234,10 @@ def gap_series() -> tuple[list[str], list[dict]]:
     first = (frame["date"][0] - dt.timedelta(days=1)).isoformat()
     dates = [first, *[d.isoformat() for d in frame["date"]]]
     data = []
-    for arm, label, role, _ in ARMS_SHOWN:
+    for arm, label, role, _, dash in ARMS_SHOWN:
         diff = sum(frame[f"{arm}_o{k}"] * (frame[f"none_o{k}"].std() / frame[f"{arm}_o{k}"].std()) - frame[f"none_o{k}"]
                    for k in range(3)) / 3
-        data.append(series(arm, label, role, [0.0, *diff.to_list()], additive=True, drawdown=False))
+        data.append(series(arm, label, role, [0.0, *diff.to_list()], additive=True, drawdown=False, dash=dash))
     return dates, data
 
 
@@ -263,12 +265,12 @@ def render_gap(out: Path, dark: bool, mobile: bool) -> None:
         ax.axhline(0, color=c["ink"], lw=0.8)
         ax.axvspan(dt.date(SPLIT_YEAR, 1, 1), x[-1], color=c["grid"], alpha=0.55, zorder=0)
         cumulative = {}
-        for (arm, label, _, colour), s in zip(ARMS_SHOWN, data):
+        for (arm, label, _, colour, dash), s in zip(ARMS_SHOWN, data):
             values = [0.0]
             for v in s["values"][1:]:
                 values.append(values[-1] + v / 1e10 * 100)
             cumulative[arm] = values
-            ax.plot(x, values, color=c[colour], lw=1.7)
+            ax.plot(x, values, color=c[colour], lw=1.7, ls="--" if dash == "dash" else "-")
             ax.text(x[-1] + dt.timedelta(days=150), values[-1], label, va="center", fontsize=10, color=c[colour])
         ax.set_xlim(x[0], x[-1] + dt.timedelta(days=(900 if mobile else 1000)))
         ticks = (2005, 2015) if mobile else (2005, 2010, 2015, 2020)
