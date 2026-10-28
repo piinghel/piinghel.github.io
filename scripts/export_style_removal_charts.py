@@ -147,17 +147,18 @@ def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
     m = {r["arm"]: r for r in pl.read_csv(DATA / "outputs/evidence/table_metrics.csv").iter_rows(named=True)}
     rows = [("none", "No removal", "base"), ("style25", "Style 25%", "style"), ("style50", "Style 50%", "style"),
             ("style75", "Style 75%", "style"), ("style100", "Style 100%", "style"),
+            ("si25", "Style + SI 25%", "si"), ("si50", "Style + SI 50%", "si"),
             ("pca25", "PCA 25%", "pca"), ("pca50", "PCA 50%", "pca")]
     ys = list(range(len(rows)))[::-1]
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-risk-return"}):
         if mobile:
-            fig, axes = plt.subplots(2, 1, figsize=(4.4, 6.4), gridspec_kw={"hspace": 0.45})
+            fig, axes = plt.subplots(2, 1, figsize=(4.4, 7.6), gridspec_kw={"hspace": 0.4})
         else:
-            fig, axes = plt.subplots(1, 2, figsize=(9.4, 3.6), sharey=True, gridspec_kw={"wspace": 0.1})
+            fig, axes = plt.subplots(1, 2, figsize=(9.4, 4.2), sharey=True, gridspec_kw={"wspace": 0.1})
         fig.set_facecolor(c["bg"])
         panels = (("Volatility (% a year)", "vol_pct", (6.8, 9.4), [7, 8, 9], "{:.1f}"),
-                  ("Net Sharpe ratio", "net_sharpe", (1.1, 1.52), [1.1, 1.2, 1.3, 1.4, 1.5], "{:.2f}"))
+                  ("Net Sharpe ratio", "net_sharpe", (1.1, 1.58), [1.1, 1.2, 1.3, 1.4, 1.5], "{:.2f}"))
         for k, (ax, (title, col, lim, ticks, fmt)) in enumerate(zip(axes, panels)):
             style(ax, c, mobile, grid="x")
             ax.axvline(m["none"][col], color=c["muted"], lw=0.8, ls=(0, (2, 3)), zorder=1)
@@ -193,6 +194,7 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
         fig.set_facecolor(c["bg"])
         strengths = (("style25", 0), ("style50", 1), ("style75", 2), ("style100", 3))
         pca = (("pca25", 0), ("pca50", 1))
+        short_interest = (("si25", 0), ("si50", 1))
         for ax, (key, title) in zip(axes, periods):
             style(ax, c, mobile)
             ax.axhline(0, color=c["ink"], lw=0.8, zorder=1)
@@ -200,6 +202,10 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
                 r = table[(arm, key)]
                 ax.vlines(x, r["lo"], r["hi"], color=c["style"], lw=2.2, zorder=2)
                 ax.plot(x, r["delta"], "o", ms=7, color=c["style"], zorder=3)
+            for arm, x in short_interest:
+                r = table[(arm, key)]
+                ax.vlines(x - 0.22, r["lo"], r["hi"], color=c["si"], lw=1.6, zorder=2)
+                ax.plot(x - 0.22, r["delta"], "s", ms=6, color=c["si"], zorder=3)
             for arm, x in pca:
                 r = table[(arm, key)]
                 ax.vlines(x + 0.22, r["lo"], r["hi"], color=c["pca"], lw=1.6, zorder=2)
@@ -208,6 +214,7 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
             ax.set_ylim(-1.45, 0.85); ax.set_yticks([-1.0, -0.5, 0, 0.5])
             ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
         axes[0].text(0.22, table[("pca25", "early")]["lo"] - 0.07, "PCA", ha="center", va="top", fontsize=9.5, color=c["pca"])
+        axes[0].text(0.78, table[("si50", "early")]["hi"] + 0.04, "+ SI", ha="center", va="bottom", fontsize=9.5, color=c["si"])
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
