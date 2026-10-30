@@ -21,15 +21,16 @@ style out earlier, from the forecast the portfolio is built on.
 About half of the [Ridge forecast]({% link _posts/2025-02-09-combining-predictors.md %})
 is explained by the styles I use here. Taking some of that out lowers the
 book's volatility in this backtest, and improves the full-period Sharpe ratio at
-some strengths. But the gains were earned before 2019, and in the last five years style removal
-hasn't helped at all. And even if the results had been stronger, momentum or low
-volatility might still be bets I want to keep.
+some strengths. But the gains were earned before 2019, and in the last five years
+style removal hasn't helped at all. A separate test of adding short interest
+shows a small negative full-period Sharpe difference, with considerable
+uncertainty. And even if the results had been stronger, momentum or low volatility
+might still be bets I want to keep.
 
-**Correction, 30 October 2026:** I previously reported that adding short interest
-to style removal improved Sharpe. That result used short-interest shares and
-prices on inconsistent split bases, so it doesn't establish a benefit from
-removing correctly measured short interest. I've withdrawn those comparisons
-and discuss a separate corrected test below. The six-style results are unaffected.
+**Correction, 30 October 2026:** An earlier version overstated the benefit of
+removing short interest because the input mixed split-adjusted shares with
+unadjusted prices. The short-interest results below use a corrected input in a
+different test; the six-style results are unaffected.
 
 ## Style bets and stock-specific bets behave differently
 
@@ -231,11 +232,9 @@ at 1.20.
   </tbody>
 </table>
 
-The 50% gain has an interval clear of zero; adjusted for all the variants in
-the originally reported set of variants, including short interest, its p-value
-is about 0.09. That adjustment does not cover the roughly
-28 removal variants I tried on this history, so none of these
-settings has an independent test. Turnover rises from 24.7 to 27.2 times capital
+The 50% gain has an interval clear of zero, but I tried roughly 28 removal
+variants on this history, and none of these settings has an independent test.
+Turnover rises from 24.7 to 27.2 times capital
 a year at 50%, and the net figures already pay 5 bp per dollar traded for it.
 
 ## The Sharpe gain was earned before 2019
@@ -273,29 +272,37 @@ sizing as part of the difference, though both portfolios change in other ways to
 
 ## Short interest is a separate trade-off
 
-The earlier comparison mixed split-adjusted short-interest shares with historical
-unadjusted prices. The resulting series wasn't a clean measure of shares sold
-short as a fraction of shares outstanding. Its apparent performance gain can't
-tell us whether removing correctly measured short interest helps.
+Short interest is worth looking at because heavily shorted stocks can share
+crowding risk. I compared 25% removal of the six styles with 25% removal of
+those styles and short interest together. I did this for Ridge and LightGBM,
+using both the original forecasts and forecasts trained with a style-exposure
+penalty. This is a separate portfolio test covering 1999–2021, with a different
+engine from the 1999–April 2026 book above.
 
-In a separate corrected test, I converted the shares to the historical share
+<table class="research-table comparison-table compact-table">
+  <caption><strong>Table 3: Adding short interest to 25% style removal.</strong> Net Sharpe ratios, mean of three rebalance schedules. The difference is the seven-style book minus the six-style book at 25%; the full-period interval is a paired 120-session block-bootstrap 95% interval. The last five years are 2017–2021.</caption>
+  <thead><tr><th>Forecast</th><th>Six styles</th><th>Six + short interest</th><th>Δ 1999–2021 [95%]</th><th>Δ 2017–2021</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">LightGBM, original</th><td>2.321</td><td>2.300</td><td>−0.021 [−0.067, +0.019]</td><td>+0.024</td></tr>
+    <tr><th scope="row">LightGBM, penalized</th><td>2.443</td><td>2.409</td><td>−0.033 [−0.086, +0.015]</td><td>+0.032</td></tr>
+    <tr><th scope="row">Ridge, original</th><td>1.356</td><td>1.305</td><td>−0.052 [−0.117, +0.010]</td><td>+0.053</td></tr>
+    <tr><th scope="row">Ridge, penalized</th><td>1.493</td><td>1.428</td><td>−0.065 [−0.141, +0.005]</td><td>+0.010</td></tr>
+  </tbody>
+</table>
+
+Adding short interest reduced measured forecast dependence on the included
+factors, but increased information-coefficient volatility. The full-period
+Sharpe differences are negative in all four comparisons, though their intervals
+include zero. The last five years are mildly positive. Short interest may be
+useful to control a particular exposure, but this test doesn't establish a
+return or signal-stability improvement.
+
+For this comparison, I converted short-interest shares to the historical share
 basis using unadjusted volume divided by split-adjusted volume, then multiplied
-by unadjusted price and divided by market capitalization. This uses a split
-factor, not a dividend-adjusted price. I lagged the whole ratio by 21 trading
-sessions. A genuine reported zero is distinct from an
-unknown value. The lag is a proxy for availability: publication and data
-vintage timing haven't been verified.
-
-That test uses a different portfolio engine and runs from 1999 to 2021, so it
-isn't a corrected replay of the 1999–April 2026 book above. Adding short interest
-to 25% six-style removal reduced measured forecast dependence on the included
-factors, but increased information-coefficient volatility. The full-period net
-Sharpe changes versus six-style removal were −0.02 and −0.03 for LightGBM, and
-−0.05 and −0.06 for Ridge, using original and penalized forecasts respectively.
-All four estimates were negative, but they don't establish significant harm;
-recent-period increments were mildly positive. Short interest may be useful to
-control a particular exposure, but this evidence doesn't establish a return or
-signal-stability improvement.
+by unadjusted price and divided by market capitalization. I lagged the whole
+ratio by 21 trading sessions and kept reported zero separate from unknown.
+The lag is a proxy for availability: publication and data vintage timing
+haven't been verified.
 
 ## PCA and portfolio-level limits do less
 
