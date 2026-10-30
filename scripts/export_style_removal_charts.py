@@ -147,7 +147,6 @@ def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
     m = {r["arm"]: r for r in pl.read_csv(DATA / "outputs/evidence/table_metrics.csv").iter_rows(named=True)}
     rows = [("none", "No removal", "base"), ("style25", "Style 25%", "style"), ("style50", "Style 50%", "style"),
             ("style75", "Style 75%", "style"), ("style100", "Style 100%", "style"),
-            ("si25", "Style + SI 25%", "si"), ("si50", "Style + SI 50%", "si"),
             ("pca25", "PCA 25%", "pca"), ("pca50", "PCA 50%", "pca")]
     ys = list(range(len(rows)))[::-1]
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
@@ -194,7 +193,6 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
         fig.set_facecolor(c["bg"])
         strengths = (("style25", 0), ("style50", 1), ("style75", 2), ("style100", 3))
         pca = (("pca25", 0), ("pca50", 1))
-        short_interest = (("si25", 0), ("si50", 1))
         for ax, (key, title) in zip(axes, periods):
             style(ax, c, mobile)
             ax.axhline(0, color=c["ink"], lw=0.8, zorder=1)
@@ -202,10 +200,6 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
                 r = table[(arm, key)]
                 ax.vlines(x, r["lo"], r["hi"], color=c["style"], lw=2.2, zorder=2)
                 ax.plot(x, r["delta"], "o", ms=7, color=c["style"], zorder=3)
-            for arm, x in short_interest:
-                r = table[(arm, key)]
-                ax.vlines(x - 0.22, r["lo"], r["hi"], color=c["si"], lw=1.6, zorder=2)
-                ax.plot(x - 0.22, r["delta"], "s", ms=6, color=c["si"], zorder=3)
             for arm, x in pca:
                 r = table[(arm, key)]
                 ax.vlines(x + 0.22, r["lo"], r["hi"], color=c["pca"], lw=1.6, zorder=2)
@@ -214,13 +208,11 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
             ax.set_ylim(-1.45, 0.85); ax.set_yticks([-1.0, -0.5, 0, 0.5])
             ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
         axes[0].text(0.22, table[("pca25", "early")]["lo"] - 0.07, "PCA", ha="center", va="top", fontsize=9.5, color=c["pca"])
-        axes[0].text(0.78, table[("si50", "early")]["hi"] + 0.04, "+ SI", ha="center", va="bottom", fontsize=9.5, color=c["si"])
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
-# (arm, label, interactive role, static colour, dash): short interest is purple, as in Figures 3 and 4.
+# (arm, label, interactive role, static colour, dash).
 ARMS_SHOWN = (("style25", "Style 25%", "long", "style", "solid"), ("style50", "Style 50%", "size", "style50", "solid"),
-              ("si25", "Style + SI 25%", "hedged", "si", "dash"), ("si50", "Style + SI 50%", "hedged", "si", "solid"),
               ("pca50", "PCA 50%", "cash", "pca", "solid"))
 
 

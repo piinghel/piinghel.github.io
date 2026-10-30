@@ -176,12 +176,12 @@
     "height": 368
   },
   "/assets/ridge-style-removal/equal-vol-gap": {
-    "width": 593,
-    "height": 247
+    "width": 568,
+    "height": 251
   },
   "/assets/ridge-style-removal/equal-vol-gap_mobile": {
-    "width": 337,
-    "height": 252
+    "width": 313,
+    "height": 255
   },
   "/assets/ridge-style-removal/forecast-style-share": {
     "width": 629,
@@ -200,11 +200,11 @@
     "height": 328
   },
   "/assets/ridge-style-removal/risk-return": {
-    "width": 624,
+    "width": 606,
     "height": 280
   },
   "/assets/ridge-style-removal/risk-return_mobile": {
-    "width": 341,
+    "width": 324,
     "height": 468
   }
 }
