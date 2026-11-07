@@ -193,7 +193,7 @@ for byte), run the renderer from this directory, then
 
 The momentum figures use portfolio-level development evidence in
 `projects/momentum_crashes_public/outputs/evidence` and the verified Ridge
-continuation's `data/momentum_crash_holdout_20261001/chart_added_pnl.csv`.
+continuation's `data/runs/momentum_crash_holdout_20261001/chart_added_pnl.csv`.
 Run both momentum scripts from the blog directory, then update figure dimensions.
 The continuation chart preserves all first-trade P&L and the three-schedule
 denominator; it includes only the three standalone approaches used in the article.
