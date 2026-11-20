@@ -8,7 +8,6 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
-from matplotlib.patheffects import withStroke
 from matplotlib.ticker import FuncFormatter, PercentFormatter
 
 from blog_charts import series, write_chart
@@ -40,7 +39,7 @@ def export_interactive(returns, portfolios, output):
                 lines, {"performance": chart})
 
 
-def render_performance(returns, portfolios, destination, *, colors, grid, surface, mobile):
+def render_performance(returns, portfolios, destination, *, colors, grid, mobile):
     dates = returns["date"].to_list()
     dates = [dates[0] - timedelta(days=1), *dates]
     fig, (growth, drawdown) = plt.subplots(
@@ -52,10 +51,12 @@ def render_performance(returns, portfolios, destination, *, colors, grid, surfac
     ):
         wealth = np.r_[1, np.cumprod(1 + returns[key].to_numpy())]
         growth.plot(dates, wealth, color=color, ls=dash, lw=1.15)
+        if mobile and key == "factor":
+            label = "Sector and\nstyle factors"
         growth.annotate(
-            label, (dates[-1], wealth[-1]), xytext=(-4, 0), textcoords="offset points",
-            ha="right", va="center", color=color, fontsize=9 if mobile else 10,
-            path_effects=[withStroke(linewidth=2.5, foreground=surface)],
+            label, (dates[-1], wealth[-1]), xytext=(5, 0), textcoords="offset points",
+            ha="left", va="center", annotation_clip=False,
+            color=color, fontsize=9 if mobile else 10,
         )
         drawdown.plot(
             dates, wealth / np.maximum.accumulate(wealth) - 1,
@@ -93,7 +94,7 @@ def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
     with plt.rc_context(style):
         render_performance(
             returns, portfolios, output / ("performance" + suffix),
-            colors=colors, grid=grid, surface="#0d1117" if dark else "#fff", mobile=mobile,
+            colors=colors, grid=grid, mobile=mobile,
         )
         fig, (upper, lower) = plt.subplots(2, 1, figsize=(4.5 if mobile else 8.4, 4.7),
                                             layout="constrained", sharex=True)

@@ -12,7 +12,7 @@ series_order: 1
 permalink: /quants/factor-risk-sizing.html
 ---
 
-When I add a short, I want to know which risk it takes out of the book. In [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}), I used historical stock correlations shrunk toward zero. That gives the optimizer a way to size positions together. In the Russell 1000 it still starts from nearly half a million pairwise relationships.
+When I add a short, I want to know which risk it takes out of the book. My baseline uses historical stock correlations shrunk toward zero. That gives the optimizer a way to size positions together. In the Russell 1000 it still starts from nearly half a million pairwise relationships.
 
 A factor risk model estimates those relationships through a smaller set of shared returns, such as the market, sectors and styles. The same exposures tell me what a trade does to the whole book. A short can cancel some market exposure and add to momentum exposure at the same time. The model can still miss shared moves among stocks, and its estimate of total volatility can be off.
 
@@ -59,19 +59,19 @@ $$
 w^\top\Sigma w=\frac{9+9-2(3)}{4}=3.
 $$
 
-The three units of daily variance are one from momentum and two from the individual residuals. [Part 2]({% link _posts/2026-11-20-residual-risk.md %}#the-sign-of-the-position-changes-the-answer) adds residual correlation to this same spread.
+The three units of daily variance are one from momentum and two from the individual residuals. That calculation changes if the residuals move together.
 {: #the-average-residual-hides-groups}
 
 ## What goes into a position
 
 At each rebalance I use the Russell 1000 membership recorded by that close. Ridge ranks expected return per unit of risk within sectors. The joint optimizers start with the 75 highest scores as long candidates and the 75 lowest as short candidates. They can retain existing positions from the union of the top and bottom 175. They use the same sizing score, the Ridge prediction times trailing 21-session daily volatility, and the same turnover penalty.
 
-- **Volatility scaling** is the simple benchmark. It starts with equal weights on each side and multiplies each by 20% divided by its trailing 60-session annualized volatility, with a 5% volatility floor. A 40%-volatility stock starts at half its equal weight. Each sleeve can use up to one dollar per dollar of capital. This benchmark sizes stocks one at a time. [Paleologo, *Advanced Portfolio Management*, §6.3](https://www.wiley.com/en-us/advanced-portfolio-management-a-quant%27s-guide-for-fundamental-investors-p-9781119789802)
-- **Stock shrinkage** is the main benchmark for the covariance comparison. It shrinks the 756-session stock correlation matrix halfway toward the identity, the correlation shrinkage step in Pedersen, Babu and Levine’s *Enhanced Portfolio Optimization*. The stock volatilities use 21 sessions and a 1.18 multiplier. [Pedersen, Babu and Levine](https://doi.org/10.1080/0015198X.2020.1854543)
+- **Volatility scaling** is the simple benchmark. It starts with equal weights on each side and multiplies each by 20% divided by its trailing 60-session annualized volatility, with a 5% volatility floor. A 40%-volatility stock starts at half its equal weight. Each sleeve can use up to one dollar per dollar of capital. This benchmark sizes stocks one at a time.
+- **Stock shrinkage** is the main benchmark for the covariance comparison. It shrinks the 756-session stock correlation matrix halfway toward the identity. The stock volatilities use 21 sessions and a 1.18 multiplier.
 - **Sector and style factors** estimate stock covariance from a market intercept, broad sectors and seven styles, including momentum, size and liquidity. The model adds each stock’s specific variance and starts with zero pairwise residual correlations.
 - **Factor target** keeps the stock-shrinkage volatilities and averages the historical correlation matrix with the total correlation implied by the factor model, including shrunk residual correlations. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
 
-At each close I fit $$r_t=B_{t-1}f_t+\epsilon_t$$ across stocks. I know the exposures $$B_{t-1}$$ from the previous close and observe today’s stock returns $$r_t$$. The regression estimates today’s factor returns $$f_t$$ and leaves one residual per stock, $$\epsilon_t$$. The fitted return histories give me the factor covariance and each stock’s specific variance. [Modeling Equities Returns](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
+At each close I fit $$r_t=B_{t-1}f_t+\epsilon_t$$ across stocks. I know the exposures $$B_{t-1}$$ from the previous close and observe today’s stock returns $$r_t$$. The regression estimates today’s factor returns $$f_t$$ and leaves one residual per stock, $$\epsilon_t$$. The fitted return histories give me the factor covariance and each stock’s specific variance.
 
 For the factor target, I first divide each model-implied stock covariance by the two model-implied stock volatilities to get a correlation. I average that matrix with the historical stock correlation matrix. Finally, I turn the result back into covariance using the same stock volatilities as the stock-shrinkage benchmark. That keeps the two models’ standalone stock risks equal while changing how they estimate co-movement.
 
@@ -91,7 +91,7 @@ The portfolio comparisons use 5,773 common sessions from 26 January 1999 through
 
 I kept each portfolio’s filled shares and compared forecasts of their daily risk through the next rebalance. Across **227 completed later cycles** on the stock-shrinkage book, stock shrinkage forecast **7%** and the factor target forecast **about 10%**, against **9.6%** annualized gross risk. On the original factor book, the target overshot realized volatility by more than two points. The result depended on which book I priced.
 
-I then calibrated each model on the same holdings. I multiplied forecast variance by the average realized-to-forecast variance ratio over the last 52 completed cycles. Both forecasts came out near **9.7%** on the stock-shrinkage holdings. To compare accuracy across cycles, I scored forecast variance $$v$$ against mean squared daily return $$u$$ using $$\log v+u/v$$. Lower is better. Stock shrinkage scored better on its own holdings. On the other two reference books the paired intervals included zero, so this gives limited grounds for preferring either risk forecast across books. [Paleologo, *The Elements of Quantitative Investing*, chapter 5](https://www.wiley.com/en-us/shop/general-finance-investments/the-elements-of-quantitative-investing-p-9781394265466)
+I then calibrated each model on the same holdings. I multiplied forecast variance by the average realized-to-forecast variance ratio over the last 52 completed cycles. Both forecasts came out near **9.7%** on the stock-shrinkage holdings. To compare accuracy across cycles, I scored forecast variance $$v$$ against mean squared daily return $$u$$ using $$\log v+u/v$$. Lower is better. Stock shrinkage scored better on its own holdings. On the other two reference books the paired intervals included zero, so this gives limited grounds for preferring either risk forecast across books.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
@@ -144,7 +144,7 @@ At three weeks, 150 names gave the clearest reduction in risk relative to diagon
 </table>
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="2" alt="Net growth of the three long/short Ridge portfolios above their drawdowns on the same timeline. Stock shrinkage finished ahead of the factor target and sector and style factors." %}
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" alt="Net growth of the three long/short Ridge portfolios above their drawdowns on the same timeline. Stock shrinkage finished ahead of the factor target and sector and style factors." %}
 </div>
 <p class="figure-caption">The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
 
@@ -229,3 +229,8 @@ Exposure changed with breadth too. At 150 per side both models met the ±0.05 es
 I would keep stock shrinkage for this Ridge portfolio. The factor model gives me a useful way to see what the book is exposed to. Estimating residual correlations also helped the factor model choose hedge weights across the stocks I gave it. In the portfolio replay, calibrating the risk budget brought both covariance models close to 7% realized volatility, and there was no clear gain from switching to the factor target.
 
 The comparison I’d want next is a wider book with a common beta target and comparable realized risk on new dates. That would put less weight on what happened in 2024 and make it easier to see whether the covariance choice improved the trades themselves.
+
+## References
+
+- Volatility scaling. [Paleologo, *Advanced Portfolio Management*, §6.3](https://www.wiley.com/en-us/advanced-portfolio-management-a-quant%27s-guide-for-fundamental-investors-p-9781119789802)
+- Correlation shrinkage. [Pedersen, Babu and Levine, *Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543)

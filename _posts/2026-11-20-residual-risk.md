@@ -12,7 +12,7 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-In [Part 1]({% link _posts/2026-11-20-factor-risk-sizing.md %}#from-stock-exposures-to-portfolio-risk), a spread that was long A and short B had three units of daily variance. Part of that came from factors and part from the two individual residuals. The calculation gave A and B zero residual correlation. Here I change that assumption while keeping the same stocks, exposures and positions.
+Take a spread that is 50% long A and 50% short B. In the three-stock example its daily variance is 3 squared percentage points when the residuals are uncorrelated. I keep the positions and factor exposures fixed and change the residual correlation.
 
 A sector factor can capture a broad move while a smaller group within the sector still moves together. I look for those groups in one year of residuals and follow the same groups into the next. Principal components give me another way to measure the shared moves and test how much of their strength is worth carrying into a risk forecast.
 
@@ -33,7 +33,7 @@ Keep the specific volatilities at 2%, 2% and 1%, so $$D=\operatorname{diag}(2,2,
   </div>
 </div>
 
-The A–B entry becomes $$2(0.6)2=2.4$$ in squared percentage points. Add it to the factor covariance of 3 from Part 1 and the total A–B covariance rises to 5.4. The individual variances stay at 9 each. The same 50%-long A and 50%-short B spread now has daily variance
+The A–B entry becomes $$2(0.6)2=2.4$$ in squared percentage points. Add it to the factor covariance of 3 and the total A–B covariance rises to 5.4. The individual variances stay at 9 each. The same 50%-long A and 50%-short B spread now has daily variance
 
 $$
 w^\top\Sigma w=\frac{9+9-2(5.4)}{4}=1.8.
@@ -43,7 +43,7 @@ Positive residual covariance lowers the spread’s estimated variance because th
 
 ## Groups identified in one year still move together in the next
 
-I use the residuals from the daily market, sector and seven-style fit in Part 1. The sector and industry labels come from the same August 2026 snapshot. At each year-end I group stocks by their trailing 252-session residual correlations, then hold the groups and stock order fixed for the next 252 sessions. The forward comparison uses names observed in both windows, about 93% of the formation names on average.
+I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. The sector and industry labels come from an August 2026 snapshot. At each year-end I group stocks by their trailing 252-session residual correlations, then hold the groups and stock order fixed for the next 252 sessions. The forward comparison uses names observed in both windows, about 93% of the formation names on average.
 
 Read the heatmaps from left to right. In the first two panels, the dates, stocks and order are identical. The first uses stock returns and the second uses the returns left by the factor fit. The third keeps the same order and uses the next 252 sessions. A block in the same place in the last two panels means that group still moves together.
 
@@ -66,7 +66,7 @@ The forward correlation gap was much larger within sectors. In the 23 developmen
 ## The model placed NVIDIA and Vertiv in different groups
 {: #would-the-model-have-grouped-nvidia-and-vertiv}
 
-Vertiv and NVIDIA published a design for powering and cooling NVIDIA-based data centers before the January 2025 selloff. [Vertiv’s October 2024 announcement](https://www.vertiv.com/en-emea/about/news-and-events/news-releases/vertiv-codevelops-with-nvidia-complete-power-and-cooling-blueprint-for--nvidia-gb200-nvl72-platform/)
+Vertiv supplies power and cooling equipment for data centers. That gives me a concrete relationship to look for in NVIDIA’s residual returns.
 
 In the 252 sessions through January 24, NVIDIA’s residual correlation was **0.14 with Vertiv** and **−0.10 with Workday**. The December groups had placed all three firms in different clusters. A group summarizes many stock pairs, so its label can miss a relationship between two particular names.
 
@@ -114,7 +114,7 @@ The comparisons keep the named-factor covariance and $$D$$ fixed. The specific v
 
 The baseline uses $$R=I$$. A stock without a complete trailing residual window keeps its named exposures and its specific variance, with zero pairwise residual correlations.
 
-- **Shrink toward zero.** For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. This pulls pairwise residual correlations toward zero while preserving each stock’s specific variance. [Ledoit and Wolf](https://www.econ.uzh.ch/dam/jcr:ffffffff-961c-1dd9-ffff-ffffceb83f14/wellCond.pdf)
+- **Shrink toward zero.** For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. This pulls pairwise residual correlations toward zero while preserving each stock’s specific variance.
 - **Keep one principal component.** Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
 - **Combine them.** Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
 
@@ -139,7 +139,7 @@ On the filled books, dropping residual correlations moved the factor target’s 
 
 ## What changed in the long/short book
 
-The replay kept the Ridge scores, rebalance schedules, optimizer constraints and dated transaction fees fixed. Each covariance model chose its own positions. The table averages the three schedule-level results, and the portfolios realized different levels of risk. [Portfolio comparison at similar realized risk]({% link _posts/2026-11-20-factor-risk-sizing.md %}#trading-with-a-calibrated-risk-budget)
+The replay kept the Ridge scores, rebalance schedules, optimizer constraints and dated transaction fees fixed. Each covariance model chose its own positions. The table averages the three schedule-level results, and the portfolios realized different levels of risk.
 
 <table class="research-table comparison-table compact-table">
   <caption>Annual after-fee performance. Each residual method uses the same named factors and specific volatilities. Stock shrinkage is the separate stock-level reference.</caption>
