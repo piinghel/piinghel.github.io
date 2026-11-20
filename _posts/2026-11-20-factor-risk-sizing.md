@@ -93,6 +93,14 @@ I first gave each optimizer the same stocks and the same required exposure to th
 
 Bloomberg’s Jose Menchero and Anthony Lazanas make a useful point about this exercise. If two portfolios carry the same exposure to a return forecast, I can judge which risk model found the quieter way to hold that exposure. I do not need to wait for the forecast itself to earn a high enough return to distinguish the portfolios. A minimum-variance test makes that comparison particularly direct. Its ability to distinguish models still depends on the positions the constraints allow them to take. A rule that forces identical weights gives every model identical realized volatility. [Menchero and Lazanas, *Evaluating and Comparing Risk Model Performance*](https://doi.org/10.3905/jpm.2023.1.565)
 
+Paleologo’s minimum-variance example helped me see why I also need a calibration test. Suppose the only constraint is one unit of exposure to a vector $$b$$. Setting every entry of $$b$$ to one gives a fully invested portfolio. Minimizing forecast variance gives
+
+$$
+w = \frac{\widehat{\Sigma}^{-1} b}{b^\top \widehat{\Sigma}^{-1} b}.
+$$
+
+Double every entry of the covariance estimate and the weights stay exactly the same. The common scale cancels between numerator and denominator. A risk model could therefore pick excellent hedges and still forecast the wrong level of volatility for every one of them. In the traded Ridge portfolio a 7% risk limit changes the answer. Multiplying the forecast volatility by 1.2 can make the optimizer buy and short fewer shares. The hedge test assesses relative risks. The risk-budget replay also assesses their absolute level. [Paleologo, *The Elements of Quantitative Investing*, chapter 6](https://www.wiley.com/en-us/The%2BElements%2Bof%2BQuantitative%2BInvesting-p-9781394265466)
+
 <table class="research-table comparison-table compact-table">
   <caption>Annualized realized volatility of the matched long/short spreads. Breadth counts the stocks across both sides together. Each row uses the same stocks and dates for all four models.</caption>
   <thead><tr><th>Stocks in spread</th><th>Stock shrinkage</th><th>Original factors</th><th>Shrunk residuals</th><th>Factor target</th></tr></thead>
