@@ -55,6 +55,14 @@
     "width": 324,
     "height": 338
   },
+  "/assets/factor-risk-sizing/short-funding": {
+    "width": 547,
+    "height": 252
+  },
+  "/assets/factor-risk-sizing/short-funding_mobile": {
+    "width": 330,
+    "height": 252
+  },
   "/assets/joint-sizing/parameter-sensitivity": {
     "width": 1200,
     "height": 660
