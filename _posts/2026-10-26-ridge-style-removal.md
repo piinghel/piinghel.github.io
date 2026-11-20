@@ -6,7 +6,7 @@ description: "Where to deal with style exposure, and what happens when part of i
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
-last_modified_at: 2026-10-30
+last_modified_at: 2026-11-20
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Style removal
 ---
@@ -166,11 +166,11 @@ That split depends on the predictors, the styles and how they are estimated.
 </div>
 <p class="figure-caption"><strong>Figure 2: The six fitted styles explain about half of the forecast.</strong> Share of each year's cross-sectional forecast variance. The three parts add to 100%: style, the residual, and a thin band for sectors plus the overlap between the sector and style parts, which are fitted together and are not perfectly independent.</p>
 
-## The optimizer's risk model is a shrunk covariance, not a factor model
+## The optimizer uses stock-correlation shrinkage
 
-The optimizer needs a covariance matrix to size positions, and it does not use a
-factor model for it. It uses a sample covariance estimated directly from stock
-returns:
+The factor regression changes the Ridge forecast. The optimizer sizes the
+resulting book with the same stock-return covariance estimator throughout this
+study.
 
 $$
 \Sigma = D\,C\,D,\qquad C=\tfrac{1}{2}\hat R+\tfrac{1}{2}I .
@@ -192,8 +192,8 @@ $$\Omega_f$$ from the residual covariance $$\Omega_\epsilon$$. A shrunk
 sample covariance has no such separation: halving every correlation also halves
 those that come from shared styles, which can make concentrated style exposure
 look too cheap and may help explain why the book overshoots its 7% target.
-Removing style from the forecast is not the same as changing the covariance used
-for sizing.
+The [factor-risk study]({% link _posts/2026-11-20-factor-risk-sizing.md %})
+holds the Ridge forecast fixed and changes the covariance estimate directly.
 
 The attribution puts the trade-off in perspective. In the unadjusted book the
 style P&L has a Sharpe ratio of 0.93, against 0.49 for the
@@ -260,7 +260,7 @@ less and kept most of it.
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=5" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="4" label="Cumulative net return against no removal at equal volatility for style 25% and 50% and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: The gap stopped growing after 2018, and 50% removal gave part of it back.</strong> Cumulative daily net return difference against no removal, in points of capital, with each variant scaled to the full-period volatility of no removal; mean of three schedules. Shaded: 2019 onward.</p>
+<p class="figure-caption"><strong>Figure 5: The gap stopped growing after 2018, and 50% removal gave part of it back.</strong> The chart rescales each saved daily return series to the full-period volatility of no removal, then accumulates the net gaps in points of capital across the three schedules. It is an after-the-fact comparison of return paths. Shading starts in 2019.</p>
 
 One possibility is that the trade-off changed: since 2019 the book's
 stock-specific P&L has paid much less (a Sharpe ratio of 0.10, against 0.63

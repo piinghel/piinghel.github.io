@@ -6,7 +6,7 @@ description: "Three ways to make a Ridge strategy's momentum exposure depend on 
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-20
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -14,26 +14,16 @@ github_repositories:
     url: https://github.com/piinghel/momentum-crash-study
 ---
 
-In the previous articles I built a long-short Russell 1000 strategy: a
-[Ridge regression on 80 predictors]({% link _posts/2025-02-09-combining-predictors.md %})
-ranks the stocks, and the
-[joint optimizer with its trading controls]({% link _posts/2026-08-29-joint-sizing.md %})
-sizes them, for a Sharpe ratio of 1.32 over 1998–2021. It works well on
-average, but it has one weakness I want to look at here: momentum crashes.
+From 9 March to 29 May 2009, the Russell 1000 momentum spread lost 57%
+while the stocks on its short side rose 134%. The sizing problem is whether
+there was a signal to cut exposure before the rebound, and how much return
+that protection would have cost in other periods.
 
-Momentum means buying the stocks that went up over the past year and shorting
-the ones that went down. It pays most of the time, and then occasionally loses
-a lot very fast. That happens when a market that has fallen for a long time
-turns sharply up: the stocks that fell the most rally the hardest, and anyone
-short them gives back months of gains in a few weeks. From 9 March to 29 May
-2009, a winners-minus-losers portfolio in the Russell 1000 lost 57% while its
-losers rose 134%.
-
-The Ridge model does not explicitly target momentum, but about fifteen of its
-80 predictors are trend measures, so the portfolio holds past winners and shorts past losers
-anyway. And it shows. On the 30 worst days for momentum since 1998, the
-strategy lost 15.5 points of capital. That's more than a year and a half of its
-average return (9.4% a year), lost on 30 days out of almost 6,000.
+About fifteen of the [Ridge model’s 80 predictors]({% link _posts/2025-02-09-combining-predictors.md %})
+are trend measures. The [jointly sized portfolio]({% link _posts/2026-08-29-joint-sizing.md %})
+tends to hold past winners and short past losers. It lost 15.5 points of
+capital on the 30 worst momentum days in development, against an average
+annual return of 9.4%.
 
 These crashes don't come out of nowhere, though: they tend to arrive when
 momentum itself has already become volatile. To see whether that holds for the
@@ -46,7 +36,7 @@ strategy earns about half its usual return (the grey bars in Figure 1).
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-state" mobile="/assets/momentum-crashes-ridge/sharpe-by-state_mobile" alt="Net Sharpe ratio of the baseline and the score overlay by level of lagged momentum volatility: similar below twice normal volatility, much lower for the baseline above it." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 1: The strategy earns much less once momentum has been volatile.</strong> Net Sharpe ratio by level of the momentum-risk state g: the 12-1 winner-minus-loser portfolio's volatility over the last 126 sessions relative to its expanding median, floored at one and known the day before. Sharpe is computed within each bucket for each of the three rebalance schedules, then averaged; September 1998–December 2021, net of 5 bp. Labels give the share of trading days. The blue bars are the score overlay described below.</p>
+<p class="figure-caption"><strong>Figure 1: Ridge’s net Sharpe drops in the highest momentum-volatility group.</strong> Groups use the momentum spread’s trailing 126-session volatility relative to its expanding median, measured before the trading day and floored at one. Labels give the share of development days. Sharpe averages the three schedule-level results after fees. Blue shows the score overlay explained below.</p>
 
 The strategy still makes money in that top bucket, and much of the gap comes
 from 2009, when the book lost about 5 points of capital on those days; without

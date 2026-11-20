@@ -33,6 +33,16 @@ test('fixed-notional P&L rebases additively, including its drawdown',()=>{
   assert.deepEqual(charts.additivePath([0,.1,-.2,.05],1,3),{equity:[0,-20,-15],drawdown:[0,-20,-15]});
 });
 
+test('predictor decile windows begin after the performance opening mark', () => {
+  const read = name => JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/combining-predictors', name)));
+  const deciles = read('deciles.json');
+  const performance = read('performance.json');
+  const expected = performance.charts.performance.episodes.map(([label, opening, end]) => [
+    label, deciles.dates.find(day => day > opening), end
+  ]);
+  assert.deepEqual(deciles.charts.deciles.episodes, expected);
+});
+
 test('non-overlapping attribution totals reconcile daily for every leg',()=>{
   const read=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/portfolio-attribution/'+name)));
   const theme=read('interactive-themes.json'),legs=read('interactive-legs.json');

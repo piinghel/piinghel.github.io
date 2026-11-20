@@ -1,4 +1,12 @@
 {
+  "/assets/combining-predictors/decile-returns": {
+    "width": 605,
+    "height": 230
+  },
+  "/assets/combining-predictors/decile-returns_mobile": {
+    "width": 320,
+    "height": 407
+  },
   "/assets/combining-predictors/expanding-walk-forward": {
     "width": 605,
     "height": 288
@@ -240,7 +248,7 @@
     "height": 389
   },
   "/assets/residual-risk/matrix": {
-    "width": 605,
+    "width": 604,
     "height": 256
   },
   "/assets/residual-risk/matrix_mobile": {

@@ -4,7 +4,7 @@ interactive_charts: true
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-20
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/joint-sizing.html
@@ -362,6 +362,11 @@ In [Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %})
 I combine the three starting weeks at one third of notional each and
 measure the diversification benefit. The [attribution series]({% link _posts/2026-09-09-portfolio-attribution.md %})
 then breaks the portfolio's P&L down by the ranking's themes.
+
+The [factor-risk comparison]({% link _posts/2026-11-20-factor-risk-sizing.md %})
+keeps volatility scaling and stock shrinkage as benchmarks and tests whether
+shrinking toward a factor model changes hedge quality or returns at similar
+realized risk.
 
 Two weaknesses remain: realized beta runs above the rebalance-time estimate
 for months at a time, and after 2021 the Sharpe advantage is positive but its

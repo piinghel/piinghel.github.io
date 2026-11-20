@@ -10,13 +10,13 @@ permalink: /quants/residual-risk.html
 home_after: _posts/2026-11-20-factor-risk-sizing.md
 ---
 
-Two chip suppliers can move together even on a day when the market, their sector and common styles barely move. Some of that shared risk cancels if I’m long one and short the other. The average residual correlation across all stock pairs was **−0.06%**. It tells me very little about those two stocks.
+The sector and style model leaves an average pairwise residual correlation of **−0.06%**. The practical question is whether the pairs that still move together do so reliably enough to matter for position sizing. In a universe of hundreds of stocks, one year of returns gives an imprecise estimate for each pair.
 
-In [Shrinking Stock Correlations Toward a Factor Model]({% link _posts/2026-11-20-factor-risk-sizing.md %}), I kept the Ridge forecasts fixed and changed the risk estimate. Here I look at what remains after the factor fit, how long it persists, and how much of it I would carry into a risk forecast.
+I freeze the relationships estimated in one year and measure them in the next. Then I compare three ways to carry that information into a portfolio. The [portfolio article]({% link _posts/2026-11-20-factor-risk-sizing.md %}) asks the separate question of what those weights earn after fees.
 
 ## The sign of the position changes the answer
 
-Each day I fit stock returns to the market, broad sectors and seven styles using exposures lagged by one close. The residual is the actual return minus the fitted return. The same August 2026 sector and industry classification snapshot is used throughout the historical fit and the industry comparisons.
+Each day I fit stock returns to a common market intercept, broad sectors and seven styles, with exposures lagged by one close. The intercept has unit loading for each stock, so its portfolio exposure is net weight. The fit weights squared errors by the square root of prior market cap and uses the August 2026 sector and industry labels across history. A residual is the return left after that fit. The weighted residuals balance within each fitted sector by construction, even when particular pairs still move together.
 
 Suppose two stocks have equal specific volatility $$d$$ and residual correlation $$\rho$$. Give each a position of size $$w$$ in absolute terms. The residual variance of two longs is $$2w^2d^2(1+\rho)$$. Flip the second position to a short and the variance becomes $$2w^2d^2(1-\rho)$$. At a correlation of 0.25, the two longs have 25% more residual variance than the diagonal model predicts. The long/short pair has 25% less. That example concerns **variance**. To compare volatility, take the square root.
 
@@ -25,7 +25,7 @@ Suppose two stocks have equal specific volatility $$d$$ and residual correlation
 At each year-end I used 252 sessions of residual returns to group stocks. I repeatedly joined the two groups with the highest average correlation between their members, stopping at eleven groups. I kept the groups and the stock order fixed for the next 252 sessions. The forward comparisons use only stocks with complete observations in both windows, about 93% of the formation names on average.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="2" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from 24.68% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
+  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="3" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from 24.68% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
   <p class="figure-caption">All three panels use the same 850 stocks, ordered by the residual groups formed in December 2021. Each tile averages distinct stock pairs. The outlines mark the original groups and the common color scale saturates at ±40%.</p>
 </div>
 
@@ -43,6 +43,9 @@ The groups mostly helped within sectors. In the 23 development cohorts the forwa
 ## The model placed NVIDIA and Vertiv in different groups
 {: #would-the-model-have-grouped-nvidia-and-vertiv}
 
+<details markdown="1">
+<summary>A case from the January 2025 selloff</summary>
+
 Vertiv and NVIDIA published a design for powering and cooling NVIDIA-based data centers before the January 2025 selloff. NVIDIA also used Workday’s HR software. These links exposed the companies to different customer decisions. [Vertiv’s October 2024 announcement](https://www.vertiv.com/en-emea/about/news-and-events/news-releases/vertiv-codevelops-with-nvidia-complete-power-and-cooling-blueprint-for--nvidia-gb200-nvl72-platform/) · [Workday’s customer study](https://forms.workday.com/content/dam/web/en-us/documents/ebooks/power-of-skills-insights-customer-success-story-global-enus.pdf)
 
 In the 252 sessions through January 24, NVIDIA’s return correlation was **0.65 with Vertiv** and **0.16 with Workday**. After removing market, sector and style returns, those correlations were **0.14 and −0.10**. The December groups had placed all three firms in different clusters. A stock can share a risk with another firm even when its strongest relationships put it in a different group.
@@ -55,7 +58,9 @@ On January 27, NVIDIA fell 16.97%, Vertiv fell 29.88% and Workday rose 2.29% aft
 </div>
 <p class="figure-caption">Each dot uses the last 252 sessions at that year-end. Workday had the higher raw correlation with NVIDIA in 2021 and 2022. Removing the broad factors reversed the ordering. The 2025 window includes the selloff. <a href="/assets/residual-risk/nvidia-pair-correlations.csv">Download the correlations and dates (CSV).</a></p>
 
-The one-day selloff pushed NVIDIA–Vertiv’s year-end 2025 residual correlation to **0.25**. Removing it brought the estimate back to **0.15**. That is close to the **0.14** measured before the event. I would use that history and the business link to investigate shared exposures, particularly when the group labels alone miss a plausible hedge. [Single-day sensitivity (CSV)]({{ '/assets/residual-risk/nvidia-single-session-sensitivity.csv' | relative_url }})
+The year-end 2025 residual correlation for NVIDIA–Vertiv was **0.25**. Omitting the selloff brought it back to **0.15**, close to the **0.14** measured before the event. [Single-day sensitivity (CSV)]({{ '/assets/residual-risk/nvidia-single-session-sensitivity.csv' | relative_url }})
+
+</details>
 
 ## The shared directions persist at a smaller scale
 
@@ -70,17 +75,17 @@ In the 23 development cohorts, components two through five averaged **14.30** un
 
 ## Putting a residual correlation into the portfolio
 
-I kept the named factor exposures $$B$$, factor covariance $$F$$ and specific volatilities $$D$$ fixed. Only the residual correlation matrix $$R$$ changed.
+Let $$B$$ hold one row of factor exposures per stock and $$F$$ be the covariance of factor returns. The first term below measures risk from those common factors. For signed weights $$w$$, the portfolio holds factor exposure $$B^\top w$$ and its factor variance is $$(B^\top w)^\top F(B^\top w)$$. The second term combines the diagonal matrix of stock-specific volatilities $$D$$ with the residual correlation matrix $$R$$.
 
 $$
 \Sigma = B F B^\top + D R D.
 $$
 
-The starting model uses $$R=I$$. Each stock has its own specific variance, and the forecast assigns zero covariance to stock pairs’ residuals and between residuals and factor shocks. I compared three ways of allowing residuals to move together. [Paleologo, *The Elements of Quantitative Investing*, §§6.4.4–6.4.5 and chapter 7](https://www.wiley.com/en-us/shop/general-finance-investments/the-elements-of-quantitative-investing-p-9781394265466)
+I keep $$B$$, $$F$$ and $$D$$ fixed and change $$R$$. The model starts with $$R=I$$ and treats factor shocks and residuals as uncorrelated. A stock without a complete trailing residual window keeps its named exposures and specific variance, with zero pairwise residual correlations. [Paleologo, *The Elements of Quantitative Investing*, §§6.4.4–6.4.5 and chapter 7](https://www.wiley.com/en-us/shop/general-finance-investments/the-elements-of-quantitative-investing-p-9781394265466)
 
 - **Shrink toward zero.** For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. With more stocks than observations, this raises the lowest estimated variances and reduces the largest. [Ledoit and Wolf](https://www.econ.uzh.ch/dam/jcr:ffffffff-961c-1dd9-ffff-ffffceb83f14/wellCond.pdf)
-- **Keep principal components.** Keep the covariance $$L$$ explained by the first one or five components and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
-- **Combine them.** Shrink the leftover matrix $$U=S-L$$ toward its diagonal and add the components back once, giving $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$. The diagonal stays at one in all three cases.
+- **Keep one principal component.** Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
+- **Combine them.** Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
 
 Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. Each cohort gets equal weight. For pairs in the **same sector and group**, carrying the trailing correlation forward reduced development root mean squared error from **16.88 to 12.03 correlation points** against a forecast of zero. For pairs in **different sectors and groups**, zero had an error of **7.65**, plain shrinkage **7.73**, and five components plus shrinkage **8.50**. Some cross-sector co-movement persisted on average, but those estimates were too large to improve the individual pair forecasts in that group.
 
@@ -97,7 +102,7 @@ In development the five-component estimate assigned **14.96** units of forecast 
 
 Keeping a component can give it *more* forecast variance than its original eigenvalue. On the formation sample the remainder $$U$$ has zero variance along a retained direction. Shrinking its off-diagonal entries removes some of the offsets that kept that variance at zero. The component then receives its original variance plus part of the remainder’s diagonal.
 
-The difference was much smaller on the filled Ridge portfolios. Removing residual correlations from the factor target’s later risk forecasts moved the estimate from **7.00% to 6.98%** on its own holdings and from **9.95% to 9.86%** on the stock-shrinkage holdings. The residual terms can reinforce or offset one another once the long and short weights enter the calculation. Keeping only the residual correlations within each frozen group also gave similar forecasts and showed no clear hedge improvement over ordinary shrinkage.
+On the filled books the effect was smaller. Dropping residual correlations moved the factor target’s later forecast from **7.00% to 6.98%** on its own holdings and from **9.95% to 9.86%** on the stock-shrinkage holdings. Long and short weights can offset these contributions. The risk of a shared direction matters in proportion to how much of it the portfolio holds.
 
 ## What changed in the long/short book
 

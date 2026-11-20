@@ -56,9 +56,15 @@ def export(article: Path, assets: Path, market: Path) -> None:
                     if abs(result[metric] - row[metric]) > 1e-6:
                         raise ValueError(f"Decile metric mismatch: {score}, {decile}, {period}, {metric}")
             bars.append(series(f"{score}_{decile}", f"{label} · {decile}", role, values, group=label, category=str(decile)))
+    # The bar chart includes its start date. Performance windows start at the
+    # opening NAV mark, so each decile window starts on the following session.
+    decile_episodes = [
+        [label, next(day for day in calendar if day > start), end]
+        for label, start, end in episodes
+    ]
     write_chart(assets / "deciles.json", calendar, bars, {
         "deciles": dict(kind="grouped-bars", series=[s["id"] for s in bars],
-                        episodes=episodes, initialRange=[calendar[0], "2021-12-31"],
+                        episodes=decile_episodes, initialRange=[calendar[0], "2021-12-31"],
                         note="Before costs. Daily decile returns averaged across three schedules; zero-cash Sharpe.")})
 
 

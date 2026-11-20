@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-20
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
@@ -320,7 +320,7 @@ Through 2021 Ridge's mean IC, 0.048, is close to the equal-weight score's
 Figure 3 first shows how the Ridge and equal-weight scores order return and
 volatility, using equal-weighted decile portfolios before costs.
 
-{% include blog-chart.html chart="deciles" source="/assets/combining-predictors/deciles.json" label="Return, volatility and Sharpe across score deciles" %}
+{% include blog-chart.html chart="deciles" source="/assets/combining-predictors/deciles.json?v=2" base="/assets/combining-predictors/decile-returns" mobile="/assets/combining-predictors/decile-returns_mobile" version="1" label="Ridge and equal-weight score decile returns are broadly increasing through 2021. After 2021 the bottom deciles lag, while return ordering largely disappears above decile 3." %}
 
 <p class="figure-caption"><strong>Figure 3: Decile portfolios of the scores.</strong> Equal-weighted portfolios of the stocks in each score decile. Explore switches between compounded annual return, Sharpe ratio and annualized volatility for the selected period. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
 
