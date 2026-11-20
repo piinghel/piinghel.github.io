@@ -1,0 +1,49 @@
+exposures:
+  rows: [A, B, C]
+  columns: [Market, Momentum]
+  values: [[1, 1], [1, -1], [1, 0]]
+
+factor_covariance:
+  rows: [Market, Momentum]
+  columns: [Market, Momentum]
+  values: [[4, 0], [0, 1]]
+
+scaled_exposures:
+  rows: [A, B, C]
+  columns: [Market, Momentum]
+  values: [[4, 1], [4, -1], [4, 0]]
+
+transposed_exposures:
+  rows: [Market, Momentum]
+  columns: [A, B, C]
+  values: [[1, 1, 1], [1, -1, 0]]
+
+factor_stock_covariance:
+  rows: [A, B, C]
+  columns: [A, B, C]
+  values: [[5, 3, 4], [3, 5, 4], [4, 4, 4]]
+
+total_stock_covariance:
+  rows: [A, B, C]
+  columns: [A, B, C]
+  values: [[9, 3, 4], [3, 9, 4], [4, 4, 5]]
+
+standardized_residuals:
+  rows: [Day 1, Day 2, Day 3, Day 4]
+  columns: [A, B, C]
+  values: [[1, 1.4, 1], [-1, 0.2, -1], [1, -0.2, -1], [-1, -1.4, 1]]
+
+residual_correlations:
+  rows: [A, B, C]
+  columns: [A, B, C]
+  values: [[1, 0.6, 0], [0.6, 1, 0], [0, 0, 1]]
+
+scaled_correlations:
+  rows: [A, B, C]
+  columns: [A, B, C]
+  values: [[2, 1.2, 0], [1.2, 2, 0], [0, 0, 1]]
+
+residual_covariance:
+  rows: [A, B, C]
+  columns: [A, B, C]
+  values: [[4, 2.4, 0], [2.4, 4, 0], [0, 0, 1]]

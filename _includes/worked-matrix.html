@@ -1,0 +1,26 @@
+<table class="worked-matrix">
+  <caption><span class="matrix-symbol">{{ include.symbol | escape }}</span> {{ include.label | escape }}</caption>
+  <thead>
+    <tr><td></td>{% for matrix_column in include.matrix.columns %}<th scope="col">{{ matrix_column | escape }}</th>{% endfor %}</tr>
+  </thead>
+  <tbody>
+    {%- for matrix_values in include.matrix.values %}
+      {%- assign matrix_row = include.matrix.rows[forloop.index0] %}
+      <tr>
+        <th scope="row">{{ matrix_row | escape }}</th>
+        {%- for matrix_value in matrix_values %}
+          {%- assign matrix_column = include.matrix.columns[forloop.index0] %}
+          {%- assign highlight = false %}
+          {%- if include.mark_row and include.mark_column %}
+            {%- if matrix_row == include.mark_row and matrix_column == include.mark_column %}
+              {%- assign highlight = true %}
+            {%- endif %}
+          {%- elsif matrix_row == include.mark_row or matrix_column == include.mark_column %}
+            {%- assign highlight = true %}
+          {%- endif %}
+          <td{% if highlight %} class="matrix-focus"{% endif %}>{{ matrix_value | replace: '-', '−' }}</td>
+        {%- endfor %}
+      </tr>
+    {%- endfor %}
+  </tbody>
+</table>

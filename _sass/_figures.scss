@@ -9,6 +9,70 @@
 .theme-svg-figure,
 .theme-svg-figure img { display: block; width: 100%; margin: 0; }
 .theme-svg-figure--dark { display: none; }
+
+.matrix-calculation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 1.15rem;
+  margin: 1.35rem 0;
+  padding: 0.7rem 0 0.8rem;
+  border-block: 1px solid var(--rule);
+}
+.matrix-calculation > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  max-width: 100%;
+}
+.matrix-operator {
+  color: var(--muted-ink);
+  font: 500 1.1rem var(--font-sans);
+}
+.post-content .worked-matrix {
+  width: auto;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.worked-matrix caption {
+  padding-bottom: 0.3rem;
+  white-space: nowrap;
+  font-size: 0.77rem;
+  color: var(--muted-ink);
+}
+.matrix-symbol { color: var(--ink); font-weight: 600; margin-right: 0.18rem; }
+.worked-matrix th { color: var(--muted-ink); font-size: 0.72rem; font-weight: 500; }
+.worked-matrix th, .worked-matrix td { padding: 0.11rem 0.27rem; }
+.worked-matrix tbody th { text-align: right; padding-right: 0.46rem; white-space: nowrap; }
+.worked-matrix tbody td:first-of-type { border-inline-start: 1px solid var(--muted-ink); }
+.worked-matrix tbody td:last-of-type { border-inline-end: 1px solid var(--muted-ink); }
+.worked-matrix tbody td:first-of-type, .worked-matrix tbody td:last-of-type { position: relative; }
+.worked-matrix tbody tr:first-child td:is(:first-of-type, :last-of-type)::before,
+.worked-matrix tbody tr:last-child td:is(:first-of-type, :last-of-type)::after {
+  content: "";
+  position: absolute;
+  width: 0.3rem;
+  border-top: 1px solid var(--muted-ink);
+}
+.worked-matrix tbody tr:first-child td::before { top: 0; }
+.worked-matrix tbody tr:last-child td::after { bottom: 0; }
+.worked-matrix tbody td:first-of-type::before, .worked-matrix tbody td:first-of-type::after { left: 0; }
+.worked-matrix tbody td:last-of-type::before, .worked-matrix tbody td:last-of-type::after { right: 0; }
+.matrix-focus {
+  background: color-mix(in srgb, var(--accent) 13%, var(--page-surface));
+  font-weight: 600;
+}
+@media (max-width: 350px) {
+  .matrix-calculation > .matrix-product {
+    flex-direction: column;
+    flex-basis: 100%;
+  }
+}
+
 html[data-theme="dark"] {
   .theme-svg-figure--light { display: none; }
   .theme-svg-figure--dark { display: block; }

@@ -4,7 +4,7 @@ toc: false
 title: "Factor Risk, Part 1: Shrinking Stock Correlations"
 description: "I kept the Ridge stock forecasts fixed and changed how the long/short portfolio measures risk. I compared risk forecasts on the same holdings, hedges on the same stocks, and long/short returns at similar realized risk."
 date: 2026-11-20
-last_modified_at: 2026-11-20
+last_modified_at: 2026-11-21
 categories: ["Portfolio construction"]
 article_label: Factor risk · Part 1 of 2
 series_id: factor-risk
@@ -16,78 +16,51 @@ When I add a short, I want to know which risk it takes out of the book. In [From
 
 A factor risk model estimates those relationships through a smaller set of shared returns, such as the market, sectors and styles. The same exposures tell me what a trade does to the whole book. A short can cancel some market exposure and add to momentum exposure at the same time. The model can still miss shared moves among stocks, and its estimate of total volatility can be off.
 
-I keep the Ridge forecasts fixed. I first compare risk forecasts on the same holdings, then compare hedges on the same stocks, and finally look at the portfolios after trading fees. [Part 2]({% link _posts/2026-11-20-residual-risk.md %}) takes up the question of which stock relationships are left after fitting the factors.
+I keep the Ridge forecasts fixed. I first compare risk forecasts on the same holdings, then compare hedges on the same stocks, and finally look at the portfolios after trading fees.
 
 ## From stock exposures to portfolio risk
 
-Let $$B$$ hold one row per stock and one column per factor. Each entry says how much the stock moves for a unit move in the factor, holding the other factors fixed. In a three-stock example, columns are market and momentum and rows are stocks A, B and C. A and B have the same market exposure and opposite momentum exposures. C has half their market exposure.
+Consider three stocks and two factors. Each row of $$B$$ holds a stock’s exposures. All three stocks have a loading of one on the common market term, as they do for the market intercept in the study. A and B have opposite momentum exposures. The two factors in this example are uncorrelated and have daily variances of 4 and 1 in squared percentage points.
+
+{% assign example = site.data.factor_risk_example %}
+<div class="matrix-calculation" role="group" aria-label="Stock exposures multiplied by factor covariance">
+  <div class="matrix-product">
+    {% include worked-matrix.html matrix=example.exposures symbol="B" label="Stock exposures" %}
+    <span class="matrix-operator" aria-hidden="true">×</span>
+    {% include worked-matrix.html matrix=example.factor_covariance symbol="F" label="Factor covariance" %}
+  </div>
+</div>
+
+Multiplying by this diagonal $$F$$ scales the market column by 4 and the momentum column by 1. A’s row goes from $$(1,1)$$ to $$(4,1)$$. To get the factor covariance between A and B, take the dot product of A’s row in $$BF$$ and B’s column in $$B^\top$$. The highlighted cells give $$4(1)+1(-1)=3$$.
+
+<div class="matrix-calculation" role="group" aria-label="Scaled exposures times transposed exposures equals stock covariance from factors">
+  <div class="matrix-product">
+    {% include worked-matrix.html matrix=example.scaled_exposures symbol="BF" label="Scaled exposures" mark_row="A" %}
+    <span class="matrix-operator" aria-hidden="true">×</span>
+    {% include worked-matrix.html matrix=example.transposed_exposures symbol="Bᵀ" label="Transposed exposures" mark_column="B" %}
+  </div>
+  <div>
+    <span class="matrix-operator" aria-hidden="true">=</span>
+    {% include worked-matrix.html matrix=example.factor_stock_covariance symbol="BFBᵀ" label="Stock covariance from factors" mark_row="A" mark_column="B" %}
+  </div>
+</div>
+
+Now put 50% of capital long A and 50% short B. The signed weights are $$w=(0.5,-0.5,0)^\top$$. In $$B^\top w$$, the market intercept exposure is $$0.5(1)-0.5(1)=0$$. Momentum exposure is $$0.5(1)-0.5(-1)=1$$. The long and short cancel the common intercept. Their momentum exposures add. The index-beta limit later in the article uses estimated stock betas.
+
+The model treats factor returns and residuals as uncorrelated, so total stock covariance is $$\Sigma=BFB^\top+\operatorname{Cov}(\epsilon)$$. Let A, B and C have specific volatilities of 2%, 2% and 1%, with zero residual correlations. That adds 4, 4 and 1 to the diagonal of $$BFB^\top$$.
+
+<div class="matrix-calculation" role="group" aria-label="Total stock covariance with a diagonal residual model">
+  {% include worked-matrix.html matrix=example.total_stock_covariance symbol="Σ" label="Total stock covariance" mark_row="A" mark_column="B" %}
+</div>
+
+The spread’s variance comes from the two individual variances and the cross term. With a short in B, its weight enters with a minus sign.
 
 $$
-\begin{aligned}
-B&=\begin{pmatrix}1&1\\1&-1\\0.5&0\end{pmatrix},\\
-F&=\begin{pmatrix}4&0\\0&1\end{pmatrix}.
-\end{aligned}
+w^\top\Sigma w=\frac{9+9-2(3)}{4}=3.
 $$
 
-The factor covariance matrix $$F$$ has rows and columns in that same factor order. For this example the market and momentum factors are uncorrelated. Their daily variances are 4 and 1 in squared percentage points. Multiplying by $$F$$ here scales the market column of $$B$$ by 4 and the momentum column by 1.
-
-$$
-\begin{aligned}
-BF&=
-\begin{pmatrix}1&1\\1&-1\\0.5&0\end{pmatrix}
-\begin{pmatrix}4&0\\0&1\end{pmatrix}\\
-&=\begin{pmatrix}4&1\\4&-1\\2&0\end{pmatrix}.
-\end{aligned}
-$$
-
-To get the covariance between two stocks, multiply the first stock’s row of $$BF$$ by the second stock’s column of $$B^\top$$. For A and B that is $$4(1)+1(-1)=3$$. Their shared market exposure adds covariance and their opposite momentum exposures take some away.
-
-$$
-\begin{gathered}
-BFB^\top = (BF)B^\top\\
-=\begin{pmatrix}4&1\\4&-1\\2&0\end{pmatrix}
-  \begin{pmatrix}1&1&0.5\\1&-1&0\end{pmatrix}\\
-=\begin{pmatrix}5&3&2\\3&5&2\\2&2&1\end{pmatrix}.
-\end{gathered}
-$$
-
-Now put half of capital long A and half short B, with nothing in C. The signed weights $$w$$ give the portfolio’s factor exposures when multiplied by $$B^\top$$.
-
-$$
-\begin{aligned}
-B^\top w &=
-\begin{pmatrix}1&1&0.5\\1&-1&0\end{pmatrix}
-\begin{pmatrix}0.5\\-0.5\\0\end{pmatrix}\\
-&=\begin{pmatrix}0\\1\end{pmatrix}.
-\end{aligned}
-$$
-
-The market exposure cancels. The short in B adds to momentum exposure because B has a negative loading. At an exposure of one, momentum contributes one squared percentage point of daily variance to this spread.
-
-The factors explain only part of each stock’s return. The remaining return is its *residual*. With factor returns and residuals uncorrelated, total stock covariance is $$\Sigma=BFB^\top+\Omega$$, where $$\Omega$$ is residual covariance. Start by giving A, B and C specific volatilities of 2%, 2% and 1% and setting their residual cross-covariances to zero.
-
-$$
-\begin{aligned}
-\Sigma &=
-\begin{pmatrix}5&3&2\\3&5&2\\2&2&1\end{pmatrix}
-+\begin{pmatrix}4&0&0\\0&4&0\\0&0&1\end{pmatrix}\\
-&=\begin{pmatrix}9&3&2\\3&9&2\\2&2&2\end{pmatrix}.
-\end{aligned}
-$$
-
-The optimizer uses $$w^\top\Sigma w$$. The first multiplication, $$\Sigma w$$, gives each stock’s covariance with the spread. Multiplying by the signed weights again gives the spread’s variance.
-
-$$
-\begin{aligned}
-\Sigma w &=
-\begin{pmatrix}9&3&2\\3&9&2\\2&2&2\end{pmatrix}
-\begin{pmatrix}0.5\\-0.5\\0\end{pmatrix}\\
-&=\begin{pmatrix}3\\-3\\0\end{pmatrix},\\
-w^\top\Sigma w &= 0.5(3)+(-0.5)(-3)=3.
-\end{aligned}
-$$
-
-That is one unit of daily variance from momentum and two from the individual residuals. In [Part 2]({% link _posts/2026-11-20-residual-risk.md %}#the-sign-of-the-position-changes-the-answer) I put residual correlation back into this same spread.
+The three units of daily variance are one from momentum and two from the individual residuals. [Part 2]({% link _posts/2026-11-20-residual-risk.md %}#the-sign-of-the-position-changes-the-answer) adds residual correlation to this same spread.
+{: #the-average-residual-hides-groups}
 
 ## What goes into a position
 
@@ -109,9 +82,6 @@ The joint optimizers use the same limits. Gross exposure can reach twice capital
 The risk budget is separate. If $$w$$ is the vector of signed capital weights and $$\Sigma$$ is the daily stock covariance, the optimizer requires annualized forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ to stay at or below 7%. Style exposures enter through that covariance, without separate style caps. A 3%-long and 3%-short position in the same sector adds zero sector net. If their estimated index betas are 1.4 and 0.8, the pair still adds $$0.03(1.4-0.8)=0.018$$ to portfolio beta.
 
 The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
-
-The [companion study]({% link _posts/2026-11-20-residual-risk.md %}) looks inside $$\Omega$$ to see which residual correlations persist and how much of them is worth keeping.
-{: #the-average-residual-hides-groups}
 
 I replayed the same Ridge forecasts in the Russell 1000 on three staggered schedules, each rebalancing every three weeks against $5 million. All four rules trade from filled holdings, with next-close execution and a 10% cap on participation in average daily dollar volume for ordinary fills. From 2011 I charge 5 bp on long trades and 7.5 bp on short trades, with higher rates earlier.
 
