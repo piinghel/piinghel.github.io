@@ -10,7 +10,7 @@ article_label: Portfolio construction · Factor risk
 permalink: /quants/factor-risk-sizing.html
 ---
 
-Suppose a cloud provider delays its next round of AI data-center construction. Which positions in my portfolio would feel it? Say I own $100 of a chip designer and I’m short $100 of a payroll software company. My sector report shows zero net dollars in technology. But the chip designer sells into the investment cycle that just slowed, while the payroll company earns subscription fees tied to employment. If the chip stock falls 10% and the payroll stock is flat, I lose $10 on the pair. Equal dollars on the two sides never told me what they were hedging.
+Suppose a cloud provider delays its next round of AI data-center construction. Which positions in my portfolio would feel it? Say I hold a $100 long position in a chip designer and an equally large short in a payroll software company. My sector report shows zero net dollars in technology. But the chip designer sells into the investment cycle that just slowed, while the payroll company earns subscription fees tied to employment. If the chip stock falls 10% and the payroll stock is flat, I lose ten dollars on the pair. Equal dollars on the two sides never told me what they were hedging.
 
 Now add a manufacturer that supplies cooling equipment for those data centers. It sits in Industrials, so buying it spreads my dollars across two sectors. It also gives me a second business exposed to the same construction decision. The sign matters just as much as the sector label. Consider a war that interrupts oil supplies. If higher crude prices lift an oil producer and squeeze an airline, being long the producer and short the airline can make money on both legs. Reverse the shock and both legs can lose.
 
