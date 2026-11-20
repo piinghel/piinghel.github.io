@@ -223,6 +223,14 @@
     "width": 310,
     "height": 518
   },
+  "/assets/residual-risk/pair-errors": {
+    "width": 562,
+    "height": 432
+  },
+  "/assets/residual-risk/pair-errors_mobile": {
+    "width": 335,
+    "height": 432
+  },
   "/assets/ridge-style-removal/delta-sharpe": {
     "width": 571,
     "height": 241
