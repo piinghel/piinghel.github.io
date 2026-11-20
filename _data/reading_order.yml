@@ -5,13 +5,14 @@
 # Build and implement the portfolio.
 - _posts/2026-08-29-joint-sizing.md
 - _posts/2026-09-05-rebalancing-luck.md
+# Revisit the risk estimate used for sizing, then investigate what it leaves behind.
+- _posts/2026-11-20-factor-risk-sizing.md
+- _posts/2026-11-20-residual-risk.md
 # Diagnose the resulting portfolio: what it is paid for and where it loses.
 - _posts/2026-09-09-portfolio-attribution.md
 - _posts/2026-09-09-short-book-rebounds.md
 # Then manage the largest single risk the diagnosis exposes, and the style bets behind it.
 - _posts/2026-09-30-momentum-crashes-ridge.md
 - _posts/2026-10-26-ridge-style-removal.md
-- _posts/2026-11-20-factor-risk-sizing.md
-- _posts/2026-11-20-residual-risk.md
 # Reference material closes the sequence.
 - _posts/2025-04-20-resources.md

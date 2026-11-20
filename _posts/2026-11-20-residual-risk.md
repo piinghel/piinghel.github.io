@@ -10,9 +10,9 @@ permalink: /quants/residual-risk.html
 home_after: _posts/2026-11-20-factor-risk-sizing.md
 ---
 
-A sector factor can capture a move shared across a sector and still leave a group of stocks within it moving together. A basic factor risk model keeps each stock’s residual variance and sets the covariance between residuals to zero. That saves estimating a separate residual correlation for every pair. It can also make two longs look more diversified than they are, or miss a useful long/short hedge.
+The simplest model in the [factor-risk comparison]({% link _posts/2026-11-20-factor-risk-sizing.md %}#from-stock-exposures-to-portfolio-risk) sets residual correlations to zero. That is a reasonable starting point across a thousand stocks. A sector factor can capture a broad move, though, and still leave a smaller group moving together. If I hold several of those names on the same side, the model can make that part of the book look more diversified than it is.
 
-I want to know how much of that residual correlation is repeatable. I group stocks using a year of residual returns and check whether those same stocks still move together the following year. Then I test how much of that co-movement is worth putting back into the risk estimate used in the [portfolio study]({% link _posts/2026-11-20-factor-risk-sizing.md %}).
+I start by looking for groups in one year of residuals and following the same groups into the next. Then I use principal components to let a stock belong to more than one shared move. The sizing decision is how much of that correlation to carry forward.
 
 ## The sign of the position changes the answer
 
@@ -63,7 +63,38 @@ The January selloff lifted the year-end 2025 residual correlation for NVIDIA–V
 
 ## The shared directions persist at a smaller scale
 
-A cluster gives each stock one label. Principal component analysis lets the same stock load on several shared directions. I estimated the directions on standardized residuals from the formation year and measured their variance over the following year. Each stock was scaled to unit variance within its own window so the comparison tracks changes in co-movement.
+A cluster gives each stock one label. Principal component analysis (PCA) gives each stock a weight in several directions. At each fit I center each stock’s residual returns and divide by its standard deviation over the trailing 252 sessions. I use one scale per stock for that whole window, so every stock starts with variance one. PCA can still find a dominant direction if many stocks move together.
+
+Let $$Z$$ be the matrix of standardized residuals, with $$T$$ dates down the rows and stocks across the columns. Multiplying $$Z^\top Z/T$$ gives the residual correlation matrix $$S$$. If $$q$$ is a vector of stock weights, $$Zq$$ is the corresponding series of daily moves and $$q^\top S q$$ is its variance. The first component picks the direction with the highest variance at unit length. The next picks the highest-variance direction orthogonal to the first. In a typical weekly fit, the first direction explained about 3% of total standardized residual variance. It can still matter to a portfolio whose holdings line up with it.
+
+<details markdown="1">
+<summary>From standardized returns to principal components</summary>
+
+For two stocks over four days, take these standardized residual returns. Each column has mean zero and variance one. The off-diagonal entry of $$S$$ is the average of the four products of the two stocks’ returns.
+
+$$
+\begin{aligned}
+Z &= \begin{pmatrix}
+1&1.4\\-1&0.2\\1&-0.2\\-1&-1.4
+\end{pmatrix},\\
+S &= \frac{Z^\top Z}{4}
+   = \frac14\begin{pmatrix}4&2.4\\2.4&4\end{pmatrix}\\
+  &= \begin{pmatrix}1&0.6\\0.6&1\end{pmatrix}.
+\end{aligned}
+$$
+
+Multiplying by the same-sign direction gives
+
+$$
+S\,\frac{1}{\sqrt{2}}\begin{pmatrix}1\\1\end{pmatrix}
+=1.6\,\frac{1}{\sqrt{2}}\begin{pmatrix}1\\1\end{pmatrix}.
+$$
+
+The two standardized stocks reinforce each other in that direction, giving it variance 1.6. In the opposite-sign direction they partly cancel, leaving variance 0.4. If the correlation were zero, each direction would have variance one.
+
+</details>
+
+For the chart, I fit the directions in the formation year and measure their variance the following year on stocks observed in both windows. I standardize each window using its own stock volatilities so the comparison isolates changes in co-movement. In the portfolio replay below, the scales and directions are both fitted on the trailing window available at each decision.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/directions" mobile="/assets/residual-risk/directions_mobile" version="2" alt="PCA directions lose variance after formation but retain more than shuffled directions with the same industry composition. Development PCs two through five fall from 14.30 to 4.36 versus 1.64 for the shuffle." %}
@@ -74,13 +105,9 @@ In the 23 development cohorts, components two through five averaged **14.30** un
 
 ## Putting a residual correlation into the portfolio
 
-Let $$B$$ hold one row of factor exposures per stock and $$F$$ be the covariance of factor returns. The first term below measures risk from those common factors. For signed weights $$w$$, the portfolio holds factor exposure $$B^\top w$$ and its factor variance is $$(B^\top w)^\top F(B^\top w)$$. The second term combines the diagonal matrix of stock-specific volatilities $$D$$ with the residual correlation matrix $$R$$.
+I keep the named-factor covariance and each stock’s specific volatility fixed. Only the residual correlation matrix $$R$$ changes. If $$D$$ is the diagonal matrix of specific volatilities, then $$DRD$$ turns residual correlations back into covariances. A pair with correlation $$\rho$$ contributes a covariance of $$d_1\rho d_2$$. The diagonal stays at each stock’s specific variance as long as $$R$$ has ones on its diagonal.
 
-$$
-\Sigma = B F B^\top + D R D.
-$$
-
-I keep $$B$$, $$F$$ and $$D$$ fixed and change $$R$$. The model starts with $$R=I$$ and treats factor shocks and residuals as uncorrelated. A stock without a complete trailing residual window keeps its named exposures and specific variance, with zero pairwise residual correlations.
+The baseline uses $$R=I$$. A stock without a complete trailing residual window keeps its named exposures and its specific variance, with zero pairwise residual correlations.
 
 - **Shrink toward zero.** For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. This pulls pairwise residual correlations toward zero while preserving each stock’s specific variance. [Ledoit and Wolf](https://www.econ.uzh.ch/dam/jcr:ffffffff-961c-1dd9-ffff-ffffceb83f14/wellCond.pdf)
 - **Keep one principal component.** Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.

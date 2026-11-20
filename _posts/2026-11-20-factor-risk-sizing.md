@@ -10,13 +10,11 @@ article_label: Portfolio construction · Factor risk
 permalink: /quants/factor-risk-sizing.html
 ---
 
-A factor risk model splits each stock’s return into a common part, explained by the market, sectors and styles, and a residual. That makes the estimation problem more manageable. A universe of 1,000 stocks has nearly half a million pairwise correlations. I can estimate how a much smaller set of factors moves together and use each stock’s exposures to work out how those factors contribute to stock covariance.
+In [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}), I gave the optimizer a stock correlation matrix shrunk toward zero. What I want from that matrix is a good estimate of which positions offset each other. There are nearly half a million stock pairs in the Russell 1000, so estimating each relationship from its own return history is a lot to ask.
 
-For portfolio sizing, I can add up the exposures of the long and short positions and see what the book is sensitive to. If the long book has positive momentum exposure, a short with positive momentum exposure offsets some of it. A short with negative momentum exposure adds to it. The two candidates can have the same standalone volatility and do very different things to the book.
+A factor risk model puts some structure on those estimates. It splits each stock’s return into a part explained by the market, sectors and styles, and a residual. I estimate how the factors move together and use the stocks’ exposures to map that back to stock covariance. That also lets me see which risks a proposed trade adds or takes out. For example, shorting a stock with positive momentum exposure offsets some of a book’s positive momentum exposure. A short with negative momentum exposure adds to it.
 
-The model can miss risks the factors leave behind. Two stocks can still move together after accounting for the market, sectors and styles. The overall level of risk can also be off even when the model points to a useful hedge.
-
-I keep the Ridge forecasts fixed and use the two benchmark sizing rules from [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}). I compare risk forecasts on the same holdings, hedge weights on the same stocks, and portfolio returns after fees at similar realized volatility.
+The trade-off is that the model can miss shared risks outside the factors it includes. It can also identify a useful hedge while getting the book’s overall volatility wrong. I keep the Ridge forecasts fixed and test the risk estimates on the same holdings, the hedge weights on the same stocks, and the portfolio returns after fees at similar realized volatility.
 
 ## What goes into a position
 
@@ -29,15 +27,55 @@ At each rebalance I use the Russell 1000 membership recorded by that close. Ridg
 
 At each close I fit the day’s returns across stocks using exposures from the previous close. That gives me one return per factor for the day and one residual per stock. I use the fitted return histories to estimate the factor covariance and each stock’s residual variance. [Modeling Equities Returns](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
 
+### From stock exposures to portfolio risk
+
+Let $$B$$ hold one row per stock and one column per factor, and let $$F$$ be the covariance matrix of factor returns. The factor part of the stock covariance matrix is $$BFB^\top$$. When factor returns and residuals are uncorrelated, the residual covariance $$\Omega$$ adds directly to it.
+
+$$
+\Sigma = BFB^\top+\Omega .
+$$
+
+For signed portfolio weights $$w$$, the product $$B^\top w$$ gives one exposure per factor. I can calculate the factor variance from those net exposures. This is where a short can offset one source of risk and add to another.
+
+<details markdown="1">
+<summary>A two-stock covariance calculation</summary>
+
+Take two stocks with the same market exposure and opposite momentum exposures. In this example the market and momentum factors are uncorrelated, with daily variances of 4 and 1 in squared percentage points. The rows of $$B$$ are the two stocks. Its columns are market and momentum.
+
+$$
+\begin{aligned}
+B &= \begin{pmatrix}1&1\\1&-1\end{pmatrix},\\
+F &= \begin{pmatrix}4&0\\0&1\end{pmatrix},\\
+BF &= \begin{pmatrix}4&1\\4&-1\end{pmatrix},\\
+BFB^\top
+&= \begin{pmatrix}4&1\\4&-1\end{pmatrix}
+   \begin{pmatrix}1&1\\1&-1\end{pmatrix}\\
+&= \begin{pmatrix}5&3\\3&5\end{pmatrix}.
+\end{aligned}
+$$
+
+The market adds 4 to the covariance between the stocks. Momentum subtracts 1 because their exposures have opposite signs. Put 50% of capital long the first stock and 50% short the second.
+
+$$
+B^\top w =
+\begin{pmatrix}1&1\\1&-1\end{pmatrix}
+\begin{pmatrix}0.5\\-0.5\end{pmatrix}
+= \begin{pmatrix}0\\1\end{pmatrix}.
+$$
+
+The market exposures cancel and the momentum exposures add. The spread has 1 squared percentage point of daily factor variance, $$(B^\top w)^\top F(B^\top w)$$. Its total variance also includes $$w^\top\Omega w$$.
+
+</details>
+
 ### The limits apply to target weights
 
 The joint optimizers use the same limits. Gross exposure can reach twice capital, net exposure stays within ±25%, and a single name can use up to 4%. Each sector is limited to ±20% net and 30% of either sleeve. The estimated index beta stays within ±0.05 at the decision close.
 
 The risk budget is separate. If $$w$$ is the vector of signed capital weights and $$\Sigma$$ is the daily stock covariance, the optimizer requires annualized forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ to stay at or below 7%. Style exposures enter through that covariance, without separate style caps. A 3%-long and 3%-short position in the same sector adds zero sector net. If their estimated index betas are 1.4 and 0.8, the pair still adds $$0.03(1.4-0.8)=0.018$$ to portfolio beta.
 
-The factor fit uses exposures lagged by one close. The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
+The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
 
-The residuals can still contain some shared risk. In [Residual Risk After Sectors and Styles]({% link _posts/2026-11-20-residual-risk.md %}#groups-identified-in-one-year-still-move-together-in-the-next), I freeze groups of stocks and use the following year to see how much of their residual correlation persists.
+The [companion study]({% link _posts/2026-11-20-residual-risk.md %}) looks inside $$\Omega$$ to see which residual correlations persist and how much of them is worth keeping.
 {: #the-average-residual-hides-groups}
 
 ## How the risk estimate changes the portfolio
