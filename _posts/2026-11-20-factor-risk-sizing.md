@@ -146,6 +146,29 @@ The original factor book had close to zero later market correlation, yet its wor
 
 Using the factor model as a shrinkage target recovered about **40% of the later return gap**. It also changed the experience of holding the portfolio. In the worst 5% of later trading days it lost an average of **1.02%** per day, against **1.35%** for stock shrinkage. Its maximum drawdown was shallower, although its longest spell below a previous peak lasted **190 sessions**, against **140**. A shallower drawdown can still take longer to recover if the gains that follow it are smaller.
 
-Some of that protection came from taking less risk. I also reran stock shrinkage with the earlier article’s 1.55 multiplier. It delivered **7.47%** later volatility, close to the factor target’s **7.27%**, and still earned **6.19%** net annually versus **4.59%**. That comparison is why I would keep stock shrinkage as the reference for this Ridge portfolio.
+Some of that protection came from taking less risk. I also reran stock shrinkage with the earlier article’s 1.55 multiplier. It delivered **7.47%** later volatility, close to the factor target’s **7.27%**, and earned **6.19%** net annually versus **4.59%**. But a fixed multiplier asks me to choose the scale upfront. I wanted to know what would happen if every optimizer could learn its own scale from earlier forecast errors.
 
-I would retain the factor target as a candidate. Its full-history Sharpe gain over the original factor model was 0.28, with a one-sided 95% lower bound of 0.04 after accounting for ten recorded comparisons and resampling common 63-session blocks. For the later period alone that lower bound was −0.24. The part I find most persuasive is the combination of two observations. Residual groups persisted into the next year, and using that structure alongside measured stock correlations produced a portfolio with smaller losses in both periods. That is a narrower and more useful conclusion than choosing a risk model by how much variation it explains in yesterday’s returns.
+## Trading with a calibrated risk budget
+
+I kept a reference portfolio for each of the three covariance models. At every decision I looked at its last 52 completed rebalance cycles. For each cycle I divided the mean squared daily gross return by the variance forecast for its filled positions. The square root of the average ratio is a volatility multiplier. If realized variance was consistently about 1.44 times the forecast, for instance, I would multiply the next volatility forecast by 1.20. These 52 observations arrive roughly weekly because the three trading schedules are staggered. Their three-week holding periods overlap.
+
+I then replayed each optimizer with its own multiplier inside the 7% risk constraint. The stock model kept its original 1.18 adjustment underneath this additional scale. The reference portfolios continued under their original rules, giving me past errors to learn from even as the new simulations began taking different positions. Each simulation still paid fees on its own fills and measured its next trade from its own holdings.
+
+<table class="research-table comparison-table compact-table">
+  <caption>Outcomes with the rolling calibration applied inside each optimizer. Gross is long plus absolute short market value per dollar of capital. Returns and volatility are annual, after fees.</caption>
+  <thead><tr><th>Sizing rule</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Gross</th></tr></thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="5">January 1999 – December 2021</th></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>9.80%</td><td>7.41%</td><td>1.30</td><td>1.65</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>7.56%</td><td>7.25%</td><td>1.04</td><td>1.44</td></tr>
+    <tr><th scope="row">Factor target</th><td>9.38%</td><td>7.12%</td><td>1.29</td><td>1.62</td></tr>
+    <tr class="period-heading"><th colspan="5">January 2022 – May 2026</th></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>6.10%</td><td>7.13%</td><td>0.87</td><td>1.19</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>2.44%</td><td>6.92%</td><td>0.38</td><td>0.96</td></tr>
+    <tr><th scope="row">Factor target</th><td>4.48%</td><td>7.00%</td><td>0.66</td><td>1.19</td></tr>
+  </tbody>
+</table>
+
+Stock shrinkage and the factor target ended up taking almost the same later risk. Both carried about 1.19 dollars of gross positions per dollar of capital. Stock shrinkage earned 6.10% net against 4.48% for the factor target, and paid 0.85% a year in fees against 0.97%. The additional fee burden explains only a small part of the gap. The point estimate favors stock shrinkage, although the paired 95% interval for the factor target’s Sharpe difference spans −0.55 to +0.20. For me the clearest benefit of calibration was getting all three portfolios close to the intended risk. They did that by putting less capital to work, and all three earned lower net returns in both periods.
+
+I would keep stock shrinkage as the reference for this Ridge portfolio and retain the factor target as a candidate. Its full-history Sharpe gain over the original factor model was 0.28, with a one-sided 95% lower bound of 0.03 after accounting for thirteen recorded comparisons and resampling common 63-session blocks. For the later period alone that lower bound was −0.25. The factor model helped find quieter hedges at every breadth I tested. At comparable risk and gross exposure, the stock-shrinkage optimizer still made better use of the Ridge scores in the later sample. I would want a change to the factor model to improve that last comparison before switching how I size the portfolio.
