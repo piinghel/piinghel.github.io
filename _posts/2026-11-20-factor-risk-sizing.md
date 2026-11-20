@@ -11,6 +11,7 @@ permalink: /quants/factor-risk-sizing.html
 ---
 
 Imagine I am $100 long NVIDIA and $100 short Workday. My sector report shows zero net dollars in technology. Now suppose a cloud provider postpones its next AI data center. NVIDIA could sell fewer chips. That same delay might barely affect subscriptions to Workday’s human-resources software. If NVIDIA falls 10% and Workday stays flat, I lose $10. What looked like a hedge in my sector report still leaves me exposed to data-center spending.
+{: .mathjax-ignore}
 
 Which other stock might share that exposure? In October 2024, Vertiv and NVIDIA published a design for powering and cooling data centers that use NVIDIA’s chips. Vertiv sits in Industrials. If I hold both stocks, my sector report shows two different sectors. Both positions could still lose if customers postpone building AI data centers. Workday had a business link too. In 2022 it described how NVIDIA used its HR software to manage recruiting. What matters for the trade is *how* the companies are connected and which cash flows a particular shock could change. [Vertiv’s announcement](https://www.vertiv.com/en-emea/about/news-and-events/news-releases/vertiv-codevelops-with-nvidia-complete-power-and-cooling-blueprint-for--nvidia-gb200-nvl72-platform/) · [Workday’s NVIDIA customer study](https://forms.workday.com/content/dam/web/en-us/documents/ebooks/power-of-skills-insights-customer-success-story-global-enus.pdf)
 
