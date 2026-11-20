@@ -358,15 +358,10 @@ less than volatility scaling, so higher costs widen its lead. It does run at
 about 160% average gross against 138% in development, so the borrow,
 financing and impact costs left out here weigh more on it.
 
-In [Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %}),
-I combine the three starting weeks at one third of notional each and
-measure the diversification benefit. The [attribution series]({% link _posts/2026-09-09-portfolio-attribution.md %})
-then breaks the portfolio's P&L down by the ranking's themes.
-
-The [factor-risk comparison]({% link _posts/2026-11-20-factor-risk-sizing.md %})
-keeps volatility scaling and stock shrinkage as benchmarks and tests whether
-shrinking toward a factor model changes hedge quality or returns at similar
-realized risk.
+The next step is to look at the covariance matrix itself. In
+[Factor Risk, Part 1]({% link _posts/2026-11-20-factor-risk-sizing.md %}),
+I show how a factor model builds stock covariance and test whether using it
+improves hedges or returns at similar realized risk.
 
 Two weaknesses remain: realized beta runs above the rebalance-time estimate
 for months at a time, and after 2021 the Sharpe advantage is positive but its
