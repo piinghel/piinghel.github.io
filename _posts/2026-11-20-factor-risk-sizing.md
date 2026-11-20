@@ -10,17 +10,23 @@ article_label: Portfolio construction · Factor risk
 permalink: /quants/factor-risk-sizing.html
 ---
 
-Suppose the Ridge model wants to buy two banks. Their prices have moved together, so buying both gives me less diversification than their individual volatilities suggest. Now change the second order to a short. The very same correlation makes the pair a better hedge. A risk model has to get both decisions reasonably right.
+Suppose my Ridge model wants to buy a chip designer and a supplier of cooling equipment for data centers. One is a technology company, the other might sit in industrials. If customers cut their AI infrastructure budgets, both positions could lose money on the same news. Buying one and shorting the other would give me a partial hedge against that same shock. On the sector report, the two trades would still appear under different headings.
+
+How would I recognize that exposure before the next earnings announcement? I could give AI spending its own factor, but then I need to decide which companies belong and how much each depends on it. Or I could ask whether, after accounting for the market, sector and style, the stocks have repeatedly moved together. That gives me a relationship I can test on the following year’s returns. Naming its cause takes separate evidence. I use AI as an example of what a sector label can miss. The historical test looks for shared movements without assigning them a story.
 
 In [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}), I estimated stock correlations directly and shrank them halfway toward zero. Here I keep the stock forecasts fixed and give the optimizer another way to understand the positions it holds. Stocks can move together because of the market, their sector or their exposure to styles such as momentum. I wanted to see how much of that structure survives in returns *after* the named factors come out, and whether incorporating it gives me a better long/short portfolio after fees.
 
 ## What goes into a position
 
-The simple benchmark starts with the top and bottom 75 eligible Ridge scores and sizes each stock inversely to its own volatility. The joint optimizer sizes the two sides together under a 7% annual risk budget. It can retain existing positions while their ranks remain within the top or bottom 175. Each position is capped at 4% of capital. At each decision it can allocate up to twice its capital in gross exposure, with net exposure within ±25% and estimated market beta within ±0.05.
+Ridge gives each stock a score for its expected return. At a rebalance I start with the 75 highest scores as possible longs and the 75 lowest as possible shorts. These are **75 candidates per side**. The simple benchmark starts with equal weights on each side and scales each stock by 20% divided by its own annualized volatility over 60 sessions, with a 5% floor on that volatility. A more volatile stock gets a smaller weight. This rule can allocate up to a dollar per side for each dollar of capital.
+
+The joint optimizer sees all the positions together. It can retain existing holdings while their ranks remain within the top or bottom 175. A 7% annual portfolio risk budget, a 4% cap per name, a gross exposure limit of twice capital, net exposure within ±25% and estimated market beta within ±0.05 constrain the weights. A 7% *forecast* at the decision close can still lead to 9% *realized* volatility over subsequent sessions. The first number is a model input to sizing. The second comes from the daily returns of the positions that actually filled.
 
 I use two starting estimates for joint sizing. **Stock shrinkage** measures volatility over 21 sessions and correlation over 756. It keeps half of each measured pairwise correlation and multiplies the resulting portfolio volatility forecast by 1.18. Halving a positive correlation reduces estimated risk for two longs and increases it for an offsetting pair. The multiplier adjusts the overall level separately.
 
 **Sector and style factors** explain each day’s stock returns with the market, broad sectors and seven styles. The styles are momentum, short-term return, beta, residual volatility, size, liquidity and short interest. I use exposures available at the preceding close, weight the squared regression errors by the square root of prior market capitalization, and estimate factor covariance and specific variance with a 63-session half-life.
+
+There are two regressions here. First, I look back along each stock’s own history to estimate how it responds to the market. I use up to 252 sessions, requiring at least 126 stock and market return pairs. Then I look *across* stocks on a single day. A group of stocks with high momentum scores might gain more than otherwise similar stocks that day. The cross-sectional regression estimates that day’s momentum factor return while accounting for their other exposures. Subtract each stock’s fitted return from its observed return and I have one residual per stock. Repeating that calculation gives me the history on which I can look for a hidden theme.
 
 For a portfolio with signed stock weights $$w$$, the factor estimate is
 
@@ -73,7 +79,9 @@ The fourth sizing rule, **factor target**, changes one input to stock shrinkage.
 </div>
 <p class="figure-caption">The chart compounds the mean daily net return across schedules. The table measures each schedule’s own experience, so its worst drawdown can differ from the chart. Select the later period to see how the paths diverged after 2021.</p>
 
-The later return gap between the original factor model and stock shrinkage was **4.70 percentage points per year**. Fees were almost identical at 1.12% and 1.15% of capital a year. The short positions explain more. Before fees, the factor shorts lost 4.01% of capital a year and the stock-shrinkage shorts lost 0.87%. About two-thirds of the gross arithmetic P&L gap came from that side of the book.
+The later return gap between the original factor model and stock shrinkage was **4.70 percentage points per year**. Turnover of 18.28× means that for every 100 dollars of capital, the factor portfolio traded 1,828 dollars of stock in an average year, adding purchases and sales. Stock shrinkage traded 1,876 dollars. Fees were almost identical at 1.12% and 1.15% of capital a year. The short positions explain more. Before fees, the factor shorts lost 4.01% of capital a year and the stock-shrinkage shorts lost 0.87%. About two-thirds of the gross arithmetic P&L gap came from that side of the book.
+
+One way to reduce turnover is to act more slowly on changes in the stock forecast. I gave today’s Ridge score 75% weight and its previous score on the same rebalance schedule 25%. Over the full history this reduced the factor portfolio’s turnover by 24%. In development, annual fees fell from 1.98% to 1.51%, yet annual net return also fell from 7.95% to 7.81%. Some trades I avoided would have paid for themselves. In the later period, fees fell from 1.12% to 0.83% and net return rose from 2.72% to 3.29%. Saving fees was repeatable here. Improving returns was more dependent on the period.
 
 Changing just the residual model moved later annual net return from 2.72% to **3.05%** with one principal component, **3.97%** with residual shrinkage, and **3.81%** with both. Across the entire history, preserving the first component on top of shrinkage changed net Sharpe by just **+0.002**. The paired 95% block interval ran from −0.017 to +0.021. The clustering result gave me a reason to model residual covariance. It gave me little reason to give that first component special treatment.
 
@@ -83,12 +91,31 @@ Before choosing a sizing rule, I wanted to know whether the factor models could 
 
 I first gave each optimizer the same stocks and the same required exposure to the Ridge score. At each weekly decision I drew three sets of 150 eligible stocks and used nested samples of 75 and 100 from each. The spread held 50% long and 50% short. Every selected stock received between one-quarter and three times its equal-weight allocation on its side, subject to the position cap. I chose weights at the decision close, allowed fills at the next close and measured the following session’s gross return. The figure compares the volatility of those one-session outcomes across **1,196 development decisions and 230 later decisions**.
 
+Bloomberg’s José Menchero and Anthony Lazanas make a useful point about this exercise. If two portfolios carry the same exposure to a return forecast, I can judge which risk model found the quieter way to hold that exposure. I do not need to wait for the forecast itself to earn a high enough return to distinguish the portfolios. A minimum-variance test makes that comparison particularly direct. Its ability to distinguish models still depends on the positions the constraints allow them to take. A rule that forces identical weights gives every model identical realized volatility. [Menchero and Lazanas, *Evaluating and Comparing Risk Model Performance*](https://doi.org/10.3905/jpm.2023.1.565)
+
+<table class="research-table comparison-table compact-table">
+  <caption>Annualized realized volatility of the matched long/short spreads. Breadth counts the stocks across both sides together. Each row uses the same stocks and dates for all four models.</caption>
+  <thead><tr><th>Stocks in spread</th><th>Stock shrinkage</th><th>Original factors</th><th>Shrunk residuals</th><th>Factor target</th></tr></thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="5">1999 – 2021</th></tr>
+    <tr><th scope="row">75</th><td>4.33%</td><td>4.01%</td><td>3.97%</td><td>4.01%</td></tr>
+    <tr><th scope="row">100</th><td>3.86%</td><td>3.57%</td><td>3.54%</td><td>3.56%</td></tr>
+    <tr><th scope="row">150</th><td>3.27%</td><td>3.12%</td><td>3.07%</td><td>3.04%</td></tr>
+    <tr class="period-heading"><th colspan="5">2022 – May 2026</th></tr>
+    <tr><th scope="row">75</th><td>4.90%</td><td>4.62%</td><td>4.52%</td><td>4.68%</td></tr>
+    <tr><th scope="row">100</th><td>4.42%</td><td>4.19%</td><td>4.04%</td><td>4.21%</td></tr>
+    <tr><th scope="row">150</th><td>3.84%</td><td>3.68%</td><td>3.48%</td><td>3.55%</td></tr>
+  </tbody>
+</table>
+
+Read down the first numeric column. In the later period, doubling the stock count from 75 to 150 reduced stock shrinkage’s volatility from 4.90% to 3.84%. Now read *across* the 150-stock row. Letting the factor model shrink residual correlations reduced the same spread to 3.48%. Those are different gains. The first gave the optimizer more stocks to choose weights across. The second gave it better information about the stocks it already had. At 100 stocks the same comparison was 4.42% against 4.04%. The figure shows how precisely the differences were estimated.
+
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/hedges" mobile="/assets/factor-risk-sizing/hedges_mobile" version="1" alt="Changes in long/short hedge volatility at 75, 100 and 150 stocks. The factor target reduced realized volatility at each size in both periods. Residual shrinkage reduced later volatility by about 0.36 to 0.39 percentage points." %}
 </div>
 <p class="figure-caption">Each point compares a model with stock shrinkage. A value of −0.3 means annualized volatility was 0.3 percentage points lower. The bars are 95% intervals from resampling 13-week blocks, accounting for the three sizes within each model comparison. Zero means the observed volatilities were equal.</p>
 
-At **150 stocks** later, stock shrinkage delivered **3.84%** volatility, the original factors **3.68%**, residual shrinkage **3.48%** and the factor target **3.55%**. These spreads had one dollar of gross exposure per dollar of capital. The Ridge trading portfolios above could use up to two. With residual shrinkage the 150 positions had the concentration of about 79 equal weights. That distinction also mattered for a long-only minimum-variance test. When all 150 stocks were represented, original factors reduced later volatility from 13.50% to 12.83%. When the optimizer could leave stocks out, effective breadth fell to 13–17 names and the difference was too uncertain to choose a model.
+The residual-shrinkage advantage over stock shrinkage was distinguishable from zero at all three later sizes. For the original factor model, the intervals included zero at all three. These spreads had one dollar of gross exposure per dollar of capital. The Ridge trading portfolios above could use up to two. With residual shrinkage the 150 positions had the concentration of about 79 equal weights. That distinction also mattered for a long-only minimum-variance test. When all 150 stocks were represented, original factors reduced later volatility from 13.50% to 12.83%. When the optimizer could leave stocks out, effective breadth fell to 13–17 names and the difference was too uncertain to choose a model.
 
 I also tried the reverse experiment. I kept stock shrinkage’s **actual filled positions** and asked each model to forecast their daily risk through the next rebalance. Over 227 complete later cycles, stock shrinkage forecast **7.00%**, the factor target forecast **9.95%**, and the positions realized **9.64%** annualized gross daily risk. On the original factor portfolio the target instead forecast 10.57% against 8.28% realized.
 
@@ -96,7 +123,28 @@ Stock shrinkage already uses a 1.18 multiplier. Could a backward-looking calibra
 
 ## Smaller losses came with a return cost
 
-Using the factor model as a shrinkage target recovered about **40% of the later return gap**. It also changed the experience of holding the portfolio. In the worst 5% of later trading days it lost an average of **1.02%** per day, against **1.35%** for stock shrinkage. Its maximum drawdown was shallower, although its longest spell below a previous peak lasted **190 sessions**, against **140**. Its realized beta to the Russell 1000 was **+0.037**, against **−0.001** for stock shrinkage. The improvement in loss severity came with a little more market sensitivity and a longer wait for recovery.
+How much market exposure did the sizing rules actually leave me with? I measured beta as the slope of daily net portfolio returns on Russell 1000 returns. A beta of 0.08 means that a 1% market move was associated with about a 0.08% portfolio move. Correlation measures how closely the two return series moved together, stripping out their different volatilities. On the same return series, beta equals correlation times portfolio volatility divided by market volatility. Both numbers can be small even when a portfolio has substantial exposure to a particular industry or theme.
+
+<table class="research-table comparison-table compact-table">
+  <caption>Market exposure and daily losses of the traded Ridge portfolios. Down-market beta uses only sessions when the index fell. Tail loss is the average loss in the worst 5% of the portfolio’s own days. Each entry averages the three schedules.</caption>
+  <thead><tr><th>Sizing rule</th><th>Market beta</th><th>Market corr.</th><th>Down-market beta</th><th>Daily tail loss</th></tr></thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="5">January 1999 – December 2021</th></tr>
+    <tr><th scope="row">Volatility scaling</th><td>0.105</td><td>0.256</td><td>0.139</td><td>1.15%</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>0.082</td><td>0.186</td><td>0.106</td><td>1.19%</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>0.020</td><td>0.047</td><td>0.038</td><td>1.12%</td></tr>
+    <tr><th scope="row">Factor target</th><td>0.080</td><td>0.210</td><td>0.099</td><td>1.00%</td></tr>
+    <tr class="period-heading"><th colspan="5">January 2022 – May 2026</th></tr>
+    <tr><th scope="row">Volatility scaling</th><td>0.071</td><td>0.124</td><td>0.147</td><td>1.42%</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>−0.001</td><td>−0.001</td><td>0.058</td><td>1.35%</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>−0.003</td><td>−0.006</td><td>0.045</td><td>1.22%</td></tr>
+    <tr><th scope="row">Factor target</th><td>0.037</td><td>0.091</td><td>0.079</td><td>1.02%</td></tr>
+  </tbody>
+</table>
+
+The original factor book had close to zero later market correlation, yet its worst drawdown was 10.54%. What else was it exposed to? I took the same sector-and-style model and used it to describe both sets of actual positions. On average, momentum accounted for about 36% of forecast variance on the stock-shrinkage book and 15% on the original factor book. Short interest accounted for about 18% and 12%. These are shares of forecast variance, including each exposure’s covariance with the rest of the book. They explain how a portfolio can carry quite different bets at near-zero market beta. The returns those bets subsequently earned are a separate measurement.
+
+Using the factor model as a shrinkage target recovered about **40% of the later return gap**. It also changed the experience of holding the portfolio. In the worst 5% of later trading days it lost an average of **1.02%** per day, against **1.35%** for stock shrinkage. Its maximum drawdown was shallower, although its longest spell below a previous peak lasted **190 sessions**, against **140**. A shallower drawdown can still take longer to recover if the gains that follow it are smaller.
 
 Some of that protection came from taking less risk. I also reran stock shrinkage with the earlier article’s 1.55 multiplier. It delivered **7.47%** later volatility, close to the factor target’s **7.27%**, and still earned **6.19%** net annually versus **4.59%**. That comparison is why I would keep stock shrinkage as the reference for this Ridge portfolio.
 
