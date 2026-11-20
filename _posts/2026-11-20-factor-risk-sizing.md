@@ -89,7 +89,7 @@ The later return gap between the original factor model and stock shrinkage was *
 
 One way to reduce turnover is to act more slowly on changes in the stock forecast. I gave today’s Ridge score 75% weight and its previous score on the same rebalance schedule 25%. Over the full history this reduced the factor portfolio’s turnover by 24%. In development, annual fees fell from 1.98% to 1.51%, yet annual net return also fell from 7.95% to 7.81%. Some trades I avoided would have paid for themselves. In the later period, fees fell from 1.12% to 0.83% and net return rose from 2.72% to 3.29%. Saving fees was repeatable here. Improving returns was more dependent on the period.
 
-Changing just the residual model moved later annual net return from 2.72% to **3.05%** with one principal component, **3.97%** with residual shrinkage, and **3.81%** with both. Across the entire history, preserving the first component on top of shrinkage changed net Sharpe by just **+0.002**. The paired 95% block interval ran from −0.017 to +0.021. The clustering result gave me a reason to model residual covariance. It gave me little reason to give that first component special treatment.
+Changing just the residual model moved later annual net return from 2.72% to **3.05%** with one principal component, **3.97%** with residual shrinkage, and **3.81%** with both. Across the entire history, preserving the first component on top of shrinkage changed net Sharpe by just **+0.002**. The paired 95% block interval ran from −0.017 to +0.021. The clustering result gave me a reason to model residual covariance. I follow those groups through the next year and test one and five components in [Residual Risk After Sectors and Styles]({% link _posts/2026-11-20-residual-risk.md %}).
 
 ## A wider entry pool changed both holdings and turnover
 
@@ -190,6 +190,13 @@ Using the factor model as a shrinkage target recovered about **40% of the later 
 Some of that protection came from taking less risk. I also reran stock shrinkage with the earlier article’s 1.55 multiplier. It delivered **7.47%** later volatility, close to the factor target’s **7.27%**, and earned **6.19%** net annually versus **4.59%**. But a fixed multiplier asks me to choose the scale upfront. I wanted to know what would happen if every optimizer could learn its own scale from earlier forecast errors.
 
 ## Trading with a calibrated risk budget
+
+The 7% budget applies to the risk forecast when I choose the weights. To see the risk a holder actually experienced, I measured the standard deviation of the preceding 252 daily net returns on each schedule, annualized it, and averaged the three readings. Across 317 monthly observations the median for stock shrinkage was **8.58%**. Its highest reading was **14.81%** in the year ending February 2021. For the factor target the corresponding values were **7.21%** and **11.81%**. A risk level measured over that particular year answers a different question from the 8.74% stock-shrinkage volatility over the full development period.
+
+<div class="research-figure responsive-figure">
+  {% include blog-chart.html chart="realized-risk" source="/assets/factor-risk-sizing/realized-risk.json?v=1" base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" label="Annualized net volatility of the preceding 252 trading sessions, measured at monthly endpoints, with the 7% optimizer forecast budget as a reference." %}
+</div>
+<p class="figure-caption">Each point uses a full trading year of daily returns. The series end on the last available session of each month. The horizontal line shows the forecast budget of the joint optimizers.</p>
 
 I kept a reference portfolio for each of the three covariance models. At every decision I looked at its last 52 completed rebalance cycles. For each cycle I divided the mean squared daily gross return by the variance forecast for its filled positions. The square root of the average ratio is a volatility multiplier. If realized variance was consistently about 1.44 times the forecast, for instance, I would multiply the next volatility forecast by 1.20. These 52 observations arrive roughly weekly because the three trading schedules are staggered. Their three-week holding periods overlap.
 

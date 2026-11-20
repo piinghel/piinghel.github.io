@@ -133,6 +133,66 @@ def render_hedges(paired, output, dark, mobile):
         plt.close(fig)
 
 
+def export_realized_risk(daily, portfolios, output, sessions, annualization, risk_budget):
+    """Report each schedule's trailing net volatility, then average on common month ends."""
+    names = [model[0] for model in portfolios]
+    keys = ["arm", "schedule"]
+    data = (
+        pl.scan_parquet(daily).filter(pl.col("arm").is_in(names))
+        .select("date", *keys, "long_short_net")
+        .with_columns((pl.col("long_short_net").rolling_std(sessions, ddof=1)
+                       .over(keys, order_by="date") * np.sqrt(annualization) * 100).alias("risk"))
+        .drop_nulls("risk")
+        .group_by("date", "arm").agg(pl.mean("risk"), pl.col("schedule").n_unique().alias("offsets"))
+        .sort("date").collect()
+    )
+    if data["offsets"].min() != 3 or data["offsets"].max() != 3:
+        raise ValueError("A forecast comparison needs three offset returns per stock model and date")
+    monthly = (data.pivot(on="arm", index="date", values="risk").sort("date")
+               .group_by(pl.col("date").dt.strftime("%Y-%m").alias("month"), maintain_order=True)
+               .last())
+    if any(monthly.select(names).null_count().row(0)):
+        raise ValueError("Monthly risk comparisons must use identical endpoints")
+    dates = monthly["date"].to_list()
+    lines = [series(key, label, role, monthly[key].to_list(), dash=dash, visible=visible)
+             for key, label, role, dash, visible in portfolios]
+    lines.append(series("budget", "Optimizer budget", "index", [100*risk_budget]*len(dates), dash="dot", visible=True))
+    slug = "realized-risk"
+    write_chart(output / (slug + ".json"), [date.isoformat() for date in dates], lines,
+                {slug: dict(kind="values", series=[line["id"] for line in lines],
+                            unit=f"Trailing {sessions}-session net volatility (%)")})
+    for mobile in (False, True):
+        for dark in (False, True):
+            ink, blue, violet, grid = (("#d3dbe4", "#68a9ed", "#b89be9", "#39434e") if dark
+                                       else ("#283542", "#2165a6", "#7950a2", "#d8dee4"))
+            style = {"font.size":9 if mobile else 10, "svg.fonttype":"none", "svg.hashsalt":slug,
+                     "text.color":ink, "xtick.color":ink, "ytick.color":ink, "axes.titlecolor":ink}
+            with plt.rc_context(style):
+                fig, ax = plt.subplots(figsize=(4.5 if mobile else 8.4, 3.8), layout="constrained")
+                for (key, label, _, _, _), color, dash in zip(
+                    portfolios[:3], (ink, blue, violet), ("-", "--", "-."), strict=True
+                ):
+                    ax.plot(dates, monthly[key].to_numpy(), lw=1.2, color=color, ls=dash, label=label)
+                ax.axhline(risk_budget*100, ls=":", color=ink, lw=1, label="Optimizer budget")
+                ax.set_title(f"Trailing {sessions}-session net volatility", loc="left")
+                ax.set_ylim(bottom=0)
+                ax.set_xlim(dates[0], dates[-1])
+                ax.yaxis.set_major_formatter(PercentFormatter(100, decimals=0))
+                ax.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
+                ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+                ax.tick_params(length=0)
+                ax.spines[:].set_visible(False)
+                ax.grid(axis="y", color=grid, lw=.6)
+                ax.set_axisbelow(True)
+                fig.legend(*ax.get_legend_handles_labels(), loc="outside lower center", ncol=2,
+                           frameon=False, fontsize=8 if mobile else 9, labelcolor=ink)
+                suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+                dest = output / f"{slug}{suffix}.svg"
+                fig.savefig(dest, transparent=True, metadata={"Date":None})
+                dest.write_text("\n".join(row.rstrip() for row in dest.read_text().splitlines()) + "\n")
+                plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for arg in ["daily", "pair-history", "clusters", "hedge-intervals", "output"]:
@@ -144,6 +204,7 @@ def main():
                   ("volatility", "Volatility scaling", "short", "dot", False))
     returns = portfolio_paths(args.daily, portfolios)
     export_interactive(returns, portfolios, args.output)
+    export_realized_risk(args.daily, portfolios, args.output, 252, 252, .07)
     pairs = pl.read_csv(args.pair_history, try_parse_dates=True).sort("decision")
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
     paired = pl.read_csv(args.hedge_intervals).filter(pl.col("mandate") == "long/short",
