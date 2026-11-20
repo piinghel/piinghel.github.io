@@ -48,7 +48,14 @@ Over the 252 trading sessions ending Friday, January 24, 2025, NVIDIA’s stock-
 
 The following Monday, January 27, U.S. investors repriced AI infrastructure stocks after DeepSeek’s model release. NVIDIA fell 16.97%, Vertiv fell 29.88% and Workday rose 2.29%. Imagine carrying $100 long NVIDIA into that close with $100 short in one of the other two stocks. The Vertiv short gained enough to cover the NVIDIA loss and leave **$12.91**. The Workday short added to the loss, leaving the pair down **$19.26**. Those are close-to-close price changes in dollars on $200 gross, before fees. I picked this episode knowing about the selloff. [NYSE’s account on January 27](https://www.ice.com/insights/conversations/inside-the-ice-house/market-storylines/01-27-2025)
 
-How typical was the relationship before then? I had four complete year-end windows from 2021 through 2024. NVIDIA–Vertiv residual correlation exceeded NVIDIA–Workday’s in all four, but it ranged from **−0.03 to +0.21** and in 2022 both pairs had negative residual correlation. I would use the business link to ask where a portfolio could lose on the same news. For an estimate of the size and persistence of that risk, I would still want the wider forward test above.
+Would the price history have pointed me toward the cooling business? At the ends of **2021 and 2022**, NVIDIA’s stock returns were actually more correlated with Workday’s than with Vertiv’s. Removing the market, sector and style moves reversed that ordering in both years. The remaining relationship with Vertiv was also variable. Across the four year-ends before the selloff, its residual correlation ranged from **−0.03 to +0.21**. In 2022 both pairs had negative residual correlations.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/residual-risk/company-pairs" mobile="/assets/residual-risk/company-pairs_mobile" version="1" alt="NVIDIA’s correlations with Vertiv and Workday at five year-ends. Workday had the higher raw correlation in 2021 and 2022. Vertiv had the higher residual correlation at all five year-ends." %}
+</div>
+<p class="figure-caption">Each dot uses the last 252 trading sessions at that year-end. Read across a row to see what changes when the broad factors are removed. The 2025 row includes the January selloff and could only have been known afterward.</p>
+
+I would use the business link to ask where two positions could lose on the same news. To decide whether residual relationships are reliable enough to change portfolio weights, I would test that idea on stocks I had no particular reason to pick.
 
 ## The shared directions persist at a smaller scale
 
