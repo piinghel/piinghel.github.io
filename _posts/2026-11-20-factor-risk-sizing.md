@@ -181,8 +181,8 @@ In the later period, switching to the factor target’s risk level reduced reali
 The scale swap is a way to diagnose the result. For a sizing rule I can carry forward, I need a way to adjust risk using information available at the rebalance. I replayed each optimizer with a multiplier estimated from the last 52 completed cycles of its original book. Each new replay starts trades from its own holdings.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Outcomes with the rolling calibration applied inside each optimizer. Gross is long plus absolute short market value per dollar of capital. Returns and volatility are annual, after fees.</caption>
-  <thead><tr><th>Sizing rule</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Gross</th></tr></thead>
+  <caption>Outcomes with rolling calibration. Gross exposure is the average total market value of the longs and shorts, both counted as positive, per dollar of capital. Returns and volatility are annual, after fees.</caption>
+  <thead><tr><th>Sizing rule</th><th>Net return</th><th>Vol.</th><th>Sharpe</th><th>Gross exposure</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">January 1999 – December 2021</th></tr>
     <tr><th scope="row">Stock shrinkage</th><td>9.80%</td><td>7.41%</td><td>1.30</td><td>1.65</td></tr>
