@@ -58,7 +58,7 @@ Across all 27 cohorts, within-group correlation was about **5 points** higher th
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
-  <p class="figure-caption">The upper panel shows how far the market-wide average correlation falls after fitting the factors. Each dot below is one year-end cohort’s following-year difference between within-group and between-group correlation. The short mark for that cohort is the 95th percentile from shuffling labels within sectors. The industry shuffle in the text is a separate check.</p>
+  <p class="figure-caption">The upper panel tracks the rolling 252-session average stock-pair correlation before and after fitting the factors. Each dot below is one year-end cohort’s following-year difference between within-group and between-group correlation. The short mark for that cohort is the 95th percentile from shuffling labels within sectors. The industry shuffle in the text is a separate check.</p>
 </div>
 
 The forward correlation gap was much larger within sectors. In the 23 development cohorts it was **about 8 points** for same-sector pairs and **less than 1 point** for cross-sector pairs matched on industry mix. The cross-sector difference was positive in all 23 cohorts. The clustering picked up some co-movement across sectors, but much more of it was within sectors.
@@ -164,4 +164,6 @@ The replay kept the Ridge scores, rebalance schedules, optimizer constraints and
 
 Ordinary residual shrinkage improved on diagonal residuals in the later sample. Annual return after fees went from **2.7% to 4.0%**, with a modest drop in volatility. In development it also lowered volatility, with a small decline in return. Adding five components barely moved later net Sharpe, and the paired interval allowed small gains or losses.
 
-I would keep ordinary shrinkage when estimating residual covariance. The groups show where co-movement persisted. The component tests show how easily the formation sample can exaggerate its strength. Keeping five components at their estimated strength made the variance forecasts worse in the directions I tested and barely changed the later portfolio Sharpe.
+The groups tell me where to look for residual co-movement. The next-year tests tell me how much of it to carry into the forecast. The estimates weakened after formation, especially across sectors, and keeping five fitted directions at full strength overstated their forward risk. In a long/short book, the sign of each position determines which of those relationships actually matters for total risk.
+
+Keeping only within-group residual covariances barely moved the risk forecasts on the filled books. A stricter test would vary how much weight goes to those relationships across sampled spreads with different sector mixes. Holding specific volatilities and constraints fixed would show when the strength of a group matters enough to change hedge weights.

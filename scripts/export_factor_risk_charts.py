@@ -1,7 +1,7 @@
 """Render aggregate portfolio returns and residual diagnostics for the factor-risk article."""
 
 import argparse
-from datetime import timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
 import matplotlib.dates as mdates
@@ -224,6 +224,84 @@ def export_realized_risk(daily, portfolios, output, sessions, annualization, ris
                 plt.close(fig)
 
 
+def market_exposure(daily: Path, portfolios: tuple, *, window: int, start: date) -> pl.DataFrame:
+    """Measure market exposure on each filled schedule before averaging."""
+    arms = [f"calibrated_{key}" for key, *_ in portfolios]
+    groups = ["arm", "schedule"]
+    returns, market = pl.col("long_short_net"), pl.col("benchmark")
+    monthly = (
+        pl.scan_parquet(daily)
+        .filter(pl.col("arm").is_in(arms))
+        .select("date", *groups, returns, market)
+        .sort(*groups, "date")
+        .with_columns(
+            (pl.rolling_cov(returns, market, window_size=window) / market.rolling_var(window))
+            .over(groups).alias("beta"),
+            pl.rolling_corr(returns, market, window_size=window).over(groups).alias("correlation"),
+        )
+        .filter(pl.col("date") >= start)
+        .drop_nulls(["beta", "correlation"])
+        .group_by("arm", "date")
+        .agg(pl.mean("beta", "correlation"), pl.col("schedule").n_unique().alias("schedules"))
+        .sort("date")
+        .group_by("arm", pl.col("date").dt.truncate("1mo").alias("month"))
+        .last()
+        .sort("date")
+        .collect()
+    )
+    if monthly.is_empty() or not (monthly["schedules"] == 3).all():
+        raise ValueError("Expected three schedule estimates at each market-exposure endpoint")
+    return monthly
+
+
+def render_market_exposure(monthly, portfolios, output, *, dark, mobile, window):
+    ink, blue, violet, grid = (
+        ("#d3dbe4", "#68a9ed", "#b89be9", "#39434e") if dark
+        else ("#283542", "#2165a6", "#7950a2", "#d8dee4")
+    )
+    style = {
+        "font.size": 9 if mobile else 10, "svg.fonttype": "none",
+        "svg.hashsalt": "factor-risk-market-exposure", "text.color": ink,
+        "axes.titlecolor": ink, "xtick.color": ink, "ytick.color": ink,
+    }
+    with plt.rc_context(style):
+        fig, (beta, correlation) = plt.subplots(
+            2, 1, figsize=(4.5 if mobile else 8.4, 4.7), layout="constrained", sharex=True,
+        )
+        dates = monthly["date"].unique().sort()
+        for (key, label, *_), color, dash in zip(
+            portfolios, (ink, blue, violet), ("-", "--", "-."), strict=True,
+        ):
+            book = monthly.filter(pl.col("arm") == f"calibrated_{key}")
+            if not book["date"].equals(dates):
+                raise ValueError(f"Market-exposure dates differ for {key}")
+            beta.plot(dates, book["beta"], color=color, ls=dash, lw=1.3)
+            correlation.plot(dates, book["correlation"], color=color, ls=dash, lw=1.3)
+            if mobile and key == "factor":
+                label = "Sector and\nstyle factors"
+            beta.annotate(
+                label, (dates[-1], book["beta"][-1]), xytext=(5, 0),
+                textcoords="offset points", ha="left", va="center",
+                annotation_clip=False, color=color, fontsize=9 if mobile else 10,
+            )
+        beta.set_title(f"{window}-session market beta", loc="left")
+        correlation.set_title(f"{window}-session correlation with the market", loc="left")
+        for axis in (beta, correlation):
+            axis.axhline(0, lw=0.9, color=grid)
+            axis.grid(axis="y", color=grid, linewidth=0.55, alpha=0.65)
+            axis.set_axisbelow(True)
+            axis.spines[:].set_visible(False)
+            axis.tick_params(length=0, pad=4)
+        correlation.set_xlim(dates[0], dates[-1])
+        correlation.xaxis.set_major_locator(mdates.YearLocator())
+        correlation.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+        path = output / f"market-exposure{suffix}.svg"
+        fig.savefig(path, transparent=True, metadata={"Date": None})
+        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        plt.close(fig)
+
+
 def render_funding(data, output, dark, mobile):
     ink, blue, violet, grid = (
         ("#d3dbe4", "#74b7f4", "#c6afea", "#39434e") if dark
@@ -316,6 +394,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for arg in ["daily", "pair-history", "clusters", "hedge-intervals", "funding-attribution", "fixed-book-forecasts", "output"]:
         parser.add_argument("--" + arg, type=Path, required=True)
+    parser.add_argument("--calibrated-daily", type=Path, help="Daily calibrated accounts for the market-exposure figure")
     args = parser.parse_args()
     portfolios = (("shrinkage", "Stock shrinkage", "strategy", "solid", True),
                   ("factor_target", "Factor target", "long", "dash", True),
@@ -330,12 +409,20 @@ def main():
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
     paired = pl.read_csv(args.hedge_intervals).filter(pl.col("mandate") == "long/short",
                                                     pl.col("weights") == "all names", pl.col("block_weeks") == 13)
+    exposure_window = 63
+    exposure = None
+    if args.calibrated_daily:
+        exposure = market_exposure(args.calibrated_daily, portfolios[:3], window=exposure_window, start=date(2022, 1, 1))
     for mobile in [False, True]:
         for dark in [False, True]:
             render_figures(returns, portfolios, pairs, clusters, args.output, dark, mobile)
             render_hedges(paired, args.output, dark, mobile)
             render_funding(funding, args.output, dark, mobile)
             render_fixed_book(calibration, args.output, dark=dark, mobile=mobile)
+            if exposure is not None:
+                render_market_exposure(
+                    exposure, portfolios[:3], args.output, dark=dark, mobile=mobile, window=exposure_window,
+                )
 
 
 if __name__ == "__main__":

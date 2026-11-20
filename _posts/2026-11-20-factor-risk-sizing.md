@@ -16,7 +16,7 @@ When I add a short, I want to know which risk it takes out of the book. My basel
 
 A factor risk model estimates those relationships through a smaller set of shared returns, such as the market, sectors and styles. The same exposures tell me what a trade does to the whole book. A short can cancel some market exposure and add to momentum exposure at the same time. The model can still miss shared moves among stocks, and its estimate of total volatility can be off.
 
-I keep the Ridge forecasts fixed. I first compare risk forecasts on the same holdings, then compare hedges on the same stocks, and finally look at the portfolios after trading fees.
+I first compare how the risk models weight sampled portfolios and forecast risk on identical holdings. Then I keep the Ridge forecasts fixed and see what each optimizer earns after fees.
 
 ## From stock exposures to portfolio risk
 
@@ -79,7 +79,7 @@ For the factor target, I first divide each model-implied stock covariance by the
 
 The joint optimizers use the same limits. Gross exposure can reach twice capital, net exposure stays within ±25%, and a single name can use up to 4%. Each sector is limited to ±20% net and 30% of either sleeve. The estimated index beta stays within ±0.05 at the decision close.
 
-The risk budget is separate. If $$w$$ is the vector of signed capital weights and $$\Sigma$$ is the daily stock covariance, the optimizer requires annualized forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ to stay at or below 7%. Style exposures enter through that covariance, without separate style caps. A 3%-long and 3%-short position in the same sector adds zero sector net. If their estimated index betas are 1.4 and 0.8, the pair still adds $$0.03(1.4-0.8)=0.018$$ to portfolio beta.
+The joint optimizer uses mean–variance optimization with a risk cap. It maximizes the portfolio’s Ridge return score less a penalty on weight changes from the filled book. If $$w$$ is the vector of signed capital weights and $$\Sigma$$ is the daily stock covariance, annualized forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ must stay at or below 7%. Style exposures enter through that covariance, without separate style caps. A 3%-long and 3%-short position in the same sector adds zero sector net. If their estimated index betas are 1.4 and 0.8, the pair still adds $$0.03(1.4-0.8)=0.018$$ to portfolio beta.
 
 The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
 
@@ -87,20 +87,9 @@ I replayed the same Ridge forecasts in the Russell 1000 on three staggered sched
 
 The portfolio comparisons use 5,773 common sessions from 26 January 1999 through 31 December 2021 and 1,103 from 3 January 2022 through 27 May 2026. The later period includes history I had already seen in related research.
 
-## The same holdings reveal a gap in risk forecasts
-
-I kept each portfolio’s filled shares and compared forecasts of their daily risk through the next rebalance. Across **227 completed later cycles** on the stock-shrinkage book, stock shrinkage forecast **7%** and the factor target forecast **about 10%**, against **9.6%** annualized gross risk. On the original factor book, the target overshot realized volatility by more than two points. The result depended on which book I priced.
-
-I then calibrated each model on the same holdings. I multiplied forecast variance by the average realized-to-forecast variance ratio over the last 52 completed cycles. Both forecasts came out near **9.7%** on the stock-shrinkage holdings. To compare accuracy across cycles, I scored forecast variance $$v$$ against mean squared daily return $$u$$ using $$\log v+u/v$$. Lower is better. Stock shrinkage scored better on its own holdings. On the other two reference books the paired intervals included zero, so this gives limited grounds for preferring either risk forecast across books.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
-</div>
-<p class="figure-caption">Compare each marker’s horizontal distance from the dashed line, the subsequent volatility of the same filled stock-shrinkage book. Open circles are the original forecasts. Diamonds are forecasts recalibrated with the last 52 completed holding periods. The top panel starts in 2000 once calibration history is available.</p>
-
 ## Comparing the hedges on the same stocks
 
-I let each risk model choose weights for the same stocks. For Ridge scores $$s$$, I minimize $$w^\top\Sigma w$$ while holding $$w^\top s$$ at the equal-weight spread’s score. The gross long and short weights are each 50%, and each name stays between one-quarter and three times its side’s equal weight. Multiplying every covariance by the same number leaves the minimum-variance weights unchanged. In the full portfolio, the same multiplier can change how much exposure fits inside the 7% budget.
+I start with sampled spreads so the hedge comparison does not inherit one set of portfolio holdings. For Ridge scores $$s$$, each model minimizes $$w^\top\Sigma w$$ while holding $$w^\top s$$ at the equal-weight spread’s score. The gross long and short weights are each 50%, and each name stays between one-quarter and three times its side’s equal weight. Multiplying every covariance by the same number leaves the minimum-variance weights unchanged. In the full portfolio, the same multiplier can change how much exposure fits inside the 7% budget.
 
 I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and measured gross returns for the session after the next close. The stock draws vary the names on the same dates. Later 150-stock spreads fell from **3.69% to 3.53%** annualized volatility when I added shrunk residual correlations to the factor model.
 
@@ -121,7 +110,22 @@ I also compared one session with the three-week holding period used in the portf
   </tbody>
 </table>
 
-At three weeks, 150 names gave the clearest reduction in risk relative to diagonal residuals. The smaller spreads gave inconclusive results, and the comparison with stock shrinkage remains open at all three sizes. These tests tell me about the hedge weights on a fixed set of stocks. The portfolio replay also has to account for which stocks the optimizer takes, how much it puts into them and what trades it needs to get there.
+At three weeks, 150 names gave the clearest reduction in risk relative to diagonal residuals. The smaller spreads gave inconclusive results, and the comparison with stock shrinkage remains open at all three sizes. The draws cover more combinations of stocks, with the same market history behind them.
+
+I also ran long-only minimum variance on sampled stocks without using Ridge scores. In the later period, the sector-and-style model lowered next-session annualized volatility from **13.5% to 12.8%** at 150 names when both optimizers had to hold every stock. Once either model could drop names, the difference was uncertain. The weighting constraints matter for the hedge comparison.
+
+## The same holdings reveal a gap in risk forecasts
+
+I scored variance forecasts with **QLIKE**, the variance-forecast Q statistic. For each holding period, I divide the mean squared daily return $$u$$ by the forecast daily variance $$v$$. If that ratio is $$x$$, the normalized score is $$x-\log x-1$$. Lower is better, with zero when $$x=1$$. The implementation uses $$\log v+u/v$$, which gives the same paired comparison when $$u$$ is shared.
+
+For a check without Ridge scores, I assigned the longs and shorts at random and gave names equal weights on each side. On these identical holdings, the factor target’s raw forecasts had lower QLIKE than stock shrinkage at 75, 100 and 150 names in the later period. All three paired intervals favored it. At 150 names, stock shrinkage forecast **3.6%** volatility and the factor target **3.4%**, against **2.7%** realized. Both estimates ran high.
+
+On the filled stock-shrinkage book, the same models forecast **7%** and **about 10%** across 227 later cycles, against **9.6%** annualized gross risk. I calibrated each forecast using the realized-to-forecast variance ratios over the last 52 completed cycles. After calibration both forecasts came out near **9.7%**. Stock shrinkage then had a lower Q score on its own holdings, and the paired intervals on the other two filled books included zero. The uncalibrated Q scores on the randomly assigned spreads also reflect differences in overall forecast scale.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
+</div>
+<p class="figure-caption">The dashed line is the realized volatility of the same filled stock-shrinkage book. Circles are the original forecasts. Diamonds show forecasts recalibrated with the last 52 completed holding periods.</p>
 
 ## The portfolio comparison after fees
 {: #how-the-risk-estimate-changes-the-portfolio}
@@ -197,6 +201,15 @@ The scale swap is a way to diagnose the result. For a sizing rule I can carry fo
 
 All three portfolios realized about **7% volatility** in the later period. Stock shrinkage and the factor target also held almost identical gross exposure. Stock shrinkage earned **6.1%** a year after fees, the factor target **4.5%**, and sector and style factors **2.4%**. Most of the gap between stock shrinkage and the factor target came from the short sleeve before fees. The factor target’s net Sharpe was about **0.2 lower**, with a paired interval that included zero.
 
+Similar overall volatility can come with different market exposure. The estimated beta limit applies at rebalance. Realized beta measures how the filled book moved with the Russell 1000. It equals correlation with the index times the ratio of portfolio to index volatility, $$\beta_{p,m}=\rho_{p,m}\sigma_p/\sigma_m$$. At the same market correlation, a more volatile book has a larger beta in magnitude.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/market-exposure" mobile="/assets/factor-risk-sizing/market-exposure_mobile" version="1" alt="Trailing market beta and correlation for the three calibrated portfolios. Both rise at the end of the sample, with stock shrinkage highest." %}
+</div>
+<p class="figure-caption">Each monthly point uses 63 daily net returns and the corresponding index returns. I calculate beta and correlation separately for each schedule, then average them. A beta of 0.19 means a 1% move in the index was associated with a 0.19% move in the portfolio over that window.</p>
+
+In the final window, beta was about **0.19** for stock shrinkage, **0.12** for the factor target and **0.04** for sector and style. To understand what market exposure misses, I looked at the deepest drawdown of an equal mix of the calibrated stock-shrinkage and factor-target books. In that early-2023 window, each book lost about **8%** while the Russell 1000 rose **11%**. The losses came from the short side as its stocks rose.
+
 ## A wider candidate list changes both holdings and turnover
 
 I also replayed all four sizing rules with **100 and 150 new candidates per side**. These are entry limits. At 150 per side the later stock-shrinkage and factor-target books held about **175 and 123 stocks**, respectively. At that width, volatility scaling earned **5.51%** after fees at **8.88%** volatility, between stock shrinkage and the factor target on both measures. Across all three widths the factor target stayed roughly 2.4 volatility points below stock shrinkage, with no clear Sharpe advantage. The comparable-risk replay covers the 75-per-side case.
@@ -224,11 +237,11 @@ At 150 per side, leaving out 2024 put the two models close to even on later Shar
 
 Exposure changed with breadth too. At 150 per side both models met the ±0.05 estimated beta band at the decision close. The later filled factor-target book had a realized index beta of about **0.06**, versus **0.02** for stock shrinkage. A common beta band still allowed different market exposures after execution.
 
-## Stock shrinkage remains the reference
+## What changes when the risk model changes
 
-I would keep stock shrinkage for this Ridge portfolio. The factor model gives me a useful way to see what the book is exposed to. Estimating residual correlations also helped the factor model choose hedge weights across the stocks I gave it. In the portfolio replay, calibrating the risk budget brought both covariance models close to 7% realized volatility, and there was no clear gain from switching to the factor target.
+The covariance estimate does two jobs. It tells the optimizer which positions offset one another, and it determines how much exposure fits inside the risk budget. A model can improve the first job for a broadly diversified spread while pushing the optimizer toward quite different positions once names can be dropped. In the Ridge replay, most of the gap in headline volatility came from how the models priced a dollar of exposure. Matching total volatility still left room for different market exposures and different stock weights.
 
-The comparison I’d want next is a wider book with a common beta target and comparable realized risk on new dates. That would put less weight on what happened in 2024 and make it easier to see whether the covariance choice improved the trades themselves.
+I would next calibrate the models on the same mix of sampled portfolios, including books whose weights never use Ridge. Comparing Q scores after that step would show whether the forecast advantage on randomly assigned spreads survives a common calibration. A second after-cost replay with different forecasts and comparable risk and beta would test how much of the trading result carries across strategies.
 
 ## References
 
