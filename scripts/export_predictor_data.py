@@ -14,6 +14,8 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from types import MappingProxyType
+from collections.abc import Mapping
 
 import numpy as np
 import polars as pl
@@ -22,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/combining-predictors"
 # Signs and the dendrogram are fitted on these years; later years reuse them.
 BASE_PERIOD = (1998, 2021)
-SHORT_THEMES = {
+SHORT_THEMES = MappingProxyType({
     "Medium- and long-term return": "Med./long ret.",
     "Short-term return": "Short-term ret.",
     "Volatility": "Volatility",
@@ -30,9 +32,9 @@ SHORT_THEMES = {
     "Trading activity": "Trading",
     "Market correlation": "Mkt corr.",
     "Short interest": "Short int.",
-}
+})
 # Figure 5 row labels; the full catalogue description stays in the hover.
-SHORT_PREDICTORS = {
+SHORT_PREDICTORS = MappingProxyType({
     "X_feature_price_macd_10_21": "MACD 10/21",
     "X_feature_short_interest_to_volume_log_ratio": "Short interest / day's volume",
     "X_feature_price_sharpe_ratio_compound_r126_volatility126_rolling": "Sharpe 126d",
@@ -43,14 +45,14 @@ SHORT_PREDICTORS = {
     "X_feature_price_ret252_shift0": "Return 252d",
     "X_feature_market_cap_log_std21": "Mcap variability 21d",
     "X_feature_price_atr5": "Average true range 5d",
-}
+})
 
 
 def scaled(values, *, scale: int = 1000) -> list[int]:
     return [round(float(v) * scale) for v in values]
 
 
-def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THEMES) -> dict:
+def export_structure(evidence: Path, *, short_themes: Mapping[str, str] = SHORT_THEMES, base_period: tuple[int, int] = BASE_PERIOD) -> dict:
     predictors = pl.read_csv(evidence / "predictors.csv")
     order = predictors.get_column("predictor").to_list()
     themes = list(dict.fromkeys(predictors.get_column("theme").to_list()))
@@ -92,7 +94,7 @@ def export_structure(evidence: Path, *, short_themes: dict[str, str] = SHORT_THE
 
     return {
         "source": "factor_combination/predictor_structure.py; every fifth session",
-        "base_period": list(BASE_PERIOD),
+        "base_period": list(base_period),
         "years": [int(y) for y in years],
         "dates_per_year": [int(dates_per_year[int(y)]) for y in years],
         "scale": 1000,
@@ -136,7 +138,7 @@ def stability_panels(values: np.ndarray, years: list[int]) -> list[dict]:
     ]
 
 
-def export_results(evidence: Path, predictors: Path) -> dict:
+def export_results(evidence: Path, predictors: Path, *, short_predictors: Mapping[str, str] = SHORT_PREDICTORS) -> dict:
     coefficients = (
         pl.scan_csv(evidence / "ridge_coefficients_by_refit.csv")
         .sort("fold_id")
@@ -161,7 +163,7 @@ def export_results(evidence: Path, predictors: Path) -> dict:
         "coefficients": {
             "kind": "matrix", "unit": "Coefficient", "defaultCount": 10,
             "columns": [str(year) for year in years],
-            "rows": [SHORT_PREDICTORS.get(f, info[f]["description"]) for f in ranked],
+            "rows": [short_predictors.get(f, info[f]["description"]) for f in ranked],
             "descriptions": [info[f]["description"] + " · " + info[f]["theme"] for f in ranked],
             "values": [
                 [round(float(value), 4) for value in values]
@@ -171,9 +173,9 @@ def export_results(evidence: Path, predictors: Path) -> dict:
 
 
 
-def main() -> None:
+def main(*, assets: Path = ASSETS) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--assets", type=Path, default=ASSETS)
+    parser.add_argument("--assets", type=Path, default=assets)
     parser.add_argument("--evidence", type=Path, help="Retained aggregate CSV directory")
     args = parser.parse_args()
     evidence = args.evidence or args.assets / "evidence"

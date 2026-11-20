@@ -24,10 +24,10 @@ import numpy as np
 
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 # Key, label, line style. Long, short and net keep one colour each across the series.
-BOOKS = [("long", "Longs", "-"), ("short", "Shorts", (0, (3.7, 1.6))), ("net", "Net", "-")]
+BOOKS = (("long", "Longs", "-"), ("short", "Shorts", (0, (3.7, 1.6))), ("net", "Net", "-"))
 
 
-def export(outputs: Path) -> None:
+def export(outputs: Path, *, output: Path = OUTPUT) -> None:
     import polars as pl
 
     daily = pl.read_parquet(outputs / "daily.parquet").sort("date")
@@ -48,7 +48,7 @@ def export(outputs: Path) -> None:
         "net": points(net.cum_sum()),
         "benchmark": points((1 + daily["benchmark"]).cum_prod()),
     }
-    (OUTPUT / "pnl-history.json").write_text(json.dumps(history, separators=(",", ":")) + "\n")
+    (output / "pnl-history.json").write_text(json.dumps(history, separators=(",", ":")) + "\n")
 
 
 def palette(dark: bool) -> dict[str, str]:
@@ -74,19 +74,19 @@ def style_axis(ax, colors, title, size):
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:g}".replace("-", "−")))
 
 
-def plot_books(ax, dates, books, colors, size):
+def plot_books(ax, dates, books, colors, size, book_styles):
     """Cumulative long/short/net lines, each named beside its last value.
 
     Call after the figure layout and y-limits are final: labels keep one line of
     text apart, and a short leader joins a label that had to move.
     """
-    for key, _, dash in BOOKS:
+    for key, _, dash in book_styles:
         ax.plot(dates, books[key], color=colors[key], linewidth=1.3, linestyle=dash)
     low, high = ax.get_ylim()
     box = ax.get_position()
     gap = 1.15 * size * (high - low) / (box.height * ax.figure.get_figheight() * 72)
     right = 1 + 6 / (box.width * ax.figure.get_figwidth() * 72)  # six points past the axis
-    ends = sorted(((books[key][-1], key, label) for key, label, _ in BOOKS), reverse=True)
+    ends = sorted(((books[key][-1], key, label) for key, label, _ in book_styles), reverse=True)
     previous = None
     for value, key, label in ends:
         y = value if previous is None else min(value, previous - gap)
@@ -98,15 +98,15 @@ def plot_books(ax, dates, books, colors, size):
                                 "shrinkA": 1, "shrinkB": 2})
 
 
-def save(fig, name, colors, dark, mobile):
+def save(fig, name, colors, dark, mobile, output):
     suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-    path = OUTPUT / f"{name}{suffix}.svg"
+    path = output / f"{name}{suffix}.svg"
     fig.savefig(path, metadata={"Date": None}, facecolor=colors["bg"])
     path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
     plt.close(fig)
 
 
-def render_whole_history(history, windows, dark, mobile):
+def render_whole_history(history, windows, dark, mobile, *, output: Path = OUTPUT, book_styles=BOOKS):
     colors = palette(dark)
     size = 11
     dates = [dt.date.fromisoformat(d) for d in history["dates"]]
@@ -133,8 +133,8 @@ def render_whole_history(history, windows, dark, mobile):
     bottom.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     fig.subplots_adjust(left=0.13 if mobile else 0.07, right=0.8 if mobile else 0.88,
                         top=0.94, bottom=0.06 if mobile else 0.05)
-    plot_books(top, dates, history, colors, size)
-    save(fig, "whole-history", colors, dark, mobile)
+    plot_books(top, dates, history, colors, size, book_styles)
+    save(fig, "whole-history", colors, dark, mobile, output)
 
 
 if __name__ == "__main__":

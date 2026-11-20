@@ -4,6 +4,7 @@ chosen_penalty_by_refit.csv (training end and prediction start of each refit);
 every training window starts on the first panel date."""
 
 import csv
+from dataclasses import dataclass
 import datetime as dt
 from pathlib import Path
 
@@ -22,18 +23,27 @@ LAST_DATE = dt.date(2026, 5, 27)
 TEST_START = dt.date(2022, 1, 3)
 
 
-def windows() -> list[tuple[dt.date, dt.date, dt.date]]:
+@dataclass(frozen=True)
+class TrainingFigure:
+    windows_file: Path = WINDOWS
+    output: Path = OUT
+    training_start: dt.date = TRAIN_START
+    test_start: dt.date = TEST_START
+    last_date: dt.date = LAST_DATE
+
+
+def windows(source: Path, last_date: dt.date) -> list[tuple[dt.date, dt.date, dt.date]]:
     """(training end, prediction start, prediction end) for each refit."""
-    rows = list(csv.DictReader(WINDOWS.open()))
+    rows = list(csv.DictReader(source.open()))
     starts = [dt.date.fromisoformat(r["test_start"]) for r in rows]
-    ends = [s - dt.timedelta(days=1) for s in starts[1:]] + [LAST_DATE]
+    ends = [s - dt.timedelta(days=1) for s in starts[1:]] + [last_date]
     return [
         (dt.date.fromisoformat(r["validation_end"]), start, end)
         for r, start, end in zip(rows, starts, ends, strict=True)
     ]
 
 
-def render(*, dark: bool, mobile: bool) -> None:
+def render(*, dark: bool, mobile: bool, settings: TrainingFigure = TrainingFigure()) -> None:
     c = {
         "bg": "#0d1117" if dark else "#ffffff",
         "ink": "#e4e7ea" if dark else "#25313a",
@@ -44,7 +54,7 @@ def render(*, dark: bool, mobile: bool) -> None:
     }
     # Point sizes that render at roughly 12-13 CSS px at each viewport's display width.
     label, tick = (12, 11.5) if mobile else (10.5, 10)
-    refits = windows()
+    refits = windows(settings.windows_file, settings.last_date)
     num = mdates.date2num
     with plt.rc_context(
         {
@@ -57,15 +67,15 @@ def render(*, dark: bool, mobile: bool) -> None:
         fig, ax = plt.subplots(figsize=(4.8, 4.9) if mobile else (8.4, 4.0))
         fig.set_facecolor(c["bg"])
         ax.set_facecolor(c["bg"])
-        ax.axvspan(num(TEST_START), num(LAST_DATE), color=c["test"], zorder=0, linewidth=0)
+        ax.axvspan(num(settings.test_start), num(settings.last_date), color=c["test"], zorder=0, linewidth=0)
         for row, (train_end, start, end) in enumerate(refits):
-            ax.barh(row, num(train_end) - num(TRAIN_START), left=num(TRAIN_START),
+            ax.barh(row, num(train_end) - num(settings.training_start), left=num(settings.training_start),
                     height=0.56, color=c["train"], zorder=2)
             # A thin background edge separates each prediction block from its training window.
             ax.barh(row, num(end) - num(start), left=num(start), height=0.56,
                     color=c["predict"], edgecolor=c["bg"], linewidth=1.2, zorder=2)
-        for x, text in ((TRAIN_START + (TEST_START - TRAIN_START) / 2, "Development"),
-                        (TEST_START + (LAST_DATE - TEST_START) / 2, "Later")):
+        for x, text in ((settings.training_start + (settings.test_start - settings.training_start) / 2, "Development"),
+                        (settings.test_start + (settings.last_date - settings.test_start) / 2, "Later")):
             ax.annotate(text, (num(x), -0.9), ha="center", va="bottom", fontsize=label - 0.5,
                         color=c["muted"], annotation_clip=False)
         # Predictions follow each fit; the reporting split concerns research choices.
@@ -78,7 +88,7 @@ def render(*, dark: bool, mobile: bool) -> None:
         )
         ax.set_yticks([])
         ax.set_ylim(len(refits) - 0.45, -1.45)
-        ax.set_xlim(num(dt.date(1994, 10, 1)), num(LAST_DATE))
+        ax.set_xlim(num(dt.date(1994, 10, 1)), num(settings.last_date))
         ax.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
         ax.spines[:].set_visible(False)
@@ -86,7 +96,7 @@ def render(*, dark: bool, mobile: bool) -> None:
         fig.subplots_adjust(left=0.03, right=0.97, top=0.81 if mobile else 0.86,
                             bottom=0.08 if mobile else 0.09)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = OUT / f"expanding-walk-forward{suffix}.svg"
+        path = settings.output / f"expanding-walk-forward{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
         path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
         plt.close(fig)

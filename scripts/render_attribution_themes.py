@@ -37,19 +37,19 @@ SIGNALS = [
 ]
 LOW_RISK = ["Low-risk package", "Low volatility", "Beta", "Net market exposure"]
 REST = ["Sector tilt", "Stock-specific", "Unloaded holdings"]
-THEMES = [*SIGNALS, *LOW_RISK, *REST]
-OVERVIEW = [*SIGNALS, "Low-risk package", *REST]
+THEMES = (*SIGNALS, *LOW_RISK, *REST)
+OVERVIEW = (*SIGNALS, "Low-risk package", *REST)
 FIRST_YEAR, LAST_YEAR = 1999, 2026
 
 
-def export(outputs: Path) -> None:
+def export(outputs: Path, *, data_path: Path = DATA, themes: tuple[str, ...] = THEMES) -> None:
     """Collect full-period, block and yearly values per theme from the tidy CSV."""
     out = {"full": {}, "blocks": {}, "years": {}}
     with open(outputs / "theme_periods_gross.csv") as f:
         for row in csv.DictReader(f):
             if row["theme"] == "Stock-specific (loaded holdings)":
                 row["theme"] = "Stock-specific"
-            if row["theme"] not in THEMES:
+            if row["theme"] not in themes:
                 continue
             value = [round(float(row["return_pct"]), 3), round(float(row["risk_share_pct"]), 2)]
             kind, period = row["period_type"], row["period"]
@@ -66,21 +66,21 @@ def export(outputs: Path) -> None:
     with open(outputs / "regime_summary.csv") as f:
         for row in csv.DictReader(f):
             label = wanted.get((row["scheme"], row["regime"]))
-            if label and row["leg"] == "total" and (row["theme"] in THEMES or row["theme"] == "Book net"):
+            if label and row["leg"] == "total" and (row["theme"] in themes or row["theme"] == "Book net"):
                 out["regimes"].setdefault(label, {})[row["theme"]] = round(float(row["per_year_pct"]), 2)
     out["drawdowns"] = {}
     with open(outputs / "drawdown_themes.csv") as f:
         for row in csv.DictReader(f):
-            if row["leg"] == "total" and row["theme"] in THEMES:
+            if row["leg"] == "total" and row["theme"] in themes:
                 label = f"{row['peak'][:4]}\u2013{row['trough'][2:4]} drawdown"
                 out["drawdowns"].setdefault(label, {})[row["theme"]] = round(float(row["pnl_pp"]), 2)
                 window = [row["peak"], row["trough"]]
                 if window not in out.setdefault("windows", []):
                     out["windows"].append(window)
-    missing = [t for t in THEMES if t not in out["full"]]
+    missing = [t for t in themes if t not in out["full"]]
     if missing:
         raise ValueError(f"themes missing from {outputs}: {missing}")
-    DATA.write_text(json.dumps(out, indent=1) + "\n")
+    data_path.write_text(json.dumps(out, indent=1) + "\n")
 
 
 def wrap(label: str) -> str:
@@ -93,7 +93,7 @@ def wrap(label: str) -> str:
 
 
 def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: bool,
-           shared_scale: bool = False, row_order: list = (), wrap_labels: bool = False) -> None:
+           shared_scale: bool = False, row_order: list = (), wrap_labels: bool = False, *, output: Path = OUTPUT) -> None:
     """Draw one horizontal bar panel per (title, {key: value}, format).
 
     `row_order` lists (key, label) rows top to bottom; None adds a half-row gap.
@@ -168,7 +168,7 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
         fig.subplots_adjust(left=left, right=0.97, top=0.97 if mobile else 0.92,
                             bottom=0.03 if mobile else 0.06)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = OUTPUT / f"{name}{suffix}.svg"
+        path = output / f"{name}{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=colors["bg"])
         path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
         plt.close(fig)
@@ -186,7 +186,8 @@ def colors(dark: bool) -> dict:
 
 
 def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
-                    dark: bool, mobile: bool, *, themes: list[str] = OVERVIEW) -> None:
+                    dark: bool, mobile: bool, *, themes: tuple[str, ...] = OVERVIEW,
+                    output: Path = OUTPUT, first_year: int = FIRST_YEAR, last_year: int = LAST_YEAR) -> None:
     """One panel per theme: yearly bars and the five-year block value as a step line.
 
     All panels share the y-scale [-limit, limit]; bars beyond it are clipped and
@@ -196,7 +197,7 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
     cols = 2 if mobile else 4
     rows = -(-len(themes) // cols)
     size = 10 if mobile else 10.5
-    years = list(range(FIRST_YEAR, LAST_YEAR + 1))
+    years = list(range(first_year, last_year + 1))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans"],
                          "svg.fonttype": "none", "svg.hashsalt": name}):
         fig, axes = plt.subplots(rows, cols, figsize=(5.2, 1.55 * rows) if mobile else (10, 1.7 * rows),
@@ -236,7 +237,7 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
         fig.subplots_adjust(left=0.09 if mobile else 0.05, right=0.99, top=0.95 if mobile else 0.93,
                             bottom=0.04 if mobile else 0.06, hspace=0.75, wspace=0.12)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = OUTPUT / f"{name}{suffix}.svg"
+        path = output / f"{name}{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
         path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
         plt.close(fig)

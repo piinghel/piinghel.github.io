@@ -7,6 +7,7 @@ Statistics are computed per rebalance calendar and then averaged; only portfolio
 from __future__ import annotations
 import datetime as dt
 from pathlib import Path
+from dataclasses import dataclass
 import matplotlib
 matplotlib.use("svg")
 import matplotlib.pyplot as plt
@@ -17,6 +18,18 @@ DATA = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/ridge_s
 SPLIT_YEAR = 2019
 STRENGTHS = (("none", 0), ("style25", 25), ("style50", 50), ("style75", 75), ("style100", 100))
 PCA = (("pca25", 25), ("pca50", 50))
+
+
+# (arm, label, interactive role, static colour, dash).
+ARMS_SHOWN = (("style25", "Style 25%", "long", "style", "solid"), ("style50", "Style 50%", "size", "style50", "solid"),
+              ("pca50", "PCA 50%", "cash", "pca", "solid"))
+
+
+@dataclass(frozen=True)
+class StyleRemovalFigures:
+    data: Path = DATA
+    split_year: int = SPLIT_YEAR
+    arms: tuple[tuple[str, str, str, str, str], ...] = ARMS_SHOWN
 
 
 def palette(dark: bool) -> dict[str, str]:
@@ -32,8 +45,8 @@ def sharpe(frame: pl.DataFrame, arm: str) -> float:
     return sum(frame[f"{arm}_o{k}"].mean() / frame[f"{arm}_o{k}"].std() * 252 ** .5 for k in range(3)) / 3
 
 
-def returns() -> pl.DataFrame:
-    return pl.read_parquet(DATA / "outputs/evidence/daily_net_returns.parquet")
+def returns(data: Path) -> pl.DataFrame:
+    return pl.read_parquet(data / "outputs/evidence/daily_net_returns.parquet")
 
 
 def save(fig, path: Path, c: dict) -> None:
@@ -120,10 +133,10 @@ def render_diagram(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"removal-diagram{suffix(dark, mobile)}.svg", c)
 
 
-def render_shares(out: Path, dark: bool, mobile: bool) -> None:
+def render_shares(out: Path, dark: bool, mobile: bool, data: Path) -> None:
     """Variance shares that add to 100%: style, stock-specific, and sector plus the style-sector overlap."""
     c = palette(dark)
-    shares = (pl.read_csv(DATA / "inputs/q1_variance_shares_by_year.csv").filter(pl.col("model") == "ridge")
+    shares = (pl.read_csv(data / "inputs/q1_variance_shares_by_year.csv").filter(pl.col("model") == "ridge")
               .sort("year").with_columns(other=pl.col("sh_sec") + pl.col("sh_cross")))
     years = shares["year"].to_list()
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
@@ -141,10 +154,10 @@ def render_shares(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"forecast-style-share{suffix(dark, mobile)}.svg", c)
 
 
-def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
+def render_risk_return(out: Path, dark: bool, mobile: bool, data: Path) -> None:
     """Realized volatility and net Sharpe ratio for every variant, mean of three schedules."""
     c = palette(dark)
-    m = {r["arm"]: r for r in pl.read_csv(DATA / "outputs/evidence/table_metrics.csv").iter_rows(named=True)}
+    m = {r["arm"]: r for r in pl.read_csv(data / "outputs/evidence/table_metrics.csv").iter_rows(named=True)}
     rows = [("none", "No removal", "base"), ("style25", "Style 25%", "style"), ("style50", "Style 50%", "style"),
             ("style75", "Style 75%", "style"), ("style100", "Style 100%", "style"),
             ("pca25", "PCA 25%", "pca"), ("pca50", "PCA 50%", "pca")]
@@ -180,10 +193,10 @@ def render_risk_return(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"risk-return{suffix(dark, mobile)}.svg", c)
 
 
-def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
+def render_deltas(out: Path, dark: bool, mobile: bool, data: Path) -> None:
     """Net Sharpe difference against no removal by strength, with paired block-bootstrap intervals, before and from 2019."""
     c = palette(dark)
-    intervals = pl.read_csv(DATA / "outputs/evidence/delta_sharpe_intervals.csv").filter(pl.col("base") == "none")
+    intervals = pl.read_csv(data / "outputs/evidence/delta_sharpe_intervals.csv").filter(pl.col("base") == "none")
     table = {(r["arm"], r["period"]): r for r in intervals.iter_rows(named=True)}
     periods = (("early", "1999\u20132018"), ("late", "2019\u20132026"))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
@@ -211,53 +224,48 @@ def render_deltas(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
 
 
-# (arm, label, interactive role, static colour, dash).
-ARMS_SHOWN = (("style25", "Style 25%", "long", "style", "solid"), ("style50", "Style 50%", "size", "style50", "solid"),
-              ("pca50", "PCA 50%", "cash", "pca", "solid"))
-
-
-def gap_series() -> tuple[list[str], list[dict]]:
+def gap_series(settings: StyleRemovalFigures) -> tuple[list[str], list[dict]]:
     """Daily return difference against no removal at equal volatility, mean of three schedules, anchored at zero.
 
     Each arm is scaled per schedule to the full-sample volatility of no removal, so the cumulative gap
     accumulates the Sharpe difference rather than a difference in risk taken.
     """
-    frame = returns().sort("date")
+    frame = returns(settings.data).sort("date")
     first = (frame["date"][0] - dt.timedelta(days=1)).isoformat()
     dates = [first, *[d.isoformat() for d in frame["date"]]]
     data = []
-    for arm, label, role, _, dash in ARMS_SHOWN:
+    for arm, label, role, _, dash in settings.arms:
         diff = sum(frame[f"{arm}_o{k}"] * (frame[f"none_o{k}"].std() / frame[f"{arm}_o{k}"].std()) - frame[f"none_o{k}"]
                    for k in range(3)) / 3
         data.append(series(arm, label, role, [0.0, *diff.to_list()], additive=True, drawdown=False, dash=dash))
     return dates, data
 
 
-def export_gap_chart(assets: Path) -> None:
-    dates, data = gap_series()
+def export_gap_chart(assets: Path, settings: StyleRemovalFigures) -> None:
+    dates, data = gap_series(settings)
     write_chart(assets / "equal-vol-gap.json", dates, data, {"gap": dict(
         kind="performance", series=[s["id"] for s in data], additive=True,
         unit="Points vs no removal, equal volatility", statistics=False, zeroReference=True,
         showWindow=False, dateLabelSpacing=10,
         dateTicks=[dates[0], "2005-01-01", "2010-01-01", "2015-01-01", "2020-01-01", dates[-1]],
         mobileDateTicks=[dates[0], "2005-01-01", "2015-01-01", dates[-1]],
-        start=dates[0], marker=f"{SPLIT_YEAR}-01-01", shade=[[f"{SPLIT_YEAR}-01-01", dates[-1]]],
+        start=dates[0], marker=f"{settings.split_year}-01-01", shade=[[f"{settings.split_year}-01-01", dates[-1]]],
         episodes=[["1999–2018", dates[0], "2018-12-31"], ["2019–2026", "2018-12-31", dates[-1]]],
         note="Sum of daily net return differences against no removal, each variant scaled to the volatility of no removal, mean of three rebalance schedules, points of capital. Shaded: 2019 onward.")})
 
 
-def render_gap(out: Path, dark: bool, mobile: bool) -> None:
+def render_gap(out: Path, dark: bool, mobile: bool, settings: StyleRemovalFigures) -> None:
     c = palette(dark)
-    dates, data = gap_series()
+    dates, data = gap_series(settings)
     x = [dt.date.fromisoformat(d) for d in dates]
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "style-removal-gap"}):
         fig, ax = plt.subplots(figsize=(4.4, 4.0) if mobile else (9.4, 3.9))
         fig.set_facecolor(c["bg"]); style(ax, c, mobile)
         ax.axhline(0, color=c["ink"], lw=0.8)
-        ax.axvspan(dt.date(SPLIT_YEAR, 1, 1), x[-1], color=c["grid"], alpha=0.55, zorder=0)
+        ax.axvspan(dt.date(settings.split_year, 1, 1), x[-1], color=c["grid"], alpha=0.55, zorder=0)
         cumulative = {}
-        for (arm, label, _, colour, dash), s in zip(ARMS_SHOWN, data):
+        for (arm, label, _, colour, dash), s in zip(settings.arms, data):
             values = [0.0]
             for v in s["values"][1:]:
                 values.append(values[-1] + v * 100)
@@ -270,13 +278,15 @@ def render_gap(out: Path, dark: bool, mobile: bool) -> None:
         save(fig, out / f"equal-vol-gap{suffix(dark, mobile)}.svg", c)
 
 
-def export(assets: Path) -> None:
+def export(assets: Path, *, settings: StyleRemovalFigures = StyleRemovalFigures()) -> None:
     assets.mkdir(parents=True, exist_ok=True)
-    export_gap_chart(assets)
+    export_gap_chart(assets, settings)
     for dark in (False, True):
         for mobile in (False, True):
-            for render in (render_diagram, render_shares, render_risk_return, render_deltas, render_gap):
-                render(assets, dark, mobile)
+            render_diagram(assets, dark, mobile)
+            for render in (render_shares, render_risk_return, render_deltas):
+                render(assets, dark, mobile, settings.data)
+            render_gap(assets, dark, mobile, settings)
 
 
 if __name__ == "__main__":

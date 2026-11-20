@@ -26,10 +26,10 @@ def figure_context(style: FigureStyle) -> dict[str, object]:
     }
 
 
-def main() -> None:
+def main(*, assets: Path = ASSETS) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--structure-dir", type=Path, default=ASSETS / "evidence" / "predictor-structure")
-    parser.add_argument("--output-dir", type=Path, default=ASSETS)
+    parser.add_argument("--structure-dir", type=Path, default=assets / "evidence" / "predictor-structure")
+    parser.add_argument("--output-dir", type=Path, default=assets)
     args = parser.parse_args()
     structure = load_structure(args.structure_dir.resolve())
     for style in (FigureStyle(), dark_figure_style()):

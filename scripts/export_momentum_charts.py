@@ -6,22 +6,26 @@ Only portfolio aggregates are exported.
 """
 from __future__ import annotations
 import datetime as dt
+from dataclasses import dataclass
 from pathlib import Path
 import polars as pl
 from blog_charts import series, write_chart
 
-EVIDENCE = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/momentum_crashes_public/outputs/evidence")
-HOLDOUT = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/data/runs/momentum_crash_holdout_20261001")
-START, END = dt.date(1998, 9, 1), dt.date(2021, 12, 31)
-DISPLAY_RULES = (
-    ("overlay", "score_overlay", "Score overlay", "long"),
-    ("learned", "learned_interactions", "Learned interactions", "size"),
-    ("cap", "optimizer_cap", "Optimizer cap", "cash"),
-)
+@dataclass(frozen=True)
+class MomentumEvidence:
+    evidence: Path = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/momentum_crashes_public/outputs/evidence")
+    holdout: Path = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/data/runs/momentum_crash_holdout_20261001")
+    start: dt.date = dt.date(1998, 9, 1)
+    end: dt.date = dt.date(2021, 12, 31)
+    display_rules: tuple[tuple[str, str, str, str], ...] = (
+        ("overlay", "score_overlay", "Score overlay", "long"),
+        ("learned", "learned_interactions", "Learned interactions", "size"),
+        ("cap", "optimizer_cap", "Optimizer cap", "cash"),
+    )
 
 
-def export(assets: Path) -> None:
-    wml = pl.read_parquet(EVIDENCE / "momentum_deciles.parquet").filter(pl.col("date").is_between(START, END)).sort("date")
+def export(assets: Path, *, settings: MomentumEvidence = MomentumEvidence()) -> None:
+    wml = pl.read_parquet(settings.evidence / "momentum_deciles.parquet").filter(pl.col("date").is_between(settings.start, settings.end)).sort("date")
     crash = [series(k, label, role, [0.0, *wml[k].cast(pl.Float64).fill_null(0.0).to_list()[1:]])
              for k, label, role in (("winners", "Winners", "long"), ("losers", "Losers", "short"), ("wml", "Long–short (WML)", "strategy"))]
     write_chart(assets / "crash-2009.json", [d.isoformat() for d in wml["date"]], crash, {"crash": dict(
@@ -33,10 +37,10 @@ def export(assets: Path) -> None:
 
     # Differencing the verified cumulative path preserves the original three-schedule
     # denominator, including zero cash before each schedule's first genuine trade.
-    saved = pl.scan_csv(HOLDOUT / "chart_added_pnl.csv", try_parse_dates=True).filter(
-        pl.col("variant").is_in([rule for _, rule, _, _ in DISPLAY_RULES])).collect()
+    saved = pl.scan_csv(settings.holdout / "chart_added_pnl.csv", try_parse_dates=True).filter(
+        pl.col("variant").is_in([rule for _, rule, _, _ in settings.display_rules])).collect()
     added, dates = [], None
-    for key, rule, label, role in DISPLAY_RULES:
+    for key, rule, label, role in settings.display_rules:
         frame = saved.filter(pl.col("variant") == rule).sort("date")
         first = (frame["date"][0] - dt.timedelta(days=1)).isoformat()
         current = [first, *[d.isoformat() for d in frame["date"]]]
