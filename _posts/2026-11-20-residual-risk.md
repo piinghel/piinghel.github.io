@@ -53,7 +53,7 @@ Would the price history have pointed me toward the cooling business? At the ends
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/company-pairs" mobile="/assets/residual-risk/company-pairs_mobile" version="1" alt="NVIDIA’s correlations with Vertiv and Workday at five year-ends. Workday had the higher raw correlation in 2021 and 2022. Vertiv had the higher residual correlation at all five year-ends." %}
 </div>
-<p class="figure-caption">Each dot uses the last 252 trading sessions at that year-end. Read across a row to see what changes when the broad factors are removed. The 2025 row includes the January selloff and could only have been known afterward.</p>
+<p class="figure-caption">Each dot uses the last 252 trading sessions at that year-end. Read across a row to see what changes when the broad factors are removed. The 2025 row includes the January selloff and could only have been known afterward. <a href="/assets/residual-risk/nvidia-pair-correlations.csv">Download the correlations and exact window dates (CSV).</a></p>
 
 I would use the business link to ask where two positions could lose on the same news. To decide whether residual relationships are reliable enough to change portfolio weights, I would test that idea on stocks I had no particular reason to pick.
 
