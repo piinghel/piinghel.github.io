@@ -144,11 +144,11 @@ At three weeks, 150 names gave the clearest reduction in risk relative to diagon
 </table>
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="1" alt="Net growth and drawdown of the long/short Ridge portfolios from January 1999 to May 2026." %}
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="2" alt="Net growth of the three long/short Ridge portfolios above their drawdowns on the same timeline. Stock shrinkage finished ahead of the factor target and sector and style factors." %}
 </div>
-<p class="figure-caption">The upper panel follows the growth of $1 after fees for the three joint optimizers. Each tick doubles the account value. The lower panel measures the percentage loss from each path’s prior peak. The paths compound the mean daily return across schedules. The table measures drawdowns separately for each schedule before averaging.</p>
+<p class="figure-caption">The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
 
-In the later period the factor target earned more than the sector-and-style model and ran at lower volatility. Stock shrinkage earned more again, at **about 9.7% realized volatility** against **7.3%** for the factor target. Both joint optimizers used the same 7% forecast budget. The growth and drawdown paths show the effect of both the return difference and the different amounts of risk the books took.
+Of the three joint optimizers, the factor target came closest to its 7% volatility budget in both periods. From 2022 to May 2026, realized volatility was **7.3%** for the factor target, **8.3%** for sector and style factors and **9.7%** for stock shrinkage. Stock shrinkage also earned the most after fees. To compare what the optimizers did with similar amounts of risk, I looked at how each one interpreted the budget.
 
 ## Why the same risk budget produced different volatility
 
@@ -157,7 +157,7 @@ The original factor target held about **$1.24** of gross exposure per dollar of 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" alt="Trailing annualized volatility of the original sizing rules before the rolling calibration." %}
 </div>
-<p class="figure-caption">Each point uses the previous 252 net daily returns of the original joint optimizers, with realized volatility averaged across schedules. The horizontal 7% line is the budget applied to each optimizer’s own forecast at rebalance. The curves show how far subsequent realized volatility can sit from that budget.</p>
+<p class="figure-caption">Each monthly point shows trailing 252-session net volatility averaged across schedules. The 7% line is the limit on each optimizer’s own forecast at rebalance. Stock shrinkage ran above the factor target throughout the chart. It traded places with the sector-and-style book before 2022, then stayed above it at every later point shown.</p>
 
 At each decision close, I priced the stock-shrinkage portfolio’s filled holdings with both models. To give stock shrinkage the factor target’s risk level, I rescaled its covariance until the two forecasts agreed on those reference holdings. I also ran the reverse. Each optimizer then selected its own positions and simulated trades from its own prior fills.
 
@@ -195,7 +195,7 @@ The scale swap is a way to diagnose the result. For a sizing rule I can carry fo
   </tbody>
 </table>
 
-Both portfolios realized about **7% volatility** in the later period. Stock shrinkage earned **6.1%** a year after trading fees and the factor target earned **4.5%**. Most of the observed gap came from the short sleeve before fees. The factor target’s net Sharpe was about **0.2 lower**, with a paired interval that included zero. The portfolios took similar total risk and still held different positions.
+All three portfolios realized about **7% volatility** in the later period. Stock shrinkage and the factor target also held almost identical gross exposure. Stock shrinkage earned **6.1%** a year after fees, the factor target **4.5%**, and sector and style factors **2.4%**. Most of the gap between stock shrinkage and the factor target came from the short sleeve before fees. The factor target’s net Sharpe was about **0.2 lower**, with a paired interval that included zero.
 
 ## A wider candidate list changes both holdings and turnover
 

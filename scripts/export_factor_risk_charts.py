@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
+from matplotlib.patheffects import withStroke
 from matplotlib.ticker import FuncFormatter, PercentFormatter
 
 from blog_charts import series, write_chart
@@ -39,6 +40,46 @@ def export_interactive(returns, portfolios, output):
                 lines, {"performance": chart})
 
 
+def render_performance(returns, portfolios, destination, *, colors, grid, surface, mobile):
+    dates = returns["date"].to_list()
+    dates = [dates[0] - timedelta(days=1), *dates]
+    fig, (growth, drawdown) = plt.subplots(
+        2, 1, figsize=(4.5 if mobile else 8.4, 4.7),
+        layout="constrained", sharex=True,
+    )
+    for (key, label, _, _, _), color, dash in zip(
+        portfolios[:3], colors, ("-", "--", "-."), strict=True,
+    ):
+        wealth = np.r_[1, np.cumprod(1 + returns[key].to_numpy())]
+        growth.plot(dates, wealth, color=color, ls=dash, lw=1.15)
+        growth.annotate(
+            label, (dates[-1], wealth[-1]), xytext=(-4, 0), textcoords="offset points",
+            ha="right", va="center", color=color, fontsize=9 if mobile else 10,
+            path_effects=[withStroke(linewidth=2.5, foreground=surface)],
+        )
+        drawdown.plot(
+            dates, wealth / np.maximum.accumulate(wealth) - 1,
+            color=color, ls=dash, lw=0.8, alpha=0.85,
+        )
+    for axis in (growth, drawdown):
+        axis.spines[:].set_visible(False)
+        axis.tick_params(which="both", length=0, pad=4)
+        axis.grid(axis="y", color=grid, linewidth=0.6)
+        axis.set_axisbelow(True)
+
+    growth.set_yscale("log")
+    growth.set_yticks([1, 2, 4, 8, 16], labels=["1", "2", "4", "8", "16"])
+    growth.set_title("Growth of $1 after fees", loc="left")
+    growth.set_xlim(dates[0], dates[-1])
+    drawdown.set_title("Drawdown from the previous peak", loc="left")
+    drawdown.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+    drawdown.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
+    drawdown.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    fig.savefig(destination, transparent=True, metadata={"Date": None})
+    destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
+    plt.close(fig)
+
+
 def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
     ink, blue, violet, grid = (
         ("#d3dbe4", "#68a9ed", "#b89be9", "#39434e") if dark
@@ -50,51 +91,40 @@ def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
              "ytick.color": ink, "axes.labelcolor": ink, "axes.titlecolor": ink,
              "svg.fonttype": "none", "svg.hashsalt": "factor-risk-sizing"}
     with plt.rc_context(style):
-        for slug in ["performance", "residuals"]:
-            fig, (upper, lower) = plt.subplots(2, 1, figsize=(4.5 if mobile else 8.4, 4.7),
-                                                layout="constrained", sharex=True)
-            for axis in [upper, lower]:
-                axis.spines[:].set_visible(False)
-                axis.tick_params(length=0, pad=4)
-                axis.grid(axis="y", color=grid, linewidth=0.6)
-                axis.set_axisbelow(True)
-            if slug == "performance":
-                dates = returns["date"].to_list()
-                dates = [dates[0] - timedelta(days=1), *dates]
-                for (key, label, _, _, _), color, dash in zip(portfolios[:3], colors, ["-", "--", "-."], strict=True):
-                    wealth = np.r_[1, np.cumprod(1 + returns[key].to_numpy())]
-                    upper.plot(dates, wealth, color=color, ls=dash, lw=1.15, label=label)
-                    lower.plot(dates, wealth / np.maximum.accumulate(wealth) - 1, color=color, ls=dash, lw=0.95)
-                upper.set_yscale("log")
-                upper.set_yticks([1, 2, 4, 8, 16], labels=["1", "2", "4", "8", "16"])
-                upper.set_title("Growth of $1 after costs", loc="left")
-                lower.set_title("Loss from the previous peak", loc="left")
-                upper.legend(loc="upper left", frameon=False, fontsize=8, labelcolor=ink)
-                lower.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
-            else:
-                upper.plot(pairs["decision"], pairs["raw_pair_correlation"], color=blue, lw=1)
-                upper.plot(pairs["decision"], pairs["residual_pair_correlation"], color=violet, lw=1.5, ls="--")
-                for col, label, color in [("raw_pair_correlation", "Stocks", blue),
-                                          ("residual_pair_correlation", "Residuals", violet)]:
-                    upper.annotate(label, (pairs["decision"][-1], pairs[col][-1]), xytext=(4, 0),
-                                   textcoords="offset points", color=color, va="center", fontsize=9)
-                upper.margins(x=0)
-                upper.set_title("Average one-year pairwise correlation", loc="left")
-                upper.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
-                lower.scatter(clusters["last_forward"], 100 * clusters["forward_contrast"], color=blue, s=19)
-                lower.scatter(clusters["last_forward"], 100 * clusters["within_sector_upper95"],
-                              color=ink, s=18, marker="_")
-                lower.axhline(0, color=grid, linewidth=0.7)
-                lower.set_title("Within-group minus outside, next year", loc="left")
-                lower.yaxis.set_major_formatter(FuncFormatter(lambda value, pos: f"{value:g} pp"))
-                # Leave space inside the exported figure for the two direct labels.
-                upper.set_xlim(pairs["decision"][0], pairs["decision"][-1] + timedelta(days=6*365 if mobile else 3*365))
-            lower.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
-            lower.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-            destination = output / (slug + suffix)
-            fig.savefig(destination, transparent=True, metadata={"Date": None})
-            destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
-            plt.close(fig)
+        render_performance(
+            returns, portfolios, output / ("performance" + suffix),
+            colors=colors, grid=grid, surface="#0d1117" if dark else "#fff", mobile=mobile,
+        )
+        fig, (upper, lower) = plt.subplots(2, 1, figsize=(4.5 if mobile else 8.4, 4.7),
+                                            layout="constrained", sharex=True)
+        for axis in [upper, lower]:
+            axis.spines[:].set_visible(False)
+            axis.tick_params(length=0, pad=4)
+            axis.grid(axis="y", color=grid, linewidth=0.6)
+            axis.set_axisbelow(True)
+        upper.plot(pairs["decision"], pairs["raw_pair_correlation"], color=blue, lw=1)
+        upper.plot(pairs["decision"], pairs["residual_pair_correlation"], color=violet, lw=1.5, ls="--")
+        for col, label, color in [("raw_pair_correlation", "Stocks", blue),
+                                  ("residual_pair_correlation", "Residuals", violet)]:
+            upper.annotate(label, (pairs["decision"][-1], pairs[col][-1]), xytext=(4, 0),
+                           textcoords="offset points", color=color, va="center", fontsize=9)
+        upper.margins(x=0)
+        upper.set_title("Average one-year pairwise correlation", loc="left")
+        upper.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+        lower.scatter(clusters["last_forward"], 100 * clusters["forward_contrast"], color=blue, s=19)
+        lower.scatter(clusters["last_forward"], 100 * clusters["within_sector_upper95"],
+                      color=ink, s=18, marker="_")
+        lower.axhline(0, color=grid, linewidth=0.7)
+        lower.set_title("Within-group minus outside, next year", loc="left")
+        lower.yaxis.set_major_formatter(FuncFormatter(lambda value, pos: f"{value:g} pp"))
+        # Leave space inside the exported figure for the two direct labels.
+        upper.set_xlim(pairs["decision"][0], pairs["decision"][-1] + timedelta(days=6*365 if mobile else 3*365))
+        lower.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
+        lower.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+        destination = output / ("residuals" + suffix)
+        fig.savefig(destination, transparent=True, metadata={"Date": None})
+        destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
+        plt.close(fig)
 
 
 def render_hedges(paired, output, dark, mobile):
