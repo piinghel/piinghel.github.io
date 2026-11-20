@@ -39,7 +39,8 @@ Could the grouping have picked up a relationship like the chip designer and its 
 
 In the 23 development years, the next year’s mean residual correlation for those cross-sector pairs was **0.55% inside a cluster and −0.12% for the matched comparison**. The difference was **0.67 percentage points**, with a two-year-block 95% interval of **0.52 to 0.83 points**. It was positive in all 23 years. Applying the same test to pairs from the same sector gave a much larger **7.78-point** gap. The four later cohorts averaged **2.41 and 10.37 points**, respectively. So the groups did pick up some common movement across sector boundaries. Two stocks in the same sector showed a much larger increase in correlation when the clustering put them together. A specific AI supply-chain connection would still need business evidence.
 
-## Would the model have grouped NVIDIA and Vertiv?
+## The model placed NVIDIA and Vertiv in different groups
+{: #would-the-model-have-grouped-nvidia-and-vertiv}
 
 There was an economic link I could have known about before the January 2025 selloff in AI infrastructure stocks. Vertiv and NVIDIA had already published a design for powering and cooling NVIDIA-based data centers. I compared them with another technology firm, Workday, whose HR software NVIDIA used. [Vertiv’s October 2024 announcement](https://www.vertiv.com/en-emea/about/news-and-events/news-releases/vertiv-codevelops-with-nvidia-complete-power-and-cooling-blueprint-for--nvidia-gb200-nvl72-platform/) · [Workday’s customer study](https://forms.workday.com/content/dam/web/en-us/documents/ebooks/power-of-skills-insights-customer-success-story-global-enus.pdf)
 
@@ -72,6 +73,8 @@ $$
 
 I started with $$R=I$$. This gives each stock its own specific variance and sets the forecast covariance between two stocks’ residuals to zero. I also assume zero forecast covariance between named factor returns and residual shocks. Both are second-moment assumptions. Neither requires independence.
 
+MSCI gives a practical reason to relax that assumption. Two share classes of the same issuer can respond to the same company news after the market and industry moves come out. MSCI calls the correlation it assigns to such securities *linked specific risk*. In its Japan trading model, it also estimates specific correlations for selected pairs of **different** issuers. It uses company information to identify peers and their historical residual returns to estimate the correlations. I use the stock returns left over after fitting my factors to estimate these remaining links. [MSCI Japan Investment Risk Summit, slides 5–7](https://www.msci.com/downloads/web/msci-com/discover-msci/events/event-assets/2025/november/2025-japan-investment-risk-summit/MSCI%20Japan%20Investment%20Risk%20Summit_November%2013%2C%202025.pdf#page=5)
+
 For the PCA version, let $$S$$ be the prior year’s sample residual correlation matrix. For each of its first $$k$$ unit eigenvectors $$q_j$$ and eigenvalues $$\lambda_j$$, keep the component $$\lambda_j q_j q_j^\top$$. Their sum is $$L$$. Setting $$R=L+\operatorname{diag}(S-L)$$ gives common residual risk through those directions and returns the unused variance to each stock. In factor language the extra stock loadings are $$D q_j\sqrt{\lambda_j}$$ on unit-variance factors. Each retained direction already uses part of the stock’s specific variance. Keeping the entire old diagonal alongside it would count that part twice.
 
 For residual shrinkage, I used $$R=(1-\alpha)S+\alpha I$$, estimating the weight from the trailing standardized observations. With more stocks than days, the sample correlation has directions of zero estimated variance. Shrinkage raises those low estimates and pulls down the large ones. It can therefore both reduce the risk assigned to a concentrated theme and raise the risk assigned to a supposed hedge. [Ledoit and Wolf, *A well-conditioned estimator for large-dimensional covariance matrices*](https://www.ledoit.net/Well-conditioned2004.pdf)
@@ -94,6 +97,8 @@ For stocks in **different sectors and different clusters**, predicting zero gave
   {% include theme-svg-figure.html base="/assets/residual-risk/pair-errors" mobile="/assets/residual-risk/pair-errors_mobile" version="1" alt="Changes in next-year pair correlation error versus forecasting zero. All estimators improved on zero for stocks in the same sector and cluster. The cross-sector, different-cluster forecasts increased error in both periods." %}
   <p class="figure-caption">Left of zero means the model estimated the next year’s pair correlations more accurately than predicting zero for every pair. One unit is 0.01 of correlation. The 23 development cohorts and four later cohorts each receive equal weight within their period. The same stock may enter many pairs.</p>
 </div>
+
+I checked whether multiple securities from the same company explained my results. The issuer file linked 17 distinct pairs, observed a total of 93 times across the year-end cohorts. Their next-year residual correlation averaged **0.92** in both periods, and every pair fell in the same sector and the same frozen group. Removing them barely changed the broader comparison. Among securities of different issuers, shrinking residual correlations reduced mean squared forecast error against zero by **2.56%** in development and **7.69%** later. The issuer file is a later snapshot, so this is a check on the historical result.
 
 ## Keeping five components overstated their forward risk
 
