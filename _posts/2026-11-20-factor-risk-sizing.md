@@ -54,16 +54,16 @@ The fourth sizing rule, **factor target**, changes one input to stock shrinkage.
   <caption>Net long/short portfolio outcomes. Each row averages statistics calculated separately for the three schedules. Return is compounded annually, volatility is annualized, drawdown is the largest peak-to-trough loss, and turnover counts purchases and sales in multiples of capital per year.</caption>
   <thead><tr><th>Sizing rule</th><th>Net return</th><th>Vol.</th><th>Sharpe</th><th>Drawdown</th><th>Turnover</th></tr></thead>
   <tbody>
-    <tr><th colspan="6">January 1999 – December 2021</th></tr>
-    <tr><td>Volatility scaling</td><td>7.12%</td><td>8.08%</td><td>0.89</td><td>20.07%</td><td>28.49×</td></tr>
-    <tr><td>Stock shrinkage</td><td>10.77%</td><td>8.74%</td><td>1.21</td><td>18.52%</td><td>25.65×</td></tr>
-    <tr><td>Sector and style factors</td><td>7.95%</td><td>8.13%</td><td>0.98</td><td>19.10%</td><td>26.49×</td></tr>
-    <tr><td>Factor target</td><td>9.50%</td><td>7.47%</td><td>1.25</td><td>15.79%</td><td>25.17×</td></tr>
-    <tr><th colspan="6">January 2022 – May 2026</th></tr>
-    <tr><td>Volatility scaling</td><td>6.96%</td><td>10.16%</td><td>0.71</td><td>9.41%</td><td>24.36×</td></tr>
-    <tr><td>Stock shrinkage</td><td>7.42%</td><td>9.65%</td><td>0.79</td><td>9.84%</td><td>18.76×</td></tr>
-    <tr><td>Sector and style factors</td><td>2.72%</td><td>8.29%</td><td>0.37</td><td>10.54%</td><td>18.28×</td></tr>
-    <tr><td>Factor target</td><td>4.59%</td><td>7.27%</td><td>0.65</td><td>7.64%</td><td>16.66×</td></tr>
+    <tr class="period-heading"><th colspan="6">January 1999 – December 2021</th></tr>
+    <tr><th scope="row">Volatility scaling</th><td>7.12%</td><td>8.07%</td><td>0.89</td><td>20.07%</td><td>28.49×</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>10.77%</td><td>8.74%</td><td>1.21</td><td>18.52%</td><td>25.65×</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>7.95%</td><td>8.13%</td><td>0.98</td><td>19.10%</td><td>26.49×</td></tr>
+    <tr><th scope="row">Factor target</th><td>9.50%</td><td>7.47%</td><td>1.25</td><td>15.79%</td><td>25.17×</td></tr>
+    <tr class="period-heading"><th colspan="6">January 2022 – May 2026</th></tr>
+    <tr><th scope="row">Volatility scaling</th><td>6.96%</td><td>10.16%</td><td>0.71</td><td>9.41%</td><td>24.36×</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>7.42%</td><td>9.65%</td><td>0.79</td><td>9.84%</td><td>18.76×</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>2.72%</td><td>8.29%</td><td>0.37</td><td>10.54%</td><td>18.28×</td></tr>
+    <tr><th scope="row">Factor target</th><td>4.59%</td><td>7.27%</td><td>0.65</td><td>7.64%</td><td>16.66×</td></tr>
   </tbody>
 </table>
 
