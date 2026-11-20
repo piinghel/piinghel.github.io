@@ -105,7 +105,7 @@ In the 23 development cohorts, components two through five averaged **14.30** un
 
 ## Putting a residual correlation into the portfolio
 
-I keep the named-factor covariance and each stock’s specific volatility fixed. Only the residual correlation matrix $$R$$ changes. If $$D$$ is the diagonal matrix of specific volatilities, then $$DRD$$ turns residual correlations back into covariances. A pair with correlation $$\rho$$ contributes a covariance of $$d_1\rho d_2$$. The diagonal stays at each stock’s specific variance as long as $$R$$ has ones on its diagonal.
+I keep the named-factor covariance and each stock’s specific volatility fixed across the models. The specific volatilities use a 63-session exponential half-life, separate from the window used to estimate residual correlations. If $$D$$ is the diagonal matrix of specific volatilities and $$R$$ is the residual correlation matrix, then $$DRD$$ turns those correlations back into covariances. A pair with correlation $$\rho$$ gives a covariance of $$d_1\rho d_2$$. Holding a nonzero correlation fixed, greater volatility makes the covariance larger in magnitude.
 
 The baseline uses $$R=I$$. A stock without a complete trailing residual window keeps its named exposures and its specific variance, with zero pairwise residual correlations.
 
