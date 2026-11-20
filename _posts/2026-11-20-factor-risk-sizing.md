@@ -10,11 +10,13 @@ article_label: Portfolio construction · Factor risk
 permalink: /quants/factor-risk-sizing.html
 ---
 
-A short can offset a risk already in the portfolio or add to it. If the long book has positive momentum exposure, shorting another stock with positive momentum exposure reduces that tilt. Shorting a stock with negative momentum exposure reinforces it. The two short candidates can have the same standalone volatility and do very different things to the book.
+A factor risk model splits each stock’s return into a common part, explained by the market, sectors and styles, and a residual. That makes the estimation problem more manageable. A universe of 1,000 stocks has nearly half a million pairwise correlations. I can estimate how a much smaller set of factors moves together and use each stock’s exposures to work out how those factors contribute to stock covariance.
 
-That is where a factor risk model helps. Estimating stock correlations directly gives a universe of 1,000 names nearly half a million pairs to estimate. A factor model ties those estimates together through a smaller set of common returns, such as sectors and styles. It uses stocks’ exposures to those factors to estimate how two names might move together and lets me see which exposures the portfolio is carrying.
+For portfolio sizing, I can add up the exposures of the long and short positions and see what the book is sensitive to. If the long book has positive momentum exposure, a short with positive momentum exposure offsets some of it. A short with negative momentum exposure adds to it. The two candidates can have the same standalone volatility and do very different things to the book.
 
-I keep the Ridge forecasts and the two benchmarks from [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}). I want to know whether the factor model measures risk more accurately on existing holdings, whether it picks better hedges from the same stocks, and what happens to returns when the resulting portfolios run at similar risk.
+The model can miss risks the factors leave behind. Two stocks can still move together after accounting for the market, sectors and styles. The overall level of risk can also be off even when the model points to a useful hedge.
+
+I keep the Ridge forecasts fixed and use the two benchmark sizing rules from [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}). I compare risk forecasts on the same holdings, hedge weights on the same stocks, and portfolio returns after fees at similar realized volatility.
 
 ## What goes into a position
 
@@ -25,7 +27,7 @@ At each rebalance I use the Russell 1000 membership recorded by that close. Ridg
 - **Sector and style factors** estimate stock covariance from a market intercept, broad sectors and seven styles, including momentum, size and liquidity. The model adds each stock’s specific variance and starts with zero pairwise residual correlations.
 - **Factor target** keeps the stock-shrinkage volatilities and averages the historical correlation matrix with the total correlation implied by the factor model, including shrunk residual correlations. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
 
-The factor exposures come first. At each close I fit the day’s returns across stocks using exposures from the previous close. The regression estimates how much each factor moved that day and leaves a residual for each stock. I then use the history of the fitted factor returns to estimate how factors move together. The stock exposures translate that factor covariance back into stock covariance. The same calculation tells me how much momentum or sector exposure a set of long and short weights carries. [Modeling Equities Returns](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
+At each close I fit the day’s returns across stocks using exposures from the previous close. That gives me one return per factor for the day and one residual per stock. I use the fitted return histories to estimate the factor covariance and each stock’s residual variance. [Modeling Equities Returns](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
 
 ### The limits apply to target weights
 

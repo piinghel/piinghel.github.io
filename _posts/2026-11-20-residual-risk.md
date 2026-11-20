@@ -10,13 +10,13 @@ permalink: /quants/residual-risk.html
 home_after: _posts/2026-11-20-factor-risk-sizing.md
 ---
 
-Once I fit the market, sectors and styles, every stock has a residual return. A standard factor risk model keeps the variance of each residual and sets the covariance between residuals to zero. That is a sensible starting point. There are many more stock pairs than days in a typical estimation window, and a hedge that looks good on the last year of data can disappoint the next year.
+A sector factor can capture a move shared across a sector and still leave a group of stocks within it moving together. A basic factor risk model keeps each stock’s residual variance and sets the covariance between residuals to zero. That saves estimating a separate residual correlation for every pair. It can also make two longs look more diversified than they are, or miss a useful long/short hedge.
 
-Some residuals still move together. The question is how much of that co-movement I should carry forward. I form groups from a year of residual returns, keep those groups fixed, and look at what happens in the following year. I then compare ways to put that information into the covariance matrix used in the [portfolio study]({% link _posts/2026-11-20-factor-risk-sizing.md %}).
+I want to know how much of that residual correlation is repeatable. I group stocks using a year of residual returns and check whether those same stocks still move together the following year. Then I test how much of that co-movement is worth putting back into the risk estimate used in the [portfolio study]({% link _posts/2026-11-20-factor-risk-sizing.md %}).
 
 ## The sign of the position changes the answer
 
-Each day I fit stock returns to a common market intercept, broad sectors and seven styles, with exposures lagged by one close. The intercept has unit loading for each stock, so its portfolio exposure is net weight. The fit weights squared errors by the square root of prior market cap and uses the August 2026 sector and industry labels across history. A residual is the return left after that fit. The weighted residuals balance within each fitted sector by construction, even when particular pairs still move together.
+Each day I fit stock returns to a common market intercept, broad sectors and seven styles, with exposures lagged by one close. The intercept has unit loading for each stock, so its portfolio exposure is net weight. The fit weights squared errors by the square root of prior market cap. I use the August 2026 sector labels for the fit and the industry labels from the same snapshot for the comparisons below. A residual is the return left after that fit. The weighted residuals balance within each fitted sector by construction, even when particular pairs still move together.
 
 Suppose two stocks have equal specific volatility $$d$$ and residual correlation $$\rho$$. Give each a position of size $$w$$ in absolute terms. The residual variance of two longs is $$2w^2d^2(1+\rho)$$. Flip the second position to a short and the variance becomes $$2w^2d^2(1-\rho)$$. At a correlation of 0.25, the two longs have 25% more residual variance than the diagonal model predicts. The long/short pair has 25% less. That example concerns **variance**. To compare volatility, take the square root.
 
