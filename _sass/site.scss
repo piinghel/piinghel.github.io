@@ -173,6 +173,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table th { text-align: left; font-weight: 500; }
 .research-table.comparison-table td, .research-table.comparison-table thead th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
 .research-table.comparison-table td { white-space: nowrap; }
+.research-table .secondary-metric { display: block; color: var(--muted-ink); font-size: 0.88em; }
 .research-table.settings-table th:first-child { width: 28%; }
 .research-table.settings-table td { text-align: left; }
 .research-table .period-heading th { padding-top: 1rem; color: var(--muted-ink); font-size: 0.82rem; font-weight: 600; }

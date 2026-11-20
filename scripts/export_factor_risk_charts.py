@@ -1,7 +1,7 @@
 """Render aggregate portfolio returns and residual diagnostics for the factor-risk article."""
 
 import argparse
-from datetime import date, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 import matplotlib.dates as mdates
@@ -224,7 +224,9 @@ def export_realized_risk(daily, portfolios, output, sessions, annualization, ris
                 plt.close(fig)
 
 
-def market_exposure(daily: Path, portfolios: tuple, *, window: int, start: date) -> pl.DataFrame:
+def market_exposure(
+    daily: Path, portfolios: tuple, *, beta_window: int, correlation_window: int,
+) -> pl.DataFrame:
     """Measure market exposure on each filled schedule before averaging."""
     arms = [f"calibrated_{key}" for key, *_ in portfolios]
     groups = ["arm", "schedule"]
@@ -235,11 +237,10 @@ def market_exposure(daily: Path, portfolios: tuple, *, window: int, start: date)
         .select("date", *groups, returns, market)
         .sort(*groups, "date")
         .with_columns(
-            (pl.rolling_cov(returns, market, window_size=window) / market.rolling_var(window))
+            (pl.rolling_cov(returns, market, window_size=beta_window) / market.rolling_var(beta_window))
             .over(groups).alias("beta"),
-            pl.rolling_corr(returns, market, window_size=window).over(groups).alias("correlation"),
+            pl.rolling_corr(returns, market, window_size=correlation_window).over(groups).alias("correlation"),
         )
-        .filter(pl.col("date") >= start)
         .drop_nulls(["beta", "correlation"])
         .group_by("arm", "date")
         .agg(pl.mean("beta", "correlation"), pl.col("schedule").n_unique().alias("schedules"))
@@ -254,7 +255,9 @@ def market_exposure(daily: Path, portfolios: tuple, *, window: int, start: date)
     return monthly
 
 
-def render_market_exposure(monthly, portfolios, output, *, dark, mobile, window):
+def render_market_exposure(
+    monthly, portfolios, output, *, dark, mobile, beta_window, correlation_window,
+):
     ink, blue, violet, grid = (
         ("#d3dbe4", "#68a9ed", "#b89be9", "#39434e") if dark
         else ("#283542", "#2165a6", "#7950a2", "#d8dee4")
@@ -284,8 +287,8 @@ def render_market_exposure(monthly, portfolios, output, *, dark, mobile, window)
                 textcoords="offset points", ha="left", va="center",
                 annotation_clip=False, color=color, fontsize=9 if mobile else 10,
             )
-        beta.set_title(f"{window}-session market beta", loc="left")
-        correlation.set_title(f"{window}-session correlation with the market", loc="left")
+        beta.set_title(f"{beta_window}-session market beta", loc="left")
+        correlation.set_title(f"{correlation_window}-session correlation with the market", loc="left")
         for axis in (beta, correlation):
             axis.axhline(0, lw=0.9, color=grid)
             axis.grid(axis="y", color=grid, linewidth=0.55, alpha=0.65)
@@ -293,7 +296,7 @@ def render_market_exposure(monthly, portfolios, output, *, dark, mobile, window)
             axis.spines[:].set_visible(False)
             axis.tick_params(length=0, pad=4)
         correlation.set_xlim(dates[0], dates[-1])
-        correlation.xaxis.set_major_locator(mdates.YearLocator())
+        correlation.xaxis.set_major_locator(mdates.YearLocator(5))
         correlation.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = output / f"market-exposure{suffix}.svg"
@@ -409,10 +412,14 @@ def main():
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
     paired = pl.read_csv(args.hedge_intervals).filter(pl.col("mandate") == "long/short",
                                                     pl.col("weights") == "all names", pl.col("block_weeks") == 13)
-    exposure_window = 63
+    beta_window = 63
+    correlation_window = 252
     exposure = None
     if args.calibrated_daily:
-        exposure = market_exposure(args.calibrated_daily, portfolios[:3], window=exposure_window, start=date(2022, 1, 1))
+        exposure = market_exposure(
+            args.calibrated_daily, portfolios[:3],
+            beta_window=beta_window, correlation_window=correlation_window,
+        )
     for mobile in [False, True]:
         for dark in [False, True]:
             render_figures(returns, portfolios, pairs, clusters, args.output, dark, mobile)
@@ -421,7 +428,8 @@ def main():
             render_fixed_book(calibration, args.output, dark=dark, mobile=mobile)
             if exposure is not None:
                 render_market_exposure(
-                    exposure, portfolios[:3], args.output, dark=dark, mobile=mobile, window=exposure_window,
+                    exposure, portfolios[:3], args.output, dark=dark, mobile=mobile,
+                    beta_window=beta_window, correlation_window=correlation_window,
                 )
 
 
