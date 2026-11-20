@@ -194,7 +194,7 @@ Some of that protection came from taking less risk. I also reran stock shrinkage
 The 7% budget applies to the risk forecast when I choose the weights. To see the risk a holder actually experienced, I measured the standard deviation of the preceding 252 daily net returns on each schedule, annualized it, and averaged the three readings. Across 317 monthly observations the median for stock shrinkage was **8.58%**. Its highest reading was **14.81%** in the year ending February 2021. For the factor target the corresponding values were **7.21%** and **11.81%**. A risk level measured over that particular year answers a different question from the 8.74% stock-shrinkage volatility over the full development period.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="realized-risk" source="/assets/factor-risk-sizing/realized-risk.json?v=1" base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" label="Annualized net volatility of the preceding 252 trading sessions, measured at monthly endpoints, with the 7% optimizer forecast budget as a reference." %}
+  {% include blog-chart.html chart="realized-risk" source="/assets/factor-risk-sizing/realized-risk.json?v=2" base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" label="Annualized net volatility of the preceding 252 trading sessions, measured at monthly endpoints, with the 7% optimizer forecast budget as a reference." %}
 </div>
 <p class="figure-caption">Each point uses a full trading year of daily returns. The series end on the last available session of each month. The horizontal line shows the forecast budget of the joint optimizers.</p>
 

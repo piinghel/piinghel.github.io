@@ -156,7 +156,7 @@ def export_realized_risk(daily, portfolios, output, sessions, annualization, ris
     dates = monthly["date"].to_list()
     lines = [series(key, label, role, monthly[key].to_list(), dash=dash, visible=visible)
              for key, label, role, dash, visible in portfolios]
-    lines.append(series("budget", "Optimizer budget", "index", [100*risk_budget]*len(dates), dash="dot", visible=True))
+    lines.append(series("budget", "Optimizer budget", "comparison", [100*risk_budget]*len(dates), dash="dot", visible=True))
     slug = "realized-risk"
     write_chart(output / (slug + ".json"), [date.isoformat() for date in dates], lines,
                 {slug: dict(kind="values", series=[line["id"] for line in lines],
