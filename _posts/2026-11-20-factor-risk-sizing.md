@@ -59,7 +59,7 @@ I tried three ways of letting residuals move together. The first principal compo
 
 ## How the risk estimate changes the portfolio
 
-I replayed the same Ridge forecasts on three schedules. Each trades every three weeks, offset by one week from the next. Each simulation sizes trades against a fixed $5 million. I divide each day’s filled-position P&L after fees by that amount. Compounding those daily returns gives the growth index shown below. Trades are sized from shares actually held, can fill at the following close and are subject to a liquidity limit. Both optimizers use the same 2.5 basis point trade penalty. Fees on filled long and short trades were 7.5 and 10 basis points through 2010, then 5 and 7.5. Returns exclude borrow, financing and additional market impact.
+I replayed the same Ridge forecasts on three schedules. Each trades every three weeks, offset by one week from the next. Each simulation sizes trades against a fixed $5 million. I divide each day’s filled-position P&L after fees by that amount. Compounding those daily returns gives the growth index shown below. Trades are sized from shares actually held, can fill at the following close and are subject to a liquidity limit. Both optimizers use the same 2.5 basis point trade penalty. Fees on filled long and short trades were 7.5 and 10 basis points through 2010, then 5 and 7.5. Returns exclude borrow, financing and additional market impact. When a stock stopped quoting, the simulation could close it at its last recorded price. These exits accounted for 0.49% of traded dollars across the tested books. Their actual sale or buyback prices are unknown.
 
 Prices begin in 1995. After allowing for estimation history and common portfolio availability, the development comparison covers 5,773 trading days from 26 January 1999 through 31 December 2021. The later comparison covers 1,103 days from 3 January 2022 through 27 May 2026. I had already seen some of the later history in related research, so it is a historical check on the choices made here.
 
@@ -194,6 +194,10 @@ How much market exposure did the sizing rules actually leave me with? I measured
     <tr><th scope="row">Factor target</th><td>0.037</td><td>0.091</td><td>0.079</td><td>1.02%</td></tr>
   </tbody>
 </table>
+
+How could stock shrinkage have a realized beta of 0.082 when I capped beta at 0.05? Every target portfolio met the cap using the stock betas known at the decision close. Once the orders filled, market prices had moved. In the later period, 51 of 230 stock-shrinkage entries landed outside the band. Among those 51, the median overshoot was just 0.005 in beta units.
+
+The larger difference in development came from how the stocks actually moved. Per 1% move in the index, the portfolio’s fitted response was about **8.2 basis points**. The intended market exposure accounted for 0.7 bp, and fills and subsequent weight changes together accounted for 0.8 bp. The remaining 6.7 bp came from co-movement that the stock beta estimates did not anticipate. That term tells me how much the estimate missed. It cannot tell me which theme caused the miss.
 
 The original factor book had close to zero later market correlation, yet its worst drawdown was 10.54%. What else was it exposed to? I took the same sector-and-style model and used it to describe both sets of actual positions. On average, momentum accounted for about 36% of forecast variance on the stock-shrinkage book and 15% on the original factor book. Short interest accounted for about 18% and 12%. These are shares of forecast variance, including each exposure’s covariance with the rest of the book. They explain how a portfolio can carry quite different bets at near-zero market beta. The returns those bets subsequently earned are a separate measurement.
 
