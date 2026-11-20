@@ -63,6 +63,14 @@
     "width": 330,
     "height": 252
   },
+  "/assets/factor-risk-sizing/stock-draws": {
+    "width": 576,
+    "height": 216
+  },
+  "/assets/factor-risk-sizing/stock-draws_mobile": {
+    "width": 302,
+    "height": 366
+  },
   "/assets/joint-sizing/parameter-sensitivity": {
     "width": 1200,
     "height": 660
