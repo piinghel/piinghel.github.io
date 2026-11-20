@@ -4,6 +4,7 @@ interactive_charts: true
 title: "Shrinking Stock Correlations Toward a Factor Model"
 description: "I kept the Ridge stock forecasts fixed and changed how the long/short portfolio measures risk. The factor model found common shocks, but the choice of shrinkage target mattered more for sizing."
 date: 2026-11-20
+last_modified_at: 2026-11-20
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Factor risk
 permalink: /quants/factor-risk-sizing.html
@@ -76,7 +77,22 @@ The later return gap between the original factor model and stock shrinkage was *
 
 Changing just the residual model moved later annual net return from 2.72% to **3.05%** with one principal component, **3.97%** with residual shrinkage, and **3.81%** with both. Across the entire history, preserving the first component on top of shrinkage changed net Sharpe by just **+0.002**. The paired 95% block interval ran from −0.017 to +0.021. The clustering result gave me a reason to model residual covariance. It gave me little reason to give that first component special treatment.
 
-## The improvement I would keep
+## Comparing the hedges on the same stocks
+
+Before choosing a sizing rule, I wanted to know whether the factor models could actually identify better hedges. The Ridge P&L comparison alone cannot tell me. A model can recognize that two stocks offset one another and still give less weight to a short position that subsequently earns money. Chapter 6 of Giuseppe Paleologo’s *The Elements of Quantitative Investing* distinguishes testing a covariance forecast on a given portfolio from testing the portfolios it helps construct. [Paleologo, chapter 6](https://www.wiley.com/en-us/The%2BElements%2Bof%2BQuantitative%2BInvesting-p-9781394265466) · [Menchero and Lazanas on risk-model efficiency tests](https://doi.org/10.3905/jpm.2023.1.565)
+
+I first gave each optimizer the same stocks and the same required exposure to the Ridge score. At each weekly decision I drew three sets of 150 eligible stocks and used nested samples of 75 and 100 from each. The spread held 50% long and 50% short. Every selected stock received between one-quarter and three times its equal-weight allocation on its side, subject to the position cap. I chose weights at the decision close, allowed fills at the next close and measured the following session’s gross return. The figure compares the volatility of those one-session outcomes across **1,196 development decisions and 230 later decisions**.
+
+<div class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/hedges" mobile="/assets/factor-risk-sizing/hedges_mobile" version="1" alt="Changes in long/short hedge volatility at 75, 100 and 150 stocks. The factor target reduced realized volatility at each size in both periods. Residual shrinkage reduced later volatility by about 0.36 to 0.39 percentage points." %}
+</div>
+<p class="figure-caption">Each point compares a model with stock shrinkage. A value of −0.3 means annualized volatility was 0.3 percentage points lower. The bars are 95% intervals from resampling 13-week blocks, accounting for the three sizes within each model comparison. Zero means the observed volatilities were equal.</p>
+
+At **150 stocks** later, stock shrinkage delivered **3.84%** volatility, the original factors **3.68%**, residual shrinkage **3.48%** and the factor target **3.55%**. These spreads had one dollar of gross exposure per dollar of capital. The Ridge trading portfolios above could use up to two. With residual shrinkage the 150 positions had the concentration of about 79 equal weights. That distinction also mattered for a long-only minimum-variance test. When all 150 stocks were represented, original factors reduced later volatility from 13.50% to 12.83%. When the optimizer could leave stocks out, effective breadth fell to 13–17 names and the difference was too uncertain to choose a model.
+
+I also tried the reverse experiment. I kept stock shrinkage’s **actual filled positions** and asked each model to forecast their daily risk through the next rebalance. Over 227 complete later cycles, stock shrinkage forecast **7.00%**, the factor target forecast **9.95%**, and the positions realized **9.64%** annualized gross daily risk. On the original factor portfolio the target instead forecast 10.57% against 8.28% realized. I would want the extra risk estimate alongside the incumbent’s positions, particularly when the optimizer says it has spent its 7% risk budget. Whether to let that estimate choose the positions is a separate decision.
+
+## Smaller losses came with a return cost
 
 Using the factor model as a shrinkage target recovered about **40% of the later return gap**. It also changed the experience of holding the portfolio. In the worst 5% of later trading days it lost an average of **1.02%** per day, against **1.35%** for stock shrinkage. Its maximum drawdown was shallower, although its longest spell below a previous peak lasted **190 sessions**, against **140**. Its realized beta to the Russell 1000 was **+0.037**, against **−0.001** for stock shrinkage. The improvement in loss severity came with a little more market sensitivity and a longer wait for recovery.
 
