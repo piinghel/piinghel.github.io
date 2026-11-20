@@ -91,6 +91,33 @@ One way to reduce turnover is to act more slowly on changes in the stock forecas
 
 Changing just the residual model moved later annual net return from 2.72% to **3.05%** with one principal component, **3.97%** with residual shrinkage, and **3.81%** with both. Across the entire history, preserving the first component on top of shrinkage changed net Sharpe by just **+0.002**. The paired 95% block interval ran from −0.017 to +0.021. The clustering result gave me a reason to model residual covariance. It gave me little reason to give that first component special treatment.
 
+## A wider entry pool changed both holdings and turnover
+
+I repeated the full Ridge backtest with 100 and 150 entry candidates per side. At 150 the optimizer can buy from the highest 150 scores and short from the lowest 150. It can still retain an existing position through rank 175 on its side. Moving from 75 to 150 gives it more stocks to choose from, including weaker-ranked ones, and reduces the distance between the entry and exit ranks from 100 places to 25. Volatility scaling has no such retention rule.
+
+<table class="research-table comparison-table compact-table">
+  <caption>Compounded annual net return as the number of eligible new positions changes. Column labels count entry candidates per side. Each cell averages three separately traded schedules.</caption>
+  <thead><tr><th>Sizing rule</th><th>75 per side</th><th>100 per side</th><th>150 per side</th></tr></thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="4">1999–2021</th></tr>
+    <tr><th scope="row">Volatility scaling</th><td>7.12%</td><td>6.43%</td><td>5.75%</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>10.77%</td><td>10.41%</td><td>10.44%</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>7.95%</td><td>7.71%</td><td>8.12%</td></tr>
+    <tr><th scope="row">Factor target</th><td>9.50%</td><td>9.06%</td><td>9.32%</td></tr>
+    <tr class="period-heading"><th colspan="4">2022–May 2026</th></tr>
+    <tr><th scope="row">Volatility scaling</th><td>6.96%</td><td>6.76%</td><td>5.51%</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>7.42%</td><td>7.20%</td><td>6.69%</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>2.72%</td><td>2.51%</td><td>2.17%</td></tr>
+    <tr><th scope="row">Factor target</th><td>4.59%</td><td>4.37%</td><td>3.75%</td></tr>
+  </tbody>
+</table>
+
+The wider pool led to different trades. In the later period, moving from 75 to 150 raised factor-target turnover from **16.66× to 25.11× capital** per year and fees from **1.01% to 1.52%**. Under volatility scaling, annual turnover fell from **24.36× to 19.96×** as capital spread across more names. All four rules earned less net at 150 than at 75 in that period.
+
+The number of candidates also overstates the diversification the optimizers used. At 150 per side the later stock-shrinkage book held **175 distinct stocks** on average and the factor target held **123**. I divided each stock’s absolute dollars by total gross and took the reciprocal of the sum of those squared shares. On that basis their concentrations were equivalent to **107 and 71 equally sized positions**, respectively. Volatility scaling held about 300 names with an effective count of 243.
+
+One result was consistent across sizes. At 75, 100 and 150 per side, later factor-target volatility was **2.38, 2.42 and 2.36 percentage points lower** than stock shrinkage. All three paired 95% intervals excluded zero in both periods after accounting for the three breadths. At 150 per side the later interval was 2.05 to 2.68 points lower. The factor target also carried less gross, 1.53 times capital against 1.80. Its later net Sharpe was 0.18 lower at that breadth, with an interval from 0.57 lower to 0.21 higher. I see evidence for lower delivered risk across these choices. The differences in Sharpe are much less precisely measured. [All 24 comparisons, including turnover, fees, drawdown, beta and market correlation](/assets/factor-risk-sizing/entry-breadth.csv)
+
 ## Comparing the hedges on the same stocks
 
 Before choosing a sizing rule, I wanted to know whether the factor models could actually identify better hedges. The Ridge P&L comparison alone cannot tell me. A model can recognize that two stocks offset one another and still give less weight to a short position that subsequently earns money. Chapter 6 of Giuseppe Paleologo’s *The Elements of Quantitative Investing* distinguishes testing a covariance forecast on a given portfolio from testing the portfolios it helps construct. [Paleologo, chapter 6](https://www.wiley.com/en-us/The%2BElements%2Bof%2BQuantitative%2BInvesting-p-9781394265466)
