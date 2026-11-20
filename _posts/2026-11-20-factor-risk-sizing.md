@@ -33,14 +33,14 @@ The factor fit uses exposures lagged by one close. The stock membership is dated
 
 ## The average residual hides groups
 
-Across 1,429 weekly observations, the same pairs averaged **29.71%** correlation on stock returns and **−0.06%** on residuals. The factor fit removes much of the common movement. Within some groups, the residuals still move together.
+Across 1,429 weekly observations, average pairwise correlation fell from **about 30% to near zero** after removing the factors. Within some groups, the residuals still move together.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="3" alt="For the same 850 stocks, mean correlation is 24.68% on 2021 stock returns and near zero after removing factors. Positive residual blocks remain visible across the same stock groups in the following year." %}
+  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="3" alt="For the same 850 stocks, mean correlation falls from about 25% to near zero after removing factors. Positive residual blocks remain visible across the same stock groups in the following year." %}
   <p class="figure-caption">All three panels use the same 850 stocks with complete observations in both windows. The outlines and stock order come from the December 2021 residual groups and stay fixed. Each tile averages distinct pairs and uses the same color scale. Colors saturate at ±40%.</p>
 </div>
 
-In this cohort, which showed the strongest persistence of the 27, the average fell from **24.68% to −0.02%** when I removed the factors. The outlined groups were still **8.45 percentage points** more correlated internally than between groups. The next 252 sessions, with the groups unchanged, delivered a **5.05-point** gap. Across all 27 cohorts the forward gap was **2.06 points**, versus **0.35 points** when I shuffled the labels within industries. The [companion article]({% link _posts/2026-11-20-residual-risk.md %}#groups-identified-in-one-year-still-move-together-in-the-next) shows all 27 comparisons and tests which residual relationships are worth carrying forward.
+In the cohort shown, the groups were about **8.5 correlation points** more correlated internally than between groups after removing the factors. The gap shrank to **5 points** the following year, the strongest persistence of the 27 cohorts. Across all cohorts the forward gap averaged **about 2 points**, compared with less than half a point after shuffling labels within industries. The [companion article]({% link _posts/2026-11-20-residual-risk.md %}#groups-identified-in-one-year-still-move-together-in-the-next) shows all 27 comparisons.
 
 ## How the risk estimate changes the portfolio
 
@@ -97,18 +97,18 @@ The factor target improved on the original factor model in the later period. It 
 
 ## The same holdings reveal a gap in risk forecasts
 
-I kept the incumbent stock-shrinkage portfolio’s filled shares and compared forecasts of their daily risk through the next rebalance. Across the same **227 completed later cycles**, stock shrinkage forecast **7.00%** and the factor target forecast **9.95%**, against **9.64%** annualized gross risk. On the original factor portfolio the target forecast 10.57% against 8.28% realized, so the closer forecast on the incumbent depended on which book I priced.
+I kept each portfolio’s filled shares and compared forecasts of their daily risk through the next rebalance. Across **227 completed later cycles** on the stock-shrinkage book, stock shrinkage forecast **7%** and the factor target forecast **about 10%**, against **9.6%** annualized gross risk. On the original factor book, the target overshot realized volatility by more than two points. The result depended on which book I priced.
 
-I then calibrated each model on the same holdings. I multiplied forecast variance by the average realized-to-forecast variance ratio over the last 52 completed cycles. The incumbent forecasts converged to **9.73% and 9.72%**. To see which forecast tracked variation across cycles, I scored the forecast variance $$v$$ against mean squared daily return $$u$$ using $$\log v+u/v$$. Lower is better. The factor target’s loss was **0.014 higher** on the stock-shrinkage holdings (paired 95% interval **0.005 to 0.025**). On the other two reference books the intervals included zero. [Paleologo, *The Elements of Quantitative Investing*, §5.1](https://www.wiley.com/en-us/shop/general-finance-investments/the-elements-of-quantitative-investing-p-9781394265466) · [Patton on comparing volatility forecasts](https://public.econ.duke.edu/~ap172/Patton_vol_proxies_JoE_2011.pdf)
+I then calibrated each model on the same holdings. I multiplied forecast variance by the average realized-to-forecast variance ratio over the last 52 completed cycles. Both forecasts came out near **9.7%** on the stock-shrinkage holdings. To compare accuracy across cycles, I scored forecast variance $$v$$ against mean squared daily return $$u$$ using $$\log v+u/v$$. Lower is better. Stock shrinkage scored better on its own holdings. On the other two reference books the paired intervals included zero, so this gives limited grounds for preferring either risk forecast across books. [Paleologo, *The Elements of Quantitative Investing*, chapter 5](https://www.wiley.com/en-us/shop/general-finance-investments/the-elements-of-quantitative-investing-p-9781394265466)
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="Same stock-shrinkage holdings. Over the later cycles, the stock model's forecast moves from 7.00% to 9.73% after calibration and the factor target moves from 9.95% to 9.72%. Realized gross volatility was 9.64%." %}
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
 </div>
 <p class="figure-caption">The open circles show uncalibrated forecasts. The diamonds use the last 52 completed cycles. Both models price the same filled shares, whose subsequent risk is the dashed line. The development comparison starts in 2000 once calibration history is available. <a href="/assets/factor-risk-sizing/fixed-book-forecasts.csv">Download forecasts for all three portfolios (CSV).</a></p>
 
 ## Comparing the hedges on the same stocks
 
-I let each risk model choose weights for the same stocks. The optimizer targeted the same Ridge score exposure, 50% long and 50% short, with each name between one-quarter and three times its side’s equal weight. Multiplying every covariance by the same number leaves the minimum-variance weights unchanged. In the full portfolio, the same multiplier can change how much exposure fits inside the 7% budget. [Paleologo, §5.2.1](https://www.wiley.com/en-us/shop/general-finance-investments/the-elements-of-quantitative-investing-p-9781394265466) · [Engle and Colacito on matched-return minimum-variance portfolios](https://www.stern.nyu.edu/rengle/EngleColacito.pdf)
+I let each risk model choose weights for the same stocks. The optimizer targeted the same Ridge score exposure, 50% long and 50% short, with each name between one-quarter and three times its side’s equal weight. Multiplying every covariance by the same number leaves the minimum-variance weights unchanged. In the full portfolio, the same multiplier can change how much exposure fits inside the 7% budget.
 
 I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and measured gross returns for the session after the next close. The stock draws vary the names on the same dates. Later 150-stock spreads fell from **3.69% to 3.53%** annualized volatility when I added shrunk residual correlations to the factor model.
 
@@ -200,7 +200,7 @@ At each decision close, I priced the stock-shrinkage portfolio’s filled holdin
   </tbody>
 </table>
 
-In the later period, switching to the factor target’s risk level reduced realized volatility by **2.39 percentage points** on average across both sets of stock relationships, with a paired 95% interval of **2.26 to 2.51 points**. Changing the relationships at a common risk level moved volatility by **0.01 points** (−0.20 to +0.24). The level explains most of the volatility gap. At either level the factor target earned less in the later sample, with considerable uncertainty around the return difference.
+In the later period, switching to the factor target’s risk level reduced realized volatility by **about 2.4 percentage points** across both sets of stock relationships. At a common risk level the volatility difference was negligible, with an interval spanning roughly a fifth of a point either way. The level explains most of the volatility gap. At either level the factor target earned less in the later sample, with considerable uncertainty around the return difference.
 
 ## Trading with a calibrated risk budget
 
@@ -228,7 +228,7 @@ I replayed each optimizer after adjusting its forecast with the last 52 complete
   </tbody>
 </table>
 
-Stock shrinkage and the factor target both held about **$1.19 gross** per dollar of capital later. At **7.13% and 7.00%** realized volatility, they earned **6.10% and 4.48%** after trading fees. Fees were 0.85% and 0.97% of capital per year. The factor target’s net Sharpe was lower by **0.21**, with a paired 95% interval from **0.55 lower to 0.20 higher**. [Calendar-year outcomes for both sets of portfolios (CSV)]({{ '/assets/factor-risk-sizing/yearly-outcomes.csv' | relative_url }})
+Both portfolios realized about **7% volatility** in the later period and held about **$1.19 gross** per dollar of capital. Stock shrinkage earned **6.1%** a year after trading fees and the factor target earned **4.5%**. The factor target’s net Sharpe was about **0.2 lower**, with a paired 95% interval wide enough to allow a loss of about **0.55** or a gain of **0.20**. [Calendar-year outcomes for both sets of portfolios (CSV)]({{ '/assets/factor-risk-sizing/yearly-outcomes.csv' | relative_url }})
 
 Most of the later gap came from the short sleeve before fees. A flat 1% borrow charge on the recorded short positions cost both books about **0.48 points** a year. Borrow availability and security-level fees can change which shorts are worth holding, so a flat charge is a limited check.
 
@@ -240,10 +240,10 @@ The wider list also left fewer ranks between entry and exit. At 150 entries, ext
 
 On the original fills, charging half to twice the recorded fees preserved stock shrinkage’s later Sharpe lead over the factor target at every width. At double fees and 150 per side, it was **0.55 versus 0.32**. At the original fee rate, leaving 2024 out brought them to a near tie at that width.
 
-Exposure changed with breadth too. At 150 per side the estimated beta band held at the decision close, yet the factor target’s realized later index beta was **0.058**, against **0.016** for stock shrinkage. Realized beta measures how the filled portfolio moved with the index. It can differ from the forecast because execution changes weights and stock betas change.
+Exposure changed with breadth too. At 150 per side both models met the ±0.05 estimated beta band at the decision close. The later filled factor-target book had a realized index beta of about **0.06**, versus **0.02** for stock shrinkage. A common beta band still allowed different market exposures after execution.
 
 ## Stock shrinkage remains the reference
 
-I would keep stock shrinkage as the Ridge reference and inverse-volatility sizing as the simple benchmark. The residual model helped the hedge test. In the replays, adjusting the risk level did most of the work, and none of the 27 recorded alternatives showed a reliable net Sharpe gain over stock shrinkage after accounting for the search. More breadths and rebalances reuse much of the same market history. [Daniel and Paleologo, *Backtesting*, slides 31–35](https://www.linkedin.com/posts/gappy_backtesting-lecture-ugcPost-7528535551839305728-Xbow/)
+I would keep stock shrinkage as the Ridge reference and inverse-volatility sizing as the simple benchmark. The residual model found quieter spreads. In the portfolio replays, adjusting the risk level did most of the work. None of the 27 recorded alternatives showed a reliable net Sharpe gain over stock shrinkage after accounting for the search across the same history.
 
 I would next freeze a comparison at 150 entries and 250 for retention. I’d give both covariance models a common estimated beta target and the same sector limits, calibrate from completed cycles, and check exposures at the fill. Inverse-volatility sizing would stay in as the simple benchmark. I’d assess all three on unseen dates with contemporaneous sector labels and stock-level borrow and execution costs.
