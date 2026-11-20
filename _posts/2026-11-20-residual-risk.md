@@ -57,6 +57,8 @@ Would the price history have pointed me toward the cooling business? At the ends
 </div>
 <p class="figure-caption">Each dot uses the last 252 trading sessions at that year-end. Read across a row to see what changes when the broad factors are removed. The 2025 row includes the January selloff and could only have been known afterward. <a href="/assets/residual-risk/nvidia-pair-correlations.csv">Download the correlations and exact window dates (CSV).</a></p>
 
+How much did one extraordinary day move that last dot? I removed each of the 252 sessions in turn and recalculated the correlation. Omitting January 27 moved NVIDIA–Vertiv’s year-end 2025 residual correlation from **0.25 to 0.15**, the largest change of any day in that window. Before the selloff, their residual correlation was already **0.14**. Deleting any one session from that earlier window still left Vertiv more correlated with NVIDIA than Workday was. The selloff amplified a relationship I could already see in returns.
+
 I would use the business link to ask where two positions could lose on the same news. To decide whether residual relationships are reliable enough to change portfolio weights, I would test that idea on stocks I had no particular reason to pick.
 
 ## The shared directions persist at a smaller scale
