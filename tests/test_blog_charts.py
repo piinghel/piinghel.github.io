@@ -41,6 +41,16 @@ class ChartExportTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             series("test", "Test", "strategy", [0], raw_metadata="private")
 
+    def test_chart_scale_is_applied_once_when_written(self):
+        points = series("book", "Book", "strategy", [0.02, -0.01])
+        with tempfile.TemporaryDirectory() as temp:
+            out = Path(temp) / "book.json"
+            write_chart(out, ["2025-01-02", "2025-01-03"], [points], {}, scale=100)
+            chart = json.loads(out.read_text())
+        self.assertEqual(chart["series"][0]["values"], [2, -1])
+        self.assertEqual(chart["scale"], 100)
+        self.assertEqual(points["values"], [0.02, -0.01])
+
     def test_rejects_missing_calendar_rows(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaises(ValueError):

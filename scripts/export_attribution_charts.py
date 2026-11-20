@@ -5,9 +5,9 @@ import json
 from datetime import timedelta
 from pathlib import Path
 import polars as pl
-from blog_charts import SCALE, series, write_chart
+from blog_charts import series, write_chart
 
-FIELDS = [
+FIELDS = (
     ("short_interest", "Short interest", "C_short_interest", "short_interest"),
     ("reversal", "Short-term return", "C_short_term_return", "reversal"),
     ("momentum", "Medium- and long-term return", "C_medium_and_long_term_return", "momentum"),
@@ -24,21 +24,21 @@ FIELDS = [
     ("turnover", "Turnover", "C_turnover", "liquidity"),
     ("volume", "Volume surge", "C_volume_surge", "liquidity"),
     ("price_volume", "Price-volume correlation", "C_price_volume_correlation", "liquidity"),
-]
+)
 
 
-def export(themes: Path, history: Path, assets: Path) -> None:
+def export(themes: Path, history: Path, assets: Path, *, fields=FIELDS) -> None:
     overview = json.loads((assets / "themes.json").read_text())
     windows = overview["windows"]
     drawdown_windows = sorted(windows)
-    factor_columns = [column for _, _, column, _ in FIELDS if column and column.startswith("C_")]
+    factor_columns = [column for _, _, column, _ in fields if column and column.startswith("C_")]
     dates, output = None, []
     for leg in ("total", "long", "short"):
         frame=pl.scan_parquet(themes / f"daily_{leg}.parquet").filter(pl.col("date")>=pl.date(1999,1,1)).sort("date").collect()
         current=[d.isoformat() for d in frame["date"]]
         if dates is not None and dates!=current: raise ValueError("Leg calendars differ")
         dates=current
-        for key,label,column,role in FIELDS:
+        for key,label,column,role in fields:
             if key=="activity": values=frame["C_turnover"]+frame["C_volume_surge"]+frame["C_price_volume_correlation"]
             elif key=="low_risk": values=frame["C_low_volatility"]+frame["C_beta"]+frame["C_net"]
             elif key=="cost": values=frame["cost_"+leg]
@@ -57,16 +57,16 @@ def export(themes: Path, history: Path, assets: Path) -> None:
         intervals=episodes.filter(pl.col("regime")==name).select("start","end").rows()
         masks[key]=[int(any(a<=d<=b for a,b in intervals)) for d in dates]
     masks["rallies"]=[int(r and not d) for r,d in zip(masks["rallies"],masks["declines"],strict=True)]
-    common=dict(series=[key for key,_,_,_ in FIELDS[:10]],components={"low_risk":["low_volatility","beta","market"],"activity":["turnover","volume","price_volume"]},
+    common=dict(series=[key for key,_,_,_ in fields[:10]],components={"low_risk":["low_volatility","beta","market"],"activity":["turnover","volume","price_volume"]},
                 episodes=[["1999–2003",dates[0],"2003-12-31"],["2008–09","2008-01-01","2009-12-31"],["2020–21","2020-01-01","2021-12-31"],["After 2021","2022-01-01",dates[-1]]])
     charts={"themes":dict(common,kind="attribution"),"years":dict(common,kind="attribution-years"),
             "regimes":dict(common,kind="attribution-regimes",masks=masks,focus="low_risk"),
             "drawdowns":dict(common,kind="attribution-drawdowns",windows=drawdown_windows)}
     # Verify the exported total reproduces the existing full-period overview.
     retained=overview["full"]
-    for item in output[:len(FIELDS)]:
+    for item in output[:len(fields)]:
         if item["label"] in retained:
-            annual=sum(item["values"])/SCALE/len(dates)*252*100
+            annual=sum(item["values"])/len(dates)*252*100
             if abs(annual-retained[item["label"]][0])>.001:
                 raise ValueError(f"Full-period attribution differs: {item['label']}")
     charts["themes"]["legSource"]="/assets/portfolio-attribution/interactive-legs.json"

@@ -11,9 +11,6 @@ from datetime import date
 from pathlib import Path
 from statistics import mean, stdev
 
-SCALE = 10_000_000_000
-
-
 def statistics(returns: list[float], annualization: int = 252) -> dict:
     """Geometric annual return; sample volatility; arithmetic zero-cash Sharpe."""
     if len(returns) < 2:
@@ -40,10 +37,16 @@ def series(key: str, label: str, role: str, returns: list[float], **options) -> 
     if not all(math.isfinite(x) and x > -1 for x in returns):
         raise ValueError("Missing or invalid aggregate return")
     return dict(id=key, label=label, role=role,
-                values=[round(x * SCALE) for x in returns], **options)
+                values=list(returns), **options)
 
 
-def write_chart(path: Path, dates: list[str], series_data: list[dict], charts: dict) -> None:
+def write_chart(
+    path: Path, dates: list[str], series_data: list[dict], charts: dict, *,
+    scale: int = 10_000_000_000, annualization: int = 252,
+) -> None:
+    """Encode all series once using the scale declared in the output file."""
+    if scale < 1 or annualization < 1:
+        raise ValueError("Scale and annualization must be positive")
     if len(dates) < 2 or dates != sorted(set(dates)):
         raise ValueError("Dates must be unique and increasing")
     for value in dates:
@@ -52,7 +55,11 @@ def write_chart(path: Path, dates: list[str], series_data: list[dict], charts: d
         raise ValueError("Duplicate series identifier")
     if any(len(s["values"]) != len(dates) for s in series_data):
         raise ValueError("Every series must cover the complete common calendar")
+    encoded = [
+        {**item, "values": [round(value * scale) for value in item["values"]]}
+        for item in series_data
+    ]
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(dict(version=1, scale=SCALE, annualization=252,
-                                   dates=dates, series=series_data, charts=charts),
+    path.write_text(json.dumps(dict(version=1, scale=scale, annualization=annualization,
+                                   dates=dates, series=encoded, charts=charts),
                                separators=(",", ":"), allow_nan=False) + "\n")

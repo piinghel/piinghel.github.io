@@ -260,7 +260,7 @@ def render_gap(out: Path, dark: bool, mobile: bool) -> None:
         for (arm, label, _, colour, dash), s in zip(ARMS_SHOWN, data):
             values = [0.0]
             for v in s["values"][1:]:
-                values.append(values[-1] + v / 1e10 * 100)
+                values.append(values[-1] + v * 100)
             cumulative[arm] = values
             ax.plot(x, values, color=c[colour], lw=1.7, ls="--" if dash == "dash" else "-")
             ax.text(x[-1] + dt.timedelta(days=150), values[-1], label, va="center", fontsize=10, color=c[colour])
