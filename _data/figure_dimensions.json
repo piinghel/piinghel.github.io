@@ -241,11 +241,11 @@
   },
   "/assets/residual-risk/matrix": {
     "width": 605,
-    "height": 310
+    "height": 256
   },
   "/assets/residual-risk/matrix_mobile": {
-    "width": 310,
-    "height": 518
+    "width": 317,
+    "height": 835
   },
   "/assets/residual-risk/pair-errors": {
     "width": 562,
