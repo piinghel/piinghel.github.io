@@ -10,6 +10,7 @@ show_drafts: false
 goatcounter: piinghel
 
 exclude:
+  - "**/*.csv"
   - AGENTS.md
   - README.md
   - scripts

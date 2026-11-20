@@ -56,9 +56,9 @@ On January 27, NVIDIA fell about 17%, Vertiv fell 30% and Workday rose 2%. At eq
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/company-pairs" mobile="/assets/residual-risk/company-pairs_mobile" version="1" alt="NVIDIA’s correlations with Vertiv and Workday at five year-ends. Workday had the higher raw correlation in 2021 and 2022. Vertiv had the higher residual correlation at all five year-ends." %}
 </div>
-<p class="figure-caption">Each dot uses the last 252 sessions at that year-end. Workday had the higher raw correlation with NVIDIA in 2021 and 2022. Removing the broad factors reversed the ordering. The 2025 window includes the selloff. <a href="/assets/residual-risk/nvidia-pair-correlations.csv">Download the correlations and dates (CSV).</a></p>
+<p class="figure-caption">Each dot uses the last 252 sessions at that year-end. Workday had the higher raw correlation with NVIDIA in 2021 and 2022. Removing the broad factors reversed the ordering. The 2025 window includes the selloff.</p>
 
-The January selloff lifted the year-end 2025 residual correlation for NVIDIA–Vertiv. Omitting that single day brought the estimate close to its pre-selloff level. [Single-day sensitivity (CSV)]({{ '/assets/residual-risk/nvidia-single-session-sensitivity.csv' | relative_url }})
+The January selloff lifted the year-end 2025 residual correlation for NVIDIA–Vertiv. Omitting that single day brought the estimate close to its pre-selloff level.
 
 </details>
 

@@ -92,7 +92,6 @@ The factor target improved on the original factor model in the later period. It 
   </tbody>
 </table>
 
-[Download the breadth results with volatility, turnover and holding counts (CSV)](/assets/factor-risk-sizing/entry-breadth.csv).
 </details>
 
 ## The same holdings reveal a gap in risk forecasts
@@ -104,7 +103,7 @@ I then calibrated each model on the same holdings. I multiplied forecast varianc
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
 </div>
-<p class="figure-caption">The open circles show uncalibrated forecasts. The diamonds use the last 52 completed cycles. Both models price the same filled shares, whose subsequent risk is the dashed line. The development comparison starts in 2000 once calibration history is available. <a href="/assets/factor-risk-sizing/fixed-book-forecasts.csv">Download forecasts for all three portfolios (CSV).</a></p>
+<p class="figure-caption">The open circles show uncalibrated forecasts. The diamonds use the last 52 completed cycles. Both models price the same filled shares, whose subsequent risk is the dashed line. The development comparison starts in 2000 once calibration history is available.</p>
 
 ## Comparing the hedges on the same stocks
 
@@ -115,7 +114,7 @@ I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/stock-draws" mobile="/assets/factor-risk-sizing/stock-draws_mobile" version="1" alt="32 stock selections at each decision. Shrinking residual correlations reduces annualized spread volatility relative to stock shrinkage and to the factor model with zero residual correlations, at 75, 100 and 150 stocks in both periods." %}
 </div>
-<p class="figure-caption">Negative differences mean the spreads with shrunk residual correlations were quieter. The right panel changes only residual correlations. The 95% intervals account for six comparisons per period and resample stock paths and common 13-week blocks. <a href="/assets/factor-risk-sizing/stock-draws.csv">Download levels and paired differences (CSV).</a></p>
+<p class="figure-caption">Negative differences mean the spreads with shrunk residual correlations were quieter. The right panel changes only residual correlations. The 95% intervals account for six comparisons per period and resample stock paths and common 13-week blocks.</p>
 
 <details markdown="1">
 <summary>Results for the original three stock draws</summary>
@@ -138,7 +137,7 @@ I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and 
 
 </details>
 
-I also compared one session with the three-week holding period used in the portfolio replay. For the same eight stock paths and 227 later starting dates, the test assumes full fills where the next close has a quote and leaves other allocations in cash. The returns are gross. At 150 stocks, adding shrunk residuals reduced annualized 15-session volatility from **3.35% to 3.22%**, a **0.13-point** reduction with a simultaneous 95% interval of **0.04 to 0.21 points**. Against stock shrinkage the estimate also favored shrunk residuals, but all three stock counts had intervals that crossed zero at 15 sessions. [Matched one- and 15-session results and intervals (CSV)]({{ '/assets/factor-risk-sizing/hedge-holding-horizons.csv' | relative_url }})
+I also compared one session with the three-week holding period used in the portfolio replay. For the same eight stock paths and 227 later starting dates, the test assumes full fills where the next close has a quote and leaves other allocations in cash. The returns are gross. At 150 stocks, adding shrunk residuals reduced annualized 15-session volatility from **3.35% to 3.22%**, a **0.13-point** reduction with a simultaneous 95% interval of **0.04 to 0.21 points**. Against stock shrinkage the estimate also favored shrunk residuals, but all three stock counts had intervals that crossed zero at 15 sessions.
 
 <details markdown="1">
 <summary>Volatility reductions by stock count and horizon</summary>
@@ -228,7 +227,7 @@ I replayed each optimizer after adjusting its forecast with the last 52 complete
   </tbody>
 </table>
 
-Both portfolios realized about **7% volatility** in the later period and held about **$1.19 gross** per dollar of capital. Stock shrinkage earned **6.1%** a year after trading fees and the factor target earned **4.5%**. The factor target’s net Sharpe was about **0.2 lower**, with a paired 95% interval wide enough to allow a loss of about **0.55** or a gain of **0.20**. [Calendar-year outcomes for both sets of portfolios (CSV)]({{ '/assets/factor-risk-sizing/yearly-outcomes.csv' | relative_url }})
+Both portfolios realized about **7% volatility** in the later period and held about **$1.19 gross** per dollar of capital. Stock shrinkage earned **6.1%** a year after trading fees and the factor target earned **4.5%**. The factor target’s net Sharpe was about **0.2 lower**, with a paired 95% interval wide enough to allow a loss of about **0.55** or a gain of **0.20**.
 
 Most of the later gap came from the short sleeve before fees. A flat 1% borrow charge on the recorded short positions cost both books about **0.48 points** a year. Borrow availability and security-level fees can change which shorts are worth holding, so a flat charge is a limited check.
 

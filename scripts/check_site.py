@@ -265,6 +265,9 @@ def check_site(destination: Path) -> list[str]:
     for private in ("AGENTS.md", "README.md", "scripts", "tests", "_drafts"):
         if (root / private).exists():
             errors.append(f"Private development material was published: {private}")
+    for path in sorted(root.rglob("*")):
+        if path.is_file() and path.suffix.lower() == ".csv":
+            errors.append(f"CSV file was published: {path.relative_to(root)}")
     return errors
 
 

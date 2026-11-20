@@ -8,6 +8,17 @@ from check_site import check_site
 
 
 class FigureInputTests(unittest.TestCase):
+    def test_build_checker_rejects_unlinked_csv(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "index.html").write_text("<h1>Test</h1>", encoding="utf-8")
+            assets = root / "assets"
+            assets.mkdir()
+            (assets / "results.csv").write_text("a,b\n1,2\n", encoding="utf-8")
+            self.assertEqual(
+                check_site(root), ["CSV file was published: assets/results.csv"]
+            )
+
     def test_local_link_checker_checks_fragments(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
