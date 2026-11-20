@@ -234,9 +234,56 @@ def render_funding(data, output, dark, mobile):
         destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
 
 
+def render_fixed_book(data, output, *, dark, mobile):
+    ink, before_color, after_color, grid = (
+        ("#d3dbe4", "#c0a1e6", "#78b6fb", "#3d4956") if dark
+        else ("#283542", "#79548c", "#2165a6", "#d7dde2")
+    )
+    style = {"font.size": 10, "svg.fonttype": "none", "svg.hashsalt": "ridge-fixed-book",
+             "text.color": ink, "axes.titlecolor": ink, "axes.labelcolor": ink,
+             "xtick.color": ink, "ytick.color": ink}
+    holdings = data.filter(pl.col("book") == "shrinkage")
+    periods = (("development", "2000–2021"), ("later", "2022–May 2026"))
+    with plt.rc_context(style):
+        fig, axes = plt.subplots(2, 1, figsize=(4.7 if mobile else 7.5, 4.5), layout="constrained", sharex=True)
+        bounds = holdings.select("raw", "calibrated", "realized_variance").to_numpy() * 100
+        lo, hi = np.floor(bounds.min()), np.ceil(bounds.max())
+        for ax, (period, heading) in zip(axes, periods, strict=True):
+            rows = holdings.filter(pl.col("period") == period)
+            if len(rows) != 2 or rows["realized_variance"].n_unique() != 1:
+                raise ValueError("Fixed-book methods must share exactly one realized outcome")
+            observed = 100 * rows["realized_variance"][0]
+            ax.axvline(observed, color=ink, linestyle="--", linewidth=1)
+            ax.set_title(f"{heading}  ·  realized {observed:.2f}%", loc="left", fontsize=11)
+            for y, (arm, label) in enumerate((("factor_target", "Factor target"), ("shrinkage", "Stock shrinkage"))):
+                row = rows.filter(pl.col("model") == arm)
+                if len(row) != 1:
+                    raise ValueError("Missing covariance estimate in fixed-book comparison")
+                raw, corrected = 100 * row.select("raw", "calibrated").to_numpy()[0]
+                ax.plot([raw, corrected], [y, y], color=grid, linewidth=2, zorder=1)
+                ax.scatter(raw, y, marker="o", facecolor="none", edgecolor=before_color, linewidth=1.6,
+                           s=42, label="Original forecast" if y == 0 else None, zorder=2)
+                ax.scatter(corrected, y, marker="D", color=after_color, s=27,
+                           label="After calibration" if y == 0 else None, zorder=3)
+            ax.set(yticks=(0, 1), yticklabels=("Factor target", "Stock shrinkage"), ylim=(-.38, 1.4),
+                   xlim=(lo - .15, hi + .15), xticks=np.arange(lo, hi + 1))
+            ax.xaxis.set_major_formatter(PercentFormatter(xmax=100, decimals=0))
+            ax.tick_params(length=0, pad=5, labelbottom=True)
+            ax.grid(axis="x", lw=.5, color=grid)
+            ax.spines[:].set_visible(False)
+        axes[-1].set_xlabel("Annualized gross volatility")
+        fig.legend(*axes[0].get_legend_handles_labels(), loc="outside upper center",
+                   frameon=False, ncol=2, handlelength=.9)
+        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+        path = output / f"fixed-book{suffix}.svg"
+        fig.savefig(path, transparent=True, metadata={"Date": None})
+        plt.close(fig)
+        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for arg in ["daily", "pair-history", "clusters", "hedge-intervals", "funding-attribution", "output"]:
+    for arg in ["daily", "pair-history", "clusters", "hedge-intervals", "funding-attribution", "fixed-book-forecasts", "output"]:
         parser.add_argument("--" + arg, type=Path, required=True)
     args = parser.parse_args()
     portfolios = (("shrinkage", "Stock shrinkage", "strategy", "solid", True),
@@ -247,6 +294,15 @@ def main():
     export_interactive(returns, portfolios, args.output)
     export_realized_risk(args.daily, portfolios, args.output, 252, 252, .07)
     funding = pl.read_csv(args.funding_attribution)
+    calibration = pl.read_csv(args.fixed_book_forecasts)
+    calibration.select(
+        "period", pl.col("book").alias("held_portfolio"), pl.col("model").alias("forecast_model"),
+        "origins", "first_decision", "last_decision",
+        (pl.col("raw") * 100).alias("original_forecast_vol_pct"),
+        (pl.col("calibrated") * 100).alias("calibrated_forecast_vol_pct"),
+        (pl.col("realized_variance") * 100).alias("realized_gross_vol_pct"),
+        "median_volatility_multiplier",
+    ).write_csv(args.output / "fixed-book-forecasts.csv")
     pairs = pl.read_csv(args.pair_history, try_parse_dates=True).sort("decision")
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
     paired = pl.read_csv(args.hedge_intervals).filter(pl.col("mandate") == "long/short",
@@ -256,6 +312,7 @@ def main():
             render_figures(returns, portfolios, pairs, clusters, args.output, dark, mobile)
             render_hedges(paired, args.output, dark, mobile)
             render_funding(funding, args.output, dark, mobile)
+            render_fixed_book(calibration, args.output, dark=dark, mobile=mobile)
 
 
 if __name__ == "__main__":
