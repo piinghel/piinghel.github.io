@@ -10,18 +10,22 @@ article_label: Portfolio construction · Factor risk
 permalink: /quants/factor-risk-sizing.html
 ---
 
-A quieter long/short book can come from better hedges or from putting less capital to work. Changing the covariance estimate can do both at once. If the new model assigns more risk to the same positions, the optimizer can reduce gross exposure without finding a better way to offset the longs.
+A short can offset a risk already in the portfolio or add to it. If the long book has positive momentum exposure, shorting another stock with positive momentum exposure reduces that tilt. Shorting a stock with negative momentum exposure reinforces it. The two short candidates can have the same standalone volatility and do very different things to the book.
 
-In [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}), I compared inverse-volatility sizing with an optimizer that shrinks stock correlations toward zero. Here I keep both benchmarks and the same Ridge forecasts. I first ask whether factor risk improves forecasts and hedge choices on comparable books. Then I ask whether it earns its place in the portfolio after trading fees at similar realized risk.
+That is where a factor risk model helps. Estimating stock correlations directly gives a universe of 1,000 names nearly half a million pairs to estimate. A factor model ties those estimates together through a smaller set of common returns, such as sectors and styles. It uses stocks’ exposures to those factors to estimate how two names might move together and lets me see which exposures the portfolio is carrying.
+
+I keep the Ridge forecasts and the two benchmarks from [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}). I want to know whether the factor model measures risk more accurately on existing holdings, whether it picks better hedges from the same stocks, and what happens to returns when the resulting portfolios run at similar risk.
 
 ## What goes into a position
 
-At each rebalance I use the Russell 1000 membership recorded by that close. Ridge ranks expected return per unit of risk within sectors. The joint optimizers start with the 75 highest scores as long candidates and the 75 lowest as short candidates. They can retain existing positions from the union of the top and bottom 175. Each uses the same sizing score, the Ridge prediction times trailing 21-session daily volatility, and a 2.5 bp penalty on changes from filled holdings.
+At each rebalance I use the Russell 1000 membership recorded by that close. Ridge ranks expected return per unit of risk within sectors. The joint optimizers start with the 75 highest scores as long candidates and the 75 lowest as short candidates. They can retain existing positions from the union of the top and bottom 175. They use the same sizing score, the Ridge prediction times trailing 21-session daily volatility, and the same turnover penalty.
 
 - **Volatility scaling** is the simple benchmark. It starts with equal weights on each side and multiplies each by 20% divided by its trailing 60-session annualized volatility, with a 5% volatility floor. A 40%-volatility stock starts at half its equal weight. Each sleeve can use up to one dollar per dollar of capital. This benchmark sizes stocks one at a time. [Paleologo, *Advanced Portfolio Management*, §6.3](https://www.wiley.com/en-us/advanced-portfolio-management-a-quant%27s-guide-for-fundamental-investors-p-9781119789802)
 - **Stock shrinkage** is the main benchmark for the covariance comparison. It shrinks the 756-session stock correlation matrix halfway toward the identity, the correlation shrinkage step in Pedersen, Babu and Levine’s *Enhanced Portfolio Optimization*. The stock volatilities use 21 sessions and a 1.18 multiplier. [Pedersen, Babu and Levine](https://doi.org/10.1080/0015198X.2020.1854543)
-- **Sector and style factors** estimate risk from a common market intercept, broad sectors, seven styles and each stock’s own residual variance. The starting model sets pairwise residual correlations to zero.
-- **Factor target** keeps the stock-shrinkage volatilities and half the historical stock correlation. It takes the other half from the stock correlation implied by the factor model with shrunk residuals. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
+- **Sector and style factors** estimate stock covariance from a market intercept, broad sectors and seven styles, including momentum, size and liquidity. The model adds each stock’s specific variance and starts with zero pairwise residual correlations.
+- **Factor target** keeps the stock-shrinkage volatilities and averages the historical correlation matrix with the total correlation implied by the factor model, including shrunk residual correlations. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
+
+The factor exposures come first. At each close I fit the day’s returns across stocks using exposures from the previous close. The regression estimates how much each factor moved that day and leaves a residual for each stock. I then use the history of the fitted factor returns to estimate how factors move together. The stock exposures translate that factor covariance back into stock covariance. The same calculation tells me how much momentum or sector exposure a set of long and short weights carries. [Modeling Equities Returns](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
 
 ### The limits apply to target weights
 
@@ -31,20 +35,12 @@ The risk budget is separate. If $$w$$ is the vector of signed capital weights an
 
 The factor fit uses exposures lagged by one close. The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
 
-## The average residual hides groups
-
-Across 1,429 weekly observations, average pairwise correlation fell from **about 30% to near zero** after removing the factors. Within some groups, the residuals still move together.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="3" alt="For the same 850 stocks, mean correlation falls from about 25% to near zero after removing factors. Positive residual blocks remain visible across the same stock groups in the following year." %}
-  <p class="figure-caption">All three panels use the same 850 stocks with complete observations in both windows. The outlines and stock order come from the December 2021 residual groups and stay fixed. Each tile averages distinct pairs and uses the same color scale. Colors saturate at ±40%.</p>
-</div>
-
-In the cohort shown, the groups were about **8.5 correlation points** more correlated internally than between groups after removing the factors. The gap shrank to **5 points** the following year, the strongest persistence of the 27 cohorts. Across all cohorts the forward gap averaged **about 2 points**, compared with less than half a point after shuffling labels within industries. The [companion article]({% link _posts/2026-11-20-residual-risk.md %}#groups-identified-in-one-year-still-move-together-in-the-next) shows all 27 comparisons.
+The residuals can still contain some shared risk. In [Residual Risk After Sectors and Styles]({% link _posts/2026-11-20-residual-risk.md %}#groups-identified-in-one-year-still-move-together-in-the-next), I freeze groups of stocks and use the following year to see how much of their residual correlation persists.
+{: #the-average-residual-hides-groups}
 
 ## How the risk estimate changes the portfolio
 
-I simulated the same Ridge forecasts on three staggered schedules, each rebalancing every three weeks against $5 million. Orders start from filled holdings and can execute at the following close. Ordinary fills use a 10% cap based on the previous 21 sessions’ average raw dollar volume. Net returns deduct 7.5 bp on long trades and 10 bp on short trades through 2010, then 5 and 7.5 bp. Borrow, financing and additional impact are outside those fees. Stopped-quote exits use the last available mark.
+I replayed the same Ridge forecasts in the Russell 1000 on three staggered schedules, each rebalancing every three weeks against $5 million. All four rules trade from filled holdings, with next-close execution and a 10% cap on participation in average daily dollar volume for ordinary fills. From 2011 I charge 5 bp on long trades and 7.5 bp on short trades, with higher rates earlier.
 
 The portfolio comparisons use 5,773 common sessions from 26 January 1999 through 31 December 2021 and 1,103 from 3 January 2022 through 27 May 2026. The later period includes history I had already seen in related research.
 
@@ -68,9 +64,9 @@ The portfolio comparisons use 5,773 common sessions from 26 January 1999 through
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json?v=1" base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="1" label="Net growth and drawdown of the long/short Ridge portfolios from January 1999 to May 2026." %}
 </div>
-<p class="figure-caption">The chart compounds the mean daily net return across schedules. The table averages the three schedules’ statistics, so its drawdowns can differ from the chart.</p>
+<p class="figure-caption">The original sizing rules ran at different realized volatility. The chart compounds mean daily net returns across schedules. The table calculates drawdowns separately for each schedule, then averages them.</p>
 
-The factor target improved on the original factor model in the later period. It also ran at **7.27%** realized volatility compared with **9.65%** for stock shrinkage. The two optimizers had the same 7% forecast budget, yet they took different amounts of risk. That makes the return comparison hard to interpret without pricing the same holdings and then replaying the portfolios at comparable risk.
+In the later period the factor target earned more than the sector-and-style model and ran at lower volatility. Stock shrinkage earned more again, at **about 9.7% realized volatility** against **7.3%** for the factor target. Both joint optimizers used the same 7% forecast budget. The model changes both the weights and how much the optimizer can hold, so I start by pricing the same shares.
 
 <details markdown="1">
 <summary>Sensitivity to the entry pool</summary>
@@ -155,11 +151,16 @@ I also compared one session with the three-week holding period used in the portf
 
 </details>
 
-For me, the narrower conclusion is the one these tests answer well. The factor model with shrunk residual correlations found a quieter way to hold the same Ridge score exposure. Whether I earn more from those hedges also depends on how the positions perform over the holding period and what I pay to change them.
+Within the factor model, shrinking the residual correlations gave a quieter way to hold the same Ridge score exposure than setting those correlations to zero. The three-week results leave the comparison with stock shrinkage open. These tests tell me about the hedge weights on a fixed set of stocks. The portfolio replay also has to account for which stocks the optimizer takes, how much it puts into them and what trades it needs to get there.
 
 ## Why the same risk budget produced different volatility
 
-The uncalibrated factor target had shallower drawdowns and lost **1.02%** on its worst 5% of later days, versus **1.35%** for stock shrinkage. It also held about **$1.24** of gross exposure per dollar of capital, against **$1.56** for stock shrinkage. To see how much the smaller book explained, I changed the level of the volatility forecast without changing the relative risks within each covariance estimate.
+The original factor target held about **$1.24** of gross exposure per dollar of capital in the later period, against **$1.56** for stock shrinkage. It also had smaller drawdowns. To see how much the smaller book explained, I changed the level of the volatility forecast while keeping the relative risks within each covariance estimate fixed.
+
+<div class="research-figure responsive-figure">
+  {% include blog-chart.html chart="realized-risk" source="/assets/factor-risk-sizing/realized-risk.json?v=2" base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" label="Trailing annualized volatility of the original sizing rules, before the rolling calibration." %}
+</div>
+<p class="figure-caption">These are the original sizing rules, before rolling calibration. Each point uses the previous 252 net daily returns, with volatility averaged across schedules. The line at 7% marks the joint optimizers’ forecast budget.</p>
 
 <details markdown="1">
 <summary>Market exposure and tail losses</summary>
@@ -203,14 +204,7 @@ In the later period, switching to the factor target’s risk level reduced reali
 
 ## Trading with a calibrated risk budget
 
-A 7% forecast can deliver quite different realized risk, and the size of that gap changes over time.
-
-<div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="realized-risk" source="/assets/factor-risk-sizing/realized-risk.json?v=2" base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" label="Annualized net volatility of the preceding 252 trading sessions, measured at monthly endpoints, with the 7% optimizer forecast budget as a reference." %}
-</div>
-<p class="figure-caption">Trailing 252-session net volatility, calculated separately for each schedule and averaged at month-end. The line at 7% is the optimizer’s forecast budget.</p>
-
-I replayed each optimizer after adjusting its forecast with the last 52 completed cycles from its own uncalibrated reference book. The staggered schedules supply roughly one completed cycle per week, with overlapping holding periods. The adjustment goes into the optimizer at each rebalance, so the calibrated books choose and pay for their own simulated trades.
+The scale swap is a way to diagnose the result. For a sizing rule I can carry forward, I need a way to adjust risk using information available at the rebalance. I replayed each optimizer with a multiplier estimated from the last 52 completed cycles of its original book. Each new replay starts trades from its own holdings.
 
 <table class="research-table comparison-table compact-table">
   <caption>Outcomes with the rolling calibration applied inside each optimizer. Gross is long plus absolute short market value per dollar of capital. Returns and volatility are annual, after fees.</caption>
@@ -227,9 +221,7 @@ I replayed each optimizer after adjusting its forecast with the last 52 complete
   </tbody>
 </table>
 
-Both portfolios realized about **7% volatility** in the later period and held about **$1.19 gross** per dollar of capital. Stock shrinkage earned **6.1%** a year after trading fees and the factor target earned **4.5%**. The factor target’s net Sharpe was about **0.2 lower**, with a paired 95% interval wide enough to allow a loss of about **0.55** or a gain of **0.20**.
-
-Most of the later gap came from the short sleeve before fees. A flat 1% borrow charge on the recorded short positions cost both books about **0.48 points** a year. Borrow availability and security-level fees can change which shorts are worth holding, so a flat charge is a limited check.
+Both portfolios realized about **7% volatility** in the later period. Stock shrinkage earned **6.1%** a year after trading fees and the factor target earned **4.5%**. Most of the observed gap came from the short sleeve before fees. The factor target’s net Sharpe was about **0.2 lower**, with a paired interval that included zero. The portfolios took similar total risk and still held different positions.
 
 ## A wider candidate list changes both holdings and turnover
 
@@ -237,12 +229,12 @@ I also replayed all four sizing rules with **100 and 150 new candidates per side
 
 The wider list also left fewer ranks between entry and exit. At 150 entries, extending retention from rank 175 to 250 cut two-way turnover by **4.51× capital** per year for stock shrinkage and **3.16×** for the factor target. The return differences between the two retention rules were uncertain.
 
-On the original fills, charging half to twice the recorded fees preserved stock shrinkage’s later Sharpe lead over the factor target at every width. At double fees and 150 per side, it was **0.55 versus 0.32**. At the original fee rate, leaving 2024 out brought them to a near tie at that width.
+At 150 per side, leaving out 2024 put the two models close to even on later Sharpe. That width check shows how much the ranking depends on a particular part of the sample.
 
 Exposure changed with breadth too. At 150 per side both models met the ±0.05 estimated beta band at the decision close. The later filled factor-target book had a realized index beta of about **0.06**, versus **0.02** for stock shrinkage. A common beta band still allowed different market exposures after execution.
 
 ## Stock shrinkage remains the reference
 
-I would keep stock shrinkage as the Ridge reference and inverse-volatility sizing as the simple benchmark. The residual model found quieter spreads. In the portfolio replays, adjusting the risk level did most of the work. None of the 27 recorded alternatives showed a reliable net Sharpe gain over stock shrinkage after accounting for the search across the same history.
+I would keep stock shrinkage for this Ridge portfolio. The factor model gives me a useful way to see what the book is exposed to. Estimating residual correlations also helped the factor model choose hedge weights across the stocks I gave it. In the portfolio replay, calibrating the risk budget brought both covariance models close to 7% realized volatility, and there was no clear gain from switching to the factor target.
 
-I would next freeze a comparison at 150 entries and 250 for retention. I’d give both covariance models a common estimated beta target and the same sector limits, calibrate from completed cycles, and check exposures at the fill. Inverse-volatility sizing would stay in as the simple benchmark. I’d assess all three on unseen dates with contemporaneous sector labels and stock-level borrow and execution costs.
+The comparison I’d want next is a wider book with a common beta target and comparable realized risk on new dates. That would put less weight on what happened in 2024 and make it easier to see whether the covariance choice improved the trades themselves.

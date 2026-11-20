@@ -295,14 +295,6 @@ def main():
     export_realized_risk(args.daily, portfolios, args.output, 252, 252, .07)
     funding = pl.read_csv(args.funding_attribution)
     calibration = pl.read_csv(args.fixed_book_forecasts)
-    calibration.select(
-        "period", pl.col("book").alias("held_portfolio"), pl.col("model").alias("forecast_model"),
-        "origins", "first_decision", "last_decision",
-        (pl.col("raw") * 100).alias("original_forecast_vol_pct"),
-        (pl.col("calibrated") * 100).alias("calibrated_forecast_vol_pct"),
-        (pl.col("realized_variance") * 100).alias("realized_gross_vol_pct"),
-        "median_volatility_multiplier",
-    ).write_csv(args.output / "fixed-book-forecasts.csv")
     pairs = pl.read_csv(args.pair_history, try_parse_dates=True).sort("decision")
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
     paired = pl.read_csv(args.hedge_intervals).filter(pl.col("mandate") == "long/short",
