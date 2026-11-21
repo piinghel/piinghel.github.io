@@ -92,7 +92,7 @@
     return [...selected].sort((a,b)=>a-b);
   }
 
-  const api={COLORS,signedColorScale,stats,path,narrowGrowthTicks,linked,additivePath,displayIndices};
+  const api={COLORS,signedColorScale,stats,path,narrowGrowthTicks,linked,additivePath,displayIndices,displayPeriods};
   if (typeof module!=='undefined') module.exports=api;
   root.BlogCharts=api;
   if (!root.document) return;
@@ -171,27 +171,50 @@
     const wrap=element('label','blog-chart-check'),box=element('input');box.type='checkbox';box.checked=checked;
     box.onchange=()=>change(box.checked);wrap.append(box,element('span','',label));parent.append(wrap);return {wrap,box};
   }
-  // Window and period presets. Returns mark(range,custom), which presses the preset the chart shows:
-  // the one clicked if it still applies, else the last matching one. Full resets a custom view, so it
-  // never shows as pressed while that view is on.
-  function rangePresets(parent,full,episodes,current,apply,visiblePeriods=null) {
+  function displayPeriods(episodes,dates,rebased) {
+    return (episodes||[]).map(([label,opening,end])=>{
+      // When a period starts on a holiday, rebase to the preceding close.
+      const start=rebased&&!dates.includes(opening)?dates.findLast(d=>d<opening)||opening:opening;
+      if(!/^(Development|Later( period)?|After \d{4}|Post-\d{4}|Test:.*)$/i.test(label))return [label,start,end];
+      const first=dates.find(date=>(rebased?date>start:date>=start)&&date<=end);
+      if(!first)return [label,start,end];
+      const last=new Date(end+'T00:00:00Z');
+      const endLabel=last.getUTCMonth()===11?end.slice(0,4):
+        last.toLocaleDateString('en',{month:'short',year:'numeric',timeZone:'UTC'});
+      return [first.slice(0,4)===endLabel?endLabel:first.slice(0,4)+'–'+endLabel,start,end];
+    });
+  }
+  function rangePresets(extra,full,episodes,current,apply,{fullLabel='Full history',compare=false}={}) {
     const presets=[],clamp=([a,b])=>[a<full[0]?full[0]:a,b>full[1]?full[1]:b];let chosen=null;
-    function add(group,label,target,isCustom=true) {
-      const button=element('button','',label),preset={button,target,isCustom};button.type='button';
-      button.onclick=()=>{chosen=preset;apply(...target(),isCustom);};group.append(button);presets.push(preset);
+    function add(group,label,target,mode='window') {
+      const button=element('button','',label),preset={button,target,mode};button.type='button';
+      button.onclick=()=>{chosen=preset;apply(...target(),mode);};group.append(button);presets.push(preset);
     }
-    const windows=segments(controlRow(parent,'Window'),'Window length');
-    for(const years of [1,3,5]) add(windows,years+'Y',()=>{
-      const end=current()[1],d=new Date(end+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()-years);return clamp([d.toISOString().slice(0,10),end]);});
-    if(!visiblePeriods)add(windows,'Full',()=>[...full],false);
-    if(episodes?.length) {
-      const periods=visiblePeriods||segments(controlRow(parent,'Periods'),'Periods');
-      if(visiblePeriods)add(periods,'Full history',()=>[...full],false);
-      for(const [label,a,b] of episodes) add(periods,label,()=>clamp([a,b]));
+    const periods=element('div','blog-chart-periods');periods.setAttribute('role','group');
+    periods.setAttribute('aria-label','Chart period');extra.before(periods);
+    add(periods,fullLabel,()=>full,'full');
+    if(compare)add(periods,'Both drawdowns',()=>full,'compare');
+    for(const [label,a,b] of episodes) {
+      if(b<full[0]||a>full[1]||(a<=full[0]&&b>=full[1]))continue;
+      add(periods,label,()=>clamp([a,b]));
     }
-    return (range,custom=false)=>{
-      const shows=preset=>{const [a,b]=preset.target();return a===range[0]&&b===range[1]&&(preset.isCustom||!custom);};
-      const pressed=chosen&&shows(chosen)?chosen:presets.filter(shows).at(-1);
+    const named=periods.children.length>1;
+    const windows=named?segments(controlRow(extra,'Window'),'Window length'):periods;
+    const lengths=(Date.parse(full[1])-Date.parse(full[0]))/86400000>365*3?[12,36,60]:[3,6,12];
+    function trailing(end,months) {
+      const d=new Date(end+'T00:00:00Z'),day=d.getUTCDate();
+      d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()-months+1,0);
+      d.setUTCDate(Math.min(day,d.getUTCDate()));return d.toISOString().slice(0,10);
+    }
+    for(const months of lengths) {
+      if(trailing(full[1],months)<=full[0])continue;
+      add(windows,months%12?months+'M':months/12+'Y',()=>{
+        const end=named?current()[1]:full[1];return clamp([trailing(end,months),end]);
+      });
+    }
+    return (range,mode='window')=>{
+      const shows=preset=>{const [a,b]=preset.target();return a===range[0]&&b===range[1]&&((preset.mode==='compare')===(mode==='compare'));};
+      const pressed=chosen&&shows(chosen)?chosen:presets.find(shows);
       for(const preset of presets)preset.button.setAttribute('aria-pressed',String(preset===pressed));
     };
   }
@@ -199,10 +222,36 @@
     return value===null || !Number.isFinite(value) ? '—' :
       (percent ? (value*100).toFixed(1)+'%' : value.toFixed(2));
   }
+  function periodChoices(ui,labels,change) {
+    const group=element('div','blog-chart-periods');
+    group.setAttribute('role','group');group.setAttribute('aria-label','Chart period');ui.prepend(group);
+    labels.forEach((label,index)=>{
+      const button=element('button','',label);button.type='button';
+      button.setAttribute('aria-pressed',String(index===0));
+      button.onclick=()=>{
+        for(const item of group.children)item.setAttribute('aria-pressed',String(item===button));
+        change(index);
+      };
+      group.append(button);
+    });
+  }
+  function refitPeriod(ui,years,split,redraw) {
+    if(!Number.isFinite(split))return ()=>true;
+    const first=Math.min(...years),last=Math.max(...years);
+    let selected=[first,last];
+    if(split>first&&split<=last) {
+      const ranges=[selected,[first,split-1],[split,last]];
+      periodChoices(ui,['Full history',first+'–'+(split-1),split+'–'+last],index=>{
+        selected=ranges[index];redraw();
+      });
+    }
+    return year=>year>=selected[0]&&year<=selected[1];
+  }
 
   // Fixed matrices share typography, theme handling and loading with time series.
   async function matrix(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const inPeriod=refitPeriod(ui,cfg.columns.map(Number),Number(host.dataset.refitSplit),draw);
     const defaults=cfg.rows.map((_,i)=>i).slice(0,cfg.defaultCount||cfg.rows.length);
     let selected=new Set(defaults);
     const boxes=[],rowLabels=[];
@@ -240,15 +289,17 @@
         return lines.slice(0,2).join('<br>')+(lines.length>2?'…':'');
       }
       const limit=Math.max(...cfg.values.flat().map(Math.abs));
-      await Plotly.react(graph,[{type:'heatmap',x:cfg.columns,y:indices.map(String),z:indices.map(i=>cfg.values[i]),
+      const cols=cfg.columns.flatMap((year,j)=>inPeriod(year)?[j]:[]);
+      const years=cols.map(j=>cfg.columns[j]);
+      await Plotly.react(graph,[{type:'heatmap',x:years,y:indices.map(String),z:indices.map(i=>cols.map(j=>cfg.values[i][j])),
         zmin:-limit,zmax:limit,colorscale:signedColorScale(),
-        xgap:1,ygap:1,customdata:indices.map(i=>cfg.columns.map(()=>cfg.descriptions[i])),
+        xgap:1,ygap:1,customdata:indices.map(i=>cols.map(()=>cfg.descriptions[i])),
         hovertemplate:'%{customdata}<br>%{x}: %{z:.3f}<extra></extra>',
         colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-Math.max(.12,40/(height-90)),yanchor:'top',
           tickvals:[-limit,0,limit],tickformat:'.2f',tickangle:0,outlinewidth:0,title:{text:cfg.unit,side:'top',font:{size:12}}}}],
         {height,margin:{l:10,r:10,t:10,b:80},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
           paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
-          xaxis:{type:'category',tickangle:0,tickvals:mobile?[cfg.columns[0],cfg.columns[Math.floor(cfg.columns.length/2)],cfg.columns.at(-1)]:cfg.columns},
+          xaxis:{type:'category',tickangle:0,tickvals:mobile&&years.length>3?[years[0],years[Math.floor(years.length/2)],years.at(-1)]:years},
           yaxis:{type:'category',autorange:'reversed',automargin:true,tickvals:indices.map(String),ticktext:indices.map(i=>rowLabel(cfg.rows[i]))}}, {responsive:true,displayModeBar:false});
     }
     await draw();host.querySelector('.blog-chart-status').hidden=true;
@@ -274,16 +325,13 @@
         for(const s of series)if(!s.dash)s.dash={short:'dash',index:'dot'}[s.role]||'solid';
       }
       const full=[cfg.start||data.dates[0],cfg.end||data.dates.at(-1)];
-      const openingRange=cfg.initialRange||full;
-      let range=[...openingRange], ready=false, busy=false, pending=false;
+      let range=[...full], ready=false, busy=false, pending=false;
       const visible=new Map(series.map(s=>[s.id,s.visible!==false && (s.role!=='index'||cfg.benchmark===true)]));
       if(sharedGroup)sharedSeriesKey(sharedGroup,series,visible,draw);
       const optionalBoxes=new Map();
       let legendTimer;
       const ui=host.querySelector('.blog-chart-ui'); ui.hidden=false;
       if(cfg.heading)ui.append(element('p','blog-chart-heading',cfg.heading));
-      const visiblePeriods=host.dataset.visiblePeriods&&cfg.episodes?.length?segments(ui,'Chart period'):null;
-      if(visiblePeriods)visiblePeriods.classList.add('blog-chart-periods');
       const initialWealth=Number(host.dataset.initialWealth)||100;
       const extra=element('details','blog-chart-options');
       extra.append(element('summary','','Explore'));ui.append(extra);
@@ -294,16 +342,8 @@
         if(a>b || b<full[0] || a>full[1]) {start.value=range[0];end.value=range[1];return;}
         range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b]; draw();
       }
-      // The opening close sets the base. Label the years in which returns accrue.
-      const episodes=visiblePeriods ? cfg.episodes.map(([label,opening,end])=>{
-        const firstReturn=data.dates.find(date=>date>opening && date<=end);
-        if(!firstReturn)return [label,opening,end];
-        const endDate=new Date(end+'T00:00:00Z');
-        const lastLabel=endDate.getUTCMonth()===11 ? end.slice(0,4) :
-          endDate.toLocaleDateString('en',{month:'short',year:'numeric',timeZone:'UTC'});
-        return [firstReturn.slice(0,4)+'–'+lastLabel,opening,end];
-      }) : cfg.episodes;
-      const markPresets=rangePresets(extra,full,episodes,()=>range,setRange,visiblePeriods);
+      const episodes=displayPeriods(cfg.episodes,data.dates,cfg.kind==='performance');
+      const markPresets=rangePresets(extra,full,episodes,()=>range,setRange,{fullLabel:sharedGroup?'Full episode':'Full history'});
       dateRange(controlRow(extra,'Dates'),start,end);
       start.onchange=end.onchange=()=>{if(start.value&&end.value)setRange(start.value,end.value);};
       const barMetrics=[
@@ -327,7 +367,7 @@
         show??=controlRow(extra,'Show');return checkControl(show,label,checked,change).box;
       }
       if(benchmark&&!sharedGroup) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
-      for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false||visiblePeriods)))optionalBoxes.set(s.id,
+      for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false||initialWealth===1)))optionalBoxes.set(s.id,
         checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
@@ -379,7 +419,7 @@
           const showLegend=!sharedGroup && cfg.showLegend!==false && !(initialWealth===1 && labelEnds);
           let plotHeight=cfg.drawdown||cfg.contributions?405:300;
           if(bars)plotHeight=430;
-          if(visiblePeriods)plotHeight=mobile?425:470;
+          if(initialWealth===1)plotHeight=mobile?425:470;
           if(sharedGroup)plotHeight=sharedGroup.clientWidth<550?300:335;
           const layout={autosize:true,height:plotHeight,
             margin:{l:mobile?44:50,r:12,t:bars?26:!showLegend?28:mobile?69:57,b:33},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11.5:12,color:t.text},
@@ -508,7 +548,7 @@
           await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:mobile?false:'hover',displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
           updateTable(first,last);
-          windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===openingRange[0]&&range[1]===openingRange[1]);
+          windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===full[0]&&range[1]===full[1]);
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
           windowLabel.title=!showLegend?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
@@ -569,17 +609,27 @@
     const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
     const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
-    const full=[data.dates[0],data.dates.at(-1)];let range=[...full],leg='total',custom=false,busy=false,pending=false;
+    const full=[data.dates[0],data.dates.at(-1)];let range=[...full],leg='total',view='full',busy=false,pending=false;
     let focus=cfg.focus||null;
     let featuredOnly=Boolean(cfg.featured);
     const expanded=new Set(focus?[focus]:[]),componentControls=new Map();
     const from=element('input'),to=element('input');from.type=to.type='date';
     for(const [input,value] of [[from,full[0]],[to,full[1]]]){input.min=full[0];input.max=full[1];input.value=value;}
-    function setRange(a,b,isCustom=true){if(a>b)return;range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b];from.value=range[0];to.value=range[1];custom=isCustom;markPresets(range,custom);draw();}
+    function setRange(a,b,mode='window') {
+      if(a<=b&&b>=full[0]&&a<=full[1]) {
+        range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b];
+        view=mode;
+      }
+      [from.value,to.value]=range;
+      markPresets(range,view);draw();
+    }
     from.onchange=to.onchange=()=>{if(from.value&&to.value)setRange(from.value,to.value);};
-    const markPresets=rangePresets(extra,full,cfg.episodes,()=>range,setRange);
+    const drawdowns=cfg.kind==='attribution-drawdowns';
+    const episodes=drawdowns?cfg.windows.map(([a,b])=>[a.slice(0,4)+'–'+b.slice(2,4),a,b]):
+      displayPeriods(cfg.episodes,data.dates,false);
+    const markPresets=rangePresets(extra,full,episodes,()=>range,setRange,{compare:drawdowns});
     dateRange(controlRow(extra,'Dates'),from,to);
-    markPresets(range,custom);
+    markPresets(range,view);
     const choices=controlRow(extra,'Show');
     if(cfg.kind==='attribution') {
       const select=element('select');for(const [key,label] of [['total','Book'],['long','Long leg'],['short','Short leg']])select.add(new Option(label,key));
@@ -675,7 +725,9 @@
           const regimes=cfg.kind==='attribution-regimes';
           const periods=regimes
             ? [['Declines',indices(...range,cfg.masks.declines)],['Strong rallies',indices(...range,cfg.masks.rallies)]]
-            : (custom?[range]:cfg.windows).map(([a,b])=>[custom?'Selected window':a.slice(0,4)+'–'+b.slice(2,4),indices(a,b,null,true)]);
+            : (view==='compare'?cfg.windows:[range]).map(([a,b])=>[
+                a.slice(0,4)+'–'+b.slice(2,4),indices(a,b,null,a!==full[0])
+              ]);
           const rows=shown.map((s,i)=>({
             label:s.label,labelText:nested(keys[i])?'↳ '+s.label:cfg.components[keys[i]]?'<b>'+s.label+'</b>':s.label,
             values:periods.map(([,days])=>metric(s,days,regimes?'return':'total'))
@@ -727,7 +779,7 @@
         }
         graph.style.height=layout.height+'px';
         await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
-        windowLabel.hidden=!custom;
+        windowLabel.hidden=view!=='window';
         windowLabel.textContent=(cfg.kind==='attribution-drawdowns'?'Selected-period P&L · ':cfg.kind==='attribution-years'?'Selected observations, annualized · ':'')+range[0]+' – '+range[1];
         host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;
       } finally {busy=false;if(pending){pending=false;draw();}}
@@ -738,6 +790,7 @@
   // Small fixed comparisons: hover exposes estimates and their observed ranges.
   async function panels(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    const inPeriod=refitPeriod(ui,cfg.panels.flatMap(p=>p.x),Number(host.dataset.refitSplit),draw);
     const graph=element('div','blog-chart-plot');ui.append(graph);
     async function draw() {
       const narrow=host.clientWidth<550,cols=host.clientWidth<300?1:2,rows=Math.ceil(cfg.panels.length/cols);
@@ -746,9 +799,17 @@
       graph.style.height=height+'px';
       const layout={autosize:true,height,margin:{l:32,r:9,t:21,b:38},showlegend:false,
         font:{family:'Bricolage Grotesque, sans-serif',size:narrow?11:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),annotations:[],shapes:[]},traces=[];
-      const xValues=cfg.panels.flatMap(p=>p.x),xLow=Math.min(...xValues),xHigh=Math.max(...xValues),xPad=(xHigh-xLow||1)*.06;
+      const panels=cfg.panels.map(panel=>{
+        const indices=panel.x.flatMap((year,i)=>inPeriod(year)?[i]:[]);
+        if(indices.length===panel.x.length)return panel;
+        const rows=values=>indices.map(i=>values[i]);
+        const x=rows(panel.x),ticks=(panel.ticks||x).filter(inPeriod);
+        return {...panel,x,y:rows(panel.y),low:panel.low&&rows(panel.low),high:panel.high&&rows(panel.high),
+          ticks:ticks.length>=2?ticks:x};
+      });
+      const xValues=panels.flatMap(p=>p.x),xLow=Math.min(...xValues),xHigh=Math.max(...xValues),xPad=(xHigh-xLow||1)*.06;
       if(cfg.sharedX)layout.annotations.push({text:cfg.sharedX,x:.5,y:0,yshift:-27,xref:'paper',yref:'paper',showarrow:false});
-      cfg.panels.forEach((p,i)=>{
+      panels.forEach((p,i)=>{
         const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
         const xd=cols===1?[0,1]:col===0?[0,.43]:[.58,1];
         const yd=[1-(row+1)/rows+.09/rows,1-row/rows-.08/rows];
@@ -775,10 +836,14 @@
   }
   async function calendarDistribution(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
+    let periods=cfg.periods;
+    periodChoices(ui,['Both periods',...cfg.periods.map(p=>p.title)],index=>{
+      periods=index?[cfg.periods[index-1]]:cfg.periods;draw();
+    });
     const graph=element('div','blog-chart-plot');ui.append(graph);
     async function draw() {
       const mobile=host.clientWidth<550,dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      const height=mobile?416:245,traces=[],layout={autosize:true,height,
+      const height=mobile&&periods.length>1?416:245,traces=[],layout={autosize:true,height,
         margin:{l:mobile?76:87,r:12,t:28,b:48},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
         font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11:12,color:ink},hoverlabel:hoverStyle(),
         dragmode:false,showlegend:false,hovermode:'closest',
@@ -787,9 +852,9 @@
       graph.style.height=height+'px';
       const weekdays=['Monday','Tuesday','Wednesday','Thursday','Friday'];
       const labels=['One book','Two books','Three books'];
-      for(const [i,period] of cfg.periods.entries()) {
+      for(const [i,period] of periods.entries()) {
         const s=i?String(i+1):'',x='x'+s,y='y'+s;
-        const xd=mobile?[0,1]:[i*.54,i*.54+.46],yd=mobile?(i?[0,.42]:[.58,1]):[0,1];
+        const xd=mobile||periods.length===1?[0,1]:[i*.54,i*.54+.46],yd=mobile&&periods.length>1?(i?[0,.42]:[.58,1]):[0,1];
         layout['xaxis'+s]={domain:xd,anchor:y,range:period.limits,tick0:0,dtick:1,fixedrange:true,
           gridcolor:grid,zeroline:false};
         layout['yaxis'+s]={domain:yd,anchor:x,range:[-.48,2.48],tickvals:[2,1,0],ticktext:labels,

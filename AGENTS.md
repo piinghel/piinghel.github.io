@@ -141,7 +141,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   holdings-level attribution.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
 - Use the shared interactive chart helper for finalized evidence, with quiet
-  defaults and optional controls under Explore. Keep statistics collapsed and
+  defaults. Open on the full history with clickable periods visible above the
+  figure. Keep custom dates and other controls under Explore. Keep statistics collapsed and
   omit miniature range previews. Retain reproducible light and dark SVG fallbacks
   from one shared composition per viewport. Stack episode groups and multi-panel charts
   on phones when needed for readable labels; preserve scales and definitions.

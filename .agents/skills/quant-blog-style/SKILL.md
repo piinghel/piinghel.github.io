@@ -132,6 +132,8 @@ homepage and Previous/Next ordering. Keep the introduction in the article body.
 Use the site's `research-figure responsive-figure` containers with
 `theme-svg-figure.html` or `blog-chart.html`. Start figures at reading width.
 Widen an individual figure only to make a particular comparison legible.
+Open date-selectable figures on their full history. Place clickable subperiods
+beside “Full history” above the chart. Keep custom dates under Explore.
 On phones, keep related panels in the same view when their labels fit. Keep comparison tables in their shared
 `research-table` / `comparison-table` styles.
 

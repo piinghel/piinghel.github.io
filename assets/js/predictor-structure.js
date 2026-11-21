@@ -9,8 +9,7 @@
   const root = document.getElementById('predictor-structure-explorer');
   if (!root) return;
 
-  const PERIODS = [[1998, 2021], [1998, 2003], [2004, 2008], [2009, 2013], [2014, 2018], [2019, 2021]];
-  let custom = PERIODS.length; // slot of the period set with the year controls
+  const PERIODS = [];
   const DEFAULT_VISIBLE = [0, 1, 2, 3, 4, 5, 6];
   // icTheme: -1 draws the theme composites, otherwise the predictors of that theme.
   const state = { period: 0, level: 'predictor', visible: new Set(DEFAULT_VISIBLE), icTheme: -1 };
@@ -200,7 +199,7 @@
     if(pick)pick.value=String(state.icTheme);
     root.querySelector('.pse-themes').closest('.blog-chart-row').hidden=state.icTheme>=0;
     root.querySelectorAll('.pse-themes input').forEach((box,i)=>{box.checked=state.visible.has(i);box.style.setProperty('--swatch',themeColor(i));});
-    root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.period) === state.period)));
+    root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.period) === state.period)));
     root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === state.level)));
     const config = { responsive: true, displayModeBar: false };
     const heat = state.level === 'theme' ? themeHeatmap() : predictorHeatmap();
@@ -256,12 +255,21 @@
     years.className='blog-chart-range';dash.className='blog-chart-range-sep';dash.textContent='–';
     for(const [label,select] of [['From year',from],['To year',to]]) {select.setAttribute('aria-label',label);data.years.forEach(y=>select.add(new Option(y,y)));}
     years.append(from,dash,to);root.querySelector('.pse-years').append(years);
-    from.onchange=to.onchange=()=>{if(Number(from.value)>Number(to.value))return;PERIODS[custom]=[Number(from.value),Number(to.value)];state.period=custom;icRange=null;render();};
-    // Years after the base period get their own preset; the default view stays on the base period.
-    const base=data.base_period,last=data.years.at(-1),later=last>base[1];
-    PERIODS[0]=[...base];
-    if(later){PERIODS.push([base[1]+1,last]);custom=PERIODS.length;}
-    from.value=base[0];to.value=base[1];
+    const base=data.base_period,last=data.years.at(-1);
+    PERIODS.push([data.years[0],last]);
+    if(last>base[1])PERIODS.push([...base],[base[1]+1,last]);
+    for(let year=base[0];year<=base[1];) {
+      const end=Math.min(base[1],year===base[0]?year+5:year+4);
+      PERIODS.push([year,end]);year=end+1;
+    }
+    const custom=PERIODS.length;
+    from.onchange=to.onchange=()=>{
+      const a=Number(from.value),b=Number(to.value);
+      if(a>b){from.value=PERIODS[state.period][0];to.value=PERIODS[state.period][1];return;}
+      const match=PERIODS.findIndex(([start,end])=>start===a&&end===b);
+      if(match<0)PERIODS[custom]=[a,b];
+      state.period=match<0?custom:match;icRange=null;render();
+    };
     if(data.predictor_ic) {
       const pick=document.createElement('select');pick.setAttribute('aria-label','Lines in the IC panel');
       pick.add(new Option('Theme composites','-1'));
@@ -273,9 +281,8 @@
     PERIODS.forEach(([a, b], i) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.setAttribute('role', 'radio');
       button.dataset.period = String(i);
-      button.textContent = i || later ? `${a}–${String(b).slice(2)}` : 'All years';
+      button.textContent = i ? `${a}–${b}` : 'Full history';
       button.addEventListener('click', () => { state.period = i; icRange=null;render(); });
       periods.appendChild(button);
     });

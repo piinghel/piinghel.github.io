@@ -152,7 +152,7 @@ predictors, the heavy line is their composite, and hovering names a line.
   <div class="research-figure responsive-figure">
     {% include theme-svg-figure.html base="/assets/combining-predictors/predictor-correlation" mobile="/assets/combining-predictors/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="6" %}
   </div>
-  <div id="figure-1" class="research-figure responsive-figure">
+  <div class="research-figure responsive-figure">
     {% include theme-svg-figure.html base="/assets/combining-predictors/theme-ic-by-year" mobile="/assets/combining-predictors/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2026." version="6" %}
   </div>
 </noscript>
@@ -389,7 +389,7 @@ largest mean absolute weight; Explore lets you choose from all 80. A
 positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
-{% include blog-chart.html id="figure-5" chart="coefficients" source="/assets/combining-predictors/coefficients.json" label="Ridge coefficients by refit, with selectable predictors" %}
+{% include blog-chart.html id="figure-5" chart="coefficients" refit_split=2022 source="/assets/combining-predictors/coefficients.json" label="Ridge coefficients by refit, with selectable predictors" %}
 
 <p class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Ridge coefficients across refits.</span> The ten largest mean absolute coefficients appear first. Each column averages three training fits and is dated by the start of its prediction block.</p>
 
@@ -422,7 +422,7 @@ refit before, using the cosine similarity of the two coefficient vectors: 1
 means the same relative weights, whatever their size. The second panel tracks
 that size, the length of the coefficient vector.
 
-{% include blog-chart.html id="figure-6" chart="stability" source="/assets/combining-predictors/coefficients.json" base="/assets/combining-predictors/refit-stability" mobile="/assets/combining-predictors/refit-stability_mobile" version="1" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
+{% include blog-chart.html id="figure-6" chart="stability" refit_split=2022 source="/assets/combining-predictors/coefficients.json" base="/assets/combining-predictors/refit-stability" mobile="/assets/combining-predictors/refit-stability_mobile" version="1" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
 
 <p class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Stability of the Ridge coefficients.</span> Cosine similarity compares each refit to the previous one. Vector length is relative to the first refit.</p>
 

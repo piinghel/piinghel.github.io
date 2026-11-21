@@ -126,6 +126,8 @@ both ends of the scroll region and absence of page-level horizontal overflow.
 Do not impose a large global minimum width on every chart. Do not clip columns
 or convert comparison tables into cards that obscure cross-row comparisons.
 
+Open on the full available sample. Put “Full history” first and the clickable
+subperiods immediately above the chart. Label a bounded case study “Full episode”.
 For a time-series comparison that readers will revisit by period, put the
 actual date ranges next to the plot. Keep one period selected visibly and
 expose exact dates on demand. When the opening close rebases the path, label

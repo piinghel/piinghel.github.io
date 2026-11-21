@@ -26,9 +26,10 @@ html[data-theme="dark"] .shared-series button::before { border-color:var(--serie
 .post-content .blog-chart th,.post-content .blog-chart td { padding:.3rem .55rem; text-align:right; white-space:nowrap; }
 .post-content .blog-chart th:first-child { text-align:left; white-space:normal; }
 .blog-chart-plot { width:100%; min-width:0; }
-.blog-chart .blog-chart-periods { display:flex; flex-wrap:wrap; gap:.3rem 1.1rem; border:0; border-radius:0; overflow:visible; margin:0 0 .9rem; }
+.blog-chart-periods { display:flex; flex-wrap:wrap; align-items:baseline; gap:.25rem 1rem; margin:0 0 .9rem; font-family:var(--font-sans); }
 .blog-chart-periods button { font:inherit; font-size:.83rem; color:var(--muted-ink); border:0; border-bottom:1px solid transparent; padding:.3rem 0; cursor:pointer; background:transparent; }
 .blog-chart-periods button[aria-pressed="true"] { color:var(--ink); border-bottom-color:var(--ink); }
+.blog-chart-periods button:hover { color:var(--ink); border-bottom-color:var(--muted-ink); }
 .blog-chart-periods button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 .blog-chart-error { color:var(--ink); font-weight:600; }
 @media(max-width:600px) { .blog-chart { font-size:12px; } }

@@ -21,6 +21,18 @@ test('one-dollar growth rebases at each opening close with readable ticks on sho
   assert.equal(charts.narrowGrowthTicks(1,16),null);
 });
 
+test('period buttons retain event names and include the first return after a holiday',()=>{
+  const dates=['2021-12-30','2021-12-31','2022-01-03','2022-01-04','2026-05-27'];
+  const periods=[['Later period','2022-01-01','2026-05-27'],['Rebound','2021-12-31','2022-01-04']];
+  assert.deepEqual(charts.displayPeriods(periods,dates,true),[
+    ['2022–May 2026','2021-12-31','2026-05-27'],periods[1]
+  ]);
+  assert.deepEqual(charts.displayPeriods(periods,dates,false),[
+    ['2022–May 2026','2022-01-01','2026-05-27'],periods[1]
+  ]);
+  assert.deepEqual(charts.displayPeriods(undefined,dates,false),[]);
+});
+
 test('deferred charts start once near the viewport and work without an observer',async()=>{
   for(const supported of [true,false]) {
     let notify,starts=0;

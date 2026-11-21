@@ -247,7 +247,7 @@ I now let each risk estimate choose its own positions and compare the portfolios
 </table>
 
 <div id="figure-3" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json" initial_wealth=1 periods_visible=true base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" label="Growth of one dollar after fees and drawdown for the three Ridge portfolios. Choose the full history, development period, later period or custom dates." %}
+  {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json" initial_wealth=1 base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" label="Growth of one dollar after fees and drawdown for the three Ridge portfolios. Choose the full history, development period, later period or custom dates." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Growth and drawdown after fees.</span> Each window starts at $1 and compounds the mean daily return across three schedules. Drawdown is measured from the peak within that window.</p>
 

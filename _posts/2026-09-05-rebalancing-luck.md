@@ -44,7 +44,7 @@ path. In the blend, it accounts for a third of each day's P&L.
 
 <figure id="figure-1" class="research-figure rebalancing-figure responsive-figure">
   {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=4" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="The three Friday starting weeks finish at different levels. The equal-notional blend ends between the strongest and weakest schedules." version="3" %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Three Friday starting weeks.</span> Growth compounds daily net P&amp;L per unit of fixed notional from 100 at the 31 December 2021 close.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Three Friday starting weeks.</span> Each selected period starts at 100 and compounds daily net P&amp;L per unit of fixed notional.</figcaption>
 </figure>
 
 All three schedules use the same 80 ranking predictors, rank buffer and trade

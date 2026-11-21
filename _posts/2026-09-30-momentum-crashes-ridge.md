@@ -111,9 +111,9 @@ value in under three months once the losers rallied. In the vaccine-rotation
 week of 9 November 2020 it lost another 24%.
 
 <div id="figure-2" class="research-figure">
-  {% include blog-chart.html chart="crash" source="/assets/momentum-crashes-ridge/crash-2009.json?v=5" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on July 2007 to June 2010." %}
+  {% include blog-chart.html chart="crash" source="/assets/momentum-crashes-ridge/crash-2009.json?v=5" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, with selectable momentum episodes." %}
 </div>
-<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">The 2009 rebound in momentum losers.</span> Month-end winner and loser deciles use Russell 1000 stocks and 12–1 momentum. Each path starts at 100. Shading marks the rebound from March 2009.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">The 2009 rebound in momentum losers.</span> Month-end winner and loser deciles use Russell 1000 stocks and 12–1 momentum. Each path starts at 100. Shading marks the 2009 and 2020 rebounds.</p>
 
 ## A linear ranking can't make its momentum weight conditional
 

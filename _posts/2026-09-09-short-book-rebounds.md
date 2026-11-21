@@ -181,9 +181,9 @@ amount the history can't pin down.
 ## The two deepest drawdowns
 
 <div id="figure-2" class="research-figure responsive-figure">
-  {% include blog-chart.html chart="drawdowns" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="9" label="Each theme has a dot for each drawdown. The low-risk package and stock-specific returns contributed large losses in both 2008–09 and 2020–21." %}
+  {% include blog-chart.html chart="drawdowns" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="9" label="Gross P&L by theme across the full history, with the two deepest drawdowns available separately or together." %}
 </div>
-<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Theme contributions in the two deepest drawdowns.</span> Gross P&amp;L in points of capital, July 2008–September 2009 and February 2020–January 2021.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Gross P&amp;L by theme.</span> Select “Both drawdowns” to compare July 2008–September 2009 with February 2020–January 2021, in points of capital.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21 after
 costs (13.2% and 14.3% compounded), look alike by theme: the low-risk package lost 12.1 and 10.1, mostly through low
