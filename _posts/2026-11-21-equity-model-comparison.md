@@ -109,40 +109,26 @@ LightGBM's full-period lead in mean IC comes from 1999–2011. Ridge has
 the higher mean in the recent windows. Its IC varies more across dates,
 so LightGBM still has the higher ICIR. Across the full matched sample,
 Kumo Small's lower IC variability puts its ICIR above Ridge's, though
-Kumo trails both baselines in 2017–2021. Using every daily date for Ridge
-and LightGBM gives similar full-period ICIRs of 0.54 and 0.72.
+Kumo trails both baselines in 2017–2021.
 
 ## Return and risk by score decile
 
 I sort the eligible stocks into ten equal-weight deciles on each rebalance
 date and trade at the next close. I keep decile membership until the next
 rebalance and average the daily returns across the three schedules before
-compounding. The figure starts with the matched weekly signal dates. The
-reference view uses the original Ridge and LightGBM deciles, which were
-formed every 15 trading sessions on each schedule.
+compounding.
 
-<figure id="figure-1" class="research-figure responsive-figure decile-schedule-figure">
-  <fieldset id="figure-2" class="decile-schedule">
-    <legend>Rebalance schedule</legend>
-    <input type="radio" name="decile-schedule" id="deciles-weekly" checked>
-    <label for="deciles-weekly">Weekly signal dates</label>
-    <input type="radio" name="decile-schedule" id="deciles-fifteen">
-    <label for="deciles-fifteen">15-session reference</label>
-    <div class="decile-schedule-panel decile-schedule-weekly">
-      {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="2" alt="On the weekly schedules, LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
-    </div>
-    <div class="decile-schedule-panel decile-schedule-fifteen">
-      {% include theme-svg-figure.html base="/assets/equity-model-comparison/decile-profile" mobile="/assets/equity-model-comparison/decile-profile_mobile" version="2" alt="On 15-session schedules, LightGBM's top decile earns more at higher volatility than Ridge. Their top-decile Sharpes are nearly equal." %}
-    </div>
-  </fieldset>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile, 1999–2021.</span> Decile 10 holds the highest scores. Both views use equal-weight deciles before costs.</figcaption>
+<figure id="figure-1" class="research-figure responsive-figure">
+  <div id="figure-2">
+    {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="2" alt="LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
+  </div>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile, 1999–2021.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
-On the 15-session schedules, LightGBM's top decile earns more at higher
-volatility, leaving its Sharpe close to Ridge's. Their bottom deciles
-separate more clearly. The broader advantage also shows up in the
-main top-minus-bottom spread, which compounds the difference between
-the two deciles' daily returns.
+Kumo Small and Ridge look similar in the top decile. The LightGBM curve
+separates at both ends, with a higher return at the top and a lower
+return at the bottom. The top-minus-bottom spread compounds the
+difference between those two deciles' daily returns.
 
 ## Returns after portfolio construction
 
@@ -236,9 +222,27 @@ side contributed 3.2 points of the gap, the short side 2.7, and lower
 execution fees 1.2. Against Ridge, higher trading fees explained about
 two thirds of Kumo Small’s 1.8-point gap.
 
-## Kumo’s training context
+## Running Kumo on a Mac
 
-The hard part on a 16 GB laptop was preparing the historical context.
+I used a 16 GB M2 Pro Mac with a separate Python 3.12 environment. This
+is the CPU setup I used, with the library and PyTorch versions pinned.
+
+```sh
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install structured-data-models==0.3.0 torch==2.11.0
+```
+
+The first model load downloads the checkpoint. I cached the released
+weights and reused them across runs. The support for Apple’s GPU
+depended on the PyTorch and macOS versions. In my test with the older
+GPU-compatible build, repeated runs gave different scores, so I ran the
+comparison on CPU in 32-bit precision.
+
+The first Small run hit the 10 GiB process limit with just 35,738
+training examples. Limiting the temporary batches used to build the
+row embeddings and compute attention brought that fold within budget.
+Preparing the historical context was still the limiting step.
 With one training date a week and the same target tails, the final fold
 would have about 760,000 examples. Small’s main buffers alone would
 need about 35 GiB in standard 32-bit precision. I sample training dates
@@ -246,6 +250,8 @@ further apart, prepare the context once per fold and reuse it across
 prediction batches. Scoring on the portfolio schedules cuts the number
 of predictions to about a fifth of daily scoring and keeps every eligible
 stock on each scheduled date.
+
+## What changed with more training rows
 
 To see what changes with a denser context, I first scored every trading
 day from January 1999 to September 2000. Taking every 15th training session

@@ -90,44 +90,6 @@ html[data-theme="dark"] {
   .responsive-figure .theme-svg-figure { max-width: 25rem; margin-inline: auto; }
 }
 
-.decile-schedule {
-  min-inline-size: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.decile-schedule legend {
-  padding: 0;
-  color: var(--muted-ink);
-  font: 0.78rem var(--font-sans);
-}
-.decile-schedule input {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  opacity: 0;
-}
-.decile-schedule label {
-  display: inline-block;
-  margin: 0.15rem 0.65rem 0.25rem 0;
-  padding: 0.25rem 0.15rem;
-  border-bottom: 2px solid transparent;
-  color: var(--muted-ink);
-  cursor: pointer;
-  font: 0.9rem var(--font-sans);
-}
-.decile-schedule input:checked + label {
-  border-bottom-color: var(--accent);
-  color: var(--ink);
-}
-.decile-schedule input:focus-visible + label {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-.decile-schedule-panel { display: none; margin-top: 0.75rem; }
-#deciles-weekly:checked ~ .decile-schedule-weekly,
-#deciles-fifteen:checked ~ .decile-schedule-fifteen { display: block; }
-
 .research-table-scroll .equity-comparison-table { min-width: 34rem; }
 .research-table.equity-comparison-table :is(th, td) { padding: 0.55rem 0.45rem; }
 .equity-comparison-table thead th[scope="colgroup"] { text-align: center; }
