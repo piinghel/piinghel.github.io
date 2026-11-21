@@ -12,21 +12,21 @@ series_order: 1
 permalink: /quants/factor-risk-sizing.html
 ---
 
-When I add a short, I want to know which risk it takes out of the book. My baseline uses historical stock correlations shrunk toward zero. That gives the optimizer a way to size positions together. In the Russell 1000 it still starts from nearly half a million pairwise relationships.
+When I add a short, I want to know which risk it takes out of the book. My stock-shrinkage benchmark starts with nearly half a million pairwise correlations in the Russell 1000. A factor model builds those relationships from a smaller set of shared moves, such as the market, sectors and styles. I can see how a short cuts market exposure and adds momentum exposure, though some shared moves may be missing from the model.
 
-A factor risk model estimates those relationships through a smaller set of shared returns, such as the market, sectors and styles. The same exposures tell me what a trade does to the whole book. A short can cancel some market exposure and add to momentum exposure at the same time. The model can still miss shared moves among stocks, and its estimate of total volatility can be off.
-
-If I keep the Ridge forecasts fixed and change how I estimate risk, do I get better hedges? Does that carry through after trading fees? I start by letting the models weight the same sampled stocks to see which hedges are quieter. Then I price identical holdings with each model to see whether it gets the level of risk right. In the full replay, each optimizer chooses and trades its own book.
+With the same Ridge forecasts, does a different risk estimate give me better hedges and a better portfolio after fees? I compare weights on the same sampled stocks, then ask each model to forecast risk on identical holdings. In the full replay, each optimizer chooses and trades its own book.
 
 ## From stock exposures to portfolio risk
 
-At each close I split the day’s stock returns into shared factor moves and a residual for each stock.
+At each close I write the vector of stock returns as shared factor moves plus a residual for each stock.
 
 $$
 r_t = B_{t-1} f_t + \epsilon_t.
 $$
 
-Here $$r_t$$ is the vector of stock returns and each row of $$B_{t-1}$$ gives one stock’s exposures as of the previous close. The market column is one for every stock. The other columns encode sector membership and style exposures. I fit the day’s factor returns $$f_t$$ across stocks by weighted least squares, with weights proportional to the square root of prior market cap. The sector returns average to zero under those weights so the market intercept and sector effects are separately defined. The fits leave a history of residual returns $$\epsilon_t$$ for each stock.
+Each row of $$B_{t-1}$$ gives one stock’s exposures as of the previous close. The market column is one for every stock. The other columns encode sectors and styles.
+
+I fit the factor returns $$f_t$$ across stocks by weighted least squares, using the square root of prior market cap as the weight. I center the sector returns under those weights to separate them from the common market term. What’s left after the fit is the vector of residual returns $$\epsilon_t$$.
 
 To forecast risk I hold the latest exposures $$B$$ fixed. Let $$F$$ be the covariance of factor returns and $$\Omega$$ the covariance of residual returns. The model assumes the factor and residual returns are uncorrelated, so their covariance contributions add.
 
@@ -34,7 +34,7 @@ $$
 \Sigma = BFB^\top + \Omega.
 $$
 
-I estimate $$F$$ and the specific variances from the fitted histories. Factor returns can move together, so $$F$$ can have off-diagonal entries. The baseline sets the off-diagonal entries of $$\Omega$$ to zero. That means stocks can move together through their factors, and shared moves left in the residuals are omitted. For signed portfolio weights $$w$$, $$B^\top w$$ gives the portfolio’s factor exposures and $$w^\top\Sigma w$$ gives its forecast daily variance.
+I estimate $$F$$ and the specific variances from the fitted histories. Factor returns can move together, so $$F$$ can have off-diagonal entries. The baseline uses a diagonal $$\Omega$$, which puts all shared risk in the factors. For signed weights $$w$$, the portfolio has factor exposures $$B^\top w$$ and forecast daily variance $$w^\top\Sigma w$$.
 
 ### A three-stock example
 
@@ -49,7 +49,7 @@ Take three stocks with a common market exposure of one. A and B have opposite mo
   </div>
 </div>
 
-Multiplying by this diagonal $$F$$ scales the market column by 4 and the momentum column by 1. A’s row goes from $$(1,1)$$ to $$(4,1)$$. To get the factor covariance between A and B, take the dot product of A’s row in $$BF$$ and B’s column in $$B^\top$$. The highlighted cells give $$4(1)+1(-1)=3$$.
+This diagonal $$F$$ scales the market column by 4 and the momentum column by 1. A’s row becomes $$(4,1)$$. Its dot product with B’s column in $$B^\top$$ gives their factor covariance. The highlighted cells show $$4(1)+1(-1)=3$$.
 
 <div class="matrix-calculation" role="group" aria-label="Scaled exposures times transposed exposures equals stock covariance from factors">
   <div class="matrix-product">
@@ -63,7 +63,7 @@ Multiplying by this diagonal $$F$$ scales the market column by 4 and the momentu
   </div>
 </div>
 
-Now put 50% of capital long A and 50% short B. The signed weights are $$w=(0.5,-0.5,0)^\top$$. In $$B^\top w$$, the market intercept exposure is $$0.5(1)-0.5(1)=0$$. Momentum exposure is $$0.5(1)-0.5(-1)=1$$. The long and short cancel the common intercept. Their momentum exposures add. The index-beta limit later in the article uses estimated stock betas.
+Now put 50% of capital long A and 50% short B, so $$w=(0.5,-0.5,0)^\top$$. The common market exposure cancels, $$0.5(1)-0.5(1)=0$$. The momentum exposures add, $$0.5(1)-0.5(-1)=1$$. The portfolio’s index-beta limit uses betas estimated separately for each stock.
 
 Let A, B and C have specific volatilities of 2%, 2% and 1%. With zero residual correlations, $$\Omega$$ adds their variances of 4, 4 and 1 to the diagonal of $$BFB^\top$$.
 
@@ -77,14 +77,14 @@ $$
 w^\top\Sigma w=\frac{9+9-2(3)}{4}=3.
 $$
 
-The three units of daily variance are one from momentum and two from the individual residuals. The same calculation lets me compare the risk of different weights. To choose among those weights, I also need a return forecast and limits on what I can hold and trade.
+Momentum accounts for one unit of variance and the two specific risks account for the other two. To choose the weights, I need return forecasts and limits on what I can hold and trade.
 {: #the-average-residual-hides-groups}
 
 ## What goes into a position
 
-I want to see what changing risk estimates does to position sizes with the return forecasts held fixed. Ridge predicts expected return per unit of risk within each sector. Each joint optimizer multiplies the same score by the stock’s trailing 21-session volatility to put it in return units.
+Ridge scores stocks within each sector on expected return per unit of risk. Each joint optimizer multiplies the same score by the stock’s trailing 21-session volatility to put it in return units.
 
-At each rebalance, new longs come from the 75 highest scores in the dated Russell 1000 universe, and new shorts from the 75 lowest. An existing position can remain eligible beyond the entry cutoff so a small move in rank needn’t trigger a round trip. Eligibility gives the optimizer room to keep the position if it still fits the book.
+At rebalance, new longs come from the top 75 scores in the dated Russell 1000 universe and new shorts from the bottom 75. Existing positions can stay eligible beyond the entry cutoff, so a small rank change needn’t trigger a round trip.
 
 To see what modeling co-movement adds, I compare a stock-by-stock sizing rule with three joint rules that use different covariance estimates.
 
@@ -97,11 +97,11 @@ The factor target isolates the choice of shrinkage target. I convert the factor 
 
 ### The optimizer trades off return, risk and turnover
 
-Inside a common set of constraints, each joint optimizer maximizes the portfolio’s Ridge return score, with a penalty on weight changes from its filled book. That penalty gives a stock a reason to stay in the book when the new target is only slightly better. The shared risk budget sets an upper limit on how much risk the optimizer can take. If $$w$$ is the vector of signed capital weights and $$\Sigma$$ is the daily stock covariance, annualized forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ must stay at or below 7%. The annualization multiplies daily variance by 252 and assumes zero covariance between days.
+Each joint optimizer maximizes the portfolio’s Ridge return score less a penalty on changes from the filled book. The penalty discourages trading when a new weight offers little improvement. Forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ must stay at or below 7% a year. Annualizing daily variance this way assumes zero covariance between days.
 
 The target weights also face limits on gross and net dollars, individual names and sectors. Those keep the optimizer from concentrating in a few positions or letting one side of the book dominate. I cap estimated index beta at ±0.05 because equal long and short dollars can still have different market sensitivity. For example, a 3%-long and 3%-short position in the same sector adds zero sector net. If their estimated betas are 1.4 and 0.8, the pair adds $$0.03(1.4-0.8)=0.018$$ to portfolio beta.
 
-This is one form of mean–variance optimization. A variance penalty in the objective would let the book take more forecast risk when the return scores are stronger. Direct style limits would make sense if I needed to control a particular exposure. Here styles enter through the covariance estimate, and keeping the other settings fixed makes the covariance comparison easier to interpret.
+This is mean–variance optimization with a hard risk cap. A variance penalty would let the book take more risk when return scores are stronger. I could cap individual style exposures directly. Here styles enter through the covariance, and I keep the limits and turnover penalty fixed.
 
 The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
 
@@ -132,7 +132,7 @@ I also compared one session with the three-week holding period used in the portf
   </tbody>
 </table>
 
-At three weeks, 150 names gave the clearest reduction in risk relative to diagonal residuals. The smaller spreads gave inconclusive results, and the comparison with stock shrinkage remains open at all three sizes. The draws cover more combinations of stocks, with the same market history behind them.
+At three weeks, the smaller spreads gave inconclusive results. Sampling more stocks helps check how the result depends on which names I draw. All the draws share the same market dates.
 
 To see how much the result depends on the kind of portfolio, I also ran long-only minimum variance on sampled stocks without using Ridge scores. In the later period, the sector-and-style model lowered next-session annualized volatility from **13.5% to 12.8%** at 150 names when both optimizers had to hold every stock. Once either model could drop names, the difference was uncertain. The benefit depends on which positions the optimizer is required to hold.
 
@@ -140,7 +140,7 @@ To see how much the result depends on the kind of portfolio, I also ran long-onl
 
 A model can pick quieter weights and still get their absolute risk wrong. I check this by having both models forecast risk for the same weights and comparing them against the same realized returns.
 
-I score the forecasts with **QLIKE**, the variance-forecast Q statistic. For each holding period, I divide the mean squared daily return $$u$$ by the forecast daily variance $$v$$. If that ratio is $$x$$, the normalized loss is $$x-\log x-1$$. It is zero when the forecast matches the outcome. Using a ratio puts misses on holdings of different volatility on the same scale. Predicting half the realized variance incurs a larger loss than predicting twice the realized variance. The implementation uses $$\log v+u/v$$, which gives the same paired comparison when $$u$$ is shared.
+I score variance forecasts with **QLIKE**, the variance-forecast Q statistic. Let $$x=u/v$$ be the mean squared daily return divided by forecast daily variance. The normalized loss $$x-\log x-1$$ is zero at a match. A given proportional miss costs the same on quiet and volatile books. Forecasting half the realized variance costs more than forecasting twice the realized variance. On identical holdings, $$\log v+u/v$$ gives the same paired comparison.
 
 For a check without Ridge scores, I assigned the longs and shorts at random and gave names equal weights on each side. On these identical holdings, the factor target’s raw forecasts had lower QLIKE than stock shrinkage at 75, 100 and 150 names in the later period. All three paired intervals favored it. At 150 names, stock shrinkage forecast **3.6%** volatility and the factor target **3.4%**, against **2.7%** realized. Both estimates ran high.
 
@@ -154,7 +154,7 @@ On the filled stock-shrinkage book, the same models forecast **7%** and **about 
 ## The portfolio comparison after fees
 {: #how-the-risk-estimate-changes-the-portfolio}
 
-In the replay the risk model can change who gets into the book and how large the positions are. With the same Ridge inputs, I let each sizing rule trade from its own fills and compare the resulting returns and risk after fees.
+I now let each sizing rule choose its own positions and trade from its own fills. The cost of those trades enters the comparison.
 
 <table class="research-table comparison-table compact-table">
   <caption>Long/short portfolio outcomes, averaged across three schedules. Return and Sharpe show net on top and gross before trading fees below. Returns are annualized compound growth. Sharpe uses daily returns, a zero cash rate and 252 sessions per year. Volatility and drawdown use net returns. Turnover counts purchases and sales in multiples of capital per year.</caption>
@@ -178,7 +178,7 @@ In the replay the risk model can change who gets into the book and how large the
 </div>
 <p class="figure-caption">The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
 
-Of the three joint optimizers, the factor target came closest to its 7% volatility budget in both periods. From 2022 to May 2026, realized volatility was **7.3%** for the factor target, **8.3%** for sector and style factors and **9.7%** for stock shrinkage. Stock shrinkage earned the most after fees and also ran the highest risk of the three.
+The factor target came closest to its 7% budget in both periods. From 2022 to May 2026 it ran at **7.3%** realized volatility. Stock shrinkage earned more after fees and ran at **9.7%**. That is a different amount of risk for the same forecast budget.
 
 ## Why the same risk budget produced different volatility
 
@@ -191,7 +191,7 @@ The same 7% cap can produce a smaller book if one model forecasts more risk for 
 
 All three books became more volatile in 2020–21. Stock shrinkage peaked near **15%**, several points above both factor books. The factor target spent more of the chart close to the **7%** budget.
 
-At each decision close, I priced the stock-shrinkage portfolio’s filled holdings with both models. To give stock shrinkage the factor target’s risk level, I rescaled its covariance until the two forecasts agreed on those reference holdings. I also ran the reverse. Each optimizer then selected its own positions and simulated trades from its own prior fills.
+At each decision close, I priced the filled stock-shrinkage holdings with both models. I rescaled one covariance matrix until the models forecast the same risk for those holdings, using each model as the scale reference in turn. Each optimizer then chose its own positions and traded from its own fills.
 
 <table class="research-table comparison-table compact-table">
   <caption>Each cell shows annualized net compounded return / realized volatility. Compare rows within a block to see the effect of changing stock relationships at a common risk scale. Find the same model in both blocks to see the effect of changing its forecast scale.</caption>
@@ -236,7 +236,7 @@ Similar overall volatility can come with different market exposure. The estimate
 </div>
 <p class="figure-caption">Monthly readings across the full backtest, starting when the first 252-session window is complete. Correlation uses the prior 252 sessions and beta uses 63. Both use daily net returns against the Russell 1000, calculated separately for each schedule and then averaged.</p>
 
-Stock shrinkage’s beta has some of the largest swings, especially in the mid-2010s. Its market correlation often moves with the factor target’s, and both rise together around 2020. The sector-and-style book stays closer to zero in much of the chart and goes sharply negative around 2009–10. A quieter book can still move with the market. Scaling the same positions down lowers volatility and beta while leaving correlation intact. Changing the covariance also changes which longs and shorts the optimizer combines, and the beta cap constrains an estimate at rebalance.
+Stock shrinkage’s beta has some of the largest swings, especially in the mid-2010s. Around 2020 its market correlation rises alongside the factor target’s. The sector-and-style book spends more time near zero and turns sharply negative around 2009–10. Scaling the same positions down lowers their volatility and beta. Their market correlation stays the same. Changing the covariance can also change the positions themselves, even under the same estimated beta cap.
 
 To understand what market exposure misses, I looked at the deepest drawdown of an equal mix of the calibrated stock-shrinkage and factor-target books. In that early-2023 window, each book lost about **8%** while the Russell 1000 rose **11%**. The losses came from the short side as its stocks rose.
 
