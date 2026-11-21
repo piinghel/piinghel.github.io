@@ -196,10 +196,11 @@ samples. On the same 91 dates, Kumo's ICIR was 1.08 with three-week spacing,
 3 minutes 8 seconds to fit and score the fold, compared with 2 minutes
 42 seconds at six weeks. A larger context helped in this fold.
 
-Kumo Medium reached an ICIR of 0.72 on the same dates using the six-week
-context. It took 6 minutes 25 seconds. In this window, increasing Small's
-context from six-week to four-week spacing gave a larger ICIR gain for
-less computation.
+On the same first-fold dates with six-week spacing, Medium reached an
+ICIR of 0.724 in 6 minutes 25 seconds, and Large reached 0.785 in 8 minutes
+42 seconds. Their gross spread Sharpes were 1.91 and 1.87, versus 2.66 for
+LightGBM on that schedule. In this window, increasing Small's context
+from six weeks to four gave a larger ICIR gain for less computation.
 
 The scoring schedule made the bigger difference to runtime. It used
 about one fifth of the predictions needed to score every daily
