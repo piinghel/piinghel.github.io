@@ -158,32 +158,67 @@ The small rank IC gap changes direction with the outcome definition.
 
 The three portfolio schedules give me a second way to choose scoring dates.
 I score every eligible stock on their shared set of signal dates and
-recompute Ridge and LightGBM's statistics on that same schedule. This calls
-for about 1.16 million stock scores over the full history. For this run, I
-expand Kumo's training context from the same start using one date every
-30 trading sessions, keeping the two target tails as before.
+recompute Ridge and LightGBM's statistics on that same schedule. I expand
+Kumo's training context from January 1995 using one date every 30 trading
+sessions, keeping the two target tails as before. Across 12 refits, the
+context grew from 18,148 to 126,892 rows. Scoring 1,162,773 stock observations
+took about 99 minutes on a laptop CPU.
 
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Expanding-window Kumo Small ranking and gross spread">
-<table id="table-5" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">Results on the portfolio signal dates.</span> Each row group begins in January 1999. Gross top-minus-bottom spread statistics are annualized.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
+<div class="research-table-scroll" tabindex="0" role="region" aria-label="Matched expanding-window rank metrics for Ridge, LightGBM and Kumo Small">
+<table id="table-5" class="research-table comparison-table ic-summary-table">
+  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">Rank metrics on the portfolio signal dates.</span> The full comparison has 1,191 dates with realized targets.</caption>
+  <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th></tr></thead>
   <tbody>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2008 · 500 rank dates</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0446</td><td>0.069</td><td>0.65</td><td>13.4%</td><td>17.3%</td><td>0.81</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0546</td><td>0.062</td><td>0.88</td><td>23.9%</td><td>15.6%</td><td>1.45</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>0.0500</td><td>0.059</td><td>0.84</td><td>16.9%</td><td>15.0%</td><td>1.12</td></tr>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2018 · 1,021 rank dates</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0471</td><td>0.077</td><td>0.61</td><td>8.1%</td><td>18.6%</td><td>0.51</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0564</td><td>0.065</td><td>0.87</td><td>18.0%</td><td>14.7%</td><td>1.20</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>0.0452</td><td>0.058</td><td>0.78</td><td>10.6%</td><td>14.0%</td><td>0.79</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0489</td><td>0.090</td><td>0.545</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0557</td><td>0.077</td><td>0.720</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0430</td><td>0.064</td><td>0.671</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2011</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0434</td><td>0.073</td><td>0.592</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0570</td><td>0.063</td><td>0.904</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0470</td><td>0.059</td><td>0.795</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">2012–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0560</td><td>0.107</td><td>0.523</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0541</td><td>0.093</td><td>0.582</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0377</td><td>0.070</td><td>0.542</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0585</td><td>0.129</td><td>0.455</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0529</td><td>0.114</td><td>0.463</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0347</td><td>0.083</td><td>0.421</td></tr>
   </tbody>
 </table>
 </div>
 
-Through September 2018, Ridge has a slightly higher mean IC than Kumo Small.
-Kumo's lower IC standard deviation gives it the higher ICIR. Kumo's spread
-has the lowest volatility of the three, while LightGBM has the highest gross
-spread Sharpe.
+Across 1999–2021, Ridge has a higher mean IC than Kumo Small. Kumo's
+lower IC variability gives it the higher ICIR. In 2017–2021, the drop in
+Kumo's mean IC is enough to put its ICIR below both baselines.
+
+<figure id="figure-2" class="research-figure responsive-figure">
+  {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="1" alt="LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">The three scores on the shared trading schedules.</span> The deciles are equal-weighted. Return, volatility and Sharpe are shown before costs.</figcaption>
+</figure>
+
+<div class="research-table-scroll" tabindex="0" role="region" aria-label="Matched expanding-window gross spread metrics">
+<table id="table-6" class="research-table comparison-table risk-performance-table">
+  <caption><span class="caption-number">Table 6.</span> <span class="caption-title">Gross top-minus-bottom spread on the shared schedules.</span> Return, volatility and Sharpe are annualized.</caption>
+  <thead><tr><th scope="col">Model</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>7.2%</td><td>19.6%</td><td>0.45</td></tr>
+    <tr><th scope="row">LightGBM</th><td>16.8%</td><td>15.0%</td><td>1.11</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>9.4%</td><td>14.9%</td><td>0.68</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>4.4%</td><td>20.9%</td><td>0.31</td></tr>
+    <tr><th scope="row">LightGBM</th><td>9.9%</td><td>14.5%</td><td>0.72</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>3.9%</td><td>16.3%</td><td>0.32</td></tr>
+  </tbody>
+</table>
+</div>
+
+Kumo's gross spread earns a Sharpe of 0.68 over the full sample, between
+Ridge and LightGBM. Its full-sample Sharpe gap versus LightGBM is −0.43,
+with a paired 21-session block-bootstrap interval from −0.78 to −0.10.
+Kumo's spread Sharpe finishes close to Ridge in 2017–2021.
 
 I can hold the first fold's scoring dates fixed to compare the training
 samples. On the same 91 dates, Kumo had a rank IC of 0.0770 and an ICIR of
