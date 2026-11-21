@@ -199,7 +199,6 @@
     if(pick)pick.value=String(state.icTheme);
     root.querySelector('.pse-themes').closest('.blog-chart-row').hidden=state.icTheme>=0;
     root.querySelectorAll('.pse-themes input').forEach((box,i)=>{box.checked=state.visible.has(i);box.style.setProperty('--swatch',themeColor(i));});
-    root.querySelectorAll('[data-period]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.period) === state.period)));
     root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === state.level)));
     const config = { responsive: true, displayModeBar: false };
     const heat = state.level === 'theme' ? themeHeatmap() : predictorHeatmap();
@@ -263,12 +262,16 @@
       PERIODS.push([year,end]);year=end+1;
     }
     const custom=PERIODS.length;
+    const labels=PERIODS.map(([a,b],i)=>i?`${a}–${b}`:'Full history');
+    const selectPeriod=window.BlogCharts.periodChoices(root,labels,index=>{
+      state.period=index;icRange=null;render();
+    });
     from.onchange=to.onchange=()=>{
       const a=Number(from.value),b=Number(to.value);
       if(a>b){from.value=PERIODS[state.period][0];to.value=PERIODS[state.period][1];return;}
       const match=PERIODS.findIndex(([start,end])=>start===a&&end===b);
       if(match<0)PERIODS[custom]=[a,b];
-      state.period=match<0?custom:match;icRange=null;render();
+      state.period=match<0?custom:match;selectPeriod(state.period);icRange=null;render();
     };
     if(data.predictor_ic) {
       const pick=document.createElement('select');pick.setAttribute('aria-label','Lines in the IC panel');
@@ -277,15 +280,6 @@
       pick.onchange=()=>{state.icTheme=Number(pick.value);render();};
       const lines=root.querySelector('.pse-lines');lines.append(pick);lines.closest('.blog-chart-row').hidden=false;
     }
-    const periods = root.querySelector('.pse-periods');
-    PERIODS.forEach(([a, b], i) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.dataset.period = String(i);
-      button.textContent = i ? `${a}–${b}` : 'Full history';
-      button.addEventListener('click', () => { state.period = i; icRange=null;render(); });
-      periods.appendChild(button);
-    });
     root.querySelectorAll('[data-level]').forEach((b) => b.addEventListener('click', () => { state.level = b.dataset.level; render(); }));
     root.querySelector('.pse-status').hidden = true;
     render();

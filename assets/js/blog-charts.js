@@ -133,9 +133,11 @@
     const row=element('div','blog-chart-row'),body=element('div','blog-chart-controls');
     row.append(element('span','blog-chart-row-label',caption),body);parent.append(row);return body;
   }
-  function segments(parent,label) {
-    const group=element('div','blog-chart-segments');group.setAttribute('role','group');group.setAttribute('aria-label',label);
-    parent.append(group);return group;
+  function buttonGroup(label,className) {
+    const group=element('div',className);
+    group.setAttribute('role','group');
+    group.setAttribute('aria-label',label);
+    return group;
   }
   // Both episodes compare the same books, so one key controls both plots.
   function sharedSeriesKey(group,series,visible,redraw) {
@@ -190,8 +192,8 @@
       const button=element('button','',label),preset={button,target,mode};button.type='button';
       button.onclick=()=>{chosen=preset;apply(...target(),mode);};group.append(button);presets.push(preset);
     }
-    const periods=element('div','blog-chart-periods');periods.setAttribute('role','group');
-    periods.setAttribute('aria-label','Chart period');extra.before(periods);
+    const periods=buttonGroup('Chart period','blog-chart-periods');
+    extra.before(periods);
     add(periods,fullLabel,()=>full,'full');
     if(compare)add(periods,'Both drawdowns',()=>full,'compare');
     for(const [label,a,b] of episodes) {
@@ -199,7 +201,8 @@
       add(periods,label,()=>clamp([a,b]));
     }
     const named=periods.children.length>1;
-    const windows=named?segments(controlRow(extra,'Window'),'Window length'):periods;
+    const windows=named?buttonGroup('Window length','blog-chart-segments'):periods;
+    if(named)controlRow(extra,'Window').append(windows);
     const lengths=(Date.parse(full[1])-Date.parse(full[0]))/86400000>365*3?[12,36,60]:[3,6,12];
     function trailing(end,months) {
       const d=new Date(end+'T00:00:00Z'),day=d.getUTCDate();
@@ -223,17 +226,18 @@
       (percent ? (value*100).toFixed(1)+'%' : value.toFixed(2));
   }
   function periodChoices(ui,labels,change) {
-    const group=element('div','blog-chart-periods');
-    group.setAttribute('role','group');group.setAttribute('aria-label','Chart period');ui.prepend(group);
+    const group=buttonGroup('Chart period','blog-chart-periods');
+    const select=index=>Array.from(group.children).forEach((button,i)=>{
+      button.setAttribute('aria-pressed',String(i===index));
+    });
+    ui.prepend(group);
     labels.forEach((label,index)=>{
       const button=element('button','',label);button.type='button';
-      button.setAttribute('aria-pressed',String(index===0));
-      button.onclick=()=>{
-        for(const item of group.children)item.setAttribute('aria-pressed',String(item===button));
-        change(index);
-      };
+      button.onclick=()=>{select(index);change(index);};
       group.append(button);
     });
+    select(0);
+    return select;
   }
   function refitPeriod(ui,years,split,redraw) {
     if(!Number.isFinite(split))return ()=>true;
@@ -879,7 +883,7 @@
     new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
-  Object.assign(api,{load,plotly,whenVisible});
+  Object.assign(api,{load,plotly,whenVisible,periodChoices});
   function init() {document.querySelectorAll('.blog-chart').forEach(host=>whenVisible(host,()=>mount(host)));}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })(typeof window==='undefined'?globalThis:window);

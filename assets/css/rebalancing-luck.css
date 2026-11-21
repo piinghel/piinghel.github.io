@@ -16,7 +16,7 @@
 .sleeve-schedule thead th { color: var(--muted-ink); }
 .sleeve-schedule thead th[scope="colgroup"] { border-bottom: 1px solid var(--rule); }
 .sleeve-schedule th:first-child { text-align: left; }
-.sleeve-schedule small { line-height: 1.2; white-space: normal; }
+.sleeve-schedule small { display: block; color: var(--muted-ink); font-weight: 400; line-height: 1.2; }
 .sleeve-schedule td:nth-child(5), .sleeve-schedule th:nth-child(5) { border-left: 1px solid var(--rule); }
 .sleeve-trade, .sleeve-hold {
   display: block;

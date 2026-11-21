@@ -64,7 +64,7 @@ def export(article: Path, assets: Path, market: Path) -> None:
     ]
     write_chart(assets / "deciles.json", calendar, bars, {
         "deciles": dict(kind="grouped-bars", series=[s["id"] for s in bars],
-                        episodes=decile_episodes, initialRange=[calendar[0], "2021-12-31"],
+                        episodes=decile_episodes,
                         note="Before costs. Daily decile returns averaged across three schedules; zero-cash Sharpe.")})
 
 

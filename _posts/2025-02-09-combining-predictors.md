@@ -146,7 +146,7 @@ fifth session, so a steadily rising line is a theme that kept ranking stocks
 well. It can also show the predictors of one theme: thin lines are the
 predictors, the heavy line is their composite, and hovering names a line.
 
-{% include predictor-structure-explorer.html %}
+{% include predictor-structure-explorer.html id="figure-1" %}
 
 <noscript markdown="0">
   <div class="research-figure responsive-figure">
@@ -294,7 +294,7 @@ of how well a score ranks the target; its Sharpe is within 0.01 of the best.
 ## Results
 {: #prediction-quality-and-portfolio-results }
 
-<table id="table-3" class="research-table comparison-table ic-summary-table portfolio-card-table">
+<table id="table-3" class="research-table comparison-table ic-summary-table">
   <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Cross-sectional ranking quality.</span> Daily rank IC and its unannualized mean-to-standard-deviation ratio. Twenty-session outcomes overlap. The last complete target date is 28 April 2026.</caption>
   <thead>
     <tr><th>Score</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
@@ -336,7 +336,7 @@ through 2021 and 0.78 after.
 
 Returns are compounded annually. Sharpe uses a zero cash rate, and two-way turnover annualizes mean daily traded notional using 252 sessions.
 
-<table id="table-4" class="research-table comparison-table portfolio-card-table">
+<table id="table-4" class="research-table comparison-table">
   <caption><span class="caption-number">Table 4.</span> <span class="caption-title">Net performance and trading.</span> Three-schedule means after 5 bp per dollar traded. Parentheses show the schedule range of Sharpe. Beta is relative to the Russell 1000.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>

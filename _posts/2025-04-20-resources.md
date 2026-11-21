@@ -8,6 +8,7 @@ categories: ["Resources"]
 article_label: Resources · Research and software
 permalink: /quants/resources.html
 navigation: false
+math: false
 ---
 
 ## Blogs and learning

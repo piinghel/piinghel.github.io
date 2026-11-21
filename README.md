@@ -113,8 +113,9 @@ Embed with a retained static fallback:
 
 Use `role` for shared colours; `episodes` are `[label, start, end]` triples.
 An `index` role supplies market context (`benchmark: true` defaults it on).
-Keep only the central comparison visible; put optional series, dates and presets
-under Explore. Do not add miniature slider previews. Show subtotals with nested
+Open on the full history and show the named subperiods above the chart. Use
+“Full episode” for a bounded case study and “Both periods” for two published
+calendar estimates. Put custom dates and optional series under Explore. Show subtotals with nested
 components rather than additive peers. Extend the helper for new chart families.
 The default view must show the comparison supporting its caption. Optional detail
 should answer a specific follow-up question, with units and period labels that
@@ -124,9 +125,9 @@ Selectable coefficient matrices ship all rows in magnitude order; `defaultCount`
 keeps the initial view small and enables search, row selection and a reset. Keep
 the colour scale fixed when selecting predictors.
 
-Performance paths rebase to 100 at the selected close; statistics use subsequent
-daily returns. Prepend a zero-return capital anchor to retain the original first
-return in Full. Bar windows include both endpoints. Return compounds; sample
+Performance paths begin at the selected opening close, indexed to 100 or to
+one dollar. Statistics use subsequent daily returns. Prepend a zero-return
+capital anchor to retain the first return in the full history. Bar windows include both endpoints. Return compounds; sample
 volatility and arithmetic zero-cash Sharpe use 252 sessions/year. Linked book
 contributions are not standalone returns. Preserve each article's conventions.
 Long displays sample weekly endpoints and extremes, but statistics retain every
@@ -180,7 +181,8 @@ for byte), run the renderer from this directory, then
 | Article | Figures | Source |
 | --- | --- | --- |
 | Low volatility | 1 and 2 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
-| | Table 1 and Figure 3 | `python -m low_volatility_factor.article_figures` in the same repository |
+| | Table 1 | HTML table in the article. Volatility and mean ex-ante beta come from the before-cost low- and high-volatility legs in `stage_metrics.csv`. |
+| | Figure 3 | `python -m low_volatility_factor.article_figures` in the same repository |
 | Regression | 1 (explorer), 3–6 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_predictor_data.py` and `scripts/export_combining_predictors_charts.py` |
 | | 1 (no-JavaScript fallback) | `scripts/render_predictor_structure.py` |
 | | 2 | `scripts/render_predictor_training_design.py` |
@@ -188,7 +190,7 @@ for byte), run the renderer from this directory, then
 | Joint sizing | all | `scripts/export_joint_sizing_charts.py` and the shared helper; Figure 1 fallback from `scripts/render_panel_fallbacks.py`, other fallbacks from the private portfolio-optimization project |
 | Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | Same attribution exporter and shared helper; fallbacks from `scripts/render_attribution_themes.py` |
-| Rebalancing luck | 1–2 | `rebalance_tranching.ridge_figures` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
+| Rebalancing luck | 1 and 3 | `rebalance_tranching.ridge_figures` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching). Figure 2 is the HTML sleeve schedule in the article. |
 | Momentum crashes | 1 and 3 | `scripts/render_momentum_figures.py` |
 | | 2 and 4 | `scripts/export_momentum_charts.py`; Figure 4 SVG fallbacks from `scripts/render_momentum_figures.py` |
 
@@ -259,7 +261,7 @@ instead of adding compatibility aliases. Inspect
 callers before removing unused material, and preserve the documented evidence
 bundle and `assets/css/style.scss` entry point. Read AGENTS before concurrent work.
 
-The locally installed Quant Blog Style skill records the house conventions for
+The repository’s [Quant Blog Style skill](.agents/skills/quant-blog-style/SKILL.md) records the house conventions for
 prose, figures, captions, tables and mobile presentation. Invoke it as
 `$quant-blog-style` when preparing future posts.
 

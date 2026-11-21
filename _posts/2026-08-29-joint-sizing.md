@@ -197,7 +197,7 @@ eligible, and a penalty on trading.
 
 I compound returns and use a zero cash rate for Sharpe. I annualize two-way turnover by dividing total traded notional by capital and elapsed calendar years.
 
-<table id="table-2" class="research-table comparison-table portfolio-card-table">
+<table id="table-2" class="research-table comparison-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">From volatility scaling to joint sizing.</span> September 1998–December 2021. Three-schedule means after 5 bp per dollar traded. Parentheses give the lowest and highest schedule Sharpe.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
@@ -283,7 +283,7 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 
 Table 4 covers January 2022–May 2026, about four and a half years.
 
-<table id="table-4" class="research-table comparison-table portfolio-card-table">
+<table id="table-4" class="research-table comparison-table">
   <caption><span class="caption-number">Table 4.</span> <span class="caption-title">The same rules after 2021.</span> January 2022–May 2026, using the conventions in Table 2.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>

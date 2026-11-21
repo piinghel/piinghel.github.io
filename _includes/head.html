@@ -2,34 +2,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script>
-    (function () {
-      var overrideKey = 'quant-notes-theme-override';
-
-      function scheduledTheme(date) {
-        var hour = date.getHours();
-        return hour >= 21 || hour < 7 ? 'dark' : 'light';
-      }
-
-      var theme = scheduledTheme(new Date());
-      try {
-        var savedOverride = JSON.parse(window.localStorage.getItem(overrideKey));
-        if (
-          savedOverride &&
-          (savedOverride.theme === 'dark' || savedOverride.theme === 'light') &&
-          Number(savedOverride.expires) > Date.now()
-        ) {
-          theme = savedOverride.theme;
-        } else {
-          window.localStorage.removeItem(overrideKey);
-          window.localStorage.removeItem('quant-notes-theme');
-        }
-      } catch (error) {
-        // Private browsing or disabled storage should not block page rendering.
-      }
-      document.documentElement.setAttribute('data-theme', theme);
-    }());
-  </script>
+  {%- include theme.html -%}
   {%- seo -%}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

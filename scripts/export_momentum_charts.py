@@ -29,7 +29,7 @@ def export(assets: Path, *, settings: MomentumEvidence = MomentumEvidence()) -> 
     crash = [series(k, label, role, [0.0, *wml[k].cast(pl.Float64).fill_null(0.0).to_list()[1:]])
              for k, label, role in (("winners", "Winners", "long"), ("losers", "Losers", "short"), ("wml", "Long–short (WML)", "strategy"))]
     write_chart(assets / "crash-2009.json", [d.isoformat() for d in wml["date"]], crash, {"crash": dict(
-        kind="performance", series=[s["id"] for s in crash], initialRange=["2007-07-02", "2010-06-30"],
+        kind="performance", series=[s["id"] for s in crash],
         episodes=[["2000–02", "2000-06-30", "2002-12-31"], ["2008–09", "2007-07-02", "2010-06-30"],
                   ["2016", "2015-06-30", "2016-12-30"], ["2020–21", "2019-12-31", "2021-06-30"]],
         directLabels=True, showLegend=False, shade=[["2009-03-09", "2009-05-29"], ["2020-11-09", "2020-11-13"]],
