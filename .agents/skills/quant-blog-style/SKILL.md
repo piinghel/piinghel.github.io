@@ -1,6 +1,6 @@
 ---
 name: quant-blog-style
-description: Apply Pieter-Jan Inghelbrecht's personal, direct research-blog voice and presentation style to posts, figures, tables and captions. Use for natural prose, voice edits and editorial consistency on piinghel.github.io or when this house style is requested; empirical reruns and publication need their own task authorization.
+description: Prepare, edit and launch Pieter-Jan Inghelbrecht's research notes on piinghel.github.io. Use by default for article releases, site layout, prose, research figures, tables and captions. Follow the user's authorization for publication and empirical reruns.
 ---
 
 # Quant blog style
@@ -117,11 +117,25 @@ research, publish, merge, send messages or clean another task's files.
 
 ## Integrate with this site
 
-Preserve permalinks, site identity and the existing prose fonts. Use the site's
-`research-figure` containers and `theme-svg-figure.html` include, its
-`research-table` / `comparison-table` classes, and `period-heading` rows where
-appropriate. Inspect current CSS and include arguments rather than assuming
-their interface has remained unchanged.
+Use `layout: post` for new articles. Shared templates provide the serif headline,
+publication metadata, a narrow reading column, a left contents rail on desktop
+and a disclosure on smaller screens. Let the layout build contents from H2s.
+Preserve permalinks, site identity, chronological RSS and the repository's
+homepage and Previous/Next ordering. Keep the introduction in the article body.
+
+Use the site's `research-figure responsive-figure` containers with
+`theme-svg-figure.html` or `blog-chart.html`. Top-level figures get extra room
+on desktop while captions stay at reading width. Give multi-panel figures a
+phone composition when needed. Keep comparison tables in their shared
+`research-table` / `comparison-table` styles.
+
+For a launch, choose one representative existing figure or an original
+explanatory illustration for the lead homepage note when it earns that space.
+Prefer a visual whose point survives at half-page width. Keep the full
+interpretation and figure in the article. Register a small, uncropped light
+and dark preview in `_data/post_previews.yml`, keyed by source post path with
+`light`, `dark`, `width`, `height`, `alt` and `caption`. Omit the preview
+when no image reads clearly at that size.
 
 Number figures and tables independently in reading order. Put the figure's one
 main title at the beginning of its caption below the display. Put a table's
@@ -143,11 +157,10 @@ and complete exports. Check labels against data lines as well as other labels;
 verify the last observation, legends and direct labels lie inside the export.
 Do not treat a successful build as visual verification.
 
-For this Jekyll site, run the relevant figure-input tests, regenerate dimension
-metadata with the documented command when assets change, then run
-`bundle exec jekyll build`, `python3 scripts/check_site.py _site` and
-`git diff --check`. Use the repository's current environment instructions.
-Report what changed and what was verified; state any blocked evidence or QA.
+Use the repository's build and test commands in `AGENTS.md`. Update dimension
+metadata if vector exports change. For a launch, check the lead note on the
+homepage, the article and its captions in both themes and at phone width,
+then verify the public URL after publication when publication is in scope.
 
 ## Basis
 

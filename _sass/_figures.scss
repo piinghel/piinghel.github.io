@@ -1,10 +1,19 @@
 // One composition per figure, with a local scroll region on small screens.
 .post-content .research-figure {
   width: 100%;
-  margin: 2rem auto 0.5rem;
+  margin: 2.4rem 0 0.65rem;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scrollbar-width: thin;
+}
+
+// Let first-level displays use the space to the right of the reading column.
+// Figures inside a comparison grid keep the width set by their own panel.
+@media (min-width: 68rem) {
+  .e-content > .research-figure,
+  .e-content > .blog-chart {
+    width: calc(100% + clamp(0rem, 50vw - 24rem, 15rem));
+  }
 }
 .theme-svg-figure,
 .theme-svg-figure img { display: block; width: 100%; margin: 0; }

@@ -3,8 +3,8 @@
 ## Typography and color
 
 Use one readable sans-serif font across research charts. DejaVu Sans is the
-portable Matplotlib default for this site; preserve the existing serif body
-text and sans-serif site headings. Set chart type sizes for the displayed size:
+portable Matplotlib default for this site. The site uses serif headlines and
+article prose, with sans-serif navigation, captions and controls. Set chart type sizes for the displayed size:
 aim for roughly 12–14 CSS px ticks/legends and 14–16 px variable labels. Judge
 the rendered result, not the export's nominal point size. Use modest semibold
 panel labels; reserve larger type for article headings.

@@ -149,6 +149,10 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 
 ## Site structure and concurrent work
 
+- Apply the repository's `quant-blog-style` skill in
+  `.agents/skills/quant-blog-style/` by default when preparing or launching an
+  article. Use the shared article layout and follow its figure and preview
+  guidance.
 - Post front matter owns title, description, category and canonical permalink.
   Use `{% link _posts/<file>.md %}` for article links, with anchors after the tag.
   Reading order, `home_after` and header links use source post paths, never URLs.

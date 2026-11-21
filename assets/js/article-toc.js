@@ -80,7 +80,7 @@
 
   toc.hidden = false;
 
-  const sideRail = window.matchMedia("(min-width: 1160px)");
+  const sideRail = window.matchMedia("(min-width: 68rem)");
   const syncLayout = () => {
     toc.open = sideRail.matches;
   };
@@ -90,7 +90,7 @@
   let ticking = false;
   const updateCurrentSection = () => {
     const readingLine = window.scrollY + Math.min(window.innerHeight * 0.28, 220);
-    let currentIndex = 0;
+    let currentIndex = -1;
 
     headings.forEach((heading, index) => {
       const headingTop = heading.getBoundingClientRect().top + window.scrollY;

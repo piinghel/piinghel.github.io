@@ -3,7 +3,10 @@ layout: base
 ---
 
 <div class="home">
-  <h1 class="home-title">Research notes</h1>
+  <header class="home-header">
+    <h1 class="home-title">Research notes</h1>
+    <p>Systematic strategies, machine learning, and portfolio construction.</p>
+  </header>
   {%- comment -%}
     Newest first, with explicit home_after links for article continuations.
     Posts published on the same day list the latest part first (Part 2, then 1).
@@ -27,21 +30,29 @@ layout: base
   {%- if listed.size > 0 -%}
     <ul class="post-list">
       {%- for post in home_posts -%}
-      <li>
-        <h2>
-          <a class="post-link" href="{{ post.url | relative_url }}">
-            {{ post.title | escape }}
-          </a>
-        </h2>
+      {%- assign preview = site.data.post_previews[post.path] -%}
+      <li{% if forloop.first %} class="lead-post{% if preview %} lead-post--illustrated{% endif %}"{% endif %}>
         <div class="post-list-details">
           <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
           {%- for category in post.categories limit: 1 -%}
-            <span class="post-topic">{{ category }}</span>
+            <span class="post-topic">{{ category | escape }}</span>
           {%- endfor -%}
         </div>
-        {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
-        {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
+        <div class="post-list-copy">
+          <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+          {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
+          {%- if site.show_excerpts -%}{{ post.excerpt }}{%- endif -%}
+        </div>
+        {%- if forloop.first and preview -%}
+          <figure class="post-preview">
+            <picture class="post-preview-light">
+              <img src="{{ preview.light | relative_url }}" alt="{{ preview.alt | escape }}" width="{{ preview.width }}" height="{{ preview.height }}" decoding="async">
+            </picture>
+            <picture class="post-preview-dark">
+              <img src="{{ preview.dark | relative_url }}" alt="{{ preview.alt | escape }}" width="{{ preview.width }}" height="{{ preview.height }}" decoding="async">
+            </picture>
+            <figcaption>{{ preview.caption | escape }}</figcaption>
+          </figure>
         {%- endif -%}
       </li>
       {%- endfor -%}

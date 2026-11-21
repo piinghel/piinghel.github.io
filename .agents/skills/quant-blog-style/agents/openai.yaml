@@ -1,4 +1,4 @@
 interface:
   display_name: "Quant Blog Style"
-  short_description: "Consistent research prose, figures and tables"
-  default_prompt: "Use $quant-blog-style to present this research post with clear prose, readable figures and compact tables."
+  short_description: "Research articles, figures and launch layout"
+  default_prompt: "Use $quant-blog-style to prepare this research note for launch with the shared article layout and responsive figures."
