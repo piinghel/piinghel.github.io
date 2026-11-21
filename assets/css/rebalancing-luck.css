@@ -1,5 +1,7 @@
+.post:has(.sleeve-figure) .post-title { text-wrap: balance; }
 .post-content:has(.sleeve-figure) > p { max-width: 66ch; }
 .rebalancing-figure .blog-chart { margin-top: 0.4rem; }
+.rebalancing-figure .blog-chart-options { margin-top: 0.3rem; }
 .rebalancing-figure .figure-caption,
 .sleeve-figure .figure-caption { max-width: 67ch; margin-bottom: 0.6rem; }
 .sleeve-figure { margin: 1.8rem 0; }

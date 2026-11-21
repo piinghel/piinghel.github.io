@@ -234,7 +234,7 @@
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
-      if(cfg.kind==='tranche-tradeoff'){await trancheTradeoff(host,cfg);return;}
+      if(cfg.kind==='calendar-distribution'){await calendarDistribution(host,cfg);return;}
       if(cfg.kind.startsWith('attribution')){await attribution(host,data,cfg);return;}
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
@@ -282,6 +282,7 @@
         checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
+      if(cfg.controlsBelow)windowLabel.after(extra);
       const statisticsPanel=element('details','blog-chart-statistics');statisticsPanel.open=cfg.statisticsOpen??false;
       statisticsPanel.append(element('summary','','Window statistics'));ui.append(statisticsPanel);
       const tableWrap=element('div','blog-chart-table-wrap'); statisticsPanel.append(tableWrap);
@@ -656,41 +657,41 @@
     new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
-  async function trancheTradeoff(host,cfg) {
+  async function calendarDistribution(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
     const graph=element('div','blog-chart-plot');ui.append(graph);
     async function draw() {
       const mobile=host.clientWidth<550,dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      const height=mobile?560:340,traces=[],layout={autosize:true,height,
-        margin:{l:48,r:12,t:61,b:34},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
-        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},hoverlabel:hoverStyle(),
-        dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:1+26/(height-95),yanchor:'bottom',itemclick:false,itemdoubleclick:false},
-        annotations:[]};
+      const height=mobile?416:245,traces=[],layout={autosize:true,height,
+        margin:{l:mobile?76:87,r:12,t:28,b:48},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
+        font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11:12,color:ink},hoverlabel:hoverStyle(),
+        dragmode:false,showlegend:false,hovermode:'closest',
+        annotations:[{text:'Annualized net return (%)',x:.5,y:0,yshift:-24,xref:'paper',yref:'paper',
+          showarrow:false,yanchor:'top',font:{size:12}}]};
       graph.style.height=height+'px';
-      [['sd_pp','Return dispersion (pp)'],['annual_orders','Orders per year']].forEach(([metric,title],i)=>{
-        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.57,i*.57+.43],yd=mobile?[i?0:.59,i?.42:1]:[0,1];
-        const maximum=Math.max(...cfg.periods.flatMap(p=>p.points.map(q=>q[metric])));
-        layout['xaxis'+s]={domain:xd,anchor:y,range:[.65,3.35],tickvals:[1,2,3],
-          ticktext:['1 tranche','2 tranches','3 tranches'],fixedrange:true,showgrid:false,zeroline:false};
-        layout['yaxis'+s]={domain:yd,anchor:x,range:[0,maximum*1.18],fixedrange:true,gridcolor:grid,zeroline:false,nticks:5,tickformat:metric==='annual_orders'?',.0f':'.1f'};
-        layout.annotations.push({text:title,x:xd[0],y:yd[1],yshift:2,xref:'paper',yref:'paper',
+      const weekdays=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+      const labels=['One book','Two books','Three books'];
+      for(const [i,period] of cfg.periods.entries()) {
+        const s=i?String(i+1):'',x='x'+s,y='y'+s;
+        const xd=mobile?[0,1]:[i*.54,i*.54+.46],yd=mobile?(i?[0,.42]:[.58,1]):[0,1];
+        layout['xaxis'+s]={domain:xd,anchor:y,range:period.limits,tick0:0,dtick:1,fixedrange:true,
+          gridcolor:grid,zeroline:false};
+        layout['yaxis'+s]={domain:yd,anchor:x,range:[-.48,2.48],tickvals:[2,1,0],ticktext:labels,
+          fixedrange:true,showgrid:false,zeroline:false,showticklabels:mobile||i===0};
+        layout.annotations.push({text:period.title,x:xd[0],y:yd[1],yshift:5,xref:'paper',yref:'paper',
           showarrow:false,xanchor:'left',yanchor:'bottom',font:{size:13}});
-        cfg.periods.forEach((period,j)=>{
-          const color=j?COLORS.blend:COLORS.short,values=period.points.map(p=>p[metric]);
-          traces.push({type:'scatter',mode:'lines+markers',name:period.title,legendgroup:period.title,showlegend:i===0,
-            x:period.points.map(p=>p.sleeves),y:values,xaxis:x,yaxis:y,
-            line:{color,width:j?2.3:1.6,dash:j?'solid':'dash'},
-            marker:{size:j?8:7,color,symbol:j?'circle':'diamond-open'},
-            customdata:period.points.map(p=>p.calendar_count),
-            hovertemplate:'%{x} tranches · %{customdata} calendars<br>'+title+': %{y'+(metric==='annual_orders'?':,.0f':':.2f')+'}<extra>'+period.title+'</extra>'});
-          if(!j)return;
-          for(const p of [period.points[0],period.points.at(-1)]){
-            const above=metric==='sd_pp'&&p.sleeves===1;
-            layout.annotations.push({text:metric==='annual_orders'?Math.round(p[metric]).toLocaleString('en-US'):p[metric].toFixed(2),
-              x:p.sleeves,y:p[metric],xref:x,yref:y,showarrow:false,yshift:above?13:-15,font:{size:12,color}});
-          }
-        });
-      });
+        for(const count of [1,2,3]) {
+          const points=period.points.filter(point=>point.sleeves===count);
+          const values=points.map(point=>point.annual_return),row=3-count;
+          const color=count===3?(dark?'#76bda5':'#176b58'):COLORS.short;
+          traces.push({type:'scatter',mode:'lines',x:[Math.min(...values),Math.max(...values)],y:[row,row],
+            xaxis:x,yaxis:y,line:{color,width:1.3},opacity:.55,hoverinfo:'skip'});
+          traces.push({type:'scatter',mode:'markers',x:values,y:points.map(point=>point.position),xaxis:x,yaxis:y,
+            marker:{size:6,color,line:{color:plotSurface(),width:.55}},
+            customdata:points.map(point=>weekdays[point.weekday-1]+' · '+(count===1?'week ':'weeks ')+point.schedules.replaceAll('+',', ')),
+            hovertemplate:'%{customdata}<br>%{x:.2f}% annualized net return<extra></extra>'});
+        }
+      }
       await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
     }
     await draw();host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;

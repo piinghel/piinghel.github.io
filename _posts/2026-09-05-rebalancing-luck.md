@@ -16,7 +16,7 @@ github_repositories:
     url: https://github.com/piinghel/rebalance-tranching
 ---
 
-<link rel="stylesheet" href="{{ '/assets/css/rebalancing-luck.css' | relative_url }}?v=1">
+<link rel="stylesheet" href="{{ '/assets/css/rebalancing-luck.css' | relative_url }}?v=2">
 
 Rebalance every three weeks and you still have to choose which week to start.
 Suppose I use Friday signals. I can start this Friday, next Friday, or the
@@ -33,7 +33,8 @@ I use the saved walk-forward predictions from the Ridge model, with September
 come from the existing research backtest. The sizing rules come from
 [From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}).
 
-## The starting week matters
+## The starting week
+{: #the-starting-week-matters }
 
 Figure 1 shows what that choice meant for Friday signals from January 2022
 to May 2026. The weakest starting week earned **5.73%** a year after costs
@@ -41,18 +42,19 @@ and the strongest earned **8.95%**. The three together earned **7.70%**.
 Had I picked the weakest week, the entire portfolio would have followed that
 path. In the blend, it accounts for a third of each day's P&L.
 
+<figure class="research-figure rebalancing-figure responsive-figure">
+  {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=4" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="The three Friday starting weeks finish at different levels. The equal-notional blend ends between the strongest and weakest schedules." version="3" %}
+  <figcaption class="figure-caption"><strong>Figure 1. The three Friday starting weeks diverged.</strong> Growth compounds daily net P&amp;L per unit of fixed notional from 100 at the 31 December 2021 close through May 2026. The vertical scale is logarithmic.</figcaption>
+</figure>
+
 All three schedules use the same 80 ranking predictors, rank buffer and trade
 penalty. The backtest fills orders at the next session's close and charges
 5 bp per dollar traded. It uses the same 7% forecast risk budget as the
 joint-sizing article, with a lower volatility forecast for the same holdings
 that allows larger positions.
 
-<figure class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=3" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="The three Friday starting weeks finish at different levels. The blue equal-notional blend ends between the strongest and weakest schedules." version="3" %}
-  <figcaption class="figure-caption"><strong>Figure 1. The three Friday starting weeks diverged.</strong> Growth compounds daily net P&amp;L per unit of fixed notional from 100 at the 31 December 2021 close through May 2026. The vertical scale is logarithmic.</figcaption>
-</figure>
-
-## Split the portfolio across three weeks
+## Three staggered books
+{: #split-the-portfolio-across-three-weeks }
 
 I split the notional into three books. In week 1, the first book gets a new
 target and the other two carry their positions. In week 2, the second book
@@ -82,7 +84,7 @@ rebalance scheduled each week, while each book keeps its three-week cycle.
       {% endfor %}
     </tbody>
   </table>
-  <figcaption class="figure-caption"><strong>Figure 2. One book rebalances each week.</strong> The blue markers show scheduled rebalances. The week labels describe the signal schedule. Holidays can move the actual signal and fill dates.</figcaption>
+  <figcaption class="figure-caption"><strong>Figure 2. One book rebalances each week.</strong> Shaded cells mark scheduled rebalances. Holidays can move the actual signal and fill dates.</figcaption>
 </figure>
 
 The backtest scales each standalone book's executed positions and trades to a
@@ -97,7 +99,8 @@ The blend earns exactly the average daily net return of its three books.
 With the average return fixed, I can focus on how much volatility the
 three books take out when I hold them together.
 
-## Staggering the books lowers volatility
+## Lower volatility
+{: #staggering-the-books-lowers-volatility }
 
 The three books share many holdings. When their positions differ, a bad day
 for one book can be milder for another. The less closely they move together,
@@ -139,7 +142,8 @@ slightly higher. The drawdown changed very little.
   </tbody>
 </table>
 
-## Staggering narrows the spread across calendars
+## Less calendar dispersion
+{: #staggering-narrows-the-spread-across-calendars }
 
 The other question is how much the annualized return changes when I pick
 a different calendar. With a single book I have 15 choices, one for each
@@ -155,17 +159,18 @@ three. The fall was smaller in development, from **0.75 to 0.50** points.
 That was still more weekday sensitivity than the quietest single starting
 week in development, at **0.34** points.
 
-To put the later numbers in terms of the choice I faced, the weakest of
-the fifteen single schedules earned **5.65%** a year. The weakest of the
-five blends earned **7.13%**. Holding all three starting weeks takes
-that choice away. Picking the weekday still matters.
+Figure 3 shows where those returns landed. In the later period, the fifteen
+single schedules ranged from **5.65% to 9.42%** a year. The five blends
+ranged from **7.13% to 8.08%**. Holding all three starting weeks lifted the
+weakest outcome and gave up the strongest. Picking the weekday still matters.
 
 <figure class="research-figure rebalancing-figure responsive-figure">
-  {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=6" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="With more tranches, annualized returns are less spread across calendar choices and order counts rise. Dispersion fell from 1.11 to 0.31 percentage points in the later period." version="6" %}
-  <figcaption class="figure-caption"><strong>Figure 3. Less calendar dispersion, more orders.</strong> Dispersion is the population standard deviation of compounded annual net returns. Order counts are means. The 15 standalone schedules, 15 same-weekday pairs and five weekly blends are equally weighted within each group. Two tranches alternate one- and two-week gaps.</figcaption>
+  {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=7" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="Annualized net returns for 15 single schedules, 15 pairs and five three-book blends in each period. After 2021, the range narrows from 5.65–9.42% for one book to 7.13–8.08% for three." version="7" %}
+  <figcaption class="figure-caption"><strong>Figure 3. Returns cluster more tightly with three books.</strong> Each dot is one of 15 single schedules, 15 same-weekday pairs or five three-book blends. The lines mark each group's range. Both panels use the same return scale.</figcaption>
 </figure>
 
-## The week and weekday interact
+## Week and weekday
+{: #the-week-and-weekday-interact }
 
 I expected the starting week to matter more than the weekday. Then I
 looked at the third starting week after 2021. It was the best of the three
@@ -187,7 +192,8 @@ That interaction accounts for about **92%** of the squared differences
 from the average calendar return after 2021. The starting week mattered quite
 a bit for Friday even though it explained little on average.
 
-## Putting the spread in context
+## The historical spread
+{: #putting-the-spread-in-context }
 
 A calendar that wins in a backtest might have a persistent advantage.
 Before preferring it, though, I want to know how unusual the full spread
@@ -207,7 +213,8 @@ is common in these simulations even when every schedule has the same
 mean daily return. The size of the gap alone gives me little reason to
 back the historical winner.
 
-## Smaller trades, more rebalance cycles
+## Smaller trades, more orders
+{: #smaller-trades-more-rebalance-cycles }
 
 The average order count rose from **2,429 to 7,288 a year** after 2021.
 Each book's order sizes were scaled to a third, so the total amount
@@ -226,7 +233,7 @@ charges, borrow and financing sit outside that calculation. A study by
 Zarattini and Pagani models how these execution trade-offs vary with account
 size.
 
-## Combining starting weeks reduced timing dependence
+## Weekly thirds
 {: #combining-starting-weeks-is-the-better-default }
 
 What I like about weekly thirds is that I can keep the three-week cycle and
