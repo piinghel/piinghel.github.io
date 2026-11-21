@@ -55,6 +55,9 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   Lead with the mathematics, its assumptions and what the comparisons isolate.
   Use portfolio results to explain mechanisms and trade-offs. Keep Python,
   code structure and routine engineering details in the research repository.
+- Carry small numerical examples through the calculation and back to the
+  portfolio decision. Explain what each estimate means, why a choice matters
+  and how the next comparison tests it.
 - Omit the sector and industry classification snapshot and historical
   reclassification caveat from all public posts. Keep dataset provenance in
   private research records.

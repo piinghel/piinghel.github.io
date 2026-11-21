@@ -58,7 +58,7 @@ The first two heatmaps compare stock returns and residual returns on the same da
 
 Removing the factors brought the average correlation from **about 25% to near zero**. Pairs in the same group were still about **8.5 correlation points** more correlated than pairs in different groups. The gap shrank to **about 5 points** over the next 252 sessions with the groups held fixed.
 
-Across all 27 cohorts, within-group correlation was about **5 points** higher than between-group correlation in formation and about **2 points** higher the next year. I shuffle group labels within industries to see how much the grouping adds beyond industry composition. That shuffle produced a forward gap of less than half a point on average. The original groups beat the 95th percentile of those industry shuffles in all 27 cohorts.
+Across all 27 cohorts, within-group correlation was about **5 points** higher than between-group correlation in formation and about **2 points** higher the next year. A group can look persistent simply because many of its names are in the same industry. I swap names within industries while preserving each group’s industry mix. The shuffled groups had a forward gap of less than half a point on average. The original groups beat the 95th percentile of the shuffles in all 27 cohorts.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
@@ -122,7 +122,7 @@ For a principal direction $$q$$ with variance $$\lambda$$, its contribution is t
 - **Keep one principal component.** Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
 - **Combine them.** Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
 
-In the example, shrinking halfway toward zero takes the A–B correlation from 0.6 to 0.3. The first component alone contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to that entry. The opposing A–B component contributes $$-0.2$$. Keeping the first component at full strength and putting the remaining variance back on the diagonal therefore raises that pair’s correlation to 0.8. This is why I check how much of the fitted components’ variance survives.
+Return to the spread. The first component contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to the A–B correlation. The opposing component subtracts 0.2, giving the observed 0.6. Retain only the first component and move the remaining variance onto the diagonal, and the estimated correlation rises to 0.8. The spread’s forecast variance falls to 1.4, below the sample-correlation estimate of 1.8 and the halfway-shrunk estimate of 2.4. Keeping the strongest component can give the spread more hedging credit than the full sample estimate.
 
 Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the **same sector and group**, carrying the trailing correlation forward reduced development error from **about 17 to 12 correlation points** against a forecast of zero. For pairs in **different sectors and groups**, predicting zero or using ordinary shrinkage gave errors of around **8 points**, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
 
@@ -137,7 +137,13 @@ Ordinary shrinkage still reduced overall forecast error compared with predicting
 
 In development the five-component estimate assigned **about 15** units of variance per direction to components two through five. The following year delivered **about 4**, close to the ordinary-shrinkage forecast. Ordinary shrinkage also had lower forecast loss for that band in all 27 cohorts.
 
-Keeping a component can give it *more* forecast variance than its original eigenvalue. On the formation sample the remainder $$U$$ has zero variance along a retained direction. Shrinking its off-diagonal entries removes some of the offsets that kept that variance at zero. The component then receives its original variance plus part of the remainder’s diagonal.
+The combined estimator can give a retained direction more variance than its fitted eigenvalue. For a retained unit direction $$q$$, the remainder $$U$$ satisfies $$q^\top Uq=0$$. Shrink its off-diagonal terms and the forecast becomes
+
+$$
+q^\top Rq=\lambda+\delta\,q^\top\operatorname{diag}(U)q.
+$$
+
+The original offsets in $$U$$ kept its variance along $$q$$ at zero. Replacing some of those offsets with the individual stock variances adds risk in that direction, even though each stock’s own variance stays fixed.
 
 On the filled books, dropping residual correlations moved the factor target’s later volatility forecasts by **less than a tenth of a percentage point** on either set of holdings. Each covariance enters portfolio variance multiplied by the two signed weights. Contributions can cancel across the long and short sides even when individual residual correlations are material.
 

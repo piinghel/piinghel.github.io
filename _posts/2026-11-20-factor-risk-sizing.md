@@ -253,7 +253,14 @@ The same 7% cap can produce a smaller book if one model forecasts more risk for 
 
 All three books became more volatile in 2020–21. Stock shrinkage peaked near **15%**, several points above both factor books. The factor target spent more of the chart close to the **7%** budget.
 
-At each decision close, I priced the filled stock-shrinkage holdings with both models. I rescaled one covariance matrix until the models forecast the same risk for those holdings, using each model as the scale reference in turn. Each optimizer then chose its own positions and traded from its own fills.
+I use the stock-shrinkage positions held at each decision close as a reference, $$w_0$$. Let $$\Sigma_s$$ and $$\Sigma_f$$ be the stock-shrinkage and factor-target covariance estimates. To give the factor target the stock model’s risk level, I use
+
+$$
+\widetilde\Sigma_f =
+\frac{w_0^\top\Sigma_s w_0}{w_0^\top\Sigma_f w_0}\,\Sigma_f.
+$$
+
+If the models forecast 7% and 10% on those weights, I multiply the factor target’s covariance by $$7^2/10^2=0.49$$. Both then price that reference book at 7%, while their correlations and relative stock volatilities still differ. I also do the reverse and put stock shrinkage at the factor target’s risk level. Each optimizer chooses its own holdings under each comparison.
 
 <table class="research-table comparison-table compact-table">
   <caption>Each cell shows annualized net compounded return / realized volatility. Compare rows within a block to see the effect of changing stock relationships at a common risk scale. Find the same model in both blocks to see the effect of changing its forecast scale.</caption>
