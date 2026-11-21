@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Equity Model Comparison"
-description: "Ridge and LightGBM on the same stock universe, with first walk-forward results for NVIDIA Kumo Tabular Small."
+description: "Ridge, LightGBM and NVIDIA Kumo Tabular Small on the same stock universe, from rank IC to net portfolio returns."
 date: 2026-11-21
 last_modified_at: 2026-11-21
 categories: ["Signals"]
@@ -54,9 +54,10 @@ rows, enough to give it a slightly higher ICIR in 2017–2021.
 
 To see where the scores differ, I sort the eligible stocks into ten
 equal-weight deciles on each rebalance date and trade at the next close.
-Each of three schedules rebalances every 15 sessions. I average their
-daily returns before compounding, and use zero cash return for the Sharpe
-ratio. This gives the same gross portfolio diagnostic for both scores.
+Each of three schedules rebalances every 15 sessions. Between rebalances I
+keep the decile membership and average its stocks' daily returns. I average
+the three schedules' daily returns before compounding and use zero cash return
+for Sharpe.
 
 <figure id="figure-1" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/equity-model-comparison/decile-profile" mobile="/assets/equity-model-comparison/decile-profile_mobile" version="1" alt="In 1999–2021, LightGBM's top score decile earns higher annual return and has higher volatility than Ridge. Their top decile Sharpes are nearly equal." %}
@@ -89,37 +90,6 @@ That puts the higher recent Ridge IC in context. LightGBM had the stronger
 spread over 2017–2021 even when Ridge's scores had the higher mean correlation
 across all names.
 
-## Returns after portfolio construction
-
-The optimized books start from the 75 highest and 75 lowest scores. A common
-risk target, gross and beta constraints, and an order limit of 10% of prior
-21-session average daily dollar volume govern the weights and fills. I use
-the turnover penalties chosen with each model, 2.5 basis points for Ridge and
-5 basis points for LightGBM. The simulated fees are shared, at 7.5 and 10 basis
-points per executed dollar on the long and short sides through 2010, then 5
-and 7.5 basis points.
-
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Constructed portfolio metrics">
-<table id="table-3" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Long–short performance after execution fees.</span> I calculate compounded annual return, volatility and zero-cash Sharpe for each schedule, then average the three statistics over matching dates.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">Net return</th><th scope="col">Volatility</th><th scope="col">Net Sharpe</th></tr></thead>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>10.7%</td><td>8.7%</td><td>1.21</td></tr>
-    <tr><th scope="row">LightGBM</th><td>16.9%</td><td>7.5%</td><td>2.12</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2011</th></tr>
-    <tr><th scope="row">Ridge</th><td>9.9%</td><td>7.9%</td><td>1.22</td></tr>
-    <tr><th scope="row">LightGBM</th><td>17.7%</td><td>7.1%</td><td>2.34</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2012–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>11.8%</td><td>9.7%</td><td>1.20</td></tr>
-    <tr><th scope="row">LightGBM</th><td>15.9%</td><td>8.1%</td><td>1.87</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>12.3%</td><td>10.6%</td><td>1.15</td></tr>
-    <tr><th scope="row">LightGBM</th><td>14.8%</td><td>8.9%</td><td>1.60</td></tr>
-  </tbody>
-</table>
-</div>
-
 ## The first Kumo Small window
 
 Kumo Tabular Small and Large approach the same prediction problem through
@@ -132,8 +102,8 @@ was in January 1999. I scored every eligible stock using its features for
 that date. [Kumo Tabular technical report](https://arxiv.org/abs/2611.23001v1)
 
 <div class="research-table-scroll" tabindex="0" role="region" aria-label="First Kumo Small window, ranking and gross spread">
-<table id="table-4" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 4.</span> <span class="caption-title">January 1999–September 2000.</span> Rank statistics use 421 dates with realized targets. The gross top-minus-bottom spread statistics are annualized.</caption>
+<table id="table-3" class="research-table comparison-table risk-performance-table">
+  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">January 1999–September 2000.</span> Rank statistics use 421 dates with realized targets. The gross top-minus-bottom spread statistics are annualized.</caption>
   <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
   <tbody>
     <tr><th scope="row">Ridge</th><td>0.0491</td><td>0.070</td><td>0.70</td><td>18.7%</td><td>15.6%</td><td>1.18</td></tr>
@@ -165,8 +135,8 @@ context grew from 18,148 to 126,892 rows. Scoring 1,162,773 stock observations
 took about 99 minutes on a laptop CPU.
 
 <div class="research-table-scroll" tabindex="0" role="region" aria-label="Matched expanding-window rank metrics for Ridge, LightGBM and Kumo Small">
-<table id="table-5" class="research-table comparison-table ic-summary-table">
-  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">Rank metrics on the portfolio signal dates.</span> The full comparison has 1,191 dates with realized targets.</caption>
+<table id="table-4" class="research-table comparison-table ic-summary-table">
+  <caption><span class="caption-number">Table 4.</span> <span class="caption-title">Rank metrics on the portfolio signal dates.</span> The full comparison has 1,191 dates with realized targets.</caption>
   <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
@@ -199,8 +169,8 @@ Kumo's mean IC is enough to put its ICIR below both baselines.
 </figure>
 
 <div class="research-table-scroll" tabindex="0" role="region" aria-label="Matched expanding-window gross spread metrics">
-<table id="table-6" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 6.</span> <span class="caption-title">Gross top-minus-bottom spread on the shared schedules.</span> Return, volatility and Sharpe are annualized.</caption>
+<table id="table-5" class="research-table comparison-table risk-performance-table">
+  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">Gross top-minus-bottom spread on the shared schedules.</span> Return, volatility and Sharpe are annualized.</caption>
   <thead><tr><th scope="col">Model</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
@@ -236,12 +206,56 @@ about one fifth of the predictions needed to score every daily
 cross-section. Increasing the prediction batch size from 1,000 to 1,500
 improved throughput by about 4% in a timing test on the first context.
 
-The Ridge and LightGBM results show why I want all three views of a score.
-The daily IC compares the whole ordering, the deciles show what happens at
-the tails, and the constructed book incorporates the weights and fees paid
-to trade them. Here the difference was already visible in the equal-weight
-spread. The optimized comparison then shows how much of it survived in two
-specified portfolio recipes. These are historical comparisons on the
-same archived development panel. The walk-forward cutoff governs when
-each return outcome can enter a fit. Reproducing the information available
-on each historical date would require dated input vintages.
+## Returns after portfolio construction
+
+The optimized books start from the 75 highest and 75 lowest scores. Each
+schedule uses $5 million of simulated capital, a 7% annual volatility
+target, and gross and beta limits. Measurable orders are capped at 10% of
+prior 21-session average daily dollar volume. The simulation closes
+positions with stopped quotes at their last observed price.
+
+The optimizer prices trades against settled holdings. Its turnover penalty
+is 2.5 basis points for Ridge and 5 basis points for LightGBM and Kumo Small.
+I use the LightGBM portfolio recipe with Kumo scores.
+
+The books share the same execution fees. Simulated long and short trades
+pay 7.5 and 10 basis points per executed dollar through 2010, then 5 and 7.5
+basis points. I compute compounded annual return, volatility and zero-cash
+Sharpe separately for each schedule on matching dates and average the
+three statistics.
+
+<div class="research-table-scroll" tabindex="0" role="region" aria-label="Current-cost portfolio metrics">
+<table id="table-6" class="research-table comparison-table risk-performance-table">
+  <caption><span class="caption-number">Table 6.</span> <span class="caption-title">Long–short performance after execution fees.</span> All three models use the same rebalance schedules.</caption>
+  <thead><tr><th scope="col">Model</th><th scope="col">Net return</th><th scope="col">Volatility</th><th scope="col">Net Sharpe</th></tr></thead>
+  <tbody>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>10.8%</td><td>8.7%</td><td>1.21</td></tr>
+    <tr><th scope="row">LightGBM</th><td>16.9%</td><td>7.5%</td><td>2.12</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>8.9%</td><td>7.1%</td><td>1.24</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2011</th></tr>
+    <tr><th scope="row">Ridge</th><td>9.9%</td><td>8.0%</td><td>1.22</td></tr>
+    <tr><th scope="row">LightGBM</th><td>17.7%</td><td>7.1%</td><td>2.35</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>9.9%</td><td>6.8%</td><td>1.42</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">2012–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>11.9%</td><td>9.7%</td><td>1.22</td></tr>
+    <tr><th scope="row">LightGBM</th><td>15.9%</td><td>8.0%</td><td>1.88</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>7.8%</td><td>7.5%</td><td>1.04</td></tr>
+    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>12.6%</td><td>10.5%</td><td>1.18</td></tr>
+    <tr><th scope="row">LightGBM</th><td>14.9%</td><td>8.9%</td><td>1.60</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>7.0%</td><td>8.1%</td><td>0.88</td></tr>
+  </tbody>
+</table>
+</div>
+
+LightGBM's lead in the equal-weight spread carries through construction and
+fees. Kumo Small and Ridge have similar net Sharpe over 1999–2021. Kumo
+earned a lower return at lower volatility. Their net Sharpe difference
+was 0.02, with a paired 21-session block-bootstrap interval from −0.30 to
+0.32. From 2017–2021, Kumo trailed both baselines after fees.
+
+These comparisons use the same archived development panel. The walk-forward
+cutoff governs when each return outcome can enter a fit. Reproducing the
+information available on each historical date would require dated input
+vintages.
