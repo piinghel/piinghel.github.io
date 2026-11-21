@@ -3,9 +3,9 @@
 .pse.chart-pending { min-height:940px; }
 .blog-chart [hidden] { display:none !important; }
 .blog-chart-note,.blog-chart-window { margin:.5rem 0; font-size:13px; }
-.blog-chart-window { color:#7b8793; }
+.blog-chart-window { color:var(--muted-ink); }
 .blog-chart-statistics { font-size:13px; }
-.blog-chart summary { cursor:pointer; color:#7b8793; width:fit-content; }
+.blog-chart summary { cursor:pointer; color:var(--muted-ink); width:fit-content; }
 .blog-chart summary:hover { color:inherit; }
 .blog-chart-statistics { border-top:1px solid #8995a130; padding-top:.6rem; }
 .blog-chart-heading { font-weight:600; font-size:14px; margin:0 0 .75rem; }
@@ -16,7 +16,7 @@
 .post-content .blog-chart th,.post-content .blog-chart td { padding:.3rem .55rem; text-align:right; white-space:nowrap; }
 .post-content .blog-chart th:first-child { text-align:left; white-space:normal; }
 .blog-chart-plot { width:100%; min-width:0; }
-.blog-chart .blog-chart-periods { display:flex; flex-wrap:wrap; gap:1.1rem; border:0; border-radius:0; margin:0 0 .9rem; }
+.blog-chart .blog-chart-periods { display:flex; flex-wrap:wrap; gap:.3rem 1.1rem; border:0; border-radius:0; overflow:visible; margin:0 0 .9rem; }
 .blog-chart-periods button { font:inherit; font-size:.83rem; color:var(--muted-ink); border:0; border-bottom:1px solid transparent; padding:.3rem 0; cursor:pointer; background:transparent; }
 .blog-chart-periods button[aria-pressed="true"] { color:var(--ink); border-bottom-color:var(--ink); }
 .blog-chart-periods button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }

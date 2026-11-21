@@ -264,7 +264,16 @@
         if(a>b || b<full[0] || a>full[1]) {start.value=range[0];end.value=range[1];return;}
         range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b]; draw();
       }
-      const markPresets=rangePresets(extra,full,cfg.episodes,()=>range,(a,b)=>setRange(a,b),visiblePeriods);
+      // The opening close sets the base. Label the years in which returns accrue.
+      const episodes=visiblePeriods ? cfg.episodes.map(([label,opening,end])=>{
+        const firstReturn=data.dates.find(date=>date>opening && date<=end);
+        if(!firstReturn)return [label,opening,end];
+        const endDate=new Date(end+'T00:00:00Z');
+        const lastLabel=endDate.getUTCMonth()===11 ? end.slice(0,4) :
+          endDate.toLocaleDateString('en',{month:'short',year:'numeric',timeZone:'UTC'});
+        return [firstReturn.slice(0,4)+'–'+lastLabel,opening,end];
+      }) : cfg.episodes;
+      const markPresets=rangePresets(extra,full,episodes,()=>range,setRange,visiblePeriods);
       dateRange(controlRow(extra,'Dates'),start,end);
       start.onchange=end.onchange=()=>{if(start.value&&end.value)setRange(start.value,end.value);};
       const barMetrics=[

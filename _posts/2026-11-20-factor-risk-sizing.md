@@ -249,7 +249,7 @@ I now let each risk estimate choose its own positions and compare the portfolios
 <div id="figure-3" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json" initial_wealth=1 periods_visible=true base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" label="Growth of one dollar after fees and drawdown for the three Ridge portfolios. Choose the full history, development period, later period or custom dates." %}
 </div>
-<p class="figure-caption"><strong>Figure 3. Growth and drawdown after fees.</strong> The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
+<p class="figure-caption"><strong>Figure 3. Growth and drawdown after fees.</strong> Each path starts at $1 at the selected opening close and compounds the mean daily return across three schedules. Drawdown measures the loss from the highest value reached in that window. Table 3 averages the schedules’ separate drawdowns.</p>
 
 The **Factor target** row shows the portfolio sized with the 50/50 correlation estimate. From January 2022 through May 2026 it earned **4.59% a year after fees** at **7.27% volatility**, close to the 7% budget. Stock shrinkage earned **7.42%** at **9.65% volatility**. How much of that extra return came from holding a bigger book?
 

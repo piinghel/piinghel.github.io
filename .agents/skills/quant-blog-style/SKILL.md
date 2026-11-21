@@ -139,7 +139,7 @@ Preserve the original homepage. Each entry uses the same article title,
 date, topic and short description beneath the “Research notes” heading.
 Keep all figures and captions inside articles.
 
-Number figures and tables independently in reading order. Put the figure's one
+Restart numbering in each article. Use “Figure 1.” and “Table 1.” as independent sequences in reading order. Put the figure's one
 main title at the beginning of its caption below the display. Put a table's
 caption above it. Panel labels identify variables or scope; they do not repeat
 the caption's title. Keep axis units visible.

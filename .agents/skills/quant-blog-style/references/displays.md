@@ -133,3 +133,10 @@ all text bounding boxes and the actual page: a valid view box alone does not
 prove readability. Verify no duplicate labels, clipped endpoints, cut legends,
 missing glyphs or inconsistent theme variants. Keep one reproducible source
 and preserve the previous version in Git before replacing an empirical asset.
+
+
+For a time-series comparison that readers will revisit by period, put the
+actual date ranges next to the plot. Keep one period selected visibly and
+expose exact dates on demand. When the opening close rebases the path, label
+the period by the returns it contains. Explain how drawdown resets. A reader
+should be able to identify the selection and the series in grayscale.
