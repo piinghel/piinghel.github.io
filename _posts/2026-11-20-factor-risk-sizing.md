@@ -121,6 +121,14 @@ To see what modeling co-movement adds, I compare a stock-by-stock sizing rule wi
 
 Stock shrinkage and the factor target use the same standalone stock risk. They differ in how much risk they assign to holding those stocks together. Shrinking a positive correlation toward zero lowers the estimated risk of two longs and gives less hedging credit to a long paired with a short. The effect on the whole book depends on its positions.
 
+Written as a correlation estimate, both methods take the weighted average
+
+$$
+\widehat R=(1-\lambda)R_{\rm sample}+\lambda R_{\rm target}.
+$$
+
+Here $$\lambda=1/2$$. With the identity as the target, the model discounts every historical pairwise relationship equally. With the factor model as the target, it can carry over a sector or style relationship even when the sample correlation for that particular pair is unreliable. The trade-off is that the optimizer also inherits whatever co-movement the factor model gets wrong.
+
 ### The objective and constraints
 
 At each rebalance the three joint optimizers maximize expected return after a turnover penalty. Each uses the same limits and prices portfolio risk with its own covariance estimate.
@@ -160,6 +168,8 @@ The portfolio comparisons use 5,773 common sessions from 26 January 1999 through
 ## Comparing the hedges on the same stocks
 
 I give stock shrinkage, the sector-and-style model, and the same factor model with shrunk residual correlations the same sampled stocks. Each finds the minimum-variance spread at the same Ridge score. For scores $$s$$, each model minimizes $$w^\top\Sigma w$$ while holding $$w^\top s$$ at the equal-weight spread’s score. The gross long and short weights are each 50%, and each name stays between one-quarter and three times its side’s equal weight. Multiplying the whole covariance matrix by a constant leaves those minimum-variance weights unchanged.
+
+That last property is why this test comes first. A model can only win here by finding a better combination of weights for the required score and gross exposure. Forecasting more or less volatility for every portfolio by the same proportion has no effect on the hedge.
 
 I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and measured gross returns for the session after the next close. The stock draws vary the names on the same dates. Later 150-stock spreads fell from **3.69% to 3.53%** annualized volatility when I added shrunk residual correlations to the factor model.
 

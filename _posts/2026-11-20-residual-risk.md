@@ -12,9 +12,9 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-The factor model in Part 1 explains shared risk through the market, sectors and styles. Its simplest version gives each stock its own residual variance and sets the residual correlations to zero. That works as a starting point, but a broad sector factor can miss a move shared by a smaller group.
+The factor model in Part 1 explains shared risk through the market, sectors and styles. Suppose two stocks still move together after I subtract those effects. Should I give a long/short spread more hedging credit for that relationship? Estimating it can improve the hedge when it persists. If the relationship fades, the estimate can make a risky spread look safer than it is.
 
-That matters when one stock is supposed to hedge another. I return to the same three-stock spread to show how residual correlation changes the hedge, then check how much of that co-movement survives into the following year.
+I start with the three-stock spread from Part 1 and work out how much that correlation changes its risk. Then I look for groups and shared directions in historical residuals and see what survives the following year. That helps decide how much weight to give the co-movement when sizing the Ridge portfolio.
 
 ## The sign of the position changes the answer
 
@@ -42,6 +42,8 @@ w^\top\Sigma w=\frac{9+9-2(5.4)}{4}=1.8.
 $$
 
 Positive residual covariance lowers the spread’s estimated variance because the two positions have opposite signs. The same covariance adds variance when both positions are long. The practical question is whether the stocks will still move together when I hold the spread.
+
+Suppose I trust only half the estimated correlation. Shrinking 0.6 halfway toward zero gives 0.3. The residual covariance becomes 1.2, and the spread’s variance becomes 2.4, halfway between the diagonal estimate of 3 and the full-correlation estimate of 1.8. That is the decision the next tests inform. How much of the apparent hedge should I count on?
 
 ## Groups identified in one year still move together in the next
 
