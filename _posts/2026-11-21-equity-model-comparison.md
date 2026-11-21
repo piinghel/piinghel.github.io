@@ -202,6 +202,15 @@ ICIR of 0.724 in 6 minutes 25 seconds, and Large reached 0.785 in 8 minutes
 LightGBM on that schedule. In this window, increasing Small's context
 from six weeks to four gave a larger ICIR gain for less computation.
 
+In the final fold, from October 2020 through December 2021, the ranking
+comparison went the other way. Four-week spacing used 190,064 context rows
+and took 24 minutes, compared with 126,892 rows and 12½ minutes at six
+weeks. On 61 dates with realized targets, ICIR was 0.11 at four weeks and
+0.21 at six. The paired 21-session block-bootstrap interval for the
+difference was −0.23 to 0.06. The spacing changes which dates enter the
+context as well as how many, and the early gain did not carry into this
+later window.
+
 The scoring schedule made the bigger difference to runtime. It used
 about one fifth of the predictions needed to score every daily
 cross-section. Increasing the prediction batch size from 1,000 to 1,500
