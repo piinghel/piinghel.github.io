@@ -196,7 +196,7 @@ I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and 
 I also compared one session with the three-week holding period used in the portfolio replay. For the same eight stock paths and 227 later starting dates, the test assumes full fills where the next close has a quote and leaves other allocations in cash. The returns are gross. At 150 stocks, adding shrunk residuals reduced annualized 15-session volatility from **3.35% to 3.22%**, a **0.13-point** reduction with a simultaneous 95% interval of **0.04 to 0.21 points**. Against stock shrinkage the estimate also favored shrunk residuals, but all three stock counts had intervals that crossed zero at 15 sessions.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 2. Volatility saved by estimating residual correlations.</strong> Annualized volatility saved by estimating residual correlations, 2022–May 2026. Values are percentage points relative to the same factor model with zero residual correlations. A larger positive number means a quieter spread.</caption>
+  <caption><strong>Table 2. Volatility saved by estimating residual correlations.</strong> Percentage points of annualized volatility saved relative to the diagonal-residual model, 2022–May 2026.</caption>
   <thead><tr><th>Total stocks</th><th>1 session</th><th>15 sessions</th></tr></thead>
   <tbody>
     <tr><th>75</th><td>0.12</td><td>0.08</td></tr>
@@ -230,7 +230,7 @@ Calibration can help when a model consistently under- or overestimates risk on t
 I now let each risk estimate choose its own positions and compare the portfolios after trading fees.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 3. Portfolio outcomes before and after fees.</strong> Long/short portfolio outcomes, averaged across three schedules. Return and Sharpe show net on top and gross before trading fees below. Returns are annualized compound growth. Sharpe uses daily returns, a zero cash rate and 252 sessions per year. Volatility and drawdown use net returns. Turnover counts purchases and sales in multiples of capital per year.</caption>
+  <caption><strong>Table 3. Portfolio outcomes before and after fees.</strong> Averages across three schedules. Return is annualized compound growth. Return and Sharpe show net above gross. Volatility and drawdown use net returns. Turnover counts purchases and sales in multiples of capital per year.</caption>
   <thead><tr><th>Sizing rule</th><th>Return</th><th>Vol.</th><th>Sharpe</th><th>Drawdown</th><th>Turnover</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="6">January 1999 – December 2021</th></tr>
@@ -262,9 +262,7 @@ The same 7% cap can produce a smaller book if one model forecasts more risk for 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" alt="Trailing annualized volatility of the original sizing rules before the rolling calibration." %}
 </div>
-<p class="figure-caption"><strong>Figure 4. Realized volatility against the risk budget.</strong> Each monthly point shows trailing 252-session net volatility averaged across schedules. The 7% line is the limit on each optimizer’s own forecast at rebalance. Stock shrinkage ran above the factor target throughout the chart. It traded places with the sector-and-style book before 2022, then stayed above it at every later point shown.</p>
-
-All three books became more volatile in 2020–21. Stock shrinkage peaked near **15%**, several points above both factor books. The factor target spent more of the chart close to the **7%** budget.
+<p class="figure-caption"><strong>Figure 4. Realized volatility against the risk budget.</strong> Monthly readings of trailing 252-session net volatility, averaged across schedules. The 7% line is the limit on each optimizer’s forecast at rebalance.</p>
 
 I use the stock-shrinkage positions held at each decision close as a reference, $$w_0$$. Let $$\Sigma_s$$ and $$\Sigma_f$$ be the stock-shrinkage and factor-target covariance estimates. To give the factor target the stock model’s risk level, I use
 
@@ -297,7 +295,7 @@ The scale swap puts the two models on a common footing. To size the portfolio at
 A fixed adjustment estimated through 2021 also brought the stock-shrinkage book close to the budget later, at **7.5%** realized volatility. The rolling adjustment brought it to **7.1%**. Both replays point to the importance of the risk level, with less evidence for the value of updating the adjustment.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 5. Portfolio outcomes after rolling risk calibration.</strong> Outcomes with rolling calibration. Return and Sharpe show net on top and gross before trading fees below. Volatility uses net returns. Gross exposure is the average market value of longs and shorts, both counted as positive, per dollar of capital.</caption>
+  <caption><strong>Table 5. Portfolio outcomes after rolling risk calibration.</strong> Return and Sharpe show net above gross. Volatility uses net returns. Gross exposure counts the market value of longs and shorts per dollar of capital.</caption>
   <thead><tr><th>Sizing rule</th><th>Return</th><th>Vol.</th><th>Sharpe</th><th>Gross exposure</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">January 1999 – December 2021</th></tr>
@@ -321,8 +319,6 @@ Similar overall volatility can come with different market exposure. The estimate
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/market-exposure" mobile="/assets/factor-risk-sizing/market-exposure_mobile" version="2" alt="Rolling 63-session market beta and 252-session correlation with the Russell 1000 across the full backtest for the three calibrated portfolios." %}
 </div>
 <p class="figure-caption"><strong>Figure 5. Market beta and correlation through time.</strong> Monthly readings across the full backtest, starting when the first 252-session window is complete. Correlation uses the prior 252 sessions and beta uses 63. Both use daily net returns against the Russell 1000, calculated separately for each schedule and then averaged.</p>
-
-Stock shrinkage’s beta has some of the largest swings, especially in the mid-2010s. Around 2020 its market correlation rises alongside the factor target’s. The sector-and-style book spends more time near zero and turns sharply negative around 2009–10. Scaling the same positions down lowers their volatility and beta. Their market correlation stays the same. Changing the covariance can also change the positions themselves, even under the same estimated beta cap.
 
 To understand what market exposure misses, I looked at the deepest drawdown of an equal mix of the calibrated stock-shrinkage and factor-target books. In that early-2023 window, each book lost about **8%** while the Russell 1000 rose **11%**. The losses came from the short side as its stocks rose.
 
@@ -352,8 +348,6 @@ At 150 per side stock shrinkage held about **175 stocks** and the factor target 
 To isolate the retention rule, I kept entry at 150 and let positions remain eligible through rank 250. Later annual turnover fell from roughly **25× capital** to **21×** for stock shrinkage and **22×** for the factor target. Most of the saving came from less trading on exits beyond the cutoff and on new entries. Net Sharpe rose from **0.71 to 0.79** and from **0.53 to 0.59**, respectively. Both paired Sharpe intervals included zero. The clearest effect of a wider retention band was less trading.
 
 The later Sharpe comparison at 150 per side is sensitive to which years are included. Leaving out 2024 put stock shrinkage and the factor target close to even.
-
-Exposure changed with breadth too. At 150 per side both models met the ±0.05 estimated beta band at the decision close. The later filled factor-target book had a realized index beta of about **0.06**, versus **0.02** for stock shrinkage. A common beta band still allowed different market exposures after execution.
 
 ## What changes when the risk model changes
 
