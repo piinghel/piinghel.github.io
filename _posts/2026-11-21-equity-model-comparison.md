@@ -9,28 +9,63 @@ article_label: Signals · Equity model comparison
 permalink: /quants/equity-model-comparison.html
 ---
 
-I wanted to see whether a model pretrained on synthetic tables could rank
-stocks using the same 80 predictors as Ridge and LightGBM. An equity panel
-can have millions of rows while still giving you relatively few independent
-return periods. Stocks move together, and adjacent 20-session targets
-overlap. LightGBM learns its thresholds and interactions from that equity
-history. Kumo arrives with a prior from pretraining and uses labeled rows
-from the panel to make predictions at inference. I wanted to see how
-well that prior transfers to a noisy equity target.
-[Kumo Tabular technical report](https://arxiv.org/abs/2611.23001v1)
+Suppose I’m looking at two stocks. One has stronger momentum, the other
+is cheaper. For earlier dates I can see how stocks with similar
+characteristics did over the following month. For the two stocks in front
+of me, that outcome is still blank. NVIDIA Kumo Tabular is a pretrained
+machine learning model that uses rows with known outcomes to make
+predictions for the rows where those outcomes are missing.
 
-I start with the ranking across the whole stock universe, then look at the
-two ends through equal-weight deciles and finally at returns after risk
-constraints and trading costs. The predictors come from the
-[linear comparison]({% link _posts/2025-02-09-combining-predictors.md %}).
-The shared target is the forward 20-session Sharpe ratio, ranked within
-sector on each date.
+I wanted to try it on the 80 predictors from the linear model study.
+The panel can have millions of stock-date rows and still cover relatively
+few independent return periods. Stocks move together, and adjacent
+20-session outcome windows overlap. A model that has already learned to
+read other tables might pick up a relationship that Ridge or LightGBM
+misses when it learns from the equity data alone. An unfamiliar
+relationship is useful only if it helps me rank stocks, or gives me a
+different set of positions that earns its place after costs.
+[Combining Multiple Predictors]({% link _posts/2025-02-09-combining-predictors.md %})
+
+## A pretrained model for tables
+
+Think of a table with two characteristics and an outcome. In one
+simulated table, the outcome might increase when both characteristics
+are high. In another, the relationship might reverse once the first
+characteristic crosses a threshold. During pretraining, Kumo sees
+millions of artificial tables with different relationships. It learns
+to infer the missing outcomes in each table from the examples it can see.
+
+In this study, each row is a stock on a date. Its outcome is the stock’s
+forward 20-session Sharpe ratio, ranked against its sector peers. At each
+refit I supply historical rows whose outcomes have already materialized.
+These examples are the context. Kumo uses them to score the next
+cross-section with its pretrained weights held fixed. That is what
+in-context learning means here. [NVIDIA Kumo Tabular report](https://arxiv.org/abs/2611.23001v1)
+
+Some of the work that got me interested came from European research groups.
+The original TabPFN from Freiburg was tested on classification problems
+with up to 1,000 training rows. The follow-up in 2025 took that to 10,000.
+The Freiburg spin-off Prior Labs continued that work, and the group behind
+TabICL at Inria in France tackled larger tables. NVIDIA’s Kumo report
+now describes tables of up to 150 million cells on modern GPUs.
+[Original TabPFN](https://arxiv.org/abs/2207.01848) · [TabPFN in Nature](https://www.nature.com/articles/s41586-024-08328-6) · [Prior Labs and Freiburg](https://www.cibss.uni-freiburg.de/news/frank-hutter-wins-the-ai-innovation-award-2026) · [TabICL](https://proceedings.mlr.press/v267/qu25d.html) · [Kumo report](https://arxiv.org/abs/2611.23001v1)
+
+Christoph Molnar sets out two ways this could matter. A pretrained model
+may beat the usual tree model out of the box, or it may make a useful
+second forecast because it makes different errors. NVIDIA reports that
+Kumo Large leads its comparisons on TabArena and BeyondArena. I wanted
+to put the claim about boosted trees to a specific test on my own
+data. Can Kumo improve on LightGBM’s stock rankings, or does it at least
+produce scores and portfolios that behave differently? Ridge gives me a
+linear reference for both questions. [Christoph Molnar, The rise of tabular foundation models](https://mindfulmodeler.substack.com/p/tabular-ml-is-about-to-get-weird) · [NVIDIA’s benchmark results](https://arxiv.org/abs/2611.23001v1)
 
 ## Ranking the whole cross-section
 
 The main comparison covers 1999–2021. I score every eligible stock on
-the combined signal dates from the three weekly portfolio schedules. For Kumo
-Small, each of the 12 training contexts expands from January 1995. I take
+the combined signal dates from three staggered portfolio schedules.
+Each schedule rebalances roughly every three weeks, giving about one
+signal date a week across the three. For Kumo Small, each of the 12
+training contexts expands from January 1995. I take
 one date every 30 trading sessions and keep the top and bottom 30% of
 targets whose return windows have ended. The context grows from 18,148
 to 126,892 rows. Scoring 1,162,773 stock observations took 99 minutes on
@@ -83,16 +118,17 @@ and LightGBM gives similar full-period ICIRs of 0.54 and 0.72.
 I sort the eligible stocks into ten equal-weight deciles on each rebalance
 date and trade at the next close. I keep decile membership until the next
 rebalance and average the daily returns across the three schedules before
-compounding. The figure starts with the matched weekly schedules. The
-15-session view shows the original Ridge and LightGBM deciles.
+compounding. The figure starts with the matched weekly signal dates. The
+reference view uses the original Ridge and LightGBM deciles, which were
+formed every 15 trading sessions on each schedule.
 
 <figure id="figure-1" class="research-figure responsive-figure decile-schedule-figure">
   <fieldset id="figure-2" class="decile-schedule">
     <legend>Rebalance schedule</legend>
     <input type="radio" name="decile-schedule" id="deciles-weekly" checked>
-    <label for="deciles-weekly">Weekly schedules</label>
+    <label for="deciles-weekly">Weekly signal dates</label>
     <input type="radio" name="decile-schedule" id="deciles-fifteen">
-    <label for="deciles-fifteen">15-session schedules</label>
+    <label for="deciles-fifteen">15-session reference</label>
     <div class="decile-schedule-panel decile-schedule-weekly">
       {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="2" alt="On the weekly schedules, LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
     </div>
@@ -106,7 +142,7 @@ compounding. The figure starts with the matched weekly schedules. The
 On the 15-session schedules, LightGBM's top decile earns more at higher
 volatility, leaving its Sharpe close to Ridge's. Their bottom deciles
 separate more clearly. The broader advantage also shows up in the
-weekly top-minus-bottom spread, which compounds the difference between
+main top-minus-bottom spread, which compounds the difference between
 the two deciles' daily returns.
 
 ## Returns after portfolio construction
@@ -122,12 +158,12 @@ penalty of 2.5 basis points for Ridge and 5 for LightGBM and Kumo. The Kumo
 books use the LightGBM construction recipe. Simulated long and short
 trades pay 7.5 and 10 basis points per executed dollar through 2010,
 then 5 and 7.5 basis points. For the constructed books I compute each
-statistic separately on the three weekly schedules and average them.
+statistic separately on the three schedules and average them.
 
 <div id="table-5">
 <div id="table-6" class="research-table-scroll" tabindex="0" role="region" aria-label="Gross decile spreads and portfolios after execution fees">
 <table id="table-2" class="research-table comparison-table equity-comparison-table">
-  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Gross decile spreads and net constructed portfolios.</span> The main comparison uses the matched weekly schedules. Return, volatility and Sharpe are annualized.</caption>
+  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Gross decile spreads and net constructed portfolios.</span> All models use the same signal dates. Return, volatility and Sharpe are annualized.</caption>
   <colgroup span="1"></colgroup><colgroup span="3"></colgroup><colgroup span="3"></colgroup>
   <thead>
     <tr><th scope="col" rowspan="2">Model</th><th scope="colgroup" colspan="3">Gross decile spread</th><th scope="colgroup" colspan="3" class="comparison-divider">Net constructed book</th></tr>
@@ -167,15 +203,56 @@ volatility. Their net Sharpe difference of 0.02 had a paired 21-session
 block-bootstrap interval from −0.30 to 0.32. From 2017–2021, Kumo trailed
 both baselines after fees.
 
+## How similarly the models trade
+
+Two scores can rank most stocks in the same order and still hold different
+names at the ends. I compare the rankings on each signal date, then
+compare the daily portfolio returns after fees. For the scores I average
+the cross-sectional Spearman correlations. For the portfolios I compute
+the Pearson correlation separately on each schedule and average the
+three estimates.
+
+<div class="research-table-scroll" tabindex="0" role="region" aria-label="Correlations between model scores and portfolio returns">
+<table id="table-3" class="research-table comparison-table ic-summary-table">
+  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Correlations between models, 1999–2021.</span> The estimates use 1,200 signal dates for rankings and 5,773 sessions for net returns.</caption>
+  <thead><tr><th scope="col">Models</th><th scope="col">Rankings</th><th scope="col">Net returns</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Ridge and LightGBM</th><td>0.74</td><td>0.65</td></tr>
+    <tr><th scope="row">Ridge and Kumo Small</th><td>0.53</td><td>0.55</td></tr>
+    <tr><th scope="row">LightGBM and Kumo Small</th><td>0.55</td><td>0.54</td></tr>
+  </tbody>
+</table>
+</div>
+
+Kumo Small differs more from either baseline than the baselines differ
+from each other. Those differences show up in the books as well as the
+rankings. That is a reason to look at what the portfolio earns on each
+side before drawing a conclusion about combining the models.
+
+I split each day's net result into the long contribution, the signed
+short contribution and execution fees. Annualizing the average daily
+contributions makes the components add up. On that basis, LightGBM
+earned 7.1 percentage points more per year than Kumo Small. The long
+side contributed 3.2 points of the gap, the short side 2.7, and lower
+execution fees 1.2. Against Ridge, higher trading fees explained about
+two thirds of Kumo Small’s 1.8-point gap.
+
 ## Kumo’s training context
+
+The hard part on a 16 GB laptop was preparing the historical context.
+With one training date a week and the same target tails, the final fold
+would have about 760,000 examples. Small’s main buffers alone would
+need about 35 GiB in standard 32-bit precision. I sample training dates
+further apart, prepare the context once per fold and reuse it across
+prediction batches. Scoring on the portfolio schedules cuts the number
+of predictions to about a fifth of daily scoring and keeps every eligible
+stock on each scheduled date.
 
 To see what changes with a denser context, I first scored every trading
 day from January 1999 to September 2000. Taking every 15th training session
 and keeping the two target tails gave Kumo Small 35,738 labeled rows.
 The latest selected training date was August 5, 1998, and the first score
 was in January 1999.
-
-<div id="table-3"></div>
 
 Over these first 421 dates, ICIR was 1.03 for Kumo Small and 1.01 for
 LightGBM. The rank IC difference was 0.0012,
