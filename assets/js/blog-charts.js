@@ -11,7 +11,8 @@
     comparison:['#a3acb5','#545d68'], index:['#b58900','#a8891a'], hedged:['#7447c9','#9085e9'], cash:['#0e8fad','#2aa3c4'],
     momentum:['#2a78d6','#3987e5'], reversal:['#c2458a','#cc5aa3'], low_volatility:['#7447c9','#9085e9'],
     size:['#b58900','#a8891a'], liquidity:['#0e8fad','#2aa3c4'], market:['#6e7781','#8b949e'], short_interest:['#24292f','#c9d1d9'],
-    low_risk:['#2a78d6','#3987e5'], beta:['#7447c9','#9085e9'], sector:['#a3acb5','#545d68'], residual:['#6e7781','#8b949e']};
+    low_risk:['#2a78d6','#3987e5'], beta:['#7447c9','#9085e9'], sector:['#a3acb5','#545d68'], residual:['#6e7781','#8b949e'],
+    blend:['#185fa9','#58a6ff']};
   const isDark=()=>typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';
   const COLORS = Object.freeze(Object.defineProperties({},Object.fromEntries(Object.entries(PALETTE).map(
     ([role,[light,dark]])=>[role,{enumerable:true,get:()=>isDark()?dark:light}]))));
@@ -334,9 +335,10 @@
             yaxis:{gridcolor:t.grid,zerolinecolor:t.grid,automargin:true},annotations:[]};
           const color=s=>COLORS[s.role]||COLORS.comparison;
           function trace(s,x,y,extra={}) {
+            const width=cfg.emphasis ? (s.id===cfg.emphasis?2.8:1.2) : s.role==='index'?1.3:1.8;
             return {type:'scatter',mode:'lines',x,y,name:s.label,legendgroup:s.id,
               visible:visible.get(s.id)?true:'legendonly',showlegend:(s.role!=='index'&&s.visible!==false)||visible.get(s.id),
-              line:{color:color(s),width:s.role==='index'?1.3:1.8,dash:s.dash||'solid'},
+              line:{color:color(s),width,dash:s.dash||'solid'},
               hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}<extra>%{fullData.name}</extra>',...extra};
           }
           function heading(text,y,yshift=0) {layout.annotations.push({text,x:0,y,yshift,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:13,color:t.text}});}
@@ -435,6 +437,10 @@
               layout.annotations.push({x:label.date,y:label.y??.03,xref:'x',yref:'paper',
                 text:mobile?(label.mobileText||label.text):label.text,showarrow:false,xanchor:'center',yanchor:'bottom',
                 font:{size:mobile?10:11,color:t.text},bgcolor:t.paper,borderpad:2});
+            }
+            if(cfg.referenceLevel!==undefined) {
+              layout.shapes=[...(layout.shapes||[]),{type:'line',xref:'paper',yref:'y',x0:0,x1:1,
+                y0:cfg.referenceLevel,y1:cfg.referenceLevel,line:{color:COLORS.short,width:1},opacity:.55,layer:'below'}];
             }
             if(cfg.zeroReference) {
               layout.yaxis.zeroline=true;layout.yaxis.zerolinecolor=t.text;layout.yaxis.zerolinewidth=1;
@@ -655,30 +661,34 @@
     const graph=element('div','blog-chart-plot');ui.append(graph);
     async function draw() {
       const mobile=host.clientWidth<550,dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      const height=mobile?720:390,traces=[],layout={autosize:true,height,
-        margin:{l:48,r:15,t:75,b:50},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
+      const height=mobile?560:340,traces=[],layout={autosize:true,height,
+        margin:{l:48,r:12,t:61,b:34},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),
         font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},hoverlabel:hoverStyle(),
-        dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:mobile?1.14:1.26,itemclick:false,itemdoubleclick:false},
+        dragmode:false,showlegend:true,legend:{orientation:'h',x:0,y:1+26/(height-95),yanchor:'bottom',itemclick:false,itemdoubleclick:false},
         annotations:[]};
       graph.style.height=height+'px';
       [['sd_pp','Return dispersion (pp)'],['annual_orders','Orders per year']].forEach(([metric,title],i)=>{
-        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.57,i*.57+.43],yd=mobile?[i?0:.61,i?.39:1]:[0,1];
+        const s=i?String(i+1):'',x='x'+s,y='y'+s,xd=mobile?[0,1]:[i*.57,i*.57+.43],yd=mobile?[i?0:.59,i?.42:1]:[0,1];
         const maximum=Math.max(...cfg.periods.flatMap(p=>p.points.map(q=>q[metric])));
-        layout['xaxis'+s]={domain:xd,anchor:y,range:[.75,3.25],tickvals:[1,2,3],fixedrange:true,showgrid:false,zeroline:false,title:{text:'Number of tranches',font:{size:12}}};
+        layout['xaxis'+s]={domain:xd,anchor:y,range:[.65,3.35],tickvals:[1,2,3],
+          ticktext:['1 tranche','2 tranches','3 tranches'],fixedrange:true,showgrid:false,zeroline:false};
         layout['yaxis'+s]={domain:yd,anchor:x,range:[0,maximum*1.18],fixedrange:true,gridcolor:grid,zeroline:false,nticks:5,tickformat:metric==='annual_orders'?',.0f':'.1f'};
-        layout.annotations.push({text:title,x:xd[0],y:yd[1]+.035,xref:'paper',yref:'paper',showarrow:false,xanchor:'left',font:{size:14}});
+        layout.annotations.push({text:title,x:xd[0],y:yd[1],yshift:2,xref:'paper',yref:'paper',
+          showarrow:false,xanchor:'left',yanchor:'bottom',font:{size:13}});
         cfg.periods.forEach((period,j)=>{
-          const color=j?COLORS.long:COLORS.short,values=period.points.map(p=>p[metric]);
+          const color=j?COLORS.blend:COLORS.short,values=period.points.map(p=>p[metric]);
           traces.push({type:'scatter',mode:'lines+markers',name:period.title,legendgroup:period.title,showlegend:i===0,
             x:period.points.map(p=>p.sleeves),y:values,xaxis:x,yaxis:y,
-            line:{color,width:2,dash:j?'solid':'dash'},marker:{size:8,color},
+            line:{color,width:j?2.3:1.6,dash:j?'solid':'dash'},
+            marker:{size:j?8:7,color,symbol:j?'circle':'diamond-open'},
             customdata:period.points.map(p=>p.calendar_count),
             hovertemplate:'%{x} tranches · %{customdata} calendars<br>'+title+': %{y'+(metric==='annual_orders'?':,.0f':':.2f')+'}<extra>'+period.title+'</extra>'});
-          period.points.forEach((p,k)=>{
-            const above=p[metric]>=cfg.periods[1-j].points[k][metric];
+          if(!j)return;
+          for(const p of [period.points[0],period.points.at(-1)]){
+            const above=metric==='sd_pp'&&p.sleeves===1;
             layout.annotations.push({text:metric==='annual_orders'?Math.round(p[metric]).toLocaleString('en-US'):p[metric].toFixed(2),
               x:p.sleeves,y:p[metric],xref:x,yref:y,showarrow:false,yshift:above?13:-15,font:{size:12,color}});
-          });
+          }
         });
       });
       await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
