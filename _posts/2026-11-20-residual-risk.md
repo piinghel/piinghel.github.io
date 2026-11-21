@@ -67,20 +67,6 @@ Across all 27 cohorts, within-group correlation was about **5 points** higher th
 
 Most of the persistence was within sectors. In the 23 development cohorts the forward gap was **about 8 points** for same-sector pairs and **less than 1 point** for cross-sector pairs matched on industry mix. The cross-sector gap was positive in all 23 cohorts.
 
-## The model placed NVIDIA and Vertiv in different groups
-{: #would-the-model-have-grouped-nvidia-and-vertiv}
-
-To see what a group label can miss, I compared NVIDIA with Vertiv, a data-center power and cooling supplier, and with Workday, an enterprise software company.
-
-In the 252 sessions through January 24, 2025, NVIDIA’s residual correlation was **0.14 with Vertiv** and **−0.10 with Workday**. The December groups put all three firms in different clusters. On January 27, NVIDIA and Vertiv fell and Workday rose. I picked the date after seeing the selloff.
-
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/residual-risk/company-pairs" mobile="/assets/residual-risk/company-pairs_mobile" version="1" alt="NVIDIA’s correlations with Vertiv and Workday at five year-ends. Workday had the higher raw correlation in 2021 and 2022. Vertiv had the higher residual correlation at all five year-ends." %}
-</div>
-<p class="figure-caption">Each dot uses the last 252 sessions at that year-end. Workday had the higher raw correlation with NVIDIA in 2021 and 2022. Removing the broad factors reversed the ordering. The 2025 window includes the selloff.</p>
-
-That one day lifted the year-end 2025 estimate for NVIDIA and Vertiv. Removing it brought the estimate close to its pre-selloff level.
-
 ## The shared directions persist at a smaller scale
 
 A cluster gives each stock one label. Principal components let a stock contribute to several shared moves. I center the residuals and scale each stock to unit variance, using the number of days $$T$$ as the divisor. For A’s residual returns $$3,-1,3,-1$$, I subtract the mean of 1 and divide by the standard deviation of 2 to get the A column below.
@@ -99,7 +85,7 @@ The correlation matrix $$S=Z^\top Z/T$$ averages the products of each pair of co
 
 Think of a direction $$q$$ as weights on the standardized residuals. The series $$Zq$$ is the return of that combination, with variance $$q^\top S q$$. The first principal component finds the combination with the highest variance for a unit-length $$q$$. Here it is $$q=(1,1,0)^\top/\sqrt{2}$$. Multiplying $$S$$ by $$q$$ gives $$Sq=1.6q$$. A and B reinforce each other in this direction. Flip the sign of B and much of their movement cancels. The opposing direction has variance 0.4, and C alone has variance 1.
 
-In a typical weekly fit on the real residual data, the first component explained about 3% of standardized residual variance. Its importance to a portfolio depends on how closely the holdings line up with it.
+In a typical weekly fit on the real residual data, the first component explained about 3% of standardized residual variance. To see what it means for a book, take its variance $$\lambda$$ times the squared exposure to that direction, $$\lambda(q^\top Dw)^2$$. In the example, A and B have the same specific volatility and opposite position weights. The common direction $$(1,1,0)^\top/\sqrt{2}$$ contributes zero variance to this spread. Put both positions on the same side and their exposures to that direction add.
 
 The first direction will look strong in the window that chose it. The test is to hold its weights fixed and ask how much variance that same direction has over the next 252 sessions. I use stocks observed in both windows and standardize each window by its own stock volatilities so the comparison tracks changes in co-movement.
 
