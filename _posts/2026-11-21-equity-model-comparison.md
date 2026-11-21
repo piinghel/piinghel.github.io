@@ -226,6 +226,11 @@ samples. On the same 91 dates, Kumo's ICIR was 1.08 with three-week spacing,
 3 minutes 8 seconds to fit and score the fold, compared with 2 minutes
 42 seconds at six weeks. A larger context helped in this fold.
 
+Kumo Medium reached an ICIR of 0.72 on the same dates using the six-week
+context. It took 6 minutes 25 seconds. In this window, increasing Small's
+context from six-week to four-week spacing gave a larger ICIR gain for
+less computation.
+
 The scoring schedule made the bigger difference to runtime. It used
 about one fifth of the predictions needed to score every daily
 cross-section. Increasing the prediction batch size from 1,000 to 1,500
