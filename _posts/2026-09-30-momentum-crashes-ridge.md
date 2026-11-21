@@ -28,15 +28,15 @@ annual return of 9.4%.
 These crashes don't come out of nowhere, though: they tend to arrive when
 momentum itself has already become volatile. To see whether that holds for the
 Ridge portfolio, I split all trading days by how volatile the momentum portfolio had
-been going in, measured up to the previous day. Up to about twice its usual
+been over the prior 126 sessions, relative to its historical median. Up to about twice its usual
 volatility the strategy hardly notices, with a Sharpe ratio around 1.5–1.6.
 Above that, which is a quarter of the days, the Sharpe drops to 0.69 and the
-strategy earns about half its usual return (the grey bars in Figure 1).
+strategy earns about half its usual return (the open circles in Figure 1).
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-state" mobile="/assets/momentum-crashes-ridge/sharpe-by-state_mobile" alt="Net Sharpe ratio of the baseline and the score overlay by level of lagged momentum volatility: similar below twice normal volatility, much lower for the baseline above it." version="2" %}
+  {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-state" mobile="/assets/momentum-crashes-ridge/sharpe-by-state_mobile" alt="Baseline and score overlay net Sharpe ratios by momentum volatility. Calm, 1.52 and 1.51. Elevated, 1.63 and 1.74. High, 1.57 and 1.59. Extreme, 0.69 and 1.39." version="3" %}
 </div>
-<p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Ridge Sharpe by momentum volatility.</span> Groups use the prior 126 sessions relative to the expanding median. Labels give the share of development days. Sharpe is net of fees and averaged across schedules.</p>
+<p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Ridge Sharpe by momentum volatility.</span> Percentages give each state’s share of development days. Net Sharpe is averaged across schedules.</p>
 
 The strategy still makes money in that top bucket, and much of the gap comes
 from 2009, when the book lost about 5 points of capital on those days; without
@@ -247,7 +247,7 @@ against +0.45 for the baseline). Turnover barely changes, so the gain holds at
 10 and 20 bp.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-rule" mobile="/assets/momentum-crashes-ridge/sharpe-by-rule_mobile" alt="Development-period Sharpe ratio and maximum drawdown for the baseline, score overlay, learned interactions and optimizer cap, with ranges across schedules." version="3" %}
+  {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-rule" mobile="/assets/momentum-crashes-ridge/sharpe-by-rule_mobile" alt="Development-period Sharpe ratio and maximum drawdown for the baseline, score overlay, learned interactions and optimizer cap, with ranges across schedules." version="4" %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Net outcomes across rebalance schedules.</span> Points mark three-schedule means. Lines span the observed schedule range. Dotted references show the baseline, September 1998–December 2021.</p>
 
@@ -284,7 +284,7 @@ Figure 4 shows the accumulated difference against the baseline throughout the
 history; the shaded region marks the test period.
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="added" source="/assets/momentum-crashes-ridge/value-added.json?v=9" base="/assets/momentum-crashes-ridge/value-added" mobile="/assets/momentum-crashes-ridge/value-added_mobile" version="3" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
+  {% include blog-chart.html chart="added" source="/assets/momentum-crashes-ridge/value-added.json?v=9" base="/assets/momentum-crashes-ridge/value-added" mobile="/assets/momentum-crashes-ridge/value-added_mobile" version="4" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Cumulative P&amp;L relative to Ridge.</span> Daily net return differences are summed in points of capital and averaged across three schedules. Shading starts in January 2022.</p>
 

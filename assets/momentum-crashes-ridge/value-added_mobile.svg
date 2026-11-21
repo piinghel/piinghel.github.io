@@ -2210,7 +2210,7 @@ L 270.166717 199.879182
 L 270.190971 200.19919
 L 270.360746 201.65652
 L 270.385 201.641486
-" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
+" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #426e89; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
    <g id="line2d_20">
     <path d="M 24.865 268.526272
@@ -5395,7 +5395,7 @@ L 270.069702 72.304778
 L 270.263732 71.389042
 L 270.385 71.6202
 L 270.385 71.6202
-" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #b58900; stroke-width: 1.6; stroke-linecap: square"/>
+" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #896835; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
    <g id="line2d_21">
     <path d="M 24.865 268.526272
@@ -7445,7 +7445,7 @@ L 270.239478 240.517896
 L 270.263732 240.814758
 L 270.360746 241.57884
 L 270.385 241.189813
-" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #0e8fad; stroke-width: 1.6; stroke-linecap: square"/>
+" clip-path="url(#pcc96c1f361)" style="fill: none; stroke: #427a70; stroke-width: 1.6; stroke-linecap: square"/>
    </g>
    <g id="text_11">
     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle; fill: #25313a" x="250.569744" y="295.122163" transform="rotate(-0 250.569744 295.122163)">Test</text>
@@ -7461,7 +7461,7 @@ L 270.385 241.189813
      <path d="M 28.0546 26.17145
 L 35.2546 26.17145
 L 42.4546 26.17145
-" style="fill: none; stroke: #2a78d6; stroke-width: 1.6; stroke-linecap: square"/>
+" style="fill: none; stroke: #426e89; stroke-width: 1.6; stroke-linecap: square"/>
     </g>
     <g id="text_14">
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="49.6546" y="29.32145" transform="rotate(-0 49.6546 29.32145)">Score overlay</text>
@@ -7470,7 +7470,7 @@ L 42.4546 26.17145
      <path d="M 28.0546 39.381762
 L 35.2546 39.381762
 L 42.4546 39.381762
-" style="fill: none; stroke: #b58900; stroke-width: 1.6; stroke-linecap: square"/>
+" style="fill: none; stroke: #896835; stroke-width: 1.6; stroke-linecap: square"/>
     </g>
     <g id="text_15">
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="49.6546" y="42.531762" transform="rotate(-0 49.6546 42.531762)">Learned interactions</text>
@@ -7479,7 +7479,7 @@ L 42.4546 39.381762
      <path d="M 160.284288 26.17145
 L 167.484287 26.17145
 L 174.684288 26.17145
-" style="fill: none; stroke: #0e8fad; stroke-width: 1.6; stroke-linecap: square"/>
+" style="fill: none; stroke: #427a70; stroke-width: 1.6; stroke-linecap: square"/>
     </g>
     <g id="text_16">
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start; fill: #25313a" x="181.884287" y="29.32145" transform="rotate(-0 181.884287 29.32145)">Optimizer cap</text>

@@ -153,19 +153,19 @@
   },
   "/assets/momentum-crashes-ridge/sharpe-by-rule": {
     "width": 661,
-    "height": 200
+    "height": 199
   },
   "/assets/momentum-crashes-ridge/sharpe-by-rule_mobile": {
     "width": 344,
     "height": 354
   },
   "/assets/momentum-crashes-ridge/sharpe-by-state": {
-    "width": 690,
-    "height": 343
+    "width": 491,
+    "height": 186
   },
   "/assets/momentum-crashes-ridge/sharpe-by-state_mobile": {
-    "width": 293,
-    "height": 354
+    "width": 257,
+    "height": 188
   },
   "/assets/momentum-crashes-ridge/value-added": {
     "width": 604,

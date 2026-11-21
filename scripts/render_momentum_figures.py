@@ -18,8 +18,8 @@ from export_momentum_charts import MomentumEvidence
 
 # Lagged momentum-risk state g (WML volatility over its expanding median, floored at 1); thresholds fixed before plotting.
 # The five-session smoothing lets g decay towards 1, so "calm" allows 1e-4 (a removed share below 0.0002).
-BUCKETS = (("Calm", "g = 1", 1.0, 1.0001), ("Elevated", "1 < g < 1.5", 1.0001, 1.5),
-           ("High", "1.5 ≤ g < 2", 1.5, 2.0), ("Extreme", "g ≥ 2", 2.0, float("inf")))
+BUCKETS = (("Calm", "≤1×", 1.0, 1.0001), ("Elevated", "1–1.5×", 1.0001, 1.5),
+           ("High", "1.5–2×", 1.5, 2.0), ("Extreme", "≥2×", 2.0, float("inf")))
 
 # label, Sharpe mean/low/high, compounded max drawdown % mean/low/high (per schedule), family
 ROWS = (
@@ -34,9 +34,9 @@ MARKER = MappingProxyType({"base": "o", "cap": "s", "overlay": "^", "learned": "
 def palette(dark: bool) -> dict[str, str]:
     return {"bg": "#0d1117" if dark else "#ffffff", "ink": "#e4e7ea" if dark else "#25313a",
             "muted": "#9ba5af" if dark else "#59636e", "grid": "#37414a" if dark else "#e2e6e9",
-            "base": "#6e7681" if dark else "#a3acb5",
-            "cap": "#2aa3c4" if dark else "#0e8fad", "overlay": "#3987e5" if dark else "#2a78d6",
-            "learned": "#a8891a" if dark else "#b58900"}
+            "base": "#a0acb4" if dark else "#606e77",
+            "cap": "#85b9aa" if dark else "#427a70", "overlay": "#89b5cc" if dark else "#426e89",
+            "learned": "#c4a36f" if dark else "#896835"}
 
 
 def render(out: Path, dark: bool, mobile: bool, *, rows=ROWS, markers=MARKER) -> None:
@@ -100,34 +100,42 @@ def sharpe_by_state(rules: tuple[str, ...] = ("baseline", "score_overlay"), *, s
 def render_state(out: Path, dark: bool, mobile: bool, *, settings: MomentumEvidence = MomentumEvidence(), buckets=BUCKETS) -> None:
     c = palette(dark)
     stats = {(r["rule"], r["bucket"]): r for r in sharpe_by_state(settings=settings, buckets=buckets).iter_rows(named=True)}
-    series = (("baseline", "Baseline", c["base"]), ("score_overlay", "Score overlay", c["overlay"]))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
                          "svg.fonttype": "none", "svg.hashsalt": "momentum-state"}):
-        fig, ax = plt.subplots(figsize=(4.6, 4.8) if mobile else (11.7, 4.5))
-        fig.set_facecolor(c["bg"]); ax.set_facecolor(c["bg"])
-        width = 0.38 if mobile else 0.36
-        for k, (rule, name, colour) in enumerate(series):
-            offset = (k - 0.5) * width
-            for i, (bucket, *_ ) in enumerate(buckets):
-                value = stats[(rule, bucket)]["sharpe"]
-                ax.bar(i + offset, value, width * 0.92, color=colour, zorder=2)
-                ax.text(i + offset, value + 0.04, f"{value:.2f}", ha="center", va="bottom",
-                        fontsize=9 if mobile else 10, color=c["ink"] if rule == "baseline" else colour)
-        ax.axhline(0, color=c["muted"], lw=0.8, zorder=3)
-        ax.set_ylim(0, 2.1); ax.set_yticks([0, 0.5, 1.0, 1.5, 2.0]); ax.set_xlim(-0.6, len(buckets) - 0.4)
-        ticks = [f"{name}\n{rule}\n{stats[('baseline', name)]['share']:.0%} of days" for name, rule, *_ in buckets]
-        ax.set_xticks(range(len(buckets)), ticks)
-        ax.tick_params(axis="x", length=0, labelsize=9.5 if mobile else 10.5, colors=c["ink"], pad=6)
-        ax.tick_params(axis="y", length=0, labelsize=9.5 if mobile else 10.5, colors=c["muted"])
-        ax.grid(axis="y", color=c["grid"], lw=0.8); ax.set_axisbelow(True)
-        for side in ax.spines.values(): side.set_visible(False)
-        ax.set_title("Net Sharpe ratio", loc="left", fontsize=11 if mobile else 11.5, color=c["ink"], pad=26 if mobile else 10)
-        handles = [plt.Rectangle((0, 0), 1, 1, color=colour) for _, _, colour in series]
-        legend = ax.legend(handles, [name for _, name, _ in series], loc="lower left" if mobile else "upper right",
-                           bbox_to_anchor=(-0.02, 1.0) if mobile else (1.0, 1.13),
-                           ncol=2, frameon=False, fontsize=9.5 if mobile else 10.5, handlelength=1.0,
-                           handleheight=0.8, columnspacing=1.2, borderaxespad=0)
-        for text in legend.get_texts(): text.set_color(c["ink"])
+        fig, ax = plt.subplots(figsize=(3.9, 2.7) if mobile else (7.4, 2.65))
+        fig.subplots_adjust(left=.35 if mobile else .22, right=.96, top=.81, bottom=.18)
+        fig.set_facecolor(c["bg"])
+        ax.set_facecolor(c["bg"])
+        ax.set(xlim=(0, 2), ylim=(-.55, len(buckets) - .45))
+        ax.set_xticks([0, .5, 1, 1.5, 2], ["0", "0.5", "1", "1.5", "2"])
+        ax.set_yticks([])
+        ax.set_axisbelow(True)
+        ax.grid(axis="x", color=c["grid"], lw=.7)
+        ax.tick_params(axis="x", colors=c["muted"], labelsize=9, length=0, pad=3)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.set_xlabel("Net Sharpe ratio", color=c["ink"], fontsize=10, labelpad=4)
+        for i, (name, threshold, *_) in enumerate(buckets):
+            y = len(buckets) - 1 - i
+            baseline = stats[("baseline", name)]
+            overlay = stats[("score_overlay", name)]["sharpe"]
+            ax.text(-.05, y + .15, name, transform=ax.get_yaxis_transform(),
+                    ha="right", va="center", color=c["ink"], fontsize=10.5)
+            ax.text(-.05, y - .2, f"{threshold} · {baseline['share']:.0%}", transform=ax.get_yaxis_transform(),
+                    ha="right", va="center", color=c["muted"], fontsize=8.5)
+            ax.plot([baseline["sharpe"], overlay], [y, y], color=c["muted"], lw=1)
+            ax.plot(baseline["sharpe"], y, marker="o", markersize=8.5, markerfacecolor=c["bg"],
+                    markeredgecolor=c["base"], markeredgewidth=1.3, linestyle="none",
+                    label="Baseline" if i == 0 else None)
+            ax.plot(overlay, y, marker="D", markersize=4.5, color=c["overlay"], linestyle="none",
+                    label="Score overlay" if i == 0 else None)
+            if name == "Extreme":
+                for value, side, colour in ((baseline["sharpe"], -1, c["base"]), (overlay, 1, c["overlay"])):
+                    ax.annotate(f"{value:.2f}", (value, y), xytext=(side * 7, 0), textcoords="offset points",
+                                ha="right" if side < 0 else "left", va="center", fontsize=9, color=colour)
+        ax.legend(loc="lower left", bbox_to_anchor=(0, 1.05), ncol=2, frameon=False,
+                  handlelength=1, handletextpad=.4, columnspacing=1.2, borderaxespad=0,
+                  fontsize=9.5, labelcolor=c["ink"])
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = out / f"sharpe-by-state{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"], bbox_inches="tight", pad_inches=0.12)
