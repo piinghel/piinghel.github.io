@@ -137,6 +137,31 @@
     const group=element('div','blog-chart-segments');group.setAttribute('role','group');group.setAttribute('aria-label',label);
     parent.append(group);return group;
   }
+  // Both episodes compare the same books, so one key controls both plots.
+  function sharedSeriesKey(group,series,visible,redraw) {
+    let key=group.querySelector('.shared-series');
+    if(!key) {
+      key=element('div','shared-series');
+      key.setAttribute('role','group');key.setAttribute('aria-label','Series in both episodes');
+      for(const item of series) {
+        const button=element('button','',item.label);button.type='button';
+        button.dataset.series=item.id;
+        button.dataset.dash=item.dash||'solid';
+        button.setAttribute('aria-pressed',String(visible.get(item.id)));
+        const [light,dark]=PALETTE[item.role]||PALETTE.comparison;
+        button.style.setProperty('--series-light',light);button.style.setProperty('--series-dark',dark);
+        button.onclick=()=>{
+          button.setAttribute('aria-pressed',String(button.getAttribute('aria-pressed')!=='true'));
+          key.dispatchEvent(new Event('serieschange'));
+        };
+        key.append(button);
+      }
+      group.prepend(key);
+    }
+    const read=()=>{for(const button of key.children)visible.set(button.dataset.series,button.getAttribute('aria-pressed')==='true');};
+    read();
+    key.addEventListener('serieschange',()=>{read();redraw();});
+  }
   function dateRange(parent,start,end) {
     const wrap=element('div','blog-chart-range');
     start.setAttribute('aria-label','Start date');end.setAttribute('aria-label','End date');
@@ -242,12 +267,17 @@
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
       if(cfg.kind==='calendar-distribution'){await calendarDistribution(host,cfg);return;}
       if(cfg.kind.startsWith('attribution')){await attribution(host,data,cfg);return;}
+      const sharedGroup=host.closest('[data-shared-series]');
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
+      if(sharedGroup){
+        for(const s of series)if(!s.dash)s.dash={short:'dash',index:'dot'}[s.role]||'solid';
+      }
       const full=[cfg.start||data.dates[0],cfg.end||data.dates.at(-1)];
       const openingRange=cfg.initialRange||full;
       let range=[...openingRange], ready=false, busy=false, pending=false;
       const visible=new Map(series.map(s=>[s.id,s.visible!==false && (s.role!=='index'||cfg.benchmark===true)]));
+      if(sharedGroup)sharedSeriesKey(sharedGroup,series,visible,draw);
       const optionalBoxes=new Map();
       let legendTimer;
       const ui=host.querySelector('.blog-chart-ui'); ui.hidden=false;
@@ -296,8 +326,8 @@
       function checkbox(label,checked,change) {
         show??=controlRow(extra,'Show');return checkControl(show,label,checked,change).box;
       }
-      if(benchmark) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
-      for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false)))optionalBoxes.set(s.id,
+      if(benchmark&&!sharedGroup) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
+      for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false||visiblePeriods)))optionalBoxes.set(s.id,
         checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
@@ -325,7 +355,7 @@
           for(const key of ['annual_return','volatility','sharpe','drawdown'])row.append(element('td','',m?(s.additive&&key==='drawdown'?(m[key]*100).toFixed(1)+' pp':format(m[key],key!=='sharpe')):'—'));
           body.append(row);
         }
-        if(!body.children.length) {const row=element('tr'),td=element('td','','Show a series in the legend to see its statistics.');td.colSpan=5;row.append(td);body.append(row);}
+        if(!body.children.length) {const row=element('tr'),td=element('td','','Choose a series to see its statistics.');td.colSpan=5;row.append(td);body.append(row);}
       }
       function theme() {
         const dark=document.documentElement.dataset.theme==='dark';
@@ -345,12 +375,17 @@
           graph.hidden=false;
           const dates=data.dates.slice(first,last+1),t=theme(),traces=[];
           const mobile=host.clientWidth<550;
-          const plotHeight=visiblePeriods?mobile?425:470:bars?430:cfg.drawdown||cfg.contributions?405:300;
+          const labelEnds=cfg.directLabels || (initialWealth===1 && host.clientWidth>=620);
+          const showLegend=!sharedGroup && cfg.showLegend!==false && !(initialWealth===1 && labelEnds);
+          let plotHeight=cfg.drawdown||cfg.contributions?405:300;
+          if(bars)plotHeight=430;
+          if(visiblePeriods)plotHeight=mobile?425:470;
+          if(sharedGroup)plotHeight=sharedGroup.clientWidth<550?300:335;
           const layout={autosize:true,height:plotHeight,
-            margin:{l:mobile?44:50,r:12,t:bars?26:cfg.showLegend===false?25:mobile?69:57,b:33},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11.5:12,color:t.text},
+            margin:{l:mobile?44:50,r:12,t:bars?26:!showLegend?28:mobile?69:57,b:33},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11.5:12,color:t.text},
             paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),hovermode:bars?'closest':'x unified',
             modebar:{color:t.text,bgcolor:'rgba(0,0,0,0)',activecolor:COLORS.strategy},
-            dragmode:'zoom',showlegend:cfg.showLegend!==false,legend:{orientation:'h',y:1.10,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
+            dragmode:'zoom',showlegend:showLegend,legend:{orientation:'h',y:1.10,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
             xaxis:{type:bars?'category':'date',gridcolor:t.grid,showgrid:false,automargin:true,
               spikecolor:isDark()?'#8b949e':'#6e7681',spikethickness:1,spikedash:'solid'},
             yaxis:{gridcolor:t.grid,zerolinecolor:t.grid,automargin:true},annotations:[]};
@@ -399,7 +434,9 @@
             layout.yaxis.domain=secondary?[.43,1]:[0,1];layout.yaxis.type=cfg.log?'log':'linear';
             if(cfg.growthRange&&range[0]===full[0]&&range[1]===full[1])layout.yaxis.range=cfg.growthRange;
             if(cfg.log) {
-              const ticks=[];for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
+              const ticks=[];
+              if(initialWealth===1)for(let exponent=-10;exponent<20;exponent++)ticks.push(2**exponent);
+              else for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
               layout.yaxis.tickmode='array';layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);
             }
             const growthLabel=initialWealth===1?'Growth of $1 after fees':'Growth · 100 at selected start';
@@ -436,7 +473,7 @@
               if(ticks){layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);}
             }
             // Optional direct labels: each visible line named at its last point, nudged apart when close.
-            if(cfg.directLabels&&traces.some(tr=>tr.yaxis!=='y2'&&tr.visible===true)) {
+            if(labelEnds&&traces.some(tr=>tr.yaxis!=='y2'&&tr.visible===true)) {
               const ends=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true&&tr.y.length)
                 .map(tr=>({x:tr.x.at(-1),y:tr.y.at(-1),name:tr.name,color:tr.line.color}));
               // Leave room for the longest label so it isn't cut off at the right edge.
@@ -473,7 +510,7 @@
           updateTable(first,last);
           windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===openingRange[0]&&range[1]===openingRange[1]);
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
-          windowLabel.title=cfg.showLegend===false?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
+          windowLabel.title=!showLegend?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
           for(const [id,box] of optionalBoxes)box.checked=visible.get(id);
           if(!ready) {

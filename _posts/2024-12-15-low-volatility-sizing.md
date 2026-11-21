@@ -159,7 +159,7 @@ about 20.
 In the later rally the short book did roughly what its beta implied, and the
 shortfall of about 6 points came from the long book.
 
-<div class="research-figure regime-comparison-figure responsive-figure">
+<div class="research-figure regime-comparison-figure responsive-figure" data-shared-series>
   {% include blog-chart.html chart="rally-a" source="/assets/low-volatility-sizing/episodes.json" base="/assets/low-volatility-sizing/regime_comparison" mobile="/assets/low-volatility-sizing/regime_comparison_mobile" label="Panel A: dot-com rally and reversal, with linked book contributions" version="22" %}
   <section class="blog-chart" data-source="{{ '/assets/low-volatility-sizing/episodes.json' | relative_url }}" data-chart="rally-b" aria-label="Panel B: April 2025–May 2026 rally, with linked book contributions">
     <div class="blog-chart-ui" hidden></div>

@@ -9,8 +9,18 @@
 .blog-chart summary:hover { color:inherit; }
 .blog-chart-statistics { border-top:1px solid #8995a130; padding-top:.6rem; }
 .blog-chart-heading { font-weight:600; font-size:14px; margin:0 0 .75rem; }
-.regime-comparison-figure:has(.js-plotly-plot) { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
-@media(max-width:760px) { .regime-comparison-figure:has(.js-plotly-plot) { grid-template-columns:1fr; } }
+.regime-comparison-figure:has(.shared-series) { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.4rem 1.2rem; }
+.shared-series { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:.15rem 1rem; align-items:center; }
+.shared-series button { display:inline-flex; align-items:center; gap:.35rem; padding:.3rem 0; border:0; background:transparent; color:var(--ink); font:400 .8rem var(--font-sans); cursor:pointer; }
+.shared-series button::before { content:""; display:inline-block; width:1.4rem; border-top:2px solid var(--series-light); }
+.shared-series button[data-dash="dash"]::before { border-top-style:dashed; }
+.shared-series button[data-dash="dot"]::before { border-top-style:dotted; }
+html[data-theme="dark"] .shared-series button::before { border-color:var(--series-dark); }
+.shared-series button[aria-pressed="false"] { color:var(--muted-ink); text-decoration:line-through; }
+.shared-series button[aria-pressed="false"]::before { opacity:.35; }
+.regime-comparison-figure .blog-chart { margin:.25rem 0 .9rem; }
+.regime-comparison-figure .blog-chart-heading { font-weight:400; margin-bottom:.55rem; }
+@media(max-width:760px) { .regime-comparison-figure:has(.shared-series) { grid-template-columns:1fr; } }
 .blog-chart-table-wrap { overflow-x:auto; }
 .post-content .blog-chart table { width:100%; min-width:520px; font-size:13px; margin:.5rem 0; border-collapse:collapse; }
 .post-content .blog-chart th,.post-content .blog-chart td { padding:.3rem .55rem; text-align:right; white-space:nowrap; }
