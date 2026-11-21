@@ -13,59 +13,63 @@ series_order: 1
 permalink: /quants/factor-risk-sizing.html
 ---
 
-Suppose I’m long a chipmaker and want to hedge it. I could short another chipmaker or a stock from a different sector. Both shorts could offset the same amount of market beta. The first can also offset a semiconductor selloff. If the long has strong momentum and the short has weak momentum, the spread can still lose when momentum reverses. The hedge depends on which move I want protection from.
+Suppose I’m long a chipmaker and want to hedge it. I could short another chipmaker or a stock from a different sector. Both shorts could offset the same amount of broad market risk. A short in another chipmaker could also protect the spread in a semiconductor selloff. How can I tell which risks the hedge takes out and which ones it leaves in?
 
-A factor risk model estimates how much each stock responds to shared moves in the market, sectors and styles. I multiply those exposures by the signed position weights and add them up. That gives the portfolio’s exposure to each factor. To turn exposures into a volatility forecast, I need to know how large each factor’s moves tend to be and how the factors move together. I also need a forecast of the risk left over after accounting for those shared moves, such as the part of an earnings surprise specific to one company.
-
-The same exposures tell me how a proposed trade changes the portfolio’s risk, what a sector or style shock would do to the book, and how much of an observed return the factor moves explain. There is also a statistical reason to use them. A universe of 1,000 stocks has 499,500 pairwise correlations. The factor model estimates much of that co-movement through a smaller covariance matrix. Whether that helps depends on what the factors capture and what co-movement remains in the residuals.
+A factor risk model starts with the moves that several stocks can share, such as a market decline or a sector selloff. It uses those shared moves and the risk left over in each stock to estimate how volatile the whole portfolio might be. That estimate helps determine both which stocks hedge one another and how much of the resulting spread fits inside a risk budget.
 
 I use the Ridge forecasts as a worked example and keep them fixed. First I test which covariance estimates find quieter hedges on the same stocks. Then I compare risk forecasts on identical holdings. Finally I let each estimate change the positions under the same risk budget and check what happens to exposure, realized volatility and returns after fees.
 
 ## From stock exposures to portfolio risk
 
-At each close I write the vector of stock returns as shared factor moves plus a residual for each stock.
+### A three-stock example
+
+Take three stocks, A, B and C, and start with two factors. The market factor captures a move common to all three. The momentum factor captures a move associated with recent winners and losers. I assign A a momentum exposure of +1 because it has been a winner, B an exposure of −1 because it has been a loser, and C an exposure of zero. Each stock has a market exposure of one in this example.
+
+{% assign example = site.data.factor_risk_example %}
+<div class="matrix-calculation" role="group" aria-label="Market and momentum exposures for stocks A, B and C">
+  {% include worked-matrix.html matrix=example.exposures symbol="B" label="Stock exposures" %}
+</div>
+
+An **exposure** tells me how much of a factor move a stock picks up. If momentum returns +1% on a given day, it contributes +1 percentage point to A, −1 to B and zero to C. The exposures come from information I have before the session. The **factor return** is the size and direction of the shared move during the session, which I estimate after seeing the stock returns.
+
+### One day gives one set of factor returns
+
+Say A falls 4.5%, B falls 0.5%, and C falls 4%. With equal weight on each of the three observations, the fit puts the common market move at −3%, the average of the three returns. A and B differ by four percentage points in return and by two units in momentum exposure. With the same market exposure for both, the fit attributes that difference to a momentum return of −2% per unit of exposure. C has zero momentum exposure, so it helps estimate the market move and contributes no information about the momentum slope.
+
+The factors explain −5% for A, from −3% on the market and −2% on momentum. A actually fell 4.5%, so its **residual return** is +0.5 percentage points. B’s residual is also +0.5 points, and C’s is −1 point. A residual is what the fitted factors leave unexplained for that stock on that day.
+
+Stack the stocks into a vector and the same calculation becomes
 
 $$
 r_t = B_{t-1} f_t + \epsilon_t.
 $$
 
-Each row of $$B_{t-1}$$ gives one stock’s exposures as of the previous close. The market column is one for every stock. The other columns give its sector and style exposures.
+Here $$r_t$$ contains the stock returns, $$B_{t-1}$$ the exposures known the previous close, $$f_t$$ the factor returns fitted that day and $$\epsilon_t$$ the stock residuals. I repeat the regression across stocks each day to build a history of factor returns and residuals. In the Russell 1000 fit I weight each observation by the square root of prior market cap. I give all stocks a market exposure of one and center the sector returns under those weights to separate sector moves from the market term.
 
-I fit the factor returns $$f_t$$ across stocks by weighted least squares, using the square root of prior market cap as the weight. I center the sector returns under those weights to separate them from the common market term. What’s left after the fit is the vector of residual returns $$\epsilon_t$$.
+### A long and a short can cancel one exposure
 
-To forecast risk I hold the latest exposures $$B$$ fixed. Let $$F$$ be the covariance of factor returns and $$\Omega$$ the covariance of residual returns. The model assumes the factor and residual returns are uncorrelated, so their covariance contributions add.
+Put 50% of capital long A and 50% short B, with nothing in C. A market move affects the two stocks equally. The gains and losses from that move cancel in the spread because one stock is long and the other is short. Momentum goes the other way. The long is a recent winner, and shorting a recent loser adds to the same momentum exposure.
 
-$$
-\Sigma = BFB^\top + \Omega.
-$$
+With signed weights $$w=(0.5,-0.5,0)^\top$$, the portfolio exposures are $$b=B^\top w$$. The market exposure is $$0.5(1)-0.5(1)=0$$ and the momentum exposure is $$0.5(1)-0.5(-1)=1$$. On the day above, the factor contribution $$b^\top f_t$$ is therefore −2%. The two +0.5-point residuals also cancel. Their equality comes from the way momentum is fitted in this three-stock example. When I fit the factors across a larger universe, A and B can have different residuals and the spread can move even when momentum is flat.
 
-The additivity of the return model still allows factor returns to move together, so I estimate a full covariance matrix $$F$$. The baseline takes $$\Omega$$ to be diagonal, treating different stocks’ residuals as uncorrelated. This leaves one specific variance per stock to estimate. A shared move the chosen factors miss can still raise each stock’s specific variance. The diagonal estimate omits the covariance between those stocks.
+### A history of daily moves gives a risk estimate
 
-Which moves land in the residuals depends on the factors. A model with only a market and sectors can leave a common momentum effect behind. Adding a factor or estimating residual correlations can capture more of that co-movement, with more relationships to estimate. Part 2 checks how much of the residual co-movement survives into the following year.
+That −2% explains one day. To estimate risk going forward, I keep the latest exposures fixed and use the history of fitted factor returns to estimate how much the factors vary and how they move together. Call their covariance matrix $$F$$. For the example, give the market a daily volatility of 2% and momentum a daily volatility of 1%, and assume the two factor returns are uncorrelated. Their variances are 4 and 1 in squared percentage points. The fitted model uses a full $$F$$, so a tendency for factors to rise or fall together also enters the risk estimate.
 
-For signed weights $$w$$, let $$b=B^\top w$$ be the portfolio’s factor exposures. A factor move $$f$$ contributes $$b^\top f$$ to portfolio return. Before seeing that move, the model forecasts daily variance as
+The spread picks up the full momentum move and zero of the market move, so its factor variance is 1. For the residual calculation, think of A, B and C as three names in the larger fit. Suppose they have residual volatilities of 2%, 2% and 1%. For now assume these residuals are uncorrelated across stocks. At half weight, each of A and B contributes $$0.5^2\times 2^2=1$$ unit of residual variance. The spread has three units of daily variance in total, or about 1.73% daily volatility.
+
+In matrix form, $$\Omega$$ is the covariance of the stock residuals. The assumption of zero residual correlations makes $$\Omega$$ diagonal. If factor returns and residuals are uncorrelated, portfolio variance is the sum of the two contributions we just calculated.
 
 $$
 w^\top\Sigma w = b^\top F b + w^\top\Omega w.
 $$
 
-The first term depends on the net exposures and on how the factors move together. With diagonal $$\Omega$$, the second is the sum of each stock’s specific variance times its squared weight. Two positions can cancel a shared exposure while both still add specific risk.
+### The factors imply a covariance for each stock pair
 
-### The factors in this study
+The same model gives a covariance matrix $$\Sigma$$ for all the stocks. Its diagonal entries are stock variances. The other entries measure how each pair moves together. For A and B, the market contributes +4 to their covariance because both stocks carry the same market exposure. Momentum contributes −1 because their exposures have opposite signs. Their factor covariance is therefore 3. The pair tends to move together under these assumptions because the market effect is larger.
 
-The market intercept and sector indicators capture broad moves. The seven styles describe how stocks within and across sectors can still move together.
+To calculate all the pairs at once, start with $$BF$$. In the example, multiplying by the diagonal $$F$$ scales the market exposures by 4 and the momentum exposures by 1. A’s row becomes $$(4,1)$$.
 
-- **Momentum and short-term return** describe price behavior over different horizons. Momentum blends 12–1 return with a moving-average trend measure. Short-term return measures the last month.
-- **Beta and residual volatility** separate sensitivity to the Russell 1000 from the volatility left after fitting that index alone. Residual volatility is a stock characteristic here. The specific variance in $$\Omega$$ comes from the full factor fit.
-- **Size, liquidity and short interest** capture differences in market capitalization, trading volume relative to capitalization, and the share of stock sold short. They describe different ways stocks can react together when investors trade or unwind positions.
-
-A characteristic can help explain co-movement even when the return forecast omits it.
-
-### A three-stock example
-
-Take three stocks with a common market exposure of one. A and B have opposite momentum exposures. For the example, give the factors zero correlation and daily variances of 4 and 1 in squared percentage points.
-
-{% assign example = site.data.factor_risk_example %}
 <div class="matrix-calculation" role="group" aria-label="Stock exposures multiplied by factor covariance">
   <div class="matrix-product">
     {% include worked-matrix.html matrix=example.exposures symbol="B" label="Stock exposures" %}
@@ -74,7 +78,7 @@ Take three stocks with a common market exposure of one. A and B have opposite mo
   </div>
 </div>
 
-This diagonal $$F$$ scales the market column by 4 and the momentum column by 1. A’s row becomes $$(4,1)$$. Its dot product with B’s column in $$B^\top$$ gives their factor covariance. The highlighted cells show $$4(1)+1(-1)=3$$.
+Then multiply by $$B^\top$$, where each stock’s exposures are now a column. A’s scaled row times B’s column gives the same covariance as before, $$4(1)+1(-1)=3$$.
 
 <div class="matrix-calculation" role="group" aria-label="Scaled exposures times transposed exposures equals stock covariance from factors">
   <div class="matrix-product">
@@ -88,24 +92,34 @@ This diagonal $$F$$ scales the market column by 4 and the momentum column by 1. 
   </div>
 </div>
 
-Now put 50% of capital long A and 50% short B, so $$w=(0.5,-0.5,0)^\top$$. The common market exposure cancels, $$0.5(1)-0.5(1)=0$$. The momentum exposures add, $$0.5(1)-0.5(-1)=1$$. If the market factor falls 3% and the momentum factor falls 2%, the factor part of the spread’s return is $$0(-3\%)+1(-2\%)=-2\%$$. The remaining return comes from the two stocks’ residual moves.
-
-Let A, B and C have specific volatilities of 2%, 2% and 1%. With zero residual correlations, $$\Omega$$ adds their variances of 4, 4 and 1 to the diagonal of $$BFB^\top$$.
+Finally, add the residual covariance to get $$\Sigma=BFB^\top+\Omega$$. With zero residual correlations, this adds 4, 4 and 1 to the stock variances and leaves the A–B covariance at 3.
 
 <div class="matrix-calculation" role="group" aria-label="Total stock covariance with a diagonal residual model">
   {% include worked-matrix.html matrix=example.total_stock_covariance symbol="Σ" label="Total stock covariance" mark_row="A" mark_column="B" %}
 </div>
 
-The spread’s variance comes from the two individual variances and the cross term. With a short in B, its weight enters with a minus sign.
+With half the capital long A and half short B, each stock variance is multiplied by $$0.5^2$$. The two covariance entries are multiplied by the product of the long and short weights, which is negative. This gives the same spread variance as summing the factor and residual contributions.
 
 $$
 w^\top\Sigma w=\frac{9+9-2(3)}{4}=3.
 $$
 
-Momentum accounts for one unit of variance and the two specific risks account for the other two. To choose the weights, I need return forecasts and limits on what I can hold and trade.
+There are 499,500 distinct pairs in a universe of 1,000 stocks. With diagonal residuals, the model estimates their co-movement through the much smaller factor covariance matrix. That simplification matters when the factors leave a shared move behind. If the model leaves some momentum effects in the residuals, a diagonal $$\Omega$$ omits the covariance they create between stocks. [Part 2]({% link _posts/2026-11-20-residual-risk.md %}) asks whether estimating some of that residual co-movement improves the hedge.
 {: #the-average-residual-hides-groups}
 
+### The factors in this study
+
+The market intercept and sector indicators capture broad moves. The seven styles describe how stocks within and across sectors can still move together.
+
+- **Momentum and short-term return** describe price behavior over different horizons. Momentum blends 12–1 return with a moving-average trend measure. Short-term return measures the last month.
+- **Beta and residual volatility** separate sensitivity to the Russell 1000 from the volatility left after fitting that index alone. Residual volatility is a stock characteristic here. The specific variance in $$\Omega$$ comes from the full factor fit.
+- **Size, liquidity and short interest** capture differences in market capitalization, trading volume relative to capitalization, and the share of stock sold short. They describe different ways stocks can react together when investors trade or unwind positions.
+
+A characteristic can help explain co-movement even when the return forecast omits it.
+
 ## What goes into a position
+
+So far I’ve held the weights fixed and estimated their risk. To choose new weights, I also need a score for each stock and limits on how much the portfolio can hold and trade.
 
 The Ridge target is the stock’s rank within its sector on forward return per unit of risk. I turn each Ridge score $$s_i$$ into a sizing input $$\mu_i=s_i\widehat\sigma_i$$, using the stock’s trailing 21-session daily volatility $$\widehat\sigma_i$$. This is a return-like score for sizing. All three joint rules use the same scores, so the comparison varies how they estimate risk.
 
