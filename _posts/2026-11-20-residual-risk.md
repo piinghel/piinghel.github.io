@@ -12,9 +12,9 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-The simplest factor model in Part 1 attributed all shared risk to the market, sectors and styles. Once those moves were accounted for, each stock had its own specific variance.
+In Part 1, I started with a factor model that put all shared risk in the market, sectors and styles. Each stock had its own residual variance. A broad sector move can still leave smaller groups of stocks moving together after the fit.
 
-A sector factor can capture a broad move and still leave a group of stocks that move together. That matters when one of them is a hedge for another. I return to the same three-stock spread to show why, then check how much of the residual correlation survives into the following year.
+That matters when one stock is supposed to hedge another. I return to the same three-stock spread to show how residual correlation changes the hedge, then check how much of that co-movement survives into the following year.
 
 ## The sign of the position changes the answer
 
@@ -141,7 +141,7 @@ On the filled books, dropping residual correlations moved the factor target’s 
 
 ## What changed in the long/short book
 
-The forecast tests price risk on chosen stocks or directions. In the replay, the optimizer can use a different covariance estimate to change the holdings themselves. I keep the same Ridge scores, risk budget, exposure limits and trading penalty so any differences in sizing trace back to how the model estimates risk. The table shows what each set of positions delivered after fees, averaged across the same three trading schedules.
+So far I’ve measured how much residual co-movement survives and how much it changes a risk forecast. In the replay, the optimizer can also change the holdings. I keep the Ridge scores, risk budget, constraints and trading penalty fixed and compare what the new positions delivered after fees.
 
 <table class="research-table comparison-table compact-table">
   <caption>Annual after-fee performance. Each residual method uses the same named factors and specific volatilities. Stock shrinkage is the separate stock-level reference.</caption>

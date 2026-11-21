@@ -1,8 +1,8 @@
 ---
 layout: post
 toc: false
-title: "Factor Risk, Part 1: Shrinking Stock Correlations"
-description: "I kept the Ridge stock forecasts fixed and changed how the long/short portfolio measures risk. I compared risk forecasts on the same holdings, hedges on the same stocks, and long/short returns at similar realized risk."
+title: "A Short Introduction to Factor Risk Models"
+description: "How factor exposures become portfolio risk, and what changes in hedges and position sizing when the Ridge forecasts stay fixed."
 date: 2026-11-20
 last_modified_at: 2026-11-21
 categories: ["Portfolio construction"]
@@ -12,9 +12,11 @@ series_order: 1
 permalink: /quants/factor-risk-sizing.html
 ---
 
-When I add a short, I want to know which risk it takes out of the book. My stock-shrinkage benchmark starts with nearly half a million pairwise correlations in the Russell 1000. A factor model builds those relationships from a smaller set of shared moves, such as the market, sectors and styles. I can see how a short cuts market exposure and adds momentum exposure, though some shared moves may be missing from the model.
+A stock’s volatility tells me how much it moves on its own. To size a position in a portfolio, I also need to know which other holdings move with it. In the Russell 1000, estimating co-movement pair by pair means nearly half a million correlations.
 
-With the same Ridge forecasts, does a different risk estimate give me better hedges and a better portfolio after fees? I compare weights on the same sampled stocks, then ask each model to forecast risk on identical holdings. In the full replay, each optimizer chooses and trades its own book.
+A factor risk model builds those estimates from a smaller set of shared moves, such as the market, sectors and styles. I estimate how the factors move together and add the risk left over for each stock. That makes it possible to see when a short cuts market exposure and adds momentum exposure. Some stocks can still move together after the named factors come out.
+
+I keep the Ridge forecasts fixed and compare factor-based estimates with stock correlations shrunk toward zero. I compare hedge weights on the same stocks and risk forecasts on identical holdings. Then I let each optimizer trade its own book to see whether better hedges or less exposure explain a quieter portfolio, and what carries through after fees.
 
 ## From stock exposures to portfolio risk
 
@@ -178,7 +180,7 @@ I now let each sizing rule choose its own positions and trade from its own fills
 </div>
 <p class="figure-caption">The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
 
-The factor target came closest to its 7% budget in both periods. From 2022 to May 2026 it ran at **7.3%** realized volatility. Stock shrinkage earned more after fees and ran at **9.7%**. That is a different amount of risk for the same forecast budget.
+The factor target came closest to its 7% budget in both periods. Stock shrinkage earned more after fees in the later period and carried more risk. To understand that trade-off, it helps to see how much exposure each book held.
 
 ## Why the same risk budget produced different volatility
 
@@ -206,7 +208,7 @@ At each decision close, I priced the filled stock-shrinkage holdings with both m
   </tbody>
 </table>
 
-In the later period, switching to the factor target’s risk level reduced realized volatility by **about 2.4 percentage points** across both sets of stock relationships. At a common risk level the volatility difference was negligible, with an interval spanning roughly a fifth of a point either way. The level explains most of the volatility gap. At either level the factor target earned less in the later sample, with considerable uncertainty around the return difference.
+In the later period, moving to the factor target’s forecast scale reduced realized volatility by **about 2.4 percentage points** for both covariance models. Swapping the stock relationships at the same scale barely moved volatility, with paired intervals spanning roughly 0.2 points either way. The factor target earned less at both scales in this sample, with considerable uncertainty around the return difference.
 
 ## Trading with a calibrated risk budget
 
