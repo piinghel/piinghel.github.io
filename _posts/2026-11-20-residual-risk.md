@@ -95,11 +95,11 @@ A cluster gives each stock one label. Principal components let a stock contribut
 
 The correlation matrix $$S=Z^\top Z/T$$ averages the products of each pair of columns. Transposing $$Z$$ makes A’s column a row for the dot product with B’s column. The four products are $$1.4,-0.2,-0.2,1.4$$, giving $$2.4/4=0.6$$.
 
-For a vector of weights $$q$$, $$Zq$$ is the combined daily return series and $$q^\top S q$$ is its variance. The first principal component finds the highest-variance combination with squared weights summing to one. In this example it is $$q=(1,1,0)^\top/\sqrt{2}$$. Multiplying $$S$$ by $$q$$ gives $$Sq=1.6q$$. The same-sign A–B combination has variance 1.6, C alone has variance 1, and the opposing A–B combination has variance 0.4.
+Think of a direction $$q$$ as weights on the standardized residuals. The series $$Zq$$ is the return of that combination, with variance $$q^\top S q$$. The first principal component finds the combination with the highest variance for a unit-length $$q$$. Here it is $$q=(1,1,0)^\top/\sqrt{2}$$. Multiplying $$S$$ by $$q$$ gives $$Sq=1.6q$$. A and B reinforce each other in this direction. Flip the sign of B and much of their movement cancels. The opposing direction has variance 0.4, and C alone has variance 1.
 
 In a typical weekly fit on the real residual data, the first component explained about 3% of standardized residual variance. Its importance to a portfolio depends on how closely the holdings line up with it.
 
-For the chart, I fit the directions on 252 sessions and measure their variance over the following 252, using stocks observed in both windows. Each window is standardized with its own stock volatilities so the comparison tracks changes in co-movement. The portfolio replay estimates the scales and directions from the trailing history available at each decision.
+The first direction will look strong in the window that chose it. The test is to hold its weights fixed and ask how much variance that same direction has over the next 252 sessions. I use stocks observed in both windows and standardize each window by its own stock volatilities so the comparison tracks changes in co-movement.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/directions" mobile="/assets/residual-risk/directions_mobile" version="2" alt="PCA directions lose variance after formation but retain more than shuffled directions with the same industry composition. Development PCs two through five fall from 14.30 to 4.36 versus 1.64 for the shuffle." %}
@@ -169,3 +169,7 @@ Ordinary residual shrinkage improved on diagonal residuals in the later sample. 
 The groups tell me where to look for residual co-movement. The next-year tests tell me how much of it to carry into the forecast. The estimates weakened after formation, especially across sectors, and keeping five fitted directions at full strength overstated their forward risk. In a long/short book, the sign of each position determines which of those relationships actually matters for total risk.
 
 Keeping only within-group residual covariances barely moved the risk forecasts on the filled books. The groups held together out of sample, and their effect on forecast portfolio risk depended on which positions the book held.
+
+## References
+
+- Interpreting statistical factors and testing their stability. [Letchford, *Statistical Factor Modeling*](https://osquant.com/papers/2025/statistical-factor-modelling/)

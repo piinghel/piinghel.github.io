@@ -18,6 +18,8 @@ A factor risk model estimates how much each stock responds to shared moves in th
 
 The same exposures tell me how a proposed trade changes the portfolio’s risk, what a sector or style shock would do to the book, and how much of an observed return the factor moves explain. There is also a statistical reason to use them. A universe of 1,000 stocks has 499,500 pairwise correlations. The factor model estimates much of that co-movement through a smaller covariance matrix. Whether that helps depends on what the factors capture and what co-movement remains in the residuals.
 
+Here I start with named exposures such as sector membership and momentum, then estimate how much each factor moved from the returns of many stocks. Part 2 looks for statistical factors in the returns that remain. Those directions are learned from patterns of co-movement, so their interpretation and persistence need to be checked separately.
+
 I use the Ridge forecasts as a worked example and keep them fixed. First I test which covariance estimates find quieter hedges on the same stocks. Then I compare risk forecasts on identical holdings. Finally I let each estimate change the positions under the same risk budget and check what happens to exposure, realized volatility and returns after fees.
 
 ## From stock exposures to portfolio risk
@@ -87,7 +89,7 @@ This diagonal $$F$$ scales the market column by 4 and the momentum column by 1. 
   </div>
 </div>
 
-Now put 50% of capital long A and 50% short B, so $$w=(0.5,-0.5,0)^\top$$. The common market exposure cancels, $$0.5(1)-0.5(1)=0$$. The momentum exposures add, $$0.5(1)-0.5(-1)=1$$. The portfolio’s index-beta limit uses betas estimated separately for each stock.
+Now put 50% of capital long A and 50% short B, so $$w=(0.5,-0.5,0)^\top$$. The common market exposure cancels, $$0.5(1)-0.5(1)=0$$. The momentum exposures add, $$0.5(1)-0.5(-1)=1$$. If the market factor falls 3% and the momentum factor falls 2%, the factor part of the spread’s return is $$0(-3\%)+1(-2\%)=-2\%$$. The remaining return comes from the two stocks’ residual moves.
 
 Let A, B and C have specific volatilities of 2%, 2% and 1%. With zero residual correlations, $$\Omega$$ adds their variances of 4, 4 and 1 to the diagonal of $$BFB^\top$$.
 
@@ -186,7 +188,7 @@ To see how much the result depends on the kind of portfolio, I also ran long-onl
 
 A model can find a good hedge and still misjudge how much risk the spread carries. That distinction matters under a hard risk limit. I give both models the same holdings and compare their forecasts with the same realized returns.
 
-I score variance forecasts with **QLIKE**, the variance-forecast Q statistic. Let $$x=u/v$$ be the mean squared daily return divided by forecast daily variance. The normalized loss $$x-\log x-1$$ is zero at a match. A given proportional miss costs the same on quiet and volatile books. Forecasting half the realized variance costs more than forecasting twice the realized variance. On identical holdings, $$\log v+u/v$$ gives the same paired comparison.
+I score variance forecasts with **QLIKE**. Let $$x=u/v$$ be the mean squared daily return divided by forecast daily variance. The loss $$x-\log x-1$$ is zero at a match. Forecast half the realized variance and the loss is about 0.31. Forecast twice the realized variance and it is about 0.19. The loss penalizes underestimation more heavily for the same multiplicative error. On identical holdings, $$\log v+u/v$$ gives the same paired comparison.
 
 For a check without Ridge scores, I assigned the longs and shorts at random and gave names equal weights on each side. On these identical holdings, the factor target’s raw forecasts had lower QLIKE than stock shrinkage at 75, 100 and 150 names in the later period. All three paired intervals favored it. At 150 names, stock shrinkage forecast **3.6%** volatility and the factor target **3.4%**, against **2.7%** realized. Both estimates ran high.
 
@@ -229,6 +231,8 @@ I now let each sizing rule choose its own positions and trade from its own fills
 The factor target came closest to its 7% budget in both periods. Stock shrinkage earned more after fees in the later period and carried more risk. To understand that trade-off, it helps to see how much exposure each book held.
 
 ## Why the same risk budget produced different volatility
+
+Imagine the same weights have forecast volatility of 7% under one model and 10% under another. If I keep their proportions, the second model fits the 7% budget at 70% of the original size. Volatility scales linearly with position size. The optimizer can also change the proportions if the second model sees a better hedge elsewhere. The next test separates the change in scale from the change in stock relationships.
 
 The same 7% cap can produce a smaller book if one model forecasts more risk for a given set of positions. In the later period the factor target held **$1.24** of gross exposure per dollar of capital, against **$1.56** for stock shrinkage. It also had smaller drawdowns. The next comparison asks how much of the volatility gap follows the forecast level.
 
