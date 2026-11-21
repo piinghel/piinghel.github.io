@@ -46,10 +46,10 @@ They use the same Ridge regression on 80 ranking predictors and the same
 [joint sizing rules]({% link _posts/2026-08-29-joint-sizing.md %}),
 including the rank buffer and trade penalty. Orders execute at the next
 trading session's close after the signal date. All returns include 5 bp
-per dollar traded. This comparison retains the earlier **1.18 volatility
-multiplier**, versus the development-calibrated **1.55** in the
-[joint-sizing article]({% link _posts/2026-08-29-joint-sizing.md %}#covariance-and-risk-forecasts);
-both use a 7% forecast risk budget, so the portfolios here take more risk.
+per dollar traded. Both studies use a 7% forecast risk budget. This comparison
+uses a lower risk forecast for the same holdings than the
+[joint-sizing study]({% link _posts/2026-08-29-joint-sizing.md %}#covariance-and-risk-forecasts),
+so the optimizer can hold more exposure under that budget.
 
 Over this period, annualized net return ranges from **5.73% to 8.95%**.
 That is a 3.22 percentage point gap from changing the starting week.

@@ -23,8 +23,8 @@ fixed formulas. Borrow the qualities, not their phrases or personas.
 - [Rob Carver](https://qoppac.blogspot.com/2016/06/obligatory-brexit-ex-post-survival-skew.html)
   discusses what happened to his positions, including losses and mistaken
   expectations, while separating returns from the quality of risk management.
-  State what the author would do and why; a disappointing result is still
-  worth explaining.
+  Explain what drove an outcome and what trade-off it reveals. A disappointing
+  result is still worth explaining.
 
 ## Applying this voice
 
@@ -34,8 +34,8 @@ machine learning and portfolio management. Assume that technical audience, rathe
 beginner's tutorial or a business presentation. Keep the technical content
 rigorous and the prose conversational. Make the author's reasoning visible:
 the problem, the genuine prior or expectation when known, what happened, and
-what the author now thinks or would do. Merely reporting results misses that
-personal connection. This is a preference, not a story arc to fabricate.
+how the evidence changes the author's interpretation. Merely reporting
+results misses that personal connection. Use the reasoning the work supports.
 
 Use domain terminology as ordinary working vocabulary. Write “lowest-volatility
 decile,” not “the calmest tenth”; use “long and short books” without explaining
@@ -71,12 +71,15 @@ Exercise editorial judgment about what matters. A detail needed to implement
 an algorithm does not automatically belong in the article's main argument.
 Read the finished article as a continuous explanation: does each concept
 arrive when the reader needs it, and does each detail advance the question,
-method, evidence or interpretation? Introduce notation and normalizations
-before using them. Prefer symbolic parameters when explaining a general
-formulation, with the chosen values in nearby prose or a settings table.
-Move incidental calibration constants and implementation recipes out of the
-narrative when they interrupt it. Treat the author's examples as evidence of
-the underlying editorial preference, not a list of literal fixes to exhaust.
+method, evidence or interpretation?
+
+When an optimizer is central, introduce the allocation problem, then show the
+objective and constraints together. Name the terms just below. Use standard
+language such as “turnover penalty” for the cost charged in the objective, and
+distinguish it from fees charged on simulated fills. Keep the limits that define
+the comparison near the formula. Put incidental calibration constants in the
+research record. In the article, explain what an adjustment changes, what
+evidence motivated it, and when it would be useful.
 
 Present established methods as established methods. Introduce the idea on its
 own terms, then cite a useful explanation when relevant. Distinguish a

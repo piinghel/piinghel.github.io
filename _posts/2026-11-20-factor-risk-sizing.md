@@ -12,11 +12,11 @@ series_order: 1
 permalink: /quants/factor-risk-sizing.html
 ---
 
-A stock’s volatility tells me how much it moves on its own. To size a position in a portfolio, I also need to know which other holdings move with it. In the Russell 1000, estimating co-movement pair by pair means nearly half a million correlations.
+A short can hedge one exposure and add to another. A stock with similar market beta might offset the market risk of a long while adding to its momentum exposure. A stock-by-stock volatility estimate misses both effects. A full correlation matrix can capture them, but in the Russell 1000 that means estimating nearly half a million pairwise correlations.
 
-A factor risk model builds those estimates from a smaller set of shared moves, such as the market, sectors and styles. I estimate how the factors move together and add the risk left over for each stock. That makes it possible to see when a short cuts market exposure and adds momentum exposure. Some stocks can still move together after the named factors come out.
+A factor risk model estimates those relationships through a smaller set of shared exposures, such as the market, sectors and styles. This makes the risk easier to interpret and reduces how much I have to estimate. It also puts more weight on which factors I include. Stocks can still move together after those factors come out.
 
-I keep the Ridge forecasts fixed and compare factor-based estimates with stock correlations shrunk toward zero. I compare hedge weights on the same stocks and risk forecasts on identical holdings. Then I let each optimizer trade its own book to see whether better hedges or less exposure explain a quieter portfolio, and what carries through after fees.
+With the Ridge forecasts fixed, I compare factor-based estimates with stock correlations shrunk toward zero. First I look at the hedges each model finds on the same stocks. Then I check how each model forecasts risk on identical holdings and what happens when it sizes and trades its own book after fees.
 
 ## From stock exposures to portfolio risk
 
@@ -105,19 +105,32 @@ At rebalance, new longs come from the top 75 scores in the dated Russell 1000 un
 To see what modeling co-movement adds, I compare a stock-by-stock sizing rule with three joint rules that use different covariance estimates.
 
 - **Volatility scaling** is the simple benchmark. It starts with equal weights on each side and multiplies each by 20% divided by its trailing 60-session annualized volatility, with a 5% volatility floor. A 40%-volatility stock starts at half its equal weight. Each sleeve can use up to one dollar per dollar of capital. This benchmark sizes stocks one at a time.
-- **Stock shrinkage** is the main benchmark for the covariance comparison. It shrinks the 756-session stock correlation matrix halfway toward the identity. The stock volatilities use 21 sessions and a 1.18 multiplier.
+- **Stock shrinkage** shrinks the 756-session stock correlation matrix halfway toward the identity. This reduces the influence of noisy pairwise estimates. Stock volatilities use 21 sessions, with the fixed risk adjustment from the reference backtest.
 - **Sector and style factors** estimate stock covariance from a market intercept, broad sectors and seven styles, including momentum, size and liquidity. The model adds each stock’s specific variance and starts with zero pairwise residual correlations.
 - **Factor target** keeps the stock-shrinkage volatilities and averages the historical correlation matrix with the total correlation implied by the factor model, including shrunk residual correlations. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
 
-The factor target isolates the choice of shrinkage target. I convert the factor covariance estimate to a correlation matrix, use it in place of the identity as the shrinkage target, and convert back to covariance with the same stock volatilities as stock shrinkage. A stock has the same standalone risk under both estimates. What changes is the risk of holding it alongside other stocks.
+Stock shrinkage and the factor target use the same standalone stock risk. They differ in how much risk they assign to holding those stocks together. Shrinking a positive correlation toward zero lowers the estimated risk of two longs and gives less hedging credit to a long paired with a short. The effect on the whole book depends on its positions.
 
-### The optimizer trades off return, risk and turnover
+### The objective and constraints
 
-Each joint optimizer maximizes the portfolio’s Ridge return score less a penalty on changes from the filled book. The penalty discourages trading when a new weight offers little improvement. Forecast volatility $$\sqrt{252\,w^\top\Sigma w}$$ must stay at or below 7% a year. Annualizing daily variance this way assumes zero covariance between days.
+At rebalance I use the same objective and limits for all three covariance estimates. The optimizer looks for the most expected return after a turnover penalty, inside a 7% forecast volatility budget.
 
-The target weights also face limits on gross and net dollars, individual names and sectors. Those keep the optimizer from concentrating in a few positions or letting one side of the book dominate. I cap estimated index beta at ±0.05 because equal long and short dollars can still have different market sensitivity. For example, a 3%-long and 3%-short position in the same sector adds zero sector net. If their estimated betas are 1.4 and 0.8, the pair adds $$0.03(1.4-0.8)=0.018$$ to portfolio beta.
+$$
+\begin{aligned}
+\max_w\quad & \mu^\top w - c\lVert w-w_{\rm prev}\rVert_1 \\
+\text{subject to}\quad & 252\,w^\top\Sigma w \le (0.07)^2 \\
+& \lVert w\rVert_1 \le 2,\quad |\mathbf{1}^\top w| \le 0.25 \\
+& |\beta^\top w| \le 0.05 \\
+& |w_i| \le 0.04 \quad (\text{each stock}) \\
+& |a_g^\top w| \le 0.20 \quad (\text{each sector}).
+\end{aligned}
+$$
 
-This is mean–variance optimization with a hard risk cap. A variance penalty would let the book take more risk when return scores are stronger. I could cap individual style exposures directly. Here styles enter through the covariance, and I keep the limits and turnover penalty fixed.
+Here $$w$$ is the vector of signed target weights and $$w_{\rm prev}$$ is the book held at rebalance. The return forecasts $$\mu$$ are the Ridge scores converted to return units using the same 21-session stock volatility estimates. The turnover penalty applies a rate $$c$$ to two-way turnover, the sum of the absolute weight changes. The replay charges trading fees separately on the orders that actually fill.
+
+The first constraint caps annualized forecast volatility at 7% using the daily covariance $$\Sigma$$. Next come gross exposure (longs plus absolute shorts) and net exposure (longs minus shorts). The vector $$\beta$$ holds the stocks’ estimated index betas, and $$a_g$$ marks stocks in sector $$g$$. The position weights follow the signs of their eligible sleeves, and a sector can account for at most 30% of either sleeve. The beta limit matters even when dollars balance. A 3% long with beta 1.4 and a 3% short with beta 0.8 add zero net exposure and 0.018 of market beta.
+
+The hard cap makes it possible to compare models under the same stated risk budget. A variance penalty in the objective would let risk rise when the forecasts are stronger. The covariance estimate is where the model accounts for style risk.
 
 The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
 
@@ -127,7 +140,7 @@ The portfolio comparisons use 5,773 common sessions from 26 January 1999 through
 
 ## Comparing the hedges on the same stocks
 
-To see which model finds better offsets, I give all of them the same sampled stocks and ask for the lowest-risk spread at the same Ridge score. For scores $$s$$, each model minimizes $$w^\top\Sigma w$$ while holding $$w^\top s$$ at the equal-weight spread’s score. The gross long and short weights are each 50%, and each name stays between one-quarter and three times its side’s equal weight. Multiplying every covariance by the same number leaves these minimum-variance weights unchanged. This test isolates how each model ranks the available hedges.
+I give stock shrinkage, the sector-and-style model, and the same factor model with shrunk residual correlations the same sampled stocks. Each finds the minimum-variance spread at the same Ridge score. For scores $$s$$, each model minimizes $$w^\top\Sigma w$$ while holding $$w^\top s$$ at the equal-weight spread’s score. The gross long and short weights are each 50%, and each name stays between one-quarter and three times its side’s equal weight. Multiplying the whole covariance matrix by a constant leaves those minimum-variance weights unchanged.
 
 I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and measured gross returns for the session after the next close. The stock draws vary the names on the same dates. Later 150-stock spreads fell from **3.69% to 3.53%** annualized volatility when I added shrunk residual correlations to the factor model.
 
@@ -154,13 +167,15 @@ To see how much the result depends on the kind of portfolio, I also ran long-onl
 
 ## The same holdings reveal a gap in risk forecasts
 
-A model can pick quieter weights and still get their absolute risk wrong. I check this by having both models forecast risk for the same weights and comparing them against the same realized returns.
+A model can find a good hedge and still misjudge how much risk the spread carries. That distinction matters under a hard risk limit. I give both models the same holdings and compare their forecasts with the same realized returns.
 
 I score variance forecasts with **QLIKE**, the variance-forecast Q statistic. Let $$x=u/v$$ be the mean squared daily return divided by forecast daily variance. The normalized loss $$x-\log x-1$$ is zero at a match. A given proportional miss costs the same on quiet and volatile books. Forecasting half the realized variance costs more than forecasting twice the realized variance. On identical holdings, $$\log v+u/v$$ gives the same paired comparison.
 
 For a check without Ridge scores, I assigned the longs and shorts at random and gave names equal weights on each side. On these identical holdings, the factor target’s raw forecasts had lower QLIKE than stock shrinkage at 75, 100 and 150 names in the later period. All three paired intervals favored it. At 150 names, stock shrinkage forecast **3.6%** volatility and the factor target **3.4%**, against **2.7%** realized. Both estimates ran high.
 
-On the filled stock-shrinkage book, the same models forecast **7%** and **about 10%** across 227 later cycles, against **9.6%** annualized gross risk. I calibrated each forecast using the realized-to-forecast variance ratios over the last 52 completed cycles. After calibration both forecasts came out near **9.7%**. Stock shrinkage then had a lower Q score on its own holdings, and the paired intervals on the other two filled books included zero. The uncalibrated Q scores on the randomly assigned spreads also reflect differences in overall forecast scale.
+On the filled stock-shrinkage book, the same models forecast **7%** and **about 10%** across 227 later cycles, against **9.6%** annualized gross volatility. Absolute risk matters here because the lower forecast leaves room to take larger positions. I checked how much of the QLIKE gap came from forecast scale by rescaling each forecast with the mean ratio of realized to forecast variance over its last 52 completed cycles. Both forecasts then came out near **9.7%**. Stock shrinkage had a lower QLIKE on its own holdings, and the paired intervals on the other two filled books included zero.
+
+Calibration can help when a model consistently under- or overestimates risk on the holdings it will size. A uniform adjustment leaves the correlations intact. Here the direction of the error depended on the holdings. Stock shrinkage forecast too much risk on the random spreads and too little on the optimized book.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
@@ -226,7 +241,7 @@ In the later period, moving to the factor target’s forecast scale reduced real
 
 ## Trading with a calibrated risk budget
 
-The scale swap explains why realized risk differed. To target similar risk through time, I let each model learn from its own past forecast errors. At each rebalance I rescale its covariance using the last 52 completed cycles of its original book and reoptimize from the new replay’s own fills.
+The scale swap shows how much exposure moved with the risk estimate. I next let each model adjust its risk forecast as new outcomes became available. At each rebalance I rescale the covariance using the last 52 completed cycles of the corresponding reference book, then reoptimize from the calibrated replay’s own fills. A fixed adjustment estimated through 2021 also brought the stock-shrinkage book close to the budget later, at **7.5%** realized volatility. The rolling adjustment brought it to **7.1%**. Both replays point to the importance of the risk level, with less evidence for the value of updating the adjustment.
 
 <table class="research-table comparison-table compact-table">
   <caption>Outcomes with rolling calibration. Return and Sharpe show net on top and gross before trading fees below. Volatility uses net returns. Gross exposure is the average market value of longs and shorts, both counted as positive, per dollar of capital.</caption>

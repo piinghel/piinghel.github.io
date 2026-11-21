@@ -12,13 +12,13 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-In Part 1, I started with a factor model that put all shared risk in the market, sectors and styles. Each stock had its own residual variance. A broad sector move can still leave smaller groups of stocks moving together after the fit.
+The factor model in Part 1 explains shared risk through the market, sectors and styles. Its simplest version gives each stock its own residual variance and sets the residual correlations to zero. That works as a starting point, but a broad sector factor can miss a move shared by a smaller group.
 
 That matters when one stock is supposed to hedge another. I return to the same three-stock spread to show how residual correlation changes the hedge, then check how much of that co-movement survives into the following year.
 
 ## The sign of the position changes the answer
 
-Write the residual covariance as $$\Omega=DRD$$, where $$D$$ contains the specific volatilities and $$R$$ contains the residual correlations. This lets me vary how stocks move together while keeping each stock’s specific risk fixed.
+Write the residual covariance as $$\Omega=DRD$$, where $$D$$ is the diagonal matrix of specific volatilities and $$R$$ is the residual correlation matrix. Changing $$R$$ lets me vary how stocks move together while keeping each stock’s specific risk fixed.
 
 The spread is 50% long A and 50% short B, with daily variance of 3 squared percentage points when residual correlations are zero. Keep the specific volatilities at 2%, 2% and 1%, so $$D=\operatorname{diag}(2,2,1)$$ in percentage points. Give A and B a residual correlation of 0.6 in $$R$$. Right multiplication by $$D$$ scales the columns, and left multiplication scales the rows.
 

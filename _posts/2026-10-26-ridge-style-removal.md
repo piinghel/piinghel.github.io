@@ -69,15 +69,11 @@ left, and how much turnover it adds.
 </div>
 <p class="figure-caption"><strong>Figure 1: The removal sits between the forecast and the optimizer.</strong> A share λ of the fitted style part is subtracted from the forecast; the optimizer then selects and sizes the book exactly as before. The attribution articles read the same split in the other direction, on the book's P&L.</p>
 
-The book is the joint-sizing optimizer: 75 long and 75 short names, a 7%
-forecast volatility target, and its position, sector and beta limits, with the
-1.18 volatility multiplier of
-[Reducing Rebalancing Luck]({% link _posts/2026-09-05-rebalancing-luck.md %}).
-It takes more risk than the books in
-[joint sizing]({% link _posts/2026-08-29-joint-sizing.md %}) and
-[momentum crashes]({% link _posts/2026-09-30-momentum-crashes-ridge.md %}): it realizes
-about 8.9% volatility instead of 7%, so its returns and drawdowns are about 25%
-larger, while its Sharpe ratio over the same dates is close to theirs, 1.20 against 1.23.
+The optimizer starts from 75 long and 75 short candidates with a 7%
+forecast volatility limit and the same position, sector and beta constraints
+at every removal strength. I use the risk forecast from the
+[rebalancing study]({% link _posts/2026-09-05-rebalancing-luck.md %}).
+The reference book realizes about 8.9% volatility against its 7% forecast limit.
 All results are means over its three rebalance schedules, after 5 bp per dollar
 traded, from January 1999 to April 2026. Intervals are paired 120-session
 block-bootstrap 95% intervals against no removal. I compare net Sharpe ratios:
@@ -174,9 +170,9 @@ $$
 \Sigma = D\,C\,D,\qquad C=\tfrac{1}{2}\hat R+\tfrac{1}{2}I .
 $$
 
-$$D$$ holds each stock's volatility: the sample standard deviation of its last 21
-daily returns, floored at 5% a year (20% when there isn't enough history), times
-a multiplier of 1.18. $$\hat R$$ is the correlation matrix of
+The diagonal of $$D$$ contains each stock's volatility, estimated from its last
+21 daily returns and scaled by the reference book’s fixed risk adjustment.
+$$\hat R$$ is the correlation matrix of
 volatility-standardized daily returns over the last 756 sessions, with at least
 252 observations per pair, daily returns capped at ±30% and negative eigenvalues
 set to zero. Shrinking it halfway to the identity, as in the
@@ -184,12 +180,10 @@ set to zero. Shrinking it halfway to the identity, as in the
 reduces the optimizer's reliance on individual correlation estimates, at the
 cost of pulling potentially useful correlations toward zero.
 
-A factor risk model would write the covariance as
-$$B\Omega_fB'+\Omega_\epsilon$$, separating the factor covariance
-$$\Omega_f$$ from the residual covariance $$\Omega_\epsilon$$. A shrunk
-sample covariance has no such separation: halving every correlation also halves
-those that come from shared styles, which can make concentrated style exposure
-look too cheap and may help explain why the book overshoots its 7% target.
+A factor risk model separates shared style risk from stock-specific risk.
+Shrinking stock correlations toward zero can make shared exposures look
+cheaper on one side of the portfolio and reduce the hedging credit between
+the two sides. The effect on forecast risk depends on the holdings.
 The [factor-risk study]({% link _posts/2026-11-20-factor-risk-sizing.md %})
 holds the Ridge forecast fixed and changes the covariance estimate directly.
 
@@ -309,16 +303,10 @@ lowers volatility about as much but adds little Sharpe (+0.04 at 50%). It falls
 short of style removal before 2019 and does a bit better since. The components
 start only in 2002, so I read it as a cross-check.
 
-Limiting style on the finished portfolio did worse. A cost-free style-beta limit
-on the book was 0.13 Sharpe behind 25% forecast removal, and hard style caps in the
-optimizer had no feasible solution on 24 April 2009 other than the empty book. The
-150 names are chosen from the forecast before the optimizer weights them. A
-limit can change their weights, but it can't choose different names to offset an
-exposure. That fits Clarke,
-de Silva and Thorley's point that constraints limit how much of a signal reaches
-the weights.[^clarke] Another alternative is to hedge part of
-the risk with covariance-based portfolios, as Daniel, Mota, Rottke and Santos do
-for characteristic portfolios.[^daniel]
+Limiting style exposure on the held book came in 0.13 Sharpe below 25% forecast
+removal, before charging for the trades added by the limit. A cap works on the
+optimizer’s existing candidate list. Removing style from the forecasts can
+change which stocks make the list in the first place.
 
 ## Style removal changed the mix of risk
 {: #what-i-take-from-this }
@@ -347,17 +335,7 @@ Mark Horvath, Dominik Zvara and Mihaly Berndt,
 [*Constructing Portfolios from Published Equity Research*](https://www.msci.com/research-and-insights/blog-post/constructing-portfolios-from-published-equity-research),
 MSCI Research, 7 October 2026.
 
-Roger Clarke, Harindra de Silva and Steven Thorley,
-*Portfolio Constraints and the Fundamental Law of Active Management*, Financial
-Analysts Journal 58(5), 2002, 48–66.
-
-Kent Daniel, Lira Mota, Simon Rottke and Tano Santos,
-[*The Cross-Section of Risk and Returns*](https://doi.org/10.1093/rfs/hhaa021),
-Review of Financial Studies 33(5), 2020, 1927–1979.
-
 [^book]: Paleologo (2021), Chapter 6, Procedure 6.3; Chapter 8 uses the same factor decomposition to separate style from idiosyncratic P&L.
 [^numerai]: See also Numerai's [feature-neutral correlation](https://docs.numer.ai/numerai-tournament/scoring/feature-neutral-correlation).
 [^msci]: Mean post-publication information ratio across the signals; these are neutralized signals, not a model's forecast.
 [^wls]: Paleologo (2021), Appendix 11.1.2; he averages market cap over about 21 days, here it is the day's value.
-[^clarke]: Their transfer coefficient is 1 when the signal reaches the weights unconstrained; constrained managers typically sit between 0.3 and 0.8.
-[^daniel]: The squared Sharpe ratio of their five characteristic portfolios rises from 1.16 to 2.16, per the authors' abstract.
