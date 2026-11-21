@@ -135,9 +135,9 @@ Widen an individual figure only to make a particular comparison legible.
 On phones, keep related panels in the same view when their labels fit. Keep comparison tables in their shared
 `research-table` / `comparison-table` styles.
 
-The homepage is a text index of article titles and dates, beginning directly
-with the latest entry. Give every article the same treatment. Figures,
-captions and introductory copy belong inside the article.
+Preserve the original homepage. Each entry uses the same article title,
+date, topic and short description beneath the “Research notes” heading.
+Keep all figures and captions inside articles.
 
 Number figures and tables independently in reading order. Put the figure's one
 main title at the beginning of its caption below the display. Put a table's

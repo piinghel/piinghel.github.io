@@ -3,7 +3,7 @@
 
 {%- include head.html -%}
 
-<body>
+<body{% if page.layout == "home" %} class="notes-index"{% endif %}>
   {%- include header.html -%}
 
   <main class="page-content" aria-label="Content">

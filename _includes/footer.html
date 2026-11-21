@@ -3,7 +3,7 @@
   <div class="wrapper">
     <p class="footer-note">
       <a class="footer-home" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
-      {% unless page.layout == "home" %}<span>{{ site.description | escape }}</span>{% endunless %}
+      <span>{{ site.description | escape }}</span>
     </p>
     <a class="footer-feed" href="{{ site.feed.path | default: 'feed.xml' | absolute_url }}">RSS</a>
   </div>

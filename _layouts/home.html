@@ -3,7 +3,7 @@ layout: base
 ---
 
 <div class="home">
-  <h1 class="visually-hidden">Articles</h1>
+  <h1 class="home-title">Research notes</h1>
   {%- comment -%}
     Newest first, with explicit home_after links for article continuations.
     Posts published on the same day list the latest part first (Part 2, then 1).
@@ -28,8 +28,21 @@ layout: base
     <ul class="post-list">
       {%- for post in home_posts -%}
       <li>
-        <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
-        <time class="post-list-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+        <h2>
+          <a class="post-link" href="{{ post.url | relative_url }}">
+            {{ post.title | escape }}
+          </a>
+        </h2>
+        <div class="post-list-details">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+          {%- for category in post.categories limit: 1 -%}
+            <span class="post-topic">{{ category }}</span>
+          {%- endfor -%}
+        </div>
+        {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
+        {%- if site.show_excerpts -%}
+          {{ post.excerpt }}
+        {%- endif -%}
       </li>
       {%- endfor -%}
     </ul>
