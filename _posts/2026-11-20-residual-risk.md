@@ -99,9 +99,7 @@ In development, components two through five fell from **about 14** units of vari
 
 ## Putting a residual correlation into the portfolio
 
-To see how much of that structure helps forecast risk, I vary the residual correlation matrix $$R$$ and hold the named factors and specific volatilities fixed. Specific volatilities use a 63-session exponential half-life. Residual correlations use the trailing 252 sessions.
-
-The baseline uses $$R=I$$. A stock without a complete trailing residual window keeps its named exposures and specific variance. Assigning it zero residual correlations keeps it eligible without estimating co-movement from an incomplete window.
+I vary the residual correlation matrix $$R$$ while keeping the named factors and specific volatilities fixed. The baseline uses $$R=I$$. The other estimates start from the trailing 252-session residual correlations.
 
 For a principal direction $$q$$ with variance $$\lambda$$, its contribution is the matrix $$\lambda qq^\top$$. Let $$L$$ be the sum over the directions I keep. In the formulas below, $$\operatorname{diag}(U)$$ means a matrix with only the diagonal entries of $$U$$.
 
@@ -117,8 +115,6 @@ Every year I compared each forecast with the same pairs’ correlations over the
   {% include theme-svg-figure.html base="/assets/residual-risk/pair-errors" mobile="/assets/residual-risk/pair-errors_mobile" version="1" alt="Changes in next-year pair correlation error versus forecasting zero. All estimators improved on zero for stocks in the same sector and cluster. The cross-sector, different-cluster forecasts increased error in both periods." %}
   <p class="figure-caption">Each row is a different set of stock pairs. The dots show how much each estimator changes the following year’s correlation error relative to a forecast of zero. Left of zero is better. A difference of −4 means four correlation points less error. Cohorts receive equal weight within each panel.</p>
 </div>
-
-Ordinary shrinkage still reduced overall forecast error compared with predicting zero after excluding pairs of securities issued by the same company.
 
 ## Keeping five components overstated their forward risk
 
@@ -162,8 +158,6 @@ So far I’ve measured how much residual co-movement survives and how much it ch
 Ordinary residual shrinkage improved on diagonal residuals in the later sample. Annual return after fees went from **2.7% to 4.0%**, with a modest drop in volatility. In development it also lowered volatility, with a small decline in return. Adding five components barely moved later net Sharpe, and the paired interval allowed small gains or losses.
 
 The groups tell me where to look for residual co-movement. The next-year tests tell me how much of it to carry into the forecast. The estimates weakened after formation, especially across sectors, and keeping five fitted directions at full strength overstated their forward risk. In a long/short book, the sign of each position determines which of those relationships actually matters for total risk.
-
-Keeping only within-group residual covariances barely moved the risk forecasts on the filled books. The groups held together out of sample, and their effect on forecast portfolio risk depended on which positions the book held.
 
 ## References
 
