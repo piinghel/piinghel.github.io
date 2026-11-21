@@ -1,120 +1,421 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="740" viewBox="0 0 1200 740" role="img" aria-labelledby="title desc">
-<title id="title">How much correlation shrinkage matters</title>
-<desc id="desc">Four panels show risk calibration, beta bias, turnover, and net Sharpe for the optimizer with trading controls as correlation shrinkage moves from zero to one; the chosen 0.5 is highlighted.</desc>
-<g font-family="DejaVu Sans, sans-serif">
-<text x="53.0" y="43.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Risk calibration</text>
-<text x="53.0" y="67.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Root-mean realized / forecast volatility</text>
-<line x1="107.0" y1="270.0" x2="560.0" y2="270.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="275.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.0</text>
-<line x1="107.0" y1="210.0" x2="560.0" y2="210.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="215.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.2</text>
-<line x1="107.0" y1="150.0" x2="560.0" y2="150.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="155.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.4</text>
-<line x1="107.0" y1="90.0" x2="560.0" y2="90.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="95.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.6</text>
-<line x1="107.0" y1="300.0" x2="107.0" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="107.0" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0</text>
-<line x1="220.2" y1="300.0" x2="220.2" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="220.2" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.25</text>
-<line x1="333.5" y1="300.0" x2="333.5" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="333.5" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.5</text>
-<line x1="446.8" y1="300.0" x2="446.8" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="446.8" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
-<line x1="560.0" y1="300.0" x2="560.0" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="560.0" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M107.0,237.2 L220.2,266.9 L333.5,268.3 L446.8,244.4 L560.0,121.3" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="237.2" r="4" fill="#AAB2C0"/>
-<circle cx="220.2" cy="266.9" r="4" fill="#AAB2C0"/>
-<circle cx="333.5" cy="268.3" r="6" fill="#C9D1D9"/>
-<circle cx="446.8" cy="244.4" r="4" fill="#AAB2C0"/>
-<circle cx="560.0" cy="121.3" r="4" fill="#AAB2C0"/>
-<text x="333.5" y="350.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
-<text x="638.0" y="43.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Beta bias</text>
-<text x="638.0" y="67.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Realized minus forecast beta, next holding period</text>
-<line x1="692.0" y1="300.0" x2="1145.0" y2="300.0" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="305.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">0.00</text>
-<line x1="692.0" y1="247.5" x2="1145.0" y2="247.5" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="252.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">0.02</text>
-<line x1="692.0" y1="195.0" x2="1145.0" y2="195.0" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="200.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">0.04</text>
-<line x1="692.0" y1="142.5" x2="1145.0" y2="142.5" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="147.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">0.06</text>
-<line x1="692.0" y1="90.0" x2="1145.0" y2="90.0" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="95.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">0.08</text>
-<line x1="692.0" y1="300.0" x2="692.0" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="692.0" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0</text>
-<line x1="805.2" y1="300.0" x2="805.2" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="805.2" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.25</text>
-<line x1="918.5" y1="300.0" x2="918.5" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="918.5" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.5</text>
-<line x1="1031.8" y1="300.0" x2="1031.8" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="1031.8" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
-<line x1="1145.0" y1="300.0" x2="1145.0" y2="305.0" stroke="#3B4250" stroke-width="1"/>
-<text x="1145.0" y="323.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M692.0,148.7 L805.2,142.6 L918.5,141.1 L1031.8,153.7 L1145.0,226.3" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="692.0" cy="148.7" r="4" fill="#AAB2C0"/>
-<circle cx="805.2" cy="142.6" r="4" fill="#AAB2C0"/>
-<circle cx="918.5" cy="141.1" r="6" fill="#C9D1D9"/>
-<circle cx="1031.8" cy="153.7" r="4" fill="#AAB2C0"/>
-<circle cx="1145.0" cy="226.3" r="4" fill="#AAB2C0"/>
-<text x="918.5" y="350.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
-<text x="53.0" y="403.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Annual turnover</text>
-<text x="53.0" y="427.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Two-way turnover (× capital)</text>
-<line x1="107.0" y1="660.0" x2="560.0" y2="660.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="665.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">20</text>
-<line x1="107.0" y1="607.5" x2="560.0" y2="607.5" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="612.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">22</text>
-<line x1="107.0" y1="555.0" x2="560.0" y2="555.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="560.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">24</text>
-<line x1="107.0" y1="502.5" x2="560.0" y2="502.5" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="507.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">26</text>
-<line x1="107.0" y1="450.0" x2="560.0" y2="450.0" stroke="#3B4250" stroke-width="1"/>
-<text x="97.0" y="455.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">28</text>
-<line x1="107.0" y1="660.0" x2="107.0" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="107.0" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0</text>
-<line x1="220.2" y1="660.0" x2="220.2" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="220.2" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.25</text>
-<line x1="333.5" y1="660.0" x2="333.5" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="333.5" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.5</text>
-<line x1="446.8" y1="660.0" x2="446.8" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="446.8" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
-<line x1="560.0" y1="660.0" x2="560.0" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="560.0" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M107.0,495.8 L220.2,560.2 L333.5,590.8 L446.8,599.5 L560.0,568.7" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="107.0" cy="495.8" r="4" fill="#AAB2C0"/>
-<circle cx="220.2" cy="560.2" r="4" fill="#AAB2C0"/>
-<circle cx="333.5" cy="590.8" r="6" fill="#C9D1D9"/>
-<circle cx="446.8" cy="599.5" r="4" fill="#AAB2C0"/>
-<circle cx="560.0" cy="568.7" r="4" fill="#AAB2C0"/>
-<text x="333.5" y="710.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
-<text x="638.0" y="403.0" fill="#F3F4F6" font-size="24" font-weight="600" text-anchor="start">Net Sharpe</text>
-<text x="638.0" y="427.0" fill="#AAB2C0" font-size="20" font-weight="400" text-anchor="start">Mean across three schedules</text>
-<line x1="692.0" y1="660.0" x2="1145.0" y2="660.0" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="665.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.0</text>
-<line x1="692.0" y1="607.5" x2="1145.0" y2="607.5" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="612.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.1</text>
-<line x1="692.0" y1="555.0" x2="1145.0" y2="555.0" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="560.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.2</text>
-<line x1="692.0" y1="502.5" x2="1145.0" y2="502.5" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="507.5" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.3</text>
-<line x1="692.0" y1="450.0" x2="1145.0" y2="450.0" stroke="#3B4250" stroke-width="1"/>
-<text x="682.0" y="455.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="end">1.4</text>
-<line x1="692.0" y1="660.0" x2="692.0" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="692.0" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0</text>
-<line x1="805.2" y1="660.0" x2="805.2" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="805.2" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.25</text>
-<line x1="918.5" y1="660.0" x2="918.5" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="918.5" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.5</text>
-<line x1="1031.8" y1="660.0" x2="1031.8" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="1031.8" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">0.75</text>
-<line x1="1145.0" y1="660.0" x2="1145.0" y2="665.0" stroke="#3B4250" stroke-width="1"/>
-<text x="1145.0" y="683.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">1</text>
-<path d="M692.0,512.4 L805.2,489.2 L918.5,493.6 L1031.8,520.7 L1145.0,633.7" fill="none" stroke="#AAB2C0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="692.0" cy="512.4" r="4" fill="#AAB2C0"/>
-<circle cx="805.2" cy="489.2" r="4" fill="#AAB2C0"/>
-<circle cx="918.5" cy="493.6" r="6" fill="#C9D1D9"/>
-<circle cx="1031.8" cy="520.7" r="4" fill="#AAB2C0"/>
-<circle cx="1145.0" cy="633.7" r="4" fill="#AAB2C0"/>
-<text x="918.5" y="710.0" fill="#AAB2C0" font-size="21" font-weight="400" text-anchor="middle">Correlation shrinkage ρ</text>
-</g>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="561.6pt" height="250.56pt" viewBox="0 0 561.6 250.56" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 250.56
+L 561.6 250.56
+L 561.6 0
+L 0 0
+z
+" style="fill: #0d1117"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 39.312 95.491765
+L 259.594759 95.491765
+L 259.594759 17.28
+L 39.312 17.28
+z
+" style="fill: #0d1117"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 39.312 95.491765
+L 259.594759 95.491765
+" clip-path="url(#p70b5868691)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5"/>
+     <g id="text_1">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="36.312" y="98.911062" transform="rotate(-0 36.312 98.911062)">0.5</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 39.312 59.940963
+L 259.594759 59.940963
+" clip-path="url(#p70b5868691)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_7"/>
+     <g id="text_2">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="36.312" y="63.360259" transform="rotate(-0 36.312 63.360259)">1</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 39.312 24.39016
+L 259.594759 24.39016
+" clip-path="url(#p70b5868691)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_9"/>
+     <g id="text_3">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="36.312" y="27.809457" transform="rotate(-0 36.312 27.809457)">1.5</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_10">
+    <path d="M 39.312 59.940963
+L 259.594759 59.940963
+" clip-path="url(#p70b5868691)" style="fill: none; stroke-dasharray: 0.7,1.155; stroke-dashoffset: 0; stroke: #c9d1d9; stroke-width: 0.7"/>
+   </g>
+   <g id="line2d_11">
+    <path d="M 49.324853 52.176771
+L 99.389116 59.204969
+L 149.453379 59.535306
+L 199.517643 53.877132
+L 249.581906 24.709999
+" clip-path="url(#p70b5868691)" style="fill: none; stroke: #89b5cc; stroke-width: 1.3; stroke-linecap: square"/>
+    <defs>
+     <path id="m86e9cfe064" d="M 0 1.5
+C 0.397805 1.5 0.77937 1.341951 1.06066 1.06066
+C 1.341951 0.77937 1.5 0.397805 1.5 0
+C 1.5 -0.397805 1.341951 -0.77937 1.06066 -1.06066
+C 0.77937 -1.341951 0.397805 -1.5 0 -1.5
+C -0.397805 -1.5 -0.77937 -1.341951 -1.06066 -1.06066
+C -1.341951 -0.77937 -1.5 -0.397805 -1.5 0
+C -1.5 0.397805 -1.341951 0.77937 -1.06066 1.06066
+C -0.77937 1.341951 -0.397805 1.5 0 1.5
+z
+" style="stroke: #89b5cc"/>
+    </defs>
+    <g clip-path="url(#p70b5868691)">
+     <use xlink:href="#m86e9cfe064" x="49.324853" y="52.176771" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="99.389116" y="59.204969" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="149.453379" y="59.535306" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="199.517643" y="53.877132" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="249.581906" y="24.709999" style="fill: #89b5cc; stroke: #89b5cc"/>
+    </g>
+   </g>
+   <g id="line2d_12">
+    <path d="M 149.453379 59.535306
+" clip-path="url(#p70b5868691)" style="fill: none; stroke: #c9d1d9; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="m80bb6fa5f5" d="M -0 3.535534
+L 3.535534 0
+L 0 -3.535534
+L -3.535534 -0
+z
+" style="stroke: #c9d1d9; stroke-linejoin: miter"/>
+    </defs>
+    <g clip-path="url(#p70b5868691)">
+     <use xlink:href="#m80bb6fa5f5" x="149.453379" y="59.535306" style="fill: #c9d1d9; stroke: #c9d1d9; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #c9d1d9" x="39.312" y="11.28" transform="rotate(-0 39.312 11.28)">Risk calibration</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_3">
+    <path d="M 330.085241 95.491765
+L 550.368 95.491765
+L 550.368 17.28
+L 330.085241 17.28
+z
+" style="fill: #0d1117"/>
+   </g>
+   <g id="matplotlib.axis_3">
+    <g id="xtick_4">
+     <g id="line2d_13"/>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_14"/>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_15"/>
+    </g>
+   </g>
+   <g id="matplotlib.axis_4">
+    <g id="ytick_4">
+     <g id="line2d_16">
+      <path d="M 330.085241 95.491765
+L 550.368 95.491765
+" clip-path="url(#pdffcd5a279)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_17"/>
+     <g id="text_5">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="327.085241" y="98.911062" transform="rotate(-0 327.085241 98.911062)">0</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_18">
+      <path d="M 330.085241 56.385882
+L 550.368 56.385882
+" clip-path="url(#pdffcd5a279)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_19"/>
+     <g id="text_6">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="327.085241" y="59.805179" transform="rotate(-0 327.085241 59.805179)">0.04</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_20">
+      <path d="M 330.085241 17.28
+L 550.368 17.28
+" clip-path="url(#pdffcd5a279)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_21"/>
+     <g id="text_7">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="327.085241" y="20.699297" transform="rotate(-0 327.085241 20.699297)">0.08</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_22">
+    <path d="M 330.085241 95.491765
+L 550.368 95.491765
+" clip-path="url(#pdffcd5a279)" style="fill: none; stroke-dasharray: 0.7,1.155; stroke-dashoffset: 0; stroke: #c9d1d9; stroke-width: 0.7"/>
+   </g>
+   <g id="line2d_23">
+    <path d="M 340.098094 39.136939
+L 390.162357 36.882497
+L 440.226621 36.305314
+L 490.290884 40.995463
+L 540.355147 68.028092
+" clip-path="url(#pdffcd5a279)" style="fill: none; stroke: #89b5cc; stroke-width: 1.3; stroke-linecap: square"/>
+    <g clip-path="url(#pdffcd5a279)">
+     <use xlink:href="#m86e9cfe064" x="340.098094" y="39.136939" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="390.162357" y="36.882497" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="440.226621" y="36.305314" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="490.290884" y="40.995463" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="540.355147" y="68.028092" style="fill: #89b5cc; stroke: #89b5cc"/>
+    </g>
+   </g>
+   <g id="line2d_24">
+    <path d="M 440.226621 36.305314
+" clip-path="url(#pdffcd5a279)" style="fill: none; stroke: #c9d1d9; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pdffcd5a279)">
+     <use xlink:href="#m80bb6fa5f5" x="440.226621" y="36.305314" style="fill: #c9d1d9; stroke: #c9d1d9; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #c9d1d9" x="330.085241" y="11.28" transform="rotate(-0 330.085241 11.28)">Beta bias</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_4">
+    <path d="M 39.312 216.72
+L 259.594759 216.72
+L 259.594759 138.508235
+L 39.312 138.508235
+z
+" style="fill: #0d1117"/>
+   </g>
+   <g id="matplotlib.axis_5">
+    <g id="xtick_7">
+     <g id="line2d_25"/>
+     <g id="text_9">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="49.324853" y="226.558594" transform="rotate(-0 49.324853 226.558594)">0</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_26"/>
+     <g id="text_10">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="149.453379" y="226.558594" transform="rotate(-0 149.453379 226.558594)">0.5</text>
+     </g>
+    </g>
+    <g id="xtick_9">
+     <g id="line2d_27"/>
+     <g id="text_11">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="249.581906" y="226.558594" transform="rotate(-0 249.581906 226.558594)">1</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_6">
+    <g id="ytick_7">
+     <g id="line2d_28">
+      <path d="M 39.312 216.72
+L 259.594759 216.72
+" clip-path="url(#p39a5e27f46)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_29"/>
+     <g id="text_12">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="36.312" y="220.139297" transform="rotate(-0 36.312 220.139297)">0</text>
+     </g>
+    </g>
+    <g id="ytick_8">
+     <g id="line2d_30">
+      <path d="M 39.312 177.614118
+L 259.594759 177.614118
+" clip-path="url(#p39a5e27f46)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_31"/>
+     <g id="text_13">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="36.312" y="181.033415" transform="rotate(-0 36.312 181.033415)">15</text>
+     </g>
+    </g>
+    <g id="ytick_9">
+     <g id="line2d_32">
+      <path d="M 39.312 138.508235
+L 259.594759 138.508235
+" clip-path="url(#p39a5e27f46)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_33"/>
+     <g id="text_14">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="36.312" y="141.927532" transform="rotate(-0 36.312 141.927532)">30</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_34">
+    <path d="M 49.324853 148.26965
+L 99.389116 154.670134
+L 149.453379 157.702446
+L 199.517643 158.571134
+L 249.581906 155.509688
+" clip-path="url(#p39a5e27f46)" style="fill: none; stroke: #89b5cc; stroke-width: 1.3; stroke-linecap: square"/>
+    <g clip-path="url(#p39a5e27f46)">
+     <use xlink:href="#m86e9cfe064" x="49.324853" y="148.26965" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="99.389116" y="154.670134" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="149.453379" y="157.702446" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="199.517643" y="158.571134" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="249.581906" y="155.509688" style="fill: #89b5cc; stroke: #89b5cc"/>
+    </g>
+   </g>
+   <g id="line2d_35">
+    <path d="M 149.453379 157.702446
+" clip-path="url(#p39a5e27f46)" style="fill: none; stroke: #c9d1d9; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p39a5e27f46)">
+     <use xlink:href="#m80bb6fa5f5" x="149.453379" y="157.702446" style="fill: #c9d1d9; stroke: #c9d1d9; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #c9d1d9" x="39.312" y="132.508235" transform="rotate(-0 39.312 132.508235)">Turnover (× capital/yr)</text>
+   </g>
+  </g>
+  <g id="axes_4">
+   <g id="patch_5">
+    <path d="M 330.085241 216.72
+L 550.368 216.72
+L 550.368 138.508235
+L 330.085241 138.508235
+z
+" style="fill: #0d1117"/>
+   </g>
+   <g id="matplotlib.axis_7">
+    <g id="xtick_10">
+     <g id="line2d_36"/>
+     <g id="text_16">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="340.098094" y="226.558594" transform="rotate(-0 340.098094 226.558594)">0</text>
+     </g>
+    </g>
+    <g id="xtick_11">
+     <g id="line2d_37"/>
+     <g id="text_17">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="440.226621" y="226.558594" transform="rotate(-0 440.226621 226.558594)">0.5</text>
+     </g>
+    </g>
+    <g id="xtick_12">
+     <g id="line2d_38"/>
+     <g id="text_18">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="540.355147" y="226.558594" transform="rotate(-0 540.355147 226.558594)">1</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_8">
+    <g id="ytick_10">
+     <g id="line2d_39">
+      <path d="M 330.085241 216.72
+L 550.368 216.72
+" clip-path="url(#pfec4914641)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_40"/>
+     <g id="text_19">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="327.085241" y="220.139297" transform="rotate(-0 327.085241 220.139297)">0</text>
+     </g>
+    </g>
+    <g id="ytick_11">
+     <g id="line2d_41">
+      <path d="M 330.085241 177.614118
+L 550.368 177.614118
+" clip-path="url(#pfec4914641)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_42"/>
+     <g id="text_20">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="327.085241" y="181.033415" transform="rotate(-0 327.085241 181.033415)">0.75</text>
+     </g>
+    </g>
+    <g id="ytick_12">
+     <g id="line2d_43">
+      <path d="M 330.085241 138.508235
+L 550.368 138.508235
+" clip-path="url(#pfec4914641)" style="fill: none; stroke: #36404a; stroke-width: 0.6; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_44"/>
+     <g id="text_21">
+      <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #c9d1d9" x="327.085241" y="141.927532" transform="rotate(-0 327.085241 141.927532)">1.5</text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_45">
+    <path d="M 340.098094 149.919645
+L 390.162357 147.618018
+L 440.226621 148.054421
+L 490.290884 150.741398
+L 540.355147 161.962614
+" clip-path="url(#pfec4914641)" style="fill: none; stroke: #89b5cc; stroke-width: 1.3; stroke-linecap: square"/>
+    <g clip-path="url(#pfec4914641)">
+     <use xlink:href="#m86e9cfe064" x="340.098094" y="149.919645" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="390.162357" y="147.618018" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="440.226621" y="148.054421" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="490.290884" y="150.741398" style="fill: #89b5cc; stroke: #89b5cc"/>
+     <use xlink:href="#m86e9cfe064" x="540.355147" y="161.962614" style="fill: #89b5cc; stroke: #89b5cc"/>
+    </g>
+   </g>
+   <g id="line2d_46">
+    <path d="M 440.226621 148.054421
+" clip-path="url(#pfec4914641)" style="fill: none; stroke: #c9d1d9; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pfec4914641)">
+     <use xlink:href="#m80bb6fa5f5" x="440.226621" y="148.054421" style="fill: #c9d1d9; stroke: #c9d1d9; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #c9d1d9" x="330.085241" y="132.508235" transform="rotate(-0 330.085241 132.508235)">Net Sharpe</text>
+   </g>
+  </g>
+  <g id="text_23">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c9d1d9" x="280.8" y="244.721913" transform="rotate(-0 280.8 244.721913)">Correlation shrinkage</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p70b5868691">
+   <rect x="39.312" y="17.28" width="220.282759" height="78.211765"/>
+  </clipPath>
+  <clipPath id="pdffcd5a279">
+   <rect x="330.085241" y="17.28" width="220.282759" height="78.211765"/>
+  </clipPath>
+  <clipPath id="p39a5e27f46">
+   <rect x="39.312" y="138.508235" width="220.282759" height="78.211765"/>
+  </clipPath>
+  <clipPath id="pfec4914641">
+   <rect x="330.085241" y="138.508235" width="220.282759" height="78.211765"/>
+  </clipPath>
+ </defs>
 </svg>

@@ -213,7 +213,7 @@ def _year_heatmap(
 
 def _diverging(style: FigureStyle) -> LinearSegmentedColormap:
     return LinearSegmentedColormap.from_list(
-        "diverging", (style.heat_negative, style.white, style.heat_positive)
+        "diverging", (style.heat_negative, style.heat_zero, style.heat_positive)
     )
 
 

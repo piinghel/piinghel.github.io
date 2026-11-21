@@ -337,7 +337,7 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
 
-{% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="6" %}
+{% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Annual return and share of book variance by theme, including a separate trading-cost row." version="7" %}
 <p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Each theme’s contribution to return and risk.</span> Returns are annualized before costs, with costs shown separately. Risk shares use whole-book variance for both the portfolio and individual legs.</p>
 
 Over the whole period the book averaged 9.6% a year before costs. Four sources
@@ -376,9 +376,9 @@ from low volatility and −0.02 from beta; stock-specific returns take off about
 {: #how-it-changed }
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="6" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
+  {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="7" label="Annual gross contributions from short-term return and short interest, with period averages. Other themes are available under Explore." %}
 </div>
-<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Annual contributions from short interest and reversal.</span> Bars show annualized gross returns. Lines give period averages. The 2026 observation covers January–May. Triangles mark values beyond ±10%.</p>
+<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Short-term reversal and short interest by year.</span> Bars show calendar years and lines show period averages on a common scale. The 2026 return annualizes January–May.</p>
 
 Short-term reversal made 8.1% a year in 1999–2003 and 0.3% since 2022
 (0.8% from 2023). This was a long decline, alongside a smaller position:

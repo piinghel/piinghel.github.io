@@ -68,89 +68,51 @@ def suffix(dark: bool, mobile: bool) -> str:
     return ("_mobile" if mobile else "") + ("_dark" if dark else "")
 
 
-def box(ax, c, x, y, w, h, text, kind="plain", size=10.0):
-    """Rounded box with centred text; kind picks the accent colour."""
-    from matplotlib.patches import FancyBboxPatch
-    edge = {"plain": c["muted"], "dial": c["style"], "style": c["style"], "specific": c["base"]}[kind]
-    fill = {"plain": c["bg"], "dial": c["style"], "style": c["bg"], "specific": c["bg"]}[kind]
-    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=0.08", fc=fill, ec=edge,
-                                lw=1.3, alpha=1.0 if kind != "dial" else 0.92, zorder=2))
-    ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=size, zorder=3,
-            color="#ffffff" if kind == "dial" else c["ink"], linespacing=1.25)
-
-
-def arrow(ax, c, start, end, color=None, ls="-", rad=0.0):
-    ax.annotate("", xy=end, xytext=start, zorder=1, arrowprops=dict(
-        arrowstyle="-|>", color=color or c["muted"], lw=1.3, ls=ls, shrinkA=0, shrinkB=0,
-        mutation_scale=11, connectionstyle=f"arc3,rad={rad}"))
-
-
 def render_diagram(out: Path, dark: bool, mobile: bool) -> None:
+    """The one operation that differs between the original and adjusted book."""
     c = palette(dark)
-    with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
-                         "svg.fonttype": "none", "svg.hashsalt": "style-removal-diagram"}):
-        if mobile:
-            steps = [("Ridge forecast", "plain"), ("Regress on sectors and styles,\neach date", "plain"),
-                     ("Subtract λ × style part", "dial"),
-                     ("Portfolio optimizer:\n75 long, 75 short, 7% volatility", "plain"), ("Book", "plain")]
-            fig, ax = plt.subplots(figsize=(4.4, 5.6)); ax.set_xlim(0, 4.4); ax.set_ylim(0, 5.6)
-            w, h, x0 = 3.7, 0.58, 0.35
-            ys = [4.85 - i * 0.8 for i in range(len(steps))]
-            for (text, kind), y in zip(steps, ys):
-                box(ax, c, x0, y, w, h, text, kind, 9.0)
-            for upper, lower in zip(ys, ys[1:]):
-                arrow(ax, c, (x0 + w / 2, upper), (x0 + w / 2, lower + h))
-            gy = 0.1
-            box(ax, c, 0.05, gy, 2.05, 0.7, "Style P&L", "style", 9.2)
-            box(ax, c, 2.3, gy, 2.05, 0.7, "Stock-specific P&L", "specific", 9.2)
-            mid = x0 + w / 2
-            arrow(ax, c, (mid, ys[-1]), (mid, gy + 0.95))
-            ax.plot([1.075, 3.325], [gy + 0.95, gy + 0.95], color=c["muted"], lw=1.3)
-            arrow(ax, c, (1.075, gy + 0.95), (1.075, gy + 0.7)); arrow(ax, c, (3.325, gy + 0.95), (3.325, gy + 0.7))
-        else:
-            labels = [("Ridge\nforecast", "plain"), ("Regress on\nsectors and\nstyles, each date", "plain"),
-                      ("Subtract\nλ × style part", "dial"),
-                      ("Portfolio\noptimizer: 75 + 75\nnames, 7% vol.", "plain"), ("Book", "plain")]
-            fig, ax = plt.subplots(figsize=(9.4, 3.9)); ax.set_xlim(0, 9.4); ax.set_ylim(0, 3.9)
-            w, h, gap = 1.66, 1.1, 0.27
-            xs = [i * (w + gap) for i in range(len(labels))]
-            y = 2.6
-            for (text, kind), x in zip(labels, xs):
-                box(ax, c, x, y, w, h, text, kind, 9.2)
-            for x in xs[:-1]:
-                arrow(ax, c, (x + w + 0.02, y + h / 2), (x + w + gap - 0.02, y + h / 2))
-            gy = 0.25
-            box(ax, c, 3.2, gy, 2.6, 0.8, "Style P&L", "style", 10)
-            box(ax, c, 6.4, gy, 2.6, 0.8, "Stock-specific P&L", "specific", 10)
-            fx = xs[-1] + w / 2
-            arrow(ax, c, (fx, y), (fx, 1.65)); ax.plot([4.5, fx], [1.65, 1.65], color=c["muted"], lw=1.3)
-            ax.plot([7.7, 7.7], [1.65, 1.05], color=c["muted"], lw=1.3)
-            arrow(ax, c, (4.5, 1.65), (4.5, gy + 0.8)); arrow(ax, c, (7.7, 1.65), (7.7, gy + 0.8))
-            arrow(ax, c, (xs[2] + w / 2, y), (3.75, gy + 0.8), color=c["style"], ls=(0, (3, 2)))
-            ax.text(3.95, 2.0, "λ shrinks\nthis", fontsize=9.5, color=c["style"], ha="right", va="center", linespacing=1.2)
-        ax.axis("off")
+    with plt.rc_context({"font.family": "DejaVu Sans", "svg.fonttype": "none",
+                         "svg.hashsalt": "style-removal-diagram"}):
+        fig, ax = plt.subplots(figsize=(4.6, .95) if mobile else (7.8, .85))
         fig.set_facecolor(c["bg"])
+        ax.set(xlim=(0, 1), ylim=(0, 1))
+        ax.axis("off")
+        stages = [(0.09, "Ridge\nscore"), (.50, "Subtract λ × fitted\nstyle contribution"),
+                  (.91, "Portfolio\noptimizer")]
+        for x, label in stages:
+            ax.text(x, .5, label, ha="center", va="center", color=c["ink"],
+                    fontsize=10 if mobile else 11, linespacing=1.3)
+        for start, end in ((.19, .28), (.72, .8)):
+            ax.annotate("", xy=(end, .5), xytext=(start, .5),
+                        arrowprops={"arrowstyle": "->", "color": c["muted"], "lw": .9})
+        fig.subplots_adjust(left=.02, right=.98, bottom=.08, top=.92)
         save(fig, out / f"removal-diagram{suffix(dark, mobile)}.svg", c)
 
 
 def render_shares(out: Path, dark: bool, mobile: bool, data: Path) -> None:
-    """Variance shares that add to 100%: style, stock-specific, and sector plus the style-sector overlap."""
+    """Track each part of the variance on a common 0–100% scale."""
     c = palette(dark)
-    shares = (pl.read_csv(data / "inputs/q1_variance_shares_by_year.csv").filter(pl.col("model") == "ridge")
-              .sort("year").with_columns(other=pl.col("sh_sec") + pl.col("sh_cross")))
+    shares = (pl.read_csv(data / "inputs/q1_variance_shares_by_year.csv")
+              .filter(pl.col("model") == "ridge").sort("year")
+              .with_columns(other=pl.col("sh_sec") + pl.col("sh_cross")))
     years = shares["year"].to_list()
-    with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans", "Arial"],
-                         "svg.fonttype": "none", "svg.hashsalt": "style-removal-shares"}):
-        fig, ax = plt.subplots(figsize=(4.4, 3.4) if mobile else (9.4, 3.4))
-        fig.set_facecolor(c["bg"]); style(ax, c, mobile)
-        ax.stackplot(years, shares["sh_style"] * 100, shares["sh_resid"] * 100, shares["other"] * 100,
-                     colors=[c["style"], c["base"], c["other"]], alpha=0.9, lw=0)
-        ax.set_xlim(years[0], years[-1]); ax.set_ylim(0, 100)
-        ax.set_yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", "100%"])
-        ax.set_xticks([2000, 2010, 2020] if mobile else [2000, 2005, 2010, 2015, 2020, 2025])
-        ax.text(2012, 24, "Style", ha="center", va="center", fontsize=10.5, color="#ffffff")
-        ax.text(2012, 72, "Stock-specific", ha="center", va="center", fontsize=10.5, color=c["ink"])
-        ax.text(1.01, 0.99, "Sector and\noverlap", transform=ax.transAxes, ha="left", va="top", fontsize=9, color=c["muted"], linespacing=1.15)
+    with plt.rc_context({"font.family": "DejaVu Sans", "svg.fonttype": "none",
+                         "svg.hashsalt": "style-removal-shares"}):
+        fig, ax = plt.subplots(figsize=(4.75, 2.45) if mobile else (8.0, 2.8))
+        fig.set_facecolor(c["bg"])
+        style(ax, c, mobile)
+        ax.set(ylim=(0, 100), xlim=(years[0], years[-1]))
+        ax.set_yticks((0, 50, 100), ("0%", "50%", "100%"))
+        ax.set_xticks((2000, 2010, 2020) if mobile else (2000, 2005, 2010, 2015, 2020, 2025))
+        lines = [("sh_style", "Styles", "#89b5cc" if dark else "#426e89", "-"),
+                 ("sh_resid", "Stock-specific", c["muted"], "--"),
+                 ("other", "Sector + overlap", c["muted"], ":")]
+        for column, label, color, pattern in lines:
+            values = shares[column].to_numpy() * 100
+            ax.plot(years, values, ls=pattern, lw=1.9 if column == "sh_style" else 1.35, color=color)
+            ax.annotate(label, xy=(years[-1], values[-1]), xytext=(5, 0),
+                        textcoords="offset points", va="center", color=color, fontsize=9.5)
+        fig.subplots_adjust(left=.1, right=.70 if mobile else .82, top=.95, bottom=.17)
         save(fig, out / f"forecast-style-share{suffix(dark, mobile)}.svg", c)
 
 

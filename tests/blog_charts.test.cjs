@@ -86,7 +86,7 @@ test('a selected window excludes the return into its opening close',()=>{
   assert.equal(charts.stats([0,0]).sharpe,null);
 });
 
-test('the three displayed Table 1 rows survive export at published precision',()=>{
+test('the low-volatility portfolio outcomes survive export at published precision',()=>{
   for(const [id,expected] of [
     ['strategy',['6.8','9.8','0.72','-38.0']],
     ['equal',['-3.3','33.4','0.07','-87.8']],

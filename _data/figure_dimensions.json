@@ -23,6 +23,14 @@
     "width": 350,
     "height": 306
   },
+  "/assets/combining-predictors/refit-stability": {
+    "width": 562,
+    "height": 143
+  },
+  "/assets/combining-predictors/refit-stability_mobile": {
+    "width": 346,
+    "height": 143
+  },
   "/assets/combining-predictors/theme-ic-by-year": {
     "width": 641,
     "height": 214
@@ -96,12 +104,12 @@
     "height": 650
   },
   "/assets/joint-sizing/rho-ladder": {
-    "width": 1200,
-    "height": 740
+    "width": 562,
+    "height": 251
   },
   "/assets/joint-sizing/rho-ladder_mobile": {
-    "width": 480,
-    "height": 1365
+    "width": 346,
+    "height": 251
   },
   "/assets/joint-sizing/risk-calibration-and-beta": {
     "width": 1200,
@@ -176,12 +184,12 @@
     "height": 283
   },
   "/assets/portfolio-attribution/theme-pnl": {
-    "width": 648,
-    "height": 403
+    "width": 576,
+    "height": 281
   },
   "/assets/portfolio-attribution/theme-pnl_mobile": {
-    "width": 274,
-    "height": 828
+    "width": 342,
+    "height": 259
   },
   "/assets/portfolio-attribution/theme-regimes": {
     "width": 533,
@@ -192,12 +200,12 @@
     "height": 168
   },
   "/assets/portfolio-attribution/theme-return-years": {
-    "width": 720,
-    "height": 367
+    "width": 590,
+    "height": 151
   },
   "/assets/portfolio-attribution/theme-return-years_mobile": {
-    "width": 374,
-    "height": 558
+    "width": 342,
+    "height": 223
   },
   "/assets/portfolio-attribution/whole-history": {
     "width": 634,
@@ -264,20 +272,20 @@
     "height": 255
   },
   "/assets/ridge-style-removal/forecast-style-share": {
-    "width": 629,
-    "height": 223
+    "width": 551,
+    "height": 192
   },
   "/assets/ridge-style-removal/forecast-style-share_mobile": {
-    "width": 346,
-    "height": 223
+    "width": 340,
+    "height": 172
   },
   "/assets/ridge-style-removal/removal-diagram": {
-    "width": 542,
-    "height": 233
+    "width": 556,
+    "height": 69
   },
   "/assets/ridge-style-removal/removal-diagram_mobile": {
-    "width": 263,
-    "height": 328
+    "width": 335,
+    "height": 75
   },
   "/assets/ridge-style-removal/risk-return": {
     "width": 606,

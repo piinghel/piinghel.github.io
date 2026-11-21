@@ -16,6 +16,7 @@ A variance share is Cov(theme, gross P&L) / Var(gross P&L).
 from __future__ import annotations
 
 import argparse
+import math
 import csv
 import json
 from pathlib import Path
@@ -83,95 +84,44 @@ def export(outputs: Path, *, data_path: Path = DATA, themes: tuple[str, ...] = T
     data_path.write_text(json.dumps(out, indent=1) + "\n")
 
 
-def wrap(label: str) -> str:
-    """Break a label at the space nearest its middle."""
-    spaces = [i for i, ch in enumerate(label) if ch == " "]
-    if not spaces:
-        return label
-    cut = min(spaces, key=lambda i: abs(i - len(label) / 2))
-    return label[:cut] + "\n" + label[cut + 1:]
-
-
-def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: bool,
-           shared_scale: bool = False, row_order: list = (), wrap_labels: bool = False, *, output: Path = OUTPUT) -> None:
-    """Draw one horizontal bar panel per (title, {key: value}, format).
-
-    `row_order` lists (key, label) rows top to bottom; None adds a half-row gap.
-    `wrap_labels` breaks long labels after their first word on phones and leaves
-    more room for them on desktop.
-    """
-    colors = {
-        "bg": "#0d1117" if dark else "#ffffff",
-        "ink": "#e4e7ea" if dark else "#25313a",
-        "grid": "#37414a" if dark else "#e2e6e9",
-        "pos": "#89b5cc" if dark else "#426e89",
-        "neg": "#a0acb4" if dark else "#606e77",
-    }
-    size = 10.5 if mobile else 11
-    rows, y, positions = [], 0.0, []
-    for row in row_order:
-        if row is None:
-            y += 0.5
-            continue
-        rows.append(row)
-        positions.append(y)
-        y += 1
-    with plt.rc_context(
-        {
-            "font.family": "sans-serif",
-            "font.sans-serif": ["DejaVu Sans", "Arial"],
-            "svg.fonttype": "none",
-            "svg.hashsalt": "attribution-components",
-        }
-    ):
-        fig, axes = plt.subplots(
-            2 if mobile else 1, 1 if mobile else 2,
-            figsize=(3.8, 11.5) if mobile else (9, 5.6), sharey=True,
-            gridspec_kw={"hspace": 0.22} if mobile else {"wspace": 0.45},
-        )
-        fig.set_facecolor(colors["bg"])
-        every = [values[k] for _, values, _ in panels for k, _ in rows]
-        for ax, (title, values, fmt) in zip(axes, panels, strict=True):
-            data = [values[k] for k, _ in rows]
-            limits = every if shared_scale else data
-            ax.set_facecolor(colors["bg"])
-            bars = ax.barh(positions, data, height=0.62,
-                           color=[colors["pos"] if v >= 0 else colors["neg"] for v in data])
-            for bar, (_, label) in zip(bars, rows, strict=True):
-                if label.startswith("↳"):
-                    bar.set_alpha(0.6)
-            span = max(abs(v) for v in limits)
-            for p, v in zip(positions, data, strict=True):
-                ax.annotate(fmt.format(v if abs(v) >= 0.05 else 0.0).replace("-", "\u2212"), (max(v, 0), p), xytext=(4, 0), textcoords="offset points",
-                            va="center", ha="left", fontsize=size - 1, color=colors["ink"])
-            # Room for the value labels beside the longest bar.
-            ax.set_xlim(min(min(limits), 0) - 0.05 * span, span * (1.7 if mobile else 1.35))
-            ax.axvline(0, color=colors["grid"], linewidth=0.9)
-            ax.set_title(title, loc="left", color=colors["ink"], fontsize=size + 0.5,
-                         weight="semibold", pad=10)
-            ax.spines[:].set_visible(False)
-            ax.tick_params(axis="x", length=0, colors=colors["ink"], labelsize=size - 1)
-            ax.tick_params(axis="y", length=0, colors=colors["ink"], labelsize=size)
-            ax.xaxis.set_major_locator(plt.MaxNLocator(3))
-            ax.grid(axis="x", color=colors["grid"], linewidth=0.5)
-            ax.set_axisbelow(True)
-        labels = [wrap(label) if wrap_labels and len(label) > (15 if mobile else 20) else label
-                  for _, label in rows]
-        for ax in axes if mobile else axes[:1]:
-            ax.set_yticks(positions, labels)
-            ax.tick_params(labelleft=True)
-            for tick, (key, _) in zip(ax.get_yticklabels(), rows, strict=True):
-                if key == "Low-risk package":
-                    tick.set_fontweight("bold")
-        axes[0].invert_yaxis()
-        left = 0.43 if mobile else (0.2 if wrap_labels else 0.17)
-        fig.subplots_adjust(left=left, right=0.97, top=0.97 if mobile else 0.92,
-                            bottom=0.03 if mobile else 0.06)
+def theme_overview(aggregates: dict, *, dark: bool, mobile: bool, output: Path) -> None:
+    """Use the published daily aggregates, including trading costs, for both axes."""
+    c = colors(dark)
+    series = {item["id"]: item for item in aggregates["series"]}
+    selected = [series["total_" + key] for key in aggregates["charts"]["themes"]["series"]]
+    gross = series["gross"]["values"]
+    gross_mean = sum(gross) / len(gross)
+    centered = [value - gross_mean for value in gross]
+    gross_sum_squares = sum(value * value for value in centered)
+    annual = [sum(item["values"]) / len(gross) / aggregates["scale"] * aggregates["annualization"] * 100
+              for item in selected]
+    risk = [sum(v * g for v, g in zip(item["values"], centered, strict=True)) / gross_sum_squares * 100
+            for item in selected]
+    labels = [item["label"].replace("Medium- and long-term return", "Med./long-term\nreturn") if mobile
+              else item["label"] for item in selected]
+    with plt.rc_context({"font.family": "DejaVu Sans", "svg.fonttype": "none", "svg.hashsalt": "theme-overview"}):
+        fig, axes = plt.subplots(1, 2, sharey=True, figsize=(4.75, 3.6) if mobile else (8, 3.9))
+        fig.set_facecolor(c["bg"])
+        for axis, title, values, marker, hue in zip(axes, ("Return / year", "Risk share"), (annual, risk),
+                                                    ("o", "D"), (c["pos"], c["neg"]), strict=True):
+            axis.set_facecolor(c["bg"])
+            axis.spines[:].set_visible(False)
+            axis.set_title(title, loc="left", fontsize=10.5, color=c["ink"], pad=6)
+            axis.axvline(0, color=c["muted"], lw=.7)
+            axis.grid(axis="x", color=c["grid"], lw=.5)
+            axis.plot(values, range(len(labels)), linestyle="none", marker=marker, color=hue, markersize=4.7)
+            axis.tick_params(length=0, colors=c["ink"], labelsize=9)
+            axis.xaxis.set_major_locator(plt.MaxNLocator(3))
+            axis.xaxis.set_major_formatter(lambda value, _: f"{value:g}%")
+            axis.margins(x=.12)
+        axes[0].set_yticks(range(len(labels)), labels)
+        axes[0].set_ylim(len(labels)-.4, -.6)
+        fig.subplots_adjust(left=.32 if mobile else .24, right=.97, bottom=.09, top=.90, wspace=.36)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = output / f"{name}{suffix}.svg"
-        fig.savefig(path, metadata={"Date": None}, facecolor=colors["bg"])
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        target = output / f"theme-pnl{suffix}.svg"
+        fig.savefig(target, metadata={"Date": None})
         plt.close(fig)
+        target.write_text("\n".join(line.rstrip() for line in target.read_text().splitlines()) + "\n")
 
 
 def colors(dark: bool) -> dict:
@@ -180,8 +130,8 @@ def colors(dark: bool) -> dict:
         "ink": "#e4e7ea" if dark else "#25313a",
         "muted": "#9aa4ad" if dark else "#66737d",
         "grid": "#37414a" if dark else "#e2e6e9",
-        "pos": "#3987e5" if dark else "#2a78d6",
-        "neg": "#8b949e" if dark else "#6e7781",
+        "pos": "#89b5cc" if dark else "#426e89",
+        "neg": "#a0acb4" if dark else "#606e77",
     }
 
 
@@ -222,23 +172,26 @@ def paired_periods(periods, rows, name, unit, *, dark, mobile, output: Path):
         target.write_text("\n".join(line.rstrip() for line in target.read_text().splitlines()) + "\n")
 
 
-def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
-                    dark: bool, mobile: bool, *, themes: tuple[str, ...] = OVERVIEW,
+def small_multiples(data: dict, index: int, name: str, unit: str,
+                    dark: bool, mobile: bool, *, themes: tuple[str, ...],
                     output: Path = OUTPUT, first_year: int = FIRST_YEAR, last_year: int = LAST_YEAR) -> None:
     """One panel per theme: yearly bars and the five-year block value as a step line.
 
-    All panels share the y-scale [-limit, limit]; bars beyond it are clipped and
-    marked with a small caret so no panel hides a large value.
+    The common signed scale includes every annual observation.
     """
     c = colors(dark)
-    cols = 2 if mobile else 4
+    cols = 1 if mobile else len(themes)
     rows = -(-len(themes) // cols)
+    all_values = [values[theme][index] for values in data["years"].values() for theme in themes]
+    low, high = min(0, min(all_values)), max(0, max(all_values))
+    step = max(5, math.ceil((high - low) / 20) * 5)
+    bottom, top = min(-step, math.floor(low / step) * step), max(step, math.ceil(high / step) * step)
     size = 10 if mobile else 10.5
     years = list(range(first_year, last_year + 1))
     with plt.rc_context({"font.family": "sans-serif", "font.sans-serif": ["DejaVu Sans"],
                          "svg.fonttype": "none", "svg.hashsalt": name}):
-        fig, axes = plt.subplots(rows, cols, figsize=(5.2, 1.55 * rows) if mobile else (10, 1.7 * rows),
-                                 sharex=True, sharey=True)
+        fig, axes = plt.subplots(rows, cols, figsize=(4.75, 1.55 * rows) if mobile else (8.2, 2.1 * rows),
+                                 sharex=True, sharey=True, squeeze=False)
         fig.set_facecolor(c["bg"])
         for ax in axes.flat:
             ax.set_facecolor(c["bg"])
@@ -246,14 +199,8 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
             ax.tick_params(length=0, colors=c["muted"], labelsize=size - 1.5)
         for ax, theme in zip(axes.flat, themes):
             values = [data["years"].get(str(y), {}).get(theme, [0, 0])[index] for y in years]
-            shown = [max(-limit, min(limit, v)) for v in values]
-            ax.bar(years, shown, width=0.75,
+            ax.bar(years, values, width=0.75,
                    color=[c["pos"] if v >= 0 else c["neg"] for v in values])
-            for y, v in zip(years, values):
-                if abs(v) > limit:
-                    ax.annotate("▲" if v > 0 else "▼", (y, limit if v > 0 else -limit),
-                                ha="center", va="bottom" if v > 0 else "top", fontsize=6,
-                                color=c["pos"] if v > 0 else c["neg"])
             for period, block in data["blocks"].items():
                 a, z = (int(p) for p in period.split("-"))
                 ax.plot([a - 0.45, z + 0.45], [block[theme][index]] * 2, color=c["ink"],
@@ -261,18 +208,17 @@ def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
             ax.axhline(0, color=c["grid"], linewidth=0.9, zorder=0)
             ax.grid(axis="y", color=c["grid"], linewidth=0.4)
             ax.set_axisbelow(True)
-            ax.set_title(theme, loc="left", color=c["ink"], fontsize=size, weight="semibold", pad=4)
+            ax.set_title(theme, loc="left", color=c["ink"], fontsize=size, weight="normal", pad=4)
         for ax in axes.flat[len(themes):]:
             ax.set_visible(False)
-        axes.flat[0].set_ylim(-limit * 1.12, limit * 1.12)
-        axes.flat[0].set_yticks([-limit, 0, limit],
-                                [f"−{limit:g}", "0", f"+{limit:g}"])
+        axes.flat[0].set_ylim(bottom - step * .06, top + step * .06)
+        axes.flat[0].set_yticks([bottom, 0, top], [f"−{abs(bottom):g}", "0", f"{top:g}"])
         axes.flat[0].set_xticks([2000, 2010, 2020], ["2000", "2010", "2020"])
         for ax in axes.flat:
             ax.tick_params(labelbottom=True)
         fig.text(0.01, 0.995, unit, ha="left", va="top", color=c["muted"], fontsize=size - 1)
-        fig.subplots_adjust(left=0.09 if mobile else 0.05, right=0.99, top=0.95 if mobile else 0.93,
-                            bottom=0.04 if mobile else 0.06, hspace=0.75, wspace=0.12)
+        fig.subplots_adjust(left=0.09 if mobile else 0.05, right=0.99, top=0.95 if mobile else 0.76,
+                            bottom=0.05 if mobile else 0.17, hspace=0.75, wspace=0.12)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
         path = output / f"{name}{suffix}.svg"
         fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
@@ -287,15 +233,13 @@ if __name__ == "__main__":
     if args.outputs:
         export(args.outputs)
     data = json.loads(DATA.read_text())
-    full = [
-        ("Return (% a year)", {t: data["full"][t][0] for t in THEMES}, "{:+.1f}"),
-        ("Share of risk (%)", {t: data["full"][t][1] for t in THEMES}, "{:.1f}"),
-    ]
+    aggregates = json.loads((OUTPUT / "interactive-themes.json").read_text())
     overview_order = [(t, t) for t in OVERVIEW]
     for dark in (False, True):
         for mobile in (False, True):
-            render(full, "theme-pnl", dark, mobile, row_order=overview_order, wrap_labels=True)
-            small_multiples(data, 0, "theme-return-years", 10, "Return, % a year", dark, mobile)
+            theme_overview(aggregates, dark=dark, mobile=mobile, output=OUTPUT)
+            small_multiples(data, 0, "theme-return-years", "Gross return (% per year)", dark, mobile,
+                            themes=("Short-term return", "Short interest"))
             regime_rows = [(key, key if i == 0 else "↳ " + key) for i, key in enumerate(LOW_RISK)]
             paired_periods([(key, data["regimes"][key]) for key in ("Declines", "Strong rallies")],
                            regime_rows, "theme-regimes", "Return (% of capital per year)",

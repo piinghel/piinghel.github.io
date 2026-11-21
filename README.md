@@ -179,12 +179,13 @@ for byte), run the renderer from this directory, then
 
 | Article | Figures | Source |
 | --- | --- | --- |
-| Low volatility | 1 and 3 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
-| | 2 and 4 | `python -m low_volatility_factor.article_figures` in the same repository |
+| Low volatility | 1 and 2 | `python -m low_volatility_factor.hedge_figures` in [low-vol-to-portfolio](https://github.com/piinghel/low-vol-to-portfolio) |
+| | Table 1 and Figure 3 | `python -m low_volatility_factor.article_figures` in the same repository |
 | Regression | 1 (explorer), 3–6 | Shared chart helper and `assets/js/predictor-structure.js`; data from `scripts/export_predictor_data.py` and `scripts/export_combining_predictors_charts.py` |
 | | 1 (no-JavaScript fallback) | `scripts/render_predictor_structure.py` |
 | | 2 | `scripts/render_predictor_training_design.py` |
-| Joint sizing | all | `scripts/export_joint_sizing_charts.py` and the shared helper; SVG fallbacks from the private portfolio-optimization project |
+| | 6 (no-JavaScript fallback) | `scripts/render_panel_fallbacks.py` |
+| Joint sizing | all | `scripts/export_joint_sizing_charts.py` and the shared helper; Figure 1 fallback from `scripts/render_panel_fallbacks.py`, other fallbacks from the private portfolio-optimization project |
 | Attribution Part 1 | 1–3 | `scripts/export_attribution_charts.py` and the shared helper; fallbacks from `scripts/render_attribution_pnl.py` and `scripts/render_attribution_themes.py` |
 | Attribution Part 2 | 1–2 | Same attribution exporter and shared helper; fallbacks from `scripts/render_attribution_themes.py` |
 | Rebalancing luck | 1–2 | `rebalance_tranching.ridge_figures` in [rebalance-tranching](https://github.com/piinghel/rebalance-tranching) |
@@ -204,7 +205,7 @@ The attribution aggregates come from the private `performance_attribution`
 project, on the 80-predictor Ridge optimizer book:
 `render_attribution_pnl.py --outputs` reads the whole-history ledger
 (`outputs/full-history-ridge80-b3k155-*`), and `render_attribution_themes.py
---outputs` reads the composite theme attribution (`outputs/factors-composite-calendar-20260928`,
+--outputs` reads the composite theme attribution (`outputs/factors-ranking80-horizon-20260929`,
 study `studies/2026-09-theme-attribution-over-time`). The public files contain
 portfolio aggregates only.
 

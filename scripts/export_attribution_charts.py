@@ -59,7 +59,7 @@ def export(themes: Path, history: Path, assets: Path, *, fields=FIELDS) -> None:
     masks["rallies"]=[int(r and not d) for r,d in zip(masks["rallies"],masks["declines"],strict=True)]
     common=dict(series=[key for key,_,_,_ in fields[:10]],components={"low_risk":["low_volatility","beta","market"],"activity":["turnover","volume","price_volume"]},
                 episodes=[["1999–2003",dates[0],"2003-12-31"],["2008–09","2008-01-01","2009-12-31"],["2020–21","2020-01-01","2021-12-31"],["After 2021","2022-01-01",dates[-1]]])
-    charts={"themes":dict(common,kind="attribution"),"years":dict(common,kind="attribution-years"),
+    charts={"themes":dict(common,kind="attribution"),"years":dict(common,kind="attribution-years",featured=["reversal","short_interest"]),
             "regimes":dict(common,kind="attribution-regimes",masks=masks,focus="low_risk"),
             "drawdowns":dict(common,kind="attribution-drawdowns",windows=drawdown_windows)}
     # Verify the exported total reproduces the existing full-period overview.

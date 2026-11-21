@@ -315,3 +315,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .post-nav-next { text-align: left; }
   .site-footer .wrapper { gap: 1rem; }
 }
+
+
+.post-content .leg-risk-table { max-width: 34rem; }
+.research-table-scroll .leg-risk-table { min-width: 0; }
+.leg-risk-table thead th { background: transparent; }

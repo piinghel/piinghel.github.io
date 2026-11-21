@@ -534,6 +534,7 @@
     const extra=element('details','blog-chart-options');extra.append(element('summary','','Explore'));ui.append(extra);
     const full=[data.dates[0],data.dates.at(-1)];let range=[...full],leg='total',custom=false,busy=false,pending=false;
     let focus=cfg.focus||null;
+    let featuredOnly=Boolean(cfg.featured);
     const expanded=new Set(focus?[focus]:[]),componentControls=new Map();
     const from=element('input'),to=element('input');from.type=to.type='date';
     for(const [input,value] of [[from,full[0]],[to,full[1]]]){input.min=full[0];input.max=full[1];input.value=value;}
@@ -556,6 +557,12 @@
         } catch {select.value=leg;const status=host.querySelector('.blog-chart-status');status.hidden=false;status.textContent='The selected leg could not load. The current view is retained.';}
         finally {select.disabled=false;}
       };choices.append(select);
+    }
+    if(cfg.featured) {
+      const themes=element('select');themes.setAttribute('aria-label','Themes to display');
+      themes.add(new Option('Themes discussed here','featured'));themes.add(new Option('All themes','all'));
+      themes.onchange=()=>{featuredOnly=themes.value==='featured';draw();};
+      choices.append(themes);
     }
     if(cfg.focus) {
       const select=element('select');select.setAttribute('aria-label','Theme view');
@@ -583,8 +590,9 @@
       try {
         const mobile=host.clientWidth<550,dark=document.documentElement.dataset.theme==='dark';
         const ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-        for(const [key,{wrap,box}] of componentControls){wrap.hidden=!!focus;box.checked=expanded.has(key);}
-        const keys=(focus?[focus]:cfg.series).filter(k=>cfg.kind==='attribution'||k!=='cost').flatMap(k=>expanded.has(k)?(cfg.kind==='attribution-years'?cfg.components[k]:[k,...cfg.components[k]]):[k]);
+        for(const [key,{wrap,box}] of componentControls){wrap.hidden=!!focus||featuredOnly;box.checked=expanded.has(key);}
+        const baseKeys=focus?[focus]:featuredOnly?cfg.featured:cfg.series;
+        const keys=baseKeys.filter(k=>cfg.kind==='attribution'||k!=='cost').flatMap(k=>expanded.has(k)?(cfg.kind==='attribution-years'?cfg.components[k]:[k,...cfg.components[k]]):[k]);
         if(cfg.kind==='attribution-regimes'&&!focus)keys.unshift('book');
         const nested=k=>[...expanded].some(parent=>cfg.components[parent].includes(k));
         const shown=keys.map(k=>all.get(leg+'_'+k));
@@ -593,21 +601,30 @@
           font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),showlegend:false,annotations:[],barmode:'overlay'};
         function title(text,x,y){layout.annotations.push({text,x,y,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:12}});}
         if(cfg.kind==='attribution-years') {
-          const cols=mobile?2:3,rows=Math.ceil(shown.length/cols);layout.height=rows*(mobile?185:190)+50;layout.margin={l:40,r:10,t:35,b:30};
-          const years=[...new Set(ids.map(i=>data.dates[i].slice(0,4)))];
+          const cols=mobile?(featuredOnly?1:2):Math.min(3,shown.length),rows=Math.ceil(shown.length/cols);
+          layout.height=rows*(mobile?120:155)+48;layout.margin={l:37,r:8,t:32,b:24};
+          const byYear=new Map();
+          for(const j of ids){
+            const year=Number(data.dates[j].slice(0,4));
+            if(!byYear.has(year))byYear.set(year,[]);
+            byYear.get(year).push(j);
+          }
+          const years=[...byYear.keys()];
+          const annual=shown.map(series=>years.map(year=>metric(series,byYear.get(year),'return')));
+          const allAnnual=annual.flat().filter(Number.isFinite);
+          const low=Math.min(0,...allAnnual),high=Math.max(0,...allAnnual);
+          const step=Math.max(5,Math.ceil((high-low)/20)*5);
+          const bottom=Math.min(-step,Math.floor(low/step)*step),top=Math.max(step,Math.ceil(high/step)*step);
+          title('Gross return (% per year)',0,1.02);
           shown.forEach((s,i)=>{
             const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
-            const xd=[col/cols+.02,(col+1)/cols-.05],yd=[1-(row+1)/rows+.25/rows,1-row/rows-.14/rows];
-            const values=years.map(year=>metric(s,ids.filter(j=>data.dates[j].startsWith(year)),'return'));
+            const xd=[col/cols+.01,(col+1)/cols-.04],yd=[1-(row+1)/rows+.24/rows,1-row/rows-.22/rows];
+            const values=annual[i];
             layout['xaxis'+suffix]={domain:xd,anchor:y,type:'linear',showgrid:false,zeroline:false,tickmode:'linear',dtick:years.length>10?10:years.length>5?5:1};
-            layout['yaxis'+suffix]={domain:yd,anchor:x,range:[-11.7,11.7],tickvals:[-10,0,10],gridcolor:grid,zerolinecolor:grid};
+            layout['yaxis'+suffix]={domain:yd,anchor:x,range:[bottom-step*.06,top+step*.06],tickvals:[bottom,0,top],showticklabels:col===0,gridcolor:grid,zerolinecolor:COLORS.short};
             title(mobile?s.label.replace('Medium- and long-term','Med./long-term'):s.label,xd[0],yd[1]+.01);
-            traces.push({type:'bar',x:years.map(Number),y:values.map(v=>Math.max(-10,Math.min(10,v))),customdata:values,
-              marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long)},xaxis:x,yaxis:y,hovertemplate:s.label+' · %{x}<br>%{customdata:.2f}% a year<extra></extra>'});
-            const clipped=values.flatMap((v,j)=>Math.abs(v)>10?[j]:[]);
-            traces.push({type:'scatter',mode:'markers',x:clipped.map(j=>Number(years[j])),y:clipped.map(j=>Math.sign(values[j])*10.5),
-              marker:{symbol:clipped.map(j=>values[j]>0?'triangle-up':'triangle-down'),size:6,color:clipped.map(j=>values[j]>0?COLORS.long:COLORS.short)},
-              xaxis:x,yaxis:y,customdata:clipped.map(j=>values[j]),hovertemplate:'%{customdata:.2f}% a year<extra></extra>'});
+            traces.push({type:'bar',x:years,y:values,marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long)},
+              xaxis:x,yaxis:y,hovertemplate:s.label+' · %{x}<br>%{y:.2f}% a year<extra></extra>'});
             const bx=[],by=[],blockDates=[];
             for(const [a,b] of [[1999,2003],[2004,2008],[2009,2013],[2014,2018],[2019,2021],[2022,2026]]) {
               const block=ids.filter(j=>Number(data.dates[j].slice(0,4))>=a&&Number(data.dates[j].slice(0,4))<=b);
@@ -648,21 +665,27 @@
               customdata:rows.map(row=>row.label),hovertemplate:'%{customdata}<br>%{x:.2f}'+(regimes?'% per year':' points')+'<extra>'+name+'</extra>'});
           });
         } else {
-          const specs=[['Return (% a year)',ids,'return'],['Share of book risk (%)',ids,'risk']];
-          const cols=mobile?1:specs.length,rows=mobile?specs.length:1;
-          layout.height=rows*(shown.length*26+(mobile?140:90));
-          specs.forEach(([label,ix,kind],i)=>{
-            const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,values=shown.map(s=>metric(s,ix,kind));
-            const xd=mobile?[0,1]:[i/cols+.02,(i+1)/cols-.08],yd=mobile?[1-(i+1)/rows+.22/rows,1-i/rows-.10/rows]:[0,1];
+          const specs=[['Return / year','return'],['Risk share','risk']];
+          const stacked=host.clientWidth<295;
+          layout.height=(shown.length*(mobile?25:27)+75)*(stacked?2:1);
+          layout.margin={l:mobile?115:153,r:10,t:34,b:30};
+          specs.forEach(([label,kind],i)=>{
+            const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix;
+            const values=shown.map(series=>metric(series,ids,kind));
+            const xd=stacked?[0,1]:i?[.57,1]:[0,.43],yd=stacked?(i?[0,.43]:[.57,1]):[0,1];
             const lo=Math.min(0,...values),hi=Math.max(0,...values),pad=(hi-lo||1)*.12;
-            layout['xaxis'+suffix]={domain:xd,anchor:y,range:[lo-pad,hi+pad],gridcolor:grid,zerolinecolor:grid,nticks:4};
+            layout['xaxis'+suffix]={domain:xd,anchor:y,range:[lo-pad,hi+pad],gridcolor:grid,zerolinecolor:COLORS.short,nticks:mobile?3:5,ticksuffix:'%'};
+            const names=shown.map((s,j)=>{
+              const name=mobile?s.label.replace('Medium- and long-term return','Med./long-term<br>return'):s.label;
+              return nested(keys[j])?'↳ '+name:name;
+            });
             layout['yaxis'+suffix]={domain:yd,anchor:x,type:'category',autorange:'reversed',tickvals:shown.map(s=>s.label),
-              ticktext:shown.map((s,j)=>nested(keys[j])?'↳ '+s.label:cfg.components[keys[j]]?'<b>'+s.label+'</b>':s.label),showticklabels:mobile||i===0,automargin:true};
+              ticktext:names,showticklabels:stacked||i===0,automargin:true};
             title(label,xd[0],yd[1]+.02);
-            if(!ix.length)title('No observations in this window',xd[0],(yd[0]+yd[1])/2);
-            traces.push({type:'bar',orientation:'h',x:values,y:shown.map(s=>s.label),xaxis:x,yaxis:y,
-              marker:{color:values.map(v=>v<0?COLORS.short:COLORS.long),opacity:keys.map(k=>nested(k)?.8:1)},
-              hovertemplate:'%{y}<br>%{x:.2f}'+(kind==='total'?' points':kind==='risk'?'% of book variance':'% a year')+'<extra></extra>'});
+            if(!ids.length)title('No observations',xd[0],(yd[0]+yd[1])/2);
+            traces.push({type:'scatter',mode:'markers',x:values,y:shown.map(s=>s.label),xaxis:x,yaxis:y,
+              marker:{size:7,color:kind==='return'?COLORS.long:COLORS.short,symbol:kind==='return'?'circle':'diamond'},
+              hovertemplate:'%{y}<br>%{x:.2f}'+(kind==='risk'?'% of book variance':'% per year')+'<extra></extra>'});
           });
         }
         graph.style.height=layout.height+'px';

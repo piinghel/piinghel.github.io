@@ -138,7 +138,7 @@ To follow whole themes, I also combine each theme into one composite: the
 equal-weight sum of its signed, standardized predictor ranks. Figure 1 lets
 you pick a period and switch between all 80 predictors and the seven theme
 composites. The predictors are ordered by a dendrogram, which joins the most
-similar predictors first, and the colour strip shows each one's theme. The
+similar predictors first using average linkage on 1 − |ρ|. The colour strip identifies each theme. The
 signs and the dendrogram are fitted on 1998–2021 and reused unchanged for
 2022–2026, so the later years show how relationships fixed in development held
 up. The lower panel adds up each composite's IC with the target, sampled every
@@ -150,10 +150,10 @@ predictors, the heavy line is their composite, and hovering names a line.
 
 <noscript markdown="0">
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/combining-predictors/predictor-correlation" mobile="/assets/combining-predictors/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="5" %}
+    {% include theme-svg-figure.html base="/assets/combining-predictors/predictor-correlation" mobile="/assets/combining-predictors/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="6" %}
   </div>
   <div class="research-figure responsive-figure">
-    {% include theme-svg-figure.html base="/assets/combining-predictors/theme-ic-by-year" mobile="/assets/combining-predictors/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2026." version="5" %}
+    {% include theme-svg-figure.html base="/assets/combining-predictors/theme-ic-by-year" mobile="/assets/combining-predictors/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2026." version="6" %}
   </div>
 </noscript>
 
@@ -334,6 +334,8 @@ remains. Ridge's daily returns correlate 0.62 with the volatility-scaled
 portfolio from the [low-volatility article]({% link _posts/2024-12-15-low-volatility-sizing.md %})
 through 2021 and 0.78 after.
 
+Returns are compounded annually. Sharpe uses a zero cash rate, and two-way turnover annualizes mean daily traded notional using 252 sessions.
+
 <table class="research-table comparison-table portfolio-card-table">
   <caption><span class="caption-number">Table 4.</span> <span class="caption-title">Net performance and trading.</span> Three-schedule means after 5 bp per dollar traded. Parentheses show the schedule range of Sharpe. Beta is relative to the Russell 1000.</caption>
   <thead>
@@ -420,7 +422,7 @@ refit before, using the cosine similarity of the two coefficient vectors: 1
 means the same relative weights, whatever their size. The second panel tracks
 that size, the length of the coefficient vector.
 
-{% include blog-chart.html chart="stability" source="/assets/combining-predictors/coefficients.json" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
+{% include blog-chart.html chart="stability" source="/assets/combining-predictors/coefficients.json" base="/assets/combining-predictors/refit-stability" mobile="/assets/combining-predictors/refit-stability_mobile" version="1" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
 
 <p class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Stability of the Ridge coefficients.</span> Cosine similarity compares each refit to the previous one. Vector length is relative to the first refit.</p>
 

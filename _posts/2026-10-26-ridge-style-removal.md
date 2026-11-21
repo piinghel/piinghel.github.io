@@ -63,7 +63,7 @@ much return. But I need to check whether that actually happens, what risk is
 left, and how much turnover it adds.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/ridge-style-removal/removal-diagram" mobile="/assets/ridge-style-removal/removal-diagram_mobile" alt="Flow from the Ridge forecast through a regression on sectors and styles, subtraction of a share of the style part and the portfolio optimizer to the book, whose P&L splits into a style part and a stock-specific part." version="3" %}
+  {% include theme-svg-figure.html base="/assets/ridge-style-removal/removal-diagram" mobile="/assets/ridge-style-removal/removal-diagram_mobile" alt="A fraction of the fitted style contribution is subtracted from the Ridge score before the optimizer sizes the portfolio." version="4" %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Where style removal enters the portfolio.</span> The optimizer receives the Ridge score after subtracting a fraction λ of its fitted style component.</p>
 
@@ -154,9 +154,9 @@ Sharpe ratio, which can favour low-volatility stocks, depending on their returns
 That split depends on the predictors, the styles and how they are estimated.
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/ridge-style-removal/forecast-style-share" mobile="/assets/ridge-style-removal/forecast-style-share_mobile" alt="Stacked shares of the Ridge forecast's cross-sectional variance by year, adding to 100%: style between 40% and 65%, residual most of the rest, and a thin band for sectors and overlap." version="3" %}
+  {% include theme-svg-figure.html base="/assets/ridge-style-removal/forecast-style-share" mobile="/assets/ridge-style-removal/forecast-style-share_mobile" alt="The style share ranges from 40% to 65% of forecast variance. Stock-specific variance accounts for most of the remainder." version="4" %}
 </div>
-<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Style share of the Ridge forecast.</span> Annual shares of cross-sectional forecast variance. The sector band includes the overlap between sector and style fits.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Style share of the Ridge forecast.</span> Annual shares of cross-sectional forecast variance. The dotted line includes sectors and their overlap with the fitted styles.</p>
 
 ## The optimizer uses stock-correlation shrinkage
 

@@ -54,18 +54,20 @@ falls from 0.90 in decile 1 to 0.20 in decile 10.
 
 The portfolio buys the lowest-volatility decile and shorts the highest, roughly
 100 names each. I start with equal weights within each book and 100% of capital
-on each side, for 200% gross exposure. As Figure 2 shows, the short book has more
+on each side, for 200% gross exposure. As Table 1 shows, the short book has more
 than three times the long book's standalone volatility and almost three times
 its ex-ante beta. The portfolio's realized beta is −1.12. So with equal
 capital, what I meant as a low-volatility portfolio is mostly a big short on
 the market.
 
-<div class="research-figure naive-leg-risk-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/low-volatility-sizing/naive_leg_risk" mobile="/assets/low-volatility-sizing/naive_leg_risk_mobile" alt="Realized volatility and average beta of the low- and high-volatility deciles" version="13" %}
-</div>
-
-
-<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Risk on each side of the equal-weighted book.</span> The high-volatility stocks’ beta is shown before applying the short sign.</p>
+<table class="research-table comparison-table leg-risk-table">
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Risk on each side of the book.</span> Beta is measured before applying the short sign, July 1995–May 2026.</caption>
+  <thead><tr><th scope="col">Stock decile</th><th scope="col">Annual volatility</th><th scope="col">Mean ex-ante beta</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Low volatility (long)</th><td>11.9%</td><td>0.55</td></tr>
+    <tr><th scope="row">High volatility (short)</th><td>37.9%</td><td>1.63</td></tr>
+  </tbody>
+</table>
 
 ## Inverse-volatility sizing
 {: #sizing-the-two-books }
@@ -99,10 +101,12 @@ ratio, so sizing by volatility almost offsets beta.
 
 Because the two rules take such different market exposures, I also hedge each
 portfolio's beta with the Russell 1000 at every rebalance, using trailing
-ex-ante betas.[^beta-check] Table 1 compares all four.
+ex-ante betas.[^beta-check] Table 2 compares all four. Before the hedge, two-way
+stock turnover is about 19 times capital a year with equal weights and 12 times
+with inverse volatility. The hedge adds 1.3 and 0.6 times capital, respectively.
 
 <table class="research-table comparison-table compact-table">
-  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Sizing with and without a beta hedge.</span> July 1995–May 2026. Returns are compounded after 5 bp per dollar traded. The index hedge has zero financing cost.</caption>
+  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Sizing with and without a beta hedge.</span> July 1995–May 2026. Returns are compounded after 5 bp per dollar traded. The index hedge has zero financing cost.</caption>
   <thead><tr><th>Rule</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">Unhedged</th></tr>
@@ -124,7 +128,7 @@ don't be fooled: that's only because its large long index hedge is financed
 for free; charging 3% a year on it cuts
 that to 4.6%, while inverse volatility, with its small hedge, barely changes.
 
-Figure 3 shows the paths. The hedge removes equal weighting's market bet but not
+Figure 2 shows the paths. The hedge removes equal weighting's market bet but not
 its deep drawdowns.
 
 <div class="research-figure performance-figure responsive-figure">
@@ -132,18 +136,18 @@ its deep drawdowns.
 </div>
 
 
-<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Growth and drawdown after trading costs.</span> The dashed line adds a Russell 1000 hedge to the equal-weighted book. Table 1 gives the corresponding inverse-volatility hedge.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Growth and drawdown after trading costs.</span> The dashed line adds a Russell 1000 hedge to the equal-weighted book. Table 2 gives the corresponding inverse-volatility hedge.</p>
 
 ## Losses in strong rallies
 
 Low-volatility books have a well-known enemy, and it isn't a crash: the
-inverse-volatility portfolio's worst periods came in strong rallies. Figure 4
+inverse-volatility portfolio's worst periods came in strong rallies. Figure 3
 follows it from its high before two of them. The first window, October
 1998 to March 2000, is also its deepest drawdown: the portfolio lost about 38%
 before costs while the market rose about 52%. In the second, April 2025 to May
 2026, it lost about 12% while the market rose about 39%.
 
-Net market beta explains only 2 to 7 points of either loss, depending on how
+The realized portfolio betas were −0.055 and −0.106. Net market beta explains only 2 to 7 points of either loss, depending on how
 beta is measured, so the beta hedge wouldn't have prevented them. Gross
 contributions point at the short book: roughly −27 points against −10 for the
 longs in the dot-com rally, and −16 against +4 in the later one. But they
@@ -165,7 +169,7 @@ shortfall of about 6 points came from the long book.
 </div>
 
 
-<p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Long and short contributions during two rallies.</span> Growth is compounded before costs. The lower panels show linked contributions in percentage points. The first panel extends through the reversal in April 2001.</p>
+<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Long and short contributions during two rallies.</span> Growth is compounded before costs. The lower panels show linked contributions in percentage points. The first panel extends through the reversal in April 2001.</p>
 
 The dot-com loss was temporary: by April 2001 the portfolio was back to roughly
 where it started.
@@ -186,4 +190,4 @@ implied.
 
 [^beta-check]: The hedge trades with the stocks at the next close. Costs are 5 bp per dollar traded; funding, borrow fees and delisting returns are excluded.
 
-[^rally-beta]: Summed daily before-cost P&L of each book net of its in-window market beta, so not directly comparable with the linked contributions in Figure 4; ex-ante betas give the same split.
+[^rally-beta]: Summed daily before-cost P&L of each book net of its in-window market beta, so not directly comparable with the linked contributions in Figure 3; ex-ante betas give the same split.

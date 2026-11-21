@@ -138,7 +138,7 @@ Figure 1 runs the final portfolio, the optimizer with the trading controls
 described below, at five shrinkage values in development.
 
 <div id="correlation-shrinkage" class="research-figure rho-ladder-figure responsive-figure">
-  {% include blog-chart.html chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="18" %}
+  {% include blog-chart.html chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="19" %}
 </div>
 
 <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How correlation shrinkage changes the portfolio.</span> The diamond marks the chosen shrinkage of 0.5. Beta bias is realized minus forecast beta over the next holding period.</p>
@@ -194,6 +194,8 @@ volatility. The second gives stronger scores larger signal weights.
 The third sizes the stocks jointly. The fourth adds two trading controls,
 explained in the next section: a rank buffer that keeps existing holdings
 eligible, and a penalty on trading.
+
+I compound returns and use a zero cash rate for Sharpe. I annualize two-way turnover by dividing total traded notional by capital and elapsed calendar years.
 
 <table class="research-table comparison-table portfolio-card-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">From volatility scaling to joint sizing.</span> September 1998–December 2021. Three-schedule means after 5 bp per dollar traded. Parentheses give the lowest and highest schedule Sharpe.</caption>
