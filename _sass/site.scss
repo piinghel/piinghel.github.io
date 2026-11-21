@@ -13,7 +13,6 @@
   --accent-dark: #114532;
   --soft-accent: #f0f5f1;
   --page-surface: #fff;
-  --table-header-surface: var(--soft-accent);
   --reading-width: 42rem;
 }
 html[data-theme="dark"] {
@@ -26,7 +25,6 @@ html[data-theme="dark"] {
   --accent-dark: #baebd4;
   --soft-accent: #161b22;
   --page-surface: #0d1117;
-  --table-header-surface: #161b22;
 }
 * { box-sizing: border-box; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
@@ -231,8 +229,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .post-content > table:not([class]) :is(th, td):last-child { padding-right: 0; text-align: right; }
 .research-table { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .research-table th, .research-table td { padding: 0.7rem 0.65rem; border: 0; vertical-align: top; }
-.research-table thead th { background: var(--table-header-surface); border-bottom: 1px solid var(--rule); font-weight: 600; }
-.research-table th { text-align: left; font-weight: 500; }
+.research-table thead th { color: var(--muted-ink); border-bottom: 1px solid var(--rule); font-weight: 400; }
+.research-table th { text-align: left; font-weight: 400; }
 .research-table.comparison-table td, .research-table.comparison-table thead th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
 .research-table.comparison-table td { white-space: nowrap; }
 .research-table .secondary-metric { display: block; color: var(--muted-ink); font-size: 0.88em; }
@@ -259,7 +257,11 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .research-table.risk-performance-table { font-size: 0.84rem; }
   .risk-performance-table th:first-child { width: 26%; }
 }
-.research-table-scroll .settings-table { min-width: 0; }
+.research-table-scroll :is(.settings-table, .ic-summary-table) { min-width: 0; }
+.research-table-scroll:has(.ic-summary-table) { max-width: 34rem; }
+@media (max-width: 600px) {
+  .ic-summary-table :is(th, td) { padding: .55rem .3rem; }
+}
 .research-table-scroll:has(.constraint-settings) { max-width: 34rem; margin-bottom: 1.8rem; }
 .research-table-scroll .constraint-settings { min-width: 0; }
 .constraint-settings :is(th, td) { padding: .42rem .25rem; }
@@ -274,7 +276,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .research-table-scroll:has(.compact-table) { margin: 0 0 1.6rem; }
 @media (max-width: 600px) {
   .research-table.compact-table { font-size: 0.82rem; }
-  .research-table.compact-table th, .research-table.compact-table td { padding: 0.6rem 0.25rem; }
+  .research-table.compact-table th, .research-table.compact-table td { padding: 0.6rem 0.15rem; }
 }
 @media (min-width: 68rem) {
   .article-body-shell {

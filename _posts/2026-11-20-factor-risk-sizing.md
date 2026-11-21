@@ -257,7 +257,7 @@ The Factor target row shows the portfolio sized with the 50/50 correlation estim
 
 Imagine the same weights have forecast volatility of 7% under one model and 10% under another. If I keep their proportions, the second model fits the 7% budget at 70% of the original size. Volatility scales linearly with position size. The optimizer can also change the proportions if the second model sees a better hedge elsewhere. The next test separates the change in scale from the change in stock relationships.
 
-The same 7% cap can produce a smaller book if one model forecasts more risk for a given set of positions. In the later period the factor target held $1.24 of gross exposure per dollar of capital, against $1.56 for stock shrinkage. It also had smaller drawdowns. The next comparison asks how much of the volatility gap follows the forecast level.
+The same 7% cap can produce a smaller book if one model forecasts more risk for a given set of positions. In the later period, gross exposure averaged 124% of capital for the factor target and 156% for stock shrinkage. It also had smaller drawdowns. The next comparison asks how much of the volatility gap follows the forecast level.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" alt="Trailing annualized volatility of the original sizing rules before the rolling calibration." %}

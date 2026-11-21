@@ -103,7 +103,7 @@ Keep gross return when the gross/net gap answers the question; otherwise it may
 live in supporting results. Prioritize the columns that assess the claim.
 
 Use subtle shading for a selected construction or combined rule, never a field
-of winning cells. Make settings tables quieter than results tables. A caption
+of winning cells. Use regular-weight column headings, a fine rule, and right-aligned comparable numbers. Let small tables take only the width they need. A caption
 begins with the comparison and scope, followed by essential conventions.
 
 ## Mechanisms and mobile layout
