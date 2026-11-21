@@ -12,13 +12,15 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-Take a spread that is 50% long A and 50% short B. In the three-stock example its daily variance is 3 squared percentage points when the residuals are uncorrelated. I keep the positions and factor exposures fixed and change the residual correlation.
+In the first part, I used market, sector and style factors to estimate which stocks move together. The simplest factor model gave each stock its own specific variance and attributed all shared risk to the named factors. That made the three-stock spread straightforward to price.
 
-A sector factor can capture a broad move while a smaller group within the sector still moves together. I look for those groups in one year of residuals and follow the same groups into the next. Principal components give me another way to measure the shared moves and test how much of their strength is worth carrying into a risk forecast.
+A sector factor can capture a broad move while a smaller group of stocks still moves together. That matters if I expect a short in one of those names to hedge a long in another. I return to the same spread to show how residual correlation changes its risk, then use the following year’s returns to see how much of that co-movement persists and is worth carrying into the sizing rule.
 
 ## The sign of the position changes the answer
 
-Keep the specific volatilities at 2%, 2% and 1%, so $$D=\operatorname{diag}(2,2,1)$$ in percentage points. Give A and B a residual correlation of 0.6 in $$R$$. Multiplying by $$D$$ on the right scales the columns. Multiplying by $$D$$ on the left scales the rows.
+Write the residual covariance as $$\Omega=DRD$$, where $$D$$ contains the specific volatilities and $$R$$ contains the residual correlations. This lets me vary how stocks move together while keeping each stock’s specific risk fixed.
+
+Take the three-stock example with 50% long A and 50% short B. Its daily variance is 3 squared percentage points with zero residual correlations. Keep the specific volatilities at 2%, 2% and 1%, so $$D=\operatorname{diag}(2,2,1)$$ in percentage points. Give A and B a residual correlation of 0.6 in $$R$$. Multiplying by $$D$$ on the right scales the columns. Multiplying by $$D$$ on the left scales the rows.
 
 {% assign example = site.data.factor_risk_example %}
 <div class="matrix-calculation" role="group" aria-label="Scale the columns of the residual correlation matrix by specific volatilities, then scale its rows">
@@ -43,7 +45,7 @@ Positive residual covariance lowers the spread’s estimated variance because th
 
 ## Groups identified in one year still move together in the next
 
-I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. The sector and industry labels come from an August 2026 snapshot. At each year-end I group stocks by their trailing 252-session residual correlations, then hold the groups and stock order fixed for the next 252 sessions. The forward comparison uses names observed in both windows, about 93% of the formation names on average.
+I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. The sector and industry labels come from an August 2026 snapshot. At each year-end I group stocks by their trailing 252-session residual correlations. I freeze the groups and stock order for the next 252 sessions so any block that reappears reflects movement after the groups were chosen. The forward comparison uses names observed in both windows, about 93% of the formation names on average.
 
 Read the heatmaps from left to right. In the first two panels, the dates, stocks and order are identical. The first uses stock returns and the second uses the returns left by the factor fit. The third keeps the same order and uses the next 252 sessions. A block in the same place in the last two panels means that group still moves together.
 
@@ -54,7 +56,7 @@ Read the heatmaps from left to right. In the first two panels, the dates, stocks
 
 Removing the factors brought the average correlation from **about 25% to near zero**. Pairs in the same group were still about **8.5 correlation points** more correlated than pairs in different groups. The gap shrank to **about 5 points** over the next 252 sessions with the groups held fixed.
 
-Across all 27 cohorts, within-group correlation was about **5 points** higher than between-group correlation in formation and about **2 points** higher the next year. Shuffling group labels within industries produced a forward gap of less than half a point on average. The original groups beat the 95th percentile of those industry shuffles in all 27 cohorts.
+Across all 27 cohorts, within-group correlation was about **5 points** higher than between-group correlation in formation and about **2 points** higher the next year. I shuffle group labels within industries to see how much the grouping adds beyond industry composition. That shuffle produced a forward gap of less than half a point on average. The original groups beat the 95th percentile of those industry shuffles in all 27 cohorts.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
@@ -66,9 +68,9 @@ The forward correlation gap was much larger within sectors. In the 23 developmen
 ## The model placed NVIDIA and Vertiv in different groups
 {: #would-the-model-have-grouped-nvidia-and-vertiv}
 
-Vertiv supplies power and cooling equipment for data centers. That gives me a concrete relationship to look for in NVIDIA’s residual returns.
+The group averages tell me little about a particular hedge. I compared NVIDIA with Vertiv, which supplies power and cooling equipment for data centers, and with the enterprise software company Workday. The two pairs give me a way to see whether removing broad factors changes which stock tends to move with NVIDIA.
 
-In the 252 sessions through January 24, NVIDIA’s residual correlation was **0.14 with Vertiv** and **−0.10 with Workday**. The December groups had placed all three firms in different clusters. A group summarizes many stock pairs, so its label can miss a relationship between two particular names.
+In the 252 sessions through January 24, 2025, NVIDIA’s residual correlation was **0.14 with Vertiv** and **−0.10 with Workday**. The groups formed the previous December had placed all three firms in different clusters. A group summarizes many stock pairs, so its label can miss a relationship between two particular names.
 
 On January 27, NVIDIA and Vertiv fell while Workday rose. I picked the date after seeing the selloff. It illustrates a stock pair that a cluster label can miss.
 
@@ -81,7 +83,7 @@ The January selloff lifted the year-end 2025 residual correlation for NVIDIA–V
 
 ## The shared directions persist at a smaller scale
 
-A cluster gives each stock one label. Principal components let a stock contribute to several shared moves. I start by centering each stock’s residuals and scaling them to unit variance. In this calculation I divide by the number of days $$T$$ when computing both the variance and the products between stocks. For A’s four residual returns $$3,-1,3,-1$$, the mean is 1 and the variance is 4. Subtracting 1 and dividing by 2 gives the A column below.
+A cluster gives each stock one label. Principal components let a stock contribute to several shared moves. I center each stock’s residuals and scale them to unit variance so the components describe co-movement on a common scale. In this calculation I divide by the number of days $$T$$ when computing both the variance and the products between stocks. For A’s four residual returns $$3,-1,3,-1$$, the mean is 1 and the variance is 4. Subtracting 1 and dividing by 2 gives the A column below.
 
 <div class="matrix-calculation" role="group" aria-label="Standardized daily stock residuals and the resulting correlation matrix">
   <div>
@@ -103,16 +105,18 @@ For the chart, I fit the directions on 252 sessions and measure their variance o
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/directions" mobile="/assets/residual-risk/directions_mobile" version="2" alt="PCA directions lose variance after formation but retain more than shuffled directions with the same industry composition. Development PCs two through five fall from 14.30 to 4.36 versus 1.64 for the shuffle." %}
-  <p class="figure-caption">Within each band, compare the formation estimate with the same directions in the following year. The industry shuffle redistributes the stock weights within industries as a reference. A value of one is the variance of a unit-length direction if residuals are uncorrelated. The axis doubles at each tick and each cohort receives equal weight.</p>
+  <p class="figure-caption">Within each band, first look at how far variance falls from formation to the following year. Then compare that forward variance with the industry shuffle, which redistributes stock weights within industries. A value of one is the variance of a unit-length direction if residuals are uncorrelated. The axis doubles at each tick and each cohort receives equal weight.</p>
 </div>
 
 In the 23 development cohorts, components two through five fell from **about 14** units of variance per direction to **about 4** the following year. The industry shuffle came in below **2**. There is some persistence, and the observed strength is well below what the formation fit suggests. The four later cohorts show the same drop from formation and the same separation from the shuffle.
 
 ## Putting a residual correlation into the portfolio
 
-The comparisons keep the named-factor covariance and $$D$$ fixed. The specific volatilities in $$D$$ use a 63-session exponential half-life. The residual correlations in $$R$$ use the trailing 252 sessions. Changing $$R$$ changes the cross-covariances in $$DRD$$ while preserving the individual specific variances.
+The next-year results show that some of the fitted structure survives. To test how much of it belongs in the risk forecast, I vary $$R$$ and keep the named-factor covariance and $$D$$ fixed. This keeps any change in the forecast tied to residual co-movement. The specific volatilities in $$D$$ use a 63-session exponential half-life. The residual correlations in $$R$$ use the trailing 252 sessions.
 
-The baseline uses $$R=I$$. A stock without a complete trailing residual window keeps its named exposures and its specific variance, with zero pairwise residual correlations.
+The baseline uses $$R=I$$. A stock without a complete trailing residual window keeps its named exposures and specific variance. Assigning it zero residual correlations keeps it eligible without estimating co-movement from an incomplete window.
+
+For a principal direction $$q$$ with variance $$\lambda$$, its contribution is the matrix $$\lambda qq^\top$$. Let $$L$$ be the sum over the directions I keep. In the formulas below, $$\operatorname{diag}(U)$$ means a matrix with only the diagonal entries of $$U$$.
 
 - **Shrink toward zero.** For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. This pulls pairwise residual correlations toward zero while preserving each stock’s specific variance.
 - **Keep one principal component.** Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
@@ -120,7 +124,7 @@ The baseline uses $$R=I$$. A stock without a complete trailing residual window k
 
 In the example, shrinking halfway toward zero takes the A–B correlation from 0.6 to 0.3. The first component alone contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to that entry. The opposing A–B component contributes $$-0.2$$. Keeping the first component at full strength and putting the remaining variance back on the diagonal therefore raises that pair’s correlation to 0.8. This is why I check how much of the fitted components’ variance survives.
 
-Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. Each cohort gets equal weight. For pairs in the **same sector and group**, carrying the trailing correlation forward reduced development root mean squared error from **about 17 to 12 correlation points** against a forecast of zero. For pairs in **different sectors and groups**, predicting zero or using ordinary shrinkage gave errors of around **8 points**, and keeping five components pushed the error higher. I would be cautious about sizing an individual cross-sector hedge from those estimates alone.
+Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the **same sector and group**, carrying the trailing correlation forward reduced development error from **about 17 to 12 correlation points** against a forecast of zero. For pairs in **different sectors and groups**, predicting zero or using ordinary shrinkage gave errors of around **8 points**, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/pair-errors" mobile="/assets/residual-risk/pair-errors_mobile" version="1" alt="Changes in next-year pair correlation error versus forecasting zero. All estimators improved on zero for stocks in the same sector and cluster. The cross-sector, different-cluster forecasts increased error in both periods." %}
@@ -139,7 +143,7 @@ On the filled books, dropping residual correlations moved the factor target’s 
 
 ## What changed in the long/short book
 
-The replay kept the Ridge scores, rebalance schedules, optimizer constraints and dated transaction fees fixed. Each covariance model chose its own positions. The table averages the three schedule-level results, and the portfolios realized different levels of risk.
+The forecast tests price risk on chosen stocks or directions. In the replay, the optimizer can use a different covariance estimate to change the holdings themselves. I keep the same Ridge scores, risk budget, exposure limits and trading penalty so any differences in sizing trace back to how the model estimates risk. The table shows what each set of positions delivered after fees, averaged across the same three trading schedules.
 
 <table class="research-table comparison-table compact-table">
   <caption>Annual after-fee performance. Each residual method uses the same named factors and specific volatilities. Stock shrinkage is the separate stock-level reference.</caption>
