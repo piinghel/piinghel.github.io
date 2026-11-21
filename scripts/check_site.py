@@ -167,10 +167,34 @@ class Page(HTMLParser):
         self.ids: set[str] = set()
         self.links: list[str] = []
         self.images: list[dict[str, str | None]] = []
+        self.captions: dict[str, list[str]] = {"Figure": [], "Table": []}
+        self._research_table = False
+        self._caption_tag = ""
+        self._caption_kind = ""
+        self._caption_text: list[str] = []
         self.feed(content)
+
+    def handle_data(self, data: str) -> None:
+        if self._caption_tag:
+            self._caption_text.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == self._caption_tag:
+            caption = " ".join("".join(self._caption_text).split())
+            self.captions[self._caption_kind].append(caption)
+            self._caption_tag = ""
+        if tag == "table":
+            self._research_table = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
+        classes = (attributes.get("class") or "").split()
+        if tag == "table":
+            self._research_table = "research-table" in classes
+        if "figure-caption" in classes or "table-caption" in classes or (tag == "caption" and self._research_table):
+            self._caption_tag = tag
+            self._caption_kind = "Figure" if "figure-caption" in classes else "Table"
+            self._caption_text = []
         if attributes.get("id"):
             self.ids.add(str(attributes["id"]))
         for key in ("href", "src"):
@@ -227,6 +251,10 @@ def check_site(destination: Path) -> list[str]:
     if not (root / "index.html").exists():
         return ["Missing site index.html"]
     for path, page in pages.items():
+        for kind, captions in page.captions.items():
+            for number, caption in enumerate(captions, 1):
+                if not caption.startswith(f"{kind} {number}. "):
+                    errors.append(f"{path.relative_to(root)}: expected {kind} {number}. followed by a title")
         for link in page.links:
             target = urlsplit(link)
             if target.scheme in {"mailto", "tel", "data", "javascript"}:

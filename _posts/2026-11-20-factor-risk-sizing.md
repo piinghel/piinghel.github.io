@@ -227,7 +227,7 @@ Calibration can help when a model consistently under- or overestimates risk on t
 ## The portfolio comparison after fees
 {: #how-the-risk-estimate-changes-the-portfolio}
 
-I now let each risk estimate choose its own positions and compare the portfolios after trading fees.
+I now let each risk estimate choose its own positions and compare the portfolios after trading fees. I calculate Table 3’s drawdown for each schedule before averaging. Figure 3 follows the portfolio that combines their daily returns.
 
 <table class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Portfolio outcomes before and after fees.</span> Three-schedule means. Returns are compounded and annualized. Return and Sharpe are net above, gross below. Volatility and drawdown use net returns. Turnover is two-way, in multiples of capital per year.</caption>

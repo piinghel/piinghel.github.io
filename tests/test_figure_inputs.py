@@ -19,6 +19,18 @@ class FigureInputTests(unittest.TestCase):
                 check_site(root), ["CSV file was published: assets/results.csv"]
             )
 
+    def test_exhibit_numbers_follow_separate_sequences_in_each_article(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            article = root / "index.html"
+            figure = '<p class="figure-caption"><span>Figure 1.</span> Growth.</p>'
+            table = '<table class="research-table"><caption>Table 1. Settings.</caption></table>'
+            matrix = '<table class="worked-matrix"><caption>Covariance matrix</caption></table>'
+            article.write_text(figure + matrix + table)
+            self.assertEqual(check_site(root), [])
+            article.write_text(figure + table + figure)
+            self.assertIn("expected Figure 2.", check_site(root)[0])
+
     def test_local_link_checker_checks_fragments(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

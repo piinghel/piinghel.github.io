@@ -10,7 +10,6 @@
       if (table.parentElement.classList.contains("research-table-scroll")) return;
       const region = document.createElement("div");
       region.className = "research-table-scroll";
-      region.tabIndex = 0;
       region.setAttribute("role", "region");
       const caption = table.caption ||
         (table.previousElementSibling?.classList.contains("table-caption")
@@ -44,7 +43,8 @@
         if (caption) caption.style.maxWidth = `${region.clientWidth}px`;
         const scrollable = region.scrollWidth > region.clientWidth + 1;
         scrollHints.get(region).hidden = !scrollable;
-        region.tabIndex = scrollable ? 0 : -1;
+        if (scrollable) region.tabIndex = 0;
+        else region.removeAttribute("tabindex");
         if (!region.classList.contains("research-table-scroll")) {
           region.setAttribute("role", "group");
           const image = region.querySelector("img");
