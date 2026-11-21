@@ -115,11 +115,11 @@ At rebalance, new longs come from the top 75 scores in the dated Russell 1000 un
 To see what modeling co-movement adds, I compare a stock-by-stock sizing rule with three joint rules that use different covariance estimates.
 
 - **Volatility scaling** is the simple benchmark. It starts with equal weights on each side and multiplies each by 20% divided by its trailing 60-session annualized volatility, with a 5% volatility floor. A 40%-volatility stock starts at half its equal weight. Each sleeve can use up to one dollar per dollar of capital. This benchmark sizes stocks one at a time.
-- **Stock shrinkage** shrinks the 756-session stock correlation matrix halfway toward the identity. This reduces the influence of noisy pairwise estimates. Stock volatilities use 21 sessions, with the fixed risk adjustment from the reference backtest.
+- **Stock shrinkage** starts with each stock pair’s correlation over 756 trading sessions and moves it halfway toward zero. The history already reflects moves the stocks shared because of market, sector or momentum exposure. Halving the correlation discounts those moves along with any accidental co-movement. Individual stock volatilities use 21 sessions and the reference backtest’s fixed risk adjustment.
 - **Sector and style factors** estimate stock covariance from a market intercept, broad sectors and seven styles, including momentum, size and liquidity. The model adds each stock’s specific variance and starts with zero pairwise residual correlations.
-- **Factor target** keeps the stock-shrinkage volatilities and averages the historical correlation matrix with the total correlation implied by the factor model, including shrunk residual correlations. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
+- **Factor target** is the **50/50 average of historical and factor-based correlations**. The factor-based estimate includes the market, sectors and styles, and allows some correlation between the returns those factors leave unexplained. The optimizer uses the averaged correlations and the same individual stock volatilities as stock shrinkage to size one portfolio.
 
-Stock shrinkage and the factor target use the same standalone stock risk. They differ in how much risk they assign to holding those stocks together. Shrinking a positive correlation toward zero lowers the estimated risk of two longs and gives less hedging credit to a long paired with a short. The effect on the whole book depends on its positions.
+Suppose two stocks have a historical correlation of **0.40** and a factor-based estimate of **0.30**. The word *target* means the value I move the historical estimate toward. Stock shrinkage goes halfway from 0.40 to zero and uses **0.20**. Factor target goes halfway from the original 0.40 to 0.30 and uses **0.35**. If I short both stocks, 0.35 assigns more risk to a rally that hurts both shorts. If I go long one and short the other, 0.35 gives the pair more credit as a hedge.
 
 Written as a correlation estimate, both methods take the weighted average
 
@@ -238,7 +238,7 @@ I now let each sizing rule choose its own positions and trade from its own fills
 </div>
 <p class="figure-caption">The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
 
-The factor target came closest to its 7% budget in both periods. Stock shrinkage earned more after fees in the later period and carried more risk. To understand that trade-off, it helps to see how much exposure each book held.
+The **Factor target** row shows the portfolio sized with the 50/50 correlation estimate. From January 2022 through May 2026 it earned **4.59% a year after fees** at **7.27% volatility**, close to the 7% budget. Stock shrinkage earned **7.42%** at **9.65% volatility**. How much of that extra return came from holding a bigger book?
 
 ## Why the same risk budget produced different volatility
 
@@ -289,7 +289,9 @@ The scale swap shows how much exposure moved with the risk estimate. I next let 
   </tbody>
 </table>
 
-All three portfolios realized about **7% volatility** in the later period. Stock shrinkage and the factor target also held almost identical gross exposure. Stock shrinkage earned **6.1%** a year after fees, the factor target **4.5%**, and sector and style factors **2.4%**. Most of the gap between stock shrinkage and the factor target came from the short sleeve before fees. The factor target’s net Sharpe was about **0.2 lower**, with a paired interval that included zero.
+The calibrated **Factor target** row uses the same 50/50 correlation estimate. Calibration adjusts the overall risk forecast used to size the positions. In the later period, stock shrinkage and the factor target both averaged **$1.19 of gross exposure per dollar of capital** and realized close to **7% volatility**. Their compounded annual returns after fees were **6.10%** and **4.48%**, respectively. The paired interval for their net Sharpe difference included zero.
+
+The two books took different risks at that size. I applied the same factor model to both portfolios’ opening holdings each day. At their average exposures, a 1% rise in the fitted momentum factor would add **0.88%** to the stock-shrinkage portfolio and **0.59%** to the factor-target portfolio. A 1% fall would reverse those contributions. Multiplying each day’s exposure by that day’s momentum return, I get **1.68 percentage points a year** in stock shrinkage’s favor, including **0.96 points** from the shorts. Other contributions partly offset that gain, leaving a **1.44-point** advantage before fees. These figures use annualized arithmetic returns so the contributions add up.
 
 Similar overall volatility can come with different market exposure. The estimated beta limit applies at rebalance. Realized beta measures how the filled book moved with the Russell 1000. When measured over the same window, beta equals correlation with the index times the ratio of portfolio to index volatility, $$\beta_{p,m}=\rho_{p,m}\sigma_p/\sigma_m$$. At the same market correlation, a more volatile book has a larger beta in magnitude.
 
