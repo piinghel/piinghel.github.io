@@ -172,18 +172,18 @@ expand Kumo's training context from the same start using one date every
     <tr><th scope="row">Ridge</th><td>0.0446</td><td>0.069</td><td>0.65</td><td>13.4%</td><td>17.3%</td><td>0.81</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0546</td><td>0.062</td><td>0.88</td><td>23.9%</td><td>15.6%</td><td>1.45</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0500</td><td>0.059</td><td>0.84</td><td>16.9%</td><td>15.0%</td><td>1.12</td></tr>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2014 · 813 rank dates</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0447</td><td>0.074</td><td>0.61</td><td>6.8%</td><td>19.3%</td><td>0.44</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0569</td><td>0.064</td><td>0.90</td><td>18.0%</td><td>15.2%</td><td>1.16</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>0.0466</td><td>0.058</td><td>0.81</td><td>10.1%</td><td>14.6%</td><td>0.73</td></tr>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2018 · 1,021 rank dates</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0471</td><td>0.077</td><td>0.61</td><td>8.1%</td><td>18.6%</td><td>0.51</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0564</td><td>0.065</td><td>0.87</td><td>18.0%</td><td>14.7%</td><td>1.20</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0452</td><td>0.058</td><td>0.78</td><td>10.6%</td><td>14.0%</td><td>0.79</td></tr>
   </tbody>
 </table>
 </div>
 
-Kumo Small's rank IC and spread Sharpe sit between the two baselines in
-both windows. Through September 2014, its mean IC is close to Ridge's and
-its daily IC varies less. Kumo's spread had the lowest volatility in both
-windows.
+Through September 2018, Ridge has a slightly higher mean IC than Kumo Small.
+Kumo's lower IC standard deviation gives it the higher ICIR. Kumo's spread
+has the lowest volatility of the three, while LightGBM has the highest gross
+spread Sharpe.
 
 I can hold the first fold's scoring dates fixed to compare the training
 samples. On the same 91 dates, Kumo had a rank IC of 0.0770 and an ICIR of
