@@ -281,7 +281,7 @@ targets, ICIR was 0.11 at four weeks and 0.21 at six. The paired 21-session
 block-bootstrap interval for the difference was −0.23 to 0.06. Training
 spacing changes which dates enter the context as well as how many.
 
-These comparisons use the same archived development panel. The walk-forward
-cutoff governs when each return outcome can enter a fit. Reproducing the
-information available on each historical date would require dated input
-vintages.
+These comparisons use the 1999–2021 research sample. Each walk-forward
+fit uses return outcomes after their measurement window ends. Verifying
+which feature values were available on each historical date would require
+their original dated versions.
