@@ -20,7 +20,25 @@ I first compare how the risk models weight sampled portfolios and forecast risk 
 
 ## From stock exposures to portfolio risk
 
-Consider three stocks and two factors. Each row of $$B$$ holds a stock’s exposures. All three stocks have a loading of one on the common market term, as they do for the market intercept in the study. A and B have opposite momentum exposures. The two factors in this example are uncorrelated and have daily variances of 4 and 1 in squared percentage points.
+At each close I split the day’s stock returns into shared factor moves and a residual for each stock.
+
+$$
+r_t = B_{t-1} f_t + \epsilon_t.
+$$
+
+Here $$r_t$$ is the vector of stock returns and each row of $$B_{t-1}$$ gives one stock’s exposures as of the previous close. The market column is one for every stock. The other columns encode sector membership and style exposures. I fit the day’s factor returns $$f_t$$ across stocks by weighted least squares, with weights proportional to the square root of prior market cap. The sector returns average to zero under those weights so the market intercept and sector effects are separately defined. The fits leave a history of residual returns $$\epsilon_t$$ for each stock.
+
+To forecast risk I hold the latest exposures $$B$$ fixed. Let $$F$$ be the covariance of factor returns and $$\Omega$$ the covariance of residual returns. The model assumes the factor and residual returns are uncorrelated, so their covariance contributions add.
+
+$$
+\Sigma = BFB^\top + \Omega.
+$$
+
+I estimate $$F$$ and the specific variances from the fitted histories. Factor returns can move together, so $$F$$ can have off-diagonal entries. The baseline sets the off-diagonal entries of $$\Omega$$ to zero. That means stocks can move together through their factors, and shared moves left in the residuals are omitted. For signed portfolio weights $$w$$, $$B^\top w$$ gives the portfolio’s factor exposures and $$w^\top\Sigma w$$ gives its forecast daily variance.
+
+### A three-stock example
+
+Take three stocks with a common market exposure of one. A and B have opposite momentum exposures. For the example, give the factors zero correlation and daily variances of 4 and 1 in squared percentage points.
 
 {% assign example = site.data.factor_risk_example %}
 <div class="matrix-calculation" role="group" aria-label="Stock exposures multiplied by factor covariance">
@@ -47,7 +65,7 @@ Multiplying by this diagonal $$F$$ scales the market column by 4 and the momentu
 
 Now put 50% of capital long A and 50% short B. The signed weights are $$w=(0.5,-0.5,0)^\top$$. In $$B^\top w$$, the market intercept exposure is $$0.5(1)-0.5(1)=0$$. Momentum exposure is $$0.5(1)-0.5(-1)=1$$. The long and short cancel the common intercept. Their momentum exposures add. The index-beta limit later in the article uses estimated stock betas.
 
-The model treats factor returns and residuals as uncorrelated, so total stock covariance is $$\Sigma=BFB^\top+\operatorname{Cov}(\epsilon)$$. Let A, B and C have specific volatilities of 2%, 2% and 1%, with zero residual correlations. That adds 4, 4 and 1 to the diagonal of $$BFB^\top$$.
+Let A, B and C have specific volatilities of 2%, 2% and 1%. With zero residual correlations, $$\Omega$$ adds their variances of 4, 4 and 1 to the diagonal of $$BFB^\top$$.
 
 <div class="matrix-calculation" role="group" aria-label="Total stock covariance with a diagonal residual model">
   {% include worked-matrix.html matrix=example.total_stock_covariance symbol="Σ" label="Total stock covariance" mark_row="A" mark_column="B" %}
@@ -70,8 +88,6 @@ At each rebalance I use the Russell 1000 membership recorded by that close. Ridg
 - **Stock shrinkage** is the main benchmark for the covariance comparison. It shrinks the 756-session stock correlation matrix halfway toward the identity. The stock volatilities use 21 sessions and a 1.18 multiplier.
 - **Sector and style factors** estimate stock covariance from a market intercept, broad sectors and seven styles, including momentum, size and liquidity. The model adds each stock’s specific variance and starts with zero pairwise residual correlations.
 - **Factor target** keeps the stock-shrinkage volatilities and averages the historical correlation matrix with the total correlation implied by the factor model, including shrunk residual correlations. For a pair with 0.40 historical correlation and 0.20 factor-implied correlation, stock shrinkage uses 0.20 and the factor target uses 0.30.
-
-At each close I fit $$r_t=B_{t-1}f_t+\epsilon_t$$ across stocks. I know the exposures $$B_{t-1}$$ from the previous close and observe today’s stock returns $$r_t$$. The regression estimates today’s factor returns $$f_t$$ and leaves one residual per stock, $$\epsilon_t$$. The fitted return histories give me the factor covariance and each stock’s specific variance.
 
 For the factor target, I first divide each model-implied stock covariance by the two model-implied stock volatilities to get a correlation. I average that matrix with the historical stock correlation matrix. Finally, I turn the result back into covariance using the same stock volatilities as the stock-shrinkage benchmark. That keeps the two models’ standalone stock risks equal while changing how they estimate co-movement.
 
