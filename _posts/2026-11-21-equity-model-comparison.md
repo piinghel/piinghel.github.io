@@ -40,24 +40,23 @@ forward 20-session Sharpe ratio, ranked against its sector peers. At each
 refit I supply historical rows whose outcomes have already materialized.
 These examples are the context. Kumo uses them to score the next
 cross-section with its pretrained weights held fixed. That is what
-in-context learning means here. [NVIDIA Kumo Tabular report](https://arxiv.org/abs/2611.23001v1)
+in-context learning means here.
 
-Some of the work that got me interested came from European research groups.
-The original TabPFN from Freiburg was tested on classification problems
-with up to 1,000 training rows. The follow-up in 2025 took that to 10,000.
-The Freiburg spin-off Prior Labs continued that work, and the group behind
-TabICL at Inria in France tackled larger tables. NVIDIA’s Kumo report
-now describes tables of up to 150 million cells on modern GPUs.
-[Original TabPFN](https://arxiv.org/abs/2207.01848) · [TabPFN in Nature](https://www.nature.com/articles/s41586-024-08328-6) · [Prior Labs and Freiburg](https://www.cibss.uni-freiburg.de/news/frank-hutter-wins-the-ai-innovation-award-2026) · [TabICL](https://proceedings.mlr.press/v267/qu25d.html) · [Kumo report](https://arxiv.org/abs/2611.23001v1)
+Some of the work that got me interested came from Europe. TabPFN grew
+out of research in Freiburg, and TabICL came from researchers at Inria
+in France. The first TabPFN was designed for small classification
+problems. NVIDIA now reports that Kumo can handle tables of up to
+150 million cells on modern GPUs and that its Large checkpoint leads
+its TabArena and BeyondArena comparisons. [NVIDIA’s Kumo Tabular report](https://arxiv.org/abs/2611.23001v1)
 
 Christoph Molnar sets out two ways this could matter. A pretrained model
 may beat the usual tree model out of the box, or it may make a useful
-second forecast because it makes different errors. NVIDIA reports that
-Kumo Large leads its comparisons on TabArena and BeyondArena. I wanted
-to put the claim about boosted trees to a specific test on my own
-data. Can Kumo improve on LightGBM’s stock rankings, or does it at least
-produce scores and portfolios that behave differently? Ridge gives me a
-linear reference for both questions. [Christoph Molnar, The rise of tabular foundation models](https://mindfulmodeler.substack.com/p/tabular-ml-is-about-to-get-weird) · [NVIDIA’s benchmark results](https://arxiv.org/abs/2611.23001v1)
+second forecast because it makes different errors. Those are the two
+questions I bring to the equity panel. Can Kumo improve on LightGBM’s
+stock rankings? How differently do the scores and portfolios behave?
+I use Ridge, which combines the predictors with shrunk linear weights,
+and LightGBM, which learns rules from a sequence of decision trees.
+[Christoph Molnar, The rise of tabular foundation models](https://mindfulmodeler.substack.com/p/tabular-ml-is-about-to-get-weird)
 
 ## Ranking the whole cross-section
 
