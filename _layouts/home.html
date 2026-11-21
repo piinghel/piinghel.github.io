@@ -3,10 +3,7 @@ layout: base
 ---
 
 <div class="home">
-  <header class="home-header">
-    <h1 class="home-title">Research notes</h1>
-    <p>Systematic strategies, machine learning, and portfolio construction.</p>
-  </header>
+  <h1 class="visually-hidden">Articles</h1>
   {%- comment -%}
     Newest first, with explicit home_after links for article continuations.
     Posts published on the same day list the latest part first (Part 2, then 1).
@@ -30,28 +27,9 @@ layout: base
   {%- if listed.size > 0 -%}
     <ul class="post-list">
       {%- for post in home_posts -%}
-      {%- assign preview = site.data.post_previews[post.path] -%}
       <li>
+        <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
         <time class="post-list-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
-        <div class="post-list-copy">
-          <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
-          {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
-          {%- if site.show_excerpts -%}{{ post.excerpt }}{%- endif -%}
-        </div>
-        {%- if forloop.first and preview -%}
-          <details class="post-preview">
-            <summary>Preview the figure</summary>
-            <figure>
-            <picture class="post-preview-light">
-              <img src="{{ preview.light | relative_url }}" alt="{{ preview.alt | escape }}" width="{{ preview.width }}" height="{{ preview.height }}" decoding="async">
-            </picture>
-            <picture class="post-preview-dark">
-              <img src="{{ preview.dark | relative_url }}" alt="{{ preview.alt | escape }}" width="{{ preview.width }}" height="{{ preview.height }}" decoding="async">
-            </picture>
-            <figcaption>{{ preview.caption | escape }}</figcaption>
-            </figure>
-          </details>
-        {%- endif -%}
       </li>
       {%- endfor -%}
     </ul>

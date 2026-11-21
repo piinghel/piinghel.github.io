@@ -1,7 +1,0 @@
-_posts/2026-11-20-residual-risk.md:
-  light: /assets/residual-risk/matrix-preview.png
-  dark: /assets/residual-risk/matrix-preview-dark.png
-  width: 950
-  height: 409
-  alt: "Clusters of positive stock correlations become weaker after removing market, sector and style exposures."
-  caption: "Raw, formation-year and following-year correlations for the same 850 stocks."

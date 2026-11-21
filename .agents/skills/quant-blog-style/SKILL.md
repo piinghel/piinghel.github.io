@@ -135,13 +135,9 @@ Widen an individual figure only to make a particular comparison legible.
 On phones, keep related panels in the same view when their labels fit. Keep comparison tables in their shared
 `research-table` / `comparison-table` styles.
 
-For a launch, list the latest note with the same type and spacing as its
-neighbours. Keep the initial homepage view focused on titles and dates.
-A representative article figure can appear in the existing optional preview
-when its point survives at that size. Register a small, uncropped light
-and dark preview in `_data/post_previews.yml`, keyed by source post path with
-`light`, `dark`, `width`, `height`, `alt` and `caption`. Omit the preview
-when no image reads clearly at that size.
+The homepage is a text index of article titles and dates, beginning directly
+with the latest entry. Give every article the same treatment. Figures,
+captions and introductory copy belong inside the article.
 
 Number figures and tables independently in reading order. Put the figure's one
 main title at the beginning of its caption below the display. Put a table's
