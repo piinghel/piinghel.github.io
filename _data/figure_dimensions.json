@@ -87,14 +87,6 @@
     "width": 302,
     "height": 366
   },
-  "/assets/joint-sizing/parameter-sensitivity": {
-    "width": 1200,
-    "height": 660
-  },
-  "/assets/joint-sizing/parameter-sensitivity_mobile": {
-    "width": 480,
-    "height": 1240
-  },
   "/assets/joint-sizing/performance-and-drawdowns": {
     "width": 1200,
     "height": 780
@@ -126,14 +118,6 @@
   "/assets/low-volatility-sizing/decile_profile_mobile": {
     "width": 329,
     "height": 515
-  },
-  "/assets/low-volatility-sizing/naive_leg_risk": {
-    "width": 629,
-    "height": 184
-  },
-  "/assets/low-volatility-sizing/naive_leg_risk_mobile": {
-    "width": 328,
-    "height": 328
   },
   "/assets/low-volatility-sizing/performance_and_drawdowns": {
     "width": 634,

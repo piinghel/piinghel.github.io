@@ -225,7 +225,9 @@ uv run python -m rebalance_tranching.ridge_figures \
 
 The low-volatility figures are rendered from the retained September 2026 run
 (`output/turnover-review-2026-09-05` and `output/point-in-time-beta-2026-09-14`
-in that project); its README lists the commands.
+in that project). Copy the desktop, phone, light and dark versions of
+`decile_profile`, `performance_and_drawdowns` and `regime_comparison` into
+the blog. The other study figures are research diagnostics.
 
 The optimizer figures were regenerated from the active main-worktree evidence
 of the private portfolio-optimization project. Older experimental branches and their
