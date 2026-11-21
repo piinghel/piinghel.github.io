@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "Equity Model Comparison"
+title: "Ranking Stocks with Kumo Tabular"
 description: "Ridge, LightGBM and NVIDIA Kumo Tabular on the same stock universe, from rank IC to net portfolio returns."
 date: 2026-11-21
 last_modified_at: 2026-11-22
 categories: ["Signals"]
-article_label: Signals · Equity model comparison
+article_label: Signals · Kumo Tabular
 permalink: /quants/equity-model-comparison.html
 ---
 
