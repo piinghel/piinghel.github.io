@@ -31,20 +31,17 @@ layout: base
     <ul class="post-list">
       {%- for post in home_posts -%}
       {%- assign preview = site.data.post_previews[post.path] -%}
-      <li{% if forloop.first %} class="lead-post{% if preview %} lead-post--illustrated{% endif %}"{% endif %}>
-        <div class="post-list-details">
-          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
-          {%- for category in post.categories limit: 1 -%}
-            <span class="post-topic">{{ category | escape }}</span>
-          {%- endfor -%}
-        </div>
+      <li>
+        <time class="post-list-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
         <div class="post-list-copy">
           <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
           {%- if post.description -%}<p class="post-deck">{{ post.description | escape }}</p>{%- endif -%}
           {%- if site.show_excerpts -%}{{ post.excerpt }}{%- endif -%}
         </div>
         {%- if forloop.first and preview -%}
-          <figure class="post-preview">
+          <details class="post-preview">
+            <summary>Preview the figure</summary>
+            <figure>
             <picture class="post-preview-light">
               <img src="{{ preview.light | relative_url }}" alt="{{ preview.alt | escape }}" width="{{ preview.width }}" height="{{ preview.height }}" decoding="async">
             </picture>
@@ -52,7 +49,8 @@ layout: base
               <img src="{{ preview.dark | relative_url }}" alt="{{ preview.alt | escape }}" width="{{ preview.width }}" height="{{ preview.height }}" decoding="async">
             </picture>
             <figcaption>{{ preview.caption | escape }}</figcaption>
-          </figure>
+            </figure>
+          </details>
         {%- endif -%}
       </li>
       {%- endfor -%}

@@ -50,10 +50,11 @@ Suppose I trust only half the estimated correlation. Shrinking 0.6 halfway towar
 I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. At each year-end I group stocks by their trailing 252-session residual correlations. Holding those groups fixed for the following year lets me measure whether yesterday’s neighbours still move together. The comparison uses stocks observed in both windows, about 93% of the initial names on average.
 
 The first two heatmaps compare stock returns and residual returns on the same dates and in the same stock order. The third keeps that order for the next 252 sessions. A block in the same place in the last two panels means the group still moves together.
+{: #stock-correlations }
 
 <div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="3" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from about 25% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
-  <p class="figure-caption">The same 850 stocks appear in all three panels. Each tile averages correlations between distinct stock pairs, and the outlines mark the groups formed in December 2021. Zero has the same neutral color in each panel. The shared scale stops at ±40%. This cohort had the strongest forward gap.</p>
+  {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="4" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from about 25% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
+  <p class="figure-caption">Each tile averages correlations between distinct pairs from the same 850 stocks. Outlines mark groups formed in December 2021. Colours saturate at ±40%. This cohort had the strongest forward gap.</p>
 </div>
 
 Removing the factors brought the average correlation from **about 25% to near zero**. Pairs in the same group were still about **8.5 correlation points** more correlated than pairs in different groups. The gap shrank to **about 5 points** over the next 252 sessions with the groups held fixed.

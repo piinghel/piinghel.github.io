@@ -7,14 +7,6 @@
   scrollbar-width: thin;
 }
 
-// Let first-level displays use the space to the right of the reading column.
-// Figures inside a comparison grid keep the width set by their own panel.
-@media (min-width: 68rem) {
-  .e-content > .research-figure,
-  .e-content > .blog-chart {
-    width: calc(100% + clamp(0rem, 50vw - 24rem, 15rem));
-  }
-}
 .theme-svg-figure,
 .theme-svg-figure img { display: block; width: 100%; margin: 0; }
 .theme-svg-figure--dark { display: none; }
@@ -89,4 +81,7 @@ html[data-theme="dark"] {
 @media (max-width: 768px) {
   .research-figure picture { min-width: 760px; }
   .responsive-figure picture { min-width: 0; }
+}
+@media (max-width: 600px) {
+  .responsive-figure .theme-svg-figure { max-width: 25rem; margin-inline: auto; }
 }

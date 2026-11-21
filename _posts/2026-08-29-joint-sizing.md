@@ -137,7 +137,7 @@ the later period, where calibration is 1.06.
 Figure 1 runs the final portfolio, the optimizer with the trading controls
 described below, at five shrinkage values in development.
 
-<div class="research-figure rho-ladder-figure responsive-figure">
+<div id="correlation-shrinkage" class="research-figure rho-ladder-figure responsive-figure">
   {% include blog-chart.html chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="18" %}
 </div>
 
@@ -275,19 +275,7 @@ The buffer alone cuts turnover by about 3× capital a year and the penalty
 alone by about 7×; together they cut it by 13.5×, more than the sum of the two. The buffer
 keeps more holdings eligible, and the penalty makes keeping them the default.
 
-Figure 3 varies one control at a time around the chosen settings.
-
-<div class="research-figure parameter-sensitivity-figure responsive-figure">
-  {% include blog-chart.html chart="sensitivity" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/parameter-sensitivity" mobile="/assets/joint-sizing/parameter-sensitivity_mobile" label="Development-period net Sharpe and annualized turnover across trade coefficients and rank-buffer cutoffs" version="13" %}
-</div>
-
-<p class="figure-caption"><strong>Figure 3: Sensitivity to the trading controls.</strong> Development-period net Sharpe and annual turnover across trade coefficients <i>c</i> (×10<sup>−4</sup>; 0 means no penalty) and rank-buffer cutoffs (75 means no buffer). Points are schedule means; whiskers span the three schedules. Chosen settings are highlighted.</p>
-
-The nice part is that net Sharpe barely moves: 1.29–1.33 across trade coefficients from 0 to 5
-and 1.30–1.32 across cutoffs from 75 to 225, while turnover falls from 33× to
-19× and from 29× to 21×. The settings I use, 2.5 and 175, sit inside both
-plateaus. A larger coefficient or cutoff would cut turnover further at little
-cost in Sharpe.
+<p id="trading-control-sensitivity">I varied each control while holding the other at its chosen setting. Raising the trade coefficient from 0 to 5&nbsp;×&nbsp;10<sup>−4</sup> cut annual turnover from 33× to 19× capital. Mean net Sharpe across the three schedules stayed between 1.29 and 1.33. Widening the rank cutoff from 75 to 225 gave a similar result: turnover fell from 29× to 21×, with Sharpe between 1.30 and 1.32. At the settings I use (2.5&nbsp;×&nbsp;10<sup>−4</sup> and rank 175), the individual schedules had net Sharpes from 1.26 to 1.36.</p>
 
 ## After 2021
 
@@ -325,7 +313,7 @@ of fixed capital and the short book lost 10.8%.
 
 ## Forecast beta versus realized beta
 
-The beta limit applies to an estimate at each rebalance. Figure 4 tracks
+The beta limit applies to an estimate at each rebalance. Figure 3 tracks
 the beta of the portfolio's realized returns over a trailing year, which
 reflects holdings and market moves throughout that year.
 
@@ -333,7 +321,7 @@ reflects holdings and market moves throughout that year.
   {% include blog-chart.html chart="beta" source="/assets/joint-sizing/beta.json" base="/assets/joint-sizing/risk-calibration-and-beta" mobile="/assets/joint-sizing/risk-calibration-and-beta_mobile" label="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="17" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 4: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the optimizer's ±0.05 limit, which applies to its rebalance-time estimate.</p>
+<p class="figure-caption"><strong>Figure 3: Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the optimizer's ±0.05 limit, which applies to its rebalance-time estimate.</p>
 
 Over the full development period, realized beta is 0.10 for volatility
 scaling and 0.08 for the optimizer with trading controls; after 2021 it is

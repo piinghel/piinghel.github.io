@@ -96,6 +96,12 @@ across metrics. A heatmap should reveal a pattern before inviting cell lookup.
 A mechanism diagram should explain what happens, without pretending to be
 empirical evidence. Avoid an extra display that repeats an existing answer.
 
+Apply the author's `wilke-research-figures` skill for figure work. Try the
+argument with the figure removed. When a short paragraph carries the finding,
+keep the numbers, any essential uncertainty, and the simpler page. When a
+figure earns its place, decide what the reader should see first, what needs
+a label, and what can leave.
+
 For display edits, read [the display standard](references/displays.md). It
 contains chart-specific decisions, typography, colors and table conventions.
 
@@ -124,15 +130,15 @@ Preserve permalinks, site identity, chronological RSS and the repository's
 homepage and Previous/Next ordering. Keep the introduction in the article body.
 
 Use the site's `research-figure responsive-figure` containers with
-`theme-svg-figure.html` or `blog-chart.html`. Top-level figures get extra room
-on desktop while captions stay at reading width. Give multi-panel figures a
-phone composition when needed. Keep comparison tables in their shared
+`theme-svg-figure.html` or `blog-chart.html`. Start figures at reading width.
+Widen an individual figure only to make a particular comparison legible.
+On phones, keep related panels in the same view when their labels fit. Keep comparison tables in their shared
 `research-table` / `comparison-table` styles.
 
-For a launch, choose one representative existing figure or an original
-explanatory illustration for the lead homepage note when it earns that space.
-Prefer a visual whose point survives at half-page width. Keep the full
-interpretation and figure in the article. Register a small, uncropped light
+For a launch, list the latest note with the same type and spacing as its
+neighbours. Keep the initial homepage view focused on titles and dates.
+A representative article figure can appear in the existing optional preview
+when its point survives at that size. Register a small, uncropped light
 and dark preview in `_data/post_previews.yml`, keyed by source post path with
 `light`, `dark`, `width`, `height`, `alt` and `caption`. Omit the preview
 when no image reads clearly at that size.
@@ -149,8 +155,10 @@ documentation unless the user explicitly requests a reader-facing download.
 ## Verify the reading experience
 
 Render light and dark variants from the same data and layout. Inspect the page
-at its actual desktop reading width and approximately 390 px phone width in
-both themes, beginning at the top and encountering displays in reading order.
+at its actual desktop reading width, at narrow-window width around 540 px
+and at approximately 390 px phone width in both themes. Read each figure
+with the surrounding paragraph. For redesigns, share a working intermediate
+version while the author can still give feedback.
 
 Check purpose, definitions, readable text, appropriate emphasis, honest scales
 and complete exports. Check labels against data lines as well as other labels;

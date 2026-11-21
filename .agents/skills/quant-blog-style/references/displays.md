@@ -15,11 +15,11 @@ needed, keep it very short. Keep headings and legends clear of data lines.
 On phones, allow text columns to wrap so names never run into numeric columns.
 
 Use a white canvas with slate text in light mode and the site's dark surface
-with light text in dark mode. References are cool gray. Comparisons use muted
-blue, teal, orange or red; pick only as many as the figure needs. Preserve a
-semantic mapping across an article: a strategy or book keeps its color, label,
-ordering and line style. Long/short contributions use teal/muted red when no
-existing mapping needs preserving. Do not encode winners with red/green cells.
+with light text in dark mode. Start with readable neutrals and use one accent
+for the focal series. Preserve the site's muted blue for longs and slate for
+shorts. Keep series labels and line patterns consistent. For a signed matrix,
+use balanced endpoints and a neutral midpoint at zero. Put the scale once
+beside the whole comparison.
 
 Color has one defined job within an encoding: distinguish categories, encode
 signed magnitude, or highlight a setting. Use line style, labels or symbols
@@ -115,8 +115,10 @@ Use the same sleeve identities in related performance displays.
 
 Ordinary line charts should fit a phone. When a wide export would shrink labels
 too far, generate a narrow layout from the same data and plotting functions.
-Stack panel groups on mobile while preserving their logic: for an episode,
-growth remains above contribution. Keep genuinely comparable scales intact.
+For an episode, keep growth above contribution. For a small set of matrices
+whose stock ordering is fixed, try one row on a phone so the reader can see
+which blocks persist. Use the physical size and arrangement that keep the
+important comparison visible. Keep genuinely comparable scales intact.
 
 Dense heatmaps and genuinely wide tables may scroll locally. Make scrolling
 discoverable with a brief visible hint when needed; check keyboard access,
