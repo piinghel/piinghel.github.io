@@ -168,12 +168,12 @@
     "height": 326
   },
   "/assets/portfolio-attribution/theme-drawdowns": {
-    "width": 648,
-    "height": 403
+    "width": 533,
+    "height": 283
   },
   "/assets/portfolio-attribution/theme-drawdowns_mobile": {
-    "width": 274,
-    "height": 828
+    "width": 342,
+    "height": 283
   },
   "/assets/portfolio-attribution/theme-pnl": {
     "width": 648,
@@ -184,12 +184,12 @@
     "height": 828
   },
   "/assets/portfolio-attribution/theme-regimes": {
-    "width": 648,
-    "height": 403
+    "width": 533,
+    "height": 168
   },
   "/assets/portfolio-attribution/theme-regimes_mobile": {
-    "width": 274,
-    "height": 828
+    "width": 342,
+    "height": 168
   },
   "/assets/portfolio-attribution/theme-return-years": {
     "width": 720,

@@ -61,7 +61,7 @@
     };
   }
 
-  const colorscale = () => [[0, window.BlogCharts.COLORS.short], [0.5, document.documentElement.dataset.theme==='dark'?'#252c34':'#f6f6f4'], [1, window.BlogCharts.COLORS.long]];
+  const colorscale = () => window.BlogCharts.signedColorScale();
   const colorbar = {
     orientation: 'h', thickness: 8, len: 0.45, x: 1, xanchor: 'right', y: -0.02, yanchor: 'top',
     tickvals: [-1, 0, 1], outlinewidth: 0,
@@ -118,7 +118,7 @@
     const abbrev = { 'Med./long ret.': 'M/L', 'Short-term ret.': 'ST', Volatility: 'Vol.', Trading: 'Trad.', 'Mkt corr.': 'Corr.', 'Short int.': 'SI' };
     const trace = {
       type: 'heatmap', x: names, y: names, z: matrix, zmin: -1, zmax: 1, colorscale: colorscale(), colorbar,
-      texttemplate: '%{z:.2f}', xgap: 2, ygap: 2,
+      xgap: 1, ygap: 1,
       customdata: data.themes.map((a) => data.themes.map((b) => `${a.name} · ${b.name}`)),
       hovertemplate: '<b>ρ = %{z:.2f}</b><br>%{customdata}<extra></extra>',
     };

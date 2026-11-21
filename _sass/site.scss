@@ -251,6 +251,12 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   .risk-performance-table th:first-child { width: 26%; }
 }
 .research-table-scroll .settings-table { min-width: 0; }
+.research-table-scroll:has(.constraint-settings) { max-width: 34rem; margin-bottom: 1.8rem; }
+.research-table-scroll .constraint-settings { min-width: 0; }
+.constraint-settings :is(th, td) { padding: .42rem .25rem; }
+.constraint-settings tbody th { font-weight: 400; }
+.constraint-settings :is(th, td):last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.constraint-settings var { margin-left: .35rem; color: var(--muted-ink); font-family: var(--font-serif); white-space: nowrap; }
 .research-table-scroll .compact-table { min-width: 0; table-layout: auto; margin-bottom: 0; }
 .research-table.compact-table { font-size: 0.88rem; }
 .research-table.compact-table th, .research-table.compact-table td { padding: 0.65rem 0.4rem; }

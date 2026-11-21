@@ -131,10 +131,12 @@ def stability_panels(values: np.ndarray, years: list[int]) -> list[dict]:
     unit = values / size
     previous = (unit[:, 1:] * unit[:, :-1]).sum(axis=0)
     return [
-        {"title": "Similarity to the previous refit", "xTitle": "Refit", "x": years[1:],
-         "ticks": years[1::2], "format": ".2f", "y": [round(float(v), 3) for v in previous]},
-        {"title": "Coefficient size, first refit = 1", "xTitle": "Refit", "x": years,
-         "ticks": years[::2], "format": ".1f", "y": [round(float(v), 3) for v in size / size[0]]},
+        {"title": "Direction similarity", "xTitle": "Refit year", "x": years[1:],
+         "domain": [0, 1.05], "yTicks": [0, .5, 1], "reference": 1,
+         "ticks": [2000, 2010, 2020], "y": [round(float(v), 3) for v in previous]},
+        {"title": "Size relative to first fit", "xTitle": "Refit year", "x": years,
+         "domain": [0, 1.05], "yTicks": [0, .5, 1], "reference": 1,
+         "ticks": [2000, 2010, 2020], "y": [round(float(v), 3) for v in size / size[0]]},
     ]
 
 
@@ -159,7 +161,7 @@ def export_results(evidence: Path, predictors: Path, *, short_predictors: Mappin
     info = {row["predictor"]: row for row in catalogue.iter_rows(named=True)}
     years = [int(d[:4]) for d in refit_dates[0]]
     stability = stability_panels(np.array(coefficients["coefficient"].to_list()), years)
-    return {"version": 1, "charts": {"stability": {"kind": "panels", "panels": stability},
+    return {"version": 1, "charts": {"stability": {"kind": "panels", "sharedX": "Refit year", "panels": stability},
         "coefficients": {
             "kind": "matrix", "unit": "Coefficient", "defaultCount": 10,
             "columns": [str(year) for year in years],

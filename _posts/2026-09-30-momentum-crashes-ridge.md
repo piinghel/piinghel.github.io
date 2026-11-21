@@ -36,7 +36,7 @@ strategy earns about half its usual return (the grey bars in Figure 1).
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-state" mobile="/assets/momentum-crashes-ridge/sharpe-by-state_mobile" alt="Net Sharpe ratio of the baseline and the score overlay by level of lagged momentum volatility: similar below twice normal volatility, much lower for the baseline above it." version="2" %}
 </div>
-<p class="figure-caption"><strong>Figure 1: Ridge’s net Sharpe drops in the highest momentum-volatility group.</strong> Groups use the momentum spread’s trailing 126-session volatility relative to its expanding median, measured before the trading day and floored at one. Labels give the share of development days. Sharpe averages the three schedule-level results after fees. Blue shows the score overlay explained below.</p>
+<p class="figure-caption"><strong>Figure 1. Ridge’s net Sharpe drops in the highest momentum-volatility group.</strong> Groups use the momentum spread’s trailing 126-session volatility relative to its expanding median, measured before the trading day and floored at one. Labels give the share of development days. Sharpe averages the three schedule-level results after fees. Blue shows the score overlay explained below.</p>
 
 The strategy still makes money in that top bucket, and much of the gap comes
 from 2009, when the book lost about 5 points of capital on those days; without
@@ -53,7 +53,7 @@ blue in Figure 1, lifts the top bucket to 1.39 and changes little below it.
 Table 1 sums up the trade-offs.
 
 <table class="research-table settings-table approach-table">
-  <caption><strong>Table 1: Three ways to take momentum out.</strong> Where each approach acts, and what it trades off.</caption>
+  <caption><strong>Table 1. Three ways to take momentum out.</strong> Where each approach acts, and what it trades off.</caption>
   <thead><tr><th>Approach</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
   <tbody>
     <tr><th scope="row">Score overlay<br><small>between the predictions and the optimizer</small></th><td>No tuned strength coefficient; transparent; applies to any score; removes the scores' positive linear momentum lean</td><td>Relies on a slow, backward-looking state; also removes momentum when it still pays after a volatility spike</td></tr>
@@ -113,7 +113,7 @@ week of 9 November 2020 it lost another 24%.
 <div class="research-figure">
   {% include blog-chart.html chart="crash" source="/assets/momentum-crashes-ridge/crash-2009.json?v=5" label="Growth of 12-1 momentum winners, losers and the long–short portfolio, 1998–2021, opening on July 2007 to June 2010." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: In 2009 the losers crashed up.</strong> Growth of equal-weight top-decile winners, bottom-decile losers and the long–short WML portfolio, 12-1 momentum within the Russell 1000, formed at month ends, indexed to 100 at the start of the window. It opens on July 2007–June 2010: momentum rises through the sell-off, then collapses when the losers rally from March 2009 (shaded). Drag across the chart to zoom into a period, double-click to reset, or pick another crash under Periods.</p>
+<p class="figure-caption"><strong>Figure 2. In 2009 the losers crashed up.</strong> Growth of equal-weight top-decile winners, bottom-decile losers and the long–short WML portfolio, 12-1 momentum within the Russell 1000, formed at month ends, indexed to 100 at the start of the window. It opens on July 2007–June 2010: momentum rises through the sell-off, then collapses when the losers rally from March 2009 (shaded). Drag across the chart to zoom into a period, double-click to reset, or pick another crash under Periods.</p>
 
 ## A linear ranking can't make its momentum weight conditional
 
@@ -226,7 +226,7 @@ leaves the scores alone and only limits the portfolio's momentum exposure.
 ## The development period favours all three approaches
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 2: Development-period performance.</strong> September 1998–December 2021, after costs of 5 bp per dollar traded. Means of metrics calculated separately for the three schedules. Returns are geometric and annualized; volatility is annualized; maximum drawdown is compounded.</caption>
+  <caption><strong>Table 2. Development-period performance.</strong> September 1998–December 2021, after costs of 5 bp per dollar traded. Means of metrics calculated separately for the three schedules. Returns are geometric and annualized; volatility is annualized; maximum drawdown is compounded.</caption>
   <thead>
     <tr><th>Rule</th><th>Net Sharpe</th><th>Net return</th><th>Net vol.</th><th>Max drawdown</th></tr>
   </thead>
@@ -249,7 +249,7 @@ against +0.45 for the baseline). Turnover barely changes, so the gain holds at
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-rule" mobile="/assets/momentum-crashes-ridge/sharpe-by-rule_mobile" alt="Development-period Sharpe ratio and maximum drawdown for the baseline, score overlay, learned interactions and optimizer cap, with ranges across schedules." version="3" %}
 </div>
-<p class="figure-caption"><strong>Figure 3: The development gains hold across schedules.</strong> September 1998–December 2021. Points are means of the three rebalance schedules; lines span the lowest and highest schedule, an observed range rather than a confidence interval. After 5 bp trading costs; drawdowns compounded per schedule, with shallower drawdowns to the right. Dotted lines mark the baseline.</p>
+<p class="figure-caption"><strong>Figure 3. The development gains hold across schedules.</strong> September 1998–December 2021. Points are means of the three rebalance schedules; lines span the lowest and highest schedule, an observed range rather than a confidence interval. After 5 bp trading costs; drawdowns compounded per schedule, with shallower drawdowns to the right. Dotted lines mark the baseline.</p>
 
 ## The approaches earn their gains differently
 
@@ -286,10 +286,10 @@ history; the shaded region marks the test period.
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="added" source="/assets/momentum-crashes-ridge/value-added.json?v=9" base="/assets/momentum-crashes-ridge/value-added" mobile="/assets/momentum-crashes-ridge/value-added_mobile" version="3" label="Cumulative net P&L added by the score overlay, learned interactions and optimizer cap against Ridge, through May 2026, with the test period shaded from 2022." %}
 </div>
-<p class="figure-caption"><strong>Figure 4: Value added against the Ridge baseline.</strong> Cumulative daily net return differences, in points of capital, averaged across three schedules after 5 bp trading costs. Zero is the baseline. Training precedes the first trades in September 1998; all subsequent P&amp;L is retained. Shading marks January 2022–27 May 2026. Under Explore, choose the test period to rebase the comparison at the end of 2021.</p>
+<p class="figure-caption"><strong>Figure 4. Value added against the Ridge baseline.</strong> Cumulative daily net return differences, in points of capital, averaged across three schedules after 5 bp trading costs. Zero is the baseline. Training precedes the first trades in September 1998; all subsequent P&amp;L is retained. Shading marks January 2022–27 May 2026. Under Explore, choose the test period to rebase the comparison at the end of 2021.</p>
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 3: Test-period performance.</strong> 3 January 2022–27 May 2026, after costs of 5 bp per dollar traded. Means of metrics calculated separately for the three schedules. Returns are geometric and annualized; maximum drawdown is compounded. Added P&amp;L sums daily net return differences against the baseline over this period, in points of capital.</caption>
+  <caption><strong>Table 3. Test-period performance.</strong> 3 January 2022–27 May 2026, after costs of 5 bp per dollar traded. Means of metrics calculated separately for the three schedules. Returns are geometric and annualized; maximum drawdown is compounded. Added P&amp;L sums daily net return differences against the baseline over this period, in points of capital.</caption>
   <thead><tr><th>Rule</th><th>Net Sharpe</th><th>Net return</th><th>Max drawdown</th><th>Added P&amp;L</th></tr></thead>
   <tbody>
     <tr><th scope="row">Baseline</th><td>0.87</td><td>6.37%</td><td>−7.31%</td><td>0.00</td></tr>

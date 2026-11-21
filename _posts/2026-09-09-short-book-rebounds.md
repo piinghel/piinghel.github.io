@@ -76,7 +76,7 @@ those sessions, times 252.
 </details>
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: Average book P&amp;L is positive in each group, lowest in declines and rallies.</strong> Average daily P&amp;L after costs × 252, as % of capital a year within each group, January 1999–May 2026. The rows partition all attributed days. “Book lost” counts episodes with negative summed net P&amp;L; rally and spike episodes include only their days remaining after the priority rules.</p>
+<p class="table-caption"><strong>Table 1. Average book P&amp;L is positive in each group, lowest in declines and rallies.</strong> Average daily P&amp;L after costs × 252, as % of capital a year within each group, January 1999–May 2026. The rows partition all attributed days. “Book lost” counts episodes with negative summed net P&amp;L; rally and spike episodes include only their days remaining after the priority rules.</p>
 
 | Regime | Episodes | Share of sessions | Book | Long book | Short book | Book lost |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -115,9 +115,9 @@ decomposition below shows where that remaining return comes from.
 ## The low-risk package mostly cancels in declines and rallies
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="regimes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-regimes" mobile="/assets/portfolio-attribution/theme-regimes_mobile" version="8" label="Theme-group returns in declines and rallies, with the low-risk subtotal and its indented components." %}
+  {% include blog-chart.html chart="regimes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-regimes" mobile="/assets/portfolio-attribution/theme-regimes_mobile" version="9" label="Paired dots compare the low-risk package and its components. Low volatility and the market exposure trade places between declines and rallies." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: The low-risk package combines offsetting contributions.</strong> Return in % of capital a year within each regime, January 1999–May 2026, before costs except for the whole book. The bold low-risk subtotal sums its three indented components: low volatility, beta and net market exposure. Explore reveals the other themes; trading activity combines turnover, volume surge and price-volume correlation.</p>
+<p class="figure-caption"><strong>Figure 1. The low-risk package combines offsetting contributions.</strong> Return in % of capital a year within each regime, January 1999–May 2026, before costs except for the whole book. The bold low-risk subtotal sums its three indented components: low volatility, beta and net market exposure. Explore reveals the other themes; trading activity combines turnover, volume surge and price-volume correlation.</p>
 
 In declines, **low volatility** earns 16% a year and made money in all 15
 episodes, while **net market exposure** loses 19% and lost in all 15. In strong
@@ -156,7 +156,7 @@ day's return, but the cutoffs use the full history. The comparison therefore
 describes the sample; it is not a tested rule for changing the portfolio.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 2: Reversal earns more on volatile days; the stock-specific remainder earns less.</strong> % of capital a year, before costs except for the book, January 1999–May 2026. Calm and volatile are the lowest and highest thirds of days by the index's volatility over the previous 21 sessions, below 11% and above 17% a year. The t-statistic of the difference allows for autocorrelation up to 21 sessions, retaining calendar gaps between selected days.</p>
+<p class="table-caption"><strong>Table 2. Reversal earns more on volatile days; the stock-specific remainder earns less.</strong> % of capital a year, before costs except for the book, January 1999–May 2026. Calm and volatile are the lowest and highest thirds of days by the index's volatility over the previous 21 sessions, below 11% and above 17% a year. The t-statistic of the difference allows for autocorrelation up to 21 sessions, retaining calendar gaps between selected days.</p>
 
 | | Calm | Volatile | Difference | t |
 | :--- | ---: | ---: | ---: | ---: |
@@ -181,9 +181,9 @@ amount the history can't pin down.
 ## The two deepest drawdowns
 
 <div class="research-figure responsive-figure">
-  {% include blog-chart.html chart="drawdowns" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="8" label="Theme-group P&L over the 2008–09 and 2020–21 drawdowns." %}
+  {% include blog-chart.html chart="drawdowns" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="9" label="Each theme has a dot for each drawdown. The low-risk package and stock-specific returns contributed large losses in both 2008–09 and 2020–21." %}
 </div>
-<p class="figure-caption"><strong>Figure 2: The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. Explore reveals the low-risk package's three components.</p>
+<p class="figure-caption"><strong>Figure 2. The low-risk package and stock-specific returns drove both drawdowns.</strong> P&amp;L points before costs, from the book's peak to its trough: 30 July 2008–16 September 2009 and 13 February 2020–27 January 2021. Explore reveals the low-risk package's three components.</p>
 
 The two deepest drawdowns, 13.8 points in 2008–09 and 14.8 in 2020–21 after
 costs (13.2% and 14.3% compounded), look alike by theme: the low-risk package lost 12.1 and 10.1, mostly through low

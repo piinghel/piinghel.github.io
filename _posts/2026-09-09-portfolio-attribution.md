@@ -59,7 +59,7 @@ even though they made money in each of the 15 declines of 15% or more since 1999
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="8" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
-<p class="figure-caption"><strong>Figure 1: The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
+<p class="figure-caption"><strong>Figure 1. The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
 
 The book is also net long, by about 25% of capital. That sounds odd for a book
 with a tight beta limit, until you look at the betas: most of it follows from
@@ -128,7 +128,7 @@ average therefore counts as short-term; the 10/21-session MACD, on the
 boundary, does not.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1: The attribution components.</strong> Characteristics are built from the ranking's predictors as listed; trading activity groups three factors. Net market exposure and sector tilt come from the net dollars and the sector weights.</p>
+<p class="table-caption"><strong>Table 1. The attribution components.</strong> Characteristics are built from the ranking's predictors as listed; trading activity groups three factors. Net market exposure and sector tilt come from the net dollars and the sector weights.</p>
 
 | Theme | What it measures |
 | :--- | :--- |
@@ -338,7 +338,7 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 {: #where-the-return-comes-from }
 
 {% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="6" %}
-<p class="figure-caption"><strong>Figure 2: What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the selected dates; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
+<p class="figure-caption"><strong>Figure 2. What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the selected dates; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
 
 Over the whole period the book averaged 9.6% a year before costs. Four sources
 carried it:
@@ -378,7 +378,7 @@ from low volatility and −0.02 from beta; stock-specific returns take off about
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="6" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
 </div>
-<p class="figure-caption"><strong>Figure 3: Short interest contributed in every block; reversal's contribution fell.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
+<p class="figure-caption"><strong>Figure 3. Short interest contributed in every block; reversal's contribution fell.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
 
 Short-term reversal made 8.1% a year in 1999–2003 and 0.3% since 2022
 (0.8% from 2023). This was a long decline, alongside a smaller position:
@@ -391,7 +391,7 @@ from 2022 to 2025 and then lost about 8 points in the first five months of 2026,
 while medium- and long-term return gained; the two moved against each other day to day,
 which suggests an exposure the themes don't capture.
 
-<p class="table-caption"><strong>Table 2: What each theme earned, and the risk it took, in each period.</strong> Average return before costs and each theme’s share of the gross book’s daily variance. The low-risk package is the sum of low volatility, beta and net market exposure, rounded on its own; the themes add up to the book and the risk shares to 100, up to rounding. The standard error allows for autocorrelation up to 21 sessions. Periods are five years to 2018, then 2019–21 and 2022–May 2026.</p>
+<p class="table-caption"><strong>Table 2. What each theme earned, and the risk it took, in each period.</strong> Average return before costs and each theme’s share of the gross book’s daily variance. The low-risk package is the sum of low volatility, beta and net market exposure, rounded on its own; the themes add up to the book and the risk shares to 100, up to rounding. The standard error allows for autocorrelation up to 21 sessions. Periods are five years to 2018, then 2019–21 and 2022–May 2026.</p>
 
 <div class="research-table-scroll">
   <table class="research-table comparison-table theme-periods">

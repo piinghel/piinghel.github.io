@@ -104,8 +104,8 @@ def render(panels: list[tuple[str, dict, str]], name: str, dark: bool, mobile: b
         "bg": "#0d1117" if dark else "#ffffff",
         "ink": "#e4e7ea" if dark else "#25313a",
         "grid": "#37414a" if dark else "#e2e6e9",
-        "pos": "#3987e5" if dark else "#2a78d6",
-        "neg": "#8b949e" if dark else "#6e7781",
+        "pos": "#89b5cc" if dark else "#426e89",
+        "neg": "#a0acb4" if dark else "#606e77",
     }
     size = 10.5 if mobile else 11
     rows, y, positions = [], 0.0, []
@@ -185,6 +185,43 @@ def colors(dark: bool) -> dict:
     }
 
 
+def paired_periods(periods, rows, name, unit, *, dark, mobile, output: Path):
+    """Compare the two periods on the same signed scale for each theme."""
+    c = colors(dark)
+    labels = [label for _, label in rows]
+    with plt.rc_context({"font.family": "DejaVu Sans", "svg.fonttype": "none", "svg.hashsalt": name}):
+        fig, axis = plt.subplots(figsize=(4.75 if mobile else 7.4, 1.05 + 0.32 * len(rows)))
+        fig.patch.set_facecolor(c["bg"])
+        axis.set_facecolor(c["bg"])
+        axis.spines[:].set_visible(False)
+        for i, (key, _) in enumerate(rows):
+            axis.plot([values[key] for _, values in periods], [i - .1, i + .1],
+                      color=c["muted"], linewidth=.7, zorder=1)
+        for (label, values), offset, symbol, fill, edge in zip(
+            periods, (-.1, .1), ("o", "D"), (c["bg"], c["pos"]), (c["neg"], c["pos"]), strict=True
+        ):
+            axis.plot([values[key] for key, _ in rows], [i + offset for i in range(len(rows))],
+                      linestyle="none", marker=symbol, markersize=5, markerfacecolor=fill,
+                      markeredgecolor=edge, markeredgewidth=1.2, label=label)
+        axis.axvline(0, color=c["muted"], linewidth=.65, zorder=0)
+        axis.grid(axis="x", color=c["grid"], linewidth=.5)
+        axis.set_axisbelow(True)
+        axis.set_yticks(range(len(rows)), labels)
+        axis.set_ylim(len(rows) - .5, -.5)
+        axis.xaxis.set_major_locator(plt.MaxNLocator(4 if mobile else 6))
+        axis.tick_params(length=0, colors=c["ink"], labelsize=9)
+        axis.set_xlabel(unit, color=c["muted"], fontsize=9.5)
+        axis.legend(frameon=False, loc="lower left", bbox_to_anchor=(0, 1), ncols=2,
+                    labelcolor=c["ink"], fontsize=9.5, handletextpad=.3, borderaxespad=0)
+        fig.subplots_adjust(left=.37 if mobile else .27, right=.97, top=.82 if len(rows)<5 else .91,
+                            bottom=.22 if len(rows)<5 else .14)
+        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+        target = output / f"{name}{suffix}.svg"
+        fig.savefig(target, metadata={"Date": None}, facecolor=c["bg"])
+        plt.close(fig)
+        target.write_text("\n".join(line.rstrip() for line in target.read_text().splitlines()) + "\n")
+
+
 def small_multiples(data: dict, index: int, name: str, limit: float, unit: str,
                     dark: bool, mobile: bool, *, themes: tuple[str, ...] = OVERVIEW,
                     output: Path = OUTPUT, first_year: int = FIRST_YEAR, last_year: int = LAST_YEAR) -> None:
@@ -254,17 +291,15 @@ if __name__ == "__main__":
         ("Return (% a year)", {t: data["full"][t][0] for t in THEMES}, "{:+.1f}"),
         ("Share of risk (%)", {t: data["full"][t][1] for t in THEMES}, "{:.1f}"),
     ]
-    order = ([(t, t) for t in SIGNALS] + [None]
-             + [(t, t if i == 0 else "↳ " + t) for i, t in enumerate(LOW_RISK)] + [None]
-             + [(t, t) for t in REST])
     overview_order = [(t, t) for t in OVERVIEW]
     for dark in (False, True):
         for mobile in (False, True):
             render(full, "theme-pnl", dark, mobile, row_order=overview_order, wrap_labels=True)
             small_multiples(data, 0, "theme-return-years", 10, "Return, % a year", dark, mobile)
-            regimes = [(k, v, "{:+.1f}") for k, v in data["regimes"].items()]
-            render(regimes, "theme-regimes", dark, mobile, shared_scale=True,
-                   row_order=[("Book net", "Whole book, net"), None] + order, wrap_labels=True)
-            drawdowns = sorted(data["drawdowns"].items())
-            render([(k.replace(" drawdown", ""), v, "{:+.1f}") for k, v in drawdowns], "theme-drawdowns",
-                   dark, mobile, shared_scale=True, row_order=order, wrap_labels=True)
+            regime_rows = [(key, key if i == 0 else "↳ " + key) for i, key in enumerate(LOW_RISK)]
+            paired_periods([(key, data["regimes"][key]) for key in ("Declines", "Strong rallies")],
+                           regime_rows, "theme-regimes", "Return (% of capital per year)",
+                           dark=dark, mobile=mobile, output=OUTPUT)
+            paired_periods([(key.removesuffix(" drawdown"), values) for key, values in sorted(data["drawdowns"].items())],
+                           overview_order, "theme-drawdowns", "P&L (points of capital)",
+                           dark=dark, mobile=mobile, output=OUTPUT)

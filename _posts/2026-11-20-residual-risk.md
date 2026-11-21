@@ -54,7 +54,7 @@ The first two heatmaps compare stock returns and residual returns on the same da
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="4" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from about 25% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
-  <p class="figure-caption">Each tile averages correlations between distinct pairs from the same 850 stocks. Outlines mark groups formed in December 2021. Colours saturate at ±40%. This cohort had the strongest forward gap.</p>
+  <p class="figure-caption"><strong>Figure 1. Stock correlations before and after removing factors.</strong> Each tile averages correlations between distinct pairs from the same 850 stocks. Outlines mark groups formed in December 2021. Colours saturate at ±40%. This cohort had the strongest forward gap.</p>
 </div>
 
 Removing the factors brought the average correlation from **about 25% to near zero**. Pairs in the same group were still about **8.5 correlation points** more correlated than pairs in different groups. The gap shrank to **about 5 points** over the next 252 sessions with the groups held fixed.
@@ -63,7 +63,7 @@ Across all 27 cohorts, within-group correlation was about **5 points** higher th
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
-  <p class="figure-caption">The upper panel tracks the rolling 252-session average stock-pair correlation before and after fitting the factors. Each dot below is one year-end cohort’s following-year difference between within-group and between-group correlation. The short mark for that cohort is the 95th percentile from shuffling labels within sectors. The industry shuffle in the text is a separate check.</p>
+  <p class="figure-caption"><strong>Figure 2. Residual groups one year after formation.</strong> The upper panel tracks the rolling 252-session average stock-pair correlation before and after fitting the factors. Each dot below is one year-end cohort’s following-year difference between within-group and between-group correlation. The short mark for that cohort is the 95th percentile from shuffling labels within sectors. The industry shuffle in the text is a separate check.</p>
 </div>
 
 Most of the persistence was within sectors. In the 23 development cohorts the forward gap was **about 8 points** for same-sector pairs and **less than 1 point** for cross-sector pairs matched on industry mix. The cross-sector gap was positive in all 23 cohorts.
@@ -92,7 +92,7 @@ The first direction will look strong in the window that chose it. The test is to
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/directions" mobile="/assets/residual-risk/directions_mobile" version="2" alt="PCA directions lose variance after formation but retain more than shuffled directions with the same industry composition. Development PCs two through five fall from 14.30 to 4.36 versus 1.64 for the shuffle." %}
-  <p class="figure-caption">Within each band, first look at how far variance falls from formation to the following year. Then compare that forward variance with the industry shuffle, which redistributes stock weights within industries. A value of one is the variance of a unit-length direction if residuals are uncorrelated. The axis doubles at each tick and each cohort receives equal weight.</p>
+  <p class="figure-caption"><strong>Figure 3. Principal directions after formation.</strong> Within each band, first look at how far variance falls from formation to the following year. Then compare that forward variance with the industry shuffle, which redistributes stock weights within industries. A value of one is the variance of a unit-length direction if residuals are uncorrelated. The axis doubles at each tick and each cohort receives equal weight.</p>
 </div>
 
 In development, components two through five fell from **about 14** units of variance per direction to **about 4** the following year. That was still above the industry shuffle, which came in below **2**. The four later cohorts showed the same pattern.
@@ -113,7 +113,7 @@ Every year I compared each forecast with the same pairs’ correlations over the
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/pair-errors" mobile="/assets/residual-risk/pair-errors_mobile" version="1" alt="Changes in next-year pair correlation error versus forecasting zero. All estimators improved on zero for stocks in the same sector and cluster. The cross-sector, different-cluster forecasts increased error in both periods." %}
-  <p class="figure-caption">Each row is a different set of stock pairs. The dots show how much each estimator changes the following year’s correlation error relative to a forecast of zero. Left of zero is better. A difference of −4 means four correlation points less error. Cohorts receive equal weight within each panel.</p>
+  <p class="figure-caption"><strong>Figure 4. Next-year correlation error by stock-pair group.</strong> Each row is a different set of stock pairs. The dots show how much each estimator changes the following year’s correlation error relative to a forecast of zero. Left of zero is better. A difference of −4 means four correlation points less error. Cohorts receive equal weight within each panel.</p>
 </div>
 
 ## Keeping five components overstated their forward risk
@@ -135,7 +135,7 @@ On the filled books, dropping residual correlations moved the factor target’s 
 So far I’ve measured how much residual co-movement survives and how much it changes a risk forecast. In the replay, the optimizer can also change the holdings. I keep the Ridge scores, risk budget, constraints and trading penalty fixed and compare what the new positions delivered after fees.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Annual after-fee performance. Each residual method uses the same named factors and specific volatilities. Stock shrinkage is the separate stock-level reference.</caption>
+  <caption><strong>Table 1. Portfolio outcomes across residual risk estimates.</strong> Annual after-fee performance. Each residual method uses the same named factors and specific volatilities. Stock shrinkage is the separate stock-level reference.</caption>
   <thead><tr><th>Risk estimate</th><th>Net return</th><th>Volatility</th><th>Sharpe</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">January 1999 – December 2021</th></tr>

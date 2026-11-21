@@ -42,15 +42,25 @@ def export(inputs: Path, assets: Path, market: Path) -> None:
     write_chart(assets / "beta.json",dates,lines,{"beta":dict(kind="values",series=[s["id"] for s in lines],unit="Trailing 252-session market beta",band=[-.05,.05])})
     ladder = pl.scan_csv(inputs / "rho_ladder_summary.csv").sort("rho").collect()
     panels=[]
-    for key,title in [("realised_to_predicted_volatility","Realized / forecast volatility"),("beta_mean_error","Beta bias"),("executed_turnover_l1_annualized","Annual turnover"),("net_sharpe","Net Sharpe")]:
-        panels.append(dict(x=ladder["rho"].to_list(),y=ladder[key].to_list(),title=title,xTitle="Correlation shrinkage",selected=.5))
+    metrics = [
+        ("realised_to_predicted_volatility", "Risk calibration", [0.5, 1.6], [0.5, 1, 1.5], 1),
+        ("beta_mean_error", "Beta bias", [0, .08], [0, .04, .08], 0),
+        ("executed_turnover_l1_annualized", "Turnover (× capital/yr)", [0, 30], [0, 15, 30], None),
+        ("net_sharpe", "Net Sharpe", [0, 1.5], [0, .75, 1.5], None),
+    ]
+    for key, title, domain, ticks, reference in metrics:
+        panels.append(dict(x=ladder["rho"].to_list(), y=ladder[key].to_list(), title=title,
+                           xTitle="Correlation shrinkage", selected=.5, domain=domain,
+                           yTicks=ticks, ticks=[0, .5, 1], reference=reference))
+    chart = dict(kind="panels", sharedX="Correlation shrinkage", panels=panels)
     sensitivities=[]
     frame=pl.scan_csv(inputs / "article_parameter_sensitivity.csv").collect()
     for family,label,chosen in [("trade_coefficient","Trade coefficient (×10⁻⁴)",2.5),("holding_cutoff","Rank-buffer cutoff",175)]:
         part=frame.filter(pl.col("family")==family).sort("value")
         for key,title in [("net_sharpe","Net Sharpe"),("executed_turnover_l1_annualized","Annual turnover")]:
             sensitivities.append(dict(x=part["value"].to_list(),y=part[key].to_list(),low=part[key+"_schedule_min"].to_list(),high=part[key+"_schedule_max"].to_list(),title=title,xTitle=label,selected=chosen))
-    (assets / "comparisons.json").write_text(json.dumps(dict(version=1,charts={"shrinkage":dict(kind="panels",panels=panels),"sensitivity":dict(kind="panels",panels=sensitivities)}),separators=(",",":"))+"\n")
+    charts = {"shrinkage": chart, "sensitivity": dict(kind="panels", panels=sensitivities)}
+    (assets / "comparisons.json").write_text(json.dumps(dict(version=1, charts=charts), separators=(",", ":"))+"\n")
 
 
 if __name__ == "__main__":

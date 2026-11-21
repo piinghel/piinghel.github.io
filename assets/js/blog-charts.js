@@ -1,24 +1,21 @@
 /* Shared static chart renderer. Daily observations remain authoritative. */
 (function (root) {
   'use strict';
-  // No red, orange or green. Long and positive values are blue, short and negative values slate;
-  // the strategy or net line is ink, comparisons grey, the index gold and the hedged book violet.
-  // Each role has its own light and dark step, validated against the page surface (#fff light,
-  // #0d1117 dark) for contrast and colour-blind separation. Figure 1's seven themes take a
-  // validated order of blue, magenta, violet, gold and cyan, with slate and ink.
+  // Each series keeps its identity across articles and themes.
   const PALETTE = {
-    strategy:['#24292f','#c9d1d9'], long:['#2a78d6','#3987e5'], short:['#6e7781','#8b949e'],
-    comparison:['#a3acb5','#545d68'], index:['#b58900','#a8891a'], hedged:['#7447c9','#9085e9'], cash:['#0e8fad','#2aa3c4'],
-    momentum:['#2a78d6','#3987e5'], reversal:['#c2458a','#cc5aa3'], low_volatility:['#7447c9','#9085e9'],
-    size:['#b58900','#a8891a'], liquidity:['#0e8fad','#2aa3c4'], market:['#6e7781','#8b949e'], short_interest:['#24292f','#c9d1d9'],
-    low_risk:['#2a78d6','#3987e5'], beta:['#7447c9','#9085e9'], sector:['#a3acb5','#545d68'], residual:['#6e7781','#8b949e'],
-    blend:['#185fa9','#58a6ff']};
+    strategy:['#27322f','#d7deda'], long:['#426e89','#89b5cc'], short:['#606e77','#a0acb4'],
+    comparison:['#78848a','#8a969f'], index:['#896835','#c4a36f'], hedged:['#736582','#b6a5c8'], cash:['#427a70','#85b9aa'],
+    momentum:['#426e89','#89b5cc'], reversal:['#9b626e','#d39aaa'], low_volatility:['#736582','#b6a5c8'],
+    size:['#896835','#c4a36f'], liquidity:['#427a70','#85b9aa'], market:['#606e77','#a0acb4'], short_interest:['#27322f','#d7deda'],
+    low_risk:['#426e89','#89b5cc'], beta:['#736582','#b6a5c8'], sector:['#78848a','#8a969f'], residual:['#606e77','#a0acb4'],
+    blend:['#365e79','#8cbdd5']};
   const isDark=()=>typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';
   const COLORS = Object.freeze(Object.defineProperties({},Object.fromEntries(Object.entries(PALETTE).map(
     ([role,[light,dark]])=>[role,{enumerable:true,get:()=>isDark()?dark:light}]))));
   // The plot area is painted in the page colour: Plotly outlines its hover line in the plot colour,
   // and a transparent plot is treated as white, which drew a bright line in dark mode.
   const plotSurface=()=>isDark()?'#0d1117':'#ffffff';
+  const signedColorScale=()=>[[0,isDark()?'#d5a081':'#976047'],[.5,isDark()?'#20282b':'#f5f4ef'],[1,isDark()?'#86bfd1':'#396a83']];
   // Plotly's default hover box is white; match it to the page in both themes.
   function hoverStyle() {
     const dark=isDark();
@@ -39,14 +36,22 @@
       volatility:vol, sharpe:vol ? mean*annualization/vol : null, drawdown:dd};
   }
 
-  function path(values, first, last) {
-    let growth=100, peak=100;
-    const equity=[100], drawdown=[0];
+  function path(values, first, last, initial=100) {
+    let growth=initial, peak=initial;
+    const equity=[initial], drawdown=[0];
     for (let i=first+1;i<=last;i++) {
       growth*=1+values[i]; peak=Math.max(peak,growth);
       equity.push(growth); drawdown.push(growth/peak-1);
     }
     return {equity,drawdown};
+  }
+
+  function narrowGrowthTicks(low,high) {
+    if(!(low>0&&high>low&&high/low<2))return null;
+    const rough=(high-low)/4,order=10**Math.floor(Math.log10(rough));
+    const step=order*[1,2,2.5,5,10].find(n=>n*order>=rough);
+    const first=Math.floor(low/step),last=Math.ceil(high/step);
+    return Array.from({length:last-first+1},(_,i)=>Number(((first+i)*step).toPrecision(8))).filter(t=>t>0);
   }
 
   function linked(values, parent, first, last) {
@@ -87,7 +92,7 @@
     return [...selected].sort((a,b)=>a-b);
   }
 
-  const api={COLORS,stats,path,linked,additivePath,displayIndices};
+  const api={COLORS,signedColorScale,stats,path,narrowGrowthTicks,linked,additivePath,displayIndices};
   if (typeof module!=='undefined') module.exports=api;
   root.BlogCharts=api;
   if (!root.document) return;
@@ -144,7 +149,7 @@
   // Window and period presets. Returns mark(range,custom), which presses the preset the chart shows:
   // the one clicked if it still applies, else the last matching one. Full resets a custom view, so it
   // never shows as pressed while that view is on.
-  function rangePresets(parent,full,episodes,current,apply) {
+  function rangePresets(parent,full,episodes,current,apply,visiblePeriods=null) {
     const presets=[],clamp=([a,b])=>[a<full[0]?full[0]:a,b>full[1]?full[1]:b];let chosen=null;
     function add(group,label,target,isCustom=true) {
       const button=element('button','',label),preset={button,target,isCustom};button.type='button';
@@ -153,9 +158,10 @@
     const windows=segments(controlRow(parent,'Window'),'Window length');
     for(const years of [1,3,5]) add(windows,years+'Y',()=>{
       const end=current()[1],d=new Date(end+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()-years);return clamp([d.toISOString().slice(0,10),end]);});
-    add(windows,'Full',()=>[...full],false);
+    if(!visiblePeriods)add(windows,'Full',()=>[...full],false);
     if(episodes?.length) {
-      const periods=segments(controlRow(parent,'Periods'),'Periods');
+      const periods=visiblePeriods||segments(controlRow(parent,'Periods'),'Periods');
+      if(visiblePeriods)add(periods,'Full history',()=>[...full],false);
       for(const [label,a,b] of episodes) add(periods,label,()=>clamp([a,b]));
     }
     return (range,custom=false)=>{
@@ -199,7 +205,7 @@
       const indices=cfg.rows.flatMap((_,i)=>selected.has(i)?[i]:[]);
       selectionLabel.textContent=indices.length?'Showing '+indices.length+' of '+cfg.rows.length+' predictors':'Choose predictors under Explore.';
       graph.hidden=!indices.length;if(!indices.length)return;
-      const height=Math.max(180,indices.length*32+110);graph.style.height=height+'px';
+      const height=Math.max(170,indices.length*(mobile?29:25)+100);graph.style.height=height+'px';
       function rowLabel(text) {
         const width=mobile?22:32,lines=[''];
         for(const word of text.split(' ')) {
@@ -210,8 +216,8 @@
       }
       const limit=Math.max(...cfg.values.flat().map(Math.abs));
       await Plotly.react(graph,[{type:'heatmap',x:cfg.columns,y:indices.map(String),z:indices.map(i=>cfg.values[i]),
-        zmin:-limit,zmax:limit,colorscale:[[0,COLORS.short],[.5,dark?'#252c34':'#f6f6f4'],[1,COLORS.long]],
-        xgap:2,ygap:2,customdata:indices.map(i=>cfg.columns.map(()=>cfg.descriptions[i])),
+        zmin:-limit,zmax:limit,colorscale:signedColorScale(),
+        xgap:1,ygap:1,customdata:indices.map(i=>cfg.columns.map(()=>cfg.descriptions[i])),
         hovertemplate:'%{customdata}<br>%{x}: %{z:.3f}<extra></extra>',
         colorbar:{orientation:'h',thickness:8,len:mobile?.85:.5,x:.5,xanchor:'center',y:-Math.max(.12,40/(height-90)),yanchor:'top',
           tickvals:[-limit,0,limit],tickformat:'.2f',tickangle:0,outlinewidth:0,title:{text:cfg.unit,side:'top',font:{size:12}}}}],
@@ -239,12 +245,16 @@
       const all=new Map(data.series.map(s=>[s.id,{...s,returns:s.values.map(v=>v/data.scale)}]));
       const series=cfg.series.map(id=>all.get(id));
       const full=[cfg.start||data.dates[0],cfg.end||data.dates.at(-1)];
-      let range=cfg.initialRange||[...full], ready=false, busy=false, pending=false;
+      const openingRange=cfg.initialRange||full;
+      let range=[...openingRange], ready=false, busy=false, pending=false;
       const visible=new Map(series.map(s=>[s.id,s.visible!==false && (s.role!=='index'||cfg.benchmark===true)]));
       const optionalBoxes=new Map();
       let legendTimer;
       const ui=host.querySelector('.blog-chart-ui'); ui.hidden=false;
       if(cfg.heading)ui.append(element('p','blog-chart-heading',cfg.heading));
+      const visiblePeriods=host.dataset.visiblePeriods&&cfg.episodes?.length?segments(ui,'Chart period'):null;
+      if(visiblePeriods)visiblePeriods.classList.add('blog-chart-periods');
+      const initialWealth=Number(host.dataset.initialWealth)||100;
       const extra=element('details','blog-chart-options');
       extra.append(element('summary','','Explore'));ui.append(extra);
       if(cfg.exploreOpen)extra.open=true;
@@ -254,7 +264,7 @@
         if(a>b || b<full[0] || a>full[1]) {start.value=range[0];end.value=range[1];return;}
         range=[a<full[0]?full[0]:a,b>full[1]?full[1]:b]; draw();
       }
-      const markPresets=rangePresets(extra,full,cfg.episodes,()=>range,(a,b)=>setRange(a,b));
+      const markPresets=rangePresets(extra,full,cfg.episodes,()=>range,(a,b)=>setRange(a,b),visiblePeriods);
       dateRange(controlRow(extra,'Dates'),start,end);
       start.onchange=end.onchange=()=>{if(start.value&&end.value)setRange(start.value,end.value);};
       const barMetrics=[
@@ -278,7 +288,7 @@
         show??=controlRow(extra,'Show');return checkControl(show,label,checked,change).box;
       }
       if(benchmark) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
-      for(const s of series.filter(s=>s.visible===false||cfg.showLegend===false))optionalBoxes.set(s.id,
+      for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false)))optionalBoxes.set(s.id,
         checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
@@ -326,11 +336,12 @@
           graph.hidden=false;
           const dates=data.dates.slice(first,last+1),t=theme(),traces=[];
           const mobile=host.clientWidth<550;
-          const layout={autosize:true,height:bars?540:cfg.drawdown||cfg.contributions?560:420,
-            margin:{l:55,r:15,t:bars?35:cfg.showLegend===false?40:mobile?100:75,b:45},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11:13,color:t.text},
+          const plotHeight=visiblePeriods?mobile?425:470:bars?430:cfg.drawdown||cfg.contributions?405:300;
+          const layout={autosize:true,height:plotHeight,
+            margin:{l:mobile?44:50,r:12,t:bars?26:cfg.showLegend===false?25:mobile?69:57,b:33},font:{family:'Bricolage Grotesque, sans-serif',size:mobile?11.5:12,color:t.text},
             paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),hovermode:bars?'closest':'x unified',
             modebar:{color:t.text,bgcolor:'rgba(0,0,0,0)',activecolor:COLORS.strategy},
-            dragmode:'zoom',showlegend:cfg.showLegend!==false,legend:{orientation:'h',y:1.16,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
+            dragmode:'zoom',showlegend:cfg.showLegend!==false,legend:{orientation:'h',y:1.10,yanchor:'bottom',x:0,font:{size:mobile?11:12},groupclick:'togglegroup'},
             xaxis:{type:bars?'category':'date',gridcolor:t.grid,showgrid:false,automargin:true,
               spikecolor:isDark()?'#8b949e':'#6e7681',spikethickness:1,spikedash:'solid'},
             yaxis:{gridcolor:t.grid,zerolinecolor:t.grid,automargin:true},annotations:[]};
@@ -345,7 +356,7 @@
           function heading(text,y,yshift=0) {layout.annotations.push({text,x:0,y,yshift,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:13,color:t.text}});}
           if(cfg.kind==='grouped-bars') {
             const [metric,title,tickformat,hoverformat]=barMetric;
-            layout.height=360;layout.margin.t=65;layout.barmode='group';layout.bargap=.25;
+            layout.height=280;layout.margin.t=62;layout.barmode='group';layout.bargap=.3;
             layout.yaxis.tickformat=tickformat;layout.xaxis.title={text:'Decile (1 = lowest score)',font:{size:12}};
             heading(title,1);
             const groups=[...new Set(series.map(s=>s.group))];
@@ -382,7 +393,8 @@
               const ticks=[];for(let exponent=-3;exponent<8;exponent++)for(const n of [1,2,5])ticks.push(n*10**exponent);
               layout.yaxis.tickmode='array';layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);
             }
-            heading(cfg.unit||(cfg.kind==='values'?cfg.unit:cfg.additive?(benchmark&&visible.get(benchmark.id)?'P&L (points) / market change (%)':'P&L since selected start (points)'):'Growth · 100 at selected start'+(cfg.log?' (log scale)':'')),1);
+            const growthLabel=initialWealth===1?'Growth of $1 after fees':'Growth · 100 at selected start';
+            heading(cfg.unit||(cfg.additive?(benchmark&&visible.get(benchmark.id)?'P&L (points) / market change (%)':'P&L since selected start (points)'):growthLabel+(cfg.log?' (log scale)':'')),1);
             if(cfg.dateTicks&&range[0]===full[0]&&range[1]===full[1]) {
               const ticks=mobile?(cfg.mobileDateTicks||cfg.dateTicks):cfg.dateTicks;
               layout.xaxis.tickmode='array';layout.xaxis.tickvals=ticks;layout.xaxis.ticktext=ticks.map(d=>d.slice(0,4));
@@ -401,15 +413,21 @@
               } else if(cfg.kind==='values') {
                 traces.push(trace(s,dates,s.returns.slice(first,last+1)));
               } else {
-                const values=s.additive?additivePath(s.returns,first,last):path(s.returns,first,last);
+                const values=s.additive?additivePath(s.returns,first,last):path(s.returns,first,last,initialWealth);
                 if(cfg.additive&&!s.additive)values.equity=values.equity.map(v=>v-100);
                 const indices=displayIndices(dates,[values.equity,values.drawdown]);
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i]),cfg.additive?{hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}'+(s.additive?' points':'%')+'<extra>%{fullData.name}</extra>'}:{}));
                 if(cfg.drawdown&&s.drawdown!==false)traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.drawdown[i]),{yaxis:'y2',showlegend:false,hovertemplate:'%{x|%d %b %Y}<br>%{y'+(s.additive?':.2f} points':':.2%}')+'<extra>%{fullData.name}</extra>'}));
               }
             }
+            if(cfg.log) {
+              const extents=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true&&tr.y.length)
+                .map(tr=>[Math.min(...tr.y),Math.max(...tr.y)]);
+              const ticks=narrowGrowthTicks(Math.min(...extents.map(e=>e[0])),Math.max(...extents.map(e=>e[1])));
+              if(ticks){layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(String);}
+            }
             // Optional direct labels: each visible line named at its last point, nudged apart when close.
-            if(cfg.directLabels) {
+            if(cfg.directLabels&&traces.some(tr=>tr.yaxis!=='y2'&&tr.visible===true)) {
               const ends=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true&&tr.y.length)
                 .map(tr=>({x:tr.x.at(-1),y:tr.y.at(-1),name:tr.name,color:tr.line.color}));
               // Leave room for the longest label so it isn't cut off at the right edge.
@@ -417,12 +435,6 @@
               const values=traces.filter(tr=>tr.yaxis!=='y2'&&tr.visible===true).flatMap(tr=>tr.y);
               const coordinate=y=>cfg.log?Math.log10(y):y;
               const lo=coordinate(Math.min(...values)),hi=coordinate(Math.max(...values)),plotHeight=layout.height-layout.margin.t-layout.margin.b;
-              if(cfg.log&&hi-lo<Math.log10(2)) {
-                const low=Math.min(...values),high=Math.max(...values),rough=(high-low)/4;
-                const power=10**Math.floor(Math.log10(rough||1)),step=Math.ceil(rough/power)*power||1;
-                const ticks=Array.from({length:Math.ceil((high-low)/step)+2},(_,i)=>(Math.floor(low/step)+i)*step).filter(x=>x>0);
-                layout.yaxis.tickvals=ticks;layout.yaxis.ticktext=ticks.map(x=>String(+x.toPrecision(6)));
-              }
               const perUnit=plotHeight*(secondary?.57:1)/((hi-lo)*1.1||1),gap=15;
               ends.sort((a,b)=>a.y-b.y);
               let previous=-Infinity;
@@ -450,7 +462,7 @@
           await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:mobile?false:'hover',displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
           updateTable(first,last);
-          windowLabel.hidden=cfg.showWindow===false;
+          windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===openingRange[0]&&range[1]===openingRange[1]);
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
           windowLabel.title=cfg.showLegend===false?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
@@ -596,18 +608,44 @@
             }
             traces.push({type:'scatter',mode:'lines',x:bx,y:by,customdata:blockDates,line:{color:ink,width:1.5},xaxis:x,yaxis:y,hovertemplate:'%{customdata}<br>Block: %{y:.2f}% a year<extra></extra>'});
           });
+        } else if(cfg.kind==='attribution-regimes'||cfg.kind==='attribution-drawdowns') {
+          const regimes=cfg.kind==='attribution-regimes';
+          const periods=regimes
+            ? [['Declines',indices(...range,cfg.masks.declines)],['Strong rallies',indices(...range,cfg.masks.rallies)]]
+            : (custom?[range]:cfg.windows).map(([a,b])=>[custom?'Selected window':a.slice(0,4)+'–'+b.slice(2,4),indices(a,b,null,true)]);
+          const rows=shown.map((s,i)=>({
+            label:s.label,labelText:nested(keys[i])?'↳ '+s.label:cfg.components[keys[i]]?'<b>'+s.label+'</b>':s.label,
+            values:periods.map(([,days])=>metric(s,days,regimes?'return':'total'))
+          }));
+          const unit=regimes?'Return (% of capital per year)':'P&L (points of capital)';
+          const coordinates=rows.flatMap(row=>row.values).filter(Number.isFinite);
+          const low=Math.min(0,...coordinates),high=Math.max(0,...coordinates),pad=(high-low||1)*.09;
+          layout.height=rows.length*(mobile?31:29)+100;
+          layout.margin={l:mobile?115:155,r:12,t:39,b:43};
+          layout.showlegend=periods.length>1;
+          layout.legend={orientation:'h',x:0,y:1.04,yanchor:'bottom',itemclick:false,itemdoubleclick:false};
+          layout.xaxis={range:[low-pad,high+pad],nticks:mobile?4:6,gridcolor:grid,zerolinecolor:COLORS.short,title:{text:unit,font:{size:12}}};
+          layout.yaxis={range:[rows.length-.5,-.5],tickvals:rows.map((_,i)=>i),ticktext:rows.map(row=>row.labelText.replace('Medium- and long-term return','Med./long-term return')),showgrid:false,zeroline:false,automargin:true,fixedrange:true};
+          if(periods.length===2)traces.push({
+            type:'scatter',mode:'lines',showlegend:false,hoverinfo:'skip',
+            x:rows.flatMap(r=>[...r.values,null]),y:rows.flatMap((_,i)=>[i-.1,i+.1,null]),
+            line:{color:COLORS.comparison,width:1}
+          });
+          periods.forEach(([name,days],j)=>{
+            const first=j===0,offset=periods.length===1?0:first?-.1:.1;
+            if(!days.length)layout.annotations.push({text:name+' · no observations',x:0,y:1.14+j*.09,xref:'paper',yref:'paper',showarrow:false,xanchor:'left'});
+            traces.push({type:'scatter',mode:'markers',name,x:rows.map(row=>row.values[j]),y:rows.map((_,i)=>i+offset),
+              marker:{size:first?8:7,symbol:first?'circle':'diamond',color:first?plotSurface():COLORS.long,line:{color:first?COLORS.short:COLORS.long,width:1.5}},
+              customdata:rows.map(row=>row.label),hovertemplate:'%{customdata}<br>%{x:.2f}'+(regimes?'% per year':' points')+'<extra>'+name+'</extra>'});
+          });
         } else {
-          let specs;
-          if(cfg.kind==='attribution-regimes')specs=[['Declines',indices(...range,cfg.masks.declines),'return'],['Strong rallies',indices(...range,cfg.masks.rallies),'return']];
-          else if(cfg.kind==='attribution-drawdowns')specs=(custom?[range]:cfg.windows).map(w=>[w[0]+' – '+w[1],indices(...w,null,true),'total']);
-          else specs=[['Return (% a year)',ids,'return'],['Share of book risk (%)',ids,'risk']];
+          const specs=[['Return (% a year)',ids,'return'],['Share of book risk (%)',ids,'risk']];
           const cols=mobile?1:specs.length,rows=mobile?specs.length:1;
           layout.height=rows*(shown.length*26+(mobile?140:90));
-          const allValues=specs.flatMap(([,ix,kind])=>shown.map(s=>metric(s,ix,kind))).filter(v=>v!==null);
           specs.forEach(([label,ix,kind],i)=>{
             const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,values=shown.map(s=>metric(s,ix,kind));
             const xd=mobile?[0,1]:[i/cols+.02,(i+1)/cols-.08],yd=mobile?[1-(i+1)/rows+.22/rows,1-i/rows-.10/rows]:[0,1];
-            const comparables=cfg.kind==='attribution'?values:allValues,lo=Math.min(0,...comparables),hi=Math.max(0,...comparables),pad=(hi-lo||1)*.12;
+            const lo=Math.min(0,...values),hi=Math.max(0,...values),pad=(hi-lo||1)*.12;
             layout['xaxis'+suffix]={domain:xd,anchor:y,range:[lo-pad,hi+pad],gridcolor:grid,zerolinecolor:grid,nticks:4};
             layout['yaxis'+suffix]={domain:yd,anchor:x,type:'category',autorange:'reversed',tickvals:shown.map(s=>s.label),
               ticktext:shown.map((s,j)=>nested(keys[j])?'↳ '+s.label:cfg.components[keys[j]]?'<b>'+s.label+'</b>':s.label),showticklabels:mobile||i===0,automargin:true};
@@ -620,7 +658,8 @@
         }
         graph.style.height=layout.height+'px';
         await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
-        windowLabel.textContent=cfg.kind==='attribution-drawdowns'&&!custom?'P&L from each peak to its trough':(cfg.kind==='attribution-drawdowns'?'Selected-period P&L · ':cfg.kind==='attribution-years'&&custom?'Selected observations, annualized · ':'')+range[0]+' – '+range[1];
+        windowLabel.hidden=!custom;
+        windowLabel.textContent=(cfg.kind==='attribution-drawdowns'?'Selected-period P&L · ':cfg.kind==='attribution-years'?'Selected observations, annualized · ':'')+range[0]+' – '+range[1];
         host.querySelector('.blog-chart-status').hidden=true;host.querySelector('.blog-chart-fallback').hidden=true;
       } finally {busy=false;if(pending){pending=false;draw();}}
     }
@@ -632,21 +671,29 @@
     const ui=host.querySelector('.blog-chart-ui');ui.hidden=false;
     const graph=element('div','blog-chart-plot');ui.append(graph);
     async function draw() {
-      const mobile=host.clientWidth<550,cols=mobile?1:2,rows=Math.ceil(cfg.panels.length/cols);
+      const narrow=host.clientWidth<550,cols=host.clientWidth<300?1:2,rows=Math.ceil(cfg.panels.length/cols);
       const dark=document.documentElement.dataset.theme==='dark',ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      graph.style.height=(rows*270)+'px';
-      const layout={autosize:true,height:rows*270,margin:{l:50,r:20,t:35,b:40},showlegend:false,
-        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),annotations:[]},traces=[];
+      const height=rows*(narrow?134:145)+44;
+      graph.style.height=height+'px';
+      const layout={autosize:true,height,margin:{l:32,r:9,t:21,b:38},showlegend:false,
+        font:{family:'Bricolage Grotesque, sans-serif',size:narrow?11:12,color:ink},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),annotations:[],shapes:[]},traces=[];
+      const xValues=cfg.panels.flatMap(p=>p.x),xLow=Math.min(...xValues),xHigh=Math.max(...xValues),xPad=(xHigh-xLow||1)*.06;
+      if(cfg.sharedX)layout.annotations.push({text:cfg.sharedX,x:.5,y:0,yshift:-27,xref:'paper',yref:'paper',showarrow:false});
       cfg.panels.forEach((p,i)=>{
         const suffix=i?String(i+1):'',x='x'+suffix,y='y'+suffix,col=i%cols,row=Math.floor(i/cols);
-        const xd=[col/cols+.02,(col+1)/cols-.06],yd=[1-(row+1)/rows+.28/rows,1-row/rows-.08/rows];
+        const xd=cols===1?[0,1]:col===0?[0,.43]:[.58,1];
+        const yd=[1-(row+1)/rows+.09/rows,1-row/rows-.08/rows];
+        if(row&&cfg.sharedX)yd[1]-=.18/rows;
         const comparable=cfg.panels.filter(q=>q.title===p.title).flatMap(q=>[...q.y,...q.low||[],...q.high||[]]);
         const lo=Math.min(...comparable),hi=Math.max(...comparable),pad=(hi-lo||1)*.1;
-        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,zeroline:false,title:{text:p.xTitle||'',font:{size:12}},tickvals:p.ticks||p.x};
-        layout['yaxis'+suffix]={domain:yd,anchor:x,gridcolor:grid,zerolinecolor:grid,tickformat:p.format||'',range:[p.zero?Math.min(0,lo-pad):lo-pad,hi+pad]};
+        layout['xaxis'+suffix]={domain:xd,anchor:y,showgrid:false,zeroline:false,title:{text:cfg.sharedX?'':p.xTitle,font:{size:12}},tickvals:p.ticks||p.x,
+          range:cfg.sharedX?[xLow-xPad,xHigh+xPad]:undefined,showticklabels:!cfg.sharedX||row===rows-1};
+        const domain=p.domain?[Math.min(p.domain[0],lo-pad),Math.max(p.domain[1],hi+pad)]:[p.zero?Math.min(0,lo-pad):lo-pad,hi+pad];
+        layout['yaxis'+suffix]={domain:yd,anchor:x,gridcolor:grid,zeroline:false,tickvals:p.yTicks,tickformat:p.format||'',range:domain};
+        if(Number.isFinite(p.reference))layout.shapes.push({type:'line',xref:x+' domain',x0:0,x1:1,yref:y,y0:p.reference,y1:p.reference,line:{color:COLORS.comparison,width:1,dash:'dot'},layer:'below'});
         layout.annotations.push({text:p.title,x:xd[0],y:yd[1]+.01,xref:'paper',yref:'paper',xanchor:'left',yanchor:'bottom',showarrow:false});
         traces.push({type:'scatter',mode:'lines+markers',x:p.x,y:p.y,xaxis:x,yaxis:y,
-          line:{color:COLORS.comparison,width:1},marker:{color:p.x.map(v=>v===p.selected?COLORS.strategy:COLORS.comparison),size:p.x.map(v=>v===p.selected?9:6)},
+          line:{color:COLORS.comparison,width:1.3},marker:{color:p.x.map(v=>v===p.selected?COLORS.long:COLORS.comparison),size:p.x.map(v=>v===p.selected?8:4.5),symbol:p.x.map(v=>v===p.selected?'diamond':'circle')},
           error_y:p.low?{type:'data',symmetric:false,array:p.high.map((v,j)=>v-p.y[j]),arrayminus:p.y.map((v,j)=>v-p.low[j]),color:COLORS.comparison,thickness:1,width:3}:undefined,
           customdata:p.low?p.x.map((_,j)=>[p.low[j],p.high[j]]):undefined,
           hovertemplate:(p.xTitle||'Setting')+': %{x}<br>'+p.title+': %{y:.3f}'+(p.low?'<br>Schedule range: %{customdata[0]:.3f}–%{customdata[1]:.3f}':'')+'<extra></extra>'});

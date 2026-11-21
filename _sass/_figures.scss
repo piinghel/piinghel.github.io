@@ -10,6 +10,9 @@
 .theme-svg-figure,
 .theme-svg-figure img { display: block; width: 100%; margin: 0; }
 .theme-svg-figure--dark { display: none; }
+@media (min-width: 72rem) {
+  .e-content > .portfolio-path-figure { width: calc(100% + 5rem); }
+}
 
 .matrix-calculation {
   display: flex;

@@ -9,6 +9,18 @@ const returns=id=>data.series.find(s=>s.id===id).values.map(v=>v/data.scale);
 const episodes=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/low-volatility-sizing/episodes.json')));
 const episodeReturns=id=>episodes.series.find(s=>s.id===id).values.map(v=>v/episodes.scale);
 
+test('one-dollar growth rebases at each opening close with readable ticks on short windows',()=>{
+  const returns=[0,.1,-.2,.05];
+  for(const first of [0,1,2]) {
+    const dollar=charts.path(returns,first,3,1),index=charts.path(returns,first,3);
+    assert.equal(dollar.equity[0],1);
+    dollar.equity.forEach((wealth,i)=>assert.ok(Math.abs(wealth*100-index.equity[i])<1e-10));
+    dollar.drawdown.forEach((loss,i)=>assert.ok(Math.abs(loss-index.drawdown[i])<1e-12));
+  }
+  assert.deepEqual(charts.narrowGrowthTicks(.96,1.34),[.9,1,1.1,1.2,1.3,1.4]);
+  assert.equal(charts.narrowGrowthTicks(1,16),null);
+});
+
 test('deferred charts start once near the viewport and work without an observer',async()=>{
   for(const supported of [true,false]) {
     let notify,starts=0;

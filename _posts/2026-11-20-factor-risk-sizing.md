@@ -1,5 +1,6 @@
 ---
 layout: post
+interactive_charts: true
 toc: false
 title: "Factor Risk Models, Part 1: An Introduction"
 description: "How factor exposures become portfolio risk, and what changes in hedges and position sizing when the Ridge forecasts stay fixed."
@@ -146,16 +147,20 @@ $$
 
 Here $$w$$ gives the signed target weights and $$w_{\rm prev}$$ the weights held at rebalance. Eligible longs have nonnegative weights, eligible shorts have nonpositive weights, and other weights are zero. The rate $$c$$ is 2.5 basis points per unit of two-way turnover, the sum of absolute weight changes. Trading fees apply separately to fills.
 
-| Symbol | Meaning | Setting |
-| --- | --- | --- |
-| $$A$$ | Sessions per year, used to annualize the daily variance from $$\Sigma$$ | 252 |
-| $$\sigma_{\rm target}$$ | Annualized forecast-volatility target | 7% |
-| $$G_{\max}$$ | Gross exposure, longs plus absolute shorts | 200% |
-| $$N_{\max}$$ | Absolute net exposure, the magnitude of longs minus shorts | 25% |
-| $$\beta_{\max}$$ | Absolute exposure to the Russell 1000, with stock betas in $$\beta$$ | 0.05 |
-| $$w_{\max}$$ | Maximum absolute target weight of a single stock | 4% |
-| $$S_{\max}$$ | Absolute net sector exposure, with $$a_g$$ selecting sector $$g$$ | 20% |
-| $$q_{\max}$$ | Maximum share of either sleeve in a single sector | 30% |
+<table class="research-table constraint-settings" id="table-1">
+  <caption><strong>Table 1. Optimizer settings.</strong> The three joint optimizers use the same limits.</caption>
+  <thead><tr><th scope="col">Parameter</th><th scope="col">Setting</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Sessions per year <var>A</var></th><td>252</td></tr>
+    <tr><th scope="row">Annual forecast volatility <var>σ<sub>target</sub></var></th><td>7%</td></tr>
+    <tr><th scope="row">Gross exposure, longs plus absolute shorts <var>G<sub>max</sub></var></th><td>200%</td></tr>
+    <tr><th scope="row">Absolute net exposure <var>N<sub>max</sub></var></th><td>25%</td></tr>
+    <tr><th scope="row">Absolute Russell 1000 beta <var>β<sub>max</sub></var></th><td>0.05</td></tr>
+    <tr><th scope="row">Absolute weight per stock <var>w<sub>max</sub></var></th><td>4%</td></tr>
+    <tr><th scope="row">Absolute net exposure per sector <var>S<sub>max</sub></var></th><td>20%</td></tr>
+    <tr><th scope="row">Share of either sleeve in one sector <var>q<sub>max</sub></var></th><td>30%</td></tr>
+  </tbody>
+</table>
 
 These constraints address different risks. A 3% long with beta 1.4 and a 3% short with beta 0.8 add zero net exposure and 0.018 of market beta. The volatility constraint also captures how sector and style exposures combine. If two estimates price the same positions differently, the same volatility target can support different amounts of gross exposure.
 
@@ -172,12 +177,12 @@ I drew 32 groups per weekly decision at 75, 100 and 150 stocks **in total** and 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/stock-draws" mobile="/assets/factor-risk-sizing/stock-draws_mobile" version="1" alt="32 stock selections at each decision. Point estimates of spread volatility favor shrunk residuals at all three stock counts. The left panel compares with stock shrinkage. The right compares with diagonal residuals." %}
 </div>
-<p class="figure-caption">Each point subtracts the reference spread’s realized volatility from that of the spread with shrunk residual correlations. Left of zero means a quieter spread. The left panel uses stock shrinkage as the reference. The right uses the same factor model with zero residual correlations. Each row fixes the names and score exposure, and the paired 95% intervals account for six comparisons per period.</p>
+<p class="figure-caption"><strong>Figure 1. Volatility of matched stock spreads.</strong> Each point subtracts the reference spread’s realized volatility from that of the spread with shrunk residual correlations. Left of zero means a quieter spread. The left panel uses stock shrinkage as the reference. The right uses the same factor model with zero residual correlations. Each row fixes the names and score exposure, and the paired 95% intervals account for six comparisons per period.</p>
 
 I also compared one session with the three-week holding period used in the portfolio replay. For the same eight stock paths and 227 later starting dates, the test assumes full fills where the next close has a quote and leaves other allocations in cash. The returns are gross. At 150 stocks, adding shrunk residuals reduced annualized 15-session volatility from **3.35% to 3.22%**, a **0.13-point** reduction with a simultaneous 95% interval of **0.04 to 0.21 points**. Against stock shrinkage the estimate also favored shrunk residuals, but all three stock counts had intervals that crossed zero at 15 sessions.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Annualized volatility saved by estimating residual correlations, 2022–May 2026. Values are percentage points relative to the same factor model with zero residual correlations. A larger positive number means a quieter spread.</caption>
+  <caption><strong>Table 2. Volatility saved by estimating residual correlations.</strong> Annualized volatility saved by estimating residual correlations, 2022–May 2026. Values are percentage points relative to the same factor model with zero residual correlations. A larger positive number means a quieter spread.</caption>
   <thead><tr><th>Total stocks</th><th>1 session</th><th>15 sessions</th></tr></thead>
   <tbody>
     <tr><th>75</th><td>0.12</td><td>0.08</td></tr>
@@ -203,7 +208,7 @@ Calibration can help when a model consistently under- or overestimates risk on t
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
 </div>
-<p class="figure-caption">The dashed line shows realized risk on the filled stock-shrinkage holdings. I average the mean squared gross daily return across holding periods and annualize its square root. Circles show the original forecasts. Diamonds show forecasts recalibrated with the last 52 completed holding periods.</p>
+<p class="figure-caption"><strong>Figure 2. Forecast and realized risk on the same holdings.</strong> The dashed line shows realized risk on the filled stock-shrinkage holdings. I average the mean squared gross daily return across holding periods and annualize its square root. Circles show the original forecasts. Diamonds show forecasts recalibrated with the last 52 completed holding periods.</p>
 
 ## The portfolio comparison after fees
 {: #how-the-risk-estimate-changes-the-portfolio}
@@ -211,7 +216,7 @@ Calibration can help when a model consistently under- or overestimates risk on t
 I now let each risk estimate choose its own positions and compare the portfolios after trading fees.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Long/short portfolio outcomes, averaged across three schedules. Return and Sharpe show net on top and gross before trading fees below. Returns are annualized compound growth. Sharpe uses daily returns, a zero cash rate and 252 sessions per year. Volatility and drawdown use net returns. Turnover counts purchases and sales in multiples of capital per year.</caption>
+  <caption><strong>Table 3. Portfolio outcomes before and after fees.</strong> Long/short portfolio outcomes, averaged across three schedules. Return and Sharpe show net on top and gross before trading fees below. Returns are annualized compound growth. Sharpe uses daily returns, a zero cash rate and 252 sessions per year. Volatility and drawdown use net returns. Turnover counts purchases and sales in multiples of capital per year.</caption>
   <thead><tr><th>Sizing rule</th><th>Return</th><th>Vol.</th><th>Sharpe</th><th>Drawdown</th><th>Turnover</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="6">January 1999 – December 2021</th></tr>
@@ -227,10 +232,10 @@ I now let each risk estimate choose its own positions and compare the portfolios
   </tbody>
 </table>
 
-<div class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" alt="Net growth of the three long/short Ridge portfolios above their drawdowns on the same timeline. Stock shrinkage finished ahead of the factor target and sector and style factors." %}
+<div id="figure-3" class="research-figure portfolio-path-figure responsive-figure">
+  {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json" initial_wealth=1 periods_visible=true base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" label="Growth of one dollar after fees and drawdown for the three Ridge portfolios. Choose the full history, development period, later period or custom dates." %}
 </div>
-<p class="figure-caption">The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
+<p class="figure-caption"><strong>Figure 3. Growth and drawdown after fees.</strong> The top panel shows how $1 grew after fees on a log scale. Each path compounds the mean daily return across schedules. Below, drawdown is the percentage loss from each path’s previous peak. The table calculates drawdown separately for each schedule before averaging.</p>
 
 The **Factor target** row shows the portfolio sized with the 50/50 correlation estimate. From January 2022 through May 2026 it earned **4.59% a year after fees** at **7.27% volatility**, close to the 7% budget. Stock shrinkage earned **7.42%** at **9.65% volatility**. How much of that extra return came from holding a bigger book?
 
@@ -243,7 +248,7 @@ The same 7% cap can produce a smaller book if one model forecasts more risk for 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" alt="Trailing annualized volatility of the original sizing rules before the rolling calibration." %}
 </div>
-<p class="figure-caption">Each monthly point shows trailing 252-session net volatility averaged across schedules. The 7% line is the limit on each optimizer’s own forecast at rebalance. Stock shrinkage ran above the factor target throughout the chart. It traded places with the sector-and-style book before 2022, then stayed above it at every later point shown.</p>
+<p class="figure-caption"><strong>Figure 4. Realized volatility against the risk budget.</strong> Each monthly point shows trailing 252-session net volatility averaged across schedules. The 7% line is the limit on each optimizer’s own forecast at rebalance. Stock shrinkage ran above the factor target throughout the chart. It traded places with the sector-and-style book before 2022, then stayed above it at every later point shown.</p>
 
 All three books became more volatile in 2020–21. Stock shrinkage peaked near **15%**, several points above both factor books. The factor target spent more of the chart close to the **7%** budget.
 
@@ -257,7 +262,7 @@ $$
 If the models forecast 7% and 10% on those weights, I multiply the factor target’s covariance by $$7^2/10^2=0.49$$. Both then price that reference book at 7%, while their correlations and relative stock volatilities still differ. I also do the reverse and put stock shrinkage at the factor target’s risk level. Each optimizer chooses its own holdings under each comparison.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Each cell shows annualized net compounded return / realized volatility. Compare rows within a block to see the effect of changing stock relationships at a common risk scale. Find the same model in both blocks to see the effect of changing its forecast scale.</caption>
+  <caption><strong>Table 4. Portfolio outcomes at a common risk scale.</strong> Each cell shows annualized net compounded return / realized volatility. Compare rows within a block to see the effect of changing stock relationships at a common risk scale. Find the same model in both blocks to see the effect of changing its forecast scale.</caption>
   <thead><tr><th scope="col">Stock relationships</th><th scope="col">1999–2021</th><th scope="col">2022–26</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="3">Stock-shrinkage risk level</th></tr>
@@ -278,7 +283,7 @@ The scale swap puts the two models on a common footing. To size the portfolio at
 A fixed adjustment estimated through 2021 also brought the stock-shrinkage book close to the budget later, at **7.5%** realized volatility. The rolling adjustment brought it to **7.1%**. Both replays point to the importance of the risk level, with less evidence for the value of updating the adjustment.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Outcomes with rolling calibration. Return and Sharpe show net on top and gross before trading fees below. Volatility uses net returns. Gross exposure is the average market value of longs and shorts, both counted as positive, per dollar of capital.</caption>
+  <caption><strong>Table 5. Portfolio outcomes after rolling risk calibration.</strong> Outcomes with rolling calibration. Return and Sharpe show net on top and gross before trading fees below. Volatility uses net returns. Gross exposure is the average market value of longs and shorts, both counted as positive, per dollar of capital.</caption>
   <thead><tr><th>Sizing rule</th><th>Return</th><th>Vol.</th><th>Sharpe</th><th>Gross exposure</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">January 1999 – December 2021</th></tr>
@@ -301,7 +306,7 @@ Similar overall volatility can come with different market exposure. The estimate
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/market-exposure" mobile="/assets/factor-risk-sizing/market-exposure_mobile" version="2" alt="Rolling 63-session market beta and 252-session correlation with the Russell 1000 across the full backtest for the three calibrated portfolios." %}
 </div>
-<p class="figure-caption">Monthly readings across the full backtest, starting when the first 252-session window is complete. Correlation uses the prior 252 sessions and beta uses 63. Both use daily net returns against the Russell 1000, calculated separately for each schedule and then averaged.</p>
+<p class="figure-caption"><strong>Figure 5. Market beta and correlation through time.</strong> Monthly readings across the full backtest, starting when the first 252-session window is complete. Correlation uses the prior 252 sessions and beta uses 63. Both use daily net returns against the Russell 1000, calculated separately for each schedule and then averaged.</p>
 
 Stock shrinkage’s beta has some of the largest swings, especially in the mid-2010s. Around 2020 its market correlation rises alongside the factor target’s. The sector-and-style book spends more time near zero and turns sharply negative around 2009–10. Scaling the same positions down lowers their volatility and beta. Their market correlation stays the same. Changing the covariance can also change the positions themselves, even under the same estimated beta cap.
 
@@ -314,7 +319,7 @@ I used 75 entry candidates per side in the experiments above. I widened the list
 At 150 per side stock shrinkage held about **175 stocks** and the factor target **123** in the later period. Net Sharpe fell for all three joint optimizers as the entry list widened. Stock shrinkage and the factor target also had lower gross Sharpe at 150 than at 75, so trading fees explain only part of the decline.
 
 <table class="research-table comparison-table compact-table">
-  <caption>Each cell shows annualized net return on top and net Sharpe below, averaged across three schedules. Columns give the number of entry candidates per side.</caption>
+  <caption><strong>Table 6. Portfolio outcomes by entry breadth.</strong> Each cell shows annualized net return on top and net Sharpe below, averaged across three schedules. Columns give the number of entry candidates per side.</caption>
   <thead><tr><th>Sizing rule</th><th>75 per side</th><th>100 per side</th><th>150 per side</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">1999–2021</th></tr>

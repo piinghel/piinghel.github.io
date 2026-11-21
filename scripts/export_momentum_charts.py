@@ -32,7 +32,7 @@ def export(assets: Path, *, settings: MomentumEvidence = MomentumEvidence()) -> 
         kind="performance", series=[s["id"] for s in crash], initialRange=["2007-07-02", "2010-06-30"],
         episodes=[["2000–02", "2000-06-30", "2002-12-31"], ["2008–09", "2007-07-02", "2010-06-30"],
                   ["2016", "2015-06-30", "2016-12-30"], ["2020–21", "2019-12-31", "2021-06-30"]],
-        directLabels=True, exploreOpen=True, shade=[["2009-03-09", "2009-05-29"], ["2020-11-09", "2020-11-13"]],
+        directLabels=True, showLegend=False, shade=[["2009-03-09", "2009-05-29"], ["2020-11-09", "2020-11-13"]],
         note="Equal-weight 12-1 momentum deciles within the Russell 1000, formed at month ends.")})
 
     # Differencing the verified cumulative path preserves the original three-schedule

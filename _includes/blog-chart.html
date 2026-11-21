@@ -1,4 +1,4 @@
-<section class="blog-chart" data-source="{{ include.source | relative_url }}" data-chart="{{ include.chart }}" aria-label="{{ include.label | escape }}">
+<section class="blog-chart" data-source="{{ include.source | relative_url }}" data-chart="{{ include.chart }}"{% if include.initial_wealth %} data-initial-wealth="{{ include.initial_wealth }}"{% endif %}{% if include.periods_visible %} data-visible-periods="true"{% endif %} aria-label="{{ include.label | escape }}">
   <div class="blog-chart-ui" hidden></div>
   <p class="blog-chart-status" role="status">Interactive chart loading…</p>
   <div class="blog-chart-fallback">
