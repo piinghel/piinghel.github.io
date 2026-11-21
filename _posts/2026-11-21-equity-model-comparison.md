@@ -224,32 +224,28 @@ two thirds of Kumo Small’s 1.8-point gap.
 
 ## Running Kumo on a Mac
 
-I used a 16 GB M2 Pro Mac with a separate Python 3.12 environment. This
-is the CPU setup I used, with the library and PyTorch versions pinned.
+I started with Large because it had the best results in NVIDIA’s paper.
+Getting the weights to load was straightforward. The first equity fold
+was where I got stuck. Large hit the 10 GiB memory limit I had set on my
+16 GB Mac. Small did too, even with only 35,738 training rows. I was able
+to get both through that fold by making the temporary batches smaller
+while Kumo prepared the historical examples. The CPU setup that worked
+used Python 3.12, `structured-data-models` 0.3.0 and PyTorch 2.11.
 
-```sh
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install structured-data-models==0.3.0 torch==2.11.0
-```
+That solved the first fold. For the full walk-forward test, the last
+fold was a better guide. At one training date a week, it would have
+about 760,000 rows even after keeping only the target tails. In 32-bit
+precision, Small’s main buffers alone would take about 35 GiB. Large
+would exceed my memory budget in the last fold even with the six-week
+spacing used for Small. I could include Large in the first-fold test.
+Running it through 2021 would have required a different setup.
 
-The first model load downloads the checkpoint. I cached the released
-weights and reused them across runs. The support for Apple’s GPU
-depended on the PyTorch and macOS versions. In my test with the older
-GPU-compatible build, repeated runs gave different scores, so I ran the
-comparison on CPU in 32-bit precision.
-
-The first Small run hit the 10 GiB process limit with just 35,738
-training examples. Limiting the temporary batches used to build the
-row embeddings and compute attention brought that fold within budget.
-Preparing the historical context was still the limiting step.
-With one training date a week and the same target tails, the final fold
-would have about 760,000 examples. Small’s main buffers alone would
-need about 35 GiB in standard 32-bit precision. I sample training dates
-further apart, prepare the context once per fold and reuse it across
-prediction batches. Scoring on the portfolio schedules cuts the number
-of predictions to about a fifth of daily scoring and keeps every eligible
-stock on each scheduled date.
+The biggest saving came from scoring only when one of the portfolios
+needed a ranking. That cut predictions to about a fifth of the daily
+total while keeping all eligible stocks on each signal date. I then
+spread the training dates further apart and reused each prepared context
+for every batch in its fold. That left enough room to run the expanding
+comparison and ask whether giving Kumo more history actually helped.
 
 ## What changed with more training rows
 
@@ -280,8 +276,3 @@ spacing used 126,892 rows and took 12½ minutes. On 61 dates with realized
 targets, ICIR was 0.11 at four weeks and 0.21 at six. The paired 21-session
 block-bootstrap interval for the difference was −0.23 to 0.06. Training
 spacing changes which dates enter the context as well as how many.
-
-These comparisons use the 1999–2021 research sample. Each walk-forward
-fit uses return outcomes after their measurement window ends. Verifying
-which feature values were available on each historical date would require
-their original dated versions.
