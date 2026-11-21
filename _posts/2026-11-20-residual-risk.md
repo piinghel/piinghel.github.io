@@ -12,17 +12,39 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-The factor model in Part 1 explains shared risk through the market, sectors and styles. Suppose two stocks still move together after I subtract those effects. Should I give a long/short spread more hedging credit for that relationship? Estimating it can improve the hedge when it persists. If the relationship fades, the estimate can make a risky spread look safer than it is.
+In [Part 1]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example), A and B both fell, and each finished half a percentage point above its fitted return. Those two +0.5-point residuals cancelled in a spread that was 50% long A and 50% short B. Stock C had a residual of −1 point and no position weight.
 
-I start with the three-stock spread from Part 1 and work out how much that correlation changes its risk. Then I look for groups and shared directions in historical residuals and see what survives the following year. That helps decide how much weight to give the co-movement when sizing the Ridge portfolio.
+Now think of A, B and C as three stocks from a larger universe. A and B might rely on the same supplier. A disruption could push both below their fitted returns even after the model accounts for any sector move. If those extra moves tend to line up, the short in B can cushion the residual moves in A. I want to know how much of that offset I can count on when sizing the Ridge portfolio.
+
+## Four days of residuals give one correlation
+
+A residual return is the gap between a stock’s observed return and the return fitted by the factors that day. Its **residual volatility** tells me how much that gap varies for one stock. To see what it does to a spread, I also need to know whether the gaps line up across stocks on the same days.
+
+Take four illustrative days. A’s residual returns are +3%, −1%, +3% and −1%. I subtract A’s four-day average of 1% to measure each day relative to its usual level. Then I divide by its 2% standard deviation to express each move in units of A’s own volatility. That gives +1, −1, +1 and −1. I do the same for B and C so a large move in a naturally volatile stock doesn’t dominate the comparison. In this example I divide by four when calculating the variances.
+
+{% assign example = site.data.factor_risk_example %}
+<div class="matrix-calculation" role="group" aria-label="Standardized daily stock residuals and the resulting correlation matrix">
+  <div>
+    {% include worked-matrix.html matrix=example.standardized_residuals symbol="Z" label="Standardized residuals" mark_column="A" %}
+  </div>
+  <div>
+    <span class="matrix-operator" aria-hidden="true">→</span>
+    {% include worked-matrix.html matrix=example.residual_correlations symbol="S" label="Residual correlation" mark_row="A" mark_column="B" %}
+  </div>
+</div>
+
+On day 1, A and B are both above their own averages, so their standardized returns multiply to a positive number, $$1\times1.4=1.4$$. On day 2 they’re on opposite sides of their averages, so the product is $$-1\times0.2=-0.2$$. The four products are $$1.4,-0.2,-0.2,1.4$$. Their average is 0.6. A and B land on the same side of their respective averages on two days, and those days have the larger products. C’s products average to zero with either stock.
+
+The matrix $$Z$$ holds one row per day and one column per stock. Multiplying $$Z^\top Z$$ takes the sum of the same-day products for every pair of columns. Dividing by the number of days $$T$$ gives the sample correlation matrix $$S=Z^\top Z/T$$.
 
 ## The sign of the position changes the answer
 
-Write the residual covariance as $$\Omega=DRD$$, where $$D$$ is the diagonal matrix of specific volatilities and $$R$$ is the residual correlation matrix. Changing $$R$$ lets me vary how stocks move together while keeping each stock’s specific risk fixed.
+Take the same 50%-long A, 50%-short B spread. If both residuals are +2%, A adds one percentage point to the spread and the short in B takes one away. If A has a +2% residual and B has a −2% residual, both positions add a point. The variance forecast gives more credit to the hedge when A and B tend to move together.
 
-The spread is 50% long A and 50% short B, with daily variance of 3 squared percentage points when residual correlations are zero. Keep the specific volatilities at 2%, 2% and 1%, so $$D=\operatorname{diag}(2,2,1)$$ in percentage points. Give A and B a residual correlation of 0.6 in $$R$$. Right multiplication by $$D$$ scales the columns, and left multiplication scales the rows.
+Part 1 gave the spread one unit of daily factor variance from momentum and two units of residual variance, one from each position. That estimate of 3 squared percentage points assumed zero residual correlation. Keep the factor risk and each stock’s residual volatility fixed at the original settings. For A, B and C the residual volatilities are 2%, 2% and 1%. Now give A and B the 0.6 correlation from the example.
 
-{% assign example = site.data.factor_risk_example %}
+I calculated correlation from returns expressed in units of each stock’s volatility. To get back to covariance in squared percentage points, multiply by both volatilities. For A and B that gives $$2\times0.6\times2=2.4$$. Across all pairs, the calculation is $$\Omega=DRD$$, where $$R$$ is the correlation matrix I use in the forecast and $$D=\operatorname{diag}(2,2,1)$$ contains the three residual volatilities. The first multiplication below applies the column stock’s volatility and the second applies the row stock’s.
+
 <div class="matrix-calculation" role="group" aria-label="Scale the columns of the residual correlation matrix by specific volatilities, then scale its rows">
   <div>
     {% include worked-matrix.html matrix=example.residual_correlations symbol="R" label="Residual correlation" mark_row="A" mark_column="B" %}
@@ -35,19 +57,21 @@ The spread is 50% long A and 50% short B, with daily variance of 3 squared perce
   </div>
 </div>
 
-The A–B entry becomes $$2(0.6)2=2.4$$ in squared percentage points. Add it to the factor covariance of 3 and the total A–B covariance rises to 5.4. The individual variances stay at 9 each. The same 50%-long A and 50%-short B spread now has daily variance
+Each of the two A–B entries contributes $$0.5(-0.5)(2.4)=-0.6$$ to spread variance. Together they take 1.2 units off the original estimate of 3, leaving 1.8. With both positions on the same side, the product of weights would be positive and the same covariance would add risk.
+
+The calculation also works directly from the total stock covariance. Add the residual covariance of 2.4 to the factor covariance of 3. The A–B entry rises to 5.4 and both stock variances stay at 9. With +0.5 and −0.5 weights, the result is
 
 $$
 w^\top\Sigma w=\frac{9+9-2(5.4)}{4}=1.8.
 $$
 
-Positive residual covariance lowers the spread’s estimated variance because the two positions have opposite signs. The same covariance adds variance when both positions are long. The practical question is whether the stocks will still move together when I hold the spread.
-
-Suppose I trust only half the estimated correlation. Shrinking 0.6 halfway toward zero gives 0.3. The residual covariance becomes 1.2, and the spread’s variance becomes 2.4, halfway between the diagonal estimate of 3 and the full-correlation estimate of 1.8. That is the decision the next tests inform. How much of the apparent hedge should I count on?
+If I use 0.6 in the forecast, I’m counting on the full relationship to persist. Shrinking 0.6 halfway toward zero gives 0.3 and residual covariance of 1.2. That gives the spread half as much hedging credit and leaves variance of 2.4. If the relationship disappears, the spread’s variance is back at 3. The next tests look at what persists from one year to the next.
 
 ## Groups identified in one year still move together in the next
 
-I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. At each year-end I group stocks by their trailing 252-session residual correlations. Holding those groups fixed for the following year lets me measure whether yesterday’s neighbours still move together. The comparison uses stocks observed in both windows, about 93% of the initial names on average.
+In the example, A and B have a stronger residual relationship with each other than either has with C. In a larger universe I can look for groups of stocks with that pattern. The groups give me a way to test many related pairs at once.
+
+I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. At each year-end I group stocks by their trailing 252-session residual correlations. I keep each stock’s group fixed through the following year and measure the correlations again. If pairs in the same group still move together more than pairs in different groups, the grouping has picked up a relationship that lasts beyond the year used to find it. The comparison uses stocks observed in both windows, about 93% of the initial names on average.
 
 The first two heatmaps compare stock returns and residual returns on the same dates and in the same stock order. The third keeps that order for the next 252 sessions. A block in the same place in the last two panels means the group still moves together.
 {: #stock-correlations }
@@ -70,23 +94,17 @@ Most of the persistence was within sectors. In the 23 development cohorts the fo
 
 ## The shared directions persist at a smaller scale
 
-A cluster gives each stock one label. Principal components let a stock contribute to several shared moves. I center the residuals and scale each stock to unit variance, using the number of days $$T$$ as the divisor. For A’s residual returns $$3,-1,3,-1$$, I subtract the mean of 1 and divide by the standard deviation of 2 to get the A column below.
+A group puts A and B together. Their four-day history still has days when they move apart. To measure both patterns, take their standardized residuals from the table above, add them for one series and subtract them for another. A large same-day move in both stocks shows up in the sum. A large gap between them shows up in the difference.
 
-<div class="matrix-calculation" role="group" aria-label="Standardized daily stock residuals and the resulting correlation matrix">
-  <div>
-    {% include worked-matrix.html matrix=example.standardized_residuals symbol="Z" label="Standardized residuals" mark_column="A" %}
-  </div>
-  <div>
-    <span class="matrix-operator" aria-hidden="true">→</span>
-    {% include worked-matrix.html matrix=example.residual_correlations symbol="S" label="Residual correlation" mark_row="A" mark_column="B" %}
-  </div>
-</div>
+Let $$z_A$$, $$z_B$$ and $$z_C$$ be the three columns of standardized residuals. Give each series weights whose squares sum to one so their variances can be compared with C on its own. Since A and B each have standardized variance one and correlation 0.6, the three combinations have these variances.
 
-The correlation matrix $$S=Z^\top Z/T$$ averages the products of each pair of columns. Transposing $$Z$$ makes A’s column a row for the dot product with B’s column. The four products are $$1.4,-0.2,-0.2,1.4$$, giving $$2.4/4=0.6$$.
+- A and B together give $$(z_A+z_B)/\sqrt{2}$$, with variance $$(1+1+2(0.6))/2=1.6$$.
+- A against B gives $$(z_A-z_B)/\sqrt{2}$$, with variance $$(1+1-2(0.6))/2=0.4$$.
+- C alone gives $$z_C$$, with variance 1 and zero correlation with either combination.
 
-Think of a direction $$q$$ as weights on the standardized residuals. The series $$Zq$$ is the return of that combination, with variance $$q^\top S q$$. The first principal component finds the combination with the highest variance for a unit-length $$q$$. Here it is $$q=(1,1,0)^\top/\sqrt{2}$$. Multiplying $$S$$ by $$q$$ gives $$Sq=1.6q$$. A and B reinforce each other in this direction. Flip the sign of B and much of their movement cancels. The opposing direction has variance 0.4, and C alone has variance 1.
+Principal component analysis (PCA) searches over these kinds of combinations. A **direction** $$q$$ is a set of weights on the standardized residuals. Its daily series is $$Zq$$ and its variance is $$q^\top S q$$. The first principal component finds the unit-length direction with the largest variance. Here that’s the common A–B move, $$q=(1,1,0)^\top/\sqrt{2}$$, with variance 1.6. The three combinations above are the three principal components in this example. In a typical weekly fit on the real residual data, the first component explained about 3% of standardized residual variance.
 
-In a typical weekly fit on the real residual data, the first component explained about 3% of standardized residual variance. To see what it means for a book, take its variance $$\lambda$$ times the squared exposure to that direction, $$\lambda(q^\top Dw)^2$$. In the example, A and B have the same specific volatility and opposite position weights. The common direction $$(1,1,0)^\top/\sqrt{2}$$ contributes zero variance to this spread. Put both positions on the same side and their exposures to that direction add.
+To see which move reaches the portfolio, multiply each position weight by its stock’s residual volatility. For the spread, $$Dw=(1,-1,0)^\top$$. The spread’s centered residual return is therefore $$z_A-z_B$$ in percentage points. The largest component, the one that moves A and B together, cancels. The spread has $$\sqrt{2}$$ times the exposure of the unit-length opposing direction, so its residual variance is $$0.4(\sqrt{2})^2=0.8$$. Add one unit from momentum and the total is back to 1.8. In general a component with variance $$\lambda$$ contributes $$\lambda(q^\top Dw)^2$$ to the portfolio’s residual variance.
 
 The first direction will look strong in the window that chose it. The test is to hold its weights fixed and ask how much variance that same direction has over the next 252 sessions. I use stocks observed in both windows and standardize each window by its own stock volatilities so the comparison tracks changes in co-movement.
 
@@ -107,7 +125,7 @@ For a principal direction $$q$$ with variance $$\lambda$$, its contribution is t
 - Keep one principal component. Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
 - Combine them. Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
 
-Return to the spread. The first component contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to the A–B correlation. The opposing component subtracts 0.2, giving the observed 0.6. Retain only the first component and move the remaining variance onto the diagonal, and the estimated correlation rises to 0.8. The spread’s forecast variance falls to 1.4, below the sample-correlation estimate of 1.8 and the halfway-shrunk estimate of 2.4. Keeping the strongest component can give the spread more hedging credit than the full sample estimate.
+Return to A and B. The common component contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to their correlation. The opposing component contributes −0.2 because its stock weights have opposite signs. Together they give the sample correlation of 0.6. Keeping just the common component drops the −0.2 offset. The remaining variance goes back on each stock’s diagonal, so the stock vols stay at 2% and the new correlation is 0.8. That gives the spread more hedging credit and takes its total variance down to 1.4. In this example, keeping one component makes a more aggressive hedge estimate than using the whole sample.
 
 Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the same sector and group, carrying the trailing correlation forward reduced development error from about 17 to 12 correlation points against a forecast of zero. For pairs in different sectors and groups, predicting zero or using ordinary shrinkage gave errors of around 8 points, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
 
@@ -120,13 +138,13 @@ Every year I compared each forecast with the same pairs’ correlations over the
 
 In development the five-component estimate assigned about 15 units of variance per direction to components two through five. The following year delivered about 4, close to the ordinary-shrinkage forecast. Ordinary shrinkage also had lower forecast loss for that band in all 27 cohorts.
 
-The combined estimator can give a retained direction more variance than its fitted eigenvalue. For a retained unit direction $$q$$, the remainder $$U$$ satisfies $$q^\top Uq=0$$. Shrink its off-diagonal terms and the forecast becomes
+The three stocks show how this can happen. Take out the common A–B component, and each stock has 0.2 of standardized variance left. Their covariance in that remainder is −0.2. Along the common direction, the residual variances contribute +0.2 and the remaining covariance contributes −0.2, so the remainder adds up to zero in that direction. Shrink the remaining covariance halfway toward zero and the offset falls to −0.1. The remainder now puts 0.1 of variance back into the common direction. Add the retained component’s 1.6 and the forecast for that direction is 1.7.
+
+In general, a retained unit direction $$q$$ starts with $$q^\top Uq=0$$ in the remainder. Shrinking its off-diagonal terms gives the forecast
 
 $$
 q^\top Rq=\lambda+\delta\,q^\top\operatorname{diag}(U)q.
 $$
-
-The original offsets in $$U$$ kept its variance along $$q$$ at zero. Replacing some of those offsets with the individual stock variances adds risk in that direction, even though each stock’s own variance stays fixed.
 
 On the filled books, dropping residual correlations moved the factor target’s later volatility forecasts by less than a tenth of a percentage point on either set of holdings. Each covariance enters portfolio variance multiplied by the two signed weights. Contributions can cancel across the long and short sides even when individual residual correlations are material.
 
