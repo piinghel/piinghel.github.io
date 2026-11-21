@@ -1,156 +1,68 @@
 ---
 layout: post
 title: "Equity Model Comparison"
-description: "Ridge, LightGBM and NVIDIA Kumo Tabular Small on the same stock universe, from rank IC to net portfolio returns."
+description: "Ridge, LightGBM and NVIDIA Kumo Tabular on the same stock universe, from rank IC to net portfolio returns."
 date: 2026-11-21
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Signals"]
 article_label: Signals · Equity model comparison
 permalink: /quants/equity-model-comparison.html
 ---
 
-When I compare two stock scores, I start by asking how well each one orders
-the whole cross-section. A long–short portfolio pays particular attention
-to the two ends of that ordering. It also changes the weights once risk,
-turnover and trading constraints enter. I wanted to see how much of the
-difference between a linear model and a boosted tree model survives each
-of those steps.
+I wanted to see whether a model pretrained on synthetic tables could rank
+stocks using the same 80 predictors as Ridge and LightGBM. An equity panel
+can have millions of rows while still giving you relatively few independent
+return periods. Stocks move together, and adjacent 20-session targets
+overlap. LightGBM learns its thresholds and interactions from that equity
+history. Kumo arrives with a prior from pretraining and uses labeled rows
+from the panel to make predictions at inference. I wanted to see how
+well that prior transfers to a noisy equity target.
+[Kumo Tabular technical report](https://arxiv.org/abs/2611.23001v1)
 
-Both models use the 80 predictors from the
+I start with the ranking across the whole stock universe, then look at the
+two ends through equal-weight deciles and finally at returns after risk
+constraints and trading costs. The predictors come from the
 [linear comparison]({% link _posts/2025-02-09-combining-predictors.md %}).
-The target is the forward 20-session Sharpe ratio, ranked within sector on
-each date. Ridge learns a regularized linear combination of the predictors.
-LightGBM fits trees that can use thresholds and interactions. I compare their
-walk-forward scores on the same stock-days over 1999–2021.
+The shared target is the forward 20-session Sharpe ratio, ranked within
+sector on each date.
 
 ## Ranking the whole cross-section
 
-I compute the Spearman correlation between the scores and realized targets
-on each date. The mean of those daily correlations is the rank IC. Dividing
-it by their daily sample standard deviation gives the ICIR. I leave the
-ratio unannualized because consecutive 20-session outcomes overlap.
+The main comparison covers 1999–2021. I score every eligible stock on
+the combined signal dates from the three weekly portfolio schedules. For Kumo
+Small, each of the 12 training contexts expands from January 1995. I take
+one date every 30 trading sessions and keep the top and bottom 30% of
+targets whose return windows have ended. The context grows from 18,148
+to 126,892 rows. Scoring 1,162,773 stock observations took 99 minutes on
+a laptop CPU.
 
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Rank IC, IC standard deviation and ICIR by period">
+On each signal date I compute the Spearman correlation between the scores
+and realized targets. Rank IC is the mean of those correlations and ICIR
+divides it by their sample standard deviation. I report ICIR unannualized.
+
+<div id="table-4" class="research-table-scroll" tabindex="0" role="region" aria-label="Rank statistics on matched signal dates">
 <table id="table-1" class="research-table comparison-table ic-summary-table">
-  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Daily rank IC, standard deviation and ICIR by period.</span> The full comparison has 5,748 dates.</caption>
-  <thead>
-    <tr><th scope="col">Period</th><th scope="colgroup" colspan="3">Ridge</th><th scope="colgroup" colspan="3">LightGBM</th></tr>
-    <tr><th></th><th scope="col">IC</th><th scope="col">SD</th><th scope="col">ICIR</th><th scope="col">IC</th><th scope="col">SD</th><th scope="col">ICIR</th></tr>
-  </thead>
-  <tbody>
-    <tr><th scope="row">1999–2021</th><td>0.0480</td><td>0.090</td><td>0.54</td><td>0.0551</td><td>0.077</td><td>0.72</td></tr>
-    <tr><th scope="row">1999–2011</th><td>0.0420</td><td>0.073</td><td>0.58</td><td>0.0555</td><td>0.061</td><td>0.91</td></tr>
-    <tr><th scope="row">2012–2021</th><td>0.0559</td><td>0.108</td><td>0.52</td><td>0.0545</td><td>0.093</td><td>0.58</td></tr>
-    <tr><th scope="row">2017–2021</th><td>0.0607</td><td>0.128</td><td>0.47</td><td>0.0554</td><td>0.114</td><td>0.49</td></tr>
-  </tbody>
-</table>
-</div>
-
-LightGBM's lead in mean IC comes from 1999–2011. Ridge has the higher mean
-in both recent windows. The daily IC is steadier for LightGBM in all four
-rows, enough to give it a slightly higher ICIR in 2017–2021.
-
-## Return and risk by score decile
-
-To see where the scores differ, I sort the eligible stocks into ten
-equal-weight deciles on each rebalance date and trade at the next close.
-Each of three schedules rebalances every 15 sessions. Between rebalances I
-keep the decile membership and average its stocks' daily returns. I average
-the three schedules' daily returns before compounding and use zero cash return
-for Sharpe.
-
-<figure id="figure-1" class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/equity-model-comparison/decile-profile" mobile="/assets/equity-model-comparison/decile-profile_mobile" version="1" alt="In 1999–2021, LightGBM's top score decile earns higher annual return and has higher volatility than Ridge. Their top decile Sharpes are nearly equal." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. The series show 1999–2021 before costs.</figcaption>
-</figure>
-
-The top LightGBM decile earned 18.3% a year at 22.1% volatility, compared with
-15.3% at 18.1% for Ridge. Top-decile Sharpe was nearly the same at 0.87 and
-0.88. There is more separation at the other end. The lowest LightGBM decile
-earned 0.6% a year, versus 2.4% for Ridge. The top-minus-bottom spread also
-had lower realized volatility under LightGBM.
-
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Top-minus-bottom spread metrics">
-<table id="table-2" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Top-minus-bottom decile spread before costs.</span> Returns and volatility are annualized.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>7.6%</td><td>19.5%</td><td>0.47</td></tr>
-    <tr><th scope="row">LightGBM</th><td>15.4%</td><td>14.8%</td><td>1.04</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>4.1%</td><td>21.0%</td><td>0.30</td></tr>
-    <tr><th scope="row">LightGBM</th><td>8.8%</td><td>14.7%</td><td>0.65</td></tr>
-  </tbody>
-</table>
-</div>
-
-I form the spread from the two deciles' daily returns and then compound it.
-That puts the higher recent Ridge IC in context. LightGBM had the stronger
-spread over 2017–2021 even when Ridge's scores had the higher mean correlation
-across all names.
-
-## The first Kumo Small window
-
-Kumo Tabular Small and Large approach the same prediction problem through
-in-context learning. They receive historical labeled rows as context at
-inference. For the first Small fold I took every 15th trading session of
-training history. Among targets whose return windows had ended, I kept
-the upper and lower 30% on those dates. That gave Kumo 35,738 labeled rows.
-The latest selected training date was August 5, 1998, and the first score
-was in January 1999. I scored every eligible stock using its features for
-that date. [Kumo Tabular technical report](https://arxiv.org/abs/2611.23001v1)
-
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="First Kumo Small window, ranking and gross spread">
-<table id="table-3" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">January 1999–September 2000.</span> Rank statistics use 421 dates with realized targets. The gross top-minus-bottom spread statistics are annualized.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
-  <tbody>
-    <tr><th scope="row">Ridge</th><td>0.0491</td><td>0.070</td><td>0.70</td><td>18.7%</td><td>15.6%</td><td>1.18</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0723</td><td>0.071</td><td>1.01</td><td>52.0%</td><td>18.1%</td><td>2.41</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>0.0735</td><td>0.071</td><td>1.03</td><td>61.0%</td><td>22.4%</td><td>2.24</td></tr>
-  </tbody>
-</table>
-</div>
-
-Kumo Small and LightGBM had similar rank IC in this window. The difference
-was 0.0012, with a paired 21-session block-bootstrap interval of roughly
-−0.0044 to 0.0070. Kumo's gross spread returned more and took more risk.
-LightGBM had the higher observed spread Sharpe. The Kumo results here cover
-one early fold.
-
-I also evaluated those same scores against the forward Sharpe ratio without
-ranking the target by sector. On corrected closing prices, rank IC was
-0.0812 for Kumo and 0.0822 for LightGBM, with ICIR of 0.75 and 0.84.
-The small rank IC gap changes direction with the outcome definition.
-
-## The expanding-window run
-
-The three portfolio schedules give me a second way to choose scoring dates.
-I score every eligible stock on their shared set of signal dates and
-recompute Ridge and LightGBM's statistics on that same schedule. I expand
-Kumo's training context from January 1995 using one date every 30 trading
-sessions, keeping the two target tails as before. Across 12 refits, the
-context grew from 18,148 to 126,892 rows. Scoring 1,162,773 stock observations
-took about 99 minutes on a laptop CPU.
-
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Matched expanding-window rank metrics for Ridge, LightGBM and Kumo Small">
-<table id="table-4" class="research-table comparison-table ic-summary-table">
-  <caption><span class="caption-number">Table 4.</span> <span class="caption-title">Rank metrics on the portfolio signal dates.</span> The full comparison has 1,191 dates with realized targets.</caption>
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Rank metrics by period.</span> The full comparison covers 1,191 shared signal dates with realized targets.</caption>
   <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0489</td><td>0.090</td><td>0.545</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0557</td><td>0.077</td><td>0.720</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0430</td><td>0.064</td><td>0.671</td></tr>
+  </tbody>
+  <tbody>
     <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2011</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0434</td><td>0.073</td><td>0.592</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0570</td><td>0.063</td><td>0.904</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0470</td><td>0.059</td><td>0.795</td></tr>
+  </tbody>
+  <tbody>
     <tr class="period-heading"><th colspan="4" scope="colgroup">2012–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0560</td><td>0.107</td><td>0.523</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0541</td><td>0.093</td><td>0.582</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0377</td><td>0.070</td><td>0.542</td></tr>
+  </tbody>
+  <tbody>
     <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0585</td><td>0.129</td><td>0.455</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0529</td><td>0.114</td><td>0.463</td></tr>
@@ -159,111 +71,133 @@ took about 99 minutes on a laptop CPU.
 </table>
 </div>
 
-Across 1999–2021, Ridge has a higher mean IC than Kumo Small. Kumo's
-lower IC variability gives it the higher ICIR. In 2017–2021, the drop in
-Kumo's mean IC is enough to put its ICIR below both baselines.
+LightGBM's full-period lead in mean IC comes from 1999–2011. Ridge has
+the higher mean in the recent windows. Its IC varies more across dates,
+so LightGBM still has the higher ICIR. Across the full matched sample,
+Kumo Small's lower IC variability puts its ICIR above Ridge's, though
+Kumo trails both baselines in 2017–2021. Using every daily date for Ridge
+and LightGBM gives similar full-period ICIRs of 0.54 and 0.72.
 
-<figure id="figure-2" class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="1" alt="LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">The three scores on the shared trading schedules.</span> The deciles are equal-weighted. Return, volatility and Sharpe are shown before costs.</figcaption>
+## Return and risk by score decile
+
+I sort the eligible stocks into ten equal-weight deciles on each rebalance
+date and trade at the next close. I keep decile membership until the next
+rebalance and average the daily returns across the three schedules before
+compounding. The figure starts with the matched weekly schedules. The
+15-session view shows the original Ridge and LightGBM deciles.
+
+<figure id="figure-1" class="research-figure responsive-figure decile-schedule-figure">
+  <fieldset id="figure-2" class="decile-schedule">
+    <legend>Rebalance schedule</legend>
+    <input type="radio" name="decile-schedule" id="deciles-weekly" checked>
+    <label for="deciles-weekly">Weekly schedules</label>
+    <input type="radio" name="decile-schedule" id="deciles-fifteen">
+    <label for="deciles-fifteen">15-session schedules</label>
+    <div class="decile-schedule-panel decile-schedule-weekly">
+      {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="2" alt="On the weekly schedules, LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
+    </div>
+    <div class="decile-schedule-panel decile-schedule-fifteen">
+      {% include theme-svg-figure.html base="/assets/equity-model-comparison/decile-profile" mobile="/assets/equity-model-comparison/decile-profile_mobile" version="2" alt="On 15-session schedules, LightGBM's top decile earns more at higher volatility than Ridge. Their top-decile Sharpes are nearly equal." %}
+    </div>
+  </fieldset>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile, 1999–2021.</span> Decile 10 holds the highest scores. Both views use equal-weight deciles before costs.</figcaption>
 </figure>
 
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Matched expanding-window gross spread metrics">
-<table id="table-5" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">Gross top-minus-bottom spread on the shared schedules.</span> Return, volatility and Sharpe are annualized.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>7.2%</td><td>19.6%</td><td>0.45</td></tr>
-    <tr><th scope="row">LightGBM</th><td>16.8%</td><td>15.0%</td><td>1.11</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>9.4%</td><td>14.9%</td><td>0.68</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>4.4%</td><td>20.9%</td><td>0.31</td></tr>
-    <tr><th scope="row">LightGBM</th><td>9.9%</td><td>14.5%</td><td>0.72</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>3.9%</td><td>16.3%</td><td>0.32</td></tr>
-  </tbody>
-</table>
-</div>
-
-Kumo's gross spread earns a Sharpe of 0.68 over the full sample, between
-Ridge and LightGBM. Its full-sample Sharpe gap versus LightGBM is −0.43,
-with a paired 21-session block-bootstrap interval from −0.78 to −0.10.
-Kumo's spread Sharpe finishes close to Ridge in 2017–2021.
-
-I can hold the first fold's scoring dates fixed to compare the training
-samples. On the same 91 dates, Kumo's ICIR was 1.08 with three-week spacing,
-0.91 with four weeks, and 0.62 with six weeks. The four-week context took
-3 minutes 8 seconds to fit and score the fold, compared with 2 minutes
-42 seconds at six weeks. A larger context helped in this fold.
-
-On the same first-fold dates with six-week spacing, Medium reached an
-ICIR of 0.724 in 6 minutes 25 seconds, and Large reached 0.785 in 8 minutes
-42 seconds. Their gross spread Sharpes were 1.91 and 1.87, versus 2.66 for
-LightGBM on that schedule. In this window, increasing Small's context
-from six weeks to four gave a larger ICIR gain for less computation.
-
-In the final fold, from October 2020 through December 2021, the ranking
-comparison went the other way. Four-week spacing used 190,064 context rows
-and took 24 minutes, compared with 126,892 rows and 12½ minutes at six
-weeks. On 61 dates with realized targets, ICIR was 0.11 at four weeks and
-0.21 at six. The paired 21-session block-bootstrap interval for the
-difference was −0.23 to 0.06. The spacing changes which dates enter the
-context as well as how many, and the early gain did not carry into this
-later window.
-
-The scoring schedule made the bigger difference to runtime. It used
-about one fifth of the predictions needed to score every daily
-cross-section. Increasing the prediction batch size from 1,000 to 1,500
-improved throughput by about 4% in a timing test on the first context.
+On the 15-session schedules, LightGBM's top decile earns more at higher
+volatility, leaving its Sharpe close to Ridge's. Their bottom deciles
+separate more clearly. The broader advantage also shows up in the
+weekly top-minus-bottom spread, which compounds the difference between
+the two deciles' daily returns.
 
 ## Returns after portfolio construction
 
-The optimized books start from the 75 highest and 75 lowest scores. Each
-schedule uses $5 million of simulated capital, a 7% annual volatility
+The optimized books start from the 75 highest and 75 lowest scores.
+Each schedule uses $5 million of simulated capital, a 7% annual volatility
 target, and gross and beta limits. Measurable orders are capped at 10% of
-prior 21-session average daily dollar volume. The simulation closes
-positions with stopped quotes at their last observed price.
+prior 21-session average daily dollar volume. Positions with stopped quotes
+close at their last observed price.
 
-The optimizer prices trades against settled holdings. Its turnover penalty
-is 2.5 basis points for Ridge and 5 basis points for LightGBM and Kumo Small.
-I use the LightGBM portfolio recipe with Kumo scores.
+The optimizer prices trades against settled holdings, with a turnover
+penalty of 2.5 basis points for Ridge and 5 for LightGBM and Kumo. The Kumo
+books use the LightGBM construction recipe. Simulated long and short
+trades pay 7.5 and 10 basis points per executed dollar through 2010,
+then 5 and 7.5 basis points. For the constructed books I compute each
+statistic separately on the three weekly schedules and average them.
 
-The books share the same execution fees. Simulated long and short trades
-pay 7.5 and 10 basis points per executed dollar through 2010, then 5 and 7.5
-basis points. I compute compounded annual return, volatility and zero-cash
-Sharpe separately for each schedule on matching dates and average the
-three statistics.
-
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Current-cost portfolio metrics">
-<table id="table-6" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 6.</span> <span class="caption-title">Long–short performance after execution fees.</span> All three models use the same rebalance schedules.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">Net return</th><th scope="col">Volatility</th><th scope="col">Net Sharpe</th></tr></thead>
+<div id="table-5">
+<div id="table-6" class="research-table-scroll" tabindex="0" role="region" aria-label="Gross decile spreads and portfolios after execution fees">
+<table id="table-2" class="research-table comparison-table equity-comparison-table">
+  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Gross decile spreads and net constructed portfolios.</span> The main comparison uses the matched weekly schedules. Return, volatility and Sharpe are annualized.</caption>
+  <colgroup span="1"></colgroup><colgroup span="3"></colgroup><colgroup span="3"></colgroup>
+  <thead>
+    <tr><th scope="col" rowspan="2">Model</th><th scope="colgroup" colspan="3">Gross decile spread</th><th scope="colgroup" colspan="3" class="comparison-divider">Net constructed book</th></tr>
+    <tr><th scope="col">Return</th><th scope="col">Vol.</th><th scope="col">Sharpe</th><th scope="col" class="comparison-divider">Return</th><th scope="col">Vol.</th><th scope="col">Sharpe</th></tr>
+  </thead>
   <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>10.8%</td><td>8.7%</td><td>1.21</td></tr>
-    <tr><th scope="row">LightGBM</th><td>16.9%</td><td>7.5%</td><td>2.12</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>8.9%</td><td>7.1%</td><td>1.24</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2011</th></tr>
-    <tr><th scope="row">Ridge</th><td>9.9%</td><td>8.0%</td><td>1.22</td></tr>
-    <tr><th scope="row">LightGBM</th><td>17.7%</td><td>7.1%</td><td>2.35</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>9.9%</td><td>6.8%</td><td>1.42</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2012–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>11.9%</td><td>9.7%</td><td>1.22</td></tr>
-    <tr><th scope="row">LightGBM</th><td>15.9%</td><td>8.0%</td><td>1.88</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>7.8%</td><td>7.5%</td><td>1.04</td></tr>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>12.6%</td><td>10.5%</td><td>1.18</td></tr>
-    <tr><th scope="row">LightGBM</th><td>14.9%</td><td>8.9%</td><td>1.60</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>7.0%</td><td>8.1%</td><td>0.88</td></tr>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">1999–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>7.2%</td><td>19.6%</td><td>0.45</td><td class="comparison-divider">10.8%</td><td>8.7%</td><td>1.21</td></tr>
+    <tr><th scope="row">LightGBM</th><td>16.8%</td><td>15.0%</td><td>1.11</td><td class="comparison-divider">16.9%</td><td>7.5%</td><td>2.12</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>9.4%</td><td>14.9%</td><td>0.68</td><td class="comparison-divider">8.9%</td><td>7.1%</td><td>1.24</td></tr>
+  </tbody>
+  <tbody>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">1999–2011</th></tr>
+    <tr><th scope="row">Ridge</th><td>7.9%</td><td>20.9%</td><td>0.47</td><td class="comparison-divider">9.9%</td><td>8.0%</td><td>1.22</td></tr>
+    <tr><th scope="row">LightGBM</th><td>20.2%</td><td>16.4%</td><td>1.20</td><td class="comparison-divider">17.7%</td><td>7.1%</td><td>2.35</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>11.8%</td><td>15.7%</td><td>0.79</td><td class="comparison-divider">9.9%</td><td>6.8%</td><td>1.42</td></tr>
+  </tbody>
+  <tbody>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">2012–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>6.3%</td><td>17.8%</td><td>0.43</td><td class="comparison-divider">11.9%</td><td>9.7%</td><td>1.22</td></tr>
+    <tr><th scope="row">LightGBM</th><td>12.6%</td><td>12.9%</td><td>0.99</td><td class="comparison-divider">15.9%</td><td>8.0%</td><td>1.88</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>6.5%</td><td>13.7%</td><td>0.52</td><td class="comparison-divider">7.8%</td><td>7.5%</td><td>1.04</td></tr>
+  </tbody>
+  <tbody>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">2017–2021</th></tr>
+    <tr><th scope="row">Ridge</th><td>4.4%</td><td>20.9%</td><td>0.31</td><td class="comparison-divider">12.6%</td><td>10.5%</td><td>1.18</td></tr>
+    <tr><th scope="row">LightGBM</th><td>9.9%</td><td>14.5%</td><td>0.72</td><td class="comparison-divider">14.9%</td><td>8.9%</td><td>1.60</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>3.9%</td><td>16.3%</td><td>0.32</td><td class="comparison-divider">7.0%</td><td>8.1%</td><td>0.88</td></tr>
   </tbody>
 </table>
 </div>
+</div>
 
-LightGBM's lead in the equal-weight spread carries through construction and
-fees. Kumo Small and Ridge have similar net Sharpe over 1999–2021. Kumo
-earned a lower return at lower volatility. Their net Sharpe difference
-was 0.02, with a paired 21-session block-bootstrap interval from −0.30 to
-0.32. From 2017–2021, Kumo trailed both baselines after fees.
+LightGBM's lead in the equal-weight spread carries through construction
+and fees. Kumo Small earned a lower net return than Ridge at lower
+volatility. Their net Sharpe difference of 0.02 had a paired 21-session
+block-bootstrap interval from −0.30 to 0.32. From 2017–2021, Kumo trailed
+both baselines after fees.
+
+## Kumo’s training context
+
+To see what changes with a denser context, I first scored every trading
+day from January 1999 to September 2000. Taking every 15th training session
+and keeping the two target tails gave Kumo Small 35,738 labeled rows.
+The latest selected training date was August 5, 1998, and the first score
+was in January 1999.
+
+<div id="table-3"></div>
+
+Over these first 421 dates, ICIR was 1.03 for Kumo Small and 1.01 for
+LightGBM. The rank IC difference was 0.0012,
+with a paired 21-session block-bootstrap interval from −0.0044 to 0.0070.
+The gap changed sign when I evaluated the same scores against the forward
+Sharpe ratio before sector ranking. With that target, ICIR was 0.75 for
+Kumo Small and 0.84 for LightGBM.
+
+On the 91 matched signal dates in that first fold, Kumo Small's ICIR was
+1.08 at three-week training spacing, 0.91 at four weeks, and 0.62 at six.
+At six-week spacing, Medium reached 0.724 in 6 minutes 25 seconds and
+Large reached 0.785 in 8 minutes 42 seconds. Their gross spread Sharpes
+were 1.91 and 1.87, versus 2.66 for LightGBM on the same schedule. Moving
+Small from six weeks to four gave a larger ICIR gain in that fold and
+took 3 minutes 8 seconds.
+
+In the final fold, from October 2020 through December 2021, four-week
+spacing gave Small 190,064 context rows and took 24 minutes. Six-week
+spacing used 126,892 rows and took 12½ minutes. On 61 dates with realized
+targets, ICIR was 0.11 at four weeks and 0.21 at six. The paired 21-session
+block-bootstrap interval for the difference was −0.23 to 0.06. Training
+spacing changes which dates enter the context as well as how many.
 
 These comparisons use the same archived development panel. The walk-forward
 cutoff governs when each return outcome can enter a fit. Reproducing the
