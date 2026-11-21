@@ -128,42 +128,6 @@ def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
         plt.close(fig)
 
 
-def render_hedges(paired, output, dark, mobile):
-    ink, blue, violet, grid = (("#d3dbe4", "#68a9ed", "#b89be9", "#39434e") if dark
-                              else ("#283542", "#2165a6", "#7950a2", "#d8dee4"))
-    labels = [("factor", "Original factors", violet, "s"), ("residual_lw", "Shrunk residuals", blue, "o"),
-              ("factor_target", "Factor target", ink, "D")]
-    style = {"font.size": 10 if mobile else 11, "svg.fonttype": "none", "svg.hashsalt": "factor-risk-hedges",
-             "text.color": ink, "axes.labelcolor": ink, "axes.titlecolor": ink, "xtick.color": ink, "ytick.color": ink}
-    with plt.rc_context(style):
-        fig, axes = plt.subplots(2, 1, figsize=(4.5 if mobile else 8.4, 6.0), layout="constrained", sharex=True)
-        for ax, (period, heading) in zip(axes, [("development","1999–2021"), ("later","2022–May 2026")], strict=True):
-            ax.set_title(heading, loc="left")
-            ax.axvline(0, color=ink, lw=.8, ls=":")
-            for shift, (model, label, color, marker) in zip([.23, 0, -.23], labels, strict=True):
-                rows = paired.filter(pl.col("model") == model, pl.col("period") == period).sort("size")
-                if rows["size"].to_list() != [75, 100, 150]:
-                    raise ValueError("Missing portfolio size in hedge figure")
-                y = np.array([2, 1, 0]) + shift
-                ax.hlines(y, rows["joint_low95"], rows["joint_high95"], color=color, lw=1.2)
-                ax.scatter(rows["difference"], y, label=label, color=color, marker=marker, s=23, zorder=3)
-            ax.set_yticks([2,1,0], labels=["75 stocks","100 stocks","150 stocks"])
-            ax.set_ylim(-.5, 2.5)
-            ax.tick_params(length=0)
-            ax.grid(axis="x", color=grid, lw=.6)
-            ax.set_axisbelow(True)
-            ax.spines[:].set_visible(False)
-        fig.legend(*axes[0].get_legend_handles_labels(), loc="outside upper center",
-                   ncol=3, labelcolor=ink, fontsize=8 if mobile else 10, frameon=False,
-                   handletextpad=.25, columnspacing=.8)
-        axes[-1].set_xlabel("Volatility minus stock shrinkage (percentage points)")
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        destination = output / f"hedges{suffix}.svg"
-        fig.savefig(destination, transparent=True, metadata={"Date":None})
-        destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
-        plt.close(fig)
-
-
 def export_realized_risk(daily, portfolios, output, sessions, annualization, risk_budget):
     """Report each schedule's trailing net volatility, then average on common month ends."""
     names = [model[0] for model in portfolios]
@@ -305,47 +269,6 @@ def render_market_exposure(
         plt.close(fig)
 
 
-def render_funding(data, output, dark, mobile):
-    ink, blue, violet, grid = (
-        ("#d3dbe4", "#74b7f4", "#c6afea", "#39434e") if dark
-        else ("#283542", "#2165a6", "#7950a2", "#d8dee4")
-    )
-    components = ("mean_funding", "funding_timing", "composition")
-    labels = ("Average amount short", "Timing of short exposure", "Choice and size of shorts")
-    style = {"font.size": 9 if mobile else 10, "text.color": ink, "xtick.color": ink,
-             "ytick.color": ink, "axes.labelcolor": ink, "svg.fonttype": "none",
-             "svg.hashsalt": "factor-risk-funding"}
-    with plt.rc_context(style):
-        fig, ax = plt.subplots(figsize=(4.6 if mobile else 7.6, 3.5), layout="constrained")
-        ax.axvline(0, color=ink, linewidth=.9, linestyle=":")
-        for period, label, color, marker, offset in (
-            ("development", "1999–2021", violet, "s", .13),
-            ("later", "2022–May 2026", blue, "o", -.13),
-        ):
-            series = data.filter(pl.col("reference") == "calibrated_shrinkage",
-                                 pl.col("leg") == "short", pl.col("period") == period)
-            for i, component in enumerate(components):
-                point, low, high = series.filter(pl.col("component") == component).select(
-                    "annual_pp", "low95", "high95").row(0)
-                y = len(components) - i + offset
-                ax.plot([low, high], [y, y], color=color, linewidth=1.5)
-                ax.plot(point, y, marker=marker, color=color, markersize=6,
-                        label=label if i == 0 else None)
-        ax.set_yticks([3, 2, 1], labels=labels)
-        ax.set(ylim=(.5, 3.55), xlabel="Difference in annual return (percentage points)")
-        ax.xaxis.grid(True, color=grid, linewidth=.55)
-        ax.set_axisbelow(True)
-        ax.tick_params(axis="both", length=0, pad=5)
-        ax.spines[:].set_visible(False)
-        ax.legend(ncols=2, frameon=False, loc="lower center", bbox_to_anchor=(.5, 1.0),
-                  fontsize=8 if mobile else 10, columnspacing=1.2, labelcolor=ink)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        destination = output / f"short-funding{suffix}.svg"
-        fig.savefig(destination, transparent=True, metadata={"Date": None})
-        plt.close(fig)
-        destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
-
-
 def render_fixed_book(data, output, *, dark, mobile):
     ink, before_color, after_color, grid = (
         ("#d3dbe4", "#c0a1e6", "#78b6fb", "#3d4956") if dark
@@ -395,7 +318,7 @@ def render_fixed_book(data, output, *, dark, mobile):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for arg in ["daily", "pair-history", "clusters", "hedge-intervals", "funding-attribution", "fixed-book-forecasts", "output"]:
+    for arg in ["daily", "pair-history", "clusters", "fixed-book-forecasts", "output"]:
         parser.add_argument("--" + arg, type=Path, required=True)
     parser.add_argument("--calibrated-daily", type=Path, help="Daily calibrated accounts for the market-exposure figure")
     args = parser.parse_args()
@@ -406,12 +329,9 @@ def main():
     returns = portfolio_paths(args.daily, portfolios)
     export_interactive(returns, portfolios, args.output)
     export_realized_risk(args.daily, portfolios, args.output, 252, 252, .07)
-    funding = pl.read_csv(args.funding_attribution)
     calibration = pl.read_csv(args.fixed_book_forecasts)
     pairs = pl.read_csv(args.pair_history, try_parse_dates=True).sort("decision")
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
-    paired = pl.read_csv(args.hedge_intervals).filter(pl.col("mandate") == "long/short",
-                                                    pl.col("weights") == "all names", pl.col("block_weeks") == 13)
     beta_window = 63
     correlation_window = 252
     exposure = None
@@ -423,8 +343,6 @@ def main():
     for mobile in [False, True]:
         for dark in [False, True]:
             render_figures(returns, portfolios, pairs, clusters, args.output, dark, mobile)
-            render_hedges(paired, args.output, dark, mobile)
-            render_funding(funding, args.output, dark, mobile)
             render_fixed_book(calibration, args.output, dark=dark, mobile=mobile)
             if exposure is not None:
                 render_market_exposure(

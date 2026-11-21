@@ -79,17 +79,14 @@ narrative when they interrupt it. Treat the author's examples as evidence of
 the underlying editorial preference, not a list of literal fixes to exhaust.
 
 Present established methods as established methods. Introduce the idea on its
-own terms, then recommend a useful explanation when relevant. Distinguish a
+own terms, then cite a useful explanation when relevant. Distinguish a
 source the author likes for its exposition from the original contribution;
 leading with a source's name can give familiar material an unintended air of
 novelty or imply credit for inventing it.
 
-Let references carry the author's personal judgment when he has expressed it:
-what he liked, found useful or would recommend to a colleague. A brief, natural
-recommendation can make a technical article more personal without interrupting
-its argument. Mention why a source is useful when that reason is known; avoid
-turning every citation into a formulaic endorsement or inventing a reading
-experience. Keep formal attribution where it supports a specific claim.
+Keep formal attribution where it supports a specific claim. Mention what a
+source explains especially well when that reason is known, without inventing
+a reading experience or adding an endorsement.
 
 The user's additional reference is Cliff Asness: choose the strongest one or
 two arguments rather than explaining a point several ways, and use footnotes
@@ -140,8 +137,8 @@ Prefer numbered footnotes for secondary methodological caveats, consolidating
 repeated hindsight or sample-reuse disclosures. Keep limitations that change
 the headline interpretation visible beside the claim; a concise existing
 in-sample box can still serve that purpose. Footnotes should improve flow
-without hiding material information. Close on the supported decision, what
-the author would change, or what remains unknown. Link existing shareable code
+without hiding material information. Close on what the evidence supports and
+where its reach ends. Link existing shareable code
 when useful; an invitation for feedback should be specific and natural, and
 never implies permission to publish private data.
 
@@ -154,8 +151,8 @@ Use these to judge the kind of edit, not as sentences to paste into every post.
   because I wanted to see what the risk limits changed.” This is the concrete
   comparison principle illustrated by Halford, not a quotation from him.
 - **Report a research dead end plainly.** When supported by completed results:
-  “The tighter limit reduced concentration but also lowered Sharpe, so I kept
-  the original rule.” Give the outcome and judgment; keep execution failures
+  “The tighter limit reduced concentration and lowered Sharpe.” Give the
+  outcome and its scope; keep execution failures
   and incomplete checks in the private workflow. A solver failure is not
   evidence that no feasible solution exists.
 - **Calibrate the interpretation.** Replace “The cap makes the portfolio
@@ -172,8 +169,8 @@ independent test” with “The schedules share the same market history.” Repl
 realized returns to the stocks' exposures.” Keep the useful definition once,
 near the measure; delete an empty qualification outright.
 
-Finish with the author's current decision and the specific unresolved question,
-if there is one. Then read the paragraphs as continuous speech. Does every
+Finish with the observed trade-off and its material limits. Then read the
+paragraphs as continuous speech. Does every
 paragraph advance the explanation? Cut repeated setup, repeated caveats and a
 second concluding recap. Keep uncertainty where it changes the claim, without
 hedging every sentence. Remove any joke, aside or polished-sounding sentence
