@@ -45,7 +45,7 @@ Positive residual covariance lowers the spread’s estimated variance because th
 
 ## Groups identified in one year still move together in the next
 
-I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. The sector and industry labels come from an August 2026 snapshot. At each year-end I group stocks by their trailing 252-session residual correlations. I freeze the groups and stock order for the next 252 sessions so any block that reappears reflects movement after the groups were chosen. The forward comparison uses names observed in both windows, about 93% of the formation names on average.
+I use residuals from a daily fit with a market intercept, broad sectors and seven style factors. At each year-end I group stocks by their trailing 252-session residual correlations. Holding those groups fixed for the following year lets me measure whether yesterday’s neighbours still move together. The comparison uses stocks observed in both windows, about 93% of the initial names on average.
 
 The first two heatmaps compare stock returns and residual returns on the same dates and in the same stock order. The third keeps that order for the next 252 sessions. A block in the same place in the last two panels means the group still moves together.
 

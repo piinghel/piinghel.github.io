@@ -12,11 +12,13 @@ series_order: 1
 permalink: /quants/factor-risk-sizing.html
 ---
 
-A short can hedge one exposure and add to another. A stock with similar market beta might offset the market risk of a long while adding to its momentum exposure. A stock-by-stock volatility estimate misses both effects. A full correlation matrix can capture them, but in the Russell 1000 that means estimating nearly half a million pairwise correlations.
+Suppose I’m long a chipmaker and want to hedge it. I could short another chipmaker or a stock from a different sector. Both shorts could offset the same amount of market beta. The first can also offset a semiconductor selloff. If the long has strong momentum and the short has weak momentum, the spread can still lose when momentum reverses. The hedge depends on which move I want protection from.
 
-A factor risk model estimates those relationships through a smaller set of shared exposures, such as the market, sectors and styles. This makes the risk easier to interpret and reduces how much I have to estimate. It also puts more weight on which factors I include. Stocks can still move together after those factors come out.
+A factor risk model estimates how much each stock responds to shared moves in the market, sectors and styles. I multiply those exposures by the signed position weights and add them up. That gives the portfolio’s exposure to each factor. To turn exposures into a volatility forecast, I need to know how large each factor’s moves tend to be and how the factors move together. I also need a forecast of the risk left over after accounting for those shared moves, such as the part of an earnings surprise specific to one company.
 
-With the Ridge forecasts fixed, I compare factor-based estimates with stock correlations shrunk toward zero. First I look at the hedges each model finds on the same stocks. Then I check how each model forecasts risk on identical holdings and what happens when it sizes and trades its own book after fees.
+The same exposures tell me how a proposed trade changes the portfolio’s risk, what a sector or style shock would do to the book, and how much of an observed return the factor moves explain. There is also a statistical reason to use them. A universe of 1,000 stocks has 499,500 pairwise correlations. The factor model estimates much of that co-movement through a smaller covariance matrix. Whether that helps depends on what the factors capture and what co-movement remains in the residuals.
+
+I use the Ridge forecasts as a worked example and keep them fixed. First I test which covariance estimates find quieter hedges on the same stocks. Then I compare risk forecasts on identical holdings. Finally I let each estimate change the positions under the same risk budget and check what happens to exposure, realized volatility and returns after fees.
 
 ## From stock exposures to portfolio risk
 
@@ -40,7 +42,13 @@ The additivity of the return model still allows factor returns to move together,
 
 Which moves land in the residuals depends on the factors. A model with only a market and sectors can leave a common momentum effect behind. Adding a factor or estimating residual correlations can capture more of that co-movement, with more relationships to estimate. Part 2 checks how much of the residual co-movement survives into the following year.
 
-For signed weights $$w$$, the portfolio has factor exposures $$B^\top w$$ and forecast daily variance $$w^\top\Sigma w$$.
+For signed weights $$w$$, let $$b=B^\top w$$ be the portfolio’s factor exposures. A factor move $$f$$ contributes $$b^\top f$$ to portfolio return. Before seeing that move, the model forecasts daily variance as
+
+$$
+w^\top\Sigma w = b^\top F b + w^\top\Omega w.
+$$
+
+The first term depends on the net exposures and on how the factors move together. With diagonal $$\Omega$$, the second is the sum of each stock’s specific variance times its squared weight. Two positions can cancel a shared exposure while both still add specific risk.
 
 ### The factors in this study
 
@@ -113,26 +121,35 @@ Stock shrinkage and the factor target use the same standalone stock risk. They d
 
 ### The objective and constraints
 
-At rebalance I use the same objective and limits for all three covariance estimates. The optimizer looks for the most expected return after a turnover penalty, inside a 7% forecast volatility budget.
+At each rebalance the three joint optimizers maximize expected return after a turnover penalty. Each uses the same limits and prices portfolio risk with its own covariance estimate.
 
 $$
 \begin{aligned}
 \max_w\quad & \mu^\top w - c\lVert w-w_{\rm prev}\rVert_1 \\
-\text{subject to}\quad & 252\,w^\top\Sigma w \le (0.07)^2 \\
-& \lVert w\rVert_1 \le 2,\quad |\mathbf{1}^\top w| \le 0.25 \\
-& |\beta^\top w| \le 0.05 \\
-& |w_i| \le 0.04 \quad (\text{each stock}) \\
-& |a_g^\top w| \le 0.20 \quad (\text{each sector}).
+\text{subject to}\quad & A\,w^\top\Sigma w \le \sigma_{\rm target}^2 \\
+& \lVert w\rVert_1 \le G_{\max},\quad |\mathbf{1}^\top w| \le N_{\max} \\
+& |\beta^\top w| \le \beta_{\max} \\
+& |w_i| \le w_{\max} \quad \text{for each stock }i \\
+& |a_g^\top w| \le S_{\max} \quad \text{for each sector }g \\
+& \lVert w_{g\cap\ell}\rVert_1 \le q_{\max}\lVert w_\ell\rVert_1
+  \quad \text{for each sector }g\text{ and sleeve }\ell.
 \end{aligned}
 $$
 
-Here $$w$$ is the vector of signed target weights and $$w_{\rm prev}$$ is the book held at rebalance. The return forecasts $$\mu$$ are the Ridge scores converted to return units using the same 21-session stock volatility estimates. The turnover penalty applies a rate $$c$$ to two-way turnover, the sum of the absolute weight changes. The replay charges trading fees separately on the orders that actually fill.
+Here $$w$$ gives the signed target weights and $$w_{\rm prev}$$ the weights held at rebalance. Eligible longs have nonnegative weights, eligible shorts have nonpositive weights, and other weights are zero. The vector $$\mu$$ contains the Ridge forecasts in return units. The rate $$c$$ is 2.5 basis points per unit of two-way turnover, the sum of absolute weight changes. Trading fees apply separately to fills.
 
-The first constraint caps annualized forecast volatility at 7% using the daily covariance $$\Sigma$$. Next come gross exposure (longs plus absolute shorts) and net exposure (longs minus shorts). The vector $$\beta$$ holds the stocks’ estimated index betas, and $$a_g$$ marks stocks in sector $$g$$. The position weights follow the signs of their eligible sleeves, and a sector can account for at most 30% of either sleeve. The beta limit matters even when dollars balance. A 3% long with beta 1.4 and a 3% short with beta 0.8 add zero net exposure and 0.018 of market beta.
+| Symbol | Meaning | Setting |
+| --- | --- | --- |
+| $$A$$ | Sessions per year, used to annualize the daily variance from $$\Sigma$$ | 252 |
+| $$\sigma_{\rm target}$$ | Annualized forecast-volatility target | 7% |
+| $$G_{\max}$$ | Gross exposure, longs plus absolute shorts | 200% |
+| $$N_{\max}$$ | Absolute net exposure, the magnitude of longs minus shorts | 25% |
+| $$\beta_{\max}$$ | Absolute exposure to the Russell 1000, with stock betas in $$\beta$$ | 0.05 |
+| $$w_{\max}$$ | Maximum absolute target weight of a single stock | 4% |
+| $$S_{\max}$$ | Absolute net sector exposure, with $$a_g$$ selecting sector $$g$$ | 20% |
+| $$q_{\max}$$ | Maximum share of either sleeve in a single sector | 30% |
 
-The hard cap makes it possible to compare models under the same stated risk budget. A variance penalty in the objective would let risk rise when the forecasts are stronger. The covariance estimate is where the model accounts for style risk.
-
-The stock membership is dated. The sector and industry labels come from a single August 2026 snapshot, so historical labels may reflect later reclassifications.
+These constraints address different risks. A 3% long with beta 1.4 and a 3% short with beta 0.8 add zero net exposure and 0.018 of market beta. The volatility constraint also captures how sector and style exposures combine. If two estimates price the same positions differently, the same volatility target can support different amounts of gross exposure.
 
 For the replay, I stagger the starting week across three schedules to see how sensitive the results are to when the book trades. Each rebalances every three weeks against $5 million. All four rules trade from filled holdings, with next-close execution and a 10% cap on participation in average daily dollar volume for ordinary fills. From 2011 I charge 5 bp on long trades and 7.5 bp on short trades, with higher rates earlier.
 
@@ -306,5 +323,8 @@ The covariance estimate does two jobs. It tells the optimizer which positions of
 
 ## References
 
+- Factor exposures, risk and attribution. [Paleologo, *Linear Models of Asset Returns*, Columbia Quantitative Investing, Lecture 3](https://www.dropbox.com/scl/fi/1nqzz8zfikjace6g5fa5j/FINC_B8420_3_simple.pdf?rlkey=pj6boer325ci9e3bys5rt5vdz&dl=0)
+- The linear factor model applied to equity portfolios. [Zhang, *Modeling Equities Returns: The Linear Case*, Hudson River Trading](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
+- Practitioner examples. [MSCI Barra US Equity Model (USE4)](https://www.msci.com/documents/10199/242721/Barra_US_Equity_Model_USE4.pdf) · [Bloomberg Portfolio & Risk Analytics](https://professional.bloomberg.com/products/bloomberg-terminal/portfolio-analytics/)
 - Volatility scaling. [Paleologo, *Advanced Portfolio Management*, §6.3](https://www.wiley.com/en-us/advanced-portfolio-management-a-quant%27s-guide-for-fundamental-investors-p-9781119789802)
 - Correlation shrinkage. [Pedersen, Babu and Levine, *Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543)

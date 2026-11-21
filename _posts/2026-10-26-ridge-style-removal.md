@@ -25,10 +25,8 @@ some strengths. But the gains were earned before 2019, and in the last five year
 style removal hasn't helped. A separate test of adding short interest shows
 a small negative full-period Sharpe difference, with considerable uncertainty.
 
-**Correction, 30 October 2026:** An earlier version overstated the benefit of
-removing short interest because the input mixed split-adjusted shares with
-unadjusted prices. The short-interest results below use a corrected input in a
-different test; the six-style results are unaffected.
+**Correction, 30 October 2026.** The short-interest results below replace an
+earlier comparison that overstated the benefit of removing that exposure.
 
 ## Style bets and stock-specific bets behave differently
 
@@ -84,7 +82,7 @@ a lower return can be acceptable if volatility falls enough too.
 The tool is the one a fundamental risk model is built on, used on the forecast
 instead of on returns. On each date I build a loadings matrix $$B$$ for the
 roughly 1,000 stocks in the universe: eleven sector loadings, 1 for the stock's
-sector and 0 otherwise (with the sector classification held fixed), and six
+sector and 0 otherwise, and six
 style loadings (Table 1). Then I regress the forecast on it:
 
 $$
@@ -252,7 +250,7 @@ less and kept most of it.
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=5" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="4" label="Cumulative net return against no removal at equal volatility for style 25% and 50% and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
 </div>
-<p class="figure-caption"><strong>Figure 5: The gap stopped growing after 2018, and 50% removal gave part of it back.</strong> The chart rescales each saved daily return series to the full-period volatility of no removal, then accumulates the net gaps in points of capital across the three schedules. It is an after-the-fact comparison of return paths. Shading starts in 2019.</p>
+<p class="figure-caption"><strong>Figure 5: The gap stopped growing after 2018, and 50% removal gave part of it back.</strong> The chart puts each strategy at the full-period volatility of the unadjusted portfolio. It accumulates the net return differences in points of capital across the three schedules. This is a retrospective comparison. Shading starts in 2019.</p>
 
 One possibility is that the trade-off changed: since 2019 the book's
 stock-specific P&L has paid much less (a Sharpe ratio of 0.10, against 0.63
@@ -268,8 +266,7 @@ Short interest is worth looking at because heavily shorted stocks can share
 crowding risk. I compared 25% removal of the six styles with 25% removal of
 those styles and short interest together. I did this for Ridge and LightGBM,
 using both the original forecasts and forecasts trained with a style-exposure
-penalty. This is a separate portfolio test covering 1999–2021, with a different
-engine from the 1999–April 2026 book above.
+penalty. The paired comparison covers 1999–2021.
 
 <table class="research-table comparison-table compact-table">
   <caption><strong>Table 3: Adding short interest to 25% style removal.</strong> Net Sharpe ratios, mean of three rebalance schedules. The difference is the seven-style book minus the six-style book at 25%; the full-period interval is a paired 120-session block-bootstrap 95% interval. The last five years are 2017–2021.</caption>
@@ -289,12 +286,8 @@ include zero. The last five years are mildly positive. Short interest may be
 useful to control a particular exposure, but this test doesn't establish a
 return or signal-stability improvement.
 
-For this comparison, I converted short-interest shares to the historical share
-basis using unadjusted volume divided by split-adjusted volume, then multiplied
-by unadjusted price and divided by market capitalization. I lagged the whole
-ratio by 21 trading sessions and kept reported zero separate from unknown.
-The lag is a proxy for availability: publication and data vintage timing
-haven't been verified.
+I measure short interest as the value of shares sold short relative to market
+capitalization, with a one-month lag as a proxy for availability.
 
 ## PCA and portfolio-level limits do less
 

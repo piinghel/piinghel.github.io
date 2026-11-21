@@ -51,6 +51,15 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   invented training/test split.
 - Describe implementation only when it changes the research design, evidence
   or interpretation. Keep material limitations once, where they matter.
+- Use the Ridge model as a worked example to explain and stress-test ideas.
+  Lead with the mathematics, its assumptions and what the comparisons isolate.
+  Use portfolio results to explain mechanisms and trade-offs. Keep Python,
+  code structure and routine engineering details in the research repository.
+- Omit the sector and industry classification snapshot and historical
+  reclassification caveat from all public posts. Keep dataset provenance in
+  private research records.
+- Write objectives and constraints symbolically, then define the symbols and
+  give the numerical settings below. Use the settings from the cited replay.
 - Do not publish confidential sell-side reports, citations to them, proprietary
   source identifiers, or licensed source data. Keep private research inputs local.
 
