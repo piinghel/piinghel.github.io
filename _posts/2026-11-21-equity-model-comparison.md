@@ -172,17 +172,18 @@ expand Kumo's training context from the same start using one date every
     <tr><th scope="row">Ridge</th><td>0.0446</td><td>0.069</td><td>0.65</td><td>13.4%</td><td>17.3%</td><td>0.81</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0546</td><td>0.062</td><td>0.88</td><td>23.9%</td><td>15.6%</td><td>1.45</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0500</td><td>0.059</td><td>0.84</td><td>16.9%</td><td>15.0%</td><td>1.12</td></tr>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2010 · 604 rank dates</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0409</td><td>0.074</td><td>0.55</td><td>7.2%</td><td>21.7%</td><td>0.43</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0544</td><td>0.063</td><td>0.86</td><td>19.6%</td><td>17.1%</td><td>1.13</td></tr>
-    <tr><th scope="row">Kumo Small</th><td>0.0469</td><td>0.061</td><td>0.77</td><td>12.4%</td><td>16.3%</td><td>0.80</td></tr>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2014 · 813 rank dates</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0447</td><td>0.074</td><td>0.61</td><td>6.8%</td><td>19.3%</td><td>0.44</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0569</td><td>0.064</td><td>0.90</td><td>18.0%</td><td>15.2%</td><td>1.16</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0466</td><td>0.058</td><td>0.81</td><td>10.1%</td><td>14.6%</td><td>0.73</td></tr>
   </tbody>
 </table>
 </div>
 
 Kumo Small's rank IC and spread Sharpe sit between the two baselines in
-both windows. Adding the sixth fold widened LightGBM's lead in ICIR from
-0.03 to 0.09. Kumo's spread had the lowest volatility in both windows.
+both windows. Through September 2014, its mean IC is close to Ridge's and
+its daily IC varies less. Kumo's spread had the lowest volatility in both
+windows.
 
 I can hold the first fold's scoring dates fixed to compare the training
 samples. On the same 91 dates, Kumo had a rank IC of 0.0770 and an ICIR of
