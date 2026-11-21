@@ -221,9 +221,15 @@ with a paired 21-session block-bootstrap interval from −0.78 to −0.10.
 Kumo's spread Sharpe finishes close to Ridge in 2017–2021.
 
 I can hold the first fold's scoring dates fixed to compare the training
-samples. On the same 91 dates, Kumo had a rank IC of 0.0770 and an ICIR of
-1.08 with three-week spacing. At six-week spacing those measures were
-0.0515 and 0.62. The denser context helped substantially in this fold.
+samples. On the same 91 dates, Kumo's ICIR was 1.08 with three-week spacing,
+0.91 with four weeks, and 0.62 with six weeks. The four-week context took
+3 minutes 8 seconds to fit and score the fold, compared with 2 minutes
+42 seconds at six weeks. A larger context helped in this fold.
+
+The scoring schedule made the bigger difference to runtime. It used
+about one fifth of the predictions needed to score every daily
+cross-section. Increasing the prediction batch size from 1,000 to 1,500
+improved throughput by about 4% in a timing test on the first context.
 
 The Ridge and LightGBM results show why I want all three views of a score.
 The daily IC compares the whole ordering, the deciles show what happens at
