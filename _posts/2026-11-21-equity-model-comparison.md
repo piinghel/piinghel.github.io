@@ -154,7 +154,7 @@ ranking the target by sector. On corrected closing prices, rank IC was
 0.0812 for Kumo and 0.0822 for LightGBM, with ICIR of 0.75 and 0.84.
 The small rank IC gap changes direction with the outcome definition.
 
-## Five folds with a smaller context
+## The expanding-window run
 
 The three portfolio schedules give me a second way to choose scoring dates.
 I score every eligible stock on their shared set of signal dates and
@@ -163,22 +163,26 @@ for about 1.16 million stock scores over the full history. For this run, I
 expand Kumo's training context from the same start using one date every
 30 trading sessions, keeping the two target tails as before.
 
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Five completed Kumo Small folds, ranking and gross spread">
+<div class="research-table-scroll" tabindex="0" role="region" aria-label="Expanding-window Kumo Small ranking and gross spread">
 <table id="table-5" class="research-table comparison-table risk-performance-table">
-  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">January 1999–September 2008 on the portfolio signal dates.</span> Rank statistics use 500 dates with realized targets. Gross top-minus-bottom spread statistics are annualized.</caption>
+  <caption><span class="caption-number">Table 5.</span> <span class="caption-title">Results on the portfolio signal dates.</span> Each row group begins in January 1999. Gross top-minus-bottom spread statistics are annualized.</caption>
   <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
   <tbody>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2008 · 500 rank dates</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0446</td><td>0.069</td><td>0.65</td><td>13.4%</td><td>17.3%</td><td>0.81</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0546</td><td>0.062</td><td>0.88</td><td>23.9%</td><td>15.6%</td><td>1.45</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0500</td><td>0.059</td><td>0.84</td><td>16.9%</td><td>15.0%</td><td>1.12</td></tr>
+    <tr class="period-heading"><th colspan="7" scope="colgroup">Through September 2010 · 604 rank dates</th></tr>
+    <tr><th scope="row">Ridge</th><td>0.0409</td><td>0.074</td><td>0.55</td><td>7.2%</td><td>21.7%</td><td>0.43</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0544</td><td>0.063</td><td>0.86</td><td>19.6%</td><td>17.1%</td><td>1.13</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0469</td><td>0.061</td><td>0.77</td><td>12.4%</td><td>16.3%</td><td>0.80</td></tr>
   </tbody>
 </table>
 </div>
 
-Kumo Small sits between the two baselines over these five folds. Its ICIR
-was 0.73 through the first two folds and 0.84 through the first five.
-LightGBM kept the highest mean rank IC and gross spread Sharpe as the
-comparison extended through 2008.
+Kumo Small's rank IC and spread Sharpe sit between the two baselines in
+both windows. Adding the sixth fold widened LightGBM's lead in ICIR from
+0.03 to 0.09. Kumo's spread had the lowest volatility in both windows.
 
 I can hold the first fold's scoring dates fixed to compare the training
 samples. On the same 91 dates, Kumo had a rank IC of 0.0770 and an ICIR of
