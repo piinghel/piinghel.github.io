@@ -23,11 +23,13 @@ class FigureInputTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             article = root / "index.html"
-            figure = '<p class="figure-caption"><span>Figure 1.</span> Growth.</p>'
-            table = '<table class="research-table"><caption>Table 1. Settings.</caption></table>'
+            figure = '<p id="figure-1" class="figure-caption"><span>Figure 1.</span> Growth.</p>'
+            table = '<table id="table-1" class="research-table"><caption>Table 1. Settings.</caption></table>'
             matrix = '<table class="worked-matrix"><caption>Covariance matrix</caption></table>'
             article.write_text(figure + matrix + table)
             self.assertEqual(check_site(root), [])
+            article.write_text(figure.replace('id="figure-1"', '') + table)
+            self.assertIn("missing anchor for Figure 1.", check_site(root)[0])
             article.write_text(figure + table + figure)
             self.assertIn("expected Figure 2.", check_site(root)[0])
 

@@ -42,7 +42,7 @@ and the strongest earned 8.95%. The three together earned 7.70%.
 Had I picked the weakest week, the entire portfolio would have followed that
 path. In the blend, it accounts for a third of each day's P&L.
 
-<figure class="research-figure rebalancing-figure responsive-figure">
+<figure id="figure-1" class="research-figure rebalancing-figure responsive-figure">
   {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=4" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="The three Friday starting weeks finish at different levels. The equal-notional blend ends between the strongest and weakest schedules." version="3" %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Three Friday starting weeks.</span> Growth compounds daily net P&amp;L per unit of fixed notional from 100 at the 31 December 2021 close.</figcaption>
 </figure>
@@ -61,7 +61,7 @@ target and the other two carry their positions. In week 2, the second book
 gets its turn. By week 4, the first book is due again. The portfolio has a
 rebalance scheduled each week, while each book keeps its three-week cycle.
 
-<figure class="sleeve-figure">
+<figure id="figure-2" class="sleeve-figure">
   <table class="sleeve-schedule" aria-label="Two cycles of the staggered rebalance schedule">
     <colgroup span="1"></colgroup><colgroup span="3"></colgroup><colgroup span="3"></colgroup>
     <thead>
@@ -125,7 +125,7 @@ later period, the average went from 0.81 to 0.84. The same arithmetic
 return came with a little less volatility, and the compounded return was
 slightly higher. The drawdown changed very little.
 
-<table class="research-table comparison-table risk-performance-table">
+<table id="table-1" class="research-table comparison-table risk-performance-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Standalone schedules and weekday blends.</span> Averages across 15 schedules or five blends. Returns are compounded and annualized. Sharpe uses 252 sessions and a zero cash rate.</caption>
   <thead><tr><th>Metric</th><th>Single<br>schedule</th><th>Three<br>tranches</th></tr></thead>
   <tbody>
@@ -164,7 +164,7 @@ single schedules ranged from 5.65% to 9.42% a year. The five blends
 ranged from 7.13% to 8.08%. Holding all three starting weeks lifted the
 weakest outcome and gave up the strongest. Picking the weekday still matters.
 
-<figure class="research-figure rebalancing-figure responsive-figure">
+<figure id="figure-3" class="research-figure rebalancing-figure responsive-figure">
   {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=7" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="Annualized net returns for 15 single schedules, 15 pairs and five three-book blends in each period. After 2021, the range narrows from 5.65–9.42% for one book to 7.13–8.08% for three." version="7" %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Return dispersion across schedules and blends.</span> Each dot is one of 15 schedules, 15 same-weekday pairs or five three-book blends. Lines span each group’s range.</figcaption>
 </figure>
@@ -178,7 +178,7 @@ with Monday signals at 8.80% a year, and the weakest with Friday
 signals at 5.73%. Averaging over weekdays makes the starting-week
 differences look small because those differences can reverse.
 
-<table class="research-table comparison-table compact-table">
+<table id="table-2" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Sources of calendar dispersion.</span> Shares of squared deviations in annualized net returns across 15 calendars. The interaction measures how the starting-week effect varies by weekday.</caption>
   <thead><tr><th>Component</th><th>1998–2021</th><th>2022–May 2026</th></tr></thead>
   <tbody>

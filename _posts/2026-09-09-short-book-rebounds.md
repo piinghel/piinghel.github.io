@@ -76,7 +76,7 @@ those sessions, times 252.
 </details>
 
 <div markdown="1">
-<p class="table-caption"><span class="caption-number">Table 1.</span> <span class="caption-title">Net book returns across market regimes.</span> Mean daily P&amp;L × 252, January 1999–May 2026. Each day enters one row. “Book lost” counts episodes with negative net P&amp;L.</p>
+<p id="table-1" class="table-caption"><span class="caption-number">Table 1.</span> <span class="caption-title">Net book returns across market regimes.</span> Mean daily P&amp;L × 252, January 1999–May 2026. Each day enters one row. “Book lost” counts episodes with negative net P&amp;L.</p>
 
 | Regime | Episodes | Share of sessions | Book | Long book | Short book | Book lost |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -114,7 +114,7 @@ decomposition below shows where that remaining return comes from.
 
 ## The low-risk package mostly cancels in declines and rallies
 
-<div class="research-figure responsive-figure">
+<div id="figure-1" class="research-figure responsive-figure">
   {% include blog-chart.html chart="regimes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-regimes" mobile="/assets/portfolio-attribution/theme-regimes_mobile" version="9" label="Paired dots compare the low-risk package and its components. Low volatility and the market exposure trade places between declines and rallies." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">The low-risk package in declines and rallies.</span> The subtotal combines low volatility, beta and net market exposure. Annualized contributions are before costs. The book is after costs.</p>
@@ -156,7 +156,7 @@ day's return, but the cutoffs use the full history. The comparison therefore
 describes the sample; it is not a tested rule for changing the portfolio.
 
 <div markdown="1">
-<p class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Theme returns on calm and volatile days.</span> Low and high thirds use lagged 21-session market volatility. Returns are annualized before costs except for the net book. The difference allows 21 sessions of autocorrelation.</p>
+<p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Theme returns on calm and volatile days.</span> Low and high thirds use lagged 21-session market volatility. Returns are annualized before costs except for the net book. The difference allows 21 sessions of autocorrelation.</p>
 
 | | Calm | Volatile | Difference | t |
 | :--- | ---: | ---: | ---: | ---: |
@@ -180,7 +180,7 @@ amount the history can't pin down.
 
 ## The two deepest drawdowns
 
-<div class="research-figure responsive-figure">
+<div id="figure-2" class="research-figure responsive-figure">
   {% include blog-chart.html chart="drawdowns" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-drawdowns" mobile="/assets/portfolio-attribution/theme-drawdowns_mobile" version="9" label="Each theme has a dot for each drawdown. The low-risk package and stock-specific returns contributed large losses in both 2008–09 and 2020–21." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Theme contributions in the two deepest drawdowns.</span> Gross P&amp;L in points of capital, July 2008–September 2009 and February 2020–January 2021.</p>

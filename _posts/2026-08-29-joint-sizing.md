@@ -138,7 +138,7 @@ Figure 1 runs the final portfolio, the optimizer with the trading controls
 described below, at five shrinkage values in development.
 
 <div id="correlation-shrinkage" class="research-figure rho-ladder-figure responsive-figure">
-  {% include blog-chart.html chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="19" %}
+  {% include blog-chart.html id="figure-1" chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="19" %}
 </div>
 
 <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How correlation shrinkage changes the portfolio.</span> The diamond marks the chosen shrinkage of 0.5. Beta bias is realized minus forecast beta over the next holding period.</p>
@@ -170,7 +170,7 @@ Long candidates take positive or zero weights and short candidates negative
 or zero weights, so the optimizer sizes the selected names but cannot flip
 their side.[^drift] Table 1 lists all settings.
 
-<table class="research-table settings-table">
+<table id="table-1" class="research-table settings-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Allocation settings.</span></caption>
   <thead><tr><th>Component</th><th>Setting</th></tr></thead>
   <tbody>
@@ -197,7 +197,7 @@ eligible, and a penalty on trading.
 
 I compound returns and use a zero cash rate for Sharpe. I annualize two-way turnover by dividing total traded notional by capital and elapsed calendar years.
 
-<table class="research-table comparison-table portfolio-card-table">
+<table id="table-2" class="research-table comparison-table portfolio-card-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">From volatility scaling to joint sizing.</span> September 1998–December 2021. Three-schedule means after 5 bp per dollar traded. Parentheses give the lowest and highest schedule Sharpe.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
@@ -225,7 +225,7 @@ limits. The full-shrinkage point in Figure 1 keeps all of these, plus the
 trading controls, and drops only the correlations. Its Sharpe of 1.05 is level
 with the score-weighted rule's 1.03, so the gain comes from the correlations.
 
-<div class="research-figure performance-figure responsive-figure">
+<div id="figure-2" class="research-figure performance-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/joint-sizing/performance.json" base="/assets/joint-sizing/performance-and-drawdowns" mobile="/assets/joint-sizing/performance-and-drawdowns_mobile" label="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="18" %}
 </div>
 
@@ -262,7 +262,7 @@ sizing score beats the old one's by more than $$2c$$ per unit of weight
 moved. The penalty is in score units, not a cost estimate; the 5 bp cost is
 charged separately on executed trades.
 
-<table class="research-table comparison-table control-table">
+<table id="table-3" class="research-table comparison-table control-table">
   <caption><span class="caption-number">Table 3.</span> <span class="caption-title">What each trading control contributes.</span> September 1998–December 2021, using the conventions in Table 2.</caption>
   <thead><tr><th>Trading rule</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Two-way turnover</th></tr></thead>
   <tbody>
@@ -283,7 +283,7 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 
 Table 4 covers January 2022–May 2026, about four and a half years.
 
-<table class="research-table comparison-table portfolio-card-table">
+<table id="table-4" class="research-table comparison-table portfolio-card-table">
   <caption><span class="caption-number">Table 4.</span> <span class="caption-title">The same rules after 2021.</span> January 2022–May 2026, using the conventions in Table 2.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
@@ -319,7 +319,7 @@ The beta limit applies to an estimate at each rebalance. Figure 3 tracks
 the beta of the portfolio's realized returns over a trailing year, which
 reflects holdings and market moves throughout that year.
 
-<div class="research-figure risk-beta-figure responsive-figure">
+<div id="figure-3" class="research-figure risk-beta-figure responsive-figure">
   {% include blog-chart.html chart="beta" source="/assets/joint-sizing/beta.json" base="/assets/joint-sizing/risk-calibration-and-beta" mobile="/assets/joint-sizing/risk-calibration-and-beta_mobile" label="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="17" %}
 </div>
 

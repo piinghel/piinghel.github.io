@@ -76,7 +76,7 @@ I use residuals from a daily fit with a market intercept, broad sectors and seve
 The first two heatmaps compare stock returns and residual returns on the same dates and in the same stock order. The third keeps that order for the next 252 sessions. A block in the same place in the last two panels means the group still moves together.
 {: #stock-correlations }
 
-<div class="research-figure responsive-figure">
+<div id="figure-1" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="4" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from about 25% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
   <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Stock correlations before and after factor removal.</span> The same 850 stocks and December 2021 groups appear in all three panels. Tile colours saturate at ±40%. This cohort had the strongest forward gap.</p>
 </div>
@@ -85,7 +85,7 @@ Removing the factors brought the average correlation from about 25% to near zero
 
 Across all 27 cohorts, within-group correlation was about 5 points higher than between-group correlation in formation and about 2 points higher the next year. A group can look persistent simply because many of its names are in the same industry. I swap names within industries while preserving each group’s industry mix. The shuffled groups had a forward gap of less than half a point on average. The original groups beat the 95th percentile of the shuffles in all 27 cohorts.
 
-<div class="research-figure responsive-figure">
+<div id="figure-2" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
   <p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Residual groups one year later.</span> Dots show next-year within-group minus between-group correlation. Short marks give the 95th percentile after shuffling labels within sectors.</p>
 </div>
@@ -108,7 +108,7 @@ To see which move reaches the portfolio, multiply each position weight by its st
 
 The first direction will look strong in the window that chose it. The test is to hold its weights fixed and ask how much variance that same direction has over the next 252 sessions. I use stocks observed in both windows and standardize each window by its own stock volatilities so the comparison tracks changes in co-movement.
 
-<div class="research-figure responsive-figure">
+<div id="figure-3" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/directions" mobile="/assets/residual-risk/directions_mobile" version="2" alt="PCA directions lose variance after formation but retain more than shuffled directions with the same industry composition. Development PCs two through five fall from 14.30 to 4.36 versus 1.64 for the shuffle." %}
   <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Principal directions after formation.</span> Compare formation, following-year and industry-shuffled variances on the same doubling scale. One is the reference for uncorrelated residuals. Cohorts have equal weight.</p>
 </div>
@@ -129,7 +129,7 @@ Return to A and B. The common component contributes $$1.6(1/\sqrt{2})(1/\sqrt{2}
 
 Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the same sector and group, carrying the trailing correlation forward reduced development error from about 17 to 12 correlation points against a forecast of zero. For pairs in different sectors and groups, predicting zero or using ordinary shrinkage gave errors of around 8 points, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
 
-<div class="research-figure responsive-figure">
+<div id="figure-4" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/pair-errors" mobile="/assets/residual-risk/pair-errors_mobile" version="1" alt="Changes in next-year pair correlation error versus forecasting zero. All estimators improved on zero for stocks in the same sector and cluster. The cross-sector, different-cluster forecasts increased error in both periods." %}
   <p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Next-year correlation error by stock-pair group.</span> Negative values mean smaller errors than forecasting zero correlation. Units are correlation points. Cohorts have equal weight within each panel.</p>
 </div>
@@ -152,7 +152,7 @@ On the filled books, dropping residual correlations moved the factor target’s 
 
 So far I’ve measured how much residual co-movement survives and how much it changes a risk forecast. In the replay, the optimizer can also change the holdings. I keep the Ridge scores, risk budget, constraints and trading penalty fixed and compare what the new positions delivered after fees.
 
-<table class="research-table comparison-table compact-table">
+<table id="table-1" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolios across residual risk estimates.</span> Annual results after fees. The residual methods share factors and specific volatilities. Stock shrinkage is the stock-level reference.</caption>
   <thead><tr><th>Risk estimate</th><th>Net return</th><th>Volatility</th><th>Sharpe</th></tr></thead>
   <tbody>

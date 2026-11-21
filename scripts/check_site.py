@@ -255,6 +255,8 @@ def check_site(destination: Path) -> list[str]:
             for number, caption in enumerate(captions, 1):
                 if not caption.startswith(f"{kind} {number}. "):
                     errors.append(f"{path.relative_to(root)}: expected {kind} {number}. followed by a title")
+                if f"{kind.lower()}-{number}" not in page.ids:
+                    errors.append(f"{path.relative_to(root)}: missing anchor for {kind} {number}.")
         for link in page.links:
             target = urlsplit(link)
             if target.scheme in {"mailto", "tel", "data", "javascript"}:

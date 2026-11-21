@@ -43,7 +43,7 @@ drop off: the most volatile decile
 compounds at only about a third of a percent a year before costs, and Sharpe
 falls from 0.90 in decile 1 to 0.20 in decile 10.
 
-<div class="research-figure decile-profile-figure responsive-figure">
+<div id="figure-1" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="deciles" source="/assets/low-volatility-sizing/deciles.json" base="/assets/low-volatility-sizing/decile_profile" mobile="/assets/low-volatility-sizing/decile_profile_mobile" label="Sharpe ratio, annual return and volatility across ten past-volatility deciles, from the least volatile stocks to the most volatile" version="18" %}
 </div>
 
@@ -60,7 +60,7 @@ its ex-ante beta. The portfolio's realized beta is −1.12. So with equal
 capital, what I meant as a low-volatility portfolio is mostly a big short on
 the market.
 
-<table class="research-table comparison-table leg-risk-table">
+<table id="table-1" class="research-table comparison-table leg-risk-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Risk on each side of the book.</span> Beta is measured before applying the short sign, July 1995–May 2026.</caption>
   <thead><tr><th scope="col">Stock decile</th><th scope="col">Annual volatility</th><th scope="col">Mean ex-ante beta</th></tr></thead>
   <tbody>
@@ -105,7 +105,7 @@ ex-ante betas.[^beta-check] Table 2 compares all four. Before the hedge, two-way
 stock turnover is about 19 times capital a year with equal weights and 12 times
 with inverse volatility. The hedge adds 1.3 and 0.6 times capital, respectively.
 
-<table class="research-table comparison-table compact-table">
+<table id="table-2" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Sizing with and without a beta hedge.</span> July 1995–May 2026. Returns are compounded after 5 bp per dollar traded. The index hedge has zero financing cost.</caption>
   <thead><tr><th>Rule</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
@@ -131,7 +131,7 @@ that to 4.6%, while inverse volatility, with its small hedge, barely changes.
 Figure 2 shows the paths. The hedge removes equal weighting's market bet but not
 its deep drawdowns.
 
-<div class="research-figure performance-figure responsive-figure">
+<div id="figure-2" class="research-figure performance-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/low-volatility-sizing/performance.json" base="/assets/low-volatility-sizing/performance_and_drawdowns" mobile="/assets/low-volatility-sizing/performance_and_drawdowns_mobile" label="Growth and drawdowns for equal-weight, inverse-volatility and equal-weight with a point-in-time Russell 1000 beta hedge" version="20" %}
 </div>
 
@@ -159,7 +159,7 @@ about 20.
 In the later rally the short book did roughly what its beta implied, and the
 shortfall of about 6 points came from the long book.
 
-<div class="research-figure regime-comparison-figure responsive-figure" data-shared-series>
+<div id="figure-3" class="research-figure regime-comparison-figure responsive-figure" data-shared-series>
   {% include blog-chart.html chart="rally-a" source="/assets/low-volatility-sizing/episodes.json" base="/assets/low-volatility-sizing/regime_comparison" mobile="/assets/low-volatility-sizing/regime_comparison_mobile" label="Panel A: dot-com rally and reversal, with linked book contributions" version="22" %}
   <section class="blog-chart" data-source="{{ '/assets/low-volatility-sizing/episodes.json' | relative_url }}" data-chart="rally-b" aria-label="Panel B: April 2025–May 2026 rally, with linked book contributions">
     <div class="blog-chart-ui" hidden></div>

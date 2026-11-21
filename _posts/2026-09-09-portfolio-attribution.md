@@ -56,7 +56,7 @@ From 23 September 1998, the longs made 372 points, the shorts lost 101 and tradi
 even though they made money in each of the 15 declines of 15% or more since 1999
 ([Part 2]({% link _posts/2026-09-09-short-book-rebounds.md %}#market-regimes)).
 
-<div class="research-figure responsive-figure">
+<div id="figure-1" class="research-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="8" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Cumulative P&amp;L by leg.</span> Longs and shorts are before costs. The net book includes costs. Shading marks the two deepest peak-to-trough losses.</p>
@@ -128,7 +128,7 @@ average therefore counts as short-term; the 10/21-session MACD, on the
 boundary, does not.
 
 <div markdown="1">
-<p class="table-caption"><span class="caption-number">Table 1.</span> <span class="caption-title">Components of the attribution.</span> Trading activity groups three factors. Net market exposure and sector tilt come from net dollars and sector weights.</p>
+<p id="table-1" class="table-caption"><span class="caption-number">Table 1.</span> <span class="caption-title">Components of the attribution.</span> Trading activity groups three factors. Net market exposure and sector tilt come from net dollars and sector weights.</p>
 
 | Theme | What it measures |
 | :--- | :--- |
@@ -337,7 +337,7 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 ## Low risk, short interest and short-term reversal pay
 {: #where-the-return-comes-from }
 
-{% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Annual return and share of book variance by theme, including a separate trading-cost row." version="7" %}
+{% include blog-chart.html id="figure-2" chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Annual return and share of book variance by theme, including a separate trading-cost row." version="7" %}
 <p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Each theme’s contribution to return and risk.</span> Returns are annualized before costs, with costs shown separately. Risk shares use whole-book variance for both the portfolio and individual legs.</p>
 
 Over the whole period the book averaged 9.6% a year before costs. Four sources
@@ -375,7 +375,7 @@ from low volatility and −0.02 from beta; stock-specific returns take off about
 ## The book earns less from reversal
 {: #how-it-changed }
 
-<div class="research-figure responsive-figure">
+<div id="figure-3" class="research-figure responsive-figure">
   {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="7" label="Annual gross contributions from short-term return and short interest, with period averages. Other themes are available under Explore." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Short-term reversal and short interest by year.</span> Bars show calendar years and lines show period averages on a common scale. The 2026 return annualizes January–May.</p>
@@ -391,7 +391,7 @@ from 2022 to 2025 and then lost about 8 points in the first five months of 2026,
 while medium- and long-term return gained; the two moved against each other day to day,
 which suggests an exposure the themes don't capture.
 
-<p class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Return and risk share by period.</span> Returns are before costs. Risk shares use the gross book’s daily variance. The low-risk subtotal includes three component rows. Standard errors allow 21 sessions of autocorrelation.</p>
+<p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Return and risk share by period.</span> Returns are before costs. Risk shares use the gross book’s daily variance. The low-risk subtotal includes three component rows. Standard errors allow 21 sessions of autocorrelation.</p>
 
 <div class="research-table-scroll">
   <table class="research-table comparison-table theme-periods">

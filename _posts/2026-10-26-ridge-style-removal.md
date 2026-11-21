@@ -62,7 +62,7 @@ $$\lambda$$, as a dial: the removal strength. I'd like to reduce unwanted common
 much return. But I need to check whether that actually happens, what risk is
 left, and how much turnover it adds.
 
-<div class="research-figure responsive-figure">
+<div id="figure-1" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/removal-diagram" mobile="/assets/ridge-style-removal/removal-diagram_mobile" alt="A fraction of the fitted style contribution is subtracted from the Ridge score before the optimizer sizes the portfolio." version="4" %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Where style removal enters the portfolio.</span> The optimizer receives the Ridge score after subtracting a fraction λ of its fitted style component.</p>
@@ -108,7 +108,7 @@ Residual volatility gets one more step: it is regressed on beta and size and onl
 the residual is kept, because volatile stocks also tend to be small and high-beta,
 and without this it would partly duplicate those two.
 
-<table class="research-table settings-table">
+<table id="table-1" class="research-table settings-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">The six style loadings.</span> Characteristics are measured per stock and date, before standardization.</caption>
   <thead><tr><th>Style</th><th>Raw characteristic</th><th>Window</th></tr></thead>
   <tbody>
@@ -153,7 +153,7 @@ Sharpe ratio, which can favour low-volatility stocks, depending on their returns
 
 That split depends on the predictors, the styles and how they are estimated.
 
-<div class="research-figure responsive-figure">
+<div id="figure-2" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/forecast-style-share" mobile="/assets/ridge-style-removal/forecast-style-share_mobile" alt="The style share ranges from 40% to 65% of forecast variance. Stock-specific variance accounts for most of the remainder." version="4" %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Style share of the Ridge forecast.</span> Annual shares of cross-sectional forecast variance. The dotted line includes sectors and their overlap with the fitted styles.</p>
@@ -201,12 +201,12 @@ return doesn't fall with it, so the Sharpe ratio rises, from 1.20 to 1.38 at 50%
 and 1.41 at 75%. At full removal the return gives way and the Sharpe ratio is back
 at 1.20.
 
-<div class="research-figure responsive-figure">
+<div id="figure-3" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/risk-return" mobile="/assets/ridge-style-removal/risk-return_mobile" alt="Volatility and net Sharpe ratio for each variant: volatility falls with every step of style removal, and the Sharpe ratio rises to 1.38 at 50% and 1.41 at 75% before falling back to 1.20 at full removal." version="4" %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Portfolio volatility and net Sharpe by removal strength.</span> Three-schedule means, January 1999–April 2026. The dotted line marks the unadjusted portfolio.</p>
 
-<table class="research-table comparison-table compact-table">
+<table id="table-2" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Net Sharpe by removal strength and period.</span> Differences are relative to the unadjusted book, averaged across three schedules. The full-period interval is 95%. The final five years begin in May 2021.</caption>
   <thead>
     <tr><th>Removal</th><th>Net Sharpe</th><th>Δ full [95%]</th><th>Δ 1999–2018</th><th>Δ 2019–2026</th><th>Δ last five years</th></tr>
@@ -238,7 +238,7 @@ is about level (Table 2). The weak stretch is mostly
 split after looking at the data, and with a split at 2016 the later period is
 slightly positive, so the boundary is soft.
 
-<div class="research-figure responsive-figure">
+<div id="figure-4" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/ridge-style-removal/delta-sharpe" mobile="/assets/ridge-style-removal/delta-sharpe_mobile" alt="Net Sharpe difference against no removal by strength with 95% intervals: positive for 25 to 75 percent before 2019, and intervals spanning zero from 2019." version="5" %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Net Sharpe difference before and after 2019.</span> Circles mark the six styles, diamonds PCA. Lines give paired 95% block-bootstrap intervals against the unadjusted portfolio.</p>
@@ -247,7 +247,7 @@ Figure 5 shows when the gain built up, with every variant scaled to the
 full-period volatility of no removal. The 50% removal was 54 points ahead at the end of 2018 and ends at 45; 25% gained
 less and kept most of it.
 
-<div class="research-figure responsive-figure">
+<div id="figure-5" class="research-figure responsive-figure">
   {% include blog-chart.html chart="gap" source="/assets/ridge-style-removal/equal-vol-gap.json?v=5" base="/assets/ridge-style-removal/equal-vol-gap" mobile="/assets/ridge-style-removal/equal-vol-gap_mobile" version="4" label="Cumulative net return against no removal at equal volatility for style 25% and 50% and PCA 50%, 1999 to April 2026, with 2019 onward shaded." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative net return difference at equal volatility.</span> Each strategy is retrospectively scaled to the unadjusted book’s full-period volatility. Net differences are summed in points of capital. Shading starts in 2019.</p>
@@ -268,7 +268,7 @@ those styles and short interest together. I did this for Ridge and LightGBM,
 using both the original forecasts and forecasts trained with a style-exposure
 penalty. The paired comparison covers 1999–2021.
 
-<table class="research-table comparison-table compact-table">
+<table id="table-3" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Adding short interest to 25% style removal.</span> Net Sharpe averaged across three schedules. Differences compare seven styles with six. The full-period 95% interval uses 120-session bootstrap blocks.</caption>
   <thead><tr><th>Forecast</th><th>Six styles</th><th>Six + short interest</th><th>Δ 1999–2021 [95%]</th><th>Δ 2017–2021</th></tr></thead>
   <tbody>

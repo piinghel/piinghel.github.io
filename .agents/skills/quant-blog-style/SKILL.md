@@ -139,7 +139,8 @@ Preserve the original homepage. Each entry uses the same article title,
 date, topic and short description beneath the “Research notes” heading.
 Keep all figures and captions inside articles.
 
-Restart numbering in each article. Use “Figure 1.” and “Table 1.” as independent sequences in reading order. Put the figure's one
+Restart numbering in each article. Use “Figure 1.” and “Table 1.” as independent sequences in reading order. Give each display a matching HTML
+anchor such as `figure-3` or `table-1` so a reader can open it directly. Put the figure's one
 main title at the beginning of its caption below the display. Put a table's
 caption above it. Use a regular-weight gray `caption-number` followed by a
 regular-weight `caption-title`. Aim for a title and one short sentence.

@@ -152,7 +152,7 @@ predictors, the heavy line is their composite, and hovering names a line.
   <div class="research-figure responsive-figure">
     {% include theme-svg-figure.html base="/assets/combining-predictors/predictor-correlation" mobile="/assets/combining-predictors/predictor-correlation_mobile" alt="Heatmap of average rank correlations between the 80 predictors, grouped into seven theme blocks." version="6" %}
   </div>
-  <div class="research-figure responsive-figure">
+  <div id="figure-1" class="research-figure responsive-figure">
     {% include theme-svg-figure.html base="/assets/combining-predictors/theme-ic-by-year" mobile="/assets/combining-predictors/theme-ic-by-year_mobile" alt="Heatmap of each theme composite's mean IC by year from 1998 to 2026." version="6" %}
   </div>
 </noscript>
@@ -234,7 +234,7 @@ I refit the weights on an expanding window starting in January 1995 (Figure 2).
 Accumulating data stabilizes the weights between refits. A shorter rolling
 window would give recent changes more influence over each fit.[^fitting]
 
-<div class="research-figure responsive-figure">
+<div id="figure-2" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/combining-predictors/expanding-walk-forward" mobile="/assets/combining-predictors/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="10" %}
 </div>
 
@@ -256,7 +256,7 @@ article]({% link _posts/2026-08-29-joint-sizing.md %}), where a portfolio built 
 scores reaches a Sharpe of 1.32 through 2021 and 0.87 after.
 
 <table class="research-table settings-table" id="portfolio-construction">
-  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolio construction for all scores.</span></caption>
+  <caption id="table-1"><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolio construction for all scores.</span></caption>
   <tbody>
     <tr><th scope="row">Holdings</th><td>Long the top 75 stocks, short the bottom 75</td></tr>
     <tr><th scope="row">Position size</th><td>20% divided by the stock's past 60-session volatility (floored at 5%); at most 4% per stock and 100% of capital per side</td></tr>
@@ -273,7 +273,7 @@ the coefficients shrink to less than half their OLS size; from $c=1$, Ridge
 drifts toward the equal-weight score, its volatility rising toward 9% and its
 Sharpe falling.
 
-<table class="research-table comparison-table">
+<table id="table-2" class="research-table comparison-table">
   <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Ridge penalty on development data.</span> September 1998–December 2021, after costs, averaged across three schedules. Coefficient length is relative to OLS (c = 0). IC IR is unannualized.</caption>
   <thead>
     <tr><th>Penalty $c$</th><th>Coefficient size</th><th>Mean daily IC</th><th>IC IR</th><th>Volatility</th><th>Sharpe</th></tr>
@@ -294,7 +294,7 @@ of how well a score ranks the target; its Sharpe is within 0.01 of the best.
 ## Results
 {: #prediction-quality-and-portfolio-results }
 
-<table class="research-table comparison-table ic-summary-table portfolio-card-table">
+<table id="table-3" class="research-table comparison-table ic-summary-table portfolio-card-table">
   <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Cross-sectional ranking quality.</span> Daily rank IC and its unannualized mean-to-standard-deviation ratio. Twenty-session outcomes overlap. The last complete target date is 28 April 2026.</caption>
   <thead>
     <tr><th>Score</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
@@ -319,7 +319,7 @@ Through 2021 Ridge's mean IC, 0.048, is close to the equal-weight score's
 Figure 3 first shows how the Ridge and equal-weight scores order return and
 volatility, using equal-weighted decile portfolios before costs.
 
-{% include blog-chart.html chart="deciles" source="/assets/combining-predictors/deciles.json?v=2" base="/assets/combining-predictors/decile-returns" mobile="/assets/combining-predictors/decile-returns_mobile" version="1" label="Ridge and equal-weight score decile returns are broadly increasing through 2021. After 2021 the bottom deciles lag, while return ordering largely disappears above decile 3." %}
+{% include blog-chart.html id="figure-3" chart="deciles" source="/assets/combining-predictors/deciles.json?v=2" base="/assets/combining-predictors/decile-returns" mobile="/assets/combining-predictors/decile-returns_mobile" version="1" label="Ridge and equal-weight score decile returns are broadly increasing through 2021. After 2021 the bottom deciles lag, while return ordering largely disappears above decile 3." %}
 
 <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Returns by score decile.</span> Decile 10 holds the highest scores. Portfolios are equally weighted and trade at the next close. Results average three schedules before costs.</p>
 
@@ -336,7 +336,7 @@ through 2021 and 0.78 after.
 
 Returns are compounded annually. Sharpe uses a zero cash rate, and two-way turnover annualizes mean daily traded notional using 252 sessions.
 
-<table class="research-table comparison-table portfolio-card-table">
+<table id="table-4" class="research-table comparison-table portfolio-card-table">
   <caption><span class="caption-number">Table 4.</span> <span class="caption-title">Net performance and trading.</span> Three-schedule means after 5 bp per dollar traded. Parentheses show the schedule range of Sharpe. Beta is relative to the Russell 1000.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>
@@ -370,7 +370,7 @@ returns, averaged across the three schedules, puts Ridge's Sharpe advantage at
 about 0.2 in both periods, with 95% intervals from roughly zero to 0.4. Figure
 4 shows the two paths.
 
-{% include blog-chart.html chart="performance" source="/assets/combining-predictors/performance.json" label="Ridge and equal-weight growth and drawdowns" %}
+{% include blog-chart.html id="figure-4" chart="performance" source="/assets/combining-predictors/performance.json" label="Ridge and equal-weight growth and drawdowns" %}
 
 <p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Equal-weight and Ridge portfolio paths.</span> Growth compounds the mean daily net P&amp;L across three schedules. The dotted line marks January 2022. Table 4 compares risk-adjusted performance.</p>
 
@@ -389,7 +389,7 @@ largest mean absolute weight; Explore lets you choose from all 80. A
 positive weight raises a stock's score as its rank on that predictor rises,
 holding the other ranks fixed.
 
-{% include blog-chart.html chart="coefficients" source="/assets/combining-predictors/coefficients.json" label="Ridge coefficients by refit, with selectable predictors" %}
+{% include blog-chart.html id="figure-5" chart="coefficients" source="/assets/combining-predictors/coefficients.json" label="Ridge coefficients by refit, with selectable predictors" %}
 
 <p class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Ridge coefficients across refits.</span> The ten largest mean absolute coefficients appear first. Each column averages three training fits and is dated by the start of its prediction block.</p>
 
@@ -422,7 +422,7 @@ refit before, using the cosine similarity of the two coefficient vectors: 1
 means the same relative weights, whatever their size. The second panel tracks
 that size, the length of the coefficient vector.
 
-{% include blog-chart.html chart="stability" source="/assets/combining-predictors/coefficients.json" base="/assets/combining-predictors/refit-stability" mobile="/assets/combining-predictors/refit-stability_mobile" version="1" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
+{% include blog-chart.html id="figure-6" chart="stability" source="/assets/combining-predictors/coefficients.json" base="/assets/combining-predictors/refit-stability" mobile="/assets/combining-predictors/refit-stability_mobile" version="1" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
 
 <p class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Stability of the Ridge coefficients.</span> Cosine similarity compares each refit to the previous one. Vector length is relative to the first refit.</p>
 
