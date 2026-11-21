@@ -159,7 +159,7 @@ $$
 \end{aligned}
 $$
 
-Here $$w$$ gives the signed target weights and $$w_{\rm prev}$$ the weights held at rebalance. Eligible longs have nonnegative weights, eligible shorts have nonpositive weights, and other weights are zero. The rate $$c$$ is 2.5 basis points per unit of two-way turnover, the sum of absolute weight changes. Trading fees apply separately to fills.
+Here $$w$$ gives the signed target weights and $$w_{\rm prev}$$ the weights held at rebalance. Eligible longs have nonnegative weights, eligible shorts have nonpositive weights, and other weights are zero. The vector $$\beta$$ contains stock betas, $$a_g$$ selects the stocks in sector $$g$$, and $$w_{g\cap\ell}$$ is the part of sleeve $$\ell$$ in that sector. The rate $$c$$ is 2.5 basis points per unit of two-way turnover, the sum of absolute weight changes. Trading fees apply separately to fills.
 
 <table class="research-table constraint-settings" id="table-1">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Optimizer settings.</span></caption>
@@ -170,7 +170,7 @@ Here $$w$$ gives the signed target weights and $$w_{\rm prev}$$ the weights held
     <tr><th scope="row">Gross exposure, longs plus absolute shorts <var>G<sub>max</sub></var></th><td>200%</td></tr>
     <tr><th scope="row">Absolute net exposure <var>N<sub>max</sub></var></th><td>25%</td></tr>
     <tr><th scope="row">Absolute Russell 1000 beta <var>β<sub>max</sub></var></th><td>0.05</td></tr>
-    <tr><th scope="row">Absolute weight per stock <var>w<sub>max</sub></var></th><td>4%</td></tr>
+    <tr><th scope="row">Absolute target weight per stock <var>w<sub>max</sub></var></th><td>3.5%</td></tr>
     <tr><th scope="row">Absolute net exposure per sector <var>S<sub>max</sub></var></th><td>20%</td></tr>
     <tr><th scope="row">Share of either sleeve in one sector <var>q<sub>max</sub></var></th><td>30%</td></tr>
   </tbody>
@@ -215,14 +215,14 @@ I score variance forecasts with QLIKE. Let $$x=u/v$$ be the mean squared daily r
 
 For a check without Ridge scores, I assigned the longs and shorts at random and gave names equal weights on each side. On these identical holdings, the factor target’s raw forecasts had lower QLIKE than stock shrinkage at 75, 100 and 150 names in the later period. All three paired intervals favored it. At 150 names, stock shrinkage forecast 3.6% volatility and the factor target 3.4%, against 2.7% realized. Both estimates ran high.
 
-On the filled stock-shrinkage book, the same models forecast 7% and about 10% across 227 later cycles, against 9.6% annualized gross volatility. Absolute risk matters here because the lower forecast leaves room to take larger positions. I checked how much of the QLIKE gap came from forecast scale by rescaling each forecast with the mean ratio of realized to forecast variance over its last 52 completed cycles. Both forecasts then came out near 9.7%. Stock shrinkage had a lower QLIKE on its own holdings, and the paired intervals on the other two filled books included zero.
+On the filled stock-shrinkage book, the same models forecast 7% and about 10% across 227 later holding periods, against 9.6% realized gross risk. I rescaled each forecast using the mean ratio of realized to forecast variance over its last 52 completed periods. Both forecasts then came out near 9.7%. After calibration, stock shrinkage had lower QLIKE on its own holdings. On the other two books, the paired intervals for the difference included zero.
 
 Calibration can help when a model consistently under- or overestimates risk on the holdings it will size. A uniform adjustment leaves the correlations intact. Here the direction of the error depended on the holdings. Stock shrinkage forecast too much risk on the random spreads and too little on the optimized book.
 
 <div id="figure-2" class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="1" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both forecasts close to the 9.6% realized gross volatility." %}
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/fixed-book" mobile="/assets/factor-risk-sizing/fixed-book_mobile" version="2" alt="On the same stock-shrinkage holdings, the two models forecast 7% and about 10% in the later period. Calibration brings both close to the 9.6% realized gross risk." %}
 </div>
-<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Risk forecasts on identical holdings.</span> Circles show original forecasts, diamonds use 52 completed holding periods for calibration, and the dashed line marks realized risk.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Risk forecasts on identical holdings.</span> Circles show the original forecasts and diamonds the calibrated ones. For the dashed line, I average squared daily gross returns within each holding period, average across periods, then annualize the square root.</p>
 
 ## The portfolio comparison after fees
 {: #how-the-risk-estimate-changes-the-portfolio}
@@ -234,33 +234,33 @@ I now let each risk estimate choose its own positions and compare the portfolios
   <thead><tr><th>Sizing rule</th><th>Return</th><th>Vol.</th><th>Sharpe</th><th>Drawdown</th><th>Turnover</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="6">January 1999 – December 2021</th></tr>
-    <tr><th scope="row">Volatility scaling</th><td>7.12%<span class="secondary-metric">9.34%</span></td><td>8.07%</td><td>0.89<span class="secondary-metric">1.15</span></td><td>20.07%</td><td>28.49×</td></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>10.77%<span class="secondary-metric">12.91%</span></td><td>8.74%</td><td>1.21<span class="secondary-metric">1.43</span></td><td>18.52%</td><td>25.65×</td></tr>
-    <tr><th scope="row">Sector and style factors</th><td>7.95%<span class="secondary-metric">10.11%</span></td><td>8.13%</td><td>0.98<span class="secondary-metric">1.23</span></td><td>19.10%</td><td>26.49×</td></tr>
-    <tr><th scope="row">Factor target</th><td>9.50%<span class="secondary-metric">11.56%</span></td><td>7.47%</td><td>1.25<span class="secondary-metric">1.50</span></td><td>15.79%</td><td>25.17×</td></tr>
+    <tr><th scope="row">Volatility scaling</th><td>7.11%<span class="secondary-metric">9.33%</span></td><td>8.08%</td><td>0.89<span class="secondary-metric">1.15</span></td><td>20.06%</td><td>28.48×</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>10.78%<span class="secondary-metric">12.92%</span></td><td>8.73%</td><td>1.22<span class="secondary-metric">1.44</span></td><td>18.34%</td><td>25.64×</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>7.93%<span class="secondary-metric">10.07%</span></td><td>8.12%</td><td>0.98<span class="secondary-metric">1.22</span></td><td>19.30%</td><td>26.27×</td></tr>
+    <tr><th scope="row">Factor target</th><td>9.39%<span class="secondary-metric">11.44%</span></td><td>7.43%</td><td>1.24<span class="secondary-metric">1.50</span></td><td>15.80%</td><td>25.05×</td></tr>
     <tr class="period-heading"><th colspan="6">January 2022 – May 2026</th></tr>
-    <tr><th scope="row">Volatility scaling</th><td>6.96%<span class="secondary-metric">8.47%</span></td><td>10.16%</td><td>0.71<span class="secondary-metric">0.85</span></td><td>9.41%</td><td>24.36×</td></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>7.42%<span class="secondary-metric">8.66%</span></td><td>9.65%</td><td>0.79<span class="secondary-metric">0.91</span></td><td>9.84%</td><td>18.76×</td></tr>
-    <tr><th scope="row">Sector and style factors</th><td>2.72%<span class="secondary-metric">3.88%</span></td><td>8.29%</td><td>0.37<span class="secondary-metric">0.50</span></td><td>10.54%</td><td>18.28×</td></tr>
-    <tr><th scope="row">Factor target</th><td>4.59%<span class="secondary-metric">5.64%</span></td><td>7.27%</td><td>0.65<span class="secondary-metric">0.79</span></td><td>7.64%</td><td>16.66×</td></tr>
+    <tr><th scope="row">Volatility scaling</th><td>6.96%<span class="secondary-metric">8.47%</span></td><td>10.16%</td><td>0.71<span class="secondary-metric">0.85</span></td><td>9.41%</td><td>24.35×</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>7.45%<span class="secondary-metric">8.68%</span></td><td>9.65%</td><td>0.79<span class="secondary-metric">0.91</span></td><td>9.88%</td><td>18.71×</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>2.70%<span class="secondary-metric">3.85%</span></td><td>8.28%</td><td>0.36<span class="secondary-metric">0.50</span></td><td>10.44%</td><td>18.04×</td></tr>
+    <tr><th scope="row">Factor target</th><td>4.64%<span class="secondary-metric">5.69%</span></td><td>7.25%</td><td>0.66<span class="secondary-metric">0.80</span></td><td>7.55%</td><td>16.46×</td></tr>
   </tbody>
 </table>
 
 <div id="figure-3" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json" initial_wealth=1 base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="3" label="Growth of one dollar after fees and drawdown for the three Ridge portfolios. Choose the full history, development period, later period or custom dates." %}
+  {% include blog-chart.html chart="performance" source="/assets/factor-risk-sizing/performance.json" initial_wealth=1 base="/assets/factor-risk-sizing/performance" mobile="/assets/factor-risk-sizing/performance_mobile" version="4" label="Growth of one dollar after fees and drawdown for the three Ridge portfolios. Choose the full history, development period, later period or custom dates." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Growth and drawdown after fees.</span> Each window starts at $1 and compounds the mean daily return across three schedules. Drawdown is measured from the peak within that window.</p>
 
-The Factor target row shows the portfolio sized with the 50/50 correlation estimate. From January 2022 through May 2026 it earned 4.59% a year after fees at 7.27% volatility, close to the 7% budget. Stock shrinkage earned 7.42% at 9.65% volatility. How much of that extra return came from holding a bigger book?
+From January 2022 through May 2026, the factor target realized 7.25% volatility, close to the 7% budget. Stock shrinkage realized 9.65% and earned more after fees. How much of that difference came from holding a bigger book?
 
 ## Why the same risk budget produced different volatility
 
 Imagine the same weights have forecast volatility of 7% under one model and 10% under another. If I keep their proportions, the second model fits the 7% budget at 70% of the original size. Volatility scales linearly with position size. The optimizer can also change the proportions if the second model sees a better hedge elsewhere. The next test separates the change in scale from the change in stock relationships.
 
-The same 7% cap can produce a smaller book if one model forecasts more risk for a given set of positions. In the later period, gross exposure averaged 124% of capital for the factor target and 156% for stock shrinkage. It also had smaller drawdowns. The next comparison asks how much of the volatility gap follows the forecast level.
+In the later period, gross exposure averaged 123% of capital for the factor target and 156% for stock shrinkage. The next comparison tests how much of the volatility gap follows the forecast level.
 
 <div id="figure-4" class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="1" alt="Trailing annualized volatility of the original sizing rules before the rolling calibration." %}
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/realized-risk" mobile="/assets/factor-risk-sizing/realized-risk_mobile" version="2" alt="Trailing annualized volatility of the original sizing rules before the rolling calibration." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Realized volatility against the 7% forecast limit.</span> Monthly observations use 252 sessions of net returns, averaged across schedules.</p>
 
@@ -278,15 +278,15 @@ If the models forecast 7% and 10% on those weights, I multiply the factor target
   <thead><tr><th scope="col">Stock relationships</th><th scope="col">1999–2021</th><th scope="col">2022–26</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="3">Stock-shrinkage risk level</th></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>10.77% / 8.74%</td><td>7.42% / 9.65%</td></tr>
-    <tr><th scope="row">Factor target</th><td>10.48% / 8.84%</td><td>6.00% / 9.70%</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>10.78% / 8.73%</td><td>7.45% / 9.65%</td></tr>
+    <tr><th scope="row">Factor target</th><td>10.42% / 8.81%</td><td>6.06% / 9.69%</td></tr>
     <tr class="period-heading"><th colspan="3">Factor-target risk level</th></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>9.67% / 7.45%</td><td>5.96% / 7.30%</td></tr>
-    <tr><th scope="row">Factor target</th><td>9.50% / 7.47%</td><td>4.59% / 7.27%</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>9.66% / 7.44%</td><td>5.91% / 7.28%</td></tr>
+    <tr><th scope="row">Factor target</th><td>9.39% / 7.43%</td><td>4.64% / 7.25%</td></tr>
   </tbody>
 </table>
 
-In the later period, moving to the factor target’s forecast scale reduced realized volatility by about 2.4 percentage points for both covariance models. Swapping the stock relationships at the same scale barely moved volatility, with paired intervals spanning roughly 0.2 points either way. The factor target earned less at both scales in this sample, with considerable uncertainty around the return difference.
+In the later period, moving to the factor target’s forecast scale reduced realized volatility by about 2.4 percentage points for both covariance models. With the scale held fixed, changing the stock relationships moved volatility by less than 0.04 points in either comparison. The paired intervals for those changes included zero. The factor target earned less at both scales in this sample, with considerable uncertainty around the return difference.
 
 ## Trading with a calibrated risk budget
 
@@ -299,24 +299,24 @@ A fixed adjustment estimated through 2021 also brought the stock-shrinkage book 
   <thead><tr><th>Sizing rule</th><th>Return</th><th>Vol.</th><th>Sharpe</th><th>Gross exposure</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">January 1999 – December 2021</th></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>9.80%<span class="secondary-metric">11.73%</span></td><td>7.41%</td><td>1.30<span class="secondary-metric">1.54</span></td><td>1.65</td></tr>
-    <tr><th scope="row">Sector and style factors</th><td>7.56%<span class="secondary-metric">9.55%</span></td><td>7.25%</td><td>1.04<span class="secondary-metric">1.29</span></td><td>1.44</td></tr>
-    <tr><th scope="row">Factor target</th><td>9.38%<span class="secondary-metric">11.38%</span></td><td>7.12%</td><td>1.29<span class="secondary-metric">1.55</span></td><td>1.62</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>9.80%<span class="secondary-metric">11.74%</span></td><td>7.41%</td><td>1.30<span class="secondary-metric">1.54</span></td><td>1.64</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>7.57%<span class="secondary-metric">9.55%</span></td><td>7.25%</td><td>1.04<span class="secondary-metric">1.29</span></td><td>1.44</td></tr>
+    <tr><th scope="row">Factor target</th><td>9.34%<span class="secondary-metric">11.33%</span></td><td>7.11%</td><td>1.29<span class="secondary-metric">1.55</span></td><td>1.62</td></tr>
     <tr class="period-heading"><th colspan="5">January 2022 – May 2026</th></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>6.10%<span class="secondary-metric">7.00%</span></td><td>7.13%</td><td>0.87<span class="secondary-metric">0.99</span></td><td>1.19</td></tr>
-    <tr><th scope="row">Sector and style factors</th><td>2.44%<span class="secondary-metric">3.41%</span></td><td>6.92%</td><td>0.38<span class="secondary-metric">0.52</span></td><td>0.96</td></tr>
-    <tr><th scope="row">Factor target</th><td>4.48%<span class="secondary-metric">5.49%</span></td><td>7.00%</td><td>0.66<span class="secondary-metric">0.80</span></td><td>1.19</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>6.07%<span class="secondary-metric">6.97%</span></td><td>7.13%</td><td>0.86<span class="secondary-metric">0.98</span></td><td>1.19</td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>2.48%<span class="secondary-metric">3.44%</span></td><td>6.93%</td><td>0.39<span class="secondary-metric">0.52</span></td><td>0.96</td></tr>
+    <tr><th scope="row">Factor target</th><td>4.52%<span class="secondary-metric">5.53%</span></td><td>7.00%</td><td>0.67<span class="secondary-metric">0.80</span></td><td>1.19</td></tr>
   </tbody>
 </table>
 
-The calibrated Factor target row uses the same 50/50 correlation estimate. Calibration adjusts the overall risk forecast used to size the positions. In the later period, stock shrinkage and the factor target both averaged $1.19 of gross exposure per dollar of capital and realized close to 7% volatility. Their compounded annual returns after fees were 6.10% and 4.48%, respectively. The paired interval for their net Sharpe difference included zero.
+With rolling calibration, stock shrinkage and the factor target both averaged $1.19 of gross exposure per dollar of capital and realized close to 7% volatility. Stock shrinkage still earned more in the later sample. The paired interval for the net Sharpe difference included zero.
 
-The two books took different risks at that size. I applied the same factor model to both portfolios’ opening holdings each day. At their average exposures, a 1% rise in the fitted momentum factor would add 0.88% to the stock-shrinkage portfolio and 0.59% to the factor-target portfolio. A 1% fall would reverse those contributions. Multiplying each day’s exposure by that day’s momentum return, I get 1.68 percentage points a year in stock shrinkage’s favor, including 0.96 points from the shorts. Other contributions partly offset that gain, leaving a 1.44-point advantage before fees. These figures use annualized arithmetic returns so the contributions add up.
+The two books took different risks at that size. Using the same factor model on both portfolios’ opening holdings, a 1% rise in momentum at their average exposures would add 0.88% to stock shrinkage and 0.60% to the factor target. A 1% fall would reverse those contributions. Multiplying each day’s exposure by that day’s momentum return gives stock shrinkage a 1.65-point annual advantage from momentum, including 0.97 points from its shorts. Other contributions partly offset that gain. The overall gap before fees was 1.37 points a year on the same additive basis.
 
 Similar overall volatility can come with different market exposure. The estimated beta limit applies at rebalance. Realized beta measures how the filled book moved with the Russell 1000. When measured over the same window, beta equals correlation with the index times the ratio of portfolio to index volatility, $$\beta_{p,m}=\rho_{p,m}\sigma_p/\sigma_m$$. At the same market correlation, a more volatile book has a larger beta in magnitude.
 
 <div id="figure-5" class="research-figure responsive-figure">
-  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/market-exposure" mobile="/assets/factor-risk-sizing/market-exposure_mobile" version="2" alt="Rolling 63-session market beta and 252-session correlation with the Russell 1000 across the full backtest for the three calibrated portfolios." %}
+  {% include theme-svg-figure.html base="/assets/factor-risk-sizing/market-exposure" mobile="/assets/factor-risk-sizing/market-exposure_mobile" version="3" alt="Rolling 63-session market beta and 252-session correlation with the Russell 1000 across the full backtest for the three calibrated portfolios." %}
 </div>
 <p class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Market beta and correlation.</span> Monthly observations use 63 sessions for beta and 252 for correlation against the Russell 1000. Both average the three schedules’ net-return estimates.</p>
 
@@ -326,28 +326,26 @@ To understand what market exposure misses, I looked at the deepest drawdown of a
 
 I used 75 entry candidates per side in the experiments above. I widened the list to 100 and 150 per side to see how much the results depend on that choice. A wider list gives the optimizer more potential hedges, including stocks with weaker forecasts. I kept the reference retention rule, which lets the joint optimizers keep holdings in the top or bottom 175 ranks. With that rule fixed, going from 75 to 150 leaves only 25 ranks of room at the entry boundary, down from 100.
 
-At 150 per side stock shrinkage held about 175 stocks and the factor target 123 in the later period. Net Sharpe fell for all three joint optimizers as the entry list widened. Stock shrinkage and the factor target also had lower gross Sharpe at 150 than at 75, so trading fees explain only part of the decline.
+At 150 per side, stock shrinkage held about 176 stocks and the factor target 123 in the later period. Net Sharpe fell for all three joint optimizers as the entry list widened. Stock shrinkage and the factor target also had lower gross Sharpe at 150 than at 75, so trading fees explain only part of the decline.
 
 <table id="table-6" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 6.</span> <span class="caption-title">Portfolio outcomes by entry breadth.</span> Each column sets the candidate count per side. Annualized net return appears above net Sharpe, averaged across three schedules.</caption>
   <thead><tr><th>Sizing rule</th><th>75 per side</th><th>100 per side</th><th>150 per side</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">1999–2021</th></tr>
-    <tr><th scope="row">Volatility scaling</th><td>7.12%<span class="secondary-metric">0.89</span></td><td>6.43%<span class="secondary-metric">0.85</span></td><td>5.75%<span class="secondary-metric">0.84</span></td></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>10.77%<span class="secondary-metric">1.21</span></td><td>10.41%<span class="secondary-metric">1.17</span></td><td>10.44%<span class="secondary-metric">1.17</span></td></tr>
-    <tr><th scope="row">Sector and style factors</th><td>7.95%<span class="secondary-metric">0.98</span></td><td>7.71%<span class="secondary-metric">0.94</span></td><td>8.12%<span class="secondary-metric">0.97</span></td></tr>
-    <tr><th scope="row">Factor target</th><td>9.50%<span class="secondary-metric">1.25</span></td><td>9.06%<span class="secondary-metric">1.19</span></td><td>9.32%<span class="secondary-metric">1.22</span></td></tr>
+    <tr><th scope="row">Volatility scaling</th><td>7.11%<span class="secondary-metric">0.89</span></td><td>6.43%<span class="secondary-metric">0.85</span></td><td>5.75%<span class="secondary-metric">0.84</span></td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>10.78%<span class="secondary-metric">1.22</span></td><td>10.35%<span class="secondary-metric">1.17</span></td><td>10.38%<span class="secondary-metric">1.17</span></td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>7.93%<span class="secondary-metric">0.98</span></td><td>7.69%<span class="secondary-metric">0.94</span></td><td>8.12%<span class="secondary-metric">0.97</span></td></tr>
+    <tr><th scope="row">Factor target</th><td>9.39%<span class="secondary-metric">1.24</span></td><td>8.99%<span class="secondary-metric">1.19</span></td><td>9.30%<span class="secondary-metric">1.22</span></td></tr>
     <tr class="period-heading"><th colspan="4">2022–May 2026</th></tr>
-    <tr><th scope="row">Volatility scaling</th><td>6.96%<span class="secondary-metric">0.71</span></td><td>6.76%<span class="secondary-metric">0.73</span></td><td>5.51%<span class="secondary-metric">0.65</span></td></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>7.42%<span class="secondary-metric">0.79</span></td><td>7.20%<span class="secondary-metric">0.76</span></td><td>6.69%<span class="secondary-metric">0.71</span></td></tr>
-    <tr><th scope="row">Sector and style factors</th><td>2.72%<span class="secondary-metric">0.37</span></td><td>2.51%<span class="secondary-metric">0.34</span></td><td>2.17%<span class="secondary-metric">0.29</span></td></tr>
-    <tr><th scope="row">Factor target</th><td>4.59%<span class="secondary-metric">0.65</span></td><td>4.37%<span class="secondary-metric">0.62</span></td><td>3.75%<span class="secondary-metric">0.53</span></td></tr>
+    <tr><th scope="row">Volatility scaling</th><td>6.96%<span class="secondary-metric">0.71</span></td><td>6.76%<span class="secondary-metric">0.72</span></td><td>5.51%<span class="secondary-metric">0.65</span></td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>7.45%<span class="secondary-metric">0.79</span></td><td>7.18%<span class="secondary-metric">0.76</span></td><td>6.67%<span class="secondary-metric">0.71</span></td></tr>
+    <tr><th scope="row">Sector and style factors</th><td>2.70%<span class="secondary-metric">0.36</span></td><td>2.39%<span class="secondary-metric">0.32</span></td><td>2.12%<span class="secondary-metric">0.29</span></td></tr>
+    <tr><th scope="row">Factor target</th><td>4.64%<span class="secondary-metric">0.66</span></td><td>4.46%<span class="secondary-metric">0.63</span></td><td>3.73%<span class="secondary-metric">0.53</span></td></tr>
   </tbody>
 </table>
 
-To isolate the retention rule, I kept entry at 150 and let positions remain eligible through rank 250. Later annual turnover fell from roughly 25× capital to 21× for stock shrinkage and 22× for the factor target. Most of the saving came from less trading on exits beyond the cutoff and on new entries. Net Sharpe rose from 0.71 to 0.79 and from 0.53 to 0.59, respectively. Both paired Sharpe intervals included zero. The clearest effect of a wider retention band was less trading.
-
-The later Sharpe comparison at 150 per side is sensitive to which years are included. Leaving out 2024 put stock shrinkage and the factor target close to even.
+To isolate the retention rule, I kept entry at 150 and let positions remain eligible through rank 250. Later annual turnover fell from roughly 25× capital to 21× for stock shrinkage and 22× for the factor target. Net Sharpe rose from 0.71 to 0.79 and from 0.53 to 0.60, respectively. The paired Sharpe intervals for both changes included zero with 21-session blocks. The clearest effect of the wider retention band was less trading.
 
 ## What changes when the risk model changes
 

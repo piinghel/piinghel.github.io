@@ -306,7 +306,7 @@ def render_fixed_book(data, output, *, dark, mobile):
             ax.tick_params(length=0, pad=5, labelbottom=True)
             ax.grid(axis="x", lw=.5, color=grid)
             ax.spines[:].set_visible(False)
-        axes[-1].set_xlabel("Annualized gross volatility")
+        axes[-1].set_xlabel("Annualized gross-return risk")
         fig.legend(*axes[0].get_legend_handles_labels(), loc="outside upper center",
                    frameon=False, ncol=2, handlelength=.9)
         suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
@@ -318,9 +318,11 @@ def render_fixed_book(data, output, *, dark, mobile):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for arg in ["daily", "pair-history", "clusters", "fixed-book-forecasts", "output"]:
+    for arg in [
+        "daily", "calibrated-daily", "pair-history", "clusters",
+        "fixed-book-forecasts", "output",
+    ]:
         parser.add_argument("--" + arg, type=Path, required=True)
-    parser.add_argument("--calibrated-daily", type=Path, help="Daily calibrated accounts for the market-exposure figure")
     args = parser.parse_args()
     portfolios = (("shrinkage", "Stock shrinkage", "strategy", "solid", True),
                   ("factor_target", "Factor target", "long", "dash", True),
@@ -334,21 +336,18 @@ def main():
     clusters = pl.read_csv(args.clusters, try_parse_dates=True).sort("last_forward")
     beta_window = 63
     correlation_window = 252
-    exposure = None
-    if args.calibrated_daily:
-        exposure = market_exposure(
-            args.calibrated_daily, portfolios[:3],
-            beta_window=beta_window, correlation_window=correlation_window,
-        )
+    exposure = market_exposure(
+        args.calibrated_daily, portfolios[:3],
+        beta_window=beta_window, correlation_window=correlation_window,
+    )
     for mobile in [False, True]:
         for dark in [False, True]:
             render_figures(returns, portfolios, pairs, clusters, args.output, dark, mobile)
             render_fixed_book(calibration, args.output, dark=dark, mobile=mobile)
-            if exposure is not None:
-                render_market_exposure(
-                    exposure, portfolios[:3], args.output, dark=dark, mobile=mobile,
-                    beta_window=beta_window, correlation_window=correlation_window,
-                )
+            render_market_exposure(
+                exposure, portfolios[:3], args.output, dark=dark, mobile=mobile,
+                beta_window=beta_window, correlation_window=correlation_window,
+            )
 
 
 if __name__ == "__main__":

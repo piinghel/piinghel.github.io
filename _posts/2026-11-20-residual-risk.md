@@ -150,26 +150,26 @@ On the filled books, dropping residual correlations moved the factor target’s 
 
 ## What changed in the long/short book
 
-So far I’ve measured how much residual co-movement survives and how much it changes a risk forecast. In the replay, the optimizer can also change the holdings. I keep the Ridge scores, risk budget, constraints and trading penalty fixed and compare what the new positions delivered after fees.
+In the replay, the residual estimate can change which stocks the optimizer holds. I keep the Ridge scores, trading penalty and [limits from Part 1]({% link _posts/2026-11-20-factor-risk-sizing.md %}#the-objective-and-constraints) fixed, including the 3.5% absolute target weight per stock. I compare what the resulting portfolios delivered after fees.
 
 <table id="table-1" class="research-table comparison-table compact-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolios across residual risk estimates.</span> Annual results after fees. The residual methods share factors and specific volatilities. Stock shrinkage is the stock-level reference.</caption>
   <thead><tr><th>Risk estimate</th><th>Net return</th><th>Volatility</th><th>Sharpe</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">January 1999 – December 2021</th></tr>
-    <tr><th scope="row">Diagonal residuals</th><td>7.95%</td><td>8.13%</td><td>0.98</td></tr>
-    <tr><th scope="row">One residual PC</th><td>7.95%</td><td>8.04%</td><td>0.99</td></tr>
-    <tr><th scope="row">Residual shrinkage</th><td>7.91%</td><td>7.90%</td><td>1.00</td></tr>
-    <tr><th scope="row">One PC + shrinkage</th><td>7.94%</td><td>7.87%</td><td>1.01</td></tr>
-    <tr><th scope="row">Five PCs + shrinkage</th><td>7.92%</td><td>7.84%</td><td>1.01</td></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>10.77%</td><td>8.74%</td><td>1.21</td></tr>
+    <tr><th scope="row">Diagonal residuals</th><td>7.93%</td><td>8.12%</td><td>0.98</td></tr>
+    <tr><th scope="row">One residual PC</th><td>7.94%</td><td>8.02%</td><td>0.99</td></tr>
+    <tr><th scope="row">Residual shrinkage</th><td>7.89%</td><td>7.89%</td><td>1.00</td></tr>
+    <tr><th scope="row">One PC + shrinkage</th><td>7.89%</td><td>7.86%</td><td>1.00</td></tr>
+    <tr><th scope="row">Five PCs + shrinkage</th><td>7.89%</td><td>7.83%</td><td>1.01</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>10.78%</td><td>8.73%</td><td>1.22</td></tr>
     <tr class="period-heading"><th colspan="4">January 2022 – May 2026</th></tr>
-    <tr><th scope="row">Diagonal residuals</th><td>2.72%</td><td>8.29%</td><td>0.37</td></tr>
-    <tr><th scope="row">One residual PC</th><td>3.05%</td><td>8.25%</td><td>0.41</td></tr>
-    <tr><th scope="row">Residual shrinkage</th><td>3.97%</td><td>8.04%</td><td>0.52</td></tr>
-    <tr><th scope="row">One PC + shrinkage</th><td>3.81%</td><td>8.07%</td><td>0.50</td></tr>
-    <tr><th scope="row">Five PCs + shrinkage</th><td>3.98%</td><td>8.00%</td><td>0.53</td></tr>
-    <tr><th scope="row">Stock shrinkage</th><td>7.42%</td><td>9.65%</td><td>0.79</td></tr>
+    <tr><th scope="row">Diagonal residuals</th><td>2.70%</td><td>8.28%</td><td>0.36</td></tr>
+    <tr><th scope="row">One residual PC</th><td>3.03%</td><td>8.24%</td><td>0.40</td></tr>
+    <tr><th scope="row">Residual shrinkage</th><td>3.96%</td><td>8.04%</td><td>0.52</td></tr>
+    <tr><th scope="row">One PC + shrinkage</th><td>3.90%</td><td>8.06%</td><td>0.52</td></tr>
+    <tr><th scope="row">Five PCs + shrinkage</th><td>3.98%</td><td>7.99%</td><td>0.53</td></tr>
+    <tr><th scope="row">Stock shrinkage</th><td>7.45%</td><td>9.65%</td><td>0.79</td></tr>
   </tbody>
 </table>
 
