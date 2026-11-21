@@ -1,11 +1,11 @@
 ---
 layout: post
 title: "Equity Model Comparison"
-description: "A comparison of Ridge and LightGBM on the same stock universe, from rank IC to score deciles and after-cost returns."
+description: "Ridge and LightGBM on the same stock universe, with first walk-forward results for NVIDIA Kumo Tabular Small."
 date: 2026-11-21
-navigation: false
-article_label: "Signals · Preview"
-permalink: /preview/equity-model-comparison.html
+categories: ["Signals"]
+article_label: Signals · Equity model comparison
+permalink: /quants/equity-model-comparison.html
 ---
 
 When I compare two stock scores, I start by asking how well each one orders
@@ -119,16 +119,40 @@ and 7.5 basis points.
 </table>
 </div>
 
-## Extending the comparison to Kumo
+## The first Kumo Small window
 
 Kumo Tabular Small and Large approach the same prediction problem through
 in-context learning. They receive historical labeled rows as context at
-inference. I would take that context from an expanding history, using only
-labels available at each refit. Thinning the dates and keeping the upper and
-lower 30% of mature targets on those dates reduces the size of the context.
-It also changes the target distribution the model sees, so that choice belongs
-in the interpretation of a Kumo result. This preview covers the two baselines
-while the Kumo evaluation is pending. [Kumo Tabular technical report](https://arxiv.org/abs/2611.23001v1)
+inference. For the first Small fold I took every 15th trading session of
+training history and kept the upper and lower 30% of known targets on those
+dates. That gave Kumo 35,738 labeled rows. The latest selected training date
+was August 5, 1998. Its 20-session target window finished in September,
+before the first score in January 1999. I scored every eligible stock
+using its features for that date. [Kumo Tabular technical report](https://arxiv.org/abs/2611.23001v1)
+
+<div class="research-table-scroll" tabindex="0" role="region" aria-label="First Kumo Small window, ranking and gross spread">
+<table id="table-4" class="research-table comparison-table risk-performance-table">
+  <caption><span class="caption-number">Table 4.</span> <span class="caption-title">January 1999–September 2000.</span> Rank statistics use 421 dates with realized targets. The gross top-minus-bottom spread statistics are annualized.</caption>
+  <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th><th scope="col">Return</th><th scope="col">Volatility</th><th scope="col">Sharpe</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Ridge</th><td>0.0491</td><td>0.070</td><td>0.70</td><td>18.7%</td><td>15.6%</td><td>1.18</td></tr>
+    <tr><th scope="row">LightGBM</th><td>0.0723</td><td>0.071</td><td>1.01</td><td>52.0%</td><td>18.1%</td><td>2.41</td></tr>
+    <tr><th scope="row">Kumo Small</th><td>0.0735</td><td>0.071</td><td>1.03</td><td>61.0%</td><td>22.4%</td><td>2.24</td></tr>
+  </tbody>
+</table>
+</div>
+
+Kumo Small and LightGBM had similar rank IC in this window. The difference
+was 0.0012, with a paired 21-session block-bootstrap interval of roughly
+−0.0044 to 0.0070. Kumo's gross spread returned more and took more risk.
+LightGBM had the higher observed spread Sharpe. The Kumo results here cover
+one early fold.
+
+For the full walk-forward test I use the three portfolio schedules to choose
+the scoring dates. That calls for about 1.16 million stock scores, with an
+expanding labeled context at each refit. I recompute Ridge and LightGBM's
+ranking metrics on those same dates. Kumo's full-period results and after-fee
+books require the remaining folds.
 
 The Ridge and LightGBM results show why I want all three views of a score.
 The daily IC compares the whole ordering, the deciles show what happens at
