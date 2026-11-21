@@ -157,7 +157,7 @@ predictors, the heavy line is their composite, and hovering names a line.
   </div>
 </noscript>
 
-<p class="figure-caption"><strong>Figure 1. How the predictors relate to each other and to the target.</strong> Average rank correlation over the selected period, on every fifth session from 1998 through April 2026; the figure opens on 1998–2021. Each predictor is signed so that its 1998–2021 average IC is positive, and blue pairs favour the same stocks. The dendrogram (average linkage on 1 − |ρ|) is fitted on the same years. Signs and dendrogram are reused unchanged for 2022–2026, so periods stay comparable. The lower panel is the cumulative IC of the theme composites or, under IC lines, of one theme's predictors: thin lines are the predictors, the heavy line is their composite, and hovering names a line and gives its mean IC over the period. With the composites, click a legend entry to show or hide a theme. Zooming the lower panel recalculates its cumulative IC and mean; the year controls set the correlation window.</p>
+<p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Predictor agreement and rank IC.</span> Blue indicates agreement after aligning predictors by their 1998–2021 IC. Both periods use the same signs and clustering. The lower panel tracks cumulative rank IC.</p>
 
 Over 1998–2021, size and volatility are the most coherent themes after
 the two-predictor market correlation: their predictors correlate 0.67 and 0.65
@@ -238,7 +238,7 @@ window would give recent changes more influence over each fit.[^fitting]
   {% include theme-svg-figure.html base="/assets/combining-predictors/expanding-walk-forward" mobile="/assets/combining-predictors/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="10" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2. Expanding walk-forward.</strong> Each row is one refit. Training always starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Shading marks the separately reported January 2022–May 2026 period. The month-long gap between training and predictions is too short to see at this scale.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Expanding walk-forward refits.</span> Each row trains from January 1995 and predicts until the next refit, with a one-month gap before predictions begin. Shading starts in January 2022.</p>
 
 The blue blocks are out of sample relative to each fit, in both reporting
 periods. Refitting continues after 2021, and observations from the later
@@ -256,7 +256,7 @@ article]({% link _posts/2026-08-29-joint-sizing.md %}), where a portfolio built 
 scores reaches a Sharpe of 1.32 through 2021 and 0.87 after.
 
 <table class="research-table settings-table" id="portfolio-construction">
-  <caption><strong>Table 1. The portfolio rule.</strong> Identical for every score.</caption>
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolio construction for all scores.</span></caption>
   <tbody>
     <tr><th scope="row">Holdings</th><td>Long the top 75 stocks, short the bottom 75</td></tr>
     <tr><th scope="row">Position size</th><td>20% divided by the stock's past 60-session volatility (floored at 5%); at most 4% per stock and 100% of capital per side</td></tr>
@@ -274,7 +274,7 @@ drifts toward the equal-weight score, its volatility rising toward 9% and its
 Sharpe falling.
 
 <table class="research-table comparison-table">
-  <caption><strong>Table 2. Ridge penalty on development data.</strong> September 1998–December 2021, mean of three schedules, after costs. $c=0$ is OLS. IC IR is the mean daily IC divided by its standard deviation, unannualized. Coefficient size is the average length of the coefficient vector across refits, relative to OLS.</caption>
+  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Ridge penalty on development data.</span> September 1998–December 2021, after costs, averaged across three schedules. Coefficient length is relative to OLS (c = 0). IC IR is unannualized.</caption>
   <thead>
     <tr><th>Penalty $c$</th><th>Coefficient size</th><th>Mean daily IC</th><th>IC IR</th><th>Volatility</th><th>Sharpe</th></tr>
   </thead>
@@ -295,7 +295,7 @@ of how well a score ranks the target; its Sharpe is within 0.01 of the best.
 {: #prediction-quality-and-portfolio-results }
 
 <table class="research-table comparison-table ic-summary-table portfolio-card-table">
-  <caption><strong>Table 3. Cross-sectional ranking quality.</strong> Mean daily rank IC, its standard deviation and their unannualized ratio. Adjacent observations share overlapping 20-session outcomes; later IC ends on 28 April 2026, the last complete target date.</caption>
+  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Cross-sectional ranking quality.</span> Daily rank IC and its unannualized mean-to-standard-deviation ratio. Twenty-session outcomes overlap. The last complete target date is 28 April 2026.</caption>
   <thead>
     <tr><th>Score</th><th>Mean daily IC</th><th>IC SD</th><th>IC IR</th></tr>
   </thead>
@@ -321,7 +321,7 @@ volatility, using equal-weighted decile portfolios before costs.
 
 {% include blog-chart.html chart="deciles" source="/assets/combining-predictors/deciles.json?v=2" base="/assets/combining-predictors/decile-returns" mobile="/assets/combining-predictors/decile-returns_mobile" version="1" label="Ridge and equal-weight score decile returns are broadly increasing through 2021. After 2021 the bottom deciles lag, while return ordering largely disappears above decile 3." %}
 
-<p class="figure-caption"><strong>Figure 3. Decile portfolios of the scores.</strong> Equal-weighted portfolios of the stocks in each score decile. Explore switches between compounded annual return, Sharpe ratio and annualized volatility for the selected period. Portfolios trade at the next close and are held until the next rebalance, averaged over the three schedules; before costs. Decile 10 holds the highest scores.</p>
+<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Returns by score decile.</span> Decile 10 holds the highest scores. Portfolios are equally weighted and trade at the next close. Results average three schedules before costs.</p>
 
 Through 2021 Ridge's deciles climb from about 3% a year to 16%, and the top
 decile's Sharpe ratio is 0.90 against 0.26 at the bottom. Equal weights reach
@@ -335,7 +335,7 @@ portfolio from the [low-volatility article]({% link _posts/2024-12-15-low-volati
 through 2021 and 0.78 after.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4. Net performance and trading.</strong> Mean statistics across three rebalance schedules, after 5 bp per dollar traded, with min–max Sharpe in parentheses. Returns are compounded annual returns and volatility is annualized; Sharpe uses a zero cash rate, beta is measured against the Russell 1000, and two-way turnover is mean daily traded notional divided by capital, multiplied by 252.</caption>
+  <caption><span class="caption-number">Table 4.</span> <span class="caption-title">Net performance and trading.</span> Three-schedule means after 5 bp per dollar traded. Parentheses show the schedule range of Sharpe. Beta is relative to the Russell 1000.</caption>
   <thead>
     <tr><th>Score</th><th>Net return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Market beta</th><th>Gross exposure</th><th>Two-way turnover / year</th></tr>
   </thead>
@@ -370,7 +370,7 @@ about 0.2 in both periods, with 95% intervals from roughly zero to 0.4. Figure
 
 {% include blog-chart.html chart="performance" source="/assets/combining-predictors/performance.json" label="Ridge and equal-weight growth and drawdowns" %}
 
-<p class="figure-caption"><strong>Figure 4. Portfolio paths of the equal-weight and Ridge scores.</strong> Mean daily net P&amp;L of the three schedules on common dates, compounded (log scale), with drawdowns below; the dotted line marks the start of the later period. Each portfolio keeps its own risk level; Table 4 gives the risk-adjusted comparison.</p>
+<p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Equal-weight and Ridge portfolio paths.</span> Growth compounds the mean daily net P&amp;L across three schedules. The dotted line marks January 2022. Table 4 compares risk-adjusted performance.</p>
 
 Both scores lean toward larger stocks, because within the Russell 1000 larger
 mostly means lower volatility. Through 2021 the stocks Ridge selects for the
@@ -389,7 +389,7 @@ holding the other ranks fixed.
 
 {% include blog-chart.html chart="coefficients" source="/assets/combining-predictors/coefficients.json" label="Ridge coefficients by refit, with selectable predictors" %}
 
-<p class="figure-caption"><strong>Figure 5. Ridge coefficients by refit.</strong> The ten largest by mean absolute coefficient are shown by default. Each refit averages the three interleaved training fits; the year is the start of its prediction block. Rows keep their magnitude ranking; hover for each predictor's full definition.</p>
+<p class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Ridge coefficients across refits.</span> The ten largest mean absolute coefficients appear first. Each column averages three training fits and is dated by the start of its prediction block.</p>
 
 The largest weight is a bit of a surprise. It's negative, on the 10/21-day
 MACD, a trend measure whose
@@ -422,7 +422,7 @@ that size, the length of the coefficient vector.
 
 {% include blog-chart.html chart="stability" source="/assets/combining-predictors/coefficients.json" label="Similarity of the Ridge coefficients to the previous refit, and the size of the coefficient vector, by refit" %}
 
-<p class="figure-caption"><strong>Figure 6. The Ridge coefficient vector across refits.</strong> The first panel is the cosine similarity between the 80 coefficients at each refit and at the previous one; the second is the length of the coefficient vector relative to the first refit. The year is the start of each prediction block.</p>
+<p class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Stability of the Ridge coefficients.</span> Cosine similarity compares each refit to the previous one. Vector length is relative to the first refit.</p>
 
 The mix of weights settles quickly. The second refit has a similarity of 0.85
 with the first, and from the 2012 refit on each one stays within 0.98–0.99 of
@@ -474,12 +474,12 @@ as the weights learned for individual predictors.
 
 ## References
 
-- **Medium- and long-term return (momentum):** Jegadeesh and Titman (1993), *Returns to Buying Winners and Selling Losers*; Da, Gurun and Warachka (2014), *Frog in the Pan*.
-- **Short-term return (reversal):** Jegadeesh (1990), *Evidence of Predictable Behavior of Security Returns*; Lehmann (1990), *Fads, Martingales, and Market Efficiency*.
-- **Volatility:** Ang, Hodrick, Xing and Zhang (2006), *The Cross-Section of Volatility and Expected Returns*; Baker, Bradley and Wurgler (2011), *Benchmarks as Limits to Arbitrage*; Bali, Cakici and Whitelaw (2011), *Maxing Out*.
-- **Size:** Banz (1981), *The Relationship Between Return and Market Value of Common Stocks*; Asness et al. (2018), *Size Matters, If You Control Your Junk*; Amihud (2002), *Illiquidity and Stock Returns*.
-- **Trading activity:** Lee and Swaminathan (2000), *Price Momentum and Trading Volume*.
-- **Market correlation:** Frazzini and Pedersen (2014), *Betting Against Beta*; Asness et al. (2020), *Betting Against Correlation*.
-- **Short interest:** Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
+- Medium- and long-term return (momentum): Jegadeesh and Titman (1993), *Returns to Buying Winners and Selling Losers*; Da, Gurun and Warachka (2014), *Frog in the Pan*.
+- Short-term return (reversal): Jegadeesh (1990), *Evidence of Predictable Behavior of Security Returns*; Lehmann (1990), *Fads, Martingales, and Market Efficiency*.
+- Volatility: Ang, Hodrick, Xing and Zhang (2006), *The Cross-Section of Volatility and Expected Returns*; Baker, Bradley and Wurgler (2011), *Benchmarks as Limits to Arbitrage*; Bali, Cakici and Whitelaw (2011), *Maxing Out*.
+- Size: Banz (1981), *The Relationship Between Return and Market Value of Common Stocks*; Asness et al. (2018), *Size Matters, If You Control Your Junk*; Amihud (2002), *Illiquidity and Stock Returns*.
+- Trading activity: Lee and Swaminathan (2000), *Price Momentum and Trading Volume*.
+- Market correlation: Frazzini and Pedersen (2014), *Betting Against Beta*; Asness et al. (2020), *Betting Against Correlation*.
+- Short interest: Boehmer, Jones and Zhang (2008), *Which Shorts Are Informed?*; Hong et al. (2015), *Days to Cover and Stock Returns*.
 
 [^fitting]: I refit about every two and a half years, starting from three and a half years of history, with a one-month gap before each prediction block. Each fit averages three models trained on interleaved dates, and a missing predictor value takes its date-and-sector mean.

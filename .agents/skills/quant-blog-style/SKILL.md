@@ -141,7 +141,11 @@ Keep all figures and captions inside articles.
 
 Restart numbering in each article. Use “Figure 1.” and “Table 1.” as independent sequences in reading order. Put the figure's one
 main title at the beginning of its caption below the display. Put a table's
-caption above it. Panel labels identify variables or scope; they do not repeat
+caption above it. Use a regular-weight gray `caption-number` followed by a
+regular-weight `caption-title`. Aim for a title and one short sentence.
+Leave numbers and model names in the running text at normal weight. Reserve
+strong emphasis for a genuine editorial notice or a distinction a reader
+would otherwise miss. Panel labels identify variables or scope; they do not repeat
 the caption's title. Keep axis units visible.
 
 Do not add inline CSV downloads or “supporting results” links to table captions.

@@ -48,7 +48,7 @@ falls from 0.90 in decile 1 to 0.20 in decile 10.
 </div>
 
 
-<p class="figure-caption"><strong>Figure 1. More volatile stocks earn less per unit of risk.</strong> Before-cost Sharpe, annual return and volatility, July 1995–May 2026. Each decile is an equal-weighted long portfolio of about 100 stocks; decile 1 has the lowest volatility. Sharpe uses the arithmetic mean daily return and a zero cash rate, so decile 10 keeps a Sharpe of 0.20 with a compounded return near zero.</p>
+<p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Returns across volatility deciles.</span> Each decile holds about 100 equally weighted stocks. Decile 1 has the lowest volatility. Returns are before costs, July 1995–May 2026.</p>
 
 ## Equal capital, unequal risk
 
@@ -65,7 +65,7 @@ the market.
 </div>
 
 
-<p class="figure-caption"><strong>Figure 2. The short book dominates risk under equal weighting.</strong> Annualized realized volatility and average ex-ante beta, July 1995–May 2026. The high-volatility book's beta is measured before applying the short sign.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Risk on each side of the equal-weighted book.</span> The high-volatility stocks’ beta is shown before applying the short sign.</p>
 
 ## Inverse-volatility sizing
 {: #sizing-the-two-books }
@@ -102,7 +102,7 @@ portfolio's beta with the Russell 1000 at every rebalance, using trailing
 ex-ante betas.[^beta-check] Table 1 compares all four.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 1. Sizing with and without a beta hedge.</strong> 12 July 1995–27 May 2026, after trading costs of 5 bp per dollar traded. Annual return is compounded and volatility annualized; the hedge is financed at no cost. Two-way stock turnover is about 19 times capital a year for equal weighting and 12 for inverse volatility; the hedge adds 1.3 and 0.6.</caption>
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Sizing with and without a beta hedge.</span> July 1995–May 2026. Returns are compounded after 5 bp per dollar traded. The index hedge has zero financing cost.</caption>
   <thead><tr><th>Rule</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="5">Unhedged</th></tr>
@@ -132,7 +132,7 @@ its deep drawdowns.
 </div>
 
 
-<p class="figure-caption"><strong>Figure 3. Hedging changes the return comparison; the risk gap remains.</strong> Compounded growth (log scale) and drawdown, July 1995–May 2026, after trading costs. The dashed line adds a Russell 1000 hedge to equal weighting at each rebalance; the inverse-volatility line is unhedged, and hedging it changes little (Table 1).</p>
+<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Growth and drawdown after trading costs.</span> The dashed line adds a Russell 1000 hedge to the equal-weighted book. Table 1 gives the corresponding inverse-volatility hedge.</p>
 
 ## Losses in strong rallies
 
@@ -165,7 +165,7 @@ shortfall of about 6 points came from the long book.
 </div>
 
 
-<p class="figure-caption"><strong>Figure 4. The portfolio lost in both rallies while the market rose.</strong> Before-cost compounded growth above linked cumulative book contributions in percentage points, gross of each book's market exposure. Episodes run 8 October 1998–9 March 2000 (Panel A continues to 3 April 2001) and 3 April 2025–27 May 2026; realized portfolio betas in the windows are −0.055 and −0.106.</p>
+<p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Long and short contributions during two rallies.</span> Growth is compounded before costs. The lower panels show linked contributions in percentage points. The first panel extends through the reversal in April 2001.</p>
 
 The dot-com loss was temporary: by April 2001 the portfolio was back to roughly
 where it started.

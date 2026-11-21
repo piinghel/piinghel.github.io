@@ -54,19 +54,19 @@ The first two heatmaps compare stock returns and residual returns on the same da
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/matrix" mobile="/assets/residual-risk/matrix_mobile" version="4" alt="Raw returns, formation residuals, and the following year's residuals for the same 850 stocks. Average correlation falls from about 25% to near zero after removing factors. Positive residual blocks weaken but remain visible in the following year." %}
-  <p class="figure-caption"><strong>Figure 1. Stock correlations before and after removing factors.</strong> Each tile averages correlations between distinct pairs from the same 850 stocks. Outlines mark groups formed in December 2021. Colours saturate at ±40%. This cohort had the strongest forward gap.</p>
+  <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Stock correlations before and after factor removal.</span> The same 850 stocks and December 2021 groups appear in all three panels. Tile colours saturate at ±40%. This cohort had the strongest forward gap.</p>
 </div>
 
-Removing the factors brought the average correlation from **about 25% to near zero**. Pairs in the same group were still about **8.5 correlation points** more correlated than pairs in different groups. The gap shrank to **about 5 points** over the next 252 sessions with the groups held fixed.
+Removing the factors brought the average correlation from about 25% to near zero. Pairs in the same group were still about 8.5 correlation points more correlated than pairs in different groups. The gap shrank to about 5 points over the next 252 sessions with the groups held fixed.
 
-Across all 27 cohorts, within-group correlation was about **5 points** higher than between-group correlation in formation and about **2 points** higher the next year. A group can look persistent simply because many of its names are in the same industry. I swap names within industries while preserving each group’s industry mix. The shuffled groups had a forward gap of less than half a point on average. The original groups beat the 95th percentile of the shuffles in all 27 cohorts.
+Across all 27 cohorts, within-group correlation was about 5 points higher than between-group correlation in formation and about 2 points higher the next year. A group can look persistent simply because many of its names are in the same industry. I swap names within industries while preserving each group’s industry mix. The shuffled groups had a forward gap of less than half a point on average. The original groups beat the 95th percentile of the shuffles in all 27 cohorts.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
-  <p class="figure-caption"><strong>Figure 2. Residual groups one year after formation.</strong> The upper panel tracks the rolling 252-session average stock-pair correlation before and after fitting the factors. Each dot below is one year-end cohort’s following-year difference between within-group and between-group correlation. The short mark for that cohort is the 95th percentile from shuffling labels within sectors. The industry shuffle in the text is a separate check.</p>
+  <p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Residual groups one year later.</span> Dots show next-year within-group minus between-group correlation. Short marks give the 95th percentile after shuffling labels within sectors.</p>
 </div>
 
-Most of the persistence was within sectors. In the 23 development cohorts the forward gap was **about 8 points** for same-sector pairs and **less than 1 point** for cross-sector pairs matched on industry mix. The cross-sector gap was positive in all 23 cohorts.
+Most of the persistence was within sectors. In the 23 development cohorts the forward gap was about 8 points for same-sector pairs and less than 1 point for cross-sector pairs matched on industry mix. The cross-sector gap was positive in all 23 cohorts.
 
 ## The shared directions persist at a smaller scale
 
@@ -92,10 +92,10 @@ The first direction will look strong in the window that chose it. The test is to
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/directions" mobile="/assets/residual-risk/directions_mobile" version="2" alt="PCA directions lose variance after formation but retain more than shuffled directions with the same industry composition. Development PCs two through five fall from 14.30 to 4.36 versus 1.64 for the shuffle." %}
-  <p class="figure-caption"><strong>Figure 3. Principal directions after formation.</strong> Within each band, first look at how far variance falls from formation to the following year. Then compare that forward variance with the industry shuffle, which redistributes stock weights within industries. A value of one is the variance of a unit-length direction if residuals are uncorrelated. The axis doubles at each tick and each cohort receives equal weight.</p>
+  <p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Principal directions after formation.</span> Compare formation, following-year and industry-shuffled variances on the same doubling scale. One is the reference for uncorrelated residuals. Cohorts have equal weight.</p>
 </div>
 
-In development, components two through five fell from **about 14** units of variance per direction to **about 4** the following year. That was still above the industry shuffle, which came in below **2**. The four later cohorts showed the same pattern.
+In development, components two through five fell from about 14 units of variance per direction to about 4 the following year. That was still above the industry shuffle, which came in below 2. The four later cohorts showed the same pattern.
 
 ## Putting a residual correlation into the portfolio
 
@@ -103,22 +103,22 @@ I vary the residual correlation matrix $$R$$ while keeping the named factors and
 
 For a principal direction $$q$$ with variance $$\lambda$$, its contribution is the matrix $$\lambda qq^\top$$. Let $$L$$ be the sum over the directions I keep. In the formulas below, $$\operatorname{diag}(U)$$ means a matrix with only the diagonal entries of $$U$$.
 
-- **Shrink toward zero.** For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. This pulls pairwise residual correlations toward zero while preserving each stock’s specific variance.
-- **Keep one principal component.** Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
-- **Combine them.** Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
+- Shrink toward zero. For the trailing residual correlation matrix $$S$$, use $$R=(1-\alpha)S+\alpha I$$, with the weight estimated by Ledoit–Wolf shrinkage. This pulls pairwise residual correlations toward zero while preserving each stock’s specific variance.
+- Keep one principal component. Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
+- Combine them. Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
 
 Return to the spread. The first component contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to the A–B correlation. The opposing component subtracts 0.2, giving the observed 0.6. Retain only the first component and move the remaining variance onto the diagonal, and the estimated correlation rises to 0.8. The spread’s forecast variance falls to 1.4, below the sample-correlation estimate of 1.8 and the halfway-shrunk estimate of 2.4. Keeping the strongest component can give the spread more hedging credit than the full sample estimate.
 
-Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the **same sector and group**, carrying the trailing correlation forward reduced development error from **about 17 to 12 correlation points** against a forecast of zero. For pairs in **different sectors and groups**, predicting zero or using ordinary shrinkage gave errors of around **8 points**, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
+Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the same sector and group, carrying the trailing correlation forward reduced development error from about 17 to 12 correlation points against a forecast of zero. For pairs in different sectors and groups, predicting zero or using ordinary shrinkage gave errors of around 8 points, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/residual-risk/pair-errors" mobile="/assets/residual-risk/pair-errors_mobile" version="1" alt="Changes in next-year pair correlation error versus forecasting zero. All estimators improved on zero for stocks in the same sector and cluster. The cross-sector, different-cluster forecasts increased error in both periods." %}
-  <p class="figure-caption"><strong>Figure 4. Next-year correlation error by stock-pair group.</strong> Each row is a different set of stock pairs. The dots show how much each estimator changes the following year’s correlation error relative to a forecast of zero. Left of zero is better. A difference of −4 means four correlation points less error. Cohorts receive equal weight within each panel.</p>
+  <p class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Next-year correlation error by stock-pair group.</span> Negative values mean smaller errors than forecasting zero correlation. Units are correlation points. Cohorts have equal weight within each panel.</p>
 </div>
 
 ## Keeping five components overstated their forward risk
 
-In development the five-component estimate assigned **about 15** units of variance per direction to components two through five. The following year delivered **about 4**, close to the ordinary-shrinkage forecast. Ordinary shrinkage also had lower forecast loss for that band in all 27 cohorts.
+In development the five-component estimate assigned about 15 units of variance per direction to components two through five. The following year delivered about 4, close to the ordinary-shrinkage forecast. Ordinary shrinkage also had lower forecast loss for that band in all 27 cohorts.
 
 The combined estimator can give a retained direction more variance than its fitted eigenvalue. For a retained unit direction $$q$$, the remainder $$U$$ satisfies $$q^\top Uq=0$$. Shrink its off-diagonal terms and the forecast becomes
 
@@ -128,14 +128,14 @@ $$
 
 The original offsets in $$U$$ kept its variance along $$q$$ at zero. Replacing some of those offsets with the individual stock variances adds risk in that direction, even though each stock’s own variance stays fixed.
 
-On the filled books, dropping residual correlations moved the factor target’s later volatility forecasts by **less than a tenth of a percentage point** on either set of holdings. Each covariance enters portfolio variance multiplied by the two signed weights. Contributions can cancel across the long and short sides even when individual residual correlations are material.
+On the filled books, dropping residual correlations moved the factor target’s later volatility forecasts by less than a tenth of a percentage point on either set of holdings. Each covariance enters portfolio variance multiplied by the two signed weights. Contributions can cancel across the long and short sides even when individual residual correlations are material.
 
 ## What changed in the long/short book
 
 So far I’ve measured how much residual co-movement survives and how much it changes a risk forecast. In the replay, the optimizer can also change the holdings. I keep the Ridge scores, risk budget, constraints and trading penalty fixed and compare what the new positions delivered after fees.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 1. Portfolio outcomes across residual risk estimates.</strong> Annual after-fee performance. Each residual method uses the same named factors and specific volatilities. Stock shrinkage is the separate stock-level reference.</caption>
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolios across residual risk estimates.</span> Annual results after fees. The residual methods share factors and specific volatilities. Stock shrinkage is the stock-level reference.</caption>
   <thead><tr><th>Risk estimate</th><th>Net return</th><th>Volatility</th><th>Sharpe</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="4">January 1999 – December 2021</th></tr>
@@ -155,7 +155,7 @@ So far I’ve measured how much residual co-movement survives and how much it ch
   </tbody>
 </table>
 
-Ordinary residual shrinkage improved on diagonal residuals in the later sample. Annual return after fees went from **2.7% to 4.0%**, with a modest drop in volatility. In development it also lowered volatility, with a small decline in return. Adding five components barely moved later net Sharpe, and the paired interval allowed small gains or losses.
+Ordinary residual shrinkage improved on diagonal residuals in the later sample. Annual return after fees went from 2.7% to 4.0%, with a modest drop in volatility. In development it also lowered volatility, with a small decline in return. Adding five components barely moved later net Sharpe, and the paired interval allowed small gains or losses.
 
 The groups tell me where to look for residual co-movement. The next-year tests tell me how much of it to carry into the forecast. The estimates weakened after formation, especially across sectors, and keeping five fitted directions at full strength overstated their forward risk. In a long/short book, the sign of each position determines which of those relationships actually matters for total risk.
 

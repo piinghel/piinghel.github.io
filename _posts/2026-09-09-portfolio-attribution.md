@@ -37,7 +37,7 @@ an explanation of the backtest; changes suggested by the attribution still
 need a separate comparison with the portfolio rules fixed in advance.
 
 <div id="pnl-conventions" markdown="1">
-Capital is held fixed, and one **P&L point** is 1% of it. Trading costs are
+Capital is held fixed, and one P&L point is 1% of it. Trading costs are
 5 basis points per dollar traded, excluding borrow, financing and market impact.
 With fixed capital, P&L over any stretch of days is the plain sum of daily P&L,
 so no linking across periods is needed. The attribution works with average daily
@@ -51,15 +51,15 @@ points a year. Sharpe ratios use a zero cash rate.
 ## The longs carry the book
 {: #the-book }
 
-From 23 September 1998, the longs made **372 points**, the shorts lost **101** and trading costs took
-**29.6**, leaving **242 points** net. The shorts lose money over the history
+From 23 September 1998, the longs made 372 points, the shorts lost 101 and trading costs took
+29.6, leaving 242 points net. The shorts lose money over the history
 even though they made money in each of the 15 declines of 15% or more since 1999
 ([Part 2]({% link _posts/2026-09-09-short-book-rebounds.md %}#market-regimes)).
 
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="performance" source="/assets/portfolio-attribution/performance.json" base="/assets/portfolio-attribution/whole-history" mobile="/assets/portfolio-attribution/whole-history_mobile" version="8" label="Cumulative long, short and net P&L above the portfolio drawdown, September 1998–May 2026." %}
 </div>
-<p class="figure-caption"><strong>Figure 1. The longs carried the accumulated result.</strong> Cumulative P&amp;L and drawdown, in points; longs and shorts before costs, net after. Shading marks the two deepest drawdowns, February 2020–January 2021 and July 2008–September 2009.</p>
+<p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Cumulative P&amp;L by leg.</span> Longs and shorts are before costs. The net book includes costs. Shading marks the two deepest peak-to-trough losses.</p>
 
 The book is also net long, by about 25% of capital. That sounds odd for a book
 with a tight beta limit, until you look at the betas: most of it follows from
@@ -102,8 +102,8 @@ and $$\tilde W_s$$ its weight in sector $$s$$ beyond the net dollars.
 
 The characteristics are built from the same 80 predictors as the ranking.
 This is not a decomposition of the Ridge model's 80 coefficients.
-**Short-term return** captures the book's reversal position, and **medium- and
-long-term return** groups momentum and slower trend. The
+Short-term return captures the book's reversal position, and medium- and
+long-term return groups momentum and slower trend. The
 [definitions](#factor-definitions) below list what each factor contains;
 stock-specific P&L is the model's remainder.
 
@@ -128,7 +128,7 @@ average therefore counts as short-term; the 10/21-session MACD, on the
 boundary, does not.
 
 <div markdown="1">
-<p class="table-caption"><strong>Table 1. The attribution components.</strong> Characteristics are built from the ranking's predictors as listed; trading activity groups three factors. Net market exposure and sector tilt come from the net dollars and the sector weights.</p>
+<p class="table-caption"><span class="caption-number">Table 1.</span> <span class="caption-title">Components of the attribution.</span> Trading activity groups three factors. Net market exposure and sector tilt come from net dollars and sector weights.</p>
 
 | Theme | What it measures |
 | :--- | :--- |
@@ -147,8 +147,8 @@ boundary, does not.
 <details markdown="1" id="factor-definitions">
 <summary>What goes into each factor</summary>
 
-The attribution uses **the 80 ranking predictors plus a separately estimated
-beta**. Related predictors are first combined into 25 groups, which together
+The attribution uses the 80 ranking predictors plus a separately estimated
+beta. Related predictors are first combined into 25 groups, which together
 with the estimated beta form nine fitted style factors. Standardized predictors
 receive equal weight within a group; standardized groups receive equal weight
 within their factor, with the signs described below. The resulting factors are
@@ -263,8 +263,8 @@ volatility, beta and net market exposure; it introduces no extra predictor.
 
 </details>
 
-I read **low volatility, beta and net market exposure together**, as the
-**low-risk package**. These are three components of the same portfolio
+I read low volatility, beta and net market exposure together, as the
+low-risk package. These are three components of the same portfolio
 position: lower-risk longs, higher-risk shorts and the net long dollars that
 partly offset their market exposure. The package is their sum, not another
 factor. Its breakdown helps explain when the position wins or loses.
@@ -275,7 +275,7 @@ contribution inside this multifactor book. The low-volatility factor here is a
 conditional attribution component, not the return of that article's decile
 portfolio.
 
-A theme's **share of risk** is the covariance of its daily P&L with the book's,
+A theme's share of risk is the covariance of its daily P&L with the book's,
 divided by the book's variance:
 
 $$
@@ -290,7 +290,7 @@ the existing holdings; it does not establish what changing them would earn.
 <details markdown="1">
 <summary>How I compute the attribution</summary>
 
-**Daily identity.** For holdings $$H$$ with characteristics at the previous
+Daily identity. For holdings $$H$$ with characteristics at the previous
 close, signed weights $$w_{i,t-1}$$ (fraction of capital), long gross
 $$L=\sum_{w>0}w$$, short gross $$S=-\sum_{w<0}w$$ and net $$n=L-S$$, the book's
 net P&L on day $$t$$ is
@@ -305,7 +305,7 @@ year. The fifth term is the P&L of the few holdings without characteristics,
 about 1% of gross, shown as its own line. Characteristics are measured at the
 previous market close.
 
-**Characteristics.** Each raw predictor is logged if it is a skewed level or
+Characteristics. Each raw predictor is logged if it is a skewed level or
 dispersion, or turned into $$\log(1+r)$$ if it is a return. Each day it is
 clipped at the median ± 5 × 1.4826 × the median absolute deviation, then
 standardized as $$z=(x-\bar x^{\text{cap}})/\sigma^{\text{EW}}$$, with a
@@ -316,19 +316,19 @@ are combined into groups, then factors, with standardization at each level as
 defined above. The estimated-beta input uses the optimizer's estimator;
 the fitted beta factor combines it with the market-correlation group.
 
-**Regression.** Weighted least squares with weights $$\sqrt{\text{market cap}}$$
+Regression. Weighted least squares with weights $$\sqrt{\text{market cap}}$$
 and eleven sector indicators, so the sector coefficients absorb the market. The
 market's return $$f^{\text{mkt}}$$ is the cap-weighted average of the sector
 coefficients, and the sector tilt is what the sector weights earn beyond it.
 Across 250 sample dates, no characteristic's variance inflation factor exceeds
 3.4.
 
-**Timing.** A theme's P&L over $$T$$ days splits into average exposure times
+Timing. A theme's P&L over $$T$$ days splits into average exposure times
 cumulative payoff plus timing:
 $$\sum_t E_tf_t=\bar E\,\Phi_T+T\operatorname{Cov}(E_t,f_t)$$, with
 $$\Phi_T=\sum_tf_t$$.
 
-**Betas.** The slope of an OLS regression is linear in the dependent variable,
+Betas. The slope of an OLS regression is linear in the dependent variable,
 so the book's beta to the market is the sum of the themes' betas,
 $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\text{mkt}})$$.
 
@@ -338,22 +338,22 @@ $$\beta_R=\sum_T\operatorname{Cov}(C_T,R^{\text{mkt}})/\operatorname{Var}(R^{\te
 {: #where-the-return-comes-from }
 
 {% include blog-chart.html chart="themes" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-pnl" mobile="/assets/portfolio-attribution/theme-pnl_mobile" label="Return and share of risk by theme" version="6" %}
-<p class="figure-caption"><strong>Figure 2. What the book is paid for, in any period.</strong> Average P&amp;L, % of capital a year, and share of the gross book's daily variance, for the selected dates; January 1999–May 2026 by default. Returns are before costs, with costs shown separately. Low-risk package and trading activity are subtotals; the control reveals their components. Each subtotal replaces its components when adding up returns or risk shares. Leg shares use the whole book's variance.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Each theme’s contribution to return and risk.</span> Returns are annualized before costs, with costs shown separately. Risk shares use whole-book variance for both the portfolio and individual legs.</p>
 
 Over the whole period the book averaged 9.6% a year before costs. Four sources
 carried it:
 
-- **The low-risk package**, 2.6% a year on 30% of the risk. Low volatility,
+- The low-risk package, 2.6% a year on 30% of the risk. Low volatility,
   beta and net market exposure are read together: separately they mostly show
   the market's move offsetting across lines, low volatility losing when the
   market rises and the net long dollars gaining. Together, about 1.8 points a
   year of that return is not explained by the market, with a standard error of
   about 0.8.
-- **Short-term return**, 3.4% a year on 8% of the risk. The book is short
+- Short-term return, 3.4% a year on 8% of the risk. The book is short
   recent winners, so this is a reversal bet, and I call it short-term reversal
   below.
-- **Short interest**, 1.4% a year on 5% of the risk.
-- **Stock-specific returns**, 1.5% a year on 31% of the risk, a Sharpe
+- Short interest, 1.4% a year on 5% of the risk.
+- Stock-specific returns, 1.5% a year on 31% of the risk, a Sharpe
   ratio of 0.37 on its own.
 
 The low-risk package supplied 27% of the return and 30% of the variance.
@@ -378,7 +378,7 @@ from low volatility and −0.02 from beta; stock-specific returns take off about
 <div class="research-figure responsive-figure">
   {% include blog-chart.html chart="years" source="/assets/portfolio-attribution/interactive-themes.json" base="/assets/portfolio-attribution/theme-return-years" mobile="/assets/portfolio-attribution/theme-return-years_mobile" version="6" label="Non-overlapping theme groups' returns per year, 1999–2026, with block averages." %}
 </div>
-<p class="figure-caption"><strong>Figure 3. Short interest contributed in every block; reversal's contribution fell.</strong> Return before costs, % of capital a year, per calendar year; lines are block averages. 2026 is January–May, annualized. Bars beyond ±10 are clipped and marked.</p>
+<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Annual contributions from short interest and reversal.</span> Bars show annualized gross returns. Lines give period averages. The 2026 observation covers January–May. Triangles mark values beyond ±10%.</p>
 
 Short-term reversal made 8.1% a year in 1999–2003 and 0.3% since 2022
 (0.8% from 2023). This was a long decline, alongside a smaller position:
@@ -391,7 +391,7 @@ from 2022 to 2025 and then lost about 8 points in the first five months of 2026,
 while medium- and long-term return gained; the two moved against each other day to day,
 which suggests an exposure the themes don't capture.
 
-<p class="table-caption"><strong>Table 2. What each theme earned, and the risk it took, in each period.</strong> Average return before costs and each theme’s share of the gross book’s daily variance. The low-risk package is the sum of low volatility, beta and net market exposure, rounded on its own; the themes add up to the book and the risk shares to 100, up to rounding. The standard error allows for autocorrelation up to 21 sessions. Periods are five years to 2018, then 2019–21 and 2022–May 2026.</p>
+<p class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Return and risk share by period.</span> Returns are before costs. Risk shares use the gross book’s daily variance. The low-risk subtotal includes three component rows. Standard errors allow 21 sessions of autocorrelation.</p>
 
 <div class="research-table-scroll">
   <table class="research-table comparison-table theme-periods">

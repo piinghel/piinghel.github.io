@@ -37,14 +37,14 @@ come from the existing research backtest. The sizing rules come from
 {: #the-starting-week-matters }
 
 Figure 1 shows what that choice meant for Friday signals from January 2022
-to May 2026. The weakest starting week earned **5.73%** a year after costs
-and the strongest earned **8.95%**. The three together earned **7.70%**.
+to May 2026. The weakest starting week earned 5.73% a year after costs
+and the strongest earned 8.95%. The three together earned 7.70%.
 Had I picked the weakest week, the entire portfolio would have followed that
 path. In the blend, it accounts for a third of each day's P&L.
 
 <figure class="research-figure rebalancing-figure responsive-figure">
   {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=4" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="The three Friday starting weeks finish at different levels. The equal-notional blend ends between the strongest and weakest schedules." version="3" %}
-  <figcaption class="figure-caption"><strong>Figure 1. The three Friday starting weeks diverged.</strong> Growth compounds daily net P&amp;L per unit of fixed notional from 100 at the 31 December 2021 close through May 2026. The vertical scale is logarithmic.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Three Friday starting weeks.</span> Growth compounds daily net P&amp;L per unit of fixed notional from 100 at the 31 December 2021 close.</figcaption>
 </figure>
 
 All three schedules use the same 80 ranking predictors, rank buffer and trade
@@ -84,7 +84,7 @@ rebalance scheduled each week, while each book keeps its three-week cycle.
       {% endfor %}
     </tbody>
   </table>
-  <figcaption class="figure-caption"><strong>Figure 2. One book rebalances each week.</strong> Shaded cells mark scheduled rebalances. Holidays can move the actual signal and fill dates.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">One book rebalances each week.</span> Shaded cells mark scheduled rebalances. Holidays can shift the signal and fill dates.</figcaption>
 </figure>
 
 The backtest scales each standalone book's executed positions and trades to a
@@ -114,19 +114,19 @@ $$
 
 I repeat the Friday comparison for all five weekdays. For every weekday
 in both periods, the blend had lower volatility than any of its
-three standalone books. Average volatility fell from **8.75% to 8.15%**
-in development and from **9.65% to 9.26%** later. The books moved more
+three standalone books. Average volatility fell from 8.75% to 8.15%
+in development and from 9.65% to 9.26% later. The books moved more
 closely together in the later sample. Their average correlation rose
 from 0.80 to 0.88. With similar standalone volatilities, the formula gives
 reductions of about 7% and 4%, close to what I find.
 
 I calculate each blend's Sharpe from its combined daily returns. In the
-later period, the average went from **0.81 to 0.84**. The same arithmetic
+later period, the average went from 0.81 to 0.84. The same arithmetic
 return came with a little less volatility, and the compounded return was
 slightly higher. The drawdown changed very little.
 
 <table class="research-table comparison-table risk-performance-table">
-  <caption><strong>Table 1. Lower volatility at the same notional.</strong> Mean statistics across 15 standalone schedules and five weekday blends. Return is annualized and compounded. Return, volatility and drawdown are percentages. Sharpe uses the daily mean and sample standard deviation, 252 sessions per year and a zero cash rate.</caption>
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Standalone schedules and weekday blends.</span> Averages across 15 schedules or five blends. Returns are compounded and annualized. Sharpe uses 252 sessions and a zero cash rate.</caption>
   <thead><tr><th>Metric</th><th>Single<br>schedule</th><th>Three<br>tranches</th></tr></thead>
   <tbody>
     <tr class="period-heading"><th colspan="3">September 1998–December 2021</th></tr>
@@ -153,20 +153,20 @@ spread by taking the standard deviation of the annualized returns across
 the choices in each case.
 
 I included the middle option too. Two books still leave a choice of which
-starting week to skip. In the later sample, dispersion fell from **1.11**
-percentage points with one book to **0.62** with two and **0.31** with
-three. The fall was smaller in development, from **0.75 to 0.50** points.
+starting week to skip. In the later sample, dispersion fell from 1.11
+percentage points with one book to 0.62 with two and 0.31 with
+three. The fall was smaller in development, from 0.75 to 0.50 points.
 That was still more weekday sensitivity than the quietest single starting
-week in development, at **0.34** points.
+week in development, at 0.34 points.
 
 Figure 3 shows where those returns landed. In the later period, the fifteen
-single schedules ranged from **5.65% to 9.42%** a year. The five blends
-ranged from **7.13% to 8.08%**. Holding all three starting weeks lifted the
+single schedules ranged from 5.65% to 9.42% a year. The five blends
+ranged from 7.13% to 8.08%. Holding all three starting weeks lifted the
 weakest outcome and gave up the strongest. Picking the weekday still matters.
 
 <figure class="research-figure rebalancing-figure responsive-figure">
   {% include blog-chart.html chart="calendars" source="/assets/rebalancing-luck/ridge-calendars.json?v=7" base="/assets/rebalancing-luck/ridge-calendars" mobile="/assets/rebalancing-luck/ridge-calendars_mobile" label="Annualized net returns for 15 single schedules, 15 pairs and five three-book blends in each period. After 2021, the range narrows from 5.65–9.42% for one book to 7.13–8.08% for three." version="7" %}
-  <figcaption class="figure-caption"><strong>Figure 3. Returns cluster more tightly with three books.</strong> Each dot is one of 15 single schedules, 15 same-weekday pairs or five three-book blends. The lines mark each group's range. Both panels use the same return scale.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Return dispersion across schedules and blends.</span> Each dot is one of 15 schedules, 15 same-weekday pairs or five three-book blends. Lines span each group’s range.</figcaption>
 </figure>
 
 ## Week and weekday
@@ -174,12 +174,12 @@ weakest outcome and gave up the strongest. Picking the weekday still matters.
 
 I expected the starting week to matter more than the weekday. Then I
 looked at the third starting week after 2021. It was the best of the three
-with Monday signals at **8.80%** a year, and the weakest with Friday
-signals at **5.73%**. Averaging over weekdays makes the starting-week
+with Monday signals at 8.80% a year, and the weakest with Friday
+signals at 5.73%. Averaging over weekdays makes the starting-week
 differences look small because those differences can reverse.
 
 <table class="research-table comparison-table compact-table">
-  <caption><strong>Table 2. Where the calendar differences show up.</strong> Share of squared deviations in compounded annual net returns across the 15 standalone calendars. Each main effect averages over the other calendar choice. The interaction measures how the week effect varies by weekday.</caption>
+  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Sources of calendar dispersion.</span> Shares of squared deviations in annualized net returns across 15 calendars. The interaction measures how the starting-week effect varies by weekday.</caption>
   <thead><tr><th>Component</th><th>1998–2021</th><th>2022–May 2026</th></tr></thead>
   <tbody>
     <tr><th scope="row">Weekday</th><td>45.2</td><td>7.7</td></tr>
@@ -188,7 +188,7 @@ differences look small because those differences can reverse.
   </tbody>
 </table>
 
-That interaction accounts for about **92%** of the squared differences
+That interaction accounts for about 92% of the squared differences
 from the average calendar return after 2021. The starting week mattered quite
 a bit for Friday even though it explained little on average.
 
@@ -205,9 +205,9 @@ still move together within each sampled block. For each of 2,000 draws,
 I measure the distance from the lowest to the highest compounded annual
 return.
 
-In development, **48%** of the draws produced a range at least as wide
-as the observed **2.65 points**. Later, **87%** matched or exceeded the
-observed **3.77 points**. Across block lengths of 21, 63 and 126 sessions,
+In development, 48% of the draws produced a range at least as wide
+as the observed 2.65 points. Later, 87% matched or exceeded the
+observed 3.77 points. Across block lengths of 21, 63 and 126 sessions,
 the frequencies were 45–55% and 87–90%, respectively. A gap this wide
 is common in these simulations even when every schedule has the same
 mean daily return. The size of the gap alone gives me little reason to
@@ -216,12 +216,12 @@ back the historical winner.
 ## Smaller trades, more orders
 {: #smaller-trades-more-rebalance-cycles }
 
-The average order count rose from **2,429 to 7,288 a year** after 2021.
+The average order count rose from 2,429 to 7,288 a year after 2021.
 Each book's order sizes were scaled to a third, so the total amount
 traded stayed the same on average. Two-way turnover, the value of purchases
-plus sales divided by portfolio notional, was **18.83 times notional
-a year** in both cases. At 5 bp per dollar traded, that works out to
-**0.94 percentage points a year** in either case and **1.29 points** in
+plus sales divided by portfolio notional, was 18.83 times notional
+a year in both cases. At 5 bp per dollar traded, that works out to
+0.94 percentage points a year in either case and 1.29 points in
 development.
 
 Smaller orders spread demand for liquidity across dates and may reduce

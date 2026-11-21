@@ -141,7 +141,7 @@ described below, at five shrinkage values in development.
   {% include blog-chart.html chart="shrinkage" source="/assets/joint-sizing/comparisons.json" base="/assets/joint-sizing/rho-ladder" mobile="/assets/joint-sizing/rho-ladder_mobile" label="Four panels showing risk calibration, beta bias, annual turnover and net Sharpe across correlation shrinkage for the optimizer with trading controls" version="18" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 1. Correlation shrinkage.</strong> The optimizer with trading controls at five shrinkage values, development period: risk calibration, beta bias (realized minus forecast beta over the next holding period), annual turnover and net Sharpe. The chosen 0.5 is highlighted.</p>
+<p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How correlation shrinkage changes the portfolio.</span> The diamond marks the chosen shrinkage of 0.5. Beta bias is realized minus forecast beta over the next holding period.</p>
 
 From 0.25 to 0.5, calibration stays close to one and Sharpe near 1.33.
 Without shrinkage realized risk runs 11% above forecast and turnover rises
@@ -171,7 +171,7 @@ or zero weights, so the optimizer sizes the selected names but cannot flip
 their side.[^drift] Table 1 lists all settings.
 
 <table class="research-table settings-table">
-  <caption><strong>Table 1. Allocation settings.</strong></caption>
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Allocation settings.</span></caption>
   <thead><tr><th>Component</th><th>Setting</th></tr></thead>
   <tbody>
     <tr><th scope="row">Selection</th><td>75 long + 75 short; with the buffer, existing holdings stay eligible through rank 175</td></tr>
@@ -196,7 +196,7 @@ explained in the next section: a rank buffer that keeps existing holdings
 eligible, and a penalty on trading.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 2. From volatility scaling to joint sizing.</strong> Development period, September 1998–December 2021. Means of metrics calculated separately for the three schedules, with min–max Sharpe in parentheses. Returns are geometric and annualized; Sharpe uses the arithmetic mean daily return and a zero cash rate. Two-way turnover is total traded notional divided by capital and elapsed calendar years; the regression article uses 252 sessions per year. Net results charge 5 bp per dollar traded.</caption>
+  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">From volatility scaling to joint sizing.</span> September 1998–December 2021. Three-schedule means after 5 bp per dollar traded. Parentheses give the lowest and highest schedule Sharpe.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
   </thead>
@@ -213,7 +213,7 @@ than half a point of gross return, but it does so at 7.1% volatility instead
 of 8.7%, which lifts Sharpe to 1.26; the maximum drawdown falls from about
 22% to 15%, partly because the book runs smaller. It also raises turnover from 30× to 36× a year. The trading
 controls keep almost all of the gross return and bring turnover down to
-23×, below either volatility-scaled rule, for a Sharpe of **1.32**.
+23×, below either volatility-scaled rule, for a Sharpe of 1.32.
 
 That comparison isn't perfectly clean, because several things change at once
 between the second and third rows:
@@ -227,7 +227,7 @@ with the score-weighted rule's 1.03, so the gain comes from the correlations.
   {% include blog-chart.html chart="performance" source="/assets/joint-sizing/performance.json" base="/assets/joint-sizing/performance-and-drawdowns" mobile="/assets/joint-sizing/performance-and-drawdowns_mobile" label="Development-period net growth and drawdowns for volatility scaling and the optimizer with trading controls" version="18" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 2. Development-period growth and drawdowns.</strong> Net growth index (log scale) and drawdown after trading costs for the first and last rules in Table 2, September 1998–December 2021. Each path averages three separately compounded schedules, so its drawdowns are shallower than the per-schedule maxima in Table 2. The rules run at different volatilities; Table 2 compares Sharpe.</p>
+<p class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Growth and drawdown in development.</span> Paths average the three separately compounded schedules after costs. Table 2 measures maximum drawdown within each schedule.</p>
 
 The lead builds steadily: scaled to the same volatility, no single year
 supplies more than about a sixth of it, and 1999–2000 together about a fifth.
@@ -261,7 +261,7 @@ moved. The penalty is in score units, not a cost estimate; the 5 bp cost is
 charged separately on executed trades.
 
 <table class="research-table comparison-table control-table">
-  <caption><strong>Table 3. What each trading control contributes.</strong> Development period, September 1998–December 2021. Conventions as in Table 2.</caption>
+  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">What each trading control contributes.</span> September 1998–December 2021, using the conventions in Table 2.</caption>
   <thead><tr><th>Trading rule</th><th>Gross return</th><th>Net return</th><th>Net Sharpe</th><th>Two-way turnover</th></tr></thead>
   <tbody>
     <tr><th scope="row">Optimizer, no controls</th><td>11.02%</td><td>9.03%</td><td>1.26</td><td>36.1×</td></tr>
@@ -282,7 +282,7 @@ keeps more holdings eligible, and the penalty makes keeping them the default.
 Table 4 covers January 2022–May 2026, about four and a half years.
 
 <table class="research-table comparison-table portfolio-card-table">
-  <caption><strong>Table 4. The same rules after 2021.</strong> January 2022–May 2026. Conventions as in Table 2.</caption>
+  <caption><span class="caption-number">Table 4.</span> <span class="caption-title">The same rules after 2021.</span> January 2022–May 2026, using the conventions in Table 2.</caption>
   <thead>
     <tr><th>Portfolio rule</th><th>Gross return</th><th>Net return</th><th>Net vol.</th><th>Net Sharpe</th><th>Max drawdown</th><th>Two-way turnover</th></tr>
   </thead>
@@ -321,7 +321,7 @@ reflects holdings and market moves throughout that year.
   {% include blog-chart.html chart="beta" source="/assets/joint-sizing/beta.json" base="/assets/joint-sizing/risk-calibration-and-beta" mobile="/assets/joint-sizing/risk-calibration-and-beta_mobile" label="Trailing 252-session realized market beta for volatility scaling and the optimizer with trading controls, with the plus or minus 0.05 limit band" version="17" %}
 </div>
 
-<p class="figure-caption"><strong>Figure 3. Realized beta.</strong> Month-end trailing 252-session market beta, averaged across the three schedules, from September 1999 after the return-window warm-up. The pale band marks the optimizer's ±0.05 limit, which applies to its rebalance-time estimate.</p>
+<p class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Realized market beta.</span> Month-end estimates use 252 sessions and average three schedules. The band shows the ±0.05 limit on the beta forecast at rebalance.</p>
 
 Over the full development period, realized beta is 0.10 for volatility
 scaling and 0.08 for the optimizer with trading controls; after 2021 it is
