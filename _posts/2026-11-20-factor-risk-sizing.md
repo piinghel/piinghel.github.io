@@ -1,7 +1,7 @@
 ---
 layout: post
 toc: false
-title: "A Short Introduction to Factor Risk Models"
+title: "Factor Risk Models, Part 1: An Introduction"
 description: "How factor exposures become portfolio risk, and what changes in hedges and position sizing when the Ridge forecasts stay fixed."
 date: 2026-11-20
 last_modified_at: 2026-11-21
@@ -26,7 +26,7 @@ $$
 r_t = B_{t-1} f_t + \epsilon_t.
 $$
 
-Each row of $$B_{t-1}$$ gives one stock’s exposures as of the previous close. The market column is one for every stock. The other columns encode sectors and styles.
+Each row of $$B_{t-1}$$ gives one stock’s exposures as of the previous close. The market column is one for every stock. The other columns encode sectors and styles. The model adds the factor contributions linearly. An interaction, such as momentum having a different effect among small stocks, would need its own term.
 
 I fit the factor returns $$f_t$$ across stocks by weighted least squares, using the square root of prior market cap as the weight. I center the sector returns under those weights to separate them from the common market term. What’s left after the fit is the vector of residual returns $$\epsilon_t$$.
 
@@ -36,7 +36,21 @@ $$
 \Sigma = BFB^\top + \Omega.
 $$
 
-I estimate $$F$$ and the specific variances from the fitted histories. Factor returns can move together, so $$F$$ can have off-diagonal entries. The baseline uses a diagonal $$\Omega$$, which puts all shared risk in the factors. For signed weights $$w$$, the portfolio has factor exposures $$B^\top w$$ and forecast daily variance $$w^\top\Sigma w$$.
+The additivity of the return model still allows factor returns to move together, so I estimate a full covariance matrix $$F$$. The baseline takes $$\Omega$$ to be diagonal, treating different stocks’ residuals as uncorrelated. This leaves one specific variance per stock to estimate. A shared move the chosen factors miss can still raise each stock’s specific variance. The diagonal estimate omits the covariance between those stocks.
+
+Which moves land in the residuals depends on the factors. A model with only a market and sectors can leave a common momentum effect behind. Adding a factor or estimating residual correlations can capture more of that co-movement, with more relationships to estimate. Part 2 checks how much of the residual co-movement survives into the following year.
+
+For signed weights $$w$$, the portfolio has factor exposures $$B^\top w$$ and forecast daily variance $$w^\top\Sigma w$$.
+
+### The factors in this study
+
+The market intercept and sector indicators capture broad moves. The seven styles describe how stocks within and across sectors can still move together.
+
+- **Momentum and short-term return** describe price behavior over different horizons. Momentum blends 12–1 return with a moving-average trend measure. Short-term return measures the last month.
+- **Beta and residual volatility** separate sensitivity to the Russell 1000 from the volatility left after fitting that index alone. Residual volatility is a stock characteristic here. The specific variance in $$\Omega$$ comes from the full factor fit.
+- **Size, liquidity and short interest** capture differences in market capitalization, trading volume relative to capitalization, and the share of stock sold short. They describe different ways stocks can react together when investors trade or unwind positions.
+
+These are risk exposures. A characteristic can explain co-movement even when the return forecast omits it. Value and quality could be useful for that reason. I lacked enough historical data to include them over this sample.
 
 ### A three-stock example
 
@@ -274,8 +288,6 @@ Exposure changed with breadth too. At 150 per side both models met the ±0.05 es
 ## What changes when the risk model changes
 
 The covariance estimate does two jobs. It tells the optimizer which positions offset one another, and it determines how much exposure fits inside the risk budget. A model can improve the first job for a broadly diversified spread while pushing the optimizer toward quite different positions once names can be dropped. In the Ridge replay, most of the gap in headline volatility came from how the models priced a dollar of exposure. Matching total volatility still left room for different market exposures and different stock weights.
-
-I would next calibrate the models on the same mix of sampled portfolios, including books whose weights never use Ridge. Comparing Q scores after that step would show whether the forecast advantage on randomly assigned spreads survives a common calibration. A second after-cost replay with different forecasts and comparable risk and beta would test how much of the trading result carries across strategies.
 
 ## References
 

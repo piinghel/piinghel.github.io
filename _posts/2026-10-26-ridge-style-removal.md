@@ -6,7 +6,7 @@ description: "Where to deal with style exposure, and what happens when part of i
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
-last_modified_at: 2026-11-20
+last_modified_at: 2026-11-21
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Style removal
 ---
@@ -22,10 +22,8 @@ About half of the [Ridge forecast]({% link _posts/2025-02-09-combining-predictor
 is explained by the styles I use here. Taking some of that out lowers the
 book's volatility in this backtest, and improves the full-period Sharpe ratio at
 some strengths. But the gains were earned before 2019, and in the last five years
-style removal hasn't helped at all. A separate test of adding short interest
-shows a small negative full-period Sharpe difference, with considerable
-uncertainty. And even if the results had been stronger, momentum or low volatility
-might still be bets I want to keep.
+style removal hasn't helped. A separate test of adding short interest shows
+a small negative full-period Sharpe difference, with considerable uncertainty.
 
 **Correction, 30 October 2026:** An earlier version overstated the benefit of
 removing short interest because the input mixed split-adjusted shares with
@@ -58,8 +56,8 @@ predictors or the training target, adjust the forecast after fitting, or limit
 exposures when building the portfolio. Each changes a different part of the
 problem: cleaning the target changes what the model learns; adjusting the
 forecast can change which stocks are selected; portfolio limits control the
-resulting book but can restrict sizing. A factor risk model offers another route:
-keep the forecast and let the optimizer account for estimated style risk.
+resulting book but can restrict sizing. A factor risk model can keep the
+forecast intact and account for estimated style risk in the optimizer.
 
 Here I adjust the forecast after fitting (Figure 1), treating the share removed,
 $$\lambda$$, as a dial: the removal strength. I'd like to reduce unwanted common risk without giving up too
@@ -322,25 +320,19 @@ the weights.[^clarke] Another alternative is to hedge part of
 the risk with covariance-based portfolios, as Daniel, Mota, Rottke and Santos do
 for characteristic portfolios.[^daniel]
 
-## What I take from this
+## Style removal changed the mix of risk
+{: #what-i-take-from-this }
 
-For this book, removing style from the forecast changes the mix of bets. Volatility
-fell at every strength tested and moved closer to the 7% target, but that alone
-doesn't establish better risk forecasts in other periods or portfolios. For the
-six styles the full-period Sharpe gain is uncertain once the variants are
-accounted for, and the recent results don't show the earlier improvement.
-The corrected short-interest evidence is mixed and comes from a different test.
+Removing part of the six-style component brought realized volatility closer to
+the 7% target in this book. The full-period Sharpe gain was uncertain after
+accounting for the strengths tested, and the improvement was concentrated
+before 2019. The separate short-interest comparison showed different signs
+over the full period and the last five years.
 
-I would start with 25% removal of the six styles if reducing this book's style
-exposure were the goal: it is a modest adjustment, not a proven optimal setting.
-I'd keep no removal as a serious
-alternative. A style bet may be deliberate and well rewarded; removing it may
-also leave correlated residual bets or discard useful stock selection.
-
-A factor risk model in the optimizer, separate decisions for each style (short
-interest included) and a style-adjusted training target would each handle this
-risk differently. For now, the result argues for measuring the bets and their
-costs at matched risk, not for treating style removal as the default.
+Changing the rankings changes which bets reach the portfolio. Taking out common
+exposures can lower volatility, give up returns from styles that pay, and leave
+stocks that still move together. The clearest effect here was on how the book
+took risk. The return trade-off depended on the period.
 
 ## References
 

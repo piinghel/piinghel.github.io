@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-11-20
+last_modified_at: 2026-11-21
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
@@ -230,10 +230,9 @@ equal-weight score.
 ## Fitting through time
 {: #from-predictions-to-portfolios }
 
-I refit the weights on an expanding window that starts in January 1995, so
-each refit adds history (Figure 2). A rolling window would adapt faster to the
-shifts in Figure 1, but with less data per fit its weights would move more
-between refits; I prefer stable weights.[^fitting]
+I refit the weights on an expanding window starting in January 1995 (Figure 2).
+Accumulating data stabilizes the weights between refits. A shorter rolling
+window would give recent changes more influence over each fit.[^fitting]
 
 <div class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/combining-predictors/expanding-walk-forward" mobile="/assets/combining-predictors/expanding-walk-forward_mobile" alt="Twelve refits on a 1995–2026 time axis. Every training window starts in January 1995 and grows with each refit; each prediction block runs until the next refit. Predictions from 2022 onward fall in the shaded later period." version="10" %}
@@ -468,10 +467,10 @@ It's worth being clear about what that gain is made of, though: much of what
 both scores learn is the low-volatility effect. The Sharpe target asks for it, the deciles sort volatility more cleanly than return, and both
 scores lean toward larger stocks.
 
-OLS and lightly penalized Ridge end up in about the same place. I keep the
-light penalty anyway, because it shrinks unstable coefficient combinations,
-even though it doesn't buy any Sharpe over OLS here. And I treat the ranking's lean toward large,
-low-volatility stocks as an exposure to manage rather than as skill.
+Lightly penalized Ridge shrinks unstable coefficient combinations and ended
+up close to OLS on Sharpe. Both rankings also leaned toward large,
+low-volatility stocks, so their performance reflects style exposure as well
+as the weights learned for individual predictors.
 
 ## References
 

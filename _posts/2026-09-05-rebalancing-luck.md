@@ -6,7 +6,7 @@ toc: true
 title: "Reducing Rebalancing Luck"
 description: "Combining Ridge rebalance schedules preserves mean return while reducing volatility and the risk of choosing an unlucky starting week."
 date: 2026-09-05
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-21
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/rebalancing-luck.html
@@ -52,10 +52,8 @@ multiplier**, versus the development-calibrated **1.55** in the
 both use a 7% forecast risk budget, so the portfolios here take more risk.
 
 Over this period, annualized net return ranges from **5.73% to 8.95%**.
-That is a 3.22 percentage point gap from choosing a different starting
-week. Combining the three gives **7.70%**. I couldn't have known in advance
-which week would win, and I wouldn't want the whole portfolio exposed to
-the one that earned 5.73%.
+That is a 3.22 percentage point gap from changing the starting week.
+Combining the three gives **7.70%**.
 
 <div class="research-figure rebalancing-figure responsive-figure">
   {% include blog-chart.html chart="schedules" source="/assets/rebalancing-luck/ridge-paths.json?v=2" base="/assets/rebalancing-luck/ridge-paths" mobile="/assets/rebalancing-luck/ridge-paths_mobile" label="Net growth of three Friday rebalance schedules and their equal-notional combination, January 2022 to May 2026." version="2" %}
@@ -200,10 +198,8 @@ changes with the weekday.
 
 So my expectation was wrong: the weekday component is larger than the
 starting-week one in both periods. Later, almost all the variation is in the
-interaction: the better starting week depends on the weekday. There is no starting week to select once all three are held.
-Figure 2 measures the resulting reduction using the combined portfolios
-themselves. I would combine starting weeks and keep the remaining weekday
-sensitivity in view.
+interaction: the better starting week depends on the weekday. Figure 2
+shows how much weekday sensitivity remains after combining starting weeks.
 
 ## Putting the spread in context
 
@@ -250,9 +246,8 @@ post-trade reconciliation, so operational work and costs can rise even
 when total traded notional stays the same. These costs are outside the
 5 bp charge; they do not necessarily triple with the number of rebalances.
 
-For an institutional portfolio, the smaller trade size is another reason
-to consider tranching. Rebalancing a third of the portfolio each week
-spreads demand for liquidity across dates. At comparable liquidity and
+Rebalancing a third of the portfolio each week spreads demand for liquidity
+across dates. At comparable liquidity and
 execution horizons, smaller orders should reduce market impact. The
 benefit depends on participation rates and how the original orders would
 have been worked; splitting a rebalance into child orders already captures
@@ -266,14 +261,13 @@ charge holds costs proportional to traded notional, so the reported gains
 come from diversification; any saving from lower market impact would be
 additional. Borrow and financing are also outside the calculation.
 
-## Combining starting weeks is the better default
+## Combining starting weeks reduced timing dependence
+{: #combining-starting-weeks-is-the-better-default }
 
-I would rebalance one third each week while keeping each book's three-week
-holding cycle. That reduces the dependence on the starting week and
-improves Sharpe in both periods, although the later improvement is modest.
-I'd rather share the notional across starting weeks than
-commit the whole portfolio to one and risk ending up at the bottom of
-the range.
+The three-tranche portfolio depended less on any one starting week and had
+higher Sharpe in both periods. The later gain was modest. The same traded
+notional was spread across more orders and rebalance cycles, so the trade-off
+includes both timing and execution.
 
 ## References
 

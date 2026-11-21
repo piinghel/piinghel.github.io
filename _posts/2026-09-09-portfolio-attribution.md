@@ -6,7 +6,7 @@ description: "How stock characteristics and market exposure contribute to the po
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-21
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
@@ -454,13 +454,12 @@ also contributes, but can contain exposures the model misses. I judge the
 low-risk position as a whole: its three components explain how it behaves,
 and they are not three separate sources of return.
 
-Reversal's contribution has fallen alongside the book's exposure to it. That's
-tempting to act on, but it's a reason to run a controlled comparison, not
-evidence that cutting its ranking weight would help. The low-risk package's recent return is
-too uncertain to establish deterioration. The attribution shows where to look
-in the ranking, and each change needs its own controlled test.
+Reversal's contribution fell alongside the book's exposure to it. The
+attribution measures those changes together and leaves the effect of
+altering its ranking weight unmeasured. The low-risk package's recent
+returns also leave considerable uncertainty about whether it deteriorated.
 [Removing Style Bets from a Ridge Forecast]({% link _posts/2026-10-26-ridge-style-removal.md %})
-is one such test, for the style content of the forecast itself.
+tests what happens when the style content of the forecast itself changes.
 
 ## References
 

@@ -6,7 +6,7 @@ description: "Three ways to make a Ridge strategy's momentum exposure depend on 
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
-last_modified_at: 2026-11-20
+last_modified_at: 2026-11-21
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -325,13 +325,11 @@ it has lagged. Reducing exposure also gives up returns when
 momentum continues to pay, and a volatility signal cannot know when a reversal
 will arrive. The later losses make that trade-off visible.
 
-The learned interactions did better in the later period, but I wouldn't read
-that as better protection yet. Their gain is concentrated in 2023, and the
-model also raises momentum in calm markets, from a tilt of 0.33 to 0.45 in
-development. That second bet pays when momentum trends, and momentum earned
-about 16% a year in the test period. So my judgement is: the overlay is reasonable insurance whose
-cost is now visible, the cap a weaker version of it, and the learned
-interactions promising until they show they cut momentum in an actual crash.
+The learned interactions did better in a later period when momentum earned
+about 16% a year. Their gains were concentrated in 2023, and the model
+also raised the momentum tilt in calm markets, from 0.33 to 0.45 in
+development. The later gains show how that exposure behaved when momentum
+paid. Protection during a new crash remains uncertain.
 
 ## References
 

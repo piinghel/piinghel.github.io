@@ -6,7 +6,7 @@ description: "The portfolio's P&L by theme in market declines and strong rallies
 permalink: /quants/short-book-rebounds.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-21
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 2
 series_id: performance-attribution
@@ -207,8 +207,8 @@ The reassuring part is that market direction matters much less to the book
 than to its long and short books. Within the low-risk package, low volatility and the net long dollars
 largely trade places, with beta completing the subtotal. Its gains concentrate
 in the base regime; it was positive in only 4 of 15 declines and 8 of 16 strong
-rallies. So I wouldn't count on it as protection in stress: the small regime
-averages hide a lot of variation from one episode to the next.
+rallies. Those episode counts show how uneven the protection was across
+stress periods.
 
 Since 2009, the positive contribution in declines appears mostly in the
 stock-specific remainder. Its negative market exposure and concentration in

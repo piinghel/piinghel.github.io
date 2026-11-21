@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Factor Risk, Part 2: Residual Risk After Sectors and Styles"
+title: "Factor Risk Models, Part 2: Residual Risk After Sectors and Styles"
 description: "I froze groups of stocks and principal directions learned from a year of residual returns, then followed them through the next year and into a long/short portfolio."
 date: 2026-11-20
 last_modified_at: 2026-11-21
@@ -168,4 +168,4 @@ Ordinary residual shrinkage improved on diagonal residuals in the later sample. 
 
 The groups tell me where to look for residual co-movement. The next-year tests tell me how much of it to carry into the forecast. The estimates weakened after formation, especially across sectors, and keeping five fitted directions at full strength overstated their forward risk. In a long/short book, the sign of each position determines which of those relationships actually matters for total risk.
 
-Keeping only within-group residual covariances barely moved the risk forecasts on the filled books. A stricter test would vary how much weight goes to those relationships across sampled spreads with different sector mixes. Holding specific volatilities and constraints fixed would show when the strength of a group matters enough to change hedge weights.
+Keeping only within-group residual covariances barely moved the risk forecasts on the filled books. The groups held together out of sample, and their effect on forecast portfolio risk depended on which positions the book held.

@@ -4,7 +4,7 @@ interactive_charts: true
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
-last_modified_at: 2026-11-20
+last_modified_at: 2026-11-21
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/joint-sizing.html
@@ -358,16 +358,11 @@ less than volatility scaling, so higher costs widen its lead. It does run at
 about 160% average gross against 138% in development, so the borrow,
 financing and impact costs left out here weigh more on it.
 
-The next step is to look at the covariance matrix itself. In
-[Factor Risk, Part 1]({% link _posts/2026-11-20-factor-risk-sizing.md %}),
-I show how a factor model builds stock covariance and test whether using it
-improves hedges or returns at similar realized risk.
-
-Two weaknesses remain: realized beta runs above the rebalance-time estimate
-for months at a time, and after 2021 the Sharpe advantage is positive but its
-interval includes zero and it depends on the rebalance schedule. I'd still
-choose joint sizing with trading controls: a clear Sharpe advantage in
-development, lower volatility and less trading in both periods.
+With the trading controls, joint sizing lowered volatility and turnover in
+both periods. Its Sharpe advantage was clearer in development. After 2021,
+the gain depended on the rebalance schedule and the paired interval included
+zero. Realized beta also exceeded the rebalance-time estimate for months at
+a time.
 
 ## References
 

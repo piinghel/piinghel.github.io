@@ -3,7 +3,7 @@ layout: post
 title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
-last_modified_at: 2026-10-26
+last_modified_at: 2026-11-21
 interactive_charts: true
 categories: ["Signals"]
 article_label: Signals · Low volatility
@@ -170,16 +170,15 @@ shortfall of about 6 points came from the long book.
 The dot-com loss was temporary: by April 2001 the portfolio was back to roughly
 where it started.
 
-## Inverse-volatility sizing is the better rule
+## Inverse-volatility sizing raised Sharpe and lowered risk
 {: #from-individual-weights-to-joint-construction }
 
-This one isn't close: I'd keep inverse-volatility sizing. Its Sharpe is about
-0.7 with or without the hedge, against 0.44 for equal weighting even after hedging, with less than half
-the volatility, about half the drawdown and less turnover. At about 131% gross,
-its realized beta also stays near zero without a hedge. Free hedge financing and
-the zero cash rate change the absolute returns, not that ranking. The thing to
-live with is strong rallies: the long book lagged its beta both times, and a
-beta hedge doesn't fix that.
+Inverse-volatility sizing reached about 0.7 Sharpe with or without the
+hedge, against 0.44 for hedged equal weighting. It also had less than half
+the volatility, about half the drawdown and lower turnover. At about 131%
+gross its realized beta was near zero before hedging. Both strong rallies
+still exposed a vulnerability: the long book lagged what its own beta
+implied.
 
 [^bab]: Andrea Frazzini and Lasse Heje Pedersen, *Betting Against Beta*, *Journal of Financial Economics*, 2014 ([author draft](https://w4.stern.nyu.edu/facdir/lpederse/papers/BettingAgainstBeta.pdf#page=2)). Their mechanism concerns market beta; this article ranks total volatility.
 

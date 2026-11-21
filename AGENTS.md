@@ -23,7 +23,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   require further approval. Keep homepage placement and Previous/Next consistent
   with the requested sequence.
 - Headings are statements. Don't pose a question and answer it yourself, and end
-  on the judgement rather than on open questions.
+  with what the evidence supports and where it is limited. Avoid recommendations
+  about which method a reader or the author should choose.
 - Keep footnotes to one or two short sentences: a source or one clarification.
   Settings lists and caveat chains go into a small table or are cut.
 - Don't hedge with "noise" ("within noise", "can't distinguish from noise"). State
@@ -60,8 +61,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Avoid possessive model and portfolio labels such as "my Ridge strategy",
   "my strategy", "my portfolio", or "our model" across all articles. Use
   "the Ridge model", "the portfolio", or the specific method's name. Keep
-  first person for research choices and judgments, such as "I tested" or
-  "I prefer"; refer to related articles by their title or topic.
+  first person for research choices and observations, such as "I tested" or
+  "I found"; refer to related articles by their title or topic.
 - Write for a systematic-equity reader: use "two-way turnover", "traded
   notional", and other normal domain terms. Define the convention once.
 - Use short, natural headings and introduce each practical problem before its
