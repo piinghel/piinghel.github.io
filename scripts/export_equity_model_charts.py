@@ -6,6 +6,7 @@ import argparse
 import csv
 import json
 import math
+from bisect import bisect_left
 from datetime import date, timedelta
 from itertools import accumulate
 from pathlib import Path
@@ -234,6 +235,7 @@ def export_pnl(
     models: tuple[tuple[str, str, str, str, str], ...] = (
         ("ridge", "Ridge", "equity_ridge", "#596877", "#aab3bf"),
         ("lightgbm", "LightGBM", "equity_lightgbm", "#2262ab", "#81b4f3"),
+        ("kumo_small", "Small 6w", "equity_small_six", "#5c55a3", "#b9b0fa"),
         (
             "kumo_medium",
             "Kumo Medium",
@@ -241,17 +243,20 @@ def export_pnl(
             "#397744",
             "#a9ccaa",
         ),
+        ("kumo_small_roll3", "Small rolling", "equity_rolling", "#9c3d58", "#e3a2b3"),
     ),
+    periods: tuple[str, ...] = ("1999–2021", "1999–2011", "2012–2021", "2017–2021"),
+    initially_hidden: tuple[str, ...] = ("kumo_small_roll3",),
     calendars: tuple[str, ...] = ("o0", "o1", "o2"),
     volatility_target: float = 0.07,
     annualization: int = 252,
 ) -> None:
-    summary = next(
-        row
+    summaries = {
+        row["period"]: row
         for row in rows(report / "books.csv")
-        if (row["period"], row["model"], row["basis"])
-        == ("1999–2021", "ridge", "long_short_net")
-    )
+        if (row["model"], row["basis"]) == (models[0][0], "long_short_net")
+    }
+    summary = summaries[periods[0]]
     start = date.fromisoformat(summary["first_date"])
     end = date.fromisoformat(summary["last_date"])
     opening = start - timedelta(days=1)
@@ -290,7 +295,19 @@ def export_pnl(
                 f"{model} lacks a complete set of returns on the common calendar"
             )
         dates = model_dates
-        lines.append(series(model, label, role, [0.0, *daily["net"]], additive=True))
+        lines.append(
+            series(
+                model, label, role, [0.0, *daily["net"]], additive=True,
+                visible=model not in initially_hidden,
+            )
+        )
+
+    episodes = []
+    for period in periods[1:]:
+        period_summary = summaries[period]
+        period_start = date.fromisoformat(period_summary["first_date"])
+        prior_close = dates[bisect_left(dates, period_start) - 1]
+        episodes.append([period, prior_close.isoformat(), period_summary["last_date"]])
 
     chart = {
         "kind": "performance",
@@ -303,11 +320,7 @@ def export_pnl(
         "matchVolatilityByDefault": True,
         "note": f"Annual P&L is mean daily net P&L × {annualization} on fixed capital. Sharpe uses zero cash return. Maximum drawdown is the loss per $100 of capital.",
         "zeroReference": True,
-        "episodes": [
-            ["1999–2011", dates[0].isoformat(), "2011-12-30"],
-            ["2012–2021", "2011-12-30", dates[-1].isoformat()],
-            ["2017–2021", "2016-12-30", dates[-1].isoformat()],
-        ],
+        "episodes": episodes,
     }
     write_chart(
         output / "net-pnl.json",
@@ -319,6 +332,8 @@ def export_pnl(
 
     portfolios = []
     for (_, label, _, light, dark), line in zip(models, lines, strict=True):
+        if not line["visible"]:
+            continue
         realized_volatility = stdev(line["values"][1:]) * math.sqrt(annualization)
         multiplier = 100 * volatility_target / realized_volatility
         pnl = [multiplier * total for total in accumulate(line["values"])]
@@ -377,7 +392,7 @@ def render_pnl_fallbacks(
                 drawdown.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
                 figure.legend(
                     loc="outside upper center",
-                    ncol=3,
+                    ncol=2 if mobile else min(4, len(portfolios)),
                     frameon=False,
                     labelcolor=ink,
                     handlelength=1.5,
@@ -393,6 +408,8 @@ if __name__ == "__main__":
     parser.add_argument("--profiles", type=Path, required=True)
     parser.add_argument("--correlations", type=Path, required=True)
     parser.add_argument("--books", type=Path, required=True)
+    parser.add_argument("--period", action="append", help="Report periods, full history first")
     args = parser.parse_args()
-    export(args.report, args.profiles, args.correlations)
-    export_pnl(args.report, args.books, args.profiles.parent)
+    options = {"periods": tuple(args.period)} if args.period else {}
+    export(args.report, args.profiles, args.correlations, **options)
+    export_pnl(args.report, args.books, args.profiles.parent, **options)

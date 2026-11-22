@@ -447,9 +447,11 @@ with each portfolio rescaled to 7% annualized volatility over the
 selected window. On that scale, over 1999–2021 Medium earned
 about USD 251 per USD 100 of fixed capital, ahead of Ridge at
 USD 209. LightGBM pulled ahead early and finished at USD 366.
+The chart also shows six-week Small. Open **Explore** to add
+rolling Small.
 
 <figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=4" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="3" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, rescaled to 7% annualized volatility by default." %}
+  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=5" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="4" label="Cumulative net P&L and drawdown for Ridge, LightGBM, Kumo Small and Kumo Medium, rescaled to 7% annualized volatility by default." %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
 </figure>
 
