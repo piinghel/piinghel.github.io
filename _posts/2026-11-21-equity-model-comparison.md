@@ -10,52 +10,53 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, boosted trees like LightGBM and XGBoost have been hard
-to beat on tabular data.[^tree-benchmark] The recipe is familiar.
-Fit a set of trees on rows with known outcomes, then use those
-trees to predict the outcome for a new row.
+For years, boosted trees like LightGBM and XGBoost were the
+benchmark I looked for when a new model seemed promising on
+tabular data.[^tree-benchmark] Now models like TabPFN and TabICL
+are beating strong tree ensembles on a growing range of
+benchmarks.[^new-benchmarks]
 
-With a tabular foundation model, the developers train a single
-network across many tables. For each table, they show the model
-some outcomes and ask it to predict the rest. When I give that
-network a new table, it uses the examples with known outcomes to
-make predictions. Its weights stay fixed.
+What got me curious was how they make those predictions. With
+LightGBM, I fit trees on the examples for the problem in front of
+me. The fitted trees then score the new rows. A tabular foundation
+model comes with a network trained across many tables. When I
+ask it for a prediction, I give it rows from my own table with
+known outcomes. The network uses those examples and its weights
+stay fixed.
 
-As these models became practical on larger tables, I wanted to
-try one on stocks.[^larger-tables] With a network pretrained on
-synthetic tables, I can give it the stock history available on
-each forecast date. That fits the walk-forward setup I already
-use for Ridge and LightGBM. I compare how all three rank stocks,
-then see how those rankings translate into returns after fees.
+As these models got better at handling larger tables, I wanted to
+try one on stocks.[^larger-tables] With a model pretrained on
+synthetic tables, the stock-specific evidence comes from the
+history I give it. I can walk through the backtest one forecast
+date at a time, giving it the stock information available then.
+I compare its rankings with Ridge and LightGBM and see how those
+rankings hold up after trading costs.
 
 ## A pretrained model for tables
 
 ### What the historical examples do at prediction time
 
-Suppose I have a table with two predictors and an outcome column.
-Most rows have a known outcome. For a new row I have the predictors
-and want to fill in the outcome. With LightGBM, `fit()` takes the
-labeled rows and builds a series of trees. Each tree adds a correction
-to the predictions from the earlier trees. One tree might split the
-rows at a threshold in the first predictor and learn a different
-correction on each side. When I call `predict()`, the new row follows
-the branches in the fitted trees and I add the corrections. The trees
-carry forward what the model learned from the labeled rows. With Ridge,
-the coefficients play the same role.
+Imagine adding a row to a table with two predictors. The predictors
+are filled in and the outcome is blank. In LightGBM, `fit()` builds
+a series of trees from the labeled rows. Each tree adds a correction
+to the earlier predictions. One tree might split the rows on the
+first predictor and learn a different correction on either side.
+In `predict()`, the new row follows the branches in the fitted
+trees and I add up the corrections. With Ridge, the fitted
+coefficients play the same role as the trees.
 
-An in-context tabular foundation model uses the labeled rows in a
-different place. To fill in the new outcome, the network uses the
-new row’s predictors together with the examples and their known
-outcomes. Those examples are its *context*. Give the same network
-different examples and its answer can change, even when the new
-row and the network’s weights stay the same. This is *in-context learning*.
+A tabular foundation model sees the new row’s predictors alongside
+the examples and their known outcomes. Those examples are its
+*context*. I can keep the same new row and the same network weights,
+swap the examples, and get a different answer. That’s *in-context
+learning*.
 
-Both workflows can look like `fit()` followed by `predict()` in code.
-With boosted trees, `fit()` estimates the trees from your data. A
-pretrained model such as TabPFN or TabICL uses the call to prepare
-the labeled rows for prediction. The training that determined the
-network’s weights took place earlier. Christoph Molnar illustrates
-this distinction in [*Tabular Foundation Models*, Chapter 4](https://tabularfoundationmodels.com/prediction#tfms-do-in-context-learning).
+Both workflows can look like `fit()` followed by `predict()` in
+code. For LightGBM, `fit()` is where the trees are built. For a
+pretrained model such as TabPFN or TabICL, it prepares the examples
+that the network will use to predict. Christoph Molnar illustrates
+what goes into each prediction in
+[*Tabular Foundation Models*, Chapter 4](https://tabularfoundationmodels.com/prediction#tfms-do-in-context-learning).
 
 ### Pretraining across many tables
 
@@ -64,15 +65,13 @@ another. In each table, it gets the outcomes for some rows and has
 to predict the outcomes for the others. Its errors on those hidden
 outcomes are used to update the network weights.
 
-The relationship between predictors and outcomes varies across the
-tables. In one synthetic table, the outcome might mostly depend on
-a single column. In another, two columns might matter together. If
-every table followed the same rule, the network could learn that
-rule and use it everywhere. Varying the rules gives the network a
-reason to use the labeled rows to work out which relationships are
-plausible in the table it has been given. At prediction time on a
-new table, the examples supply that evidence and the weights stay
-fixed. [Molnar, Pretraining](https://tabularfoundationmodels.com/pretraining).
+In one synthetic table, the first column might explain most of
+the outcome. In another, two columns might matter together. If
+every table followed the same rule, the network could use that
+rule everywhere. When the rules vary, the labeled rows help it
+work out which relationships make sense for the table at hand.
+Molnar shows how those tables are generated in
+[*Tabular Foundation Models*, Chapter 5](https://tabularfoundationmodels.com/pretraining).
 
 ### The Bayesian intuition
 
@@ -83,15 +82,13 @@ Start with a 50% probability for each rule. Suppose the usual outcome
 occurs nine times out of ten under either rule, with independent errors
 across rows.
 
-Now I see a row where the first predictor is high, the second is low
-and the outcome is low. That outcome is expected under the second
-rule and unusual under the first.
-It is nine times as likely under the second rule, so I raise that
-rule’s probability to 90%. For a new row with the same predictors,
-there are two ways to get a low outcome. The second rule could be
-right and give its usual outcome, or the first rule could be right and
-give its unusual outcome. Adding those probabilities gives
-0.9 × 0.9 + 0.1 × 0.1, or 82%.
+Now I see a row where the first predictor is high, the second is
+low, and the outcome is low. That outcome is nine times as likely
+under the second rule. The rules started with equal odds, so I
+now give the second rule a 90% probability. For a new row with
+the same predictors, either rule could still give a low outcome.
+Weight the two forecasts by their updated probabilities and you
+get 0.9 × 0.9 + 0.1 × 0.1, or 82%.
 
 The probabilities assigned to the rules before seeing the example
 are the *prior*. The updated probabilities are the *posterior*.
@@ -108,56 +105,49 @@ develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbN
 
 ### What the model could know on each date
 
-In a stock backtest, the date on a forecast sets the information it
-can use. Imagine giving a language model an old announcement of a
-proposed merger. Its pretraining may already include news about
-whether the deal went through. Even a correctly dated prompt can
-therefore produce a forecast informed by later events. Glasserman
-and Lin study this problem in [*Assessing Look-Ahead Bias in Stock
-Return Predictions Generated By GPT Sentiment Analysis*](https://arxiv.org/abs/2309.17322).
+When I backtest a model, I need to know what it could have seen on
+each forecast date. Say I give a language model an old announcement
+of a proposed merger. It may already have read news about how the
+deal ended. If it did, that later information can influence its
+answer even when I give it just the announcement. For a language model, one
+way to guard against this is to start the backtest after a training
+cutoff I can verify. Glasserman and Lin explore the issue for
+[*GPT-based news sentiment*](https://arxiv.org/abs/2309.17322).
 
-That is one reason I wanted to try a model pretrained on synthetic
-tables. NVIDIA’s Kumo Tabular learned from generated examples, and
-the stock data in this test enter through the table I give it
+This is where synthetic pretraining makes the stock test appealing.
+NVIDIA trained Kumo Tabular on generated tables. The stock predictors
+and outcomes it sees here come from the tables I give it
 ([Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)).
-I can reuse the same pretrained network as history grows and check
-what it sees on each forecast date. The predictors have to be
-available on that date, and a historical row enters the context
-only once its 20-session outcome is known. That lets me test a new
-way of learning from the same stock data inside the usual
-walk-forward setup.
+I can step through history with one fixed network and check the
+inputs on each date. I use predictors available on that date and
+add a historical row to the context only after its 20-session
+outcome is known.
 
 ### Research setup
 
-All three models use the same 80 predictors and target. The target is
-the forward 20-session Sharpe ratio, ranked within each sector on each
-date. This cross-sectional normalization asks the models to distinguish
-stocks from their sector peers. The predictor ranks use the whole
-universe on each date. I describe the target and inputs in
+I give all three models the same target and 80 predictors. For
+the target, I take each stock’s Sharpe ratio over the next 20
+sessions and rank it against its sector peers. I rank the
+predictors across the whole stock universe on each date.
+I describe how I build the target and predictors in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
-I compare Kumo with the existing Ridge and LightGBM walk-forward
-forecasts. The baselines fit on past data and score the next group
-of dates. I refresh Kumo’s context at each LightGBM refit. The
-expanding runs draw on history back to January 1995.
+Ridge and LightGBM fit on past data and score the dates that follow.
+I refresh Kumo’s context on the LightGBM refit dates. The expanding
+Kumo runs draw on history back to January 1995. The test runs from
+1999 to May 2026, with the results from 2022 onward also shown on
+their own.
 
-I first ran the comparison over 1999–2021, then carried the same
-model settings and trading rules through May 2026. Each later fit
-or context refresh used history available at the time.
-
-For **Ridge**, I kept the penalty at $c=0.1$ because many predictors overlap,
-such as momentum measured over nearby horizons. In the earlier sweep,
-this penalty cut the length of the coefficient vector to less than
-half its OLS value while keeping development rank IC and net Sharpe
-close to their OLS values. The penalty sweep is in
+For **Ridge**, I use a penalty of $c=0.1$. Several predictors overlap,
+such as momentum measured over nearby horizons, and the penalty
+keeps the coefficients from growing too large as a result. I go
+into the penalty choice in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#choosing-the-penalty).
 
-For **LightGBM**, I kept the existing settings of 350 trees per fit,
-a maximum depth of five and a learning rate of 0.05. I wanted enough
-room to pick up interactions while keeping the model’s complexity in
-check. I used a feature fraction of 0.25 so different trees would see
-different subsets of predictors, in an effort to make their
-predictions less correlated.[^lightgbm-settings]
+For **LightGBM**, I use 350 trees per fit, a maximum depth of five,
+and a learning rate of 0.05. The shallow trees can still pick up
+interactions. Each tree sees a random quarter of the predictors,
+giving different trees a chance to split on different inputs.
 
 ### A stock forecast with historical context
 
@@ -181,33 +171,34 @@ The simulated trade takes place at the next close.
 
 ### How Kumo turns the examples into a score
 
-In Kumo, the route from examples to a prediction runs through attention.
-The network starts by encoding the predictors in each row and the
-outcomes in the historical rows. In an attention layer, it compares
-learned representations of C and the historical rows. Those comparisons
-determine how much information each example contributes to C’s updated
-representation. The next layer can use that richer representation to
-draw on the examples again. Pretraining determines how the network
-makes those comparisons and combines the information
+Kumo turns the rows into vectors that represent their predictors
+and, for the historical rows, their known outcomes. In an attention
+layer, it compares C’s vector with those of A and B. That comparison
+determines how much information from each example goes into an
+updated vector for C. The next layer can use the updated vector
+to look at the examples again. The network learns how to make
+those comparisons during pretraining
 ([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
 Kumo predicts a range of quantiles for the outcome. I average them
 to get the single score used to rank each stock.
 
 ## Subsampling the historical context
 
-Ridge and LightGBM use their fitted coefficients and trees at prediction
-time. Kumo has to prepare and keep a representation of its historical
-examples, so a larger context takes more compute and memory. NVIDIA
-recommends a GPU for large contexts in its
+The part that took work on my Mac was giving Kumo enough history.
+Ridge and LightGBM can score a row from their fitted coefficients or
+trees. Kumo also has to process the historical examples it keeps
+around for prediction. The more rows I give it, the more work that
+takes. NVIDIA recommends a GPU for large contexts in its
 [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
-I wanted to run the comparison on my Mac’s CPU, so I needed to pass
-Kumo fewer examples. I cut down the context in two steps.
+I wanted to run the test on the CPU, so I looked for rows I could
+leave out.
 
 **First, space out the historical dates.** Adjacent 20-session targets
-share 19 return days. I sample every 30 trading sessions (roughly
-six weeks) for expanding Small, and every 40 (roughly eight weeks)
-for Medium. Spacing out the dates keeps examples from across the
-history while dropping many overlapping ones.
+share 19 days of returns. Keeping every date would give Kumo
+many outcomes built from almost the same return days. I sample
+every 30 trading sessions (roughly six weeks) for expanding Small and
+every 40 (roughly eight weeks) for Medium. Both still get examples
+from across the history.
 
 **Then, keep the tails on each sampled date.** Stocks on the same
 date share market moves. To cut the number of rows further, I sort
@@ -313,10 +304,10 @@ what daily scoring would require.
 
 ## Ranking the whole cross-section
 
-All five configurations score the same 1,387,790 stock-date rows
-across 1,429 signal dates. Three staggered portfolios each rebalance
-roughly every three weeks, giving about one signal date a week
-across the three.
+Once I have the forecasts, the first thing I check is how well
+each model orders the stocks. All five configurations score the
+same 1,387,790 stock-date rows. That’s 1,429 signal dates across
+three staggered portfolios, each rebalanced roughly every three weeks.
 
 On each signal date, I rank the model scores and the realized outcomes
 for the same stocks, then correlate the two ranks. That Spearman
@@ -347,10 +338,11 @@ Small’s mean IC was 0.025, and Rolling Small’s was −0.010.
 
 ## Return and risk by score decile
 
-Rank IC looks across the whole ranking. To see what happens at the
-ends, I sort stocks into score deciles on each signal date and trade
-at the next close. If a decile has $n$ stocks with a return that day,
-its daily return is $\sum_i r_i / n$. I average these returns across
+Rank IC looks across the whole ranking. For the portfolios, I care
+especially about the stocks at either end. I sort each model’s
+scores into deciles on the signal date and trade at the next close.
+If a decile has $n$ stocks with a return that day, its daily
+return is $\sum_i r_i / n$. I average these returns across
 the three schedules on days when all three are available. The spread
 is the top decile’s daily return minus the bottom decile’s. I compound
 returns, annualize using 252 sessions and use zero cash return for Sharpe.
@@ -369,12 +361,14 @@ room for a long–short spread before sizing or trading fees.
 
 ## Returns after portfolio construction
 
-To see how the rankings fare after sizing and trading fees, I give
-the optimizer the 75 highest- and 75 lowest-scoring stocks as new
-candidates. Stocks already held can stay eligible within a wider
-rank buffer. Each schedule uses $5 million of simulated capital,
-a 7% annual volatility target, and limits on gross exposure and
-market beta. Where I can measure liquidity, I cap trades at 10%
+The decile spread gives me a first look at the two sides of the
+ranking. Now I want to know what happens when I size positions
+and pay for trading. I give the optimizer the 75 highest- and
+75 lowest-scoring stocks as new candidates. Stocks already held
+can stay eligible within a wider rank buffer. Each schedule uses
+$5 million of simulated capital, a 7% annual volatility target,
+and limits on gross exposure and market beta. Where I can measure
+liquidity, I cap trades at 10%
 of the previous 21 sessions’ average daily dollar volume. The
 sizing method is in
 [*From Volatility Scaling to Joint Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget).
@@ -450,11 +444,11 @@ by fixed capital, and annualizes the average over trading sessions.
 </div>
 </div>
 
-Over 1999–2021, expanding Small had the higher equal-weight
-decile-spread Sharpe of the two expanding Kumo runs. Once I sized
-the portfolios, Medium edged ahead before fees, 1.76 versus 1.68. Small traded
-42.3 times capital per year versus 31.8 for Medium. Fees widened
-Medium’s lead to 1.44 versus 1.24.
+In the 1999–2021 decile spread, six-week Small had the higher
+Sharpe of the two expanding Kumo runs. Once I sized the portfolios,
+Medium edged ahead before fees, 1.76 versus 1.68. Small also traded
+more, at 42.3 times capital per year versus 31.8 for Medium.
+After fees, Medium’s lead widened to 1.44 versus 1.24.
 
 Medium also beat Ridge on net Sharpe over 1999–2021, 1.44 versus
 1.21, with lower realized volatility. LightGBM led in the decile
@@ -484,9 +478,10 @@ extra fees cost another 0.6 points.
 
 ## How similarly the models trade
 
-The portfolio results tell us how each model fared on its own.
-Table 2 shows how closely the models ranked stocks and whether they
-made or lost money on the same days. The left side averages score
+Two models can have similar results overall while ranking stocks
+differently. Table 2 shows how closely the rankings agreed and
+whether the portfolios made or lost money on the same days.
+The left side averages score
 rank correlations across all signal dates, including dates whose
 outcomes fall beyond the test period. The right side averages net
 daily return correlations across the three schedules.
@@ -496,20 +491,19 @@ daily return correlations across the three schedules.
   {% include equity-correlation-matrices.html %}
 </div>
 
-The two baselines agree more on rankings than either agrees with the
+Ridge and LightGBM agree more on rankings than either agrees with
 expanding Small. Medium is closer to LightGBM than to Ridge
 on both rankings and daily returns. Rolling Small’s net daily
 returns had a correlation of −0.06 with expanding Small.
 
 ## Comparing model sizes on the same context
 
-The portfolio comparison uses the Kumo configurations that fit on my
-Mac across the full history.
-For the earliest forecasts, all three model sizes fit with
-the same six-week context. On 91 matched signal dates, ICIR was
-0.62 for Small, 0.72 for Medium and 0.79 for Large. That early
-comparison isolates model size. For the full run I needed wider
-spacing for Medium, which also changes the examples it sees.
+I could give all three Kumo sizes the same six-week context for
+the earliest forecasts. On those 91 signal dates, ICIR rose from
+0.62 for Small to 0.72 for Medium and 0.79 for Large. That’s the one
+comparison where I could change model size and keep the examples
+the same. Over the full history, Medium needed wider spacing, so
+the comparison also changes which examples it sees.
 
 ## A shorter context with Rolling Small
 
@@ -557,9 +551,9 @@ the period in which Medium finished ahead of LightGBM in both views.
 What surprised me was that a model pretrained on artificial tables
 could take these historical examples and rank stocks at all.
 Medium beat Ridge on net Sharpe in both the original and later
-periods. LightGBM kept the full-history lead at 1.94 versus 1.39 for
-Medium, while their order flipped after 2021. That later advantage
-was small relative to the uncertainty around it.
+periods. LightGBM led over the full history, at 1.94 versus 1.39 for
+Medium. Medium pulled ahead from 2022 to May 2026, though the
+estimated gap was imprecise.
 
 I’d like to test Kumo Large over the full period, giving it the same
 historical rows as Small and Medium. Large ranked better on the
@@ -585,9 +579,10 @@ at a manageable cost and whether that shows up after trading fees.
 - Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and Frank Hutter (2022). [*Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9). ICLR.
 - NVIDIA. [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing). *NVIDIA Kumo Documentation*.
 - Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.
+- Qu, Jingang, David Holzmüller, Gaël Varoquaux, and Marine Le Morvan (2026). [*TabICLv2: A Better, Faster, Scalable, and Open Tabular Foundation Model*](https://proceedings.mlr.press/v306/qu26a.html). *ICML*, PMLR 306, 102477–102555.
 
 [^tree-benchmark]: [Grinsztajn, Oyallon and Varoquaux (2022)](https://proceedings.neurips.cc/paper_files/paper/2022/hash/0378c7692da36807bdec87ab043cdadc-Abstract-Datasets_and_Benchmarks.html) compared models across 45 datasets and examined how tree ensembles handle irrelevant predictors and irregular relationships.
 
-[^larger-tables]: [TabPFN-2.5](https://arxiv.org/abs/2511.08667) extended the supported table size from 10,000 to 50,000 rows.
+[^new-benchmarks]: See the comparisons with tuned tree models in the [TabPFN-2.5 report](https://arxiv.org/abs/2511.08667) and the [TabICLv2 paper](https://proceedings.mlr.press/v306/qu26a.html).
 
-[^lightgbm-settings]: In a separate 1999–2021 development comparison, the reference LightGBM had a net Sharpe of 2.19. Increasing the tree count to 1,000, raising the feature fraction to 0.45, or changing the learning rate and tree count together gave net Sharpes between 2.16 and 2.22.
+[^larger-tables]: [TabPFN-2.5](https://arxiv.org/abs/2511.08667) extended the supported table size from 10,000 to 50,000 rows.
