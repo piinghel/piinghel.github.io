@@ -507,8 +507,8 @@ rankings and the daily portfolio returns.
 Over the full test, Medium used more widely spaced historical
 dates than Small. To compare the sizes on the same examples, I
 gave Small, Medium and Large the same six-week context for the
-earliest forecasts. On those 91 signal dates, ICIR rose from
-0.62 for Small to 0.72 for Medium and 0.79 for Large.
+earliest forecasts. On those 91 signal dates, ICIR was 0.62
+for Small, 0.72 for Medium and 0.78 for Large.
 
 ## A shorter context with Rolling Small
 
@@ -535,11 +535,8 @@ full-period net Sharpe at all three widths. In the later period,
 the ordering of Medium and LightGBM changed with the number
 of candidates. Rolling Small struggled, particularly on the short side.
 
-I’d like to test Kumo Large over the full period, giving it the same
-historical rows as Small and Medium. Large ranked better on the
-earliest forecasts by ICIR when all three sizes saw the same examples.
-The full-period comparison would tell me whether that early advantage
-holds up.
+I’d like to compare Kumo Small, Medium and Large over the full
+period, giving all three the same historical examples.
 
 I’d also like to give a fixed model more data. With more memory, I
 could sample dates more often and test all eligible stocks against
