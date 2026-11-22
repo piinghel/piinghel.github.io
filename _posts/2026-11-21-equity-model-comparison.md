@@ -97,9 +97,10 @@ Kumo fewer examples. I cut down the context in two steps.
 [NVIDIA’s GPU sizing guide](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing)
 
 **First, space out the historical dates.** Adjacent 20-session targets
-share 19 return days. Sampling every 20 or 30 trading sessions
-(roughly four or six weeks) keeps examples from across the history
-while dropping many overlapping ones.
+share 19 return days. I sample every 30 trading sessions (roughly
+six weeks) for expanding Small, and every 40 for Medium. Spacing
+out the dates keeps examples from across the history while dropping
+many overlapping ones.
 
 **Then, keep the tails on each sampled date.** Stocks on the same
 date share market moves. To cut the number of rows further, I sort
@@ -171,9 +172,8 @@ per date, that leaves 24 and 18 examples, respectively.
 When the available history was longest, weekly sampling with the
 tails filter would still leave about 760,000 labeled rows. I
 estimated 35 GiB just to prepare that context with Kumo Small, on
-a Mac with 16 GB. That’s why I tried wider spacing. At four and six
-weeks, the context dropped to about 190,000 and 127,000 rows,
-respectively. Both runs fit on the Mac.
+a Mac with 16 GB. That’s why I used wider spacing. At six weeks,
+the context dropped to about 127,000 rows and fit on the Mac.
 
 ## Running Kumo on a Mac
 
@@ -185,14 +185,12 @@ for Small. Smaller batches during context preparation got both through.
 
 In Molnar’s TabICL example, `predict` takes longer than `fit`.
 Kumo can do part of the prediction work up front by preparing a
-context once and reusing it. For Small at four-week spacing, setup
-for the last block took about 16 minutes and scoring took about eight.
+context once and reusing it. In the last block of the 1999–2021 test,
+Medium’s setup took about 13 minutes and scoring took about eight.
 [Molnar’s TabICL timing example](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict)
 
-For the longer runs, I spaced the historical dates farther apart and
-kept the context fixed until the next refresh. The four- and six-week
-Small runs took 2 hours 37 minutes and 1 hour 39 minutes.
-Medium needed eight-week spacing to fit and ran in 2 hours 52 minutes.
+Over the full 1999–2021 comparison, expanding Small took 1 hour 39
+minutes and Medium took 2 hours 52 minutes.
 I ran Large only in the first block. I also ran Small with weekly dates
 in a shorter window that grew from two to three years, then rolled
 forward. That run took just under two hours.
@@ -238,18 +236,18 @@ of 0.0557 divided by its IC standard deviation of about 0.077 gives
 an ICIR of about 0.72. The ratio is unannualized.
 
 <figure id="figure-3" class="research-figure responsive-figure">
-  {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=2" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="3" label="Rank IC, standard deviation of IC, and ICIR by model, with four selectable periods." %}
+  {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=3" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="4" label="Rank IC, standard deviation of IC, and ICIR by model, with four selectable periods." %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> Kumo runs are in blue. Each metric uses the same scale across periods. The full period covers 1,191 shared signal dates with known targets.</figcaption>
 </figure>
 
-All three expanding Kumo runs had positive rank IC in every period
+Both expanding Kumo runs had positive rank IC in every period
 shown. That’s what surprised me about a model pretrained on artificial
 tables. LightGBM’s lead in mean IC over the full period comes from
 1999–2011. Ridge had the higher mean IC in the recent windows.
 LightGBM’s IC was steadier, keeping it ahead on ICIR.
 
 Among the Kumo runs, Medium had the highest mean IC over the full
-period. The two expanding Small runs had steadier ICs and higher ICIRs
+period. Expanding Small had steadier ICs and a higher ICIR
 than Medium and Ridge. Rolling Small had the lowest mean IC in each
 period, and its mean fell slightly below zero in 2017–2021.
 
@@ -296,7 +294,7 @@ earned different returns. In the return panel, look at deciles 1
 and 10 to see where the long-short spread comes from.
 
 <figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
-  {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=2" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="7" label="Return, volatility and Sharpe by stock score decile, with selectable periods and models." %}
+  {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=3" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="8" label="Return, volatility and Sharpe by stock score decile, with selectable periods and models." %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
@@ -338,7 +336,6 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>12.9%</td><td>1.43</td><td class="comparison-divider">10.8%</td><td>8.7%</td><td>1.21</td><td>25.6×</td></tr>
     <tr><th scope="row">LightGBM</th><td>19.2%</td><td>2.37</td><td class="comparison-divider">16.9%</td><td>7.5%</td><td>2.12</td><td>25.4×</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>12.6%</td><td>1.72</td><td class="comparison-divider">9.0%</td><td>7.1%</td><td>1.26</td><td>44.7×</td></tr>
     <tr><th scope="row">Small, 6 weeks</th><td>12.4%</td><td>1.68</td><td class="comparison-divider">8.9%</td><td>7.1%</td><td>1.24</td><td>42.3×</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>13.7%</td><td>1.76</td><td class="comparison-divider">11.0%</td><td>7.4%</td><td>1.44</td><td>31.8×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>5.7%</td><td>0.77</td><td class="comparison-divider">2.7%</td><td>7.6%</td><td>0.39</td><td>38.2×</td></tr>
@@ -347,7 +344,6 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2011</th></tr>
     <tr><th scope="row">Ridge</th><td>12.4%</td><td>1.52</td><td class="comparison-divider">9.9%</td><td>8.0%</td><td>1.22</td><td>27.5×</td></tr>
     <tr><th scope="row">LightGBM</th><td>20.4%</td><td>2.66</td><td class="comparison-divider">17.7%</td><td>7.1%</td><td>2.35</td><td>26.3×</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>16.4%</td><td>2.30</td><td class="comparison-divider">12.5%</td><td>6.7%</td><td>1.78</td><td>40.7×</td></tr>
     <tr><th scope="row">Small, 6 weeks</th><td>13.5%</td><td>1.91</td><td class="comparison-divider">9.9%</td><td>6.8%</td><td>1.42</td><td>38.6×</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>12.9%</td><td>1.80</td><td class="comparison-divider">9.8%</td><td>6.9%</td><td>1.38</td><td>33.1×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>7.3%</td><td>0.97</td><td class="comparison-divider">4.0%</td><td>7.6%</td><td>0.55</td><td>37.2×</td></tr>
@@ -356,7 +352,6 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2012–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>13.5%</td><td>1.36</td><td class="comparison-divider">11.9%</td><td>9.7%</td><td>1.22</td><td>23.2×</td></tr>
     <tr><th scope="row">LightGBM</th><td>17.6%</td><td>2.05</td><td class="comparison-divider">15.9%</td><td>8.0%</td><td>1.88</td><td>24.1×</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>7.9%</td><td>1.06</td><td class="comparison-divider">4.6%</td><td>7.5%</td><td>0.64</td><td>49.8×</td></tr>
     <tr><th scope="row">Small, 6 weeks</th><td>10.9%</td><td>1.43</td><td class="comparison-divider">7.8%</td><td>7.5%</td><td>1.04</td><td>47.2×</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>14.6%</td><td>1.73</td><td class="comparison-divider">12.5%</td><td>8.1%</td><td>1.50</td><td>30.1×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>3.6%</td><td>0.50</td><td class="comparison-divider">1.1%</td><td>7.5%</td><td>0.18</td><td>39.4×</td></tr>
@@ -365,7 +360,6 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2017–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>14.1%</td><td>1.30</td><td class="comparison-divider">12.6%</td><td>10.5%</td><td>1.18</td><td>22.0×</td></tr>
     <tr><th scope="row">LightGBM</th><td>16.4%</td><td>1.76</td><td class="comparison-divider">14.9%</td><td>8.9%</td><td>1.60</td><td>22.3×</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>7.5%</td><td>0.93</td><td class="comparison-divider">4.3%</td><td>8.1%</td><td>0.56</td><td>49.3×</td></tr>
     <tr><th scope="row">Small, 6 weeks</th><td>10.2%</td><td>1.24</td><td class="comparison-divider">7.0%</td><td>8.1%</td><td>0.88</td><td>47.1×</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>15.0%</td><td>1.59</td><td class="comparison-divider">13.0%</td><td>9.0%</td><td>1.40</td><td>28.5×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>1.8%</td><td>0.27</td><td class="comparison-divider">−0.6%</td><td>7.8%</td><td>−0.04</td><td>39.0×</td></tr>
@@ -376,24 +370,24 @@ by fixed capital, and annualizes the average over trading sessions.
 
 LightGBM led on Sharpe in the equal-weight decile spread and in the
 sized portfolios before and after fees. Medium had a lower decile
-spread Sharpe than both expanding Small runs, yet a higher net
+spread Sharpe than expanding Small, yet a higher net
 portfolio Sharpe. It also beat Ridge on net Sharpe over 1999–2021,
 1.44 versus 1.21, with lower realized volatility. LightGBM led at
 2.12. Resampling the same 21-session stretches of returns for
 Medium and LightGBM gives a 95% interval of −0.99 to −0.40 for
 their net Sharpe difference.
 
-Four-week Small and Medium had similar Sharpe ratios before fees,
-1.72 and 1.76. Four-week Small traded 44.7 times capital per year
-versus 31.8 for Medium. After fees, the gap widened to 1.26 versus
+Expanding Small and Medium had similar Sharpe ratios before fees,
+1.68 and 1.76. Small traded 42.3 times capital per year
+versus 31.8 for Medium. After fees, the gap widened to 1.24 versus
 1.44.
 
 I split the difference in average daily P&L into longs, shorts and
 fees, then annualize so the pieces add up. LightGBM earned 7.1
-percentage points more per year than four-week Small on this
-measure. Longs contributed 3.3 points, shorts 2.4 and lower fees
-1.4. Medium earned 1.8 points more than four-week Small, with 1.5
-points from longs and 0.9 from lower fees, offset by a 0.6-point
+percentage points more per year than expanding Small on this
+measure. Longs contributed 3.2 points, shorts 2.7 and lower fees
+1.2. Medium earned 1.9 points more than expanding Small, with 1.5
+points from longs and 0.7 from lower fees, offset by a 0.3-point
 shortfall on the short side.
 
 ## How similarly the models trade
@@ -411,36 +405,18 @@ the three schedules.
 </div>
 
 The two baselines agree more on rankings than either agrees with the
-expanding Small variants. Medium is closer to LightGBM than to Ridge
+expanding Small. Medium is closer to LightGBM than to Ridge
 on both rankings and daily returns. Rolling Small’s daily net returns
-have a correlation of about 0.02 with four-week Small.
+have a correlation of about 0.03 with expanding Small.
 
-## The cost of sampling more dates
+## Comparing model sizes on the same context
 
-Those results compare the configurations I could run on the Mac.
-To isolate what the extra historical dates bought, I keep the Small
-model and the tails filter fixed and vary how closely I sample
-the dates. For the first block of forecasts, I could also compare
-model sizes using exactly the same dates.
-
-On the 91 matched signal dates in that block, Kumo Small’s ICIR was
-1.08 when it sampled historical dates every three weeks, 0.91 at
-four weeks and 0.62 at six.
-With the same six-week training dates, Medium reached 0.72 and Large
-reached 0.79. Changing Small’s date spacing moved ICIR more in that
-early comparison than changing model size at six-week spacing.
-
-For the last block, four-week Small took 24 minutes and six-week Small
-took 12½. The denser run's ICIR was 0.11 versus 0.21 for six weeks on
-61 dates with realized targets.
-
-Across the full run, moving from six-week to four-week spacing took about
-59% longer. The paired 21-session intervals for four weeks minus six
-were −0.06 to 0.04 for ICIR and −0.21 to 0.23 for net Sharpe. The
-full-period results were close. Four-week Small earned a higher net
-Sharpe through 2011 and a lower one after 2011. The accuracy cost of
-dropping the middle 40% is unknown here since both runs use the tail
-filter.
+The full run compares the configurations that fit on my Mac.
+For the first block of forecasts, all three model sizes fit with
+the same six-week context. On 91 matched signal dates, ICIR was
+0.62 for Small, 0.72 for Medium and 0.79 for Large. That early
+comparison isolates model size. For the full run I needed wider
+spacing for Medium, which also changes the examples it sees.
 
 ## Rolling Small was weaker in every period
 
@@ -451,18 +427,18 @@ forward. It changed both the spacing of the dates and how far back the
 model could look.
 
 Rolling Small’s rankings were less correlated with Ridge and
-LightGBM. Relative to four-week expanding Small, its ICIR was lower
-by 0.44 and its after-fee Sharpe by 0.87. The paired intervals are
-−0.58 to −0.30 for ICIR and −1.39 to −0.36 for net Sharpe.
-In 2012–2021, the rolling equal-weight decile spread was less volatile
-and had a higher Sharpe. After sizing and fees, Rolling Small had the
-lowest Sharpe of any model in every period shown. Its net Sharpe was
+LightGBM. Relative to expanding Small, its ICIR was lower
+by 0.45 and its after-fee Sharpe by 0.85.
+Even in 2012–2021, when the rolling equal-weight decile spread was
+less volatile, its Sharpe was lower than expanding Small’s. After
+sizing and fees, Rolling Small had the lowest Sharpe of any model
+in every period shown. Its net Sharpe was
 0.39 for the full period and −0.04 in 2017–2021.
 
 The short book explains most of the difference. The rolling variant
 gave up 5.9 percentage points of annualized arithmetic net P&L versus
-four-week Small. The short side cost 5.6 points more, the long side
-earned 0.7 points less, and lower fees recovered 0.4 points.
+expanding Small. The short side cost 5.4 points more, the long side
+earned 0.7 points less, and lower fees recovered 0.2 points.
 
 ## How the P&L built up
 
@@ -486,12 +462,10 @@ capital, while LightGBM earned about USD 365.
 ## What I found and what I’d test next
 
 What surprised me was that a model pretrained on artificial tables
-could rank stocks at all. All three expanding Kumo runs had positive
+could rank stocks at all. Both expanding Kumo runs had positive
 rank IC in every period shown. Medium beat Ridge on net Sharpe,
 1.44 versus 1.21, while LightGBM led at 2.12. Rolling Small was the
-weakest result after fees. Moving expanding Small from six-week to
-four-week spacing took 59% longer and left full-period ICIR and
-net Sharpe broadly similar.
+weakest result after fees.
 
 With more memory, I’d run the same Kumo model on the same dates with
 all eligible stocks and with just the tails. That would show how much

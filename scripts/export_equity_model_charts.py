@@ -31,7 +31,6 @@ def export(
     models: tuple[tuple[str, str, str], ...] = (
         ("ridge", "Ridge", "equity_ridge"),
         ("lightgbm", "LightGBM", "equity_lightgbm"),
-        ("kumo_small_4w", "Small 4w", "equity_small_four"),
         ("kumo_small", "Small 6w", "equity_small_six"),
         ("kumo_medium", "Medium", "equity_medium"),
         ("kumo_small_roll3", "Small rolling", "equity_rolling"),
