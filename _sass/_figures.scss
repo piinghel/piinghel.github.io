@@ -12,7 +12,7 @@
 .theme-svg-figure--dark { display: none; }
 .post-content .portfolio-path-figure { overflow: visible; scroll-margin-top: 1.25rem; }
 @media (min-width: 72rem) {
-  .e-content > :is(.portfolio-path-figure, .regime-comparison-figure) { width: calc(100% + 5rem); }
+  .e-content > :is(.portfolio-path-figure, .regime-comparison-figure, .decile-profile-figure) { width: calc(100% + 5rem); }
 }
 
 .matrix-calculation {

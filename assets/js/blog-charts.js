@@ -377,6 +377,15 @@
       if(benchmark&&!sharedGroup) benchmarkBox=checkbox(bars?benchmark.label:'Market',visible.get(benchmark.id),value=>{visible.set(benchmark.id,value);draw();});
       for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false||initialWealth===1)))optionalBoxes.set(s.id,
         checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
+      const volatilityTarget=cfg.additive&&cfg.volatilityTarget;
+      let scaleBox,scaleStatus;
+      if(volatilityTarget) {
+        const control=element('div','blog-chart-volatility');
+        ui.append(control);
+        scaleBox=checkControl(control,'Match '+format(volatilityTarget,true).replace('.0%','%')+' annualized volatility',false,draw).box;
+        scaleStatus=element('p','blog-chart-note','Choose a longer window with variation in every portfolio to match volatility.');
+        scaleStatus.setAttribute('role','status');scaleStatus.hidden=true;ui.append(scaleStatus);
+      }
       const graph=element('div','blog-chart-plot');ui.append(graph);
       const windowLabel=element('p','blog-chart-window');windowLabel.setAttribute('aria-live','polite');ui.append(windowLabel);
       if(cfg.controlsBelow)windowLabel.after(extra);
@@ -415,6 +424,7 @@
           start.value=range[0];end.value=range[1];markPresets(range);
           const first=data.dates.findIndex(d=>d>=range[0]);
           let last=data.dates.length-1;while(last>=0&&data.dates[last]>range[1])last--;
+          if(scaleStatus)scaleStatus.hidden=true;
           if(first<0||last<=first) {
             windowLabel.hidden=false;
             windowLabel.textContent='Choose a window containing at least two observations.';
@@ -422,6 +432,11 @@
           }
           graph.hidden=false;
           const dates=data.dates.slice(first,last+1),t=theme(),traces=[];
+          const volatilities=scaleBox?.checked
+            ? series.map(s=>stats(s.returns.slice(first+1,last+1),data.annualization)?.volatility)
+            : [];
+          const scaled=volatilities.length>0&&volatilities.every(value=>value>0&&Number.isFinite(value));
+          if(scaleBox?.checked)scaleStatus.hidden=scaled;
           const mobile=host.clientWidth<550;
           const labelEnds=cfg.directLabels || (initialWealth===1 && host.clientWidth>=620);
           const showLegend=!sharedGroup && cfg.showLegend!==false && !(initialWealth===1 && labelEnds);
@@ -497,9 +512,9 @@
               layout.yaxis2={domain:[0,.29],anchor:'x',gridcolor:t.grid,zerolinecolor:t.grid,
                 tickformat:cfg.additive?'.0f':cfg.drawdown?'.0%':'.0f',ticksuffix:cfg.contributions?' pp':''};
               if(cfg.contributionRange&&range[0]===full[0]&&range[1]===full[1])layout.yaxis2.range=cfg.contributionRange;
-              heading(cfg.drawdown?(cfg.additive?'Drawdown (points)':'Drawdown (%)'):'Linked book contributions (pp)',.29,8);
+              heading(cfg.drawdown?(cfg.drawdownUnit||(cfg.additive?'Drawdown (points)':'Drawdown (%)')):'Linked book contributions (pp)',.29,8);
             }
-            for(const s of series) {
+            for(const [index,s] of series.entries()) {
               if(s.contribution) {
                 const values=linked(s.returns,all.get(s.parent).returns,first,last);
                 const indices=displayIndices(dates,[values]);
@@ -508,6 +523,11 @@
                 traces.push(trace(s,dates,s.returns.slice(first,last+1)));
               } else {
                 const values=s.additive?additivePath(s.returns,first,last):path(s.returns,first,last,initialWealth);
+                if(scaled&&s.additive) {
+                  const multiplier=volatilityTarget/volatilities[index];
+                  values.equity=values.equity.map(value=>value*multiplier);
+                  values.drawdown=values.drawdown.map(value=>value*multiplier);
+                }
                 if(cfg.additive&&!s.additive)values.equity=values.equity.map(v=>v-100);
                 const indices=displayIndices(dates,[values.equity,values.drawdown]);
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i]),cfg.additive?{hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}'+(s.additive?' points':'%')+'<extra>%{fullData.name}</extra>'}:{}));
@@ -555,7 +575,7 @@
           }
           await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:mobile?false:'hover',displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
-          updateTable(first,last);
+          if(!statisticsPanel.hidden)updateTable(first,last);
           windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===full[0]&&range[1]===full[1]);
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
           windowLabel.title=!showLegend?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
@@ -798,34 +818,43 @@
   async function decileProfiles(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');
     ui.hidden=false;
-    let period=cfg.periods[0],metric=cfg.metrics[0];
+    let period=cfg.periods[0];
     periodChoices(ui,cfg.periods.map(item=>item.label),index=>{period=cfg.periods[index];draw();});
-    const metrics=element('div'),modelKey=element('div'),graph=element('div','blog-chart-plot');
-    ui.append(metrics,modelKey,graph);
-    periodChoices(metrics,cfg.metrics.map(item=>item.label),index=>{metric=cfg.metrics[index];draw();},'Decile metric');
+    const modelKey=element('div'),graph=element('div','blog-chart-plot');
+    ui.append(modelKey,graph);
     const visible=new Map(cfg.series.map(item=>[item.id,true]));
     sharedSeriesKey(modelKey,cfg.series,visible,draw,'Models to show');
 
     async function draw() {
-      const mobile=host.clientWidth<550,dark=isDark(),height=mobile?275:315;
-      const values=cfg.periods.flatMap(item=>cfg.series.flatMap(series=>item.values[series.id][metric.id]));
-      const lower=Math.min(...values),upper=Math.max(...values),padding=(upper-lower||1)*.09;
-      const traces=cfg.series.filter(item=>visible.get(item.id)).map(item=>({
-        type:'scatter',mode:'lines+markers',name:item.label,x:cfg.deciles,y:period.values[item.id][metric.id],
-        line:{color:COLORS[item.role],dash:item.dash,width:1.7},
-        marker:{symbol:item.symbol,size:6},
-        hovertemplate:'Decile %{x}<br>'+metric.label+' %{y:'+metric.format+'}<extra>'+item.label+'</extra>',
-      }));
-      const layout={height,margin:{l:mobile?43:50,r:12,t:13,b:48},
-        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
+      const stacked=host.clientWidth<580,dark=isDark(),height=stacked?650:275;
+      const ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
+      const shown=cfg.series.filter(item=>visible.get(item.id)),traces=[];
+      const layout={height,margin:{l:43,r:9,t:25,b:57},
+        font:{family:'Bricolage Grotesque, sans-serif',size:11.5,color:ink},
         paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
         showlegend:false,dragmode:false,hovermode:'closest',
-        xaxis:{tickvals:cfg.deciles,range:[.6,10.4],fixedrange:true,showgrid:false,
-          title:{text:'Score decile (1 = lowest)',font:{size:12}}},
-        yaxis:{range:[lower-padding,upper+padding],tickformat:metric.format,nticks:5,fixedrange:true,
-          gridcolor:dark?'#36404a':'#e2e7eb',zerolinecolor:COLORS.comparison},
-        annotations:traces.length?[]:[{text:'Select a model to show',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}],
+        annotations:[],
       };
+      cfg.metrics.forEach((metric,index)=>{
+        const suffix=index?String(index+1):'',x='x'+suffix,y='y'+suffix;
+        const xDomain=stacked?[0,1]:[index*.35,index*.35+.30];
+        const yDomain=stacked?[(2-index)*.355,(2-index)*.355+.29]:[0,1];
+        const values=cfg.periods.flatMap(item=>cfg.series.flatMap(s=>item.values[s.id][metric.id]));
+        const lower=Math.min(...values),upper=Math.max(...values),padding=(upper-lower||1)*.09;
+        layout['xaxis'+suffix]={domain:xDomain,anchor:y,tickvals:stacked?cfg.deciles:[1,3,5,7,10],
+          range:[.6,10.4],showticklabels:!stacked||index===cfg.metrics.length-1,fixedrange:true,showgrid:false};
+        layout['yaxis'+suffix]={domain:yDomain,anchor:x,range:[lower-padding,upper+padding],
+          tickformat:metric.format,nticks:4,fixedrange:true,gridcolor:grid,zerolinecolor:COLORS.comparison};
+        layout.annotations.push({text:metric.label,xref:'paper',yref:'paper',x:xDomain[0],y:yDomain[1],yshift:5,
+          xanchor:'left',yanchor:'bottom',showarrow:false,font:{size:12,color:ink}});
+        for(const item of shown) {
+          traces.push({type:'scatter',mode:'lines',name:item.label,x:cfg.deciles,y:period.values[item.id][metric.id],
+            xaxis:x,yaxis:y,line:{color:COLORS[item.role],width:1.8},
+            hovertemplate:'Decile %{x}<br>'+metric.label+' %{y:'+metric.format+'}<extra>'+item.label+'</extra>'});
+        }
+      });
+      layout.annotations.push({text:shown.length?'Score decile (1 = lowest)':'Select a model to show',
+        xref:'paper',yref:'paper',x:.5,y:shown.length?0:.5,yshift:shown.length?-42:0,showarrow:false,font:{size:12}});
       graph.style.height=height+'px';
       await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
     }

@@ -7,6 +7,7 @@ import csv
 import json
 import math
 from datetime import date, timedelta
+from itertools import accumulate
 from pathlib import Path
 
 import matplotlib.dates as mdates
@@ -25,13 +26,13 @@ def export(
     profiles_path: Path,
     correlations_path: Path,
     *,
-    models: tuple[tuple[str, str, str, str, str], ...] = (
-        ("ridge", "Ridge", "equity_ridge", "dash", "square"),
-        ("lightgbm", "LightGBM", "equity_lightgbm", "solid", "circle"),
-        ("kumo_small_4w", "Small 4w", "equity_small_four", "dot", "triangle-up"),
-        ("kumo_small", "Small 6w", "equity_small_six", "dash", "x"),
-        ("kumo_medium", "Medium", "equity_medium", "dashdot", "diamond"),
-        ("kumo_small_roll3", "Small rolling", "equity_rolling", "solid", "cross"),
+    models: tuple[tuple[str, str, str], ...] = (
+        ("ridge", "Ridge", "equity_ridge"),
+        ("lightgbm", "LightGBM", "equity_lightgbm"),
+        ("kumo_small_4w", "Small 4w", "equity_small_four"),
+        ("kumo_small", "Small 6w", "equity_small_six"),
+        ("kumo_medium", "Medium", "equity_medium"),
+        ("kumo_small_roll3", "Small rolling", "equity_rolling"),
     ),
     periods: tuple[str, ...] = ("1999–2021", "1999–2011", "2012–2021", "2017–2021"),
 ) -> None:
@@ -53,8 +54,7 @@ def export(
         "kind": "decile-profiles",
         "deciles": deciles,
         "series": [
-            {"id": model, "label": label, "role": role, "dash": dash, "symbol": symbol}
-            for model, label, role, dash, symbol in models
+            {"id": model, "label": label, "role": role} for model, label, role in models
         ],
         "metrics": [
             {"id": metric, "label": label, "format": unit}
@@ -120,14 +120,13 @@ def export_pnl(
     books: Path,
     output: Path,
     *,
-    models: tuple[tuple[str, str, str, str, str, str], ...] = (
-        ("ridge", "Ridge", "equity_ridge", "dash", "#596877", "#aab3bf"),
-        ("lightgbm", "LightGBM", "equity_lightgbm", "solid", "#2262ab", "#81b4f3"),
+    models: tuple[tuple[str, str, str, str, str], ...] = (
+        ("ridge", "Ridge", "equity_ridge", "#596877", "#aab3bf"),
+        ("lightgbm", "LightGBM", "equity_lightgbm", "#2262ab", "#81b4f3"),
         (
             "kumo_medium",
             "Kumo Medium",
             "equity_medium",
-            "dashdot",
             "#397744",
             "#a9ccaa",
         ),
@@ -145,7 +144,7 @@ def export_pnl(
     dates = [start - timedelta(days=1)]
     lines = []
     paths = []
-    for model, label, role, dash, *_ in models:
+    for model, label, role, *_ in models:
         daily = (
             pl.concat(
                 pl.scan_parquet(books / model / f"returns_{calendar}.parquet")
@@ -179,9 +178,7 @@ def export_pnl(
                 f"{model} lacks a complete set of returns on the common calendar"
             )
         dates = model_dates
-        lines.append(
-            series(model, label, role, [0.0, *daily["net"]], additive=True, dash=dash)
-        )
+        lines.append(series(model, label, role, [0.0, *daily["net"]], additive=True))
         paths.append([0.0, *daily["pnl"]])
 
     chart = {
@@ -189,6 +186,9 @@ def export_pnl(
         "series": [line["id"] for line in lines],
         "additive": True,
         "unit": "Net P&L per $100 of capital",
+        "drawdown": True,
+        "drawdownUnit": "Drawdown per $100 of capital",
+        "volatilityTarget": 0.07,
         "statistics": False,
         "zeroReference": True,
         "episodes": [
@@ -209,30 +209,35 @@ def export_pnl(
             ink, grid = ("#e4e7ea", "#313843") if dark else ("#25313a", "#dce3ea")
             style = {"font.size": 9.5, "svg.hashsalt": "equity-model-net-pnl"}
             with plt.rc_context(style):
-                figure, axis = plt.subplots(
-                    figsize=(4.25, 3.25) if mobile else (6.7, 3.4),
+                figure, (equity, drawdown) = plt.subplots(
+                    2,
+                    1,
+                    figsize=(4.25, 4.55) if mobile else (6.7, 4.55),
                     layout="constrained",
+                    sharex=True,
+                    height_ratios=(2, 1),
                 )
-                for (_, label, _, dash, light, night), pnl in zip(
-                    models, paths, strict=True
+                for (_, label, _, light, night), pnl in zip(models, paths, strict=True):
+                    color = night if dark else light
+                    equity.plot(dates, pnl, label=label, color=color, linewidth=1.7)
+                    loss = [
+                        value - peak
+                        for value, peak in zip(pnl, accumulate(pnl, max), strict=True)
+                    ]
+                    drawdown.plot(dates, loss, color=color, linewidth=1.1)
+                for axis, title in (
+                    (equity, chart["unit"]),
+                    (drawdown, chart["drawdownUnit"]),
                 ):
-                    axis.plot(
-                        dates,
-                        pnl,
-                        label=label,
-                        color=night if dark else light,
-                        linestyle={"dash": "--", "solid": "-", "dashdot": "-."}[dash],
-                        linewidth=1.8,
-                    )
-                axis.set_title(chart["unit"], loc="left", color=ink, fontsize=11)
-                axis.set_xlim(dates[0], dates[-1])
-                axis.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
-                axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-                axis.tick_params(length=0, colors=ink)
-                axis.axhline(0, color=ink, linewidth=0.6, alpha=0.6, zorder=0)
-                axis.grid(axis="y", color=grid, linewidth=0.6)
-                axis.set_axisbelow(True)
-                axis.spines[:].set_visible(False)
+                    axis.set_title(title, loc="left", color=ink, fontsize=11)
+                    axis.tick_params(length=0, colors=ink)
+                    axis.axhline(0, color=ink, linewidth=0.6, alpha=0.6, zorder=0)
+                    axis.grid(axis="y", color=grid, linewidth=0.6)
+                    axis.set_axisbelow(True)
+                    axis.spines[:].set_visible(False)
+                drawdown.set_xlim(dates[0], dates[-1])
+                drawdown.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
+                drawdown.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
                 suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
                 figure.legend(
                     loc="outside upper center",

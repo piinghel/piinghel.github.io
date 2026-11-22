@@ -19,44 +19,32 @@
         {
           "id": "ridge",
           "label": "Ridge",
-          "role": "equity_ridge",
-          "dash": "dash",
-          "symbol": "square"
+          "role": "equity_ridge"
         },
         {
           "id": "lightgbm",
           "label": "LightGBM",
-          "role": "equity_lightgbm",
-          "dash": "solid",
-          "symbol": "circle"
+          "role": "equity_lightgbm"
         },
         {
           "id": "kumo_small_4w",
           "label": "Small 4w",
-          "role": "equity_small_four",
-          "dash": "dot",
-          "symbol": "triangle-up"
+          "role": "equity_small_four"
         },
         {
           "id": "kumo_small",
           "label": "Small 6w",
-          "role": "equity_small_six",
-          "dash": "dash",
-          "symbol": "x"
+          "role": "equity_small_six"
         },
         {
           "id": "kumo_medium",
           "label": "Medium",
-          "role": "equity_medium",
-          "dash": "dashdot",
-          "symbol": "diamond"
+          "role": "equity_medium"
         },
         {
           "id": "kumo_small_roll3",
           "label": "Small rolling",
-          "role": "equity_rolling",
-          "dash": "solid",
-          "symbol": "cross"
+          "role": "equity_rolling"
         }
       ],
       "metrics": [
