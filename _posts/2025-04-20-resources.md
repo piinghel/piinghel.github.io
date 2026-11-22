@@ -28,7 +28,7 @@ math: false
 
 - [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/) — Claus O. Wilke.
 - [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/) — Christoph Molnar.
-- [Tabular Foundation Models](https://tabularfoundationmodels.com/) — Christoph Molnar.
+- [Tabular Foundation Models](https://tabularfoundationmodels.com/) — Christoph Molnar. His explanation of in-context learning is excellent. I especially like how a simple sketch shows what each model sees at prediction time.
 
 ## Software
 
