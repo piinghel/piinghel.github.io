@@ -182,7 +182,7 @@ unannualized.
 </table>
 </div>
 
-All three expanding Kumo runs had positive rank IC in both subperiods.
+All three expanding Kumo runs had positive rank IC in every period shown.
 That’s what surprised me about a model pretrained on artificial tables.
 LightGBM's full-period lead in mean IC comes from 1999–2011. Ridge has
 the higher mean in the recent windows. Its IC varies more across dates,
