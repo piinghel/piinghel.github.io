@@ -67,17 +67,19 @@ table. That use of examples at prediction time is in-context learning
 
 ### The Bayesian intuition
 
-Suppose I start out giving the two relationships equal weight, and
-each relationship generates its usual outcome nine times out of ten.
+Suppose I start out giving the two relationships equal weight. Each
+generates its usual outcome nine times out of ten, with independent
+errors across rows.
 I then see one row with a high first value, a low second value, and
 a low outcome. That evidence is nine times as likely under the
 second relationship, so its weight goes from 50% to 90%. For the
 next row with those same inputs, both relationships still contribute.
 The chance of a low outcome is 0.9 × 0.9 + 0.1 × 0.1, or 82%.
 
-The starting weights are the *prior*. The historical examples
-shift those weights, and the forecast averages over the
-relationships that remain plausible. In prior-data fitted networks,
+The starting weights are the *prior*. The updated weights after
+seeing the examples are the *posterior*. Averaging the forecasts
+under each rule using those updated weights gives the *posterior
+predictive distribution*. In prior-data fitted networks,
 the way the artificial tables are generated defines the prior.
 Pretraining teaches the network to approximate this kind of prediction
 from examples in a new table. The two-rule calculation shows the idea
@@ -87,12 +89,14 @@ on a small enough problem to do by hand
 ### How Kumo turns the examples into a score
 
 Kumo turns each row into a vector that summarizes its predictors and
-any known outcome. Its attention layers let the new row draw information
-from those labeled rows. Some examples have more influence than others,
-depending on what the model sees in the row it is scoring. The updated
-representation gives Kumo a distribution for the missing outcome
+any known outcome. In an attention layer, the model compares a vector
+derived from the new row with vectors derived from the labeled rows.
+Stronger matches give those examples more weight when the model
+combines their information. Several layers repeat this step, refining
+the representation of the new row before predicting its outcome
 ([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
-I average its predicted quantiles to get one score for each stock.
+Kumo produces quantiles of the predicted outcome, and I average them
+to get one score for each stock.
 
 Each row in the study is a stock on a date. To get its realized outcome,
 I take the stock’s average daily return over the next 20 trading sessions,
@@ -100,9 +104,10 @@ divide by daily return volatility, and rank that Sharpe ratio among its
 sector peers. Figure 1 follows a prediction for stock C. I know its
 momentum on session 55. Its eventual rank is still a question mark.
 
-LightGBM learns its tree splits and leaf values from the labeled rows
-A and B, then runs C’s momentum through those fitted trees. Kumo
-scores C using its momentum and the labeled examples together.
+LightGBM learns its splits and leaf values from the labeled rows
+A and B, then runs C’s momentum through those fitted trees. To
+incorporate more history, I fit the trees again. With Kumo, I refresh
+the labeled examples that C can draw on and keep the same model weights.
 
 <figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
   <picture>
