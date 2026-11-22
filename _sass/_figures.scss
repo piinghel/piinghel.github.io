@@ -78,12 +78,15 @@ html[data-theme="dark"] .context-sampling { --selected-mark: #8bb3cc; }
   padding: 0.2rem 0 0.45rem;
 }
 html[data-theme="dark"] .model-sketch { --sketch-mark: #91bec8; }
+.model-sketch--delivery { max-width: 32rem; margin-inline: auto; }
 .model-sketch__pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.95rem clamp(0.9rem, 3vw, 2.25rem);
 }
 .model-sketch__label { margin-bottom: 0.35rem; font-size: 0.9rem; font-weight: 500; }
+.model-sketch--delivery .model-sketch__pair { margin-top: 0.8rem; }
+.model-sketch__detail { color: var(--muted-ink); }
 .post-content .model-sketch table {
   margin: 0;
   font-size: inherit;

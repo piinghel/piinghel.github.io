@@ -10,17 +10,18 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, a random forest or a boosted tree model like LightGBM
-was where I’d start with a new table.[^tree-benchmark] I started
-paying attention to tabular foundation models when I saw TabPFN
-and TabICL beat tuned tree ensembles on
-benchmarks.[^new-benchmarks]
+If I’m working with a table of predictors, I usually start with
+a random forest or boosted trees like LightGBM. They’ve been
+strong benchmarks for years, which is why I paid attention when
+tabular foundation models such as TabPFN and TabICL started beating
+tuned tree ensembles on benchmark datasets.[^tree-benchmark][^new-benchmarks]
+As the newer models got better at handling larger tables, I wanted
+to see how one would do at ranking stocks.[^larger-tables]
 
-Once these models could handle bigger tables, I wanted to try one
-on stocks.[^larger-tables] I give it the same predictors as Ridge
-and LightGBM and compare how well they rank the stocks. Then I turn
-each ranking into a long–short portfolio to see which differences
-matter after trading costs.
+I give the foundation model, Ridge and LightGBM the same stock
+predictors and compare their rankings. Then I turn those rankings
+into long–short portfolios to see whether the differences still
+matter after I size the positions and pay to trade.
 
 ## A pretrained model for tables
 
@@ -54,12 +55,9 @@ their known outcomes at prediction time. Those rows are its
 a similar trip. The network has already learned how to combine
 information from the examples.
 
-Figure 1 shows what each approach brings into the prediction for
-the same new order.
-
 <figure id="figure-1" class="research-figure responsive-figure">
   {% include equity-delivery-context-sketch.html %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Two ways to use the past deliveries.</span> Marked rows feed the prediction. The dashed line separates the new order from the completed deliveries.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Two ways to use the past deliveries.</span> The last row is the new order. The shaded rows are its two nearest neighbors.</figcaption>
 </figure>
 
 Inside the network, the new order and the historical examples
@@ -146,17 +144,23 @@ a past example once I know how the stock did over the following
 
 ### Research setup
 
-Ridge, LightGBM and the Kumo runs all use the same target and 80
-predictors. For the target, I take each stock’s Sharpe ratio over
-the next 20 sessions and rank it against its sector peers. I rank the
-predictors across the whole stock universe on each date.
-I describe how I build the target and predictors in
+Ridge, LightGBM and Kumo all use the same 80 predictors. On each
+date, I rank stocks across the full universe on each predictor
+and put the ranks on a −1 to +1 scale. For example, the stocks
+with the highest momentum end up near +1 for that predictor.
+
+For the target, I take each stock’s Sharpe ratio over the following
+20 trading sessions. I rank those outcomes on the same −1 to +1
+scale within each sector on each date. A high target means the
+stock did well against its sector peers. The models are trying to
+identify which stocks are likely to do best within their sectors.
+I describe the predictors and target in more detail in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
 Ridge and LightGBM fit on past data and score the dates that follow.
 I put together a new set of examples for Kumo whenever I fit
-LightGBM again. I test Small and Medium with expanding histories, where the pool
-of examples grows from the same January 1995 start. I also test
+LightGBM again. For Small and Medium, I let the history grow from
+the same January 1995 start. I also test
 Rolling Small, which keeps only recent history. The test runs from
 1999 through May 27, 2026. I show 2022 onward separately to see
 whether the same patterns turn up in the more recent years.
@@ -174,8 +178,9 @@ giving different trees a chance to split on different inputs.
 
 ### A stock forecast with historical context
 
-Figure 3 uses momentum alone to show how both models score stock C on
-session 55. LightGBM fits trees on historical rows A and B and scores C
+Figure 3 illustrates the two workflows with raw momentum as its
+only predictor.
+LightGBM fits trees on historical rows A and B and scores C
 by following its momentum through those trees. With Kumo, `fit()`
 prepares and caches information from A and B, and `predict()` uses
 that context alongside C’s momentum. C’s outcome is still unknown.
@@ -462,14 +467,34 @@ as I gave the optimizer more names. The paired intervals for
 the later Sharpe gap include zero at all three widths. Over
 the full history, LightGBM led on net Sharpe at every width.
 
+## How the P&L built up
+
+Figure 7 shows when those gaps opened and how deep the drawdowns
+were. The curves add up daily net P&L as a share of fixed capital.
+Table 1 gives compounded returns. The chart opens with each path
+rescaled to 7% annualized volatility in the selected window.
+Clear the checkbox to see the original paths. Open **Explore** to
+add Rolling Small.
+
+<figure id="figure-7" class="research-figure portfolio-path-figure responsive-figure">
+  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=7" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="6" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 7.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
+</figure>
+
+LightGBM finished with the highest cumulative P&L over the full
+history. At matched volatility, Medium finished ahead of Ridge
+and its worst drawdown was smaller. The gap between Medium and Ridge
+narrowed at their original volatilities. Select 2022–May 2026 to see
+the period in which Medium finished ahead of LightGBM in both views.
+
 ## How similarly the models trade
 
-Two models can have similar results overall while ranking stocks
-differently. Table 2 shows how closely the rankings agreed and
-whether the portfolios made or lost money on the same days.
-The left side averages score rank correlations across signal dates.
-The right side averages daily net return correlations across the
-three schedules.
+Two portfolios can finish close together even if their models
+rank stocks differently. The left side of Table 2 shows how
+closely the rankings agree, averaging rank correlations across
+signal dates. The right side shows how closely the portfolios
+move together, averaging daily net return correlations across
+the three schedules.
 
 <div role="group" aria-labelledby="table-2">
   <p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Correlations between models, 1999–May 2026.</span></p>
@@ -481,12 +506,11 @@ rankings and the daily portfolio returns.
 
 ## Comparing model sizes on the same context
 
-I could give all three Kumo sizes the same six-week context for
-the earliest forecasts. On those 91 signal dates, ICIR rose from
-0.62 for Small to 0.72 for Medium and 0.79 for Large. That’s the one
-comparison where I could change model size and keep the examples
-the same. Over the full history, Medium needed wider spacing, so
-the comparison also changes which examples it sees.
+Over the full test, Medium used more widely spaced historical
+dates than Small. To compare the sizes on the same examples, I
+gave Small, Medium and Large the same six-week context for the
+earliest forecasts. On those 91 signal dates, ICIR rose from
+0.62 for Small to 0.72 for Medium and 0.79 for Large.
 
 ## A shorter context with Rolling Small
 
@@ -502,26 +526,6 @@ Small and had a net Sharpe of 0.39 versus 1.24. The short book
 accounted for most of the gap in average net P&L. From 2022 to
 May 2026, Rolling Small lost money before fees at every candidate
 width.
-
-## How the P&L built up
-
-Table 1 compounds returns. Figure 7 adds up daily net P&L as a
-share of fixed capital, so you can see when the gaps opened and
-how deep the drawdowns were. The chart starts with each path
-visually rescaled to 7% annualized volatility in the selected
-window. Clear the checkbox to see the original paths. Open
-**Explore** to add Rolling Small.
-
-<figure id="figure-7" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=7" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="6" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 7.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
-</figure>
-
-LightGBM finished with the highest cumulative P&L over the full
-history. At matched volatility, Medium finished ahead of Ridge
-and its worst drawdown was smaller. The gap between Medium and Ridge
-narrowed at their original volatilities. Select 2022–May 2026 to see
-the period in which Medium finished ahead of LightGBM in both views.
 
 ## What I found and what I’d test next
 
