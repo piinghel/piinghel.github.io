@@ -377,11 +377,11 @@ The optimizer uses a turnover penalty of 5 basis points for
 LightGBM and Kumo and 2.5 for Ridge. This affects how much it
 trades. The simulated execution fees are 7.5 basis points on
 long trades and 10 on shorts through 2010, then 5 and 7.5.
-Table 1 shows the same holdings before and after those fees.
-I compute return, volatility, Sharpe and
-turnover for each schedule and then average the three. Two-way
-turnover adds all dollars bought and sold across both sides, divides
-by fixed capital, and annualizes the average over trading sessions.
+I use the same holdings for the before- and after-fee figures.
+I compute return, volatility, Sharpe and turnover for each
+schedule, then average across the three. Two-way turnover adds
+all dollars bought and sold across both sides, divides by fixed
+capital, and annualizes the average over trading sessions.
 
 I also tried 100 and 150 new candidates per side. This lets me
 see how much the results depend on how far into the ranking the
@@ -389,17 +389,13 @@ optimizer can look for new positions. Table 1 shows all three
 choices with the same forecasts, sizing rules and fees.
 
 <div id="table-5" class="equity-breadth">
-{% if site.data.equity_portfolio_breadth %}
 <fieldset class="equity-breadth-controls">
   <legend>New candidates per side</legend>
-  <input type="radio" name="equity-breadth" id="equity-breadth-75" value="75" checked aria-controls="table-1">
-  <label for="equity-breadth-75">75</label>
   {% for breadth in site.data.equity_portfolio_breadth %}
-  <input type="radio" name="equity-breadth" id="equity-breadth-{{ breadth.count }}" value="{{ breadth.count }}" aria-controls="table-1">
+  <input type="radio" name="equity-breadth" id="equity-breadth-{{ breadth.count }}" value="{{ breadth.count }}"{% if forloop.first %} checked{% endif %} aria-controls="table-1">
   <label for="equity-breadth-{{ breadth.count }}">{{ breadth.count }}</label>
   {% endfor %}
 </fieldset>
-{% endif %}
 <div id="table-6" class="research-table-scroll" tabindex="0" role="region" aria-label="Portfolio results before and after execution fees, with turnover">
 <table id="table-1" class="research-table comparison-table equity-comparison-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolio performance before and after fees.</span> Returns are compounded. Turnover is two-way traded notional per year, in multiples of fixed capital. All figures are annualized.</caption>
@@ -408,54 +404,6 @@ choices with the same forecasts, sizing rules and fees.
     <tr><th scope="col" rowspan="2">Model</th><th scope="colgroup" colspan="2">Before fees</th><th scope="colgroup" colspan="3" class="comparison-divider">After fees</th><th scope="col" rowspan="2">Turnover</th></tr>
     <tr><th scope="col">Return</th><th scope="col">Sharpe</th><th scope="col" class="comparison-divider">Return</th><th scope="col">Vol.</th><th scope="col">Sharpe</th></tr>
   </thead>
-  <tbody data-candidates="75">
-    <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–May 2026</th></tr>
-    <tr><th scope="row">Ridge</th><td>12.2%</td><td>1.34</td><td class="comparison-divider">10.2%</td><td>8.9%</td><td>1.14</td><td>24.5×</td></tr>
-    <tr><th scope="row">LightGBM</th><td>17.6%</td><td>2.17</td><td class="comparison-divider">15.5%</td><td>7.6%</td><td>1.94</td><td>24.5×</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>11.1%</td><td>1.47</td><td class="comparison-divider">7.7%</td><td>7.3%</td><td>1.05</td><td>43.3×</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>13.4%</td><td>1.70</td><td class="comparison-divider">10.8%</td><td>7.6%</td><td>1.39</td><td>31.4×</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>4.7%</td><td>0.61</td><td class="comparison-divider">1.8%</td><td>8.0%</td><td>0.26</td><td>38.0×</td></tr>
-  </tbody>
-  <tbody data-candidates="75">
-    <tr class="period-heading"><th colspan="7" scope="rowgroup">2022–May 2026</th></tr>
-    <tr><th scope="row">Ridge</th><td>8.7%</td><td>0.91</td><td class="comparison-divider">7.4%</td><td>9.7%</td><td>0.79</td><td>18.8×</td></tr>
-    <tr><th scope="row">LightGBM</th><td>9.5%</td><td>1.19</td><td class="comparison-divider">8.2%</td><td>7.9%</td><td>1.04</td><td>20.1×</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>4.6%</td><td>0.58</td><td class="comparison-divider">1.6%</td><td>8.4%</td><td>0.23</td><td>48.2×</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>12.0%</td><td>1.43</td><td class="comparison-divider">10.0%</td><td>8.2%</td><td>1.20</td><td>29.2×</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>−0.5%</td><td>−0.01</td><td class="comparison-divider">−2.8%</td><td>9.7%</td><td>−0.24</td><td>36.9×</td></tr>
-  </tbody>
-  <tbody data-candidates="75">
-    <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>12.9%</td><td>1.43</td><td class="comparison-divider">10.8%</td><td>8.7%</td><td>1.21</td><td>25.6×</td></tr>
-    <tr><th scope="row">LightGBM</th><td>19.2%</td><td>2.37</td><td class="comparison-divider">16.9%</td><td>7.5%</td><td>2.12</td><td>25.4×</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>12.4%</td><td>1.68</td><td class="comparison-divider">8.9%</td><td>7.1%</td><td>1.24</td><td>42.3×</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>13.7%</td><td>1.76</td><td class="comparison-divider">11.0%</td><td>7.4%</td><td>1.44</td><td>31.8×</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>5.7%</td><td>0.77</td><td class="comparison-divider">2.7%</td><td>7.6%</td><td>0.39</td><td>38.2×</td></tr>
-  </tbody>
-  <tbody data-candidates="75">
-    <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2011</th></tr>
-    <tr><th scope="row">Ridge</th><td>12.4%</td><td>1.52</td><td class="comparison-divider">9.9%</td><td>8.0%</td><td>1.22</td><td>27.5×</td></tr>
-    <tr><th scope="row">LightGBM</th><td>20.4%</td><td>2.66</td><td class="comparison-divider">17.7%</td><td>7.1%</td><td>2.35</td><td>26.3×</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>13.5%</td><td>1.91</td><td class="comparison-divider">9.9%</td><td>6.8%</td><td>1.42</td><td>38.6×</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>12.9%</td><td>1.80</td><td class="comparison-divider">9.8%</td><td>6.9%</td><td>1.38</td><td>33.1×</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>7.3%</td><td>0.97</td><td class="comparison-divider">4.0%</td><td>7.6%</td><td>0.55</td><td>37.2×</td></tr>
-  </tbody>
-  <tbody data-candidates="75">
-    <tr class="period-heading"><th colspan="7" scope="rowgroup">2012–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>13.5%</td><td>1.36</td><td class="comparison-divider">11.9%</td><td>9.7%</td><td>1.22</td><td>23.2×</td></tr>
-    <tr><th scope="row">LightGBM</th><td>17.6%</td><td>2.05</td><td class="comparison-divider">15.9%</td><td>8.0%</td><td>1.88</td><td>24.1×</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>10.9%</td><td>1.43</td><td class="comparison-divider">7.8%</td><td>7.5%</td><td>1.04</td><td>47.2×</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>14.6%</td><td>1.73</td><td class="comparison-divider">12.5%</td><td>8.1%</td><td>1.50</td><td>30.1×</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>3.6%</td><td>0.50</td><td class="comparison-divider">1.1%</td><td>7.5%</td><td>0.18</td><td>39.4×</td></tr>
-  </tbody>
-  <tbody data-candidates="75">
-    <tr class="period-heading"><th colspan="7" scope="rowgroup">2017–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>14.1%</td><td>1.30</td><td class="comparison-divider">12.6%</td><td>10.5%</td><td>1.18</td><td>22.0×</td></tr>
-    <tr><th scope="row">LightGBM</th><td>16.4%</td><td>1.76</td><td class="comparison-divider">14.9%</td><td>8.9%</td><td>1.60</td><td>22.3×</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>10.2%</td><td>1.24</td><td class="comparison-divider">7.0%</td><td>8.1%</td><td>0.88</td><td>47.1×</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>15.0%</td><td>1.59</td><td class="comparison-divider">13.0%</td><td>9.0%</td><td>1.40</td><td>28.5×</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>1.8%</td><td>0.27</td><td class="comparison-divider">−0.6%</td><td>7.8%</td><td>−0.04</td><td>39.0×</td></tr>
-  </tbody>
   {% for breadth in site.data.equity_portfolio_breadth %}
     {% for period in breadth.periods %}
     <tbody data-candidates="{{ breadth.count }}">
