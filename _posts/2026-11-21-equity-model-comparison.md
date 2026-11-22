@@ -171,8 +171,8 @@ into the penalty choice in
 
 For **LightGBM**, I use 350 trees per fit, a maximum depth of five,
 and a learning rate of 0.05. The shallow trees can still pick up
-interactions. Each tree sees a random quarter of the predictors,
-giving different trees a chance to split on different inputs.
+interactions. I set the feature fraction to 0.25, so each tree sees
+a random quarter of the predictors.
 
 ### A stock forecast with historical context
 
