@@ -10,27 +10,23 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, boosted trees like LightGBM have been the benchmark to
-beat on tabular data. In a comparison across 45 datasets, tree
-ensembles led on medium-sized tables. They were better at handling
-irrelevant predictors and relationships that change sharply
-([Grinsztajn, Oyallon and Varoquaux, 2022](https://proceedings.neurips.cc/paper_files/paper/2022/hash/0378c7692da36807bdec87ab043cdadc-Abstract-Datasets_and_Benchmarks.html)).
+For years, boosted trees like LightGBM and XGBoost have been hard
+to beat on tabular data.[^tree-benchmark] The recipe is familiar.
+Fit a set of trees on rows with known outcomes, then use those
+trees to predict the outcome for a new row.
 
-The setup is familiar. Fit the trees on rows with known outcomes,
-then use the fitted trees to score a new row from its predictors.
+With a tabular foundation model, the developers train a single
+network across many tables. For each table, they show the model
+some outcomes and ask it to predict the rest. When I give that
+network a new table, it uses the examples with known outcomes to
+make predictions. Its weights stay fixed.
 
-Tabular foundation models change what the model sees when it makes a
-prediction. During pretraining, they learn to predict hidden outcomes
-from labeled examples across many different tables. Give one a new
-table and it uses the rows with known outcomes to score the others.
-
-Tabular foundation models have gained attention over the past two
-years as they’ve become faster and more practical on larger tables.
-In 2025, for example, TabPFN went from being designed for 10,000 rows
-to 50,000 with [TabPFN-2.5](https://arxiv.org/abs/2511.08667). That
-progress made me want to see whether a model like this could rank
-stocks, where the signal is weak and what the model knows on each
-date matters for the backtest.
+As these models became practical on larger tables, I wanted to
+try one on stocks.[^larger-tables] With a network pretrained on
+synthetic tables, I can give it the stock history available on
+each forecast date. That fits the walk-forward setup I already
+use for Ridge and LightGBM. I compare how all three rank stocks,
+then see how those rankings translate into returns after fees.
 
 ## A pretrained model for tables
 
@@ -589,5 +585,9 @@ at a manageable cost and whether that shows up after trading fees.
 - Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and Frank Hutter (2022). [*Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9). ICLR.
 - NVIDIA. [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing). *NVIDIA Kumo Documentation*.
 - Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.
+
+[^tree-benchmark]: [Grinsztajn, Oyallon and Varoquaux (2022)](https://proceedings.neurips.cc/paper_files/paper/2022/hash/0378c7692da36807bdec87ab043cdadc-Abstract-Datasets_and_Benchmarks.html) compared models across 45 datasets and examined how tree ensembles handle irrelevant predictors and irregular relationships.
+
+[^larger-tables]: [TabPFN-2.5](https://arxiv.org/abs/2511.08667) extended the supported table size from 10,000 to 50,000 rows.
 
 [^lightgbm-settings]: In a separate 1999–2021 development comparison, the reference LightGBM had a net Sharpe of 2.19. Increasing the tree count to 1,000, raising the feature fraction to 0.45, or changing the learning rate and tree count together gave net Sharpes between 2.16 and 2.22.
