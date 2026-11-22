@@ -128,7 +128,7 @@ def export_rank(
 ) -> None:
     metrics = (
         ("ic_mean", "Rank IC", 4),
-        ("ic_sd", "IC standard deviation", 3),
+        ("ic_sd", "IC SD", 3),
         ("icir", "ICIR", 3),
     )
     rank_rows = {}
@@ -172,30 +172,56 @@ def export_rank(
     render_rank_fallbacks(
         base,
         labels=[label for _, label, _ in models],
-        values=[period_data[0]["values"][model]["ic_mean"] for model, *_ in models],
+        panels=[
+            (
+                label,
+                digits,
+                [period_data[0]["values"][model][metric] for model, *_ in models],
+                [
+                    period["values"][model][metric]
+                    for period in period_data
+                    for model, *_ in models
+                ],
+            )
+            for metric, label, digits in metrics
+        ],
     )
 
 
 def render_rank_fallbacks(
-    base: Path, *, labels: list[str], values: list[float]
+    base: Path,
+    *,
+    labels: list[str],
+    panels: list[tuple[str, int, list[float], list[float]]],
 ) -> None:
     for mobile in (False, True):
         for dark in (False, True):
             ink, grid = ("#dce3eb", "#36404a") if dark else ("#27343d", "#e2e7eb")
             fill = "#9db1c3" if dark else "#526c82"
-            with plt.rc_context({"svg.hashsalt": "stock-rank-metrics", "font.size": 11}):
-                figure, axis = plt.subplots(
-                    figsize=(4.1 if mobile else 6.7, 2.65), layout="constrained"
+            text_size = 8 if mobile else 10
+            with plt.rc_context({"svg.hashsalt": "stock-rank-metrics", "font.size": text_size}):
+                figure, axes = plt.subplots(
+                    1,
+                    len(panels),
+                    figsize=(4.1 if mobile else 6.7, 2.8),
+                    sharey=True,
+                    layout="constrained",
                 )
-                bars = axis.barh(labels, values, height=0.54, color=fill)
-                axis.bar_label(bars, fmt="%.4f", padding=4, color=ink, fontsize=10)
-                axis.invert_yaxis()
-                axis.set_xlim(0, max(values) * 1.33)
-                axis.set_xlabel("Rank IC, 1999–2021", color=ink, fontsize=11)
-                axis.tick_params(length=0, colors=ink)
-                axis.grid(axis="x", color=grid, linewidth=0.6)
-                axis.set_axisbelow(True)
-                axis.spines[:].set_visible(False)
+                for axis, (label, digits, values, all_values) in zip(axes, panels, strict=True):
+                    lower, upper = min(0, *all_values), max(0, *all_values)
+                    axis.barh(labels, values, height=0.26, color=fill)
+                    axis.set_title(label, loc="left", color=ink, fontsize=text_size)
+                    for index, value in enumerate(values):
+                        axis.annotate(f"{value:.{digits}f}", (lower, index), color=ink,
+                                      xytext=(1, 4), textcoords="offset points", va="bottom")
+                    axis.set_xlim(lower, upper * 1.06)
+                    axis.set_ylim(len(labels) - 0.5, -0.6)
+                    axis.xaxis.set_major_locator(plt.MaxNLocator(2 if mobile else 4))
+                    axis.tick_params(length=0, colors=ink)
+                    axis.grid(axis="x", color=grid, linewidth=0.6)
+                    axis.axvline(0, color=ink, linewidth=0.5, alpha=0.5)
+                    axis.set_axisbelow(True)
+                    axis.spines[:].set_visible(False)
                 save_svg(figure, svg_path(base, mobile=mobile, dark=dark), transparent=True)
 
 

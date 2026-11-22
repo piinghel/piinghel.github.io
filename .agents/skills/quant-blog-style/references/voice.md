@@ -96,9 +96,10 @@ method, evidence or interpretation?
   define what is averaged and work through a small example. Keep timing,
   units, denominators and implementation conventions where they affect
   the result.
-- [ ] **Check the figures independently.** Give each figure one job, use
-  quiet styling and make the scale, default view and selected period clear.
-  Test labels and controls on a phone. Put the interpretation beside the figure.
+- [ ] **Connect figures and tables to the argument.** Give the reader a
+  reason to look and point to the part that answers the question. Put the
+  interpretation beside the display. Keep styling quiet, make the scale,
+  default view and selected period clear, and test the labels on a phone.
 - [ ] **Finish with the evidence.** Distinguish what changed, what was held
   fixed and what the comparison leaves open. Credit explanatory references
   next to the idea they illuminate and list them at the end of the article.

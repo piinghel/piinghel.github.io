@@ -831,11 +831,7 @@
     const graph=element('div','blog-chart-plot');
     graph.setAttribute('role','img');
     ui.append(graph);
-    let period=cfg.periods[0],metric=cfg.metrics[0];
-    periodChoices(ui,cfg.metrics.map(item=>item.label),index=>{
-      metric=cfg.metrics[index];
-      draw();
-    },'Rank metric');
+    let period=cfg.periods[0];
     periodChoices(ui,cfg.periods.map(item=>item.label),index=>{
       period=cfg.periods[index];
       draw();
@@ -843,29 +839,42 @@
 
     async function draw() {
       const dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      const height=228,labels=cfg.series.map(item=>item.label);
-      const values=cfg.series.map(item=>period.values[item.id][metric.id]);
-      const allValues=cfg.periods.flatMap(item=>cfg.series.map(model=>item.values[model.id][metric.id]));
-      const lower=Math.min(0,...allValues),upper=Math.max(0,...allValues),span=upper-lower;
-      const textValues=values.map(value=>value.toFixed(metric.digits).replace('-','−'));
-      const annotations=values.map((value,index)=>({
-        x:Math.max(0,value),y:labels[index],text:textValues[index],
-        xanchor:'left',xshift:4,showarrow:false,font:{size:12,color:ink},
-      }));
+      const narrow=host.clientWidth<530,height=243,labels=cfg.series.map(item=>item.label);
+      const positions=labels.map((_,index)=>index);
+      const colors=cfg.series.map(item=>COLORS[item.role]),traces=[],metricDescriptions=[];
+      const layout={height,margin:{l:narrow?76:105,r:8,t:25,b:24},
+        font:{family:'Bricolage Grotesque, sans-serif',size:narrow?10.5:11.5,color:ink},
+        paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
+        showlegend:false,dragmode:false,annotations:[],
+        yaxis:{range:[labels.length-.5,-.5],tickvals:positions,ticktext:labels,
+          showgrid:false,zeroline:false,fixedrange:true}};
       graph.style.height=height+'px';
-      graph.setAttribute('aria-label',metric.label+' in '+period.label+' across '+period.dates+
-        ' signal dates. '+labels.map((label,index)=>label+' '+textValues[index]).join(', ')+'.');
-      await Plotly.react(graph,[{type:'bar',orientation:'h',x:values,y:labels,
-        marker:{color:cfg.series.map(item=>COLORS[item.role]),opacity:.86},width:.55,
-        text:textValues,textposition:'none',
-        hovertemplate:'%{y}<br>'+metric.label+': %{text}<extra></extra>'}],
-        {height,margin:{l:106,r:8,t:3,b:29},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},
-          paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
-          showlegend:false,dragmode:false,annotations,
-          xaxis:{range:[lower-(lower<0?.12:0)*span,upper+.29*span],tickformat:'.2f',nticks:5,
-            fixedrange:true,gridcolor:grid,zerolinecolor:COLORS.comparison},
-          yaxis:{autorange:'reversed',fixedrange:true}},
-        {responsive:true,displayModeBar:false});
+
+      cfg.metrics.forEach((metric,index)=>{
+        const suffix=index?String(index+1):'',x='x'+suffix;
+        const values=cfg.series.map(item=>period.values[item.id][metric.id]);
+        const allValues=cfg.periods.flatMap(item=>cfg.series.map(model=>item.values[model.id][metric.id]));
+        const lower=Math.min(0,...allValues),upper=Math.max(0,...allValues),span=upper-lower;
+        const left=index*.347,domain=[left,left+.306];
+        const textValues=values.map(value=>value.toFixed(metric.digits).replace('-','−'));
+        const range=[lower-(lower<0?.04:0)*span,upper+.05*span];
+        layout['xaxis'+suffix]={domain,range,anchor:'y',tickformat:'~g',nticks:4,
+          tickvals:narrow?[0,Number((upper*.75).toPrecision(1))]:undefined,
+          fixedrange:true,gridcolor:grid,zerolinecolor:COLORS.comparison};
+        layout.annotations.push({text:metric.label,x:left,y:1,xref:'paper',yref:'paper',
+          xanchor:'left',yanchor:'bottom',yshift:5,showarrow:false});
+        textValues.forEach((value,row)=>{
+          layout.annotations.push({text:value,x:range[0],y:row,
+            xref:x,yref:'y',xanchor:'left',xshift:1,yshift:10,showarrow:false});
+        });
+        traces.push({type:'bar',orientation:'h',x:values,xaxis:x,y:positions,
+          width:.24,customdata:labels,
+          marker:{color:colors,opacity:.86},text:textValues,textposition:'none',
+          hovertemplate:'%{customdata}<br>'+metric.label+': %{text}<extra></extra>'});
+        metricDescriptions.push(metric.label+': '+labels.map((label,row)=>label+' '+textValues[row]).join(', '));
+      });
+      graph.setAttribute('aria-label',period.label+' across '+period.dates+' signal dates. '+metricDescriptions.join('. ')+'.');
+      await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
     }
 
     await draw();

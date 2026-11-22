@@ -43,7 +43,7 @@
         },
         {
           "id": "ic_sd",
-          "label": "IC standard deviation",
+          "label": "IC SD",
           "digits": 3
         },
         {
