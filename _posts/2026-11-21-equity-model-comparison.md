@@ -340,17 +340,17 @@ earned 0.7 points less, and lower fees recovered 0.4 points.
 
 I was surprised by how close Medium stayed to Ridge over the full
 test. LightGBM pulled ahead early and kept adding to its lead.
-By the end of 2021, Ridge and Medium had each earned about $244 per
-$100 of fixed capital, and LightGBM had earned about $365.
+At their original volatility, Ridge and Medium had each earned about
+$244 per $100 of fixed capital by the end of 2021, and LightGBM had
+earned about $365.
 
-Each portfolio took a different amount of risk along the way. The
-volatility toggle scales each line to 7% annualized realized volatility
-using the daily returns in the selected window. That puts the P&amp;L and
-drawdowns on the same risk scale. Open **Window statistics** below the chart
-to compare annual net P&L, volatility, Sharpe and drawdowns at either scale.
+The chart opens with each portfolio rescaled to 7% annualized
+volatility over the selected window. Clear the checkbox to see the
+original P&L and drawdowns. Open **Window statistics** to compare
+annual net P&L, volatility, Sharpe and drawdowns at either scale.
 
 <figure id="figure-3" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=3" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="2" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, with optional volatility scaling." %}
+  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=4" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="3" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, rescaled to 7% annualized volatility by default." %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
 </figure>
 

@@ -9,6 +9,7 @@ import math
 from datetime import date, timedelta
 from itertools import accumulate
 from pathlib import Path
+from statistics import stdev
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -133,6 +134,8 @@ def export_pnl(
         ),
     ),
     calendars: tuple[str, ...] = ("o0", "o1", "o2"),
+    volatility_target: float = 0.07,
+    annualization: int = 252,
 ) -> None:
     summary = next(
         row
@@ -187,8 +190,9 @@ def export_pnl(
         "unit": "Net P&L per $100 of capital",
         "drawdown": True,
         "drawdownUnit": "Drawdown per $100 of capital",
-        "volatilityTarget": 0.07,
-        "note": "Annual P&L is mean daily net P&L × 252 on fixed capital. Sharpe uses zero cash return. Maximum drawdown is the loss per $100 of capital.",
+        "volatilityTarget": volatility_target,
+        "matchVolatilityByDefault": True,
+        "note": f"Annual P&L is mean daily net P&L × {annualization} on fixed capital. Sharpe uses zero cash return. Maximum drawdown is the loss per $100 of capital.",
         "zeroReference": True,
         "episodes": [
             ["1999–2011", dates[0].isoformat(), "2011-12-30"],
@@ -201,16 +205,21 @@ def export_pnl(
         [day.isoformat() for day in dates],
         lines,
         {"pnl": chart},
+        annualization=annualization,
     )
+
+    portfolios = []
+    for (_, label, _, light, dark), line in zip(models, lines, strict=True):
+        realized_volatility = stdev(line["values"][1:]) * math.sqrt(annualization)
+        multiplier = 100 * volatility_target / realized_volatility
+        pnl = [multiplier * total for total in accumulate(line["values"])]
+        portfolios.append((label, light, dark, pnl))
 
     render_pnl_fallbacks(
         output,
         dates=dates,
-        portfolios=[
-            (label, light, dark, [100 * total for total in accumulate(line["values"])])
-            for (_, label, _, light, dark), line in zip(models, lines, strict=True)
-        ],
-        pnl_unit=chart["unit"],
+        portfolios=portfolios,
+        pnl_unit=f"Net P&L per $100 at {volatility_target * 100:g}% annualized volatility",
         drawdown_unit=chart["drawdownUnit"],
     )
 

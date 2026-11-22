@@ -60,6 +60,7 @@ test('fixed-notional P&L rebases additively, including its drawdown',()=>{
 test('fixed-capital losses and underwater sessions follow the plotted risk scale',()=>{
   const bundle=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/equity-model-comparison/net-pnl.json')));
   assert.notEqual(bundle.charts.pnl.statistics,false);
+  assert.equal(bundle.charts.pnl.matchVolatilityByDefault,true);
   const ridge=bundle.series.find(s=>s.id==='ridge').values.slice(1).map(v=>v/bundle.scale);
   const raw=charts.stats(ridge,bundle.annualization,true);
   const matched=charts.stats(ridge.map(r=>r*.07/raw.volatility),bundle.annualization,true);

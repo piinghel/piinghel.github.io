@@ -385,11 +385,12 @@
       for(const s of series.filter(s=>s!==benchmark&&(s.visible===false||cfg.showLegend===false||initialWealth===1)))optionalBoxes.set(s.id,
         checkbox(s.label,visible.get(s.id),value=>{visible.set(s.id,value);draw();}));
       const volatilityTarget=cfg.additive&&cfg.volatilityTarget;
+      const volatilityLabel=volatilityTarget?format(volatilityTarget,true).replace('.0%','%'):'';
       let scaleBox,scaleStatus;
       if(volatilityTarget) {
         const control=element('div','blog-chart-volatility');
         ui.append(control);
-        scaleBox=checkControl(control,'Match '+format(volatilityTarget,true).replace('.0%','%')+' annualized volatility',false,draw).box;
+        scaleBox=checkControl(control,'Rescale to '+volatilityLabel+' annualized volatility',cfg.matchVolatilityByDefault===true,draw).box;
         scaleStatus=element('p','blog-chart-note','Choose a longer window with variation in every portfolio to match volatility.');
         scaleStatus.setAttribute('role','status');scaleStatus.hidden=true;ui.append(scaleStatus);
       }
@@ -582,8 +583,11 @@
           await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:mobile?false:'hover',displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
           if(!statisticsPanel.hidden)updateTable(plottedSeries,first,last);
-          windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===full[0]&&range[1]===full[1]);
-          windowLabel.textContent=dates[0]+' – '+dates.at(-1);
+          const fullWindow=range[0]===full[0]&&range[1]===full[1];
+          const datesLabel=dates[0]+' – '+dates.at(-1);
+          const scaleLabel=scaled?'Rescaled to '+volatilityLabel+' annualized volatility':'Original volatility';
+          windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&!volatilityTarget&&fullWindow);
+          windowLabel.textContent=volatilityTarget?(fullWindow?scaleLabel:datesLabel+' · '+scaleLabel):datesLabel;
           windowLabel.title=!showLegend?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
           if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
           for(const [id,box] of optionalBoxes)box.checked=visible.get(id);
