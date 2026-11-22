@@ -10,10 +10,26 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-The signal in stock returns is weak. I wanted to see whether a model
-pretrained on synthetic tables could use real stock history to rank
-stocks. I tested NVIDIA’s Kumo Tabular alongside Ridge and LightGBM.
-All three use the 80 stock predictors I describe in [*Combining Multiple Predictors:
+For years, boosted trees like LightGBM have been a standard choice for
+prediction on tabular data. The setup is familiar. Fit the trees on
+rows with known outcomes, then use the fitted trees to score a new row
+from its predictors.
+
+Tabular foundation models change what the model sees when it makes a
+prediction. During pretraining, they learn to predict hidden outcomes
+from labeled examples across many different tables. Give one a new
+table and it uses the rows with known outcomes to score the others.
+
+Tabular foundation models have gained attention over the past two
+years as they’ve become faster and more practical on larger tables.
+In 2025, for example, TabPFN went from being designed for 10,000 rows
+to 50,000 with [TabPFN-2.5](https://arxiv.org/abs/2511.08667). That
+progress made me want to see whether a model like this could rank
+stocks, where the signal is weak.
+
+I tested NVIDIA’s Kumo Tabular, which was pretrained entirely on
+synthetic tables, alongside Ridge and LightGBM. All three use the
+80 stock predictors I describe in [*Combining Multiple Predictors:
 The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
 I first compare the rankings themselves. Then I use the sizing method
 from [*From Volatility Scaling to Joint
@@ -108,10 +124,7 @@ to get one score for each stock.
 In the expanding runs, the available history starts in January 1995.
 By the later blocks, there are many more examples to choose from.
 Processing those examples takes more compute and memory as the
-context grows. Table sizes have been moving up quickly. In 2025,
-the [TabPFN-2.5 paper](https://arxiv.org/abs/2511.08667) reported a
-fivefold increase in the number of rows it could handle, from 10,000
-to 50,000. NVIDIA recommends a GPU for large contexts in its
+context grows. NVIDIA recommends a GPU for large contexts in its
 [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
 I wanted to run the comparison on my Mac’s CPU, so I needed to pass
 Kumo fewer examples. I cut down the context in two steps.
