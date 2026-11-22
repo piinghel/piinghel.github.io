@@ -25,6 +25,10 @@ fixed formulas. Borrow the qualities, not their phrases or personas.
   expectations, while separating returns from the quality of risk management.
   Explain what drove an outcome and what trade-off it reveals. A disappointing
   result is still worth explaining.
+- [Christoph Molnar’s Tabular Foundation Models](https://tabularfoundationmodels.com/prediction#fig-input-output)
+  makes in-context learning concrete by showing which cells enter a prediction.
+  Start with a small worked example and follow the data through each method.
+  Add implementation detail where it explains a choice in the research.
 
 ## Applying this voice
 

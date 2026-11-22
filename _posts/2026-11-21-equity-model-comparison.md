@@ -26,19 +26,37 @@ portfolio construction and trading costs? [How I combine the stock predictors]({
 
 ## A pretrained model for tables
 
-Think of a table with two characteristics and an outcome. In one
-simulated table, the outcome might increase when both characteristics
-are high. In another, the relationship might reverse once the first
-characteristic crosses a threshold. During pretraining, Kumo sees
-millions of artificial tables with different relationships. It learns
-to infer the missing outcomes in each table from the examples it can see.
-
-In this study, each row is a stock on a date. The outcome is its Sharpe
+Each row in the study is a stock on a date. The outcome is its Sharpe
 ratio over the next 20 trading sessions, ranked against other stocks in
-its sector. At each refit I give Kumo past rows whose return windows have
-already finished. Kumo uses those examples to score the next set of
-stocks without updating its pretrained weights. That's what in-context
-learning means here.
+its sector. The sketch uses momentum as the only predictor. On session
+55, I know stock C’s momentum. Its sector rank is still a question mark.
+
+LightGBM uses the labeled rows A and B to fit its trees. To score C, it
+runs C’s momentum through those trees. Kumo scores C with A and B still
+available as examples. Give Kumo a different set of examples and C’s
+score can change even though the pretrained weights stay fixed. That’s
+in-context learning.
+
+Kumo learned to do this on artificial tables. During pretraining, some
+outcomes were shown and others were hidden. In one table a predictor
+might be informative, while in another the same column might carry
+little signal. To predict the hidden outcomes, Kumo had to use the
+labeled examples to infer which relationships applied to that table.
+[Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
+
+<figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
+  <picture>
+    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}" width="1024" height="1536">
+    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}" width="1536" height="1024" loading="lazy" decoding="async" alt="LightGBM fits trees on labeled stocks A and B, then scores C from its momentum. Kumo scores C with A and B as context. The label cutoff is session 50, the context refresh is 51, the forecast is 55, and the simulated trade is 56.">
+  </picture>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
+</figure>
+
+Stock B’s forward window ends at session 50, so its outcome is known
+when I refresh the context at 51. I can use that same context with
+session 55’s predictors and simulate the trade at the next close.
+Sampling more dates adds historical examples. Rebalancing more often
+adds occasions to score stocks and trade on those scores.
 
 Several of these models have European roots. TabPFN came out of research
 in Freiburg, and TabICL was developed at Inria in France. The first
@@ -66,7 +84,8 @@ keep the top and bottom 30% of realized outcomes, since the extremes
 are the stocks I most want the model to distinguish.
 
 I ran Small with training dates spaced four and six weeks apart, or
-20 and 30 trading sessions. By the final fold, four-week Small used
+20 and 30 trading sessions, on the same signal calendar. By the final
+fold, four-week Small used
 190,064 training rows and six-week Small used 126,892. Their full runs
 took 2 hours 37 minutes and 1 hour 39 minutes on the Mac. Medium needed
 eight-week spacing to fit and ran in 2 hours 52 minutes.
@@ -143,9 +162,9 @@ scores into ten equal-weight groups, trade at the next close, and hold
 until the next rebalance. I average daily returns across the three
 schedules before compounding and use a zero cash return for Sharpe.
 
-<figure id="figure-1" class="research-figure decile-profile-figure responsive-figure">
+<figure id="figure-2" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=2" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="7" label="Return, volatility and Sharpe by stock score decile, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
 LightGBM separates at both ends, with a higher return at the top and
@@ -330,9 +349,9 @@ using the daily returns in the selected window. That puts the P&amp;L and
 drawdowns on the same risk scale. Open **Window statistics** below the chart
 to compare annual net P&L, volatility, Sharpe and drawdowns at either scale.
 
-<figure id="figure-2" class="research-figure portfolio-path-figure responsive-figure">
+<figure id="figure-3" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=3" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="2" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, with optional volatility scaling." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
 </figure>
 
 At the same realized volatility over the full period, Medium earned

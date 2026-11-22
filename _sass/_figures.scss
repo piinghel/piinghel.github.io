@@ -10,6 +10,11 @@
 .theme-svg-figure,
 .theme-svg-figure img { display: block; width: 100%; margin: 0; }
 .theme-svg-figure--dark { display: none; }
+.stock-scoring-figure img { display: block; width: 100%; }
+html[data-theme="dark"] .stock-scoring-figure img {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+}
 .post-content .portfolio-path-figure { overflow: visible; scroll-margin-top: 1.25rem; }
 @media (min-width: 72rem) {
   .e-content > :is(.portfolio-path-figure, .regime-comparison-figure, .decile-profile-figure) { width: calc(100% + 5rem); }

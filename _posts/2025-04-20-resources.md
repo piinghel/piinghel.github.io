@@ -3,7 +3,7 @@ layout: post
 title: "Resources"
 description: "Writers, papers, and software I return to."
 date: 2025-04-20
-last_modified_at: 2026-09-05
+last_modified_at: 2026-11-22
 categories: ["Resources"]
 article_label: Resources · Research and software
 permalink: /quants/resources.html
@@ -28,6 +28,7 @@ math: false
 
 - [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/) — Claus O. Wilke.
 - [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/) — Christoph Molnar.
+- [Tabular Foundation Models](https://tabularfoundationmodels.com/) — Christoph Molnar.
 
 ## Software
 
