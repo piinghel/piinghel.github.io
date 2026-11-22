@@ -40,25 +40,36 @@ to see how each ranking fares after trading costs.
 
 ### What the historical examples do at prediction time
 
-Each row is a stock on a particular date. Its predictors are what I
-know on that date, such as momentum. To get the outcome, I divide the
-stock’s average daily return over the next 20 trading sessions by
-its daily return volatility over the same period and rank that ratio
-within its sector. In Figure 1, the outcomes for A and B are already
-known. The task is to score C using the momentum observed on session 55.
+Take a stock I want to score at today’s close. I know its momentum
+and the rest of its predictors. Its outcome will take another 20
+trading sessions to observe. Over those sessions, I divide its average
+daily return by its daily return volatility and rank the resulting
+ratio within its sector. Historical rows whose 20 sessions have
+already passed give me examples with known outcomes.
 
-LightGBM and Kumo both expose `fit()` and `predict()`. With LightGBM,
-`fit()` builds trees from A and B. To score C, `predict()` passes C’s
-momentum through the fitted trees and adds their contributions. Ridge
-fits a set of coefficients and uses those coefficients to score new rows.
+Figure 1 shows a small version of the problem. The historical rows
+are A and B. Stock C has positive momentum on session 55, and its
+outcome is still unknown. In the study I use 80 predictors. The sketch
+uses momentum alone so we can follow the same input through both models.
 
-With Kumo, `fit()` prepares A and B and caches information from them.
-At `predict()`, the network uses that cached information alongside C’s
-momentum. As more outcomes become available, I can refresh the examples
-while keeping the pretrained network weights fixed. Using labeled
-examples this way is called *in-context learning*. [Christoph Molnar’s
-first example](https://tabularfoundationmodels.com/first-look) shows how
-the familiar calls conceal this change in what the model uses at prediction time.
+With LightGBM, I call `fit()` with the historical predictors and
+outcomes. Each tree adds a correction to what the earlier trees predict.
+A tree might split the rows at a momentum threshold and learn a
+different correction on either side. Once the trees are fitted,
+`predict()` takes C’s momentum, follows the corresponding branches and
+adds the corrections. The historical outcomes have already shaped the
+trees. Ridge works the same way in this respect. The historical data
+determine its coefficients, which it then applies to C’s predictors.
+
+The Kumo API has the same two calls. Here, `fit()` processes the
+historical rows and saves information from them for reuse. When I call
+`predict()` with C’s momentum, the network also uses the saved
+information from A and B, including their known outcomes. This is the
+*context*. If I replace A and B with other historical examples, C’s
+score can change even though C’s momentum and Kumo’s network weights
+stay the same. That is *in-context learning*. Christoph Molnar uses
+the familiar interface as his starting point in
+[*Tabular Foundation Models*, Chapter 2](https://tabularfoundationmodels.com/first-look).
 
 <figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
   <picture>
@@ -76,27 +87,39 @@ context using the outcomes available by then.
 
 ### What Kumo learns during pretraining
 
-NVIDIA generated tables with different relationships between predictors
-and outcomes. On each table, Kumo saw some outcomes and had to predict
-the rest. Its prediction errors drove updates to the same network
-across many such tables. By the time I use Kumo, that training is
-complete. The stock history supplies examples of how predictors and
-outcomes relate in this particular dataset.
+How can a network trained on synthetic tables use stock history this
+way? During pretraining, NVIDIA repeatedly gave Kumo a new table, showed
+it the outcomes for some rows and asked it to predict the others. The
+relationship could change from one table to the next. One target might
+depend mainly on a single predictor. Another might depend on a
+combination of predictors, with different amounts of noise.
+
+NVIDIA used the errors on the hidden outcomes to update the network
+weights. Because those updates came from many different prediction
+problems, the network learned to use the labeled rows to figure out
+what kind of relationship might apply in a new table. When I use Kumo,
+that training is complete. The historical stock rows are the examples
+it uses to do the same job for the stock ranking.
 [Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
 explains why varying the relationships across tables matters.
 
 ### The Bayesian intuition
 
-Suppose an outcome is usually high when momentum is high under one
-rule, and usually high only when both momentum and value are high under
-another. Say each rule gives its usual outcome nine times out of ten,
-with independent errors across rows, and I give both rules a 50%
-probability to start.
+To see what an example can tell us, imagine two possible rules.
+Under the first, high momentum usually goes with a high outcome.
+Under the second, the outcome is usually high only when both momentum
+and the value signal are high. Start by assigning a 50% probability
+to each rule. Suppose the usual outcome occurs nine times out of ten
+under either rule, with independent errors across rows.
 
 Now I see a row with high momentum, low value and a low outcome. That
-outcome is nine times as likely under the second rule, so I raise its
-probability to 90%. For a new row with the same predictors, the chance
-of a low outcome is 0.9 × 0.9 + 0.1 × 0.1, or 82%.
+outcome is expected under the second rule and unusual under the first.
+It is nine times as likely under the second rule, so I raise that
+rule’s probability to 90%. For a new row with the same predictors,
+there are two ways to get a low outcome. The second rule could be
+right and give its usual outcome, or the first rule could be right and
+give its unusual outcome. Adding those probabilities gives
+0.9 × 0.9 + 0.1 × 0.1, or 82%.
 
 The probabilities assigned to the rules before seeing the example
 are the *prior*. The updated probabilities are the *posterior*.
@@ -110,14 +133,17 @@ develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbN
 
 ### How Kumo turns the examples into a score
 
-Kumo builds a numerical representation of each row from its predictors
-and any known outcome. Attention lets the model use these representations
-to decide how much information to draw from each historical example.
-Successive layers refine the representation of the new row before
-predicting its outcome
+In Kumo, the route from examples to a prediction runs through attention.
+The network starts by encoding the predictors in each row and the
+outcomes in the historical rows. In an attention layer, it compares
+learned representations of C and the historical rows. Those comparisons
+determine how much information each example contributes to C’s updated
+representation. The next layer can use that richer representation to
+draw on the examples again. Pretraining determines how the network
+makes those comparisons and combines the information
 ([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
-Kumo produces quantiles of the predicted outcome, and I average them
-to get one score for each stock.
+Kumo predicts a range of quantiles for the outcome. I average them
+to get the single score used to rank each stock.
 
 ## Subsampling the historical context
 
