@@ -10,11 +10,11 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, boosted trees like LightGBM and XGBoost were the
-benchmark I looked for when a new model seemed promising on
-tabular data.[^tree-benchmark] Now models like TabPFN and TabICL
-are beating strong tree ensembles on a growing range of
-benchmarks.[^new-benchmarks]
+For years, the models to beat on tabular data were tree ensembles,
+from random forests to boosted trees like LightGBM and
+XGBoost.[^tree-benchmark] That’s starting to change. Models like
+TabPFN and TabICL are beating strong tree ensembles on a growing
+range of benchmarks.[^new-benchmarks]
 
 What got me curious was how they make those predictions. With
 LightGBM, I fit trees on the examples for the problem in front of
@@ -135,8 +135,8 @@ I describe how I build the target and predictors in
 Ridge and LightGBM fit on past data and score the dates that follow.
 I refresh Kumo’s context on the LightGBM refit dates. The expanding
 Kumo runs draw on history back to January 1995. The test runs from
-1999 to May 2026, with the results from 2022 onward also shown on
-their own.
+1999 through May 27, 2026. I show 2022 onward on its own to see
+whether the same patterns turn up in the more recent years.
 
 For **Ridge**, I use a penalty of $c=0.1$. Several predictors overlap,
 such as momentum measured over nearby horizons, and the penalty
@@ -373,17 +373,33 @@ of the previous 21 sessions’ average daily dollar volume. The
 sizing method is in
 [*From Volatility Scaling to Joint Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget).
 
-I use LightGBM's construction settings for the Kumo books, including a
-5 basis point turnover penalty. Ridge uses its original 2.5 basis point
-penalty. The penalty shapes how much the optimizer trades. The
-execution fees are 7.5 basis points on long trades and 10 on shorts
-through 2010, then 5 and 7.5. Table 1 shows the same holdings before
-and after those fees. I compute return, volatility, Sharpe and
+The optimizer uses a turnover penalty of 5 basis points for
+LightGBM and Kumo and 2.5 for Ridge. This affects how much it
+trades. The simulated execution fees are 7.5 basis points on
+long trades and 10 on shorts through 2010, then 5 and 7.5.
+Table 1 shows the same holdings before and after those fees.
+I compute return, volatility, Sharpe and
 turnover for each schedule and then average the three. Two-way
 turnover adds all dollars bought and sold across both sides, divides
 by fixed capital, and annualizes the average over trading sessions.
 
-<div id="table-5">
+I also tried 100 and 150 new candidates per side. This lets me
+see how much the results depend on how far into the ranking the
+optimizer can look for new positions. Table 1 shows all three
+choices with the same forecasts, sizing rules and fees.
+
+<div id="table-5" class="equity-breadth">
+{% if site.data.equity_portfolio_breadth %}
+<fieldset class="equity-breadth-controls">
+  <legend>New candidates per side</legend>
+  <input type="radio" name="equity-breadth" id="equity-breadth-75" value="75" checked aria-controls="table-1">
+  <label for="equity-breadth-75">75</label>
+  {% for breadth in site.data.equity_portfolio_breadth %}
+  <input type="radio" name="equity-breadth" id="equity-breadth-{{ breadth.count }}" value="{{ breadth.count }}" aria-controls="table-1">
+  <label for="equity-breadth-{{ breadth.count }}">{{ breadth.count }}</label>
+  {% endfor %}
+</fieldset>
+{% endif %}
 <div id="table-6" class="research-table-scroll" tabindex="0" role="region" aria-label="Portfolio results before and after execution fees, with turnover">
 <table id="table-1" class="research-table comparison-table equity-comparison-table">
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Portfolio performance before and after fees.</span> Returns are compounded. Turnover is two-way traded notional per year, in multiples of fixed capital. All figures are annualized.</caption>
@@ -392,7 +408,7 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="col" rowspan="2">Model</th><th scope="colgroup" colspan="2">Before fees</th><th scope="colgroup" colspan="3" class="comparison-divider">After fees</th><th scope="col" rowspan="2">Turnover</th></tr>
     <tr><th scope="col">Return</th><th scope="col">Sharpe</th><th scope="col" class="comparison-divider">Return</th><th scope="col">Vol.</th><th scope="col">Sharpe</th></tr>
   </thead>
-  <tbody>
+  <tbody data-candidates="75">
     <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–May 2026</th></tr>
     <tr><th scope="row">Ridge</th><td>12.2%</td><td>1.34</td><td class="comparison-divider">10.2%</td><td>8.9%</td><td>1.14</td><td>24.5×</td></tr>
     <tr><th scope="row">LightGBM</th><td>17.6%</td><td>2.17</td><td class="comparison-divider">15.5%</td><td>7.6%</td><td>1.94</td><td>24.5×</td></tr>
@@ -400,7 +416,7 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="row">Kumo Medium</th><td>13.4%</td><td>1.70</td><td class="comparison-divider">10.8%</td><td>7.6%</td><td>1.39</td><td>31.4×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>4.7%</td><td>0.61</td><td class="comparison-divider">1.8%</td><td>8.0%</td><td>0.26</td><td>38.0×</td></tr>
   </tbody>
-  <tbody>
+  <tbody data-candidates="75">
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2022–May 2026</th></tr>
     <tr><th scope="row">Ridge</th><td>8.7%</td><td>0.91</td><td class="comparison-divider">7.4%</td><td>9.7%</td><td>0.79</td><td>18.8×</td></tr>
     <tr><th scope="row">LightGBM</th><td>9.5%</td><td>1.19</td><td class="comparison-divider">8.2%</td><td>7.9%</td><td>1.04</td><td>20.1×</td></tr>
@@ -408,7 +424,7 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="row">Kumo Medium</th><td>12.0%</td><td>1.43</td><td class="comparison-divider">10.0%</td><td>8.2%</td><td>1.20</td><td>29.2×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>−0.5%</td><td>−0.01</td><td class="comparison-divider">−2.8%</td><td>9.7%</td><td>−0.24</td><td>36.9×</td></tr>
   </tbody>
-  <tbody>
+  <tbody data-candidates="75">
     <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>12.9%</td><td>1.43</td><td class="comparison-divider">10.8%</td><td>8.7%</td><td>1.21</td><td>25.6×</td></tr>
     <tr><th scope="row">LightGBM</th><td>19.2%</td><td>2.37</td><td class="comparison-divider">16.9%</td><td>7.5%</td><td>2.12</td><td>25.4×</td></tr>
@@ -416,7 +432,7 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="row">Kumo Medium</th><td>13.7%</td><td>1.76</td><td class="comparison-divider">11.0%</td><td>7.4%</td><td>1.44</td><td>31.8×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>5.7%</td><td>0.77</td><td class="comparison-divider">2.7%</td><td>7.6%</td><td>0.39</td><td>38.2×</td></tr>
   </tbody>
-  <tbody>
+  <tbody data-candidates="75">
     <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2011</th></tr>
     <tr><th scope="row">Ridge</th><td>12.4%</td><td>1.52</td><td class="comparison-divider">9.9%</td><td>8.0%</td><td>1.22</td><td>27.5×</td></tr>
     <tr><th scope="row">LightGBM</th><td>20.4%</td><td>2.66</td><td class="comparison-divider">17.7%</td><td>7.1%</td><td>2.35</td><td>26.3×</td></tr>
@@ -424,7 +440,7 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="row">Kumo Medium</th><td>12.9%</td><td>1.80</td><td class="comparison-divider">9.8%</td><td>6.9%</td><td>1.38</td><td>33.1×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>7.3%</td><td>0.97</td><td class="comparison-divider">4.0%</td><td>7.6%</td><td>0.55</td><td>37.2×</td></tr>
   </tbody>
-  <tbody>
+  <tbody data-candidates="75">
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2012–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>13.5%</td><td>1.36</td><td class="comparison-divider">11.9%</td><td>9.7%</td><td>1.22</td><td>23.2×</td></tr>
     <tr><th scope="row">LightGBM</th><td>17.6%</td><td>2.05</td><td class="comparison-divider">15.9%</td><td>8.0%</td><td>1.88</td><td>24.1×</td></tr>
@@ -432,7 +448,7 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="row">Kumo Medium</th><td>14.6%</td><td>1.73</td><td class="comparison-divider">12.5%</td><td>8.1%</td><td>1.50</td><td>30.1×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>3.6%</td><td>0.50</td><td class="comparison-divider">1.1%</td><td>7.5%</td><td>0.18</td><td>39.4×</td></tr>
   </tbody>
-  <tbody>
+  <tbody data-candidates="75">
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2017–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>14.1%</td><td>1.30</td><td class="comparison-divider">12.6%</td><td>10.5%</td><td>1.18</td><td>22.0×</td></tr>
     <tr><th scope="row">LightGBM</th><td>16.4%</td><td>1.76</td><td class="comparison-divider">14.9%</td><td>8.9%</td><td>1.60</td><td>22.3×</td></tr>
@@ -440,13 +456,29 @@ by fixed capital, and annualizes the average over trading sessions.
     <tr><th scope="row">Kumo Medium</th><td>15.0%</td><td>1.59</td><td class="comparison-divider">13.0%</td><td>9.0%</td><td>1.40</td><td>28.5×</td></tr>
     <tr><th scope="row">Small, rolling</th><td>1.8%</td><td>0.27</td><td class="comparison-divider">−0.6%</td><td>7.8%</td><td>−0.04</td><td>39.0×</td></tr>
   </tbody>
+  {% for breadth in site.data.equity_portfolio_breadth %}
+    {% for period in breadth.periods %}
+    <tbody data-candidates="{{ breadth.count }}">
+      <tr class="period-heading"><th colspan="7" scope="rowgroup">{{ period.label | escape }}</th></tr>
+      {% for row in period.rows %}
+      <tr>
+        <th scope="row">{{ row.model | escape }}</th>
+        {% for metric in row.metrics %}
+        <td{% if forloop.index == 3 %} class="comparison-divider"{% endif %}>{{ metric | escape }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+    {% endfor %}
+  {% endfor %}
 </table>
 </div>
 </div>
 
 In the 1999–2021 decile spread, six-week Small had the higher
-Sharpe of the two expanding Kumo runs. Once I sized the portfolios,
-Medium edged ahead before fees, 1.76 versus 1.68. Small also traded
+Sharpe of the two expanding Kumo runs. Once I sized the portfolios
+with 75 new candidates per side, Medium edged ahead before fees,
+1.76 versus 1.68. Small also traded
 more, at 42.3 times capital per year versus 31.8 for Medium.
 After fees, Medium’s lead widened to 1.44 versus 1.24.
 
@@ -465,9 +497,10 @@ measure. Longs contributed 3.2 points, shorts 2.7 and lower fees
 points from longs and 0.7 from lower fees, offset by a 0.3-point
 shortfall on the short side.
 
-From 2022 to May 2026, LightGBM still led on rank IC. Medium
-had the highest observed net Sharpe, at 1.20 versus 1.04 for
-LightGBM and 0.79 for Ridge. Medium’s 0.17 lead over LightGBM
+From 2022 to May 2026, LightGBM still led on rank IC. With
+75 candidates per side, Medium had the highest net Sharpe,
+at 1.20 versus 1.04 for LightGBM and 0.79 for Ridge.
+Medium’s 0.17 lead over LightGBM
 had a paired 95% interval of −0.38 to 0.71 using 21-session blocks.
 
 Medium’s lead came from the long side. Relative to LightGBM, its
@@ -475,6 +508,14 @@ long book contributed 5.5 percentage points more annualized
 arithmetic P&L and its short book gave up 3.2 points. It traded
 29.2 times capital per year versus 20.1 for LightGBM, and the
 extra fees cost another 0.6 points.
+
+When I widened the candidate list, the later comparison got
+closer. At 100 candidates per side, Medium and LightGBM had
+after-fee Sharpes of 1.18 and 1.14. At 150, LightGBM came out
+ahead, at 1.24 versus 1.12 for Medium. Both models traded more
+as I gave the optimizer more names. The paired intervals for
+the later Sharpe gap include zero at all three widths. Over
+the full history, LightGBM led on net Sharpe at every width.
 
 ## How similarly the models trade
 
@@ -524,8 +565,9 @@ The short book explains most of the original gap. The rolling variant
 gave up 5.9 percentage points of annualized arithmetic net P&L versus
 expanding Small. The short side cost 5.4 points more, the long side
 earned 0.7 points less, and lower fees recovered 0.2 points. From
-2022 to May 2026 the rolling book lost money even before fees.
-Its net return was −2.8% a year.
+2022 to May 2026 the rolling book lost money before fees at
+every width. Its annual net return was −2.8% with 75 candidates
+per side and −3.9% with 150.
 
 ## How the P&L built up
 
@@ -537,7 +579,7 @@ window. Clear the checkbox to see the original paths. Open
 
 <figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=7" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="6" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I average daily P&amp;L across the three schedules and add it up. The chart shows P&amp;L and drawdown as percentages of fixed capital.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
 </figure>
 
 LightGBM finished with the highest cumulative P&L over the full
@@ -550,10 +592,9 @@ the period in which Medium finished ahead of LightGBM in both views.
 
 What surprised me was that a model pretrained on artificial tables
 could take these historical examples and rank stocks at all.
-Medium beat Ridge on net Sharpe in both the original and later
-periods. LightGBM led over the full history, at 1.94 versus 1.39 for
-Medium. Medium pulled ahead from 2022 to May 2026, though the
-estimated gap was imprecise.
+Medium beat Ridge on net Sharpe at each candidate width over the
+full history and from 2022 onward. Its comparison with LightGBM
+in the later period depended more on how I built the portfolio.
 
 I’d like to test Kumo Large over the full period, giving it the same
 historical rows as Small and Medium. Large ranked better on the
