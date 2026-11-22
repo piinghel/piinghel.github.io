@@ -67,8 +67,11 @@ signal date a week across the three. For Kumo Small, each of the 12
 training contexts expands from January 1995. I take
 one date every 30 trading sessions and keep the top and bottom 30% of
 targets whose return windows have ended. The context grows from 18,148
-to 126,892 rows. Scoring 1,162,773 stock observations took 99 minutes on
-a laptop CPU.
+to 126,892 rows. Small took 99 minutes on a laptop CPU. For Medium,
+I used one date every 40 trading sessions, or about eight weeks. Its
+contexts ranged from 13,459 to 95,033 rows and took 2 hours 52 minutes
+to prepare and score. Each Kumo run scored the same 1,162,773 stock-date
+rows.
 
 On each signal date I compute the Spearman correlation between the scores
 and realized targets. Rank IC is the mean of those correlations and ICIR
@@ -79,28 +82,32 @@ divides it by their sample standard deviation. I report ICIR unannualized.
   <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Rank metrics by period.</span> The full comparison covers 1,191 shared signal dates with realized targets.</caption>
   <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th></tr></thead>
   <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2021</th></tr>
+    <tr class="period-heading"><th colspan="4" scope="rowgroup">1999–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0489</td><td>0.090</td><td>0.545</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0557</td><td>0.077</td><td>0.720</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0430</td><td>0.064</td><td>0.671</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>0.0458</td><td>0.073</td><td>0.625</td></tr>
   </tbody>
   <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">1999–2011</th></tr>
+    <tr class="period-heading"><th colspan="4" scope="rowgroup">1999–2011</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0434</td><td>0.073</td><td>0.592</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0570</td><td>0.063</td><td>0.904</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0470</td><td>0.059</td><td>0.795</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>0.0444</td><td>0.060</td><td>0.735</td></tr>
   </tbody>
   <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2012–2021</th></tr>
+    <tr class="period-heading"><th colspan="4" scope="rowgroup">2012–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0560</td><td>0.107</td><td>0.523</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0541</td><td>0.093</td><td>0.582</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0377</td><td>0.070</td><td>0.542</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>0.0476</td><td>0.087</td><td>0.546</td></tr>
   </tbody>
   <tbody>
-    <tr class="period-heading"><th colspan="4" scope="colgroup">2017–2021</th></tr>
+    <tr class="period-heading"><th colspan="4" scope="rowgroup">2017–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>0.0585</td><td>0.129</td><td>0.455</td></tr>
     <tr><th scope="row">LightGBM</th><td>0.0529</td><td>0.114</td><td>0.463</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0347</td><td>0.083</td><td>0.421</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>0.0480</td><td>0.107</td><td>0.449</td></tr>
   </tbody>
 </table>
 </div>
@@ -108,8 +115,11 @@ divides it by their sample standard deviation. I report ICIR unannualized.
 LightGBM's full-period lead in mean IC comes from 1999–2011. Ridge has
 the higher mean in the recent windows. Its IC varies more across dates,
 so LightGBM still has the higher ICIR. Across the full matched sample,
-Kumo Small's lower IC variability puts its ICIR above Ridge's, though
-Kumo trails both baselines in 2017–2021.
+Kumo Small's lower IC variability puts its full-period ICIR above
+Ridge's. Medium has a slightly higher mean IC than Small and more
+variation from date to date, giving it a lower ICIR over the full
+period. The two Kumo runs compare the checkpoint sizes and training
+cadences that fit the same laptop.
 
 ## Return and risk by score decile
 
@@ -120,15 +130,15 @@ compounding.
 
 <figure id="figure-1" class="research-figure responsive-figure">
   <div id="figure-2">
-    {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="2" alt="LightGBM has the highest top-decile return and Sharpe. Kumo Small and Ridge have similar top-decile returns." %}
+    {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="3" alt="LightGBM has the highest top-decile return and Sharpe. Ridge and both Kumo models have similar top-decile returns." %}
   </div>
   <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile, 1999–2021.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
-Kumo Small and Ridge look similar in the top decile. The LightGBM curve
-separates at both ends, with a higher return at the top and a lower
-return at the bottom. The top-minus-bottom spread compounds the
-difference between those two deciles' daily returns.
+Both Kumo models and Ridge have similar top-decile returns. The
+LightGBM curve separates at both ends, with a higher return at the
+top and a lower return at the bottom. The top-minus-bottom spread
+compounds the difference between those two deciles' daily returns.
 
 ## Returns after portfolio construction
 
@@ -155,38 +165,43 @@ statistic separately on the three schedules and average them.
     <tr><th scope="col">Return</th><th scope="col">Vol.</th><th scope="col">Sharpe</th><th scope="col" class="comparison-divider">Return</th><th scope="col">Vol.</th><th scope="col">Sharpe</th></tr>
   </thead>
   <tbody>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">1999–2021</th></tr>
+    <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>7.2%</td><td>19.6%</td><td>0.45</td><td class="comparison-divider">10.8%</td><td>8.7%</td><td>1.21</td></tr>
     <tr><th scope="row">LightGBM</th><td>16.8%</td><td>15.0%</td><td>1.11</td><td class="comparison-divider">16.9%</td><td>7.5%</td><td>2.12</td></tr>
     <tr><th scope="row">Kumo Small</th><td>9.4%</td><td>14.9%</td><td>0.68</td><td class="comparison-divider">8.9%</td><td>7.1%</td><td>1.24</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>8.7%</td><td>14.0%</td><td>0.66</td><td class="comparison-divider">11.0%</td><td>7.4%</td><td>1.44</td></tr>
   </tbody>
   <tbody>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">1999–2011</th></tr>
+    <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2011</th></tr>
     <tr><th scope="row">Ridge</th><td>7.9%</td><td>20.9%</td><td>0.47</td><td class="comparison-divider">9.9%</td><td>8.0%</td><td>1.22</td></tr>
     <tr><th scope="row">LightGBM</th><td>20.2%</td><td>16.4%</td><td>1.20</td><td class="comparison-divider">17.7%</td><td>7.1%</td><td>2.35</td></tr>
     <tr><th scope="row">Kumo Small</th><td>11.8%</td><td>15.7%</td><td>0.79</td><td class="comparison-divider">9.9%</td><td>6.8%</td><td>1.42</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>8.0%</td><td>14.2%</td><td>0.62</td><td class="comparison-divider">9.8%</td><td>6.9%</td><td>1.38</td></tr>
   </tbody>
   <tbody>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">2012–2021</th></tr>
+    <tr class="period-heading"><th colspan="7" scope="rowgroup">2012–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>6.3%</td><td>17.8%</td><td>0.43</td><td class="comparison-divider">11.9%</td><td>9.7%</td><td>1.22</td></tr>
     <tr><th scope="row">LightGBM</th><td>12.6%</td><td>12.9%</td><td>0.99</td><td class="comparison-divider">15.9%</td><td>8.0%</td><td>1.88</td></tr>
     <tr><th scope="row">Kumo Small</th><td>6.5%</td><td>13.7%</td><td>0.52</td><td class="comparison-divider">7.8%</td><td>7.5%</td><td>1.04</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>9.6%</td><td>13.8%</td><td>0.73</td><td class="comparison-divider">12.5%</td><td>8.1%</td><td>1.50</td></tr>
   </tbody>
   <tbody>
-    <tr class="period-heading"><th colspan="7" scope="colgroup">2017–2021</th></tr>
+    <tr class="period-heading"><th colspan="7" scope="rowgroup">2017–2021</th></tr>
     <tr><th scope="row">Ridge</th><td>4.4%</td><td>20.9%</td><td>0.31</td><td class="comparison-divider">12.6%</td><td>10.5%</td><td>1.18</td></tr>
     <tr><th scope="row">LightGBM</th><td>9.9%</td><td>14.5%</td><td>0.72</td><td class="comparison-divider">14.9%</td><td>8.9%</td><td>1.60</td></tr>
     <tr><th scope="row">Kumo Small</th><td>3.9%</td><td>16.3%</td><td>0.32</td><td class="comparison-divider">7.0%</td><td>8.1%</td><td>0.88</td></tr>
+    <tr><th scope="row">Kumo Medium</th><td>7.5%</td><td>17.0%</td><td>0.51</td><td class="comparison-divider">13.0%</td><td>9.0%</td><td>1.40</td></tr>
   </tbody>
 </table>
 </div>
 </div>
 
 LightGBM's lead in the equal-weight spread carries through construction
-and fees. Kumo Small earned a lower net return than Ridge at lower
-volatility. Their net Sharpe difference of 0.02 had a paired 21-session
-block-bootstrap interval from −0.30 to 0.32. From 2017–2021, Kumo trailed
-both baselines after fees.
+and fees. Medium had a slightly weaker gross decile spread than Small
+and the stronger net constructed book. The portfolio also moved less
+than Ridge's and finished with higher after-fee Sharpe in each of the
+three calendars. The gap versus LightGBM was −0.69, with a paired
+21-session block-bootstrap interval from −0.99 to −0.40.
 
 ## How similarly the models trade
 
@@ -204,23 +219,28 @@ three estimates.
   <tbody>
     <tr><th scope="row">Ridge and LightGBM</th><td>0.74</td><td>0.65</td></tr>
     <tr><th scope="row">Ridge and Kumo Small</th><td>0.53</td><td>0.55</td></tr>
+    <tr><th scope="row">Ridge and Kumo Medium</th><td>0.60</td><td>0.55</td></tr>
     <tr><th scope="row">LightGBM and Kumo Small</th><td>0.55</td><td>0.54</td></tr>
+    <tr><th scope="row">LightGBM and Kumo Medium</th><td>0.71</td><td>0.67</td></tr>
+    <tr><th scope="row">Kumo Small and Kumo Medium</th><td>0.52</td><td>0.56</td></tr>
   </tbody>
 </table>
 </div>
 
-Kumo Small differs more from either baseline than the baselines differ
-from each other. Those differences show up in the books as well as the
-rankings. That is a reason to look at what the portfolio earns on each
-side before drawing a conclusion about combining the models.
+Small differs more from either baseline than the baselines differ
+from each other. Medium’s rankings look closer to LightGBM’s, and
+its portfolio returns move more closely with LightGBM’s too. So the
+larger model improves on Small’s net Sharpe while giving up some of the
+difference in how the portfolio behaves.
 
 I split each day's net result into the long contribution, the signed
 short contribution and execution fees. Annualizing the average daily
 contributions makes the components add up. On that basis, LightGBM
 earned 7.1 percentage points more per year than Kumo Small. The long
 side contributed 3.2 points of the gap, the short side 2.7, and lower
-execution fees 1.2. Against Ridge, higher trading fees explained about
-two thirds of Kumo Small’s 1.8-point gap.
+execution fees 1.2. Medium earned about 1.9 points more than Small.
+The long side added 1.5 points and lower fees added 0.7, with the short
+side giving back 0.3.
 
 ## Running Kumo on a Mac
 
