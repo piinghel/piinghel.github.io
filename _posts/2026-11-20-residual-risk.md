@@ -12,11 +12,11 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-Suppose two stocks both fall, but each beats the return implied by its
-factor exposures by half a percentage point. That gap is its residual.
-The two +0.5-point residuals cancel in a spread that is 50% long one
-stock and 50% short the other.
-[The worked example with stocks A, B and C]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example)
+Suppose two stocks, A and B, each beat the return implied by their
+factor exposures by half a percentage point. That gap is the stock’s
+residual. In the example from [*Factor Risk Models, Part
+1*]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example),
+I’m 50% long A and 50% short B, so those two residuals cancel.
 
 If A and B rely on the same supplier, a disruption could push both
 below their fitted returns even after the model accounts for any sector
@@ -194,4 +194,4 @@ The groups tell me where to look for residual co-movement. The next-year tests t
 
 ## References
 
-- Interpreting statistical factors and testing their stability. [Letchford, *Statistical Factor Modeling*](https://osquant.com/papers/2025/statistical-factor-modelling/)
+- Letchford, Adrian (2025). “[Statistical Factor Modeling](https://osquant.com/papers/2025/statistical-factor-modelling/).” OSQuant.

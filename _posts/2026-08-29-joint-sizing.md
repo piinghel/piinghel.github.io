@@ -13,13 +13,12 @@ github_repositories:
     url: https://github.com/piinghel/portfolio-optimization-study
 ---
 
-In the articles on [low-volatility sizing]({% link _posts/2024-12-15-low-volatility-sizing.md %})
-and [regression]({% link _posts/2025-02-09-combining-predictors.md %}),
-I sized positions one stock at a time: scale each by its own volatility and
-cap it. That simple rule worked surprisingly well, which makes it a good
-benchmark to beat. Here I want to see whether sizing the stocks together,
-taking into account how they move with each other, actually does better once
-trading costs are included.
+In [*Sizing a Low-Volatility Portfolio*]({% link _posts/2024-12-15-low-volatility-sizing.md %})
+and [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}),
+I sized each position using the stock’s own volatility and a cap. That
+simple rule worked surprisingly well. Here I test whether sizing the stocks
+together, using estimates of how they move with each other, improves the
+portfolio after trading costs.
 
 Joint sizing comes with two well-known headaches. The optimizer can lean on combinations
 that look safer than they are, and it can trade a lot in response to small
@@ -241,9 +240,9 @@ It shows most in the two large drawdowns, about 13% against 18% in 2008–09 and
 
 ## Trading controls
 
-Left alone, the optimizer is a nervous trader. At each rebalance it starts from
-the newly selected stocks, so a small change in rank or covariance can trigger a
-replacement whose benefit is smaller than its cost.
+At each rebalance the optimizer starts from the newly selected stocks.
+A small change in rank or covariance can trigger a replacement even
+when the expected benefit is smaller than the trading cost.
 
 Take a long stock whose rank slips from 60 to 110. The optimizer without controls drops
 it, because only the top 75 enter the new selection. With a *rank buffer*,

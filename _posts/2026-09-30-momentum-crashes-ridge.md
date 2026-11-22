@@ -26,13 +26,13 @@ tends to hold past winners and short past losers. It lost 15.5 points of
 capital on the 30 worst momentum days in development, against an average
 annual return of 9.4%.
 
-These crashes don't come out of nowhere, though: they tend to arrive when
-momentum itself has already become volatile. To see whether that holds for the
-Ridge portfolio, I split all trading days by how volatile the momentum portfolio had
-been over the prior 126 sessions, relative to its historical median. Up to about twice its usual
-volatility the strategy hardly notices, with a Sharpe ratio around 1.5–1.6.
-Above that, which is a quarter of the days, the Sharpe drops to 0.69 and the
-strategy earns about half its usual return (the open circles in Figure 1).
+Momentum crashes tend to arrive after momentum has already become
+volatile. To see how the Ridge portfolio behaved in those conditions,
+I group trading days by the momentum portfolio’s volatility over the
+prior 126 sessions, relative to its historical median. The Ridge portfolio’s
+Sharpe stays around 1.5–1.6 up to about twice that median. Above that
+threshold, which covers a quarter of the days, its Sharpe drops to 0.69
+and it earns about half its usual return (the open circles in Figure 1).
 
 <div id="figure-1" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/momentum-crashes-ridge/sharpe-by-state" mobile="/assets/momentum-crashes-ridge/sharpe-by-state_mobile" alt="Baseline and score overlay net Sharpe ratios by momentum volatility. Calm, 1.52 and 1.51. Elevated, 1.63 and 1.74. High, 1.57 and 1.59. Extreme, 0.69 and 1.39." version="3" %}
@@ -118,27 +118,25 @@ week of 9 November 2020 it lost another 24%.
 
 ## A linear ranking can't make its momentum weight conditional
 
-Nothing in the model asks for momentum. It comes from about fifteen trend
-predictors (past returns over several horizons, distance to highs,
-moving-average gaps), which together tilt the book toward past winners. I
+About fifteen trend predictors give the Ridge portfolio its tilt toward
+past winners. They include returns over several horizons, distance from
+recent highs and gaps from moving averages. I
 measure that as the book's momentum tilt: the position-weighted average of the
 stocks' momentum ranks (from −1 to 1 within each sector) per unit of gross
 exposure. It's about 0.33 in calm markets, 0.36 in volatile ones and 0.45 in
 the months after the March 2009 low, so the lean doesn't back off when momentum
 gets risky.
 
-A linear model gives each predictor one coefficient across all market states,
-so the momentum weight is an average of a regime where momentum pays and one
-where it crashes. The ranking keeps that average exactly where it's most wrong,
-and the book even leans a bit harder into momentum there, because the losers
-are volatile and the winners defensive. The tilt is the obvious suspect for the
-15.5 points lost on momentum's worst days, but exposure alone doesn't put all
-of that on momentum: in the
-[attribution series]({% link _posts/2026-09-09-short-book-rebounds.md %}) the deepest drawdowns
-came mostly from the low-volatility tilt, and in March 2009 the
-high-volatility stocks the book was short were also the past losers. Either
-way, if I want the momentum weight to depend on the market state, I have to
-build that in.
+A linear model gives each predictor one coefficient across market states.
+Each fitted weight reflects the whole estimation period, so a change
+in momentum risk does not directly trigger a change in weight.
+The 15.5-point loss on momentum’s worst days is consistent with the
+portfolio’s trend exposure. I also found a large low-volatility
+contribution to its deepest drawdowns in [*When the Portfolio
+Loses*]({% link _posts/2026-09-09-short-book-rebounds.md %}). In March
+2009 the high-volatility stocks the book shorted were also past
+losers. To test whether adjusting the trend exposure helps, I first
+need a measure of when momentum risk is high.
 
 ## Measuring momentum risk with the momentum portfolio itself
 

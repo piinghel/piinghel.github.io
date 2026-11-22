@@ -15,10 +15,9 @@ github_repositories:
 
 <link rel="stylesheet" href="/assets/css/combining-predictors.css?v=12">
 
-In the [low-volatility article]({% link _posts/2024-12-15-low-volatility-sizing.md %}),
-I picked stocks on a single characteristic and spent the whole article on
-sizing. Here I want to give the selection more to work with. Alongside
-volatility, I can describe a stock by its momentum,
+In [*Sizing a Low-Volatility Portfolio*]({% link _posts/2024-12-15-low-volatility-sizing.md %}),
+I kept the ranking fixed and varied the position sizes. Here I change
+how the stocks are ranked. Volatility is one input alongside momentum,
 liquidity, size and short interest, among other characteristics.
 
 With one characteristic, the ranking is the selection rule. With several, I

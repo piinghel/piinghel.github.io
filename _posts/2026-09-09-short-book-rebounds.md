@@ -6,7 +6,7 @@ description: "The portfolio's P&L by theme in market declines and strong rallies
 permalink: /quants/short-book-rebounds.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 2 of 2
 series_id: performance-attribution
@@ -16,12 +16,12 @@ series_order: 2
 <link rel="stylesheet" href="/assets/css/performance-attribution.css?v=5">
 
 Averages over whole periods hide when the money is made and lost. For a book
-that is long low-risk stocks and short high-risk ones, I'd expect the market's
-direction to matter a lot, so here I split [Part
-1]({% link _posts/2026-09-09-portfolio-attribution.md %})'s theme P&L by what the market was
-doing. I use two separate views: the direction of whole market episodes, then
-the size of daily market moves. A rally can be volatile, and a decline can
-contain calm days; the two classifications overlap.
+that is long low-risk stocks and short high-risk ones, I expect market
+direction to matter. I take the theme P&L from [Part 1, *What the Portfolio
+Is Paid For*]({% link _posts/2026-09-09-portfolio-attribution.md %}) and look at
+it two ways. First I group returns by market declines and rallies. Then I
+group days by the size of the market’s daily moves. A rally can be volatile,
+and a decline can contain calm days, so the groups can overlap.
 
 The book, [attribution groups]({% link _posts/2026-09-09-portfolio-attribution.md %}#factor-definitions) and [conventions]({% link _posts/2026-09-09-portfolio-attribution.md %}#pnl-conventions)
 are those of Part 1. The backtest assumes shorts can always be borrowed, for

@@ -23,17 +23,18 @@ table and it uses the rows with known outcomes to score the others.
 Tabular foundation models have gained attention over the past two
 years as they’ve become faster and more practical on larger tables.
 In 2025, for example, TabPFN went from being designed for 10,000 rows
-to 50,000. That progress made me want to see whether a
-model like this could rank stocks, where the signal is weak.
-[TabPFN-2.5 technical report](https://arxiv.org/abs/2511.08667)
+to 50,000 with [TabPFN-2.5](https://arxiv.org/abs/2511.08667). That
+progress made me want to see whether a model like this could rank
+stocks, where the signal is weak.
 
-For the comparison, I chose NVIDIA’s Kumo Tabular, a model pretrained
-entirely on synthetic tables. All three models get the same 80 stock
-predictors so I can focus on how they rank the same stocks. I then
-use the existing portfolio construction to see how those differences
-carry through to returns after fees.
-[The stock predictors]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors) ·
-[How rankings become positions]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
+I tested NVIDIA’s Kumo Tabular, which was pretrained entirely on
+synthetic tables, alongside Ridge and LightGBM. All three use the
+80 stock predictors I describe in [*Combining Multiple Predictors:
+The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
+I first compare the rankings themselves. Then I use the sizing method
+from [*From Volatility Scaling to Joint
+Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
+to see how each ranking fares after trading costs.
 
 ## A pretrained model for tables
 
@@ -47,15 +48,15 @@ context that tells the model which relationship applies.
 During pretraining, each table is a separate prediction problem.
 The model sees some outcomes and tries to fill in the hidden ones.
 Its errors across many tables update its weights. It learns how to
-use examples to make a prediction in a table it has just been given.
-[Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
+use examples to make a prediction in a table it has just been given
+([Molnar, Chapter 5](https://tabularfoundationmodels.com/pretraining)).
 
 When a new table arrives, the pretrained weights stay fixed. The
 model encodes the table entries into numerical representations. As it
 scores a new row, attention lets it draw more information from some
 labeled examples than others. Changing those examples can change the
-score with the same model weights. That’s in-context learning.
-[Molnar’s chapter on in-context learning](https://tabularfoundationmodels.com/prediction)
+score with the same model weights. That’s in-context learning
+([Molnar, Chapter 4](https://tabularfoundationmodels.com/prediction)).
 
 Each row in the study is a stock on a date. To get its realized outcome,
 I take the stock’s average daily return over the next 20 trading sessions,
@@ -91,10 +92,10 @@ more history available to sample.
 When Ridge or LightGBM scores a row, it uses fitted coefficients or
 trees. Kumo also has to process the historical examples it will use
 to make the prediction. That work takes more compute and memory as
-the table grows. NVIDIA recommends a GPU for large contexts.
+the table grows. NVIDIA recommends a GPU for large contexts in its
+[*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
 I wanted to run the comparison on my Mac’s CPU, so I needed to pass
 Kumo fewer examples. I cut down the context in two steps.
-[NVIDIA’s GPU sizing guide](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing)
 
 **First, space out the historical dates.** Adjacent 20-session targets
 share 19 return days. I sample every 30 trading sessions (roughly
@@ -113,12 +114,13 @@ useful examples. Both cuts apply to historical rows with outcomes
 already known. On each forecast date Kumo still scores every
 eligible stock, and both runs trade on the same schedule.
 
-Coqueret and Guida (2020) tested this idea with boosted trees.
+In [*Training Trees on Tails with Applications to Portfolio
+Choice*](https://doi.org/10.1007/s10479-020-03539-2), Coqueret and
+Guida (2020) tested this idea with boosted trees.
 Keeping the lowest and highest 20% of their training outcomes cut
 backtest time by roughly 60% and gave a similar return spread
 between the highest- and lowest-ranked portfolios. That result
 motivated keeping the tails when I needed to shrink Kumo’s context.
-[Training trees on tails with applications to portfolio choice](https://link.springer.com/article/10.1007/s10479-020-03539-2)
 
 Figure 2 puts the two steps together. The 20-session grid keeps
 four dates and the 30-session grid keeps three. With six stocks
@@ -183,11 +185,12 @@ had the best results in NVIDIA’s paper. Large and Small both hit my
 10 GiB memory limit in the first block, even with 35,738 context rows
 for Small. Smaller batches during context preparation got both through.
 
-In Molnar’s TabICL example, `predict` takes longer than `fit`.
+In the [TabICL example in Molnar’s classification
+chapter](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict),
+`predict` takes longer than `fit`.
 Kumo can do part of the prediction work up front by preparing a
 context once and reusing it. In the last block of the 1999–2021 test,
 Medium’s setup took about 13 minutes and scoring took about eight.
-[Molnar’s TabICL timing example](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict)
 
 Over the full 1999–2021 comparison, expanding Small took 1 hour 39
 minutes and Medium took 2 hours 52 minutes.
@@ -479,7 +482,8 @@ of history.
 
 ## References
 
-- Coqueret, Guillaume, and Tony Guida (2020). *Training trees on tails with applications to portfolio choice*. *Annals of Operations Research*, 288, 181–221. [Published article](https://doi.org/10.1007/s10479-020-03539-2)
-- Grinsztajn, Léo, et al. (2025). *TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models*. [Technical report](https://arxiv.org/abs/2511.08667)
-- Molnar, Christoph. *Tabular Foundation Models*. [Online book](https://tabularfoundationmodels.com/) · [In-context learning, Figure 4.2](https://tabularfoundationmodels.com/prediction#fig-input-output) · [Pretraining](https://tabularfoundationmodels.com/pretraining) · [Classification](https://tabularfoundationmodels.com/classification)
-- Qu, Jingang, et al. (2026). *NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*. arXiv:2611.23001, v1. [Preprint](https://arxiv.org/abs/2611.23001v1)
+- Coqueret, Guillaume, and Tony Guida (2020). “[Training Trees on Tails with Applications to Portfolio Choice](https://doi.org/10.1007/s10479-020-03539-2).” *Annals of Operations Research*, 288(1), 181–221.
+- Grinsztajn, Léo, et al. (2025). “[TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models](https://arxiv.org/abs/2511.08667).” Technical report, arXiv:2511.08667.
+- Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book. See [Chapter 4, “In-context Learning,” Figure 4.2](https://tabularfoundationmodels.com/prediction#fig-input-output), [Chapter 5, “Pretraining”](https://tabularfoundationmodels.com/pretraining), and [Chapter 6, “Classification”](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict).
+- NVIDIA. “[GPU Sizing Guide](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).” *NVIDIA Kumo Documentation*.
+- Qu, Jingang, et al. (2026). “[NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction](https://arxiv.org/abs/2611.23001v1).” arXiv:2611.23001, version 1.

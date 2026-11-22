@@ -6,17 +6,17 @@ description: "Where to deal with style exposure, and what happens when part of i
 permalink: /quants/ridge-style-removal.html
 toc: true
 date: 2026-10-26
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Style removal
 ---
 
-In the attribution articles I split the Ridge portfolio's return by its
-estimated sources. Style kept showing up on both sides: it accounts for a good
-part of the return, and in
-[Part 2]({% link _posts/2026-09-09-short-book-rebounds.md %}) it was also
-behind the deepest drawdowns. That made me wonder what happens if I take some
-style out earlier, from the forecast the portfolio is built on.
+In [*What the Portfolio Is Paid For*]({% link _posts/2026-09-09-portfolio-attribution.md %}),
+style exposures accounted for a good part of the Ridge portfolio’s return.
+They were also prominent in its deepest drawdowns, as I showed in
+[*When the Portfolio Loses*]({% link _posts/2026-09-09-short-book-rebounds.md %}).
+That made me wonder what would happen if I removed some style from
+the forecast before sizing the positions.
 
 About half of the [Ridge forecast]({% link _posts/2025-02-09-combining-predictors.md %})
 is explained by the styles I use here. Taking some of that out lowers the
@@ -79,8 +79,9 @@ a lower return can be acceptable if volatility falls enough too.
 
 ## A fundamental factor model splits the forecast into style and the rest
 
-The tool is the one a fundamental risk model is built on, used on the forecast
-instead of on returns. On each date I build a loadings matrix $$B$$ for the
+I use the cross-sectional regression from a fundamental risk model and
+put the Ridge forecasts on the left-hand side. On each date I build a
+loadings matrix $$B$$ for the
 roughly 1,000 stocks in the universe: eleven sector loadings, 1 for the stock's
 sector and 0 otherwise, and six
 style loadings (Table 1). Then I regress the forecast on it:

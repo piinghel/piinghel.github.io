@@ -17,12 +17,13 @@ Suppose I’m long a chipmaker and want to hedge it. I could short another chipm
 
 A factor risk model starts with the moves that several stocks can share, such as a market decline or a sector selloff. It uses those shared moves and the risk left over in each stock to estimate how volatile the whole portfolio might be. That estimate helps determine both which stocks hedge one another and how much of the resulting spread fits inside a risk budget.
 
-I keep the Ridge stock rankings fixed so I can see what the risk model
-changes. First I test which covariance estimates find quieter hedges on
-the same stocks. Then I compare risk forecasts on identical holdings.
-Finally I let each estimate change the positions under the same risk
-budget and check what happens to exposure, volatility and returns after
-fees. [How the Ridge scores are fitted]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios)
+I keep the Ridge ranking from [*Combining Multiple Predictors:
+The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios)
+fixed so I can see what the risk model changes. First I test which
+covariance estimates find quieter hedges on the same stocks. Then I
+compare risk forecasts on identical holdings. Finally I let each
+estimate change the positions under the same risk budget and check
+what happens to exposure, volatility and returns after fees.
 
 ## From stock exposures to portfolio risk
 
@@ -358,8 +359,9 @@ The covariance estimate does two jobs. It tells the optimizer which positions of
 
 ## References
 
-- Factor exposures, risk and attribution. [Paleologo, *Linear Models of Asset Returns*, Columbia Quantitative Investing, Lecture 3](https://www.dropbox.com/scl/fi/1nqzz8zfikjace6g5fa5j/FINC_B8420_3_simple.pdf?rlkey=pj6boer325ci9e3bys5rt5vdz&dl=0)
-- The linear factor model applied to equity portfolios. [Zhang, *Modeling Equities Returns: The Linear Case*, Hudson River Trading](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
-- Practitioner examples. [MSCI Barra US Equity Model (USE4)](https://www.msci.com/documents/10199/242721/Barra_US_Equity_Model_USE4.pdf) · [Bloomberg Portfolio & Risk Analytics](https://professional.bloomberg.com/products/bloomberg-terminal/portfolio-analytics/)
-- Volatility scaling. [Paleologo, *Advanced Portfolio Management*, §6.3](https://www.wiley.com/en-us/advanced-portfolio-management-a-quant%27s-guide-for-fundamental-investors-p-9781119789802)
-- Correlation shrinkage. [Pedersen, Babu and Levine, *Enhanced Portfolio Optimization*](https://doi.org/10.1080/0015198X.2020.1854543)
+- Bloomberg. [*Portfolio & Risk Analytics*](https://professional.bloomberg.com/products/bloomberg-terminal/portfolio-analytics/).
+- MSCI. [*Barra US Equity Model (USE4)*](https://www.msci.com/documents/10199/242721/Barra_US_Equity_Model_USE4.pdf).
+- Paleologo, Giuseppe A. (2021). [*Advanced Portfolio Management: A Quant’s Guide for Fundamental Investors*](https://www.wiley.com/en-us/advanced-portfolio-management-a-quant%27s-guide-for-fundamental-investors-p-9781119789802). Wiley, §6.3.
+- Paleologo, Giuseppe A. [“Linear Models of Asset Returns”](https://www.dropbox.com/scl/fi/1nqzz8zfikjace6g5fa5j/FINC_B8420_3_simple.pdf?rlkey=pj6boer325ci9e3bys5rt5vdz&dl=0). Columbia Quantitative Investing, Lecture 3.
+- Pedersen, Lasse Heje, Abhilash Babu, and Ari Levine (2021). “[Enhanced Portfolio Optimization](https://doi.org/10.1080/0015198X.2020.1854543).” *Financial Analysts Journal*.
+- Zhang, Ray (2023). “[Modeling Equities Returns: The Linear Case](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/).” *The HRT Beat*, Hudson River Trading.

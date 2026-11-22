@@ -103,6 +103,11 @@ method, evidence or interpretation?
 - [ ] **Finish with the evidence.** Distinguish what changed, what was held
   fixed and what the comparison leaves open. Credit explanatory references
   next to the idea they illuminate and list them at the end of the article.
+- [ ] **Read references as part of the prose.** Put a link in the sentence
+  that says what comes from that source. Name an earlier post on first use
+  and link to the relevant section. Give academic references enough detail
+  to identify the work, including the authors, title, and publication or
+  chapter when available.
 
 ## Technical details and attribution
 

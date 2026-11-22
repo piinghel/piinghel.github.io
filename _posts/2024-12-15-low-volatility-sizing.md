@@ -3,7 +3,7 @@ layout: post
 title: "Sizing a Low-Volatility Portfolio"
 description: "How equal weighting and inverse-volatility sizing compare in risk, market exposure and performance."
 date: 2024-12-15
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 interactive_charts: true
 categories: ["Signals"]
 article_label: Signals · Low volatility
@@ -13,16 +13,15 @@ github_repositories:
     url: https://github.com/piinghel/low-vol-to-portfolio
 ---
 
-Ranking stocks by volatility is the easy part of a
-[low-volatility](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=980865)
-long–short portfolio. Then I still have to decide how big each position is, and
-the obvious choice, equal weights and equal capital on both sides, quietly turns
-the whole thing into a large bet on the market. So in this article I put equal
-weighting next to inverse-volatility sizing, and use a market hedge to pull the
-sizing apart from the market exposure it creates.
+Ranking stocks by volatility is the easy part of a low-volatility
+long–short portfolio. The next decision is how big each position should be.
+Equal weights and equal capital on both sides can create a large market bet.
+I compare equal weighting with inverse-volatility sizing, then use a market
+hedge to see how much of the difference comes from market exposure.
 
-The low-volatility effect is the tendency of low-volatility stocks to earn
-about as much as volatile ones with far less risk. Frazzini and Pedersen offer
+Blitz and van Vliet (2007) document higher risk-adjusted returns for less
+volatile stocks in [*The Volatility Effect: Lower Risk Without Lower
+Return*](https://ssrn.com/abstract=980865). Frazzini and Pedersen offer
 one explanation: investors who cannot easily borrow bid up stocks with more
 market exposure, lowering their expected returns.[^bab]
 
@@ -140,9 +139,9 @@ its deep drawdowns.
 
 ## Losses in strong rallies
 
-Low-volatility books have a well-known enemy, and it isn't a crash: the
-inverse-volatility portfolio's worst periods came in strong rallies. Figure 3
-follows it from its high before two of them. The first window, October
+The inverse-volatility portfolio’s deepest losses came in strong
+market rallies. Figure 3 follows it from its high before two of them.
+The first window, October
 1998 to March 2000, is also its deepest drawdown: the portfolio lost about 38%
 before costs while the market rose about 52%. In the second, April 2025 to May
 2026, it lost about 12% while the market rose about 39%.

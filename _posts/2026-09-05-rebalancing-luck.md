@@ -28,11 +28,12 @@ schedule. The three books get new targets in different weeks, so there are
 two ways this might help. Their daily returns can partly offset each other,
 and the result can depend less on which dates I happen to pick.
 
-I vary the trading dates, keeping the Ridge ranking and sizing rules
-fixed across schedules. I show September 1998–December 2021 and January
-2022–May 2026 separately.
-[How the Ridge scores are fitted]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios) ·
-[The portfolio sizing and trading rules]({% link _posts/2026-08-29-joint-sizing.md %}#trading-controls)
+I keep the Ridge ranking from [*Combining Multiple Predictors:
+The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios)
+and the trading rules from [*From Volatility Scaling to Joint
+Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#trading-controls) fixed
+and vary the rebalance dates. I show September 1998–December 2021
+and January 2022–May 2026 separately.
 
 ## The starting week
 {: #the-starting-week-matters }

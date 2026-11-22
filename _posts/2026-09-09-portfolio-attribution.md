@@ -20,12 +20,14 @@ Sizing]({% link _posts/2026-08-29-joint-sizing.md %}) compounded at about
 8.9% a year after costs from September 1998 to May 2026, with 6.6% volatility,
 a Sharpe ratio of 1.32 and two-way turnover of about 21 times capital a year.
 A return chart says how much the book made. I want to know which of the
-ranking’s themes it was paid for, which took risk without paying for it,
-and whether that changed. I use the same portfolio with trading controls,
-holding its three rebalancing schedules at equal notional. The attribution
-describes what drove this backtest. Any changes it suggests need a
-separate comparison with the portfolio rules fixed in advance.
-[The Ridge predictors behind the ranking]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors)
+ranking’s themes earned returns, which took risk without paying for it,
+and whether that changed over time. The Ridge scores use the predictors
+from [*Combining Multiple Predictors: The Linear
+Case*]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
+I keep the trading controls and hold the three rebalancing schedules at
+equal notional. The attribution describes what drove this backtest.
+Any changes it suggests need a separate comparison with the portfolio
+rules fixed in advance.
 
 <div id="pnl-conventions" markdown="1">
 Capital is held fixed, and one P&L point is 1% of it. Trading costs are
