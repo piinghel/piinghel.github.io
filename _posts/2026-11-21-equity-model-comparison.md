@@ -73,6 +73,12 @@ spacing and grew from 13,459 to 95,033 rows. The two runs scored the same
 1,162,773 stock-date rows. They took 2 hours 37 minutes and 2 hours 52
 minutes on the Mac.
 
+I also ran Small with weekly training dates inside a rolling window.
+It starts with two years of history and grows to three. After that,
+older dates drop out as the window moves forward. That run used
+59,252 to 92,190 context rows and took 1 hour 58 minutes. All three
+runs use the same signal dates and scoring universe.
+
 On each signal date I compute the Spearman correlation between the scores
 and realized targets. Rank IC is the mean of those correlations and ICIR
 divides it by their sample standard deviation. I report ICIR unannualized.
@@ -87,6 +93,7 @@ divides it by their sample standard deviation. I report ICIR unannualized.
     <tr><th scope="row">LightGBM</th><td>0.0557</td><td>0.077</td><td>0.720</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0410</td><td>0.062</td><td>0.660</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>0.0458</td><td>0.073</td><td>0.625</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>0.0153</td><td>0.070</td><td>0.220</td></tr>
   </tbody>
   <tbody>
     <tr class="period-heading"><th colspan="4" scope="rowgroup">1999–2011</th></tr>
@@ -94,6 +101,7 @@ divides it by their sample standard deviation. I report ICIR unannualized.
     <tr><th scope="row">LightGBM</th><td>0.0570</td><td>0.063</td><td>0.904</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0493</td><td>0.059</td><td>0.842</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>0.0444</td><td>0.060</td><td>0.735</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>0.0258</td><td>0.067</td><td>0.384</td></tr>
   </tbody>
   <tbody>
     <tr class="period-heading"><th colspan="4" scope="rowgroup">2012–2021</th></tr>
@@ -101,6 +109,7 @@ divides it by their sample standard deviation. I report ICIR unannualized.
     <tr><th scope="row">LightGBM</th><td>0.0541</td><td>0.093</td><td>0.582</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0301</td><td>0.065</td><td>0.465</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>0.0476</td><td>0.087</td><td>0.546</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>0.0016</td><td>0.071</td><td>0.023</td></tr>
   </tbody>
   <tbody>
     <tr class="period-heading"><th colspan="4" scope="rowgroup">2017–2021</th></tr>
@@ -108,6 +117,7 @@ divides it by their sample standard deviation. I report ICIR unannualized.
     <tr><th scope="row">LightGBM</th><td>0.0529</td><td>0.114</td><td>0.463</td></tr>
     <tr><th scope="row">Kumo Small</th><td>0.0284</td><td>0.078</td><td>0.366</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>0.0480</td><td>0.107</td><td>0.449</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>-0.0046</td><td>0.078</td><td>-0.059</td></tr>
   </tbody>
 </table>
 </div>
@@ -118,27 +128,30 @@ so LightGBM still has the higher ICIR. Across the full matched sample,
 Kumo Small's lower IC variability puts its full-period ICIR above
 Ridge's. Medium has a slightly higher mean IC than Small and more
 variation from date to date, giving it a lower ICIR over the full
-period. The two Kumo runs compare the checkpoint sizes and training
-cadences that fit the same laptop.
+period. The two expanding Kumo runs compare the checkpoint sizes and
+training cadences that fit the same laptop. Rolling Small had the
+weakest rank IC in each period, and its mean IC was slightly negative
+from 2017–2021.
 
 ## Return and risk by score decile
 
 I sort the eligible stocks into ten equal-weight deciles on each rebalance
 date and trade at the next close. I keep decile membership until the next
 rebalance and average the daily returns across the three schedules before
-compounding.
+compounding. Sharpe uses a zero cash return.
 
 <figure id="figure-1" class="research-figure responsive-figure">
   <div id="figure-2">
-    {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="4" alt="LightGBM has the highest top-decile return and Sharpe. Ridge and both Kumo models have similar top-decile returns." %}
+    {% include theme-svg-figure.html base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="5" alt="LightGBM has the highest top-decile return. Rolling Small has a flatter return profile with substantially higher returns in its lowest score deciles." %}
   </div>
   <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Return, volatility and Sharpe by score decile, 1999–2021.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
-Both Kumo models and Ridge have similar top-decile returns. The
-LightGBM curve separates at both ends, with a higher return at the
-top and a lower return at the bottom. The top-minus-bottom spread
-compounds the difference between those two deciles' daily returns.
+LightGBM separates at both ends, with a higher return at the top and
+a lower return at the bottom. The rolling variant is particularly weak
+on the short side. Stocks in its lowest score decile earn nearly 10%
+a year. The top-minus-bottom spread compounds the difference between
+those two deciles' daily returns.
 
 ## Returns after portfolio construction
 
@@ -170,6 +183,7 @@ statistic separately on the three schedules and average them.
     <tr><th scope="row">LightGBM</th><td>16.8%</td><td>15.0%</td><td>1.11</td><td class="comparison-divider">16.9%</td><td>7.5%</td><td>2.12</td></tr>
     <tr><th scope="row">Kumo Small</th><td>10.0%</td><td>15.2%</td><td>0.70</td><td class="comparison-divider">9.0%</td><td>7.1%</td><td>1.26</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>8.7%</td><td>14.0%</td><td>0.66</td><td class="comparison-divider">11.0%</td><td>7.4%</td><td>1.44</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>3.7%</td><td>13.6%</td><td>0.34</td><td class="comparison-divider">2.7%</td><td>7.6%</td><td>0.39</td></tr>
   </tbody>
   <tbody>
     <tr class="period-heading"><th colspan="7" scope="rowgroup">1999–2011</th></tr>
@@ -177,6 +191,7 @@ statistic separately on the three schedules and average them.
     <tr><th scope="row">LightGBM</th><td>20.2%</td><td>16.4%</td><td>1.20</td><td class="comparison-divider">17.7%</td><td>7.1%</td><td>2.35</td></tr>
     <tr><th scope="row">Kumo Small</th><td>15.4%</td><td>15.9%</td><td>0.98</td><td class="comparison-divider">12.5%</td><td>6.7%</td><td>1.78</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>8.0%</td><td>14.2%</td><td>0.62</td><td class="comparison-divider">9.8%</td><td>6.9%</td><td>1.38</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>3.7%</td><td>16.1%</td><td>0.30</td><td class="comparison-divider">4.0%</td><td>7.6%</td><td>0.55</td></tr>
   </tbody>
   <tbody>
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2012–2021</th></tr>
@@ -184,6 +199,7 @@ statistic separately on the three schedules and average them.
     <tr><th scope="row">LightGBM</th><td>12.6%</td><td>12.9%</td><td>0.99</td><td class="comparison-divider">15.9%</td><td>8.0%</td><td>1.88</td></tr>
     <tr><th scope="row">Kumo Small</th><td>3.4%</td><td>14.2%</td><td>0.31</td><td class="comparison-divider">4.6%</td><td>7.5%</td><td>0.64</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>9.6%</td><td>13.8%</td><td>0.73</td><td class="comparison-divider">12.5%</td><td>8.1%</td><td>1.50</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>3.8%</td><td>9.5%</td><td>0.44</td><td class="comparison-divider">1.1%</td><td>7.5%</td><td>0.18</td></tr>
   </tbody>
   <tbody>
     <tr class="period-heading"><th colspan="7" scope="rowgroup">2017–2021</th></tr>
@@ -191,6 +207,7 @@ statistic separately on the three schedules and average them.
     <tr><th scope="row">LightGBM</th><td>9.9%</td><td>14.5%</td><td>0.72</td><td class="comparison-divider">14.9%</td><td>8.9%</td><td>1.60</td></tr>
     <tr><th scope="row">Kumo Small</th><td>1.9%</td><td>17.7%</td><td>0.20</td><td class="comparison-divider">4.3%</td><td>8.1%</td><td>0.56</td></tr>
     <tr><th scope="row">Kumo Medium</th><td>7.5%</td><td>17.0%</td><td>0.51</td><td class="comparison-divider">13.0%</td><td>9.0%</td><td>1.40</td></tr>
+    <tr><th scope="row">Small, rolling</th><td>2.9%</td><td>11.3%</td><td>0.30</td><td class="comparison-divider">−0.6%</td><td>7.8%</td><td>-0.04</td></tr>
   </tbody>
 </table>
 </div>
@@ -219,18 +236,22 @@ three estimates.
     <tr><th scope="row">Ridge and LightGBM</th><td>0.74</td><td>0.65</td></tr>
     <tr><th scope="row">Ridge and Kumo Small</th><td>0.46</td><td>0.52</td></tr>
     <tr><th scope="row">Ridge and Kumo Medium</th><td>0.60</td><td>0.55</td></tr>
+    <tr><th scope="row">Ridge and Small, rolling</th><td>0.33</td><td>0.08</td></tr>
     <tr><th scope="row">LightGBM and Kumo Small</th><td>0.50</td><td>0.51</td></tr>
     <tr><th scope="row">LightGBM and Kumo Medium</th><td>0.71</td><td>0.67</td></tr>
+    <tr><th scope="row">LightGBM and Small, rolling</th><td>0.35</td><td>0.12</td></tr>
     <tr><th scope="row">Kumo Small and Kumo Medium</th><td>0.50</td><td>0.57</td></tr>
+    <tr><th scope="row">Kumo Small and Small, rolling</th><td>0.21</td><td>0.02</td></tr>
+    <tr><th scope="row">Kumo Medium and Small, rolling</th><td>0.26</td><td>0.01</td></tr>
   </tbody>
 </table>
 </div>
 
-Small differs more from either baseline than the baselines differ
-from each other. Medium’s rankings look closer to LightGBM’s, and
-its portfolio returns move more closely with LightGBM’s too. So the
-larger model improves on Small’s net Sharpe while giving up some of the
-difference in how the portfolio behaves.
+Expanding Small’s rankings differ more from either baseline than the
+baselines differ from each other. Medium’s rankings look closer to
+LightGBM’s, and its portfolio returns move more closely with LightGBM’s
+too. Rolling Small is different again. The correlation of its daily net
+returns with expanding Small is about 0.02.
 
 I split each day's net result into the long contribution, the signed
 short contribution and execution fees. Annualizing the average daily
@@ -302,3 +323,26 @@ for both differences. The near tie covers two different periods. Net
 Sharpe rose from 1.42 to 1.78 through 2011 and fell from 1.04 to 0.64
 after 2011. Four-week Small’s scores were less correlated with
 LightGBM’s, 0.50 versus 0.55.
+
+## The shorter history changed what Kumo picked
+
+I tried the rolling window because relationships in equities can
+change. Weekly dates give Kumo more examples of the recent market.
+Letting older observations fall out gives those recent examples more
+weight in the context. Here the comparison changes both the age of
+the examples and how often I sample them.
+
+The rolling model’s rankings were less correlated with Ridge and
+LightGBM. Its own ICIR fell by 0.44 versus four-week expanding Small,
+with a paired 21-session interval from −0.58 to −0.30. The after-fee
+Sharpe fell by 0.87, with an interval from −1.39 to −0.36. The gross
+spread was quieter and had a higher gross Sharpe after 2012, while
+the constructed rolling book earned less per unit of risk in every
+reported period.
+
+The short book explains most of the difference. The rolling variant
+gave up 5.9 percentage points of annualized arithmetic net P&L versus
+four-week Small. The short side cost 5.6 points more, the long side
+earned 0.7 points less, and lower fees recovered 0.4 points. The
+rolling context produced more distinct positions and a weaker
+standalone portfolio.
