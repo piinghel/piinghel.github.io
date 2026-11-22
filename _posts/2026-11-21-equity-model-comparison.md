@@ -10,26 +10,10 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, boosted trees like LightGBM have been a standard choice for
-prediction on tabular data. The setup is familiar. Fit the trees on
-rows with known outcomes, then use the fitted trees to score a new row
-from its predictors.
-
-Tabular foundation models change what the model sees when it makes a
-prediction. During pretraining, they learn to predict hidden outcomes
-from labeled examples across many different tables. Give one a new
-table and it uses the rows with known outcomes to score the others.
-
-Tabular foundation models have gained attention over the past two
-years as they’ve become faster and more practical on larger tables.
-In 2025, for example, TabPFN went from being designed for 10,000 rows
-to 50,000 with [TabPFN-2.5](https://arxiv.org/abs/2511.08667). That
-progress made me want to see whether a model like this could rank
-stocks, where the signal is weak.
-
-I tested NVIDIA’s Kumo Tabular, which was pretrained entirely on
-synthetic tables, alongside Ridge and LightGBM. All three use the
-80 stock predictors I describe in [*Combining Multiple Predictors:
+The signal in stock returns is weak. I wanted to see whether a model
+pretrained on synthetic tables could use real stock history to rank
+stocks. I tested NVIDIA’s Kumo Tabular alongside Ridge and LightGBM.
+All three use the 80 stock predictors I describe in [*Combining Multiple Predictors:
 The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
 I first compare the rankings themselves. Then I use the sizing method
 from [*From Volatility Scaling to Joint
@@ -38,76 +22,27 @@ to see how each ranking fares after trading costs.
 
 ## A pretrained model for tables
 
-When I fit LightGBM to a table, each new tree tries to correct errors
-made by the trees already fitted. It might learn to split rows where
-a predictor crosses a threshold, then assign a different adjustment
-on each side. To score a new row, I follow its predictors down the
-trees and add their adjustments. The fitted trees already contain
-what the model learned from the table.
-
 ### What the historical examples do at prediction time
 
-Imagine two tables with the same two predictors. In the first, a high
-value for the first predictor usually goes with a high outcome. In the
-second, the outcome is usually high only when both predictors are high.
-Now give the model a row with a high first value and a low second value.
-The likely answer depends on which table it came from. An example with
-the same predictor values and a known outcome helps tell the two cases
-apart.
+Each row is a stock on a particular date. Its predictors are what I
+know on that date, such as momentum. To get the outcome, I divide the
+stock’s average daily return over the next 20 trading sessions by
+its daily return volatility over the same period and rank that ratio
+within its sector. In Figure 1, the outcomes for A and B are already
+known. The task is to score C using the momentum observed on session 55.
 
-A tabular foundation model practices this kind of problem during
-pretraining. It sees many artificial tables, each with its own
-relationship between the predictors and the outcome. Some outcomes
-are hidden, and the model is asked to recover them using the labeled
-rows in the same table. Its mistakes update one set of weights across
-all of those practice problems. When I give it a new table, those
-weights stay fixed. The labeled rows now tell it about this particular
-table. That use of examples at prediction time is in-context learning
-([Christoph Molnar, *Tabular Foundation Models*, Chapters 4 and 5](https://tabularfoundationmodels.com/prediction)).
+LightGBM and Kumo both expose `fit()` and `predict()`. With LightGBM,
+`fit()` builds trees from A and B. To score C, `predict()` passes C’s
+momentum through the fitted trees and adds their contributions. Ridge
+fits a set of coefficients and uses those coefficients to score new rows.
 
-### The Bayesian intuition
-
-Suppose I start out giving the two relationships equal weight. Each
-generates its usual outcome nine times out of ten, with independent
-errors across rows.
-I then see one row with a high first value, a low second value, and
-a low outcome. That evidence is nine times as likely under the
-second relationship, so its weight goes from 50% to 90%. For the
-next row with those same inputs, both relationships still contribute.
-The chance of a low outcome is 0.9 × 0.9 + 0.1 × 0.1, or 82%.
-
-The starting weights are the *prior*. The updated weights after
-seeing the examples are the *posterior*. Averaging the forecasts
-under each rule using those updated weights gives the *posterior
-predictive distribution*. In prior-data fitted networks,
-the way the artificial tables are generated defines the prior.
-Pretraining teaches the network to approximate this kind of prediction
-from examples in a new table. The two-rule calculation shows the idea
-on a small enough problem to do by hand
-([Müller et al., *Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9)).
-
-### How Kumo turns the examples into a score
-
-Kumo turns each row into a vector that summarizes its predictors and
-any known outcome. In an attention layer, the model compares a vector
-derived from the new row with vectors derived from the labeled rows.
-Stronger matches give those examples more weight when the model
-combines their information. Several layers repeat this step, refining
-the representation of the new row before predicting its outcome
-([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
-Kumo produces quantiles of the predicted outcome, and I average them
-to get one score for each stock.
-
-Each row in the study is a stock on a date. To get its realized outcome,
-I take the stock’s average daily return over the next 20 trading sessions,
-divide by daily return volatility, and rank that Sharpe ratio among its
-sector peers. Figure 1 follows a prediction for stock C. I know its
-momentum on session 55. Its eventual rank is still a question mark.
-
-LightGBM learns its splits and leaf values from the labeled rows
-A and B, then runs C’s momentum through those fitted trees. To
-incorporate more history, I fit the trees again. With Kumo, I refresh
-the labeled examples that C can draw on and keep the same model weights.
+With Kumo, `fit()` prepares A and B and caches information from them.
+At `predict()`, the network uses that cached information alongside C’s
+momentum. As more outcomes become available, I can refresh the examples
+while keeping the pretrained network weights fixed. Using labeled
+examples this way is called *in-context learning*. [Christoph Molnar’s
+first example](https://tabularfoundationmodels.com/first-look) shows how
+the familiar calls conceal this change in what the model uses at prediction time.
 
 <figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
   <picture>
@@ -118,22 +53,65 @@ the labeled examples that C can draw on and keep the same model weights.
 </figure>
 
 B is sampled at session 30, so its 20-session outcome is known at
-session 50. At the refresh on 51,
-Kumo’s `fit` call saves a representation of the labeled rows for
-reuse. The forecast at 55 uses that context, and the simulated
-trade takes place at the next close.
+session 50. I refresh the context on 51 and reuse it for a block of
+forecasts, including the one for C on 55. The simulated trade takes
+place at the next close. At the start of each block I rebuild the
+context using the outcomes available by then.
 
-I reuse one context for a block of forecasts, then rebuild it with
-the outcomes known when the next block begins. In the expanding runs,
-each context draws on history back to January 1995. Later blocks have
-more history available to sample.
+### What Kumo learns during pretraining
+
+NVIDIA generated tables with different relationships between predictors
+and outcomes. On each table, Kumo saw some outcomes and had to predict
+the rest. Its prediction errors drove updates to the same network
+across many such tables. By the time I use Kumo, that training is
+complete. The stock history supplies examples of how predictors and
+outcomes relate in this particular dataset.
+[Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
+explains why varying the relationships across tables matters.
+
+### The Bayesian intuition
+
+Suppose an outcome is usually high when momentum is high under one
+rule, and usually high only when both momentum and value are high under
+another. Say each rule gives its usual outcome nine times out of ten,
+with independent errors across rows, and I give both rules a 50%
+probability to start.
+
+Now I see a row with high momentum, low value and a low outcome. That
+outcome is nine times as likely under the second rule, so I raise its
+probability to 90%. For a new row with the same predictors, the chance
+of a low outcome is 0.9 × 0.9 + 0.1 × 0.1, or 82%.
+
+The probabilities assigned to the rules before seeing the example
+are the *prior*. The updated probabilities are the *posterior*.
+Averaging each rule’s forecast using those probabilities gives the
+*posterior predictive distribution*. For a prior-data fitted network,
+the generator of the synthetic tables defines the prior. Pretraining
+teaches the network to approximate this kind of prediction from
+examples, across a much wider range of relationships.
+[Molnar’s chapter on prior-data fitted networks](https://tabularfoundationmodels.com/prior-data-fitted-networks)
+develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbNf9).
+
+### How Kumo turns the examples into a score
+
+Kumo builds a numerical representation of each row from its predictors
+and any known outcome. Attention lets the model use these representations
+to decide how much information to draw from each historical example.
+Successive layers refine the representation of the new row before
+predicting its outcome
+([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
+Kumo produces quantiles of the predicted outcome, and I average them
+to get one score for each stock.
 
 ## Subsampling the historical context
 
-When Ridge or LightGBM scores a row, it uses fitted coefficients or
-trees. Kumo also has to process the historical examples it will use
-to make the prediction. That work takes more compute and memory as
-the table grows. NVIDIA recommends a GPU for large contexts in its
+In the expanding runs, the available history starts in January 1995.
+By the later blocks, there are many more examples to choose from.
+Processing those examples takes more compute and memory as the
+context grows. Table sizes have been moving up quickly. In 2025,
+the [TabPFN-2.5 paper](https://arxiv.org/abs/2511.08667) reported a
+fivefold increase in the number of rows it could handle, from 10,000
+to 50,000. NVIDIA recommends a GPU for large contexts in its
 [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
 I wanted to run the comparison on my Mac’s CPU, so I needed to pass
 Kumo fewer examples. I cut down the context in two steps.
@@ -342,10 +320,9 @@ and 10 to see where the long-short spread comes from.
   <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
-LightGBM separates at both ends, with a higher return at the top and
-a lower return at the bottom. The rolling variant is particularly weak
-on the short side. Stocks in its lowest score decile earn nearly 10%
-a year.
+Over the full period, LightGBM’s top decile earns about 19% a year
+and its bottom decile is roughly flat. Rolling Small struggles on
+the short side. Even the stocks it ranks lowest earn nearly 10% a year.
 
 ## Returns after portfolio construction
 
@@ -412,19 +389,18 @@ by fixed capital, and annualizes the average over trading sessions.
 </div>
 </div>
 
-LightGBM led on Sharpe in the equal-weight decile spread and in the
-sized portfolios before and after fees. Medium had a lower decile
-spread Sharpe than expanding Small, yet a higher net
-portfolio Sharpe. It also beat Ridge on net Sharpe over 1999–2021,
-1.44 versus 1.21, with lower realized volatility. LightGBM led at
-2.12. Resampling the same 21-session stretches of returns for
-Medium and LightGBM gives a 95% interval of −0.99 to −0.40 for
-their net Sharpe difference.
+Expanding Small had the higher equal-weight decile-spread Sharpe
+of the two expanding Kumo runs. Once I sized the portfolios,
+Medium edged ahead before fees, 1.76 versus 1.68. Small traded
+42.3 times capital per year versus 31.8 for Medium. Fees widened
+Medium’s lead to 1.44 versus 1.24.
 
-Expanding Small and Medium had similar Sharpe ratios before fees,
-1.68 and 1.76. Small traded 42.3 times capital per year
-versus 31.8 for Medium. After fees, the gap widened to 1.24 versus
-1.44.
+Medium also beat Ridge on net Sharpe over 1999–2021, 1.44 versus
+1.21, with lower realized volatility. LightGBM led in the decile
+spread and in the sized portfolios, reaching a net Sharpe of 2.12.
+Resampling the same 21-session stretches of returns for Medium and
+LightGBM gives a 95% interval of −0.99 to −0.40 for Medium’s net
+Sharpe minus LightGBM’s.
 
 I split the difference in average daily P&L into longs, shorts and
 fees, then annualize so the pieces add up. LightGBM earned 7.1
@@ -512,7 +488,7 @@ weakest result after fees.
 
 I’d like to test Kumo Large over the full period, giving it the same
 historical rows as Small and Medium. Large ranked better on the
-first block of forecasts when all three sizes saw the same examples.
+first block of forecasts by ICIR when all three sizes saw the same examples.
 The full-period comparison would tell me whether that early advantage
 holds up.
 
@@ -528,7 +504,7 @@ at a manageable cost and whether that shows up after trading fees.
 
 - Coqueret, Guillaume, and Tony Guida (2020). [*Training Trees on Tails with Applications to Portfolio Choice*](https://doi.org/10.1007/s10479-020-03539-2). *Annals of Operations Research*, 288(1), 181–221.
 - Grinsztajn, Léo, et al. (2025). [*TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models*](https://arxiv.org/abs/2511.08667). Technical report, arXiv:2511.08667.
-- Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book. See [Chapter 4, Figure 4.2](https://tabularfoundationmodels.com/prediction#fig-input-output), [Chapter 5, Pretraining](https://tabularfoundationmodels.com/pretraining), and [Chapter 6, Classification](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict).
+- Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book.
 - Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and Frank Hutter (2022). [*Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9). ICLR.
 - NVIDIA. [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing). *NVIDIA Kumo Documentation*.
 - Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.
