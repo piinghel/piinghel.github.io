@@ -8,7 +8,10 @@
     momentum:['#426e89','#89b5cc'], reversal:['#9b626e','#d39aaa'], low_volatility:['#736582','#b6a5c8'],
     size:['#896835','#c4a36f'], liquidity:['#427a70','#85b9aa'], market:['#606e77','#a0acb4'], short_interest:['#27322f','#d7deda'],
     low_risk:['#426e89','#89b5cc'], beta:['#736582','#b6a5c8'], sector:['#78848a','#8a969f'], residual:['#606e77','#a0acb4'],
-    blend:['#365e79','#8cbdd5']};
+    blend:['#365e79','#8cbdd5'],
+    equity_ridge:['#596877','#aab3bf'], equity_lightgbm:['#2262ab','#81b4f3'],
+    equity_small_four:['#945614','#e9bc83'], equity_small_six:['#5c55a3','#b9b0fa'],
+    equity_medium:['#397744','#a9ccaa'], equity_rolling:['#9c3d58','#e3a2b3']};
   const isDark=()=>typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';
   const COLORS = Object.freeze(Object.defineProperties({},Object.fromEntries(Object.entries(PALETTE).map(
     ([role,[light,dark]])=>[role,{enumerable:true,get:()=>isDark()?dark:light}]))));
@@ -140,11 +143,11 @@
     return group;
   }
   // Both episodes compare the same books, so one key controls both plots.
-  function sharedSeriesKey(group,series,visible,redraw) {
+  function sharedSeriesKey(group,series,visible,redraw,label='Series in both episodes') {
     let key=group.querySelector('.shared-series');
     if(!key) {
       key=element('div','shared-series');
-      key.setAttribute('role','group');key.setAttribute('aria-label','Series in both episodes');
+      key.setAttribute('role','group');key.setAttribute('aria-label',label);
       for(const item of series) {
         const button=element('button','',item.label);button.type='button';
         button.dataset.series=item.id;
@@ -225,8 +228,8 @@
     return value===null || !Number.isFinite(value) ? '—' :
       (percent ? (value*100).toFixed(1)+'%' : value.toFixed(2));
   }
-  function periodChoices(ui,labels,change) {
-    const group=buttonGroup('Chart period','blog-chart-periods');
+  function periodChoices(ui,labels,change,label='Chart period') {
+    const group=buttonGroup(label,'blog-chart-periods');
     const select=index=>Array.from(group.children).forEach((button,i)=>{
       button.setAttribute('aria-pressed',String(i===index));
     });
@@ -318,6 +321,7 @@
       const [data]=await Promise.all([load(host.dataset.source),plotly()]);
       if(data.version!==1) throw new Error('Unsupported chart version');
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
+      if(cfg.kind==='decile-profiles'){await decileProfiles(host,cfg);return;}
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
       if(cfg.kind==='calendar-distribution'){await calendarDistribution(host,cfg);return;}
@@ -790,6 +794,48 @@
     }
     await draw();new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
+  }
+  async function decileProfiles(host,cfg) {
+    const ui=host.querySelector('.blog-chart-ui');
+    ui.hidden=false;
+    let period=cfg.periods[0],metric=cfg.metrics[0];
+    periodChoices(ui,cfg.periods.map(item=>item.label),index=>{period=cfg.periods[index];draw();});
+    const metrics=element('div'),modelKey=element('div'),graph=element('div','blog-chart-plot');
+    ui.append(metrics,modelKey,graph);
+    periodChoices(metrics,cfg.metrics.map(item=>item.label),index=>{metric=cfg.metrics[index];draw();},'Decile metric');
+    const visible=new Map(cfg.series.map(item=>[item.id,true]));
+    sharedSeriesKey(modelKey,cfg.series,visible,draw,'Models to show');
+
+    async function draw() {
+      const mobile=host.clientWidth<550,dark=isDark(),height=mobile?275:315;
+      const values=cfg.periods.flatMap(item=>cfg.series.flatMap(series=>item.values[series.id][metric.id]));
+      const lower=Math.min(...values),upper=Math.max(...values),padding=(upper-lower||1)*.09;
+      const traces=cfg.series.filter(item=>visible.get(item.id)).map(item=>({
+        type:'scatter',mode:'lines+markers',name:item.label,x:cfg.deciles,y:period.values[item.id][metric.id],
+        line:{color:COLORS[item.role],dash:item.dash,width:1.7},
+        marker:{symbol:item.symbol,size:6},
+        hovertemplate:'Decile %{x}<br>'+metric.label+' %{y:'+metric.format+'}<extra>'+item.label+'</extra>',
+      }));
+      const layout={height,margin:{l:mobile?43:50,r:12,t:13,b:48},
+        font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'},
+        paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
+        showlegend:false,dragmode:false,hovermode:'closest',
+        xaxis:{tickvals:cfg.deciles,range:[.6,10.4],fixedrange:true,showgrid:false,
+          title:{text:'Score decile (1 = lowest)',font:{size:12}}},
+        yaxis:{range:[lower-padding,upper+padding],tickformat:metric.format,nticks:5,fixedrange:true,
+          gridcolor:dark?'#36404a':'#e2e7eb',zerolinecolor:COLORS.comparison},
+        annotations:traces.length?[]:[{text:'Select a model to show',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}],
+      };
+      graph.style.height=height+'px';
+      await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
+    }
+
+    await draw();
+    host.querySelector('.blog-chart-status').hidden=true;
+    host.querySelector('.blog-chart-fallback').hidden=true;
+    new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    let width=host.clientWidth;
+    new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
   // Small fixed comparisons: hover exposes estimates and their observed ranges.
   async function panels(host,cfg) {

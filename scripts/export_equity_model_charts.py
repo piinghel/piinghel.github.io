@@ -1,0 +1,264 @@
+"""Export the stock-ranking article's aggregate charts."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import math
+from datetime import date, timedelta
+from pathlib import Path
+
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import polars as pl
+from blog_charts import series, write_chart
+
+
+def rows(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def export(
+    report: Path,
+    profiles_path: Path,
+    correlations_path: Path,
+    *,
+    models: tuple[tuple[str, str, str, str, str], ...] = (
+        ("ridge", "Ridge", "equity_ridge", "dash", "square"),
+        ("lightgbm", "LightGBM", "equity_lightgbm", "solid", "circle"),
+        ("kumo_small_4w", "Small 4w", "equity_small_four", "dot", "triangle-up"),
+        ("kumo_small", "Small 6w", "equity_small_six", "dash", "x"),
+        ("kumo_medium", "Medium", "equity_medium", "dashdot", "diamond"),
+        ("kumo_small_roll3", "Small rolling", "equity_rolling", "solid", "cross"),
+    ),
+    periods: tuple[str, ...] = ("1999–2021", "1999–2011", "2012–2021", "2017–2021"),
+) -> None:
+    metrics = (
+        ("annual_return", "Annual return", ".1%"),
+        ("annual_volatility", "Annual volatility", ".1%"),
+        ("sharpe", "Sharpe ratio", ".2f"),
+    )
+    deciles = list(range(1, 11))
+    profiles = {}
+    for row in rows(report / "deciles_summary.csv"):
+        decile = int(row["decile"])
+        if decile in deciles:
+            key = (row["period"], row["model"], decile)
+            if key in profiles:
+                raise ValueError(f"Duplicate decile result for {key}")
+            profiles[key] = row
+    chart = {
+        "kind": "decile-profiles",
+        "deciles": deciles,
+        "series": [
+            {"id": model, "label": label, "role": role, "dash": dash, "symbol": symbol}
+            for model, label, role, dash, symbol in models
+        ],
+        "metrics": [
+            {"id": metric, "label": label, "format": unit}
+            for metric, label, unit in metrics
+        ],
+        "periods": [
+            {
+                "label": period,
+                "values": {
+                    model: {
+                        metric: [
+                            float(profiles[period, model, decile][metric])
+                            for decile in deciles
+                        ]
+                        for metric, _, _ in metrics
+                    }
+                    for model, *_ in models
+                },
+            }
+            for period in periods
+        ],
+    }
+
+    pairs = {}
+    for row in rows(report / "correlations.csv"):
+        if row["period"] == periods[0]:
+            pair = frozenset(row["pair"].split("|"))
+            if pair in pairs:
+                raise ValueError(f"Duplicate model correlation for {pair}")
+            pairs[pair] = row
+    matrices = []
+    for column, title in (("score_rho", "Score rankings"), ("pnl_rho", "Net returns")):
+        values = []
+        for index, (model, *_) in enumerate(models):
+            cells = []
+            for other, *_ in models[:index]:
+                correlation = float(pairs[frozenset((model, other))][column])
+                if not math.isfinite(correlation) or abs(correlation) > 1:
+                    raise ValueError(f"Invalid correlation for {model} and {other}")
+                cells.append(
+                    {
+                        "value": correlation,
+                        "display": f"{correlation:.2f}".replace("-", "−"),
+                    }
+                )
+            values.append(cells + [None] * (len(models) - index))
+        matrices.append({"title": title, "values": values})
+
+    for destination, data in (
+        (profiles_path, {"version": 1, "charts": {"profiles": chart}}),
+        (
+            correlations_path,
+            {"labels": [label for _, label, *_ in models], "matrices": matrices},
+        ),
+    ):
+        destination.write_text(
+            json.dumps(data, ensure_ascii=False, allow_nan=False, indent=2) + "\n"
+        )
+
+
+def export_pnl(
+    report: Path,
+    books: Path,
+    output: Path,
+    *,
+    models: tuple[tuple[str, str, str, str, str, str], ...] = (
+        ("ridge", "Ridge", "equity_ridge", "dash", "#596877", "#aab3bf"),
+        ("lightgbm", "LightGBM", "equity_lightgbm", "solid", "#2262ab", "#81b4f3"),
+        (
+            "kumo_medium",
+            "Kumo Medium",
+            "equity_medium",
+            "dashdot",
+            "#397744",
+            "#a9ccaa",
+        ),
+    ),
+    calendars: tuple[str, ...] = ("o0", "o1", "o2"),
+) -> None:
+    summary = next(
+        row
+        for row in rows(report / "books.csv")
+        if (row["period"], row["model"], row["basis"])
+        == ("1999–2021", "ridge", "long_short_net")
+    )
+    start = date.fromisoformat(summary["first_date"])
+    end = date.fromisoformat(summary["last_date"])
+    dates = [start - timedelta(days=1)]
+    lines = []
+    paths = []
+    for model, label, role, dash, *_ in models:
+        daily = (
+            pl.concat(
+                pl.scan_parquet(books / model / f"returns_{calendar}.parquet")
+                .filter(pl.col("date").is_between(start, end))
+                .select("date", "long_short_net")
+                for calendar in calendars
+            )
+            .group_by("date")
+            .agg(
+                pl.mean("long_short_net").alias("net"),
+                pl.len().alias("observations"),
+                pl.col("long_short_net")
+                .is_finite()
+                .fill_null(False)
+                .all()
+                .alias("valid"),
+            )
+            .sort("date")
+            .with_columns((100 * pl.col("net").cum_sum()).alias("pnl"))
+            .collect()
+        )
+        model_dates = [start - timedelta(days=1), *daily["date"].to_list()]
+        if (
+            daily.height != int(summary["sessions"])
+            or daily["observations"].min() != len(calendars)
+            or daily["observations"].max() != len(calendars)
+            or not daily["valid"].all()
+            or (len(dates) > 1 and model_dates != dates)
+        ):
+            raise ValueError(
+                f"{model} lacks a complete set of returns on the common calendar"
+            )
+        dates = model_dates
+        lines.append(
+            series(model, label, role, [0.0, *daily["net"]], additive=True, dash=dash)
+        )
+        paths.append([0.0, *daily["pnl"]])
+
+    chart = {
+        "kind": "performance",
+        "series": [line["id"] for line in lines],
+        "additive": True,
+        "unit": "Net P&L per $100 of capital",
+        "statistics": False,
+        "zeroReference": True,
+        "episodes": [
+            ["1999–2011", dates[0].isoformat(), "2011-12-30"],
+            ["2012–2021", "2011-12-30", dates[-1].isoformat()],
+            ["2017–2021", "2016-12-30", dates[-1].isoformat()],
+        ],
+    }
+    write_chart(
+        output / "net-pnl.json",
+        [day.isoformat() for day in dates],
+        lines,
+        {"pnl": chart},
+    )
+
+    for mobile in (False, True):
+        for dark in (False, True):
+            ink, grid = ("#e4e7ea", "#313843") if dark else ("#25313a", "#dce3ea")
+            style = {"font.size": 9.5, "svg.hashsalt": "equity-model-net-pnl"}
+            with plt.rc_context(style):
+                figure, axis = plt.subplots(
+                    figsize=(4.25, 3.25) if mobile else (6.7, 3.4),
+                    layout="constrained",
+                )
+                for (_, label, _, dash, light, night), pnl in zip(
+                    models, paths, strict=True
+                ):
+                    axis.plot(
+                        dates,
+                        pnl,
+                        label=label,
+                        color=night if dark else light,
+                        linestyle={"dash": "--", "solid": "-", "dashdot": "-."}[dash],
+                        linewidth=1.8,
+                    )
+                axis.set_title(chart["unit"], loc="left", color=ink, fontsize=11)
+                axis.set_xlim(dates[0], dates[-1])
+                axis.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
+                axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+                axis.tick_params(length=0, colors=ink)
+                axis.axhline(0, color=ink, linewidth=0.6, alpha=0.6, zorder=0)
+                axis.grid(axis="y", color=grid, linewidth=0.6)
+                axis.set_axisbelow(True)
+                axis.spines[:].set_visible(False)
+                suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
+                figure.legend(
+                    loc="outside upper center",
+                    ncol=3,
+                    frameon=False,
+                    labelcolor=ink,
+                    handlelength=1.5,
+                    columnspacing=1.1,
+                )
+                destination = output / f"net-pnl{suffix}.svg"
+                figure.savefig(destination, transparent=True, metadata={"Date": None})
+                plt.close(figure)
+                destination.write_text(
+                    "".join(
+                        f"{line.rstrip()}\n"
+                        for line in destination.read_text().splitlines()
+                    )
+                )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--profiles", type=Path, required=True)
+    parser.add_argument("--correlations", type=Path, required=True)
+    parser.add_argument("--books", type=Path, required=True)
+    args = parser.parse_args()
+    export(args.report, args.profiles, args.correlations)
+    export_pnl(args.report, args.books, args.profiles.parent)

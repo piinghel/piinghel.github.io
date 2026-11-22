@@ -1,0 +1,208 @@
+{
+  "labels": [
+    "Ridge",
+    "LightGBM",
+    "Small 4w",
+    "Small 6w",
+    "Medium",
+    "Small rolling"
+  ],
+  "matrices": [
+    {
+      "title": "Score rankings",
+      "values": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.7397097689222542,
+            "display": "0.74"
+          },
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.4611885893096526,
+            "display": "0.46"
+          },
+          {
+            "value": 0.5005295354441892,
+            "display": "0.50"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.529233040412267,
+            "display": "0.53"
+          },
+          {
+            "value": 0.5543773103691636,
+            "display": "0.55"
+          },
+          {
+            "value": 0.6774669518818458,
+            "display": "0.68"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.5998684391876061,
+            "display": "0.60"
+          },
+          {
+            "value": 0.7061046117791864,
+            "display": "0.71"
+          },
+          {
+            "value": 0.5023709113399187,
+            "display": "0.50"
+          },
+          {
+            "value": 0.5191637953867515,
+            "display": "0.52"
+          },
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.33442245266271736,
+            "display": "0.33"
+          },
+          {
+            "value": 0.3502706481956858,
+            "display": "0.35"
+          },
+          {
+            "value": 0.21192743162149175,
+            "display": "0.21"
+          },
+          {
+            "value": 0.22646966632567153,
+            "display": "0.23"
+          },
+          {
+            "value": 0.2623758714324019,
+            "display": "0.26"
+          },
+          null
+        ]
+      ]
+    },
+    {
+      "title": "Net returns",
+      "values": [
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.6489076859610764,
+            "display": "0.65"
+          },
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.5221266171067328,
+            "display": "0.52"
+          },
+          {
+            "value": 0.5121917769195442,
+            "display": "0.51"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.5470869545486834,
+            "display": "0.55"
+          },
+          {
+            "value": 0.5421274515092992,
+            "display": "0.54"
+          },
+          {
+            "value": 0.6816717151982586,
+            "display": "0.68"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.553447287787115,
+            "display": "0.55"
+          },
+          {
+            "value": 0.6664979504194887,
+            "display": "0.67"
+          },
+          {
+            "value": 0.5716417920517355,
+            "display": "0.57"
+          },
+          {
+            "value": 0.5613900644360745,
+            "display": "0.56"
+          },
+          null,
+          null
+        ],
+        [
+          {
+            "value": 0.0807081761455294,
+            "display": "0.08"
+          },
+          {
+            "value": 0.12451944591459513,
+            "display": "0.12"
+          },
+          {
+            "value": 0.021875778759036662,
+            "display": "0.02"
+          },
+          {
+            "value": 0.029463649123832005,
+            "display": "0.03"
+          },
+          {
+            "value": 0.011706911662639638,
+            "display": "0.01"
+          },
+          null
+        ]
+      ]
+    }
+  ]
+}

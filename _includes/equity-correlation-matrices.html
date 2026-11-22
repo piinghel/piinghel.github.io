@@ -1,0 +1,36 @@
+<div class="equity-correlation">
+  {% assign labels = site.data.equity_model_correlations.labels %}
+  {% assign columns = labels.size | minus: 1 %}
+  <div class="equity-correlation-grid">
+    {% for matrix in site.data.equity_model_correlations.matrices %}
+    <table class="equity-correlation-table">
+      <caption>{{ matrix.title | escape }}</caption>
+      <thead>
+        <tr><th scope="col" aria-label="Model"></th>
+          {% for label in labels limit: columns %}
+          <th scope="col">{{ label | escape }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in matrix.values offset: 1 %}
+        {% assign row_index = forloop.index %}
+        {% assign row_label = labels[row_index] %}
+        <tr><th scope="row">{{ row_label | escape }}</th>
+          {% for cell in row limit: columns %}
+          {% if cell %}
+          <td class="equity-correlation-value{% if cell.value < 0 %} is-negative{% endif %}" style="--strength: {{ cell.value | abs | times: 62 }}%">{{ cell.display | escape }}</td>
+          {% else %}
+          <td></td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endfor %}
+  </div>
+  <div class="equity-correlation-key" aria-label="Correlation shading ranges from minus one to plus one">
+    <span>−1</span><span class="equity-correlation-ramp" aria-hidden="true"></span><span>+1</span>
+  </div>
+</div>

@@ -94,3 +94,65 @@ html[data-theme="dark"] {
 .research-table.equity-comparison-table :is(th, td) { padding: 0.55rem 0.45rem; }
 .equity-comparison-table thead th[scope="colgroup"] { text-align: center; }
 .equity-comparison-table .comparison-divider { border-inline-start: 1px solid var(--rule); }
+
+.equity-correlation {
+  --correlation-positive: #3b7893;
+  --correlation-negative: #a46647;
+  margin-bottom: 1.4rem;
+}
+html[data-theme="dark"] .equity-correlation {
+  --correlation-positive: #79bad3;
+  --correlation-negative: #d09b7e;
+}
+.equity-correlation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19.5rem), 1fr));
+  gap: 1rem;
+}
+.post-content .equity-correlation-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 2px;
+  margin: 0;
+  font: 0.73rem/1.3 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.equity-correlation-table caption {
+  color: var(--ink);
+  text-align: left;
+  padding-bottom: 0.45rem;
+  font-size: 0.86rem;
+}
+.equity-correlation-table :is(th, td) {
+  padding: 0.35rem 0.12rem;
+  border: 0;
+  text-align: center;
+}
+.equity-correlation-table th { font-weight: 400; white-space: normal; }
+.equity-correlation-table th:first-child { width: 21%; text-align: left; }
+.equity-correlation-table thead th:nth-child(3) { width: 19%; }
+.equity-correlation-value {
+  background: color-mix(in srgb, var(--correlation-positive) var(--strength), var(--page-surface));
+}
+.equity-correlation-value.is-negative {
+  background: color-mix(in srgb, var(--correlation-negative) var(--strength), var(--page-surface));
+}
+.equity-correlation-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+  color: var(--muted-ink);
+  font: 0.72rem var(--font-sans);
+}
+.equity-correlation-ramp {
+  width: 6.75rem;
+  height: 0.42rem;
+  border: 1px solid var(--rule);
+  background: linear-gradient(to right,
+    color-mix(in srgb, var(--correlation-negative) 62%, var(--page-surface)),
+    var(--page-surface),
+    color-mix(in srgb, var(--correlation-positive) 62%, var(--page-surface)));
+}
