@@ -96,50 +96,47 @@ give its unusual outcome. Adding those probabilities gives
 The probabilities assigned to the rules before seeing the example
 are the *prior*. The updated probabilities are the *posterior*.
 Averaging each rule’s forecast using those probabilities gives the
-*posterior predictive distribution*. For a prior-data fitted network,
-the generator of the synthetic tables defines the prior. Pretraining
-teaches the network to approximate this kind of prediction from
-examples, across a much wider range of relationships.
+*posterior predictive distribution*. In a prior-data fitted network,
+the way we generate the synthetic tables plays the role of those
+starting probabilities. It determines which relationships the
+network sees and how often it sees them. Pretraining teaches the
+network to make this kind of prediction across many such relationships.
 [Molnar’s chapter on prior-data fitted networks](https://tabularfoundationmodels.com/prior-data-fitted-networks)
 develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbNf9).
 
 ## Testing a tabular foundation model on stocks
 
-Each row is a stock on a particular date. The predictors, such as
-momentum, are observable on that date. To get the outcome, I divide
-the stock’s average daily return over the next 20 trading sessions by
-its daily return volatility over the same period and rank the ratio
-within its sector.
+### Research setup
+
+All three models use the same 80 predictors and target. The target is
+the forward 20-session Sharpe ratio, ranked within each sector on each
+date. This cross-sectional normalization asks the models to distinguish
+stocks from their sector peers. The predictor ranks use the whole
+universe on each date. [Target and predictor construction]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
 I used NVIDIA’s Kumo Tabular as one implementation of the in-context
-approach. It was pretrained on synthetic tables. I compared its stock
-rankings with those from Ridge and LightGBM using the same
-[80 stock predictors]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
-I kept the two previously fitted baselines as fixed reference points
-for the comparison.
+approach and compared it with the existing Ridge and LightGBM
+walk-forward forecasts. The baselines fit on past data and score the
+next block. I use LightGBM’s saved cutoffs to refresh Kumo’s context,
+using rows whose 20-session outcomes are already known. The expanding
+runs draw on history back to January 1995.
+[*Combining Multiple Predictors* illustrates the walk-forward design.]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios)
 
-For **Ridge**, I reused the linear baseline with a penalty of $c=0.1$
-on the sum of squared coefficients, with the squared prediction error
-averaged across training rows. Many of the predictors overlap, such as
-momentum measured over nearby horizons. The penalty limits how much
-the fit can rely on large offsetting coefficients to exploit small
-differences between those predictors. In the earlier penalty sweep,
-$c=0.1$ cut the length of the coefficient vector to less than half
-its OLS value while leaving development rank IC and net Sharpe close
-to their OLS values.
+For **Ridge**, I kept the penalty at $c=0.1$ because many predictors overlap,
+such as momentum measured over nearby horizons. In the earlier sweep,
+this penalty cut the length of the coefficient vector to less than
+half its OLS value while keeping development rank IC and net Sharpe
+close to their OLS values.
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#choosing-the-penalty).
 
-For **LightGBM**, I reused the boosted-tree baseline with 350 trees
-per fit, a maximum depth of five and a learning rate of 0.05. The
-depth lets the trees pick up interactions while limiting how finely
-any one tree can partition the data. The learning rate scales each
-tree’s correction by 0.05, and 350 rounds let those small corrections
-build up. Each tree considers a quarter of the predictors, giving
-other signals a chance to be used when a strong predictor is absent.
+For **LightGBM**, I kept the existing settings of 350 trees per fit,
+a maximum depth of five and a learning rate of 0.05. I wanted enough
+room to pick up interactions while keeping the model’s complexity in
+check. I used a feature fraction of 0.25 so different trees would see
+different subsets of predictors, in an effort to make their
+predictions less correlated.[^lightgbm-settings]
 
-I compare the rankings first, then use the portfolio sizing method
-from [*From Volatility Scaling to Joint Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
-to see how they fare after trading costs.
+### A stock forecast with historical context
 
 Figure 1 uses momentum alone to show how both models score stock C on
 session 55. LightGBM fits trees on historical rows A and B and scores C
@@ -156,10 +153,8 @@ that context alongside C’s momentum. C’s outcome is still unknown.
 </figure>
 
 B is sampled at session 30, so its outcome is known at session 50.
-I refresh the context on 51 and reuse it for a block of forecasts,
-including the one for C on 55. The simulated trade takes place at
-the next close. At the start of each block I rebuild the context
-using the outcomes available by then.
+It can enter the context refreshed on 51 and help score C on 55.
+The simulated trade takes place at the next close.
 
 ### How Kumo turns the examples into a score
 
@@ -177,10 +172,8 @@ to get the single score used to rank each stock.
 
 ## Subsampling the historical context
 
-In the expanding runs, the available history starts in January 1995.
-By the later blocks, there are many more examples to choose from.
-Processing those examples takes more compute and memory as the
-context grows. NVIDIA recommends a GPU for large contexts in its
+As the available history grows, preparing Kumo’s context takes
+more compute and memory. NVIDIA recommends a GPU for large contexts in its
 [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
 I wanted to run the comparison on my Mac’s CPU, so I needed to pass
 Kumo fewer examples. I cut down the context in two steps.
@@ -297,34 +290,12 @@ across 1,200 signal dates over 1999–2021. Three staggered
 portfolios each rebalance roughly every three weeks, giving about one
 signal date a week across the three.
 
-A useful ranking puts stocks with higher scores near the top of the
-realized ranking. On each signal date $t$, I measure that agreement
-by correlating the ranks of scores $s_{i,t}$ and realized targets
-$y_{i,t}$. I use the same stocks for every model, with a score from
-each and a known target. The result is the information coefficient
-(IC), or Spearman rank correlation for that date.
-
-$$
-\mathrm{IC}_t
-= \operatorname{Corr}_i\!\bigl(
-  \operatorname{rank}_i(s_{i,t}),\,\operatorname{rank}_i(y_{i,t})
-\bigr).
-$$
-
-Rank IC in Figure 3 is the average of the $T$ signal-date ICs. I also
-want to know how steady that agreement is. The information coefficient
-ratio (ICIR) divides the average by the sample standard deviation of
-the signal-date ICs, $s_{\mathrm{IC}}$.
-
-$$
-\overline{\mathrm{IC}}=\frac{1}{T}\sum_{t=1}^{T}\mathrm{IC}_t,
-\qquad
-\mathrm{ICIR}=\frac{\overline{\mathrm{IC}}}{s_{\mathrm{IC}}}.
-$$
-
-Read across LightGBM’s full-period row in Figure 3. Its average IC
-of 0.0557 divided by its IC standard deviation of about 0.077 gives
-an ICIR of about 0.72. The ratio is unannualized.
+On each signal date, I measure how well the scores order the realized
+outcomes using the Spearman rank correlation, or information
+coefficient (IC). I use the same stocks for each model and require a
+known target. Figure 3 shows the mean IC across dates and the
+unannualized ICIR, which divides the mean by the sample standard
+deviation of the signal-date ICs.
 
 <figure id="figure-3" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=3" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="4" label="Rank IC, standard deviation of IC, and ICIR by model, with four selectable periods." %}
@@ -344,45 +315,13 @@ period, and its mean fell slightly below zero in 2017–2021.
 
 ## Return and risk by score decile
 
-Rank IC looks across the whole ranking. A long-short portfolio depends
-on the stocks at the ends. To see how those stocks performed, I sort
-each signal date’s scores into ten roughly equal-sized groups, from
-lowest to highest score. I simulate the trade at the next close. The
-new groups start earning returns the following session and keep the
-same members until the next trade.
-
-Each day I give the stocks in a decile equal weights within their
-schedule, then give the three schedules equal weight. Let $D_{d,k,t}$
-be the members of decile $d$ on schedule $k$ with an available return
-on date $t$, and $r_{i,t}$ be stock $i$’s close-to-close total return.
-
-$$
-R_{d,t}
-=\frac{1}{3}\sum_{k=1}^{3}
-  \frac{1}{|D_{d,k,t}|}\sum_{i\in D_{d,k,t}}r_{i,t}.
-$$
-
-If a decile has three stocks returning 2%, 1% and −1% on one schedule,
-its return for that day and schedule is about 0.67%. I average the
-schedule returns on days when all three are available. The spread is
-the top decile’s return minus the bottom decile’s each day.
-
-For either a decile or the spread, let $R_t$ be its daily return,
-$\bar R$ its mean and $s_R$ its sample standard deviation over $T$
-trading sessions. With 252 sessions per year and zero cash return,
-the annualized statistics are
-
-$$
-\begin{aligned}
-R_{\mathrm{ann}}&=\left[\prod_{t=1}^{T}(1+R_t)\right]^{252/T}-1,\\
-\sigma_{\mathrm{ann}}&=\sqrt{252}\,s_R,\\
-\mathrm{Sharpe}_{\mathrm{ann}}&=\sqrt{252}\,\frac{\bar R}{s_R}.
-\end{aligned}
-$$
-
-Figure 4 shows whether the stocks at the two ends of each ranking
-earned different returns. In the return panel, look at deciles 1
-and 10 to see where the long-short spread comes from.
+Rank IC looks across the whole ranking. To see what happens at the
+ends, I sort stocks into score deciles on each signal date and trade
+at the next close. I equal-weight stocks with available returns
+within each decile and average across the three schedules on days
+when all are available. The spread is the top decile’s daily return
+minus the bottom decile’s. Figures are annualized using 252 sessions
+and zero cash return, with returns compounded. [The Ridge decile comparison]({% link _posts/2025-02-09-combining-predictors.md %}#figure-3).
 
 <figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=3" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="8" label="Return, volatility and Sharpe by stock score decile, with selectable periods and models." %}
@@ -395,9 +334,9 @@ the short side. Even the stocks it ranks lowest earn nearly 10% a year.
 
 ## Returns after portfolio construction
 
-To see how the decile results carry through sizing and fees, I build
-long-short portfolios from the 75 highest and 75 lowest scores. The
-optimizer uses forecast risk to size those positions together. Each
+I feed the 75 highest and 75 lowest scores into the
+[joint sizing optimizer]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
+to see how the rankings fare after sizing and trading fees. Each
 schedule uses $5 million of simulated capital, a 7% annual volatility
 target, and limits on gross exposure and market beta. Where I can
 measure liquidity, I cap trades at 10% of the previous 21 sessions'
@@ -577,3 +516,5 @@ at a manageable cost and whether that shows up after trading fees.
 - Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and Frank Hutter (2022). [*Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9). ICLR.
 - NVIDIA. [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing). *NVIDIA Kumo Documentation*.
 - Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.
+
+[^lightgbm-settings]: In a separate 1999–2021 development comparison, the reference LightGBM had a net Sharpe of 2.19. Increasing the tree count to 1,000, raising the feature fraction to 0.45, or changing the learning rate and tree count together gave net Sharpes between 2.16 and 2.22.
