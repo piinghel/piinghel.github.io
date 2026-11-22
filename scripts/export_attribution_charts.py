@@ -2,10 +2,9 @@
 from __future__ import annotations
 import argparse
 import json
-from datetime import timedelta
 from pathlib import Path
 import polars as pl
-from blog_charts import series, write_chart
+from blog_charts import dates_with_opening_mark, series, write_chart
 
 FIELDS = (
     ("short_interest", "Short interest", "C_short_interest", "short_interest"),
@@ -73,7 +72,7 @@ def export(themes: Path, history: Path, assets: Path, *, fields=FIELDS) -> None:
     write_chart(assets / "interactive-themes.json",dates,[s for s in output if s["id"].startswith("total_") or s["id"]=="gross"],charts)
     write_chart(assets / "interactive-legs.json",dates,[s for s in output if s["id"].startswith(("long_","short_"))],{})
     daily=pl.scan_parquet(history / "daily.parquet").sort("date").collect()
-    dates=[(daily["date"][0]-timedelta(days=1)).isoformat(),*[d.isoformat() for d in daily["date"]]]
+    dates = dates_with_opening_mark(daily["date"].to_list())
     paths=[]
     for key,label,column,role in [("long","Longs","long_pnl","long"),("short","Shorts","short_pnl","short"),("net","Net","long_short_net","strategy")]:
         paths.append(series(key,label,role,[0,*daily[column].to_list()],additive=True,drawdown=key=="net"))

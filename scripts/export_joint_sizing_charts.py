@@ -2,10 +2,9 @@
 from __future__ import annotations
 import argparse
 import json
-from datetime import timedelta
 from pathlib import Path
 import polars as pl
-from blog_charts import market_series, returns_from_wealth, series, write_chart
+from blog_charts import dates_with_opening_mark, market_series, returns_from_wealth, series, write_chart
 
 
 def export(inputs: Path, assets: Path, market: Path) -> None:
@@ -15,7 +14,7 @@ def export(inputs: Path, assets: Path, market: Path) -> None:
     paths, dates = [], None
     for key, label, role in models:
         part = daily.filter(pl.col("allocator") == key)
-        current = [(part["date"][0] - timedelta(days=1)).isoformat(), *[d.isoformat() for d in part["date"]]]
+        current = dates_with_opening_mark(part["date"].to_list())
         if dates is not None and dates != current: raise ValueError("Calendars differ")
         dates = current
         returns = returns_from_wealth(part["wealth"].to_list())

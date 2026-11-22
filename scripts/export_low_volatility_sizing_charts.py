@@ -6,12 +6,11 @@ Usage: python scripts/export_low_volatility_sizing_charts.py --baseline /path/to
 from __future__ import annotations
 
 import argparse
-from datetime import timedelta
 from pathlib import Path
 
 import polars as pl
 
-from blog_charts import series, statistics, write_chart
+from blog_charts import dates_with_opening_mark, series, statistics, write_chart
 
 
 def read_series(path, scenario, expression):
@@ -104,9 +103,7 @@ def main():
                         start="2025-04-03", end="2026-05-27", benchmark=True, contributions=True,
                         note="B · April 2025–May 2026 rally. Before costs; 100 at the first visible close. Book contributions are not standalone investment returns."),
     }
-    # Retain the original first return in the full window via an explicit capital anchor.
-    anchor = (dates[0] - timedelta(days=1)).isoformat()
-    write_chart(args.output / "performance.json", [anchor] + [d.isoformat() for d in dates],
+    write_chart(args.output / "performance.json", dates_with_opening_mark(dates),
                 [series(key, label, role, [0.0] + frame["return"].to_list(), **options)
                  for key, label, role, frame, options in frames if key in charts["performance"]["series"]],
                 {"performance": charts["performance"]})

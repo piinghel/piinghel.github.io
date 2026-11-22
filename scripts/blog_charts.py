@@ -7,10 +7,18 @@ from __future__ import annotations
 
 import json
 import math
-from datetime import date
+from datetime import date, timedelta
 from itertools import pairwise
 from pathlib import Path
 from statistics import mean, stdev
+
+
+def dates_with_opening_mark(sessions: list[date]) -> list[str]:
+    """Prepend the prior calendar day so the opening value precedes every daily return."""
+    if not sessions:
+        raise ValueError("A performance chart needs at least one trading session")
+    opening = sessions[0] - timedelta(days=1)
+    return [opening.isoformat(), *(day.isoformat() for day in sessions)]
 
 
 def returns_from_wealth(wealth: list[float]) -> list[float]:

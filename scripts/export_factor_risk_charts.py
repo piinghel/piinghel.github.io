@@ -10,7 +10,7 @@ import numpy as np
 import polars as pl
 from matplotlib.ticker import FuncFormatter, PercentFormatter
 
-from blog_charts import series, write_chart
+from blog_charts import dates_with_opening_mark, series, write_chart
 from figure_svg import save_svg, svg_path
 
 
@@ -26,17 +26,16 @@ def portfolio_paths(daily: Path, portfolios: tuple) -> pl.DataFrame:
 
 
 def export_interactive(returns, portfolios, output):
-    dates = returns["date"].to_list()
-    origin = dates[0] - timedelta(days=1)
+    dates = dates_with_opening_mark(returns["date"].to_list())
     lines = [
         series(key, label, role, [0.0, *returns[key]], dash=dash, visible=visible)
         for key, label, role, dash, visible in portfolios
     ]
     chart = dict(kind="performance", series=[line["id"] for line in lines], log=True, drawdown=True,
-                 episodes=[["Development", origin.isoformat(), "2021-12-31"],
-                           ["Later period", "2021-12-31", dates[-1].isoformat()]],
+                 episodes=[["Development", dates[0], "2021-12-31"],
+                           ["Later period", "2021-12-31", dates[-1]]],
                  note="Compounded mean daily net return of the three schedules. Table entries average each schedule’s own statistic.")
-    write_chart(output / "performance.json", [origin.isoformat(), *[d.isoformat() for d in dates]],
+    write_chart(output / "performance.json", dates,
                 lines, {"performance": chart})
 
 

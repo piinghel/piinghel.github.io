@@ -12,7 +12,7 @@ import matplotlib
 matplotlib.use("svg")
 import matplotlib.pyplot as plt
 import polars as pl
-from blog_charts import series, write_chart
+from blog_charts import dates_with_opening_mark, series, write_chart
 from figure_svg import save_svg, svg_path
 
 DATA = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/ridge_style_removal")
@@ -188,8 +188,7 @@ def gap_series(settings: StyleRemovalFigures) -> tuple[list[str], list[dict]]:
     accumulates the Sharpe difference rather than a difference in risk taken.
     """
     frame = returns(settings.data).sort("date")
-    first = (frame["date"][0] - dt.timedelta(days=1)).isoformat()
-    dates = [first, *[d.isoformat() for d in frame["date"]]]
+    dates = dates_with_opening_mark(frame["date"].to_list())
     data = []
     for arm, label, role, _, dash in settings.arms:
         diff = sum(frame[f"{arm}_o{k}"] * (frame[f"none_o{k}"].std() / frame[f"{arm}_o{k}"].std()) - frame[f"none_o{k}"]

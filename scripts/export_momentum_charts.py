@@ -9,7 +9,7 @@ import datetime as dt
 from dataclasses import dataclass
 from pathlib import Path
 import polars as pl
-from blog_charts import series, write_chart
+from blog_charts import dates_with_opening_mark, series, write_chart
 
 @dataclass(frozen=True)
 class MomentumEvidence:
@@ -42,8 +42,7 @@ def export(assets: Path, *, settings: MomentumEvidence = MomentumEvidence()) -> 
     added, dates = [], None
     for key, rule, label, role in settings.display_rules:
         frame = saved.filter(pl.col("variant") == rule).sort("date")
-        first = (frame["date"][0] - dt.timedelta(days=1)).isoformat()
-        current = [first, *[d.isoformat() for d in frame["date"]]]
+        current = dates_with_opening_mark(frame["date"].to_list())
         if dates is not None and dates != current:
             raise ValueError("Calendars differ")
         dates = current
