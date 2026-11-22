@@ -32,29 +32,37 @@ html[data-theme="dark"] .shared-series button::before { border-color:var(--serie
 .blog-chart-periods button:hover { color:var(--ink); border-bottom-color:var(--muted-ink); }
 .blog-chart-periods button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 .blog-chart-error { color:var(--ink); font-weight:600; }
-/* Keep the numbers in their own column, clear of the bar and its zero marker. */
-.post-content .blog-chart .rank-metric-bars {
-  width:100%; min-width:0; table-layout:fixed; margin:0; font-variant-numeric:tabular-nums;
+.rank-metric-chart {
+  container-type:inline-size; color:var(--ink); font-size:.8rem; font-variant-numeric:tabular-nums;
 }
-.post-content .blog-chart .rank-metric-bars :is(th,td) { padding:.4rem .65rem; }
-.post-content .blog-chart .rank-metric-bars th:first-child { padding-left:0; width:17%; }
-.post-content .blog-chart .rank-metric-bars td:last-child,
-.post-content .blog-chart .rank-metric-bars thead th:last-child { padding-right:0; }
-.post-content .blog-chart .rank-metric-bars th { font-weight:400; color:var(--ink); }
-.post-content .blog-chart .rank-metric-bars thead th { border-bottom:1px solid var(--rule); color:var(--muted-ink); }
-.rank-metric-cell { display:grid; grid-template-columns:minmax(0,1fr) 4.7ch; align-items:center; gap:.55rem; }
-.rank-metric-track { position:relative; height:.36rem; background:#8995a11f; }
-.rank-metric-track::after { content:""; position:absolute; left:var(--zero); top:-1px; bottom:-1px; border-left:1px solid #8995a178; }
-.rank-metric-bar { position:absolute; top:0; bottom:0; background:#83909b; }
+.rank-metric-plots {
+  --rank-heading:1.8rem; --rank-row:1.8rem; --rank-values:7ch;
+  display:grid; grid-template-columns:max-content repeat(3,minmax(0,1fr)); column-gap:1.15rem;
+}
+.rank-metric-names { padding-top:var(--rank-heading); white-space:nowrap; }
+.rank-metric-name,.rank-metric-row { height:var(--rank-row); align-items:center; }
+.rank-metric-name { display:flex; }
+.rank-metric-title { height:var(--rank-heading); font-weight:600; }
+.rank-metric-row,.rank-metric-axis {
+  display:grid; grid-template-columns:minmax(0,1fr) var(--rank-values); column-gap:.45rem;
+}
+.rank-metric-model { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.rank-metric-track { position:relative; height:100%; display:flex; align-items:center; }
+.rank-metric-track::before { content:""; position:absolute; left:var(--zero); inset-block:0; border-left:1px solid var(--rule); }
+.rank-metric-bar { position:absolute; height:.65rem; background:#83909b; }
 .rank-kumo .rank-metric-bar { background:#63849a; }
 html[data-theme="dark"] .rank-kumo .rank-metric-bar { background:#83a7bc; }
 .rank-metric-value { text-align:right; }
-@media(max-width:550px) {
-  .post-content .blog-chart .rank-metric-bars { font-size:.74rem; }
-  .post-content .blog-chart .rank-metric-bars :is(th,td) { padding:.33rem .36rem; }
-  .post-content .blog-chart .rank-metric-bars th:first-child { width:22%; }
-  .rank-metric-cell { grid-template-columns:1fr; gap:.21rem; }
-  .rank-metric-track { grid-row:2; height:.27rem; }
+.rank-metric-ticks { position:relative; height:1.3rem; border-top:1px solid var(--rule); font-size:.72rem; color:var(--muted-ink); }
+.rank-metric-ticks span { position:absolute; top:.12rem; }
+.rank-metric-zero { left:var(--zero); transform:translateX(-50%); }
+.rank-metric-max { right:0; }
+@container (max-width:560px) {
+  .rank-metric-plots { grid-template-columns:1fr; row-gap:.9rem; --rank-row:1.6rem; }
+  .rank-metric-names { display:none; }
+  .rank-metric-row,.rank-metric-axis { grid-template-columns:6.4rem minmax(0,1fr) var(--rank-values); }
+  .rank-metric-model { position:static; width:auto; height:auto; overflow:visible; clip-path:none; }
+  .rank-metric-ticks { grid-column:2; }
 }
 @media(max-width:600px) { .blog-chart { font-size:12px; } }
 

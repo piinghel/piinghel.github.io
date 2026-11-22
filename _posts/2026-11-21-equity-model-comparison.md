@@ -318,7 +318,7 @@ The full history includes five more 2021 signals whose outcomes
 became known in 2022.
 
 <figure id="figure-3" class="research-figure responsive-figure">
-  {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=4" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="5" label="Rank IC, standard deviation of IC, and ICIR by model from 1999 through May 2026, with selectable periods." %}
+  {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=5" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="6" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> The full sample has 1,421 shared signal dates with known targets. Each metric keeps the same scale across periods.</figcaption>
 </figure>
 

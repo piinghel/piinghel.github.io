@@ -34,17 +34,29 @@
         {
           "id": "ic_mean",
           "label": "Rank IC",
-          "digits": 4
+          "digits": 4,
+          "domain": [
+            -0.01,
+            0.06
+          ]
         },
         {
           "id": "ic_sd",
           "label": "IC SD",
-          "digits": 3
+          "digits": 3,
+          "domain": [
+            0,
+            0.15
+          ]
         },
         {
           "id": "icir",
           "label": "ICIR",
-          "digits": 3
+          "digits": 3,
+          "domain": [
+            -0.15,
+            0.95
+          ]
         }
       ],
       "periods": [

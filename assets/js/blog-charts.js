@@ -829,51 +829,54 @@
   function rankBars(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');
     ui.hidden=false;
-    const chart=element('table','rank-metric-bars');
-    const headings=chart.createTHead().insertRow();
-    for(const label of ['Model',...cfg.metrics.map(metric=>metric.label)]) {
-      const heading=element('th','',label);
-      heading.scope='col';
-      headings.append(heading);
-    }
-    const body=chart.createTBody();
+    const chart=element('div','rank-metric-chart');
+    chart.setAttribute('role','group');
+    const plots=element('div','rank-metric-plots');
+    const names=element('div','rank-metric-names');
+    names.setAttribute('aria-hidden','true');
+    for(const item of cfg.series)names.append(element('div','rank-metric-name',item.label));
+    plots.append(names);
+    chart.append(plots);
     ui.append(chart);
-    const domains=cfg.metrics.map(metric=>{
-      const values=cfg.periods.flatMap(period=>cfg.series.map(item=>period.values[item.id][metric.id]));
-      return [Math.min(0,...values), Math.max(0,...values)];
-    });
-    periodChoices(ui,cfg.periods.map(item=>item.label),index=>{
-      draw(cfg.periods[index]);
-    });
-
-    function draw(period) {
-      chart.setAttribute('aria-label','Rank metrics, '+period.label+', '+period.dates+' signal dates');
-      body.replaceChildren();
-      for(const item of cfg.series) {
-        const row=body.insertRow();
+    const updates=cfg.metrics.map(metric=>{
+      const [lower,upper]=metric.domain,span=upper-lower;
+      const panel=element('div','rank-metric-panel');
+      panel.setAttribute('role','group');
+      panel.setAttribute('aria-label',metric.label);
+      panel.style.setProperty('--zero',(-100*lower/span)+'%');
+      panel.append(element('div','rank-metric-title',metric.label));
+      const rows=cfg.series.map(item=>{
+        const row=element('div','rank-metric-row');
         row.classList.toggle('rank-kumo',item.id.startsWith('kumo_'));
-        const label=element('th','',item.label);
-        label.scope='row';
-        row.append(label);
-        cfg.metrics.forEach((metric,index)=>{
-          const [lower,upper]=domains[index],span=upper-lower||1;
+        const track=element('span','rank-metric-track');
+        track.setAttribute('aria-hidden','true');
+        const bar=element('span','rank-metric-bar'),number=element('span','rank-metric-value');
+        track.append(bar);
+        row.append(element('span','rank-metric-model',item.label),track,number);
+        panel.append(row);
+        return period=>{
           const value=period.values[item.id][metric.id];
-          const cell=element('div','rank-metric-cell');
-          const track=element('span','rank-metric-track');
-          track.setAttribute('aria-hidden','true');
-          track.style.setProperty('--zero',(-100*lower/span)+'%');
-          const bar=element('span','rank-metric-bar');
           bar.style.left=(100*(Math.min(value,0)-lower)/span)+'%';
           bar.style.width=(100*Math.abs(value)/span)+'%';
-          track.append(bar);
-          const number=element('span','rank-metric-value',value.toFixed(metric.digits).replace('-','−'));
-          cell.append(track,number);
-          row.insertCell().append(cell);
-        });
-      }
-    }
+          number.textContent=value.toFixed(metric.digits).replace('-','−');
+        };
+      });
+      const axis=element('div','rank-metric-axis'),ticks=element('div','rank-metric-ticks');
+      ticks.setAttribute('aria-hidden','true');
+      ticks.append(element('span','rank-metric-zero','0'),element('span','rank-metric-max',String(upper)));
+      axis.append(ticks);
+      panel.append(axis);
+      plots.append(panel);
+      return period=>rows.forEach(update=>update(period));
+    });
 
-    draw(cfg.periods[0]);
+    function selectPeriod(index) {
+      const period=cfg.periods[index];
+      chart.setAttribute('aria-label','Rank metrics, '+period.label+', '+period.dates+' signal dates');
+      updates.forEach(update=>update(period));
+    }
+    periodChoices(ui,cfg.periods.map(item=>item.label),selectPeriod);
+    selectPeriod(0);
     host.querySelector('.blog-chart-status').hidden=true;
     host.querySelector('.blog-chart-fallback').hidden=true;
   }

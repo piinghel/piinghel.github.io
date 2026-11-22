@@ -153,15 +153,25 @@ def export_rank(
             },
         })
 
+    panels = []
+    for metric, label, digits in metrics:
+        all_values = [
+            period["values"][model][metric]
+            for period in period_data
+            for model, *_ in models
+        ]
+        spacing = 0.5 * 10 ** math.floor(math.log10(max(map(abs, all_values)) or 1))
+        lower = round(min(0, math.floor(min(all_values) / spacing) * spacing), digits)
+        upper = round(max(spacing, math.ceil(max(all_values) / spacing) * spacing), digits)
+        metric_info = {"id": metric, "label": label, "digits": digits, "domain": [lower, upper]}
+        panels.append((metric_info, [period_data[0]["values"][model][metric] for model, *_ in models]))
+
     chart = {
         "kind": "rank-bars",
         "series": [
             {"id": model, "label": label, "role": role} for model, label, role in models
         ],
-        "metrics": [
-            {"id": metric, "label": label, "digits": digits}
-            for metric, label, digits in metrics
-        ],
+        "metrics": [metric for metric, _ in panels],
         "periods": period_data,
     }
     base = output / "rank-metrics"
@@ -173,19 +183,7 @@ def export_rank(
         base,
         labels=[label for _, label, _ in models],
         is_kumo=[model.startswith("kumo_") for model, _, _ in models],
-        panels=[
-            (
-                label,
-                digits,
-                [period_data[0]["values"][model][metric] for model, *_ in models],
-                [
-                    period["values"][model][metric]
-                    for period in period_data
-                    for model, *_ in models
-                ],
-            )
-            for metric, label, digits in metrics
-        ],
+        panels=panels,
     )
 
 
@@ -194,34 +192,36 @@ def render_rank_fallbacks(
     *,
     labels: list[str],
     is_kumo: list[bool],
-    panels: list[tuple[str, int, list[float], list[float]]],
+    panels: list[tuple[dict, list[float]]],
 ) -> None:
     for mobile in (False, True):
         for dark in (False, True):
-            ink, track = ("#dce3eb", "#2a323c") if dark else ("#27343d", "#eef1f3")
+            ink, rule = ("#dce3eb", "#52606d") if dark else ("#27343d", "#bcc4cb")
             accent = "#83a7bc" if dark else "#63849a"
             colors = [accent if model else "#83909b" for model in is_kumo]
-            text_size = 8 if mobile else 10
+            text_size = 9 if mobile else 9.5
             with plt.rc_context({"svg.hashsalt": "stock-rank-metrics", "font.size": text_size}):
                 figure, axes = plt.subplots(
-                    1,
-                    len(panels),
-                    figsize=(4.1 if mobile else 6.7, 2.35),
+                    len(panels) if mobile else 1,
+                    1 if mobile else len(panels),
+                    figsize=(4.1, 6.3) if mobile else (7.6, 2.65),
                     sharey=True,
                     layout="constrained",
                 )
-                for axis, (label, digits, values, all_values) in zip(axes, panels, strict=True):
-                    lower, upper = min(0, *all_values), max(0, *all_values)
+                for index, (axis, (metric, values)) in enumerate(zip(axes, panels, strict=True)):
+                    lower, upper = metric["domain"]
                     span = upper - lower
-                    axis.barh(labels, [span] * len(labels), left=lower, height=0.23, color=track)
-                    axis.barh(labels, values, height=0.23, color=colors)
-                    axis.set_title(label, loc="left", color=ink, fontsize=text_size)
+                    axis.axvline(0, linewidth=0.8, color=rule, zorder=0)
+                    axis.barh(labels, values, height=0.41, color=colors)
+                    axis.set_title(metric["label"], loc="left", color=ink, fontsize=text_size, pad=8)
                     for label_row, value in zip(labels, values, strict=True):
-                        axis.text(1, label_row, f"{value:.{digits}f}", ha="right", va="center",
+                        number = f"{value:.{metric['digits']}f}".replace("-", "−")
+                        axis.text(1, label_row, number, ha="right", va="center",
                                   color=ink, transform=axis.get_yaxis_transform())
-                    axis.set_xlim(lower, upper + span * (1.55 if mobile else 0.55))
+                    axis.set_xlim(lower, upper + span * (0.24 if mobile else 0.36))
                     axis.set_ylim(len(labels) - 0.55, -0.55)
-                    axis.set_xticks([])
+                    axis.set_xticks([0, upper], ["0", f"{upper:g}"])
+                    axis.tick_params(axis="y", labelleft=mobile or index == 0, pad=8)
                     axis.tick_params(length=0, colors=ink)
                     axis.spines[:].set_visible(False)
                 save_svg(figure, svg_path(base, mobile=mobile, dark=dark), transparent=True)
