@@ -2,13 +2,12 @@
 from __future__ import annotations
 
 import argparse
-import json
 from datetime import date, timedelta
 from pathlib import Path
 
 import polars as pl
 
-from blog_charts import series, statistics, write_chart
+from blog_charts import market_series, returns_from_wealth, series, statistics, write_chart
 
 
 def export(article: Path, assets: Path, market: Path) -> None:
@@ -21,15 +20,9 @@ def export(article: Path, assets: Path, market: Path) -> None:
         part = growth.filter(pl.col("model") == key)
         if part["date"].to_list() != dates:
             raise ValueError("Model calendars differ")
-        wealth = [1.0, *part["growth_index"].to_list()]
-        paths.append(series(key, label, role, [0.0, *[b / a - 1 for a, b in zip(wealth, wealth[1:])]]))
-    source = json.loads(market.read_text())
-    index = next(s for s in source["series"] if s["role"] == "index")
-    returns = dict(zip(source["dates"], index["values"], strict=True))
-    missing = set(dates) - returns.keys()
-    if missing:
-        raise ValueError(f"Missing market dates: {sorted(missing)}")
-    paths.append(series("index", "Russell 1000", "index", [0.0, *[returns[d] / source["scale"] for d in dates]]))
+        returns = returns_from_wealth(part["growth_index"].to_list())
+        paths.append(series(key, label, role, returns))
+    paths.append(market_series(market, dates))
     episodes = [["1998–2021", anchor, "2021-12-31"], ["After 2021", "2021-12-31", dates[-1]],
                 ["2008–09", "2007-12-31", "2009-12-31"], ["2020–21", "2019-12-31", "2021-12-31"]]
     write_chart(assets / "performance.json", [anchor, *dates], paths, {

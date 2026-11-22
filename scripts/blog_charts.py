@@ -8,8 +8,27 @@ from __future__ import annotations
 import json
 import math
 from datetime import date
+from itertools import pairwise
 from pathlib import Path
 from statistics import mean, stdev
+
+
+def returns_from_wealth(wealth: list[float]) -> list[float]:
+    """Convert closing wealth on an initial dollar to chart returns with an opening mark."""
+    return [0.0, *(close / previous - 1 for previous, close in pairwise([1.0, *wealth]))]
+
+
+def market_series(source_path: Path, dates: list[str]) -> dict:
+    """Align the published Russell 1000 returns to the portfolio's trading dates."""
+    source = json.loads(source_path.read_text())
+    index = next(item for item in source["series"] if item["role"] == "index")
+    encoded = dict(zip(source["dates"], index["values"], strict=True))
+    missing = set(dates) - encoded.keys()
+    if missing:
+        raise ValueError(f"Missing market dates: {sorted(missing)}")
+    returns = [encoded[day] / source["scale"] for day in dates]
+    return series("index", "Russell 1000", "index", [0.0, *returns])
+
 
 def statistics(returns: list[float], annualization: int = 252) -> dict:
     """Geometric annual return; sample volatility; arithmetic zero-cash Sharpe."""

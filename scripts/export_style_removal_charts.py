@@ -13,6 +13,7 @@ matplotlib.use("svg")
 import matplotlib.pyplot as plt
 import polars as pl
 from blog_charts import series, write_chart
+from figure_svg import save_svg, svg_path
 
 DATA = Path("/Users/pjinghelbrecht/ResearchLocal/quant_research/projects/ridge_style_removal")
 SPLIT_YEAR = 2019
@@ -50,9 +51,7 @@ def returns(data: Path) -> pl.DataFrame:
 
 
 def save(fig, path: Path, c: dict) -> None:
-    fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"], bbox_inches="tight", pad_inches=0.12)
-    plt.close(fig)
-    path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+    save_svg(fig, path, facecolor=c["bg"], tight_padding=0.12)
 
 
 def style(ax, c: dict, mobile: bool, grid: str = "y") -> None:
@@ -62,10 +61,6 @@ def style(ax, c: dict, mobile: bool, grid: str = "y") -> None:
     ax.set_axisbelow(True)
     for side in ax.spines.values():
         side.set_visible(False)
-
-
-def suffix(dark: bool, mobile: bool) -> str:
-    return ("_mobile" if mobile else "") + ("_dark" if dark else "")
 
 
 def render_diagram(out: Path, dark: bool, mobile: bool) -> None:
@@ -86,7 +81,7 @@ def render_diagram(out: Path, dark: bool, mobile: bool) -> None:
             ax.annotate("", xy=(end, .5), xytext=(start, .5),
                         arrowprops={"arrowstyle": "->", "color": c["muted"], "lw": .9})
         fig.subplots_adjust(left=.02, right=.98, bottom=.08, top=.92)
-        save(fig, out / f"removal-diagram{suffix(dark, mobile)}.svg", c)
+        save(fig, svg_path(out / "removal-diagram", mobile=mobile, dark=dark), c)
 
 
 def render_shares(out: Path, dark: bool, mobile: bool, data: Path) -> None:
@@ -113,7 +108,7 @@ def render_shares(out: Path, dark: bool, mobile: bool, data: Path) -> None:
             ax.annotate(label, xy=(years[-1], values[-1]), xytext=(5, 0),
                         textcoords="offset points", va="center", color=color, fontsize=9.5)
         fig.subplots_adjust(left=.1, right=.70 if mobile else .82, top=.95, bottom=.17)
-        save(fig, out / f"forecast-style-share{suffix(dark, mobile)}.svg", c)
+        save(fig, svg_path(out / "forecast-style-share", mobile=mobile, dark=dark), c)
 
 
 def render_risk_return(out: Path, dark: bool, mobile: bool, data: Path) -> None:
@@ -152,7 +147,7 @@ def render_risk_return(out: Path, dark: bool, mobile: bool, data: Path) -> None:
                     tick.set_color(c["ink"])
             else:
                 ax.tick_params(axis="y", labelleft=False)
-        save(fig, out / f"risk-return{suffix(dark, mobile)}.svg", c)
+        save(fig, svg_path(out / "risk-return", mobile=mobile, dark=dark), c)
 
 
 def render_deltas(out: Path, dark: bool, mobile: bool, data: Path) -> None:
@@ -183,7 +178,7 @@ def render_deltas(out: Path, dark: bool, mobile: bool, data: Path) -> None:
             ax.set_ylim(-1.45, 0.85); ax.set_yticks([-1.0, -0.5, 0, 0.5])
             ax.set_title(title, loc="left", fontsize=11, color=c["ink"], pad=8)
         axes[0].text(0.22, table[("pca25", "early")]["lo"] - 0.07, "PCA", ha="center", va="top", fontsize=9.5, color=c["pca"])
-        save(fig, out / f"delta-sharpe{suffix(dark, mobile)}.svg", c)
+        save(fig, svg_path(out / "delta-sharpe", mobile=mobile, dark=dark), c)
 
 
 def gap_series(settings: StyleRemovalFigures) -> tuple[list[str], list[dict]]:
@@ -237,7 +232,7 @@ def render_gap(out: Path, dark: bool, mobile: bool, settings: StyleRemovalFigure
         ax.set_xlim(x[0], x[-1] + dt.timedelta(days=(900 if mobile else 1000)))
         ticks = (2005, 2015) if mobile else (2005, 2010, 2015, 2020)
         ax.set_xticks([x[0], *[dt.date(y, 1, 1) for y in ticks]], [str(x[0].year), *map(str, ticks)])
-        save(fig, out / f"equal-vol-gap{suffix(dark, mobile)}.svg", c)
+        save(fig, svg_path(out / "equal-vol-gap", mobile=mobile, dark=dark), c)
 
 
 def export(assets: Path, *, settings: StyleRemovalFigures = StyleRemovalFigures()) -> None:

@@ -26,6 +26,11 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+if __package__:
+    from .figure_svg import save_svg, svg_path
+else:
+    from figure_svg import save_svg, svg_path
+
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 DATA = OUTPUT / "themes.json"
 # Display order: the ranking's signal themes, the low-risk package (subtotal first), the rest.
@@ -117,11 +122,8 @@ def theme_overview(aggregates: dict, *, dark: bool, mobile: bool, output: Path) 
         axes[0].set_yticks(range(len(labels)), labels)
         axes[0].set_ylim(len(labels)-.4, -.6)
         fig.subplots_adjust(left=.32 if mobile else .24, right=.97, bottom=.09, top=.90, wspace=.36)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        target = output / f"theme-pnl{suffix}.svg"
-        fig.savefig(target, metadata={"Date": None})
-        plt.close(fig)
-        target.write_text("\n".join(line.rstrip() for line in target.read_text().splitlines()) + "\n")
+        target = svg_path(output / "theme-pnl", mobile=mobile, dark=dark)
+        save_svg(fig, target)
 
 
 def colors(dark: bool) -> dict:
@@ -165,11 +167,8 @@ def paired_periods(periods, rows, name, unit, *, dark, mobile, output: Path):
                     labelcolor=c["ink"], fontsize=9.5, handletextpad=.3, borderaxespad=0)
         fig.subplots_adjust(left=.37 if mobile else .27, right=.97, top=.82 if len(rows)<5 else .91,
                             bottom=.22 if len(rows)<5 else .14)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        target = output / f"{name}{suffix}.svg"
-        fig.savefig(target, metadata={"Date": None}, facecolor=c["bg"])
-        plt.close(fig)
-        target.write_text("\n".join(line.rstrip() for line in target.read_text().splitlines()) + "\n")
+        target = svg_path(output / name, mobile=mobile, dark=dark)
+        save_svg(fig, target, facecolor=c["bg"])
 
 
 def small_multiples(data: dict, index: int, name: str, unit: str,
@@ -219,11 +218,8 @@ def small_multiples(data: dict, index: int, name: str, unit: str,
         fig.text(0.01, 0.995, unit, ha="left", va="top", color=c["muted"], fontsize=size - 1)
         fig.subplots_adjust(left=0.09 if mobile else 0.05, right=0.99, top=0.95 if mobile else 0.76,
                             bottom=0.05 if mobile else 0.17, hspace=0.75, wspace=0.12)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = output / f"{name}{suffix}.svg"
-        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
-        plt.close(fig)
+        path = svg_path(output / name, mobile=mobile, dark=dark)
+        save_svg(fig, path, facecolor=c["bg"])
 
 
 if __name__ == "__main__":

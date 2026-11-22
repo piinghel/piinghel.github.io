@@ -5,13 +5,10 @@ import json
 from datetime import timedelta
 from pathlib import Path
 import polars as pl
-from blog_charts import series, write_chart
+from blog_charts import market_series, returns_from_wealth, series, write_chart
 
 
 def export(inputs: Path, assets: Path, market: Path) -> None:
-    source = json.loads(market.read_text())
-    index = next(s for s in source["series"] if s["role"] == "index")
-    benchmark = dict(zip(source["dates"], index["values"], strict=True))
     models = [("volatility_scaled", "Volatility-scaled", "comparison"),
               ("optimizer_with_trading_controls", "Optimizer + trading controls", "strategy")]
     daily = pl.scan_parquet(inputs / "performance_path_daily.parquet").filter(pl.col("date") <= pl.date(2021,12,31)).sort("date").collect()
@@ -21,9 +18,9 @@ def export(inputs: Path, assets: Path, market: Path) -> None:
         current = [(part["date"][0] - timedelta(days=1)).isoformat(), *[d.isoformat() for d in part["date"]]]
         if dates is not None and dates != current: raise ValueError("Calendars differ")
         dates = current
-        wealth = [1.0, *part["wealth"].to_list()]
-        paths.append(series(key, label, role, [0.0, *[b/a-1 for a,b in zip(wealth,wealth[1:])]]))
-    paths.append(series("index", "Russell 1000", "index", [0.0,*[benchmark[d]/source["scale"] for d in dates[1:]]]))
+        returns = returns_from_wealth(part["wealth"].to_list())
+        paths.append(series(key, label, role, returns))
+    paths.append(market_series(market, dates[1:]))
     write_chart(assets / "performance.json", dates, paths, {"performance": dict(kind="performance", series=[p["id"] for p in paths],log=True,drawdown=True,
         episodes=[["2008–09","2007-12-31","2009-12-31"],["2020–21","2019-12-31","2021-12-31"]],
         note="Statistics of the plotted mean wealth path. Each schedule compounds separately; Table 2 reports means of per-schedule statistics. Zero-cash Sharpe.")})

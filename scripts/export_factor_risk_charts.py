@@ -11,6 +11,7 @@ import polars as pl
 from matplotlib.ticker import FuncFormatter, PercentFormatter
 
 from blog_charts import series, write_chart
+from figure_svg import save_svg, svg_path
 
 
 def portfolio_paths(daily: Path, portfolios: tuple) -> pl.DataFrame:
@@ -76,9 +77,7 @@ def render_performance(returns, portfolios, destination, *, colors, grid, mobile
     drawdown.yaxis.set_major_formatter(PercentFormatter(1, decimals=0))
     drawdown.xaxis.set_major_locator(mdates.YearLocator(10 if mobile else 5))
     drawdown.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    fig.savefig(destination, transparent=True, metadata={"Date": None})
-    destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
-    plt.close(fig)
+    save_svg(fig, destination, transparent=True)
 
 
 def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
@@ -87,13 +86,12 @@ def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
         else ("#283542", "#2165a6", "#7950a2", "#d8dee4")
     )
     colors = [ink, blue, violet]
-    suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "") + ".svg"
     style = {"font.size": 9 if mobile else 10, "text.color": ink, "xtick.color": ink,
              "ytick.color": ink, "axes.labelcolor": ink, "axes.titlecolor": ink,
              "svg.fonttype": "none", "svg.hashsalt": "factor-risk-sizing"}
     with plt.rc_context(style):
         render_performance(
-            returns, portfolios, output / ("performance" + suffix),
+            returns, portfolios, svg_path(output / "performance", mobile=mobile, dark=dark),
             colors=colors, grid=grid, mobile=mobile,
         )
         fig, (upper, lower) = plt.subplots(2, 1, figsize=(4.5 if mobile else 8.4, 4.7),
@@ -122,10 +120,8 @@ def render_figures(returns, portfolios, pairs, clusters, output, dark, mobile):
         upper.set_xlim(pairs["decision"][0], pairs["decision"][-1] + timedelta(days=6*365 if mobile else 3*365))
         lower.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
         lower.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-        destination = output / ("residuals" + suffix)
-        fig.savefig(destination, transparent=True, metadata={"Date": None})
-        destination.write_text("\n".join(line.rstrip() for line in destination.read_text().splitlines()) + "\n")
-        plt.close(fig)
+        destination = svg_path(output / "residuals", mobile=mobile, dark=dark)
+        save_svg(fig, destination, transparent=True)
 
 
 def export_realized_risk(daily, portfolios, output, sessions, annualization, risk_budget):
@@ -181,11 +177,8 @@ def export_realized_risk(daily, portfolios, output, sessions, annualization, ris
                 ax.set_axisbelow(True)
                 fig.legend(*ax.get_legend_handles_labels(), loc="outside lower center", ncol=2,
                            frameon=False, fontsize=8 if mobile else 9, labelcolor=ink)
-                suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-                dest = output / f"{slug}{suffix}.svg"
-                fig.savefig(dest, transparent=True, metadata={"Date":None})
-                dest.write_text("\n".join(row.rstrip() for row in dest.read_text().splitlines()) + "\n")
-                plt.close(fig)
+                dest = svg_path(output / slug, mobile=mobile, dark=dark)
+                save_svg(fig, dest, transparent=True)
 
 
 def market_exposure(
@@ -262,11 +255,8 @@ def render_market_exposure(
         correlation.set_xlim(dates[0], dates[-1])
         correlation.xaxis.set_major_locator(mdates.YearLocator(5))
         correlation.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = output / f"market-exposure{suffix}.svg"
-        fig.savefig(path, transparent=True, metadata={"Date": None})
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
-        plt.close(fig)
+        path = svg_path(output / "market-exposure", mobile=mobile, dark=dark)
+        save_svg(fig, path, transparent=True)
 
 
 def render_fixed_book(data, output, *, dark, mobile):
@@ -309,11 +299,8 @@ def render_fixed_book(data, output, *, dark, mobile):
         axes[-1].set_xlabel("Annualized gross-return risk")
         fig.legend(*axes[0].get_legend_handles_labels(), loc="outside upper center",
                    frameon=False, ncol=2, handlelength=.9)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = output / f"fixed-book{suffix}.svg"
-        fig.savefig(path, transparent=True, metadata={"Date": None})
-        plt.close(fig)
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        path = svg_path(output / "fixed-book", mobile=mobile, dark=dark)
+        save_svg(fig, path, transparent=True)
 
 
 def main():

@@ -15,6 +15,7 @@ import polars as pl
 from types import MappingProxyType
 
 from export_momentum_charts import MomentumEvidence
+from figure_svg import save_svg, svg_path
 
 # Lagged momentum-risk state g (WML volatility over its expanding median, floored at 1); thresholds fixed before plotting.
 # The five-session smoothing lets g decay towards 1, so "calm" allows 1e-4 (a removed share below 0.0002).
@@ -74,11 +75,8 @@ def render(out: Path, dark: bool, mobile: bool, *, rows=ROWS, markers=MARKER) ->
                     tick.set_color(c["ink"])
             else:
                 ax.tick_params(axis="y", labelleft=False)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = out / f"sharpe-by-rule{suffix}.svg"
-        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"], bbox_inches="tight", pad_inches=0.12)
-        plt.close(fig)
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        path = svg_path(out / "sharpe-by-rule", mobile=mobile, dark=dark)
+        save_svg(fig, path, facecolor=c["bg"], tight_padding=0.12)
 
 
 def sharpe_by_state(rules: tuple[str, ...] = ("baseline", "score_overlay"), *, settings: MomentumEvidence = MomentumEvidence(), buckets=BUCKETS) -> pl.DataFrame:
@@ -136,11 +134,8 @@ def render_state(out: Path, dark: bool, mobile: bool, *, settings: MomentumEvide
         ax.legend(loc="lower left", bbox_to_anchor=(0, 1.05), ncol=2, frameon=False,
                   handlelength=1, handletextpad=.4, columnspacing=1.2, borderaxespad=0,
                   fontsize=9.5, labelcolor=c["ink"])
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = out / f"sharpe-by-state{suffix}.svg"
-        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"], bbox_inches="tight", pad_inches=0.12)
-        plt.close(fig)
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        path = svg_path(out / "sharpe-by-state", mobile=mobile, dark=dark)
+        save_svg(fig, path, facecolor=c["bg"], tight_padding=0.12)
 
 
 def render_added(out: Path, dark: bool, mobile: bool, *, settings: MomentumEvidence = MomentumEvidence()) -> None:
@@ -177,11 +172,8 @@ def render_added(out: Path, dark: bool, mobile: bool, *, settings: MomentumEvide
         legend = ax.legend(loc="lower left", bbox_to_anchor=(-.02, 1.01), ncol=2 if mobile else 3,
                            frameon=False, fontsize=9, handlelength=1.6)
         for item in legend.get_texts(): item.set_color(c["ink"])
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = out / f"value-added{suffix}.svg"
-        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"], bbox_inches="tight", pad_inches=.12)
-        plt.close(fig)
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
+        path = svg_path(out / "value-added", mobile=mobile, dark=dark)
+        save_svg(fig, path, facecolor=c["bg"], tight_padding=0.12)
 
 
 if __name__ == "__main__":

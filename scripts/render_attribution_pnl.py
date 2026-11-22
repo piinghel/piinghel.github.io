@@ -22,6 +22,11 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 
+if __package__:
+    from .figure_svg import save_svg, svg_path
+else:
+    from figure_svg import save_svg, svg_path
+
 OUTPUT = Path(__file__).resolve().parents[1] / "assets/portfolio-attribution"
 # Key, label, line style. Long, short and net keep one colour each across the series.
 BOOKS = (("long", "Longs", "-"), ("short", "Shorts", (0, (3.7, 1.6))), ("net", "Net", "-"))
@@ -98,14 +103,6 @@ def plot_books(ax, dates, books, colors, size, book_styles):
                                 "shrinkA": 1, "shrinkB": 2})
 
 
-def save(fig, name, colors, dark, mobile, output):
-    suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-    path = output / f"{name}{suffix}.svg"
-    fig.savefig(path, metadata={"Date": None}, facecolor=colors["bg"])
-    path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
-    plt.close(fig)
-
-
 def render_whole_history(history, windows, dark, mobile, *, output: Path = OUTPUT, book_styles=BOOKS):
     colors = palette(dark)
     size = 11
@@ -134,7 +131,8 @@ def render_whole_history(history, windows, dark, mobile, *, output: Path = OUTPU
     fig.subplots_adjust(left=0.13 if mobile else 0.07, right=0.8 if mobile else 0.88,
                         top=0.94, bottom=0.06 if mobile else 0.05)
     plot_books(top, dates, history, colors, size, book_styles)
-    save(fig, "whole-history", colors, dark, mobile, output)
+    path = svg_path(output / "whole-history", mobile=mobile, dark=dark)
+    save_svg(fig, path, facecolor=colors["bg"])
 
 
 if __name__ == "__main__":

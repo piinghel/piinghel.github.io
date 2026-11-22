@@ -9,6 +9,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 
+if __package__:
+    from .figure_svg import save_svg, svg_path
+else:
+    from figure_svg import save_svg, svg_path
+
 
 def render(source: Path, key: str, base: Path, *, mobile: bool, dark: bool) -> None:
     chart = json.loads(source.read_text())["charts"][key]
@@ -45,11 +50,8 @@ def render(source: Path, key: str, base: Path, *, mobile: bool, dark: bool) -> N
         fig.supxlabel(chart["sharedX"], fontsize=10, color=ink, y=.015)
         fig.subplots_adjust(left=.10 if mobile else .07, right=.98, top=1-.24/(rows*1.5+.48),
                             bottom=.47/(rows*1.5+.48), hspace=.55, wspace=.32)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        output = base.with_name(base.name + suffix + ".svg")
-        fig.savefig(output, metadata={"Date": None})
-        plt.close(fig)
-        output.write_text("\n".join(line.rstrip() for line in output.read_text().splitlines()) + "\n")
+        output = svg_path(base, mobile=mobile, dark=dark)
+        save_svg(fig, output)
 
 
 def main(assets: Path) -> None:

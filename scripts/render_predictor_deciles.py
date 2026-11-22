@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from blog_charts import statistics
 from matplotlib.ticker import PercentFormatter
 
+from figure_svg import save_svg, svg_path
+
 
 @dataclass(frozen=True)
 class DecilePeriod:
@@ -103,11 +105,7 @@ def render(
             fontsize=9,
             labelcolor=ink,
         )
-        figure.savefig(destination, transparent=True, metadata={"Date": None})
-        plt.close(figure)
-    destination.write_text(
-        "".join(f"{line.rstrip()}\n" for line in destination.read_text().splitlines())
-    )
+        save_svg(figure, destination, transparent=True)
 
 
 if __name__ == "__main__":
@@ -115,10 +113,9 @@ if __name__ == "__main__":
     decile_periods = read_periods(assets / "deciles.json")
     for mobile in (False, True):
         for dark in (False, True):
-            suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
             render(
                 decile_periods,
-                assets / f"decile-returns{suffix}.svg",
+                svg_path(assets / "decile-returns", mobile=mobile, dark=dark),
                 mobile=mobile,
                 dark=dark,
             )

@@ -14,6 +14,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import polars as pl
 from blog_charts import series, write_chart
+from figure_svg import save_svg, svg_path
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -256,7 +257,6 @@ def render_pnl_fallbacks(
                 drawdown.set_xlim(dates[0], dates[-1])
                 drawdown.xaxis.set_major_locator(mdates.YearLocator(6 if mobile else 5))
                 drawdown.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-                suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
                 figure.legend(
                     loc="outside upper center",
                     ncol=3,
@@ -265,15 +265,8 @@ def render_pnl_fallbacks(
                     handlelength=1.5,
                     columnspacing=1.1,
                 )
-                destination = output / f"net-pnl{suffix}.svg"
-                figure.savefig(destination, transparent=True, metadata={"Date": None})
-                plt.close(figure)
-                destination.write_text(
-                    "".join(
-                        f"{line.rstrip()}\n"
-                        for line in destination.read_text().splitlines()
-                    )
-                )
+                destination = svg_path(output / "net-pnl", mobile=mobile, dark=dark)
+                save_svg(figure, destination, transparent=True)
 
 
 if __name__ == "__main__":

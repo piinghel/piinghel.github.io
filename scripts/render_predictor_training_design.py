@@ -15,6 +15,11 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
+if __package__:
+    from .figure_svg import save_svg, svg_path
+else:
+    from figure_svg import save_svg, svg_path
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets" / "combining-predictors"
 WINDOWS = OUT / "evidence/results/chosen_penalty_by_refit.csv"
@@ -95,11 +100,8 @@ def render(*, dark: bool, mobile: bool, settings: TrainingFigure = TrainingFigur
         ax.tick_params(length=0, colors=c["muted"], labelsize=tick)
         fig.subplots_adjust(left=0.03, right=0.97, top=0.81 if mobile else 0.86,
                             bottom=0.08 if mobile else 0.09)
-        suffix = ("_mobile" if mobile else "") + ("_dark" if dark else "")
-        path = settings.output / f"expanding-walk-forward{suffix}.svg"
-        fig.savefig(path, metadata={"Date": None}, facecolor=c["bg"])
-        path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
-        plt.close(fig)
+        path = svg_path(settings.output / "expanding-walk-forward", mobile=mobile, dark=dark)
+        save_svg(fig, path, facecolor=c["bg"])
 
 
 if __name__ == "__main__":

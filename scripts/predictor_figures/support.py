@@ -7,6 +7,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
+if __package__ and "." in __package__:
+    from ..figure_svg import save_svg
+else:
+    from figure_svg import save_svg
+
 
 @dataclass(frozen=True)
 class FigureStyle:
@@ -40,15 +45,4 @@ def save_figure(
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     svg_path = output_dir / f"{stem}{style.output_suffix}.svg"
-    fig.savefig(
-        svg_path,
-        format="svg",
-        facecolor=style.white,
-        metadata={"Date": None},
-    )
-    lines = svg_path.read_text(encoding="utf-8").splitlines()
-    svg_path.write_text(
-        "\n".join(line.rstrip() for line in lines) + "\n",
-        encoding="utf-8",
-    )
-    plt.close(fig)
+    save_svg(fig, svg_path, facecolor=style.white)
