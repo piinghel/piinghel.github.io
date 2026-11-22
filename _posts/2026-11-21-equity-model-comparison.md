@@ -10,27 +10,22 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, the models to beat on tabular data were tree ensembles,
-from random forests to boosted trees like LightGBM and
-XGBoost.[^tree-benchmark] That’s starting to change. Models like
-TabPFN and TabICL are beating strong tree ensembles on a growing
-range of benchmarks.[^new-benchmarks]
+Random forests and boosted trees like LightGBM have long been strong
+choices for tabular data.[^tree-benchmark] That’s starting to change.
+Tabular foundation models such as TabPFN and TabICL are beating tuned
+tree ensembles on some broad benchmarks.[^new-benchmarks]
 
-What got me curious was how they make those predictions. With
-LightGBM, I fit trees on the examples for the problem in front of
-me. The fitted trees then score the new rows. A tabular foundation
-model comes with a network trained across many tables. When I
-ask it for a prediction, I give it rows from my own table with
-known outcomes. The network uses those examples and its weights
-stay fixed.
+What caught my attention was how they use the data. LightGBM fits
+trees for the table in front of it. A tabular foundation model comes
+pretrained across many tables and reads examples from yours when it
+makes a prediction. When those pretraining tables are all synthetic,
+the stock history the model sees is the history I supply in the
+backtest.
 
-As these models got better at handling larger tables, I wanted to
-try one on stocks.[^larger-tables] With a model pretrained on
-synthetic tables, the stock-specific evidence comes from the
-history I give it. I can walk through the backtest one forecast
-date at a time, giving it the stock information available then.
-I compare its rankings with Ridge and LightGBM and see how those
-rankings hold up after trading costs.
+As these models started handling larger tables, I wanted to see how
+well that approach could rank stocks.[^larger-tables] I compare one
+with Ridge and LightGBM, first on the rankings and then on what those
+rankings deliver after trading costs.
 
 ## A pretrained model for tables
 
@@ -93,11 +88,10 @@ get 0.9 × 0.9 + 0.1 × 0.1, or 82%.
 The probabilities assigned to the rules before seeing the example
 are the *prior*. The updated probabilities are the *posterior*.
 Averaging each rule’s forecast using those probabilities gives the
-*posterior predictive distribution*. In a prior-data fitted network,
-the way we generate the synthetic tables plays the role of those
-starting probabilities. It determines which relationships the
-network sees and how often it sees them. Pretraining teaches the
-network to make this kind of prediction across many such relationships.
+*posterior predictive distribution*. For a prior-data fitted network,
+the table generator sets the prior by choosing which relationships
+to show the network and how often. Pretraining teaches the network
+to approximate this kind of prediction directly from the examples.
 [Molnar’s chapter on prior-data fitted networks](https://tabularfoundationmodels.com/prior-data-fitted-networks)
 develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbNf9).
 
@@ -109,33 +103,35 @@ When I backtest a model, I need to know what it could have seen on
 each forecast date. Say I give a language model an old announcement
 of a proposed merger. It may already have read news about how the
 deal ended. If it did, that later information can influence its
-answer even when I give it just the announcement. For a language model, one
-way to guard against this is to start the backtest after a training
-cutoff I can verify. Glasserman and Lin explore the issue for
+answer even when I give it just the announcement. One way to guard
+against this is to start the backtest after the last date covered
+by the training data, if I can verify that date. Glasserman and Lin
+explore the issue for
 [*GPT-based news sentiment*](https://arxiv.org/abs/2309.17322).
 
-This is where synthetic pretraining makes the stock test appealing.
-NVIDIA trained Kumo Tabular on generated tables. The stock predictors
-and outcomes it sees here come from the tables I give it
+I chose NVIDIA’s Kumo Tabular for the stock test. Its generated
+tables teach it how to use examples, and the historical rows I
+give it supply the evidence about stocks
 ([Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)).
-I can step through history with one fixed network and check the
-inputs on each date. I use predictors available on that date and
-add a historical row to the context only after its 20-session
-outcome is known.
+I keep its weights fixed throughout the backtest. At each forecast
+I use predictors available on that date. A historical row can enter
+the context at a refresh only if its 20-session outcome is already known.
 
 ### Research setup
 
-I give all three models the same target and 80 predictors. For
-the target, I take each stock’s Sharpe ratio over the next 20
-sessions and rank it against its sector peers. I rank the
+Ridge, LightGBM and the Kumo runs all use the same target and 80
+predictors. For the target, I take each stock’s Sharpe ratio over
+the next 20 sessions and rank it against its sector peers. I rank the
 predictors across the whole stock universe on each date.
 I describe how I build the target and predictors in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
 Ridge and LightGBM fit on past data and score the dates that follow.
-I refresh Kumo’s context on the LightGBM refit dates. The expanding
-Kumo runs draw on history back to January 1995. The test runs from
-1999 through May 27, 2026. I show 2022 onward on its own to see
+I refresh Kumo’s context on the LightGBM refit dates. For Kumo,
+I test Small and Medium with expanding histories, where the pool
+of examples grows from the same January 1995 start. I also test
+Rolling Small, which keeps only recent history. The test runs from
+1999 through May 27, 2026. I show 2022 onward separately to see
 whether the same patterns turn up in the more recent years.
 
 For **Ridge**, I use a penalty of $c=0.1$. Several predictors overlap,
@@ -179,49 +175,53 @@ updated vector for C. The next layer can use the updated vector
 to look at the examples again. The network learns how to make
 those comparisons during pretraining
 ([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
-Kumo predicts a range of quantiles for the outcome. I average them
-to get the single score used to rank each stock.
+Kumo can process A and B before it sees C, so it caches their
+representations for reuse on later forecasts. For C, it predicts
+quantiles from the low end of the outcome distribution to the high
+end. I average those quantiles to get one score per stock.
 
 ## Subsampling the historical context
 
-The part that took work on my Mac was giving Kumo enough history.
-Ridge and LightGBM can score a row from their fitted coefficients or
-trees. Kumo also has to process the historical examples it keeps
-around for prediction. The more rows I give it, the more work that
-takes. NVIDIA recommends a GPU for large contexts in its
+A long history makes prediction expensive because Kumo has to
+prepare, store and use the context. Near the end of the 1999–2021
+run, sampling one historical date a week would have left Kumo Small
+with about 760,000 labeled rows, even after the tails cut below.
+I estimated that the main buffers alone would take about 35 GiB
+to prepare that context. My Mac has 16 GB of memory. NVIDIA recommends
+a GPU for large contexts in its
 [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
-I wanted to run the test on the CPU, so I looked for rows I could
-leave out.
+I wanted to run the test on the CPU, so I reduced the context in
+two ways.
 
-**First, space out the historical dates.** Adjacent 20-session targets
-share 19 days of returns. Keeping every date would give Kumo
-many outcomes built from almost the same return days. I sample
-every 30 trading sessions (roughly six weeks) for expanding Small and
-every 40 (roughly eight weeks) for Medium. Both still get examples
-from across the history.
+**First, space out the historical dates.** Two targets one session
+apart share 19 of their 20 return days. Keeping every date would give
+Kumo many examples built from nearly the same returns. I sample every
+30 trading sessions (roughly six weeks) for expanding Small and every
+40 (roughly eight weeks) for Medium, whose context is more expensive
+to process. With six-week sampling, that late Small context came
+down to about 127,000 rows and fit on the Mac.
 
-**Then, keep the tails on each sampled date.** Stocks on the same
-date share market moves. To cut the number of rows further, I sort
-that date’s stocks by their **realized target**, the 20-session
-Sharpe rank within each stock’s sector. I keep roughly the lowest
-30% and the highest 30%. The hope is that examples of strong and
-weak outcomes are especially useful for a portfolio that buys and
-shorts at the ends of the ranking. The middle can still contain
-useful examples. Both cuts apply to historical rows with outcomes
-already known. On each forecast date Kumo still scores every
-eligible stock, and both runs trade on the same schedule.
+**Then, keep the tails on each sampled date.** I sort eligible
+stocks on that date by their **realized target**, the rank of each
+stock’s 20-session Sharpe ratio within its sector. I keep roughly
+the lowest and highest 30% across the date. That saves about 40%
+of the rows while keeping examples of the unusually strong and weak
+outcomes I care about for a long–short portfolio. The middle may
+contain useful examples too. I’d need to give the same model all
+the stocks on those dates to see what dropping the middle does to
+ranking accuracy.
 
 In [*Training Trees on Tails with Applications to Portfolio
 Choice*](https://doi.org/10.1007/s10479-020-03539-2), Coqueret and
 Guida (2020) tested this idea with boosted trees.
 Keeping the lowest and highest 20% of their training outcomes cut
 backtest time by roughly 60% and gave a similar return spread
-between the highest- and lowest-ranked portfolios. That result
-motivated keeping the tails when I needed to shrink Kumo’s context.
+between the highest- and lowest-ranked portfolios.
 
-Figure 2 puts the two steps together in a small example. Here the
-20-session grid keeps four dates and the 30-session grid keeps
-three. With six stocks per date, that leaves 24 and 18 examples.
+Figure 2 uses two illustrative grids. Sampling every 20 sessions
+keeps four dates, and sampling every 30 keeps three. The tails filter
+keeps six of the ten stocks on each selected date, leaving 24 or 18
+labeled rows.
 
 <figure id="figure-2" class="research-figure responsive-figure">
   <div class="context-sampling" role="img" aria-label="The 20-session grid selects historical sessions 0, 20, 40 and 60. The 30-session grid selects 0, 30 and 60. On each selected date, ten stocks are sorted by the realized prediction target. The lowest three and highest three are kept, and the middle four are skipped.">
@@ -268,11 +268,11 @@ three. With six stocks per date, that leaves 24 and 18 examples.
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
-By the end of the original 1999–2021 comparison, weekly sampling
-with the tails filter would still leave about 760,000 labeled rows. I
-estimated 35 GiB just to prepare that context with Kumo Small, on
-a Mac with 16 GB. That’s why I used wider spacing. At six weeks,
-the context dropped to about 127,000 rows and fit on the Mac.
+At each context refresh, as in Figure 1, I apply these cuts to the
+history with known outcomes. The portfolios have three staggered
+signal calendars, each with a rebalance roughly every three weeks.
+Even with six weeks between historical examples, Kumo can score
+every eligible stock on those signal dates using the latest context.
 
 ## Running Kumo on a Mac
 
@@ -298,16 +298,16 @@ Small, I sampled the history weekly in a window that grew from
 two to three years, then rolled forward. That run took just under
 two hours.
 
-Each portfolio needs a new ranking only on its signal dates. Scoring
-on those dates cuts the number of predictions to about a fifth of
-what daily scoring would require.
+Scoring on the three portfolios’ shared set of signal dates takes
+about a fifth as many scoring days as running daily forecasts.
 
 ## Ranking the whole cross-section
 
 Once I have the forecasts, the first thing I check is how well
-each model orders the stocks. All five configurations score the
-same 1,387,790 stock-date rows. That’s 1,429 signal dates across
-three staggered portfolios, each rebalanced roughly every three weeks.
+each model orders the stocks. The five configurations have
+1,387,790 stock forecasts in common across 1,429 signal dates.
+The full-period rank comparison uses the 1,421 dates with
+realized outcomes available by the end of the test.
 
 On each signal date, I rank the model scores and the realized outcomes
 for the same stocks, then correlate the two ranks. That Spearman
@@ -361,9 +361,9 @@ room for a long–short spread before sizing or trading fees.
 
 ## Returns after portfolio construction
 
-The decile spread gives me a first look at the two sides of the
-ranking. Now I want to know what happens when I size positions
-and pay for trading. I give the optimizer the 75 highest- and
+The decile spread weights all names in each tail equally. Sizing
+positions changes which stocks drive returns, and trading costs can
+change the ordering again. I give the optimizer the 75 highest- and
 75 lowest-scoring stocks as new candidates. Stocks already held
 can stay eligible within a wider rank buffer. Each schedule uses
 $5 million of simulated capital, a 7% annual volatility target,
@@ -447,20 +447,19 @@ shortfall on the short side.
 
 From 2022 to May 2026, LightGBM still led on rank IC. With
 75 candidates per side, Medium had the highest net Sharpe,
-at 1.20 versus 1.04 for LightGBM and 0.79 for Ridge.
-Medium’s 0.17 lead over LightGBM
-had a paired 95% interval of −0.38 to 0.71 using 21-session blocks.
+at 1.20 versus 1.04 for LightGBM and 0.79 for Ridge. The paired
+95% interval for Medium’s Sharpe minus LightGBM’s ran from −0.38
+to 0.71 using 21-session blocks.
 
-Medium’s lead came from the long side. Relative to LightGBM, its
-long book contributed 5.5 percentage points more annualized
+Medium’s higher average net P&L came from the long side. Relative
+to LightGBM, its long book contributed 5.5 percentage points more annualized
 arithmetic P&L and its short book gave up 3.2 points. It traded
 29.2 times capital per year versus 20.1 for LightGBM, and the
 extra fees cost another 0.6 points.
 
-When I widened the candidate list, the later comparison got
-closer. At 100 candidates per side, Medium and LightGBM had
-after-fee Sharpes of 1.18 and 1.14. At 150, LightGBM came out
-ahead, at 1.24 versus 1.12 for Medium. Both models traded more
+At 100 candidates per side, Medium and LightGBM were closer, with
+after-fee Sharpes of 1.18 and 1.14. At 150, LightGBM moved ahead,
+at 1.24 versus 1.12 for Medium. Both models traded more
 as I gave the optimizer more names. The paired intervals for
 the later Sharpe gap include zero at all three widths. Over
 the full history, LightGBM led on net Sharpe at every width.
@@ -519,9 +518,10 @@ per side and −3.9% with 150.
 
 ## How the P&L built up
 
-Table 1 compares annualized results. Figure 5 shows when the gaps
-opened and how deep the drawdowns were. The chart starts with each
-path visually rescaled to 7% annualized volatility in the selected
+Table 1 compounds returns. Figure 5 adds up daily net P&L as a
+share of fixed capital, so you can see when the gaps opened and
+how deep the drawdowns were. The chart starts with each path
+visually rescaled to 7% annualized volatility in the selected
 window. Clear the checkbox to see the original paths. Open
 **Explore** to add Rolling Small.
 
@@ -541,8 +541,10 @@ the period in which Medium finished ahead of LightGBM in both views.
 What surprised me was that a model pretrained on artificial tables
 could take these historical examples and rank stocks at all.
 Medium beat Ridge on net Sharpe at each candidate width over the
-full history and from 2022 onward. Its comparison with LightGBM
-in the later period depended more on how I built the portfolio.
+full history and from 2022 onward. LightGBM had the highest
+full-period net Sharpe at all three widths. In the later period,
+the ordering of Medium and LightGBM changed with the number
+of candidates. Rolling Small struggled, particularly on the short side.
 
 I’d like to test Kumo Large over the full period, giving it the same
 historical rows as Small and Medium. Large ranked better on the
