@@ -10,14 +10,24 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-NVIDIA pretrained Kumo Tabular entirely on synthetic tables. I wanted
-to see whether that training could carry over to ranking real stocks,
-where the signal is weak and adjacent return windows overlap.
-[NVIDIA’s Kumo Tabular report](https://arxiv.org/abs/2611.23001v1)
+For years, boosted trees like LightGBM have been a standard choice for
+prediction on tabular data. The setup is familiar. Fit the trees on
+rows with known outcomes, then use the fitted trees to score a new row
+from its predictors.
 
-I compared Kumo with Ridge and LightGBM using the same 80 stock
-predictors. The test starts with the rankings and follows them through
-portfolio construction and trading costs.
+Tabular foundation models change what the model sees when it makes a
+prediction. During pretraining, they learn to predict hidden outcomes
+from labeled examples across many different tables. When you bring a
+new table, the rows with known outcomes are still part of what the model
+sees. It uses those examples to score the rows where the outcome is missing.
+
+I wanted to see whether that idea would carry over to stock ranking,
+where the signal is weak. For the comparison, I chose NVIDIA’s Kumo
+Tabular, a model pretrained entirely on synthetic tables. I gave it
+the same 80 predictors as Ridge and LightGBM. Could it rank stocks well
+enough for those rankings to hold up after portfolio construction and
+trading costs?
+[NVIDIA’s Kumo Tabular report](https://arxiv.org/abs/2611.23001v1) ·
 [How I combine the stock predictors]({% link _posts/2025-02-09-combining-predictors.md %})
 
 ## A pretrained model for tables
@@ -34,11 +44,11 @@ weights fixed. At prediction time, Kumo uses C’s momentum and the
 labeled examples together. Change the examples and C’s score can change
 with the same weights. That’s in-context learning.
 
-During pretraining, Kumo repeatedly predicted hidden outcomes from
-labeled rows in artificial tables. A predictor that mattered in one
-table might carry little signal in the next. Kumo had to infer what
-mattered from each table’s examples. In the backtest those examples are
-real stock-date rows with known outcomes.
+Pretraining varies the relationships from table to table. A predictor
+that carries signal in one artificial table might be unhelpful in the
+next. To fill in the missing outcomes, the model has to infer which
+relationships apply from the labeled examples it sees. In the
+backtest, those examples are real stock-date rows.
 [Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
 
 <figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
@@ -55,25 +65,36 @@ simulated trade takes place at the next close.
 
 ## Subsampling the historical context
 
-At each of the 12 context refreshes, Kumo can use historical rows whose
-full 20-session outcomes are known before the first forecast. The
-expanding samples start in January 1995. I cut the context to fit in
-memory in two steps.
+Kumo prepares its labeled examples in memory before scoring stocks.
+In the last expanding fold, sampling one historical date a week would
+still leave about 760,000 rows after cutting the number of stocks per date.
+Small’s main 32-bit buffers alone were estimated to need about 35 GiB.
+My Mac has 16 GB. I wanted to keep examples spread across the full
+history, so I reduced the row count in two ways.
 
-First I choose historical dates from a fixed grid of trading sessions.
-One Small run takes every 20th session, the other every 30th. In the
-figure, the two grids share sessions 0 and 60. The four-week grid also
-uses 20 and 40, while the six-week grid uses 30. A denser grid changes
-which dates Kumo sees as well as how many.
+First I thin the historical dates on a regular grid starting in
+January 1995. This keeps early and recent examples in the same
+context. At each refresh, I use rows whose full 20-session outcome
+is already known before the first forecast. One Small run takes every
+20th trading session, the other every 30th. In Figure 2, the grids
+share sessions 0 and 60, the four-week grid adds 20 and 40, and the
+six-week grid adds 30.
 
-On each selected date I sort the eligible stocks by their realized
-target and keep roughly the bottom and top 30%. With ten stocks and
-distinct outcomes, that means keeping three at each end and leaving
-four in the middle. I wanted the examples to emphasize the strong and
-weak outcomes that matter for long and short selection.
+On each selected date I sort the eligible stocks by **the realized
+target Kumo is asked to predict**, their forward 20-session Sharpe
+ratio ranked within their sector. I keep roughly the bottom and top 30%
+and retain their original target values. With ten stocks and distinct
+targets, that gives Kumo three examples at each end and removes four
+middle rows. This saves about 40% of the rows on the sampled dates while
+keeping examples of both the strong and weak outcomes that matter for
+long and short selection.
+
+Coqueret and Guida (2020) studied this kind of target-based subsampling
+for regression trees in portfolio selection.
+[Training trees on tails with applications to portfolio choice](https://link.springer.com/article/10.1007/s10479-020-03539-2)
 
 <figure id="figure-2" class="research-figure responsive-figure">
-  <div class="context-sampling" role="img" aria-label="The 20-session grid selects historical sessions 0, 20, 40 and 60. The 30-session grid selects 0, 30 and 60. On each selected date, ten stocks are sorted by realized outcome. The lowest three and highest three are kept, and the middle four are skipped.">
+  <div class="context-sampling" role="img" aria-label="The 20-session grid selects historical sessions 0, 20, 40 and 60. The 30-session grid selects 0, 30 and 60. On each selected date, ten stocks are sorted by the realized prediction target. The lowest three and highest three are kept, and the middle four are skipped.">
     <div aria-hidden="true">
       <div class="context-sampling-heading">Historical dates</div>
       <div class="context-sampling-dates">
@@ -91,7 +112,7 @@ weak outcomes that matter for long and short selection.
       </div>
     </div>
     <div aria-hidden="true">
-      <div class="context-sampling-heading">Stocks on one selected date</div>
+      <div class="context-sampling-heading">Stocks sorted by realized target</div>
       <div class="context-sampling-stocks">
         <div>
           <span>Lowest 30%</span>
@@ -117,6 +138,25 @@ weak outcomes that matter for long and short selection.
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
+By the last fold, Small’s context contained 190,064 labeled rows at
+four-week spacing and 126,892 at six-week spacing.
+
+## Running Kumo on a Mac
+
+I ran Kumo on the 10-core Apple M2 Pro CPU of my 14-inch MacBook Pro
+(2023), with 16 GB of unified memory. I started with Large because it
+had the best results in NVIDIA’s paper. Large and Small both hit my
+10 GiB memory limit in the first fold, even with 35,738 context rows
+for Small. Smaller batches during context preparation got both through.
+
+For the expanding runs I used wider historical spacing and reused
+the prepared context across forecasts within each fold. Large ran
+only in the first-fold comparison.
+
+I used the forecast calendar to save computation at prediction time.
+Scoring only on signal dates cut the number of predictions to about a
+fifth of the daily total.
+
 ## Ranking the whole cross-section
 
 Every Kumo run scores the same 1,162,773 stock-date rows over 1999–2021,
@@ -124,19 +164,38 @@ covering all eligible stocks on each signal date. Three staggered
 portfolios each rebalance roughly every three weeks, giving about one
 signal date a week across the three.
 
-In the final fold, four-week Small used 190,064 labeled rows and
-six-week Small used 126,892. Their full runs took 2 hours 37 minutes and
-1 hour 39 minutes, respectively. Medium needed eight-week spacing to
-fit in memory and ran in 2 hours 52 minutes.
+The full four- and six-week Small runs took 2 hours 37 minutes and
+1 hour 39 minutes, respectively. Medium needed eight-week spacing
+to fit in memory and ran in 2 hours 52 minutes.
 
 I also ran Small with weekly historical dates in a shorter window. It
 starts at two years and grows to three, then drops older dates as it
 rolls forward. That run took just under two hours.
 
-On each signal date I compare the model's ranking with the realized
-ranking using Spearman correlation. Rank IC is the average correlation.
-ICIR divides that average by how much the correlation varies across
-dates, measured by its sample standard deviation. I leave ICIR
+For each signal date $t$, I rank the scores $s_{i,t}$ and the realized
+targets $y_{i,t}$ across the same stocks. The information coefficient
+(IC) is Spearman correlation, the Pearson correlation of those two sets
+of ranks. I use stocks with a score from every model and a known target.
+
+$$
+\mathrm{IC}_t
+= \operatorname{Corr}_i\!\bigl(
+  \operatorname{rank}_i(s_{i,t}),\,\operatorname{rank}_i(y_{i,t})
+\bigr).
+$$
+
+Rank IC in Table 1 is the average of the $T$ signal-date ICs. The
+information coefficient ratio (ICIR) divides that average by their
+sample standard deviation, $s_{\mathrm{IC}}$.
+
+$$
+\overline{\mathrm{IC}}=\frac{1}{T}\sum_{t=1}^{T}\mathrm{IC}_t,
+\qquad
+\mathrm{ICIR}=\frac{\overline{\mathrm{IC}}}{s_{\mathrm{IC}}}.
+$$
+
+For example, LightGBM’s full-period average of 0.0557 and standard
+deviation of about 0.077 give an ICIR of about 0.72. The ratio is
 unannualized.
 
 <div id="table-4" class="research-table-scroll" tabindex="0" role="region" aria-label="Rank statistics on matched signal dates">
@@ -196,11 +255,40 @@ from 2017–2021.
 
 ## Return and risk by score decile
 
-Rank IC describes the whole cross-section. For a long-short portfolio
-I'm especially interested in what happens at the ends. I sort each day's
-scores into ten equal-weight groups, trade at the next close, and hold
-until the next rebalance. I average daily returns across the three
-schedules before compounding and use a zero cash return for Sharpe.
+Rank IC measures agreement across the whole ranking. To see how much
+that matters at the ends, I sort each signal date’s scores into ten
+roughly equal-sized groups. A signal trades at the next close. The
+deciles start earning returns the session after that and keep the same
+members until the next trade.
+
+Each day I give the stocks in a decile equal weights within their
+schedule, then give the three schedules equal weight. Let $D_{d,k,t}$
+be the members of decile $d$ on schedule $k$ with an available return
+on date $t$, and $r_{i,t}$ be stock $i$’s close-to-close total return.
+
+$$
+R_{d,t}
+=\frac{1}{3}\sum_{k=1}^{3}
+  \frac{1}{|D_{d,k,t}|}\sum_{i\in D_{d,k,t}}r_{i,t}.
+$$
+
+So three stocks returning 2%, 1% and −1% contribute a decile return of
+about 0.67% for that schedule on that day. I average only on dates
+with all three schedules present. The top-minus-bottom series subtracts
+the bottom decile’s daily return from the top decile’s before compounding.
+
+For either a decile or the spread, let $R_t$ be its daily return,
+$\bar R$ its mean and $s_R$ its sample standard deviation over $T$
+trading sessions. With 252 sessions per year and zero cash return,
+the annualized statistics are
+
+$$
+\begin{aligned}
+R_{\mathrm{ann}}&=\left[\prod_{t=1}^{T}(1+R_t)\right]^{252/T}-1,\\
+\sigma_{\mathrm{ann}}&=\sqrt{252}\,s_R,\\
+\mathrm{Sharpe}_{\mathrm{ann}}&=\sqrt{252}\,\frac{\bar R}{s_R}.
+\end{aligned}
+$$
 
 <figure id="figure-3" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=2" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="7" label="Return, volatility and Sharpe by stock score decile, with selectable periods and models." %}
@@ -210,13 +298,13 @@ schedules before compounding and use a zero cash return for Sharpe.
 LightGBM separates at both ends, with a higher return at the top and
 a lower return at the bottom. The rolling variant is particularly weak
 on the short side. Stocks in its lowest score decile earn nearly 10%
-a year. The top-minus-bottom spread compounds the difference between
-those two deciles' daily returns.
+a year.
 
 ## Returns after portfolio construction
 
-To see what I'd get after sizing and paying for trades, I build
-long-short portfolios from the 75 highest and 75 lowest scores. Each
+The deciles show how the scores separate returns before costs. To see
+how that carries through sizing and fees, I build long-short portfolios
+from the 75 highest and 75 lowest scores. Each
 schedule uses $5 million of simulated capital, a 7% annual volatility
 target, and limits on gross exposure and market beta. Where I can
 measure liquidity, I cap trades at 10% of the previous 21 sessions'
@@ -286,11 +374,10 @@ portfolios together in 21-session blocks gives an interval of −0.99 to
 
 ## How similarly the models trade
 
-I also wanted to know whether Kumo was finding different trades. Two
-models can agree on most of the ranking and still choose different
-stocks at the ends. The left matrix averages rank correlations across
-signal dates. The right one shows how the net daily returns move
-together, averaging the Pearson correlations from the three schedules.
+Medium came close to Ridge after costs. I wanted to see whether their
+rankings and daily returns were also similar. The left matrix averages
+rank correlations across signal dates. The right averages the Pearson
+correlations of net daily returns across the three schedules.
 
 <div role="group" aria-labelledby="table-3">
   <p id="table-3" class="table-caption"><span class="caption-number">Table 3.</span> <span class="caption-title">Correlations between models, 1999–2021.</span> Rankings use 1,200 signal dates. Net returns use 5,773 trading sessions.</p>
@@ -312,25 +399,11 @@ execution fees 1.4. Medium earned about 1.8 points more than four-week Small.
 The long side added 1.5 points and lower fees added 0.9, with the short
 side giving back 0.6.
 
-## Running Kumo on a Mac
-
-I ran Kumo on the 10-core Apple M2 Pro CPU of my 14-inch MacBook Pro
-(2023), with 16 GB of unified memory. I started with Large because it
-had the best results in NVIDIA’s paper. Large and Small both hit my
-10 GiB memory limit in the first fold, even with 35,738 context rows
-for Small. Smaller batches during context preparation got both through.
-
-With weekly historical dates, the final expanding fold would have
-about 760,000 rows after the tail selection. Small’s main 32-bit
-buffers alone would take about 35 GiB. I spaced the historical dates
-farther apart and reused the prepared context across forecasts within
-each fold. Large ran only in the first-fold comparison.
-
-Scoring on the signal calendar cut the number of predictions to about
-a fifth of the daily total. Each signal date still included the whole
-eligible cross-section.
-
 ## What changed with more training rows
+
+The Kumo portfolio results reflect how much historical context each
+checkpoint could fit in memory. The first fold lets me compare model
+sizes on a fixed grid and sampling grids within Small.
 
 On the 91 matched signal dates in the first fold, Kumo Small's ICIR was
 1.08 at three-week training spacing, 0.91 at four weeks, and 0.62 at six.
@@ -350,11 +423,10 @@ Sharpe through 2011 and a lower one after 2011.
 
 ## The shorter history changed what Kumo picked
 
-I tried the rolling window because relationships in equities can
-change. Weekly dates give Kumo more examples of the recent market.
-Letting older observations fall out gives those recent examples more
-weight in the context. Here the comparison changes both the age of
-the examples and how often I sample them.
+The expanding runs all reached back to January 1995. I tried a rolling
+window because relationships in equities can change. It gives Kumo
+denser examples of recent markets and drops older observations, changing
+both the spacing and the age of the examples.
 
 The rolling model’s rankings were less correlated with Ridge and
 LightGBM. Its own ICIR fell by 0.44 versus four-week expanding Small,
@@ -371,8 +443,9 @@ earned 0.7 points less, and lower fees recovered 0.4 points.
 
 ## How the P&L built up
 
-I was surprised by how close Medium stayed to Ridge over the full
-test. LightGBM pulled ahead early and kept adding to its lead.
+The cumulative paths show when those performance gaps opened up.
+Medium stayed close to Ridge over the full test. LightGBM pulled ahead
+early and kept adding to its lead.
 At their original volatility, Ridge and Medium had each earned about
 $244 per $100 of fixed capital by the end of 2021, and LightGBM had
 earned about $365.
@@ -396,3 +469,9 @@ In the first fold, ranking improved from Small to Medium to Large
 when I used the same training dates. Across the full test, the memory
 limit forced me to use fewer dates for Medium, so I’m still curious
 what a larger model would do with the same history.
+
+## References
+
+- Coqueret, Guillaume, and Tony Guida (2020). *Training trees on tails with applications to portfolio choice*. *Annals of Operations Research*, 288, 181–221. [Published article](https://doi.org/10.1007/s10479-020-03539-2)
+- Molnar, Christoph. *Tabular Foundation Models*. [Online book](https://tabularfoundationmodels.com/) · [In-context learning, Figure 4.2](https://tabularfoundationmodels.com/prediction#fig-input-output) · [Pretraining](https://tabularfoundationmodels.com/pretraining) · [Classification](https://tabularfoundationmodels.com/classification)
+- Qu, Jingang, et al. (2026). *NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*. arXiv:2611.23001, v1. [Preprint](https://arxiv.org/abs/2611.23001v1)
