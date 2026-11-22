@@ -535,16 +535,9 @@ full-period net Sharpe at all three widths. In the later period,
 the ordering of Medium and LightGBM changed with the number
 of candidates. Rolling Small struggled, particularly on the short side.
 
-I’d like to compare Kumo Small, Medium and Large over the full
-period, giving all three the same historical examples.
-
-I’d also like to give a fixed model more data. With more memory, I
-could sample dates more often and test all eligible stocks against
-keeping just the tails. Changing one of those at a time would show
-whether the extra examples improve the ranking and what they cost
-to process. As newer tabular foundation models come out, I’d run them
-through the same comparison to see whether they can use more history
-at a manageable cost and whether that shows up after trading fees.
+I’m looking forward to the next round of tabular foundation models.
+With more efficient models, I could use more of the available stock
+history and see whether the extra examples improve the rankings.
 
 ## References
 
