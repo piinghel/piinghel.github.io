@@ -25,61 +25,77 @@ position sizing and trading costs.
 
 ## A pretrained model for tables
 
-### What the historical examples do at prediction time
+### What the model needs to make a prediction
 
-Imagine adding a row to a table with two predictors. The predictors
-are filled in and the outcome is blank. In LightGBM, `fit()` builds
-a series of trees from the labeled rows. Each tree adds a correction
-to the earlier predictions. One tree might split the rows on the
-first predictor and learn a different correction on either side.
-In `predict()`, the new row follows the branches in the fitted
-trees and I add up the corrections. With Ridge, the fitted
-coefficients play the same role as the trees.
+Suppose I want to predict how long an 8 km delivery will take at
+5 p.m. My table has past deliveries, with the distance, time of
+day and actual delivery time for each one. For the new order,
+I know the distance and time of day. The delivery time is blank.
 
-A tabular foundation model sees the new row’s predictors alongside
-the examples and their known outcomes. Those examples are its
-*context*. I can keep the same new row and the same network weights,
-swap the examples, and get a different answer. That’s *in-context
-learning*.
+With LightGBM, I use the completed deliveries to fit a set of
+trees. A tree can learn to use a different estimate for short
+and long trips, or to use the time of day for some trips. Once
+the trees are fitted, I can give them the new order’s predictors
+and get an estimate. I’d have to fit the trees again for new delivery
+records to change that estimate. Ridge works the same way in this
+respect. The fitted coefficients carry forward what it learned.
 
-Both workflows can look like `fit()` followed by `predict()` in
-code. For LightGBM, `fit()` is where the trees are built. For a
-pretrained model such as TabPFN or TabICL, it prepares the examples
-that the network will use to predict. Christoph Molnar illustrates
-what goes into each prediction in
+Think about k-nearest neighbors. To predict the new order’s
+delivery time, it looks up past orders with similar distances
+and times of day. If the two closest took 25 and 35 minutes, a
+two-neighbor forecast would be 30 minutes. The old rows and
+their delivery times are still part of making the prediction.
+
+A tabular foundation model also gets the past deliveries and
+their known outcomes at prediction time. Those rows are its
+*context*. With k-nearest neighbors, I choose what counts as
+a similar trip. The network has already learned how to weigh
+information from the examples. It can pick up, for instance,
+that rush hour matters more for long trips.
+
+If I give the same network a different city’s deliveries, the
+same order can get a different estimate. The network weights
+stay fixed. That’s *in-context learning*.
+
+The code can look like the same two calls, `fit()` and
+`predict()`. With LightGBM, `fit()` builds the trees.
+With a pretrained network, it can store or prepare the examples
+the network will use during `predict()`. Christoph Molnar uses
+the k-nearest-neighbors analogy and shows what each model needs
+when it predicts in
 [*Tabular Foundation Models*, Chapter 4](https://tabularfoundationmodels.com/prediction#tfms-do-in-context-learning).
 
 ### Pretraining across many tables
 
-During pretraining, the network sees one prediction problem after
-another. In each table, it gets the outcomes for some rows and has
-to predict the outcomes for the others. Its errors on those hidden
-outcomes are used to update the network weights.
+The network learns to use examples by solving many prediction
+problems before it sees a table like the delivery data. In each
+practice table, some rows come with outcomes and others have blanks.
+The network tries to fill the blanks, and the errors update its weights.
 
-In one synthetic table, the first column might explain most of
-the outcome. In another, two columns might matter together. If
-every table followed the same rule, the network could use that
-rule everywhere. When the rules vary, the labeled rows help it
-work out which relationships make sense for the table at hand.
+The practice tables can be generated. In one table, the first
+predictor might explain most of the outcome. In another, two
+predictors might matter together. The rule changes from one table
+to the next, so the network has to use the labeled rows to work
+out what matters in each table. That is the skill it brings to
+a new dataset.
 Molnar shows how those tables are generated in
 [*Tabular Foundation Models*, Chapter 5](https://tabularfoundationmodels.com/pretraining).
 
 ### The Bayesian intuition
 
-Return to the table with two predictors and imagine two possible rules.
-Under the first, a high value in the first column usually gives a high
-outcome. Under the second, both predictors usually need to be high.
-Start with a 50% probability for each rule. Suppose the usual outcome
-occurs nine times out of ten under either rule, with independent errors
-across rows.
+Go back to the deliveries and imagine two possible rules. Under
+the first, long routes usually take a long time. Under the second,
+they usually take a long time during rush hour and are quick at
+other times. Start with both rules equally likely and suppose each
+rule gives the right outcome nine times out of ten, independently
+from one delivery to the next.
 
-Now I see a row where the first predictor is high, the second is
-low, and the outcome is low. That outcome is nine times as likely
-under the second rule. The rules started with equal odds, so I
-now give the second rule a 90% probability. For a new row with
-the same predictors, either rule could still give a low outcome.
-Weight the two forecasts by their updated probabilities and you
-get 0.9 × 0.9 + 0.1 × 0.1, or 82%.
+Now I see a long route outside rush hour that was delivered quickly.
+That outcome is nine times as likely under the second rule, so I
+update its probability to 90%. For another long route outside rush
+hour, the probability of a quick delivery is 90% under the second
+rule and 10% under the first. Weight those forecasts by the new
+probabilities of the rules and I get 0.9 × 0.9 + 0.1 × 0.1, or 82%.
 
 The probabilities assigned to the rules before seeing the example
 are the *prior*. The updated probabilities are the *posterior*.
@@ -94,16 +110,6 @@ develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbN
 ## Testing a tabular foundation model on stocks
 
 ### What the model could know on each date
-
-When I backtest a model, I need to know what it could have seen on
-each forecast date. Say I give a language model an old announcement
-of a proposed merger. It may already have read news about how the
-deal ended. If it did, that later information can influence its
-answer even when I give it just the announcement. One way to guard
-against this is to start the backtest after the last date covered
-by the training data, if I can verify that date. Glasserman and Lin
-explore the issue for
-[*GPT-based news sentiment*](https://arxiv.org/abs/2309.17322).
 
 I chose NVIDIA’s Kumo Tabular, which was pretrained entirely on
 generated tables
@@ -517,7 +523,6 @@ at a manageable cost and whether that shows up after trading fees.
 ## References
 
 - Coqueret, Guillaume, and Tony Guida (2020). [*Training Trees on Tails with Applications to Portfolio Choice*](https://doi.org/10.1007/s10479-020-03539-2). *Annals of Operations Research*, 288(1), 181–221.
-- Glasserman, Paul, and Caden Lin (2023). [*Assessing Look-Ahead Bias in Stock Return Predictions Generated By GPT Sentiment Analysis*](https://arxiv.org/abs/2309.17322). arXiv:2309.17322.
 - Grinsztajn, Léo, Edouard Oyallon, and Gaël Varoquaux (2022). [*Why Do Tree-Based Models Still Outperform Deep Learning on Typical Tabular Data?*](https://proceedings.neurips.cc/paper_files/paper/2022/hash/0378c7692da36807bdec87ab043cdadc-Abstract-Datasets_and_Benchmarks.html). *NeurIPS*, Datasets and Benchmarks Track.
 - Grinsztajn, Léo, et al. (2025). [*TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models*](https://arxiv.org/abs/2511.08667). Technical report, arXiv:2511.08667.
 - Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book.
