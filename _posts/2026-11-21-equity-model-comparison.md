@@ -468,9 +468,9 @@ earned 0.7 points less, and lower fees recovered 0.4 points.
 
 Figure 5 shows when Medium, Ridge and LightGBM diverged. It opens
 with each portfolio rescaled to 7% annualized volatility over the
-selected window. On that scale, over 1999–2021 Medium earned about
-$251 per $100 of fixed capital, ahead of Ridge at $209. LightGBM
-pulled ahead early and finished at $366.
+selected window. On that scale, over 1999–2021 Medium earned
+about USD 251 per USD 100 of fixed capital, ahead of Ridge at
+USD 209. LightGBM pulled ahead early and finished at USD 366.
 
 <figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=4" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="3" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, rescaled to 7% annualized volatility by default." %}
@@ -480,8 +480,8 @@ pulled ahead early and finished at $366.
 At matched volatility, Medium’s worst drawdown was smaller than
 Ridge’s. LightGBM had the smallest drawdown of the three. Clear the
 checkbox to see the original paths. At their original volatilities,
-Medium and Ridge each earned about $244 per $100 of fixed capital,
-while LightGBM earned about $365.
+Medium and Ridge each earned about USD 244 per USD 100 of fixed
+capital, while LightGBM earned about USD 365.
 
 ## What I found and what I’d test next
 
