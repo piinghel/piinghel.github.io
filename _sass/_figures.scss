@@ -12,12 +12,12 @@
 .theme-svg-figure--dark { display: none; }
 .stock-scoring-figure picture {
   display: block;
-  max-width: 28rem;
+  max-width: 34rem;
   margin-inline: auto;
 }
 .stock-scoring-figure img { display: block; width: 100%; }
 @media (max-width: 600px) {
-  .stock-scoring-figure picture { max-width: 18rem; }
+  .stock-scoring-figure picture { max-width: 21rem; }
 }
 html[data-theme="dark"] .stock-scoring-figure img {
   filter: invert(1) hue-rotate(180deg);
