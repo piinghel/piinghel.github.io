@@ -77,6 +77,34 @@ Read the finished article as a continuous explanation: does each concept
 arrive when the reader needs it, and does each detail advance the question,
 method, evidence or interpretation?
 
+## Checklist for a first read
+
+- [ ] **Establish the scope.** Start with the familiar problem. Introduce the
+  general idea before the specific model or application. Say what changes in
+  this study and what is held fixed. Point to the relevant section of another
+  post when it already explains an inherited input or method.
+- [ ] **Explain why each choice was made.** Put the practical constraint or
+  hypothesis before the method. For a shortcut, spell out what it saves,
+  what it might give up and which part of that trade-off the test measures.
+- [ ] **Introduce terms when they earn their place.** Give the reader a
+  small example or a sequence of events first. Define unfamiliar terms at
+  first use. Cut internal labels that can be said plainly.
+- [ ] **Connect the sections.** End a section with what the comparison
+  showed. Let the open question motivate the next comparison. Prefer a
+  single well-placed explanation to a reminder in every section.
+- [ ] **Make the math interpretable.** Say what the quantity measures,
+  define what is averaged and work through a small example. Keep timing,
+  units, denominators and implementation conventions where they affect
+  the result.
+- [ ] **Check the figures independently.** Give each figure one job, use
+  quiet styling and make the scale, default view and selected period clear.
+  Test labels and controls on a phone. Put the interpretation beside the figure.
+- [ ] **Finish with the evidence.** Distinguish what changed, what was held
+  fixed and what the comparison leaves open. Credit explanatory references
+  next to the idea they illuminate and list them at the end of the article.
+
+## Technical details and attribution
+
 When an optimizer is central, introduce the allocation problem, then show the
 objective and constraints together. Name the terms just below. Use standard
 language such as “turnover penalty” for the cost charged in the objective, and

@@ -6,7 +6,7 @@ description: "Three ways to make a Ridge strategy's momentum exposure depend on 
 permalink: /quants/momentum-crashes-ridge.html
 toc: true
 date: 2026-09-30
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Momentum crashes
 github_repositories:
@@ -14,12 +14,13 @@ github_repositories:
     url: https://github.com/piinghel/momentum-crash-study
 ---
 
-From 9 March to 29 May 2009, the Russell 1000 momentum spread lost 57%
-while the stocks on its short side rose 134%. The sizing problem is whether
+The Russell 1000 momentum spread is long past winners and short past
+losers. From 9 March to 29 May 2009, the spread lost 57% while the stocks
+on its short side rose 134%. The sizing problem is whether
 there was a signal to cut exposure before the rebound, and how much return
 that protection would have cost in other periods.
 
-About fifteen of the [Ridge model’s 80 predictors]({% link _posts/2025-02-09-combining-predictors.md %})
+About fifteen of the [Ridge model’s 80 predictors]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors)
 are trend measures. The [jointly sized portfolio]({% link _posts/2026-08-29-joint-sizing.md %})
 tends to hold past winners and short past losers. It lost 15.5 points of
 capital on the 30 worst momentum days in development, against an average

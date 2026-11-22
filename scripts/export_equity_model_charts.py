@@ -116,6 +116,88 @@ def export(
             json.dumps(data, ensure_ascii=False, allow_nan=False, indent=2) + "\n"
         )
 
+    export_rank(report, profiles_path.parent, models=models, periods=periods)
+
+
+def export_rank(
+    report: Path,
+    output: Path,
+    *,
+    models: tuple[tuple[str, str, str], ...],
+    periods: tuple[str, ...],
+) -> None:
+    metrics = (
+        ("ic_mean", "Rank IC", 4),
+        ("ic_sd", "IC standard deviation", 3),
+        ("icir", "ICIR", 3),
+    )
+    rank_rows = {}
+    for row in rows(report / "rank_summary.csv"):
+        key = (row["period"], row["model"])
+        if key in rank_rows:
+            raise ValueError(f"Duplicate rank result for {key}")
+        rank_rows[key] = row
+
+    period_data = []
+    for period in periods:
+        results = {model: rank_rows[period, model] for model, *_ in models}
+        dates = {int(result["dates"]) for result in results.values()}
+        if len(dates) != 1:
+            raise ValueError(f"Models use different signal date counts in {period}")
+        period_data.append({
+            "label": period,
+            "dates": dates.pop(),
+            "values": {
+                model: {metric: float(result[metric]) for metric, *_ in metrics}
+                for model, result in results.items()
+            },
+        })
+
+    chart = {
+        "kind": "rank-bars",
+        "series": [
+            {"id": model, "label": label, "role": role} for model, label, role in models
+        ],
+        "metrics": [
+            {"id": metric, "label": label, "digits": digits}
+            for metric, label, digits in metrics
+        ],
+        "periods": period_data,
+    }
+    base = output / "rank-metrics"
+    base.with_suffix(".json").write_text(
+        json.dumps({"version": 1, "charts": {"rank": chart}}, ensure_ascii=False,
+                   allow_nan=False, indent=2) + "\n"
+    )
+    render_rank_fallbacks(
+        base,
+        labels=[label for _, label, _ in models],
+        values=[period_data[0]["values"][model]["ic_mean"] for model, *_ in models],
+    )
+
+
+def render_rank_fallbacks(
+    base: Path, *, labels: list[str], values: list[float]
+) -> None:
+    for mobile in (False, True):
+        for dark in (False, True):
+            ink, grid = ("#dce3eb", "#36404a") if dark else ("#27343d", "#e2e7eb")
+            fill = "#9db1c3" if dark else "#526c82"
+            with plt.rc_context({"svg.hashsalt": "stock-rank-metrics", "font.size": 11}):
+                figure, axis = plt.subplots(
+                    figsize=(4.1 if mobile else 6.7, 2.65), layout="constrained"
+                )
+                bars = axis.barh(labels, values, height=0.54, color=fill)
+                axis.bar_label(bars, fmt="%.4f", padding=4, color=ink, fontsize=10)
+                axis.invert_yaxis()
+                axis.set_xlim(0, max(values) * 1.33)
+                axis.set_xlabel("Rank IC, 1999–2021", color=ink, fontsize=11)
+                axis.tick_params(length=0, colors=ink)
+                axis.grid(axis="x", color=grid, linewidth=0.6)
+                axis.set_axisbelow(True)
+                axis.spines[:].set_visible(False)
+                save_svg(figure, svg_path(base, mobile=mobile, dark=dark), transparent=True)
+
 
 def export_pnl(
     report: Path,

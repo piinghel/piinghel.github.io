@@ -328,6 +328,7 @@
       const [data]=await Promise.all([load(host.dataset.source),plotly()]);
       if(data.version!==1) throw new Error('Unsupported chart version');
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
+      if(cfg.kind==='rank-bars'){await rankBars(host,cfg);return;}
       if(cfg.kind==='decile-profiles'){await decileProfiles(host,cfg);return;}
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
@@ -823,6 +824,56 @@
     }
     await draw();new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
+  }
+  async function rankBars(host,cfg) {
+    const ui=host.querySelector('.blog-chart-ui');
+    ui.hidden=false;
+    const graph=element('div','blog-chart-plot');
+    graph.setAttribute('role','img');
+    ui.append(graph);
+    let period=cfg.periods[0],metric=cfg.metrics[0];
+    periodChoices(ui,cfg.metrics.map(item=>item.label),index=>{
+      metric=cfg.metrics[index];
+      draw();
+    },'Rank metric');
+    periodChoices(ui,cfg.periods.map(item=>item.label),index=>{
+      period=cfg.periods[index];
+      draw();
+    });
+
+    async function draw() {
+      const dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
+      const height=228,labels=cfg.series.map(item=>item.label);
+      const values=cfg.series.map(item=>period.values[item.id][metric.id]);
+      const allValues=cfg.periods.flatMap(item=>cfg.series.map(model=>item.values[model.id][metric.id]));
+      const lower=Math.min(0,...allValues),upper=Math.max(0,...allValues),span=upper-lower;
+      const textValues=values.map(value=>value.toFixed(metric.digits).replace('-','−'));
+      const annotations=values.map((value,index)=>({
+        x:Math.max(0,value),y:labels[index],text:textValues[index],
+        xanchor:'left',xshift:4,showarrow:false,font:{size:12,color:ink},
+      }));
+      graph.style.height=height+'px';
+      graph.setAttribute('aria-label',metric.label+' in '+period.label+' across '+period.dates+
+        ' signal dates. '+labels.map((label,index)=>label+' '+textValues[index]).join(', ')+'.');
+      await Plotly.react(graph,[{type:'bar',orientation:'h',x:values,y:labels,
+        marker:{color:cfg.series.map(item=>COLORS[item.role]),opacity:.86},width:.55,
+        text:textValues,textposition:'none',
+        hovertemplate:'%{y}<br>'+metric.label+': %{text}<extra></extra>'}],
+        {height,margin:{l:106,r:8,t:3,b:29},font:{family:'Bricolage Grotesque, sans-serif',size:12,color:ink},
+          paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
+          showlegend:false,dragmode:false,annotations,
+          xaxis:{range:[lower-(lower<0?.12:0)*span,upper+.29*span],tickformat:'.2f',nticks:5,
+            fixedrange:true,gridcolor:grid,zerolinecolor:COLORS.comparison},
+          yaxis:{autorange:'reversed',fixedrange:true}},
+        {responsive:true,displayModeBar:false});
+    }
+
+    await draw();
+    host.querySelector('.blog-chart-status').hidden=true;
+    host.querySelector('.blog-chart-fallback').hidden=true;
+    new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    let width=host.clientWidth;
+    new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
   async function decileProfiles(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');

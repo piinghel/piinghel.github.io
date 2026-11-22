@@ -6,7 +6,7 @@ description: "How stock characteristics and market exposure contribute to the po
 permalink: /quants/portfolio-attribution.html
 toc: true
 date: 2026-09-09
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Risk & attribution"]
 article_label: Performance attribution · Part 1 of 2
 series_id: performance-attribution
@@ -19,22 +19,13 @@ The portfolio in [From Volatility Scaling to Joint
 Sizing]({% link _posts/2026-08-29-joint-sizing.md %}) compounded at about
 8.9% a year after costs from September 1998 to May 2026, with 6.6% volatility,
 a Sharpe ratio of 1.32 and two-way turnover of about 21 times capital a year.
-A return chart says how much it made. It doesn't say what for. After
-short-term reversal, the largest fitted contribution here is the combined
-low-risk position: low volatility, beta and net market exposure together
-earned 2.6% a year before costs. Its
-net long dollars matter to that result, even with a tight forecast-beta limit.
-
-The ranking behind it combines the 80 predictors of the [regression
-article]({% link _posts/2025-02-09-combining-predictors.md %}). So what I really
-want to know is which of the ranking's themes the portfolio is actually paid
-for, which ones take risk without paying for it, and whether that has changed.
-
-The book is the optimizer article's final portfolio, joint sizing with trading
-controls, with its three rebalance schedules held together at equal notional.
-I use the full history here to understand its exposures and payoffs. This is
-an explanation of the backtest; changes suggested by the attribution still
-need a separate comparison with the portfolio rules fixed in advance.
+A return chart says how much the book made. I want to know which of the
+ranking’s themes it was paid for, which took risk without paying for it,
+and whether that changed. I use the same portfolio with trading controls,
+holding its three rebalancing schedules at equal notional. The attribution
+describes what drove this backtest. Any changes it suggests need a
+separate comparison with the portfolio rules fixed in advance.
+[The Ridge predictors behind the ranking]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors)
 
 <div id="pnl-conventions" markdown="1">
 Capital is held fixed, and one P&L point is 1% of it. Trading costs are

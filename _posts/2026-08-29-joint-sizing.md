@@ -4,7 +4,7 @@ interactive_charts: true
 title: "From Volatility Scaling to Joint Sizing"
 description: "Sizing stocks together under a risk budget, then slowing the trading down with a rank buffer and a trade penalty."
 date: 2026-08-29
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Joint sizing
 permalink: /quants/joint-sizing.html
@@ -41,7 +41,10 @@ about their durability.
 
 ## Sizing under a volatility budget
 
-Start with the unconstrained problem. With expected excess returns
+I want to use the risk budget where the ranking is strongest and give
+stocks credit for hedging each other. The unconstrained Sharpe problem
+shows how expected return and covariance determine the relative
+position sizes. With expected excess returns
 $$\alpha$$ and a positive-definite covariance matrix $$\Sigma$$,
 
 $$

@@ -17,39 +17,49 @@ from its predictors.
 
 Tabular foundation models change what the model sees when it makes a
 prediction. During pretraining, they learn to predict hidden outcomes
-from labeled examples across many different tables. When you bring a
-new table, the rows with known outcomes are still part of what the model
-sees. It uses those examples to score the rows where the outcome is missing.
+from labeled examples across many different tables. Give one a new
+table and it uses the rows with known outcomes to score the others.
 
 I wanted to see whether that idea would carry over to stock ranking,
 where the signal is weak. For the comparison, I chose NVIDIA’s Kumo
-Tabular, a model pretrained entirely on synthetic tables. I gave it
-the same 80 predictors as Ridge and LightGBM. Could it rank stocks well
-enough for those rankings to hold up after portfolio construction and
-trading costs?
-[NVIDIA’s Kumo Tabular report](https://arxiv.org/abs/2611.23001v1) ·
-[How I combine the stock predictors]({% link _posts/2025-02-09-combining-predictors.md %})
+Tabular, a model pretrained entirely on synthetic tables. All three
+models get the same 80 stock predictors so I can focus on how they
+rank the same stocks. I then use the existing portfolio construction
+to see how those differences carry through to returns after fees.
+[The stock predictors]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors) ·
+[How rankings become positions]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
 
 ## A pretrained model for tables
 
-Each row in the study is a stock on a date. The outcome is its Sharpe
-ratio over the next 20 trading sessions, ranked against other stocks in
-its sector. The sketch uses momentum as the only predictor. On session
-55, I know stock C’s momentum. Its sector rank is still a question mark.
+Imagine two artificial tables with the same two predictors. In one,
+the outcome is high whenever the first predictor is high. In the
+other, both predictors have to be high. Now give the model a row with
+a high first value and a low second value. The first table suggests a
+high outcome. The second suggests a low one. The labeled rows are the
+context that tells the model which relationship applies.
 
-LightGBM’s `fit` learns tree splits and leaf values from the labeled
-rows A and B. When C arrives, its momentum goes through those fitted
-trees. Kumo’s `fit` prepares A and B for reuse with the pretrained
-weights fixed. At prediction time, Kumo uses C’s momentum and the
-labeled examples together. Change the examples and C’s score can change
-with the same weights. That’s in-context learning.
-
-Pretraining varies the relationships from table to table. A predictor
-that carries signal in one artificial table might be unhelpful in the
-next. To fill in the missing outcomes, the model has to infer which
-relationships apply from the labeled examples it sees. In the
-backtest, those examples are real stock-date rows.
+During pretraining, each table is a separate prediction problem.
+The model sees some outcomes and tries to fill in the hidden ones.
+Its errors across many tables update its weights. It learns how to
+use examples to make a prediction in a table it has just been given.
 [Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
+
+When a new table arrives, the pretrained weights stay fixed. The
+model encodes the table entries into numerical representations. As it
+scores a new row, attention lets it draw more information from some
+labeled examples than others. Changing those examples can change the
+score with the same model weights. That’s in-context learning.
+[Molnar’s chapter on in-context learning](https://tabularfoundationmodels.com/prediction)
+
+Each row in the study is a stock on a date. To get its realized outcome,
+I take the stock’s average daily return over the next 20 trading sessions,
+divide by daily return volatility, and rank that Sharpe ratio among its
+sector peers. In the sketch, I know stock C’s momentum on session 55.
+Its eventual rank is still a question mark.
+
+LightGBM learns its tree splits and leaf values from the labeled rows
+A and B, then runs C’s momentum through those fitted trees. Kumo
+scores C using its momentum and the labeled examples together.
 
 <figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
   <picture>
@@ -59,35 +69,42 @@ backtest, those examples are real stock-date rows.
   <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
 </figure>
 
-Stock B’s outcome is known at session 50, in time for the context
-refresh at 51. The forecast at 55 reuses that context, and the
-simulated trade takes place at the next close.
+Stock B’s outcome is known at session 50. At the refresh on 51,
+Kumo’s `fit` call saves a representation of the labeled rows for
+reuse. The forecast at 55 uses that context, and the simulated
+trade takes place at the next close.
+
+I reuse one context for a block of forecasts, then rebuild it with
+the outcomes known when the next block begins. In the expanding runs,
+each context draws on history back to January 1995. Later blocks have
+more history available to sample.
 
 ## Subsampling the historical context
 
-Kumo prepares its labeled examples in memory before scoring stocks.
-In the last expanding fold, sampling one historical date a week would
-still leave about 760,000 rows after cutting the number of stocks per date.
-Small’s main 32-bit buffers alone were estimated to need about 35 GiB.
-My Mac has 16 GB. I wanted to keep examples spread across the full
-history, so I reduced the row count in two ways.
+I sampled the historical data to make the comparison feasible on my
+Mac. Ridge and LightGBM score new rows from fitted coefficients and
+trees. Kumo has to process the historical examples it will use for
+scoring. Tabular foundation models can handle much larger tables than
+they used to, but preparing Kumo’s context still took substantial
+memory and time. I cut the number of examples in two ways. Both made
+the run cheaper. Either could throw away useful information.
 
-First I thin the historical dates on a regular grid starting in
-January 1995. This keeps early and recent examples in the same
-context. At each refresh, I use rows whose full 20-session outcome
-is already known before the first forecast. One Small run takes every
-20th trading session, the other every 30th. In Figure 2, the grids
-share sessions 0 and 60, the four-week grid adds 20 and 40, and the
-six-week grid adds 30.
+Stocks on the same date share market moves, and nearby 20-session
+windows contain many of the same return days. Spacing out the dates
+lets me cut rows while keeping examples from different parts of the
+history. One Small run takes every 20th trading session, the other
+every 30th. These are dates I sample to build the context. The
+forecast and trading schedules stay the same in both runs.
 
-On each selected date I sort the eligible stocks by **the realized
-target Kumo is asked to predict**, their forward 20-session Sharpe
-ratio ranked within their sector. I keep roughly the bottom and top 30%
-and retain their original target values. With ten stocks and distinct
-targets, that gives Kumo three examples at each end and removes four
-middle rows. This saves about 40% of the rows on the sampled dates while
-keeping examples of both the strong and weak outcomes that matter for
-long and short selection.
+To save more memory, I take fewer stocks on each sampled date. I sort
+the eligible stocks by **the realized target Kumo is asked to predict**, the
+20-session Sharpe rank within each stock’s sector, and keep roughly
+the bottom and top 30%. With ten distinct outcomes, that keeps three
+stocks at each end with their original target values. The cut removes
+about 40% of the rows per date. I keep the extremes because the
+portfolio ends up trading stocks at the top and bottom of the
+ranking. The middle can still contain information that would help
+the model rank stocks.
 
 Coqueret and Guida (2020) studied this kind of target-based subsampling
 for regression trees in portfolio selection.
@@ -138,24 +155,39 @@ for regression trees in portfolio selection.
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
-By the last fold, Small’s context contained 190,064 labeled rows at
-four-week spacing and 126,892 at six-week spacing.
+The memory limit mattered most for the last block, when the most
+history was available. With one sampled date a week and the tail
+filter, that context would still have had about 760,000 examples.
+I estimated about 35 GiB of working memory just to prepare it with
+Kumo Small. My Mac has 16 GB. At the wider date
+spacings I could run, the last context held 190,064 labeled rows
+with four-week spacing and 126,892 with six-week spacing.
 
 ## Running Kumo on a Mac
 
 I ran Kumo on the 10-core Apple M2 Pro CPU of my 14-inch MacBook Pro
-(2023), with 16 GB of unified memory. I started with Large because it
+(2023), with 16 GB of unified memory. I started with Kumo Large because it
 had the best results in NVIDIA’s paper. Large and Small both hit my
-10 GiB memory limit in the first fold, even with 35,738 context rows
+10 GiB memory limit in the first block, even with 35,738 context rows
 for Small. Smaller batches during context preparation got both through.
 
-For the expanding runs I used wider historical spacing and reused
-the prepared context across forecasts within each fold. Large ran
-only in the first-fold comparison.
+In Molnar’s TabICL example, `predict` takes longer than `fit`.
+Kumo can do part of the prediction work up front by preparing a
+context once and reusing it. For Small at four-week spacing, setup
+for the last block took about 16 minutes and scoring took about eight.
+[Molnar’s TabICL timing example](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict)
 
-I used the forecast calendar to save computation at prediction time.
-Scoring only on signal dates cut the number of predictions to about a
-fifth of the daily total.
+For the longer runs, I spaced the historical dates farther apart and
+kept the context fixed until the next refresh. The four- and six-week
+Small runs took 2 hours 37 minutes and 1 hour 39 minutes.
+Medium needed eight-week spacing to fit and ran in 2 hours 52 minutes.
+I ran Large only in the first block. I also ran Small with weekly dates
+in a shorter window that grew from two to three years, then rolled
+forward. That run took just under two hours.
+
+Each portfolio needs a new ranking only on its signal dates. Scoring
+on those dates cuts the number of predictions to about a fifth of
+what daily scoring would require.
 
 ## Ranking the whole cross-section
 
@@ -164,18 +196,12 @@ covering all eligible stocks on each signal date. Three staggered
 portfolios each rebalance roughly every three weeks, giving about one
 signal date a week across the three.
 
-The full four- and six-week Small runs took 2 hours 37 minutes and
-1 hour 39 minutes, respectively. Medium needed eight-week spacing
-to fit in memory and ran in 2 hours 52 minutes.
-
-I also ran Small with weekly historical dates in a shorter window. It
-starts at two years and grows to three, then drops older dates as it
-rolls forward. That run took just under two hours.
-
-For each signal date $t$, I rank the scores $s_{i,t}$ and the realized
-targets $y_{i,t}$ across the same stocks. The information coefficient
-(IC) is Spearman correlation, the Pearson correlation of those two sets
-of ranks. I use stocks with a score from every model and a known target.
+A useful ranking puts stocks with higher scores near the top of the
+realized ranking. On each signal date $t$, I measure that agreement
+by correlating the ranks of scores $s_{i,t}$ and realized targets
+$y_{i,t}$. I use the same stocks for every model, with a score from
+each and a known target. The result is the information coefficient
+(IC), or Spearman rank correlation for that date.
 
 $$
 \mathrm{IC}_t
@@ -184,9 +210,10 @@ $$
 \bigr).
 $$
 
-Rank IC in Table 1 is the average of the $T$ signal-date ICs. The
-information coefficient ratio (ICIR) divides that average by their
-sample standard deviation, $s_{\mathrm{IC}}$.
+Rank IC in Figure 3 is the average of the $T$ signal-date ICs. I also
+want to know how steady that agreement is. The information coefficient
+ratio (ICIR) divides the average by the sample standard deviation of
+the signal-date ICs, $s_{\mathrm{IC}}$.
 
 $$
 \overline{\mathrm{IC}}=\frac{1}{T}\sum_{t=1}^{T}\mathrm{IC}_t,
@@ -198,68 +225,30 @@ For example, LightGBM’s full-period average of 0.0557 and standard
 deviation of about 0.077 give an ICIR of about 0.72. The ratio is
 unannualized.
 
-<div id="table-4" class="research-table-scroll" tabindex="0" role="region" aria-label="Rank statistics on matched signal dates">
-<table id="table-1" class="research-table comparison-table ic-summary-table">
-  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Rank metrics by period.</span> The full comparison covers 1,191 shared signal dates with realized targets.</caption>
-  <thead><tr><th scope="col">Model</th><th scope="col">IC</th><th scope="col">IC SD</th><th scope="col">ICIR</th></tr></thead>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="rowgroup">1999–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0489</td><td>0.090</td><td>0.545</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0557</td><td>0.077</td><td>0.720</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>0.0410</td><td>0.062</td><td>0.660</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>0.0430</td><td>0.064</td><td>0.671</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>0.0458</td><td>0.073</td><td>0.625</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>0.0153</td><td>0.070</td><td>0.220</td></tr>
-  </tbody>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="rowgroup">1999–2011</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0434</td><td>0.073</td><td>0.592</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0570</td><td>0.063</td><td>0.904</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>0.0493</td><td>0.059</td><td>0.842</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>0.0470</td><td>0.059</td><td>0.795</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>0.0444</td><td>0.060</td><td>0.735</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>0.0258</td><td>0.067</td><td>0.384</td></tr>
-  </tbody>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="rowgroup">2012–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0560</td><td>0.107</td><td>0.523</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0541</td><td>0.093</td><td>0.582</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>0.0301</td><td>0.065</td><td>0.465</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>0.0377</td><td>0.070</td><td>0.542</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>0.0476</td><td>0.087</td><td>0.546</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>0.0016</td><td>0.071</td><td>0.023</td></tr>
-  </tbody>
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="rowgroup">2017–2021</th></tr>
-    <tr><th scope="row">Ridge</th><td>0.0585</td><td>0.129</td><td>0.455</td></tr>
-    <tr><th scope="row">LightGBM</th><td>0.0529</td><td>0.114</td><td>0.463</td></tr>
-    <tr><th scope="row">Small, 4 weeks</th><td>0.0284</td><td>0.078</td><td>0.366</td></tr>
-    <tr><th scope="row">Small, 6 weeks</th><td>0.0347</td><td>0.083</td><td>0.421</td></tr>
-    <tr><th scope="row">Kumo Medium</th><td>0.0480</td><td>0.107</td><td>0.449</td></tr>
-    <tr><th scope="row">Small, rolling</th><td>-0.0046</td><td>0.078</td><td>-0.059</td></tr>
-  </tbody>
-</table>
-</div>
+<figure id="figure-3" class="research-figure responsive-figure">
+  {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="1" label="Mean rank IC from 1999 to 2021. Ridge 0.0489, LightGBM 0.0557, Kumo Small four-week 0.0410, Small six-week 0.0430, Medium 0.0458, Small rolling 0.0153. The interactive chart also shows IC standard deviation and ICIR for four periods." %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> The full period covers 1,191 shared signal dates with known targets.</figcaption>
+</figure>
 
-All three expanding Kumo runs had positive rank IC in every period shown.
-That’s what surprised me about a model pretrained on artificial tables.
-LightGBM's full-period lead in mean IC comes from 1999–2011. Ridge has
-the higher mean in the recent windows. Its IC varies more across dates,
-so LightGBM still has the higher ICIR. Across the full matched sample,
-both expanding Small runs have a higher full-period ICIR than Ridge
-because their IC varies less. Medium has a higher mean IC than either
-expanding Small run and more variation from date to date, giving it a
-lower full-period ICIR. Rolling Small had the
-weakest rank IC in each period, and its mean IC was slightly negative
-from 2017–2021.
+All three expanding Kumo runs had positive rank IC in every period
+shown. That’s what surprised me about a model pretrained on artificial
+tables. LightGBM’s lead in mean IC over the full period comes from
+1999–2011. Ridge had the higher mean IC in the recent windows.
+LightGBM’s IC was steadier, keeping it ahead on ICIR.
+
+Among the Kumo runs, Medium had the highest mean IC over the full
+period. The two expanding Small runs had steadier ICs and higher ICIRs
+than Medium and Ridge. Rolling Small had the lowest mean IC in each
+period, and its mean fell slightly below zero in 2017–2021.
 
 ## Return and risk by score decile
 
-Rank IC measures agreement across the whole ranking. To see how much
-that matters at the ends, I sort each signal date’s scores into ten
-roughly equal-sized groups. A signal trades at the next close. The
-deciles start earning returns the session after that and keep the same
-members until the next trade.
+Rank IC looks across the whole ranking. A long-short portfolio depends
+on the stocks at the ends. To see how those stocks performed, I sort
+each signal date’s scores into ten roughly equal-sized groups, from
+lowest to highest score. I simulate the trade at the next close. The
+new groups start earning returns the following session and keep the
+same members until the next trade.
 
 Each day I give the stocks in a decile equal weights within their
 schedule, then give the three schedules equal weight. Let $D_{d,k,t}$
@@ -272,10 +261,10 @@ R_{d,t}
   \frac{1}{|D_{d,k,t}|}\sum_{i\in D_{d,k,t}}r_{i,t}.
 $$
 
-So three stocks returning 2%, 1% and −1% contribute a decile return of
-about 0.67% for that schedule on that day. I average only on dates
-with all three schedules present. The top-minus-bottom series subtracts
-the bottom decile’s daily return from the top decile’s before compounding.
+If a decile has three stocks returning 2%, 1% and −1% on one schedule,
+its return for that day and schedule is about 0.67%. I average the
+schedule returns on days when all three are available. The spread is
+the top decile’s return minus the bottom decile’s each day.
 
 For either a decile or the spread, let $R_t$ be its daily return,
 $\bar R$ its mean and $s_R$ its sample standard deviation over $T$
@@ -290,9 +279,9 @@ R_{\mathrm{ann}}&=\left[\prod_{t=1}^{T}(1+R_t)\right]^{252/T}-1,\\
 \end{aligned}
 $$
 
-<figure id="figure-3" class="research-figure decile-profile-figure responsive-figure">
+<figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=2" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="7" label="Return, volatility and Sharpe by stock score decile, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
 LightGBM separates at both ends, with a higher return at the top and
@@ -302,9 +291,9 @@ a year.
 
 ## Returns after portfolio construction
 
-The deciles show how the scores separate returns before costs. To see
-how that carries through sizing and fees, I build long-short portfolios
-from the 75 highest and 75 lowest scores. Each
+To see how the decile results carry through sizing and fees, I build
+long-short portfolios from the 75 highest and 75 lowest scores. The
+optimizer uses forecast risk to size those positions together. Each
 schedule uses $5 million of simulated capital, a 7% annual volatility
 target, and limits on gross exposure and market beta. Where I can
 measure liquidity, I cap trades at 10% of the previous 21 sessions'
@@ -312,14 +301,15 @@ average daily dollar volume.
 
 I use LightGBM's construction settings for the Kumo books, including a
 5 basis point turnover penalty. Ridge uses its original 2.5 basis point
-penalty. In the trading simulation, long and short trades cost 7.5 and
-10 basis points through 2010, then 5 and 7.5. The net results in Table 2
-average the statistic from each of the three schedules.
+penalty. The penalty shapes how much the optimizer trades. The
+execution fees are 7.5 basis points on long trades and 10 on shorts
+through 2010, then 5 and 7.5. I compute each net statistic separately
+on each schedule, then average the three in Table 1.
 
 <div id="table-5">
 <div id="table-6" class="research-table-scroll" tabindex="0" role="region" aria-label="Gross decile spreads and portfolios after execution fees">
-<table id="table-2" class="research-table comparison-table equity-comparison-table">
-  <caption><span class="caption-number">Table 2.</span> <span class="caption-title">Gross decile spreads and net constructed portfolios.</span> All models use the same signal dates. Return, volatility and Sharpe are annualized.</caption>
+<table id="table-1" class="research-table comparison-table equity-comparison-table">
+  <caption><span class="caption-number">Table 1.</span> <span class="caption-title">Gross decile spreads and net constructed portfolios.</span> All models use the same signal dates. Return, volatility and Sharpe are annualized.</caption>
   <colgroup span="1"></colgroup><colgroup span="3"></colgroup><colgroup span="3"></colgroup>
   <thead>
     <tr><th scope="col" rowspan="2">Model</th><th scope="colgroup" colspan="3">Gross decile spread</th><th scope="colgroup" colspan="3" class="comparison-divider">Net constructed book</th></tr>
@@ -365,76 +355,81 @@ average the statistic from each of the three schedules.
 </div>
 </div>
 
-LightGBM's lead in the equal-weight spread carries through construction
-and fees. Both expanding Small runs had higher gross spread Sharpe than
-Medium. Medium came out ahead of both after positions were sized and traded.
-Medium's net Sharpe trailed LightGBM's by 0.69. Resampling the two
-portfolios together in 21-session blocks gives an interval of −0.99 to
-−0.40 for the difference.
+Over 1999–2021, LightGBM leads on Sharpe for both the equal-weight
+spread and the net portfolios. Medium ranks below both expanding Small
+runs on gross spread Sharpe and above both on net Sharpe. Medium’s net
+Sharpe trails LightGBM’s by 0.69. I resample 21-session stretches of
+returns to keep nearby observations together, using the same stretches
+for both portfolios. The 95% interval for the difference is −0.99 to
+−0.40.
 
 ## How similarly the models trade
 
 Medium came close to Ridge after costs. I wanted to see whether their
 rankings and daily returns were also similar. The left matrix averages
-rank correlations across signal dates. The right averages the Pearson
-correlations of net daily returns across the three schedules.
+rank correlations across signal dates. It only needs the scores, so it
+can include dates whose outcomes fall beyond the test period. The right
+matrix averages the correlations of net daily returns across the three
+schedules.
 
-<div role="group" aria-labelledby="table-3">
-  <p id="table-3" class="table-caption"><span class="caption-number">Table 3.</span> <span class="caption-title">Correlations between models, 1999–2021.</span> Rankings use 1,200 signal dates. Net returns use 5,773 trading sessions.</p>
+<div role="group" aria-labelledby="table-2">
+  <p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Correlations between models, 1999–2021.</span> Rankings use 1,200 signal dates. Net returns use 5,773 trading sessions.</p>
   {% include equity-correlation-matrices.html %}
 </div>
 
-Expanding Small’s rankings differ more from either baseline than the
-baselines differ from each other. Medium’s rankings look closer to
-LightGBM’s, and its portfolio returns move more closely with LightGBM’s
-too. Rolling Small is different again. The correlation of its daily net
-returns with four-week Small is about 0.02.
+The two baselines agree more on rankings than either agrees with the
+expanding Small variants. Medium is closer to LightGBM than to Ridge
+on both rankings and daily returns. Rolling Small’s daily net returns
+have a correlation of about 0.02 with four-week Small.
 
-I split each day's net result into the long contribution, the signed
-short contribution and execution fees. Annualizing the average daily
-contributions makes the components add up. On that basis, LightGBM
-earned 7.1 percentage points more per year than four-week Small. The long
-side contributed 3.3 points of the gap, the short side 2.4, and lower
-execution fees 1.4. Medium earned about 1.8 points more than four-week Small.
-The long side added 1.5 points and lower fees added 0.9, with the short
-side giving back 0.6.
+The correlations show how the models move together. To see where the
+P&L differences come from, I split each day’s result into contributions
+from longs, shorts and fees. Annualizing the average daily contributions
+keeps them additive. LightGBM earned 7.1 percentage points more per
+year than four-week Small on this measure. Longs accounted for 3.3
+points, shorts for 2.4 and lower fees for 1.4. Medium earned 1.8 points
+more than four-week Small. Longs added 1.5 points and lower fees added
+0.9, with the short side giving back 0.6.
 
-## What changed with more training rows
+## The cost of sampling more dates
 
-The Kumo portfolio results reflect how much historical context each
-checkpoint could fit in memory. The first fold lets me compare model
-sizes on a fixed grid and sampling grids within Small.
+Finer date spacing gives Kumo more examples at a higher compute cost.
+To see whether it improves the rankings, I compare versions of
+Small at different spacings with the same tail filter. For the first
+block, I could also compare model sizes on exactly the same dates.
 
-On the 91 matched signal dates in the first fold, Kumo Small's ICIR was
+On the 91 matched signal dates in that block, Kumo Small’s ICIR was
 1.08 at three-week training spacing, 0.91 at four weeks, and 0.62 at six.
 With the same six-week training dates, Medium reached 0.72 and Large
-reached 0.79. Changing Small’s sampling grid moved ICIR more in that
-fold than changing model size at six-week spacing.
+reached 0.79. Changing Small’s date spacing moved ICIR more in that
+early comparison than changing model size at six-week spacing.
 
-By the final fold, four-week Small took 24 minutes and six-week Small
+For the last block, four-week Small took 24 minutes and six-week Small
 took 12½. The denser run's ICIR was 0.11 versus 0.21 for six weeks on
 61 dates with realized targets.
 
-Over all 12 folds, moving from six-week to four-week spacing took about
+Across the full run, moving from six-week to four-week spacing took about
 59% longer. The paired 21-session intervals for four weeks minus six
 were −0.06 to 0.04 for ICIR and −0.21 to 0.23 for net Sharpe. The
 full-period results were close. Four-week Small earned a higher net
-Sharpe through 2011 and a lower one after 2011.
+Sharpe through 2011 and a lower one after 2011. The accuracy cost of
+dropping the middle 40% is unknown here since both runs use the tail
+filter.
 
 ## The shorter history changed what Kumo picked
 
-The expanding runs all reached back to January 1995. I tried a rolling
-window because relationships in equities can change. It gives Kumo
-denser examples of recent markets and drops older observations, changing
-both the spacing and the age of the examples.
+Spacing determines how often I sample dates. A rolling window also
+changes how far back I look. I tried this because relationships in
+equities can change. The rolling run samples recent history weekly
+and drops older observations as the window moves forward.
 
-The rolling model’s rankings were less correlated with Ridge and
-LightGBM. Its own ICIR fell by 0.44 versus four-week expanding Small,
-with a paired 21-session interval from −0.58 to −0.30. The after-fee
-Sharpe fell by 0.87, with an interval from −1.39 to −0.36. The gross
-spread was quieter and had a higher gross Sharpe after 2012, while
-the constructed rolling book earned less per unit of risk in every
-reported period.
+Rolling Small’s rankings were less correlated with Ridge and
+LightGBM. Relative to four-week expanding Small, its ICIR was lower
+by 0.44 and its after-fee Sharpe by 0.87. The paired intervals are
+−0.58 to −0.30 for ICIR and −1.39 to −0.36 for net Sharpe.
+In 2012–2021, the rolling gross spread was less volatile and had a
+higher Sharpe. The net rolling portfolio’s Sharpe was lower in every
+period shown.
 
 The short book explains most of the difference. The rolling variant
 gave up 5.9 percentage points of annualized arithmetic net P&L versus
@@ -443,32 +438,31 @@ earned 0.7 points less, and lower fees recovered 0.4 points.
 
 ## How the P&L built up
 
-The cumulative paths show when those performance gaps opened up.
-Medium stayed close to Ridge over the full test. LightGBM pulled ahead
-early and kept adding to its lead.
-At their original volatility, Ridge and Medium had each earned about
-$244 per $100 of fixed capital by the end of 2021, and LightGBM had
-earned about $365.
+The P&L chart puts Medium and the two baselines on the same timeline
+to show when their results diverged. Medium stayed close to Ridge
+over the full test. At their original volatility, both earned about
+$244 per $100 of fixed capital by the end of 2021. LightGBM pulled
+ahead early and ended at about $365.
 
 The chart opens with each portfolio rescaled to 7% annualized
 volatility over the selected window. Clear the checkbox to see the
 original P&L and drawdowns. Open **Window statistics** to compare
 annual net P&L, volatility, Sharpe and drawdowns at either scale.
 
-<figure id="figure-4" class="research-figure portfolio-path-figure responsive-figure">
+<figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=4" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="3" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
 </figure>
 
 At the same realized volatility over the full period, Medium earned
 more than Ridge and had a smaller worst drawdown. LightGBM still earned
 the most and had the smallest peak-to-trough loss of the three.
 
-The result I’d most like to revisit is the effect of model size.
-In the first fold, ranking improved from Small to Medium to Large
-when I used the same training dates. Across the full test, the memory
-limit forced me to use fewer dates for Medium, so I’m still curious
-what a larger model would do with the same history.
+I’m still curious how much model size contributed. The comparison at
+the same date spacing favored the larger models in the first block.
+Across the full test, Medium needed wider spacing to fit. The results
+through 2021 reflect the model sizes and the amount of history I could
+run together on the Mac.
 
 ## References
 

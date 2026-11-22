@@ -5,7 +5,7 @@ toc: false
 title: "Factor Risk Models, Part 1: An Introduction"
 description: "How factor exposures become portfolio risk, and what changes in hedges and position sizing when the Ridge forecasts stay fixed."
 date: 2026-11-20
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Portfolio construction"]
 article_label: Factor risk · Part 1 of 2
 series_id: factor-risk
@@ -17,7 +17,12 @@ Suppose I’m long a chipmaker and want to hedge it. I could short another chipm
 
 A factor risk model starts with the moves that several stocks can share, such as a market decline or a sector selloff. It uses those shared moves and the risk left over in each stock to estimate how volatile the whole portfolio might be. That estimate helps determine both which stocks hedge one another and how much of the resulting spread fits inside a risk budget.
 
-I use the Ridge forecasts as a worked example and keep them fixed. First I test which covariance estimates find quieter hedges on the same stocks. Then I compare risk forecasts on identical holdings. Finally I let each estimate change the positions under the same risk budget and check what happens to exposure, realized volatility and returns after fees.
+I keep the Ridge stock rankings fixed so I can see what the risk model
+changes. First I test which covariance estimates find quieter hedges on
+the same stocks. Then I compare risk forecasts on identical holdings.
+Finally I let each estimate change the positions under the same risk
+budget and check what happens to exposure, volatility and returns after
+fees. [How the Ridge scores are fitted]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios)
 
 ## From stock exposures to portfolio risk
 

@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Combining Multiple Predictors: The Linear Case"
 description: "How 80 overlapping stock predictors relate, and whether learning their weights with OLS or Ridge beats equal weights."
 date: 2025-02-09
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Signals"]
 article_label: Signals · Linear and Ridge regression
 permalink: /quants/combining-predictors.html
@@ -267,6 +267,11 @@ scores reaches a Sharpe of 1.32 through 2021 and 0.87 after.
 
 ## Choosing the penalty
 {: #choosing-the-penalty }
+
+The penalty should damp large weights on small differences between
+similar predictors while preserving the ranking. I compare penalties
+on development data using mean IC for the ranking and net Sharpe for
+the portfolio built from it.
 
 Up to $c=0.1$, development IC and Sharpe barely move (Table 2), even though
 the coefficients shrink to less than half their OLS size; from $c=1$, Ridge

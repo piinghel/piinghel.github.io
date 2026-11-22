@@ -6,7 +6,7 @@ toc: true
 title: "Reducing Rebalancing Luck"
 description: "Staggering three Ridge portfolios lowers realized volatility and narrows the spread of returns across rebalance calendars."
 date: 2026-09-05
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Portfolio construction"]
 article_label: Portfolio construction · Rebalancing
 permalink: /quants/rebalancing-luck.html
@@ -28,10 +28,11 @@ schedule. The three books get new targets in different weeks, so there are
 two ways this might help. Their daily returns can partly offset each other,
 and the result can depend less on which dates I happen to pick.
 
-I use the saved walk-forward predictions from the Ridge model, with September
-1998–December 2021 and January 2022–May 2026 shown separately. Both periods
-come from the existing research backtest. The sizing rules come from
-[From Volatility Scaling to Joint Sizing]({% link _posts/2026-08-29-joint-sizing.md %}).
+I vary the trading dates, keeping the Ridge ranking and sizing rules
+fixed across schedules. I show September 1998–December 2021 and January
+2022–May 2026 separately.
+[How the Ridge scores are fitted]({% link _posts/2025-02-09-combining-predictors.md %}#from-predictions-to-portfolios) ·
+[The portfolio sizing and trading rules]({% link _posts/2026-08-29-joint-sizing.md %}#trading-controls)
 
 ## The starting week
 {: #the-starting-week-matters }

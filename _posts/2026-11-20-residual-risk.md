@@ -3,7 +3,7 @@ layout: post
 title: "Factor Risk Models, Part 2: Residual Risk After Sectors and Styles"
 description: "I froze groups of stocks and principal directions learned from a year of residual returns, then followed them through the next year and into a long/short portfolio."
 date: 2026-11-20
-last_modified_at: 2026-11-21
+last_modified_at: 2026-11-22
 categories: ["Portfolio construction"]
 article_label: Factor risk · Part 2 of 2
 series_id: factor-risk
@@ -12,13 +12,23 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-In [Part 1]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example), A and B both fell, and each finished half a percentage point above its fitted return. Those two +0.5-point residuals cancelled in a spread that was 50% long A and 50% short B. Stock C had a residual of −1 point and no position weight.
+Suppose two stocks both fall, but each beats the return implied by its
+factor exposures by half a percentage point. That gap is its residual.
+The two +0.5-point residuals cancel in a spread that is 50% long one
+stock and 50% short the other.
+[The worked example with stocks A, B and C]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example)
 
-Now think of A, B and C as three stocks from a larger universe. A and B might rely on the same supplier. A disruption could push both below their fitted returns even after the model accounts for any sector move. If those extra moves tend to line up, the short in B can cushion the residual moves in A. I want to know how much of that offset I can count on when sizing the Ridge portfolio.
+If A and B rely on the same supplier, a disruption could push both
+below their fitted returns even after the model accounts for any sector
+move. If those residuals tend to move together, the short in B can cushion
+the residual moves in A. I want to know how much of that offset I can
+count on when sizing the Ridge portfolio.
 
 ## Four days of residuals give one correlation
 
-A residual return is the gap between a stock’s observed return and the return fitted by the factors that day. Its **residual volatility** tells me how much that gap varies for one stock. To see what it does to a spread, I also need to know whether the gaps line up across stocks on the same days.
+A stock’s **residual volatility** tells me how much its residual varies
+from day to day. To see what that means for a spread, I also need to
+know whether the gaps line up across stocks on the same days.
 
 Take four illustrative days. A’s residual returns are +3%, −1%, +3% and −1%. I subtract A’s four-day average of 1% to measure each day relative to its usual level. Then I divide by its 2% standard deviation to express each move in units of A’s own volatility. That gives +1, −1, +1 and −1. I do the same for B and C so a large move in a naturally volatile stock doesn’t dominate the comparison. In this example I divide by four when calculating the variances.
 
@@ -117,7 +127,12 @@ In development, components two through five fell from about 14 units of variance
 
 ## Putting a residual correlation into the portfolio
 
-I vary the residual correlation matrix $$R$$ while keeping the named factors and specific volatilities fixed. The baseline uses $$R=I$$. The other estimates start from the trailing 252-session residual correlations.
+The earlier comparisons show some shared residual moves persist into
+the next year. To test whether using them improves risk forecasts, I
+vary the residual correlation matrix $$R$$ while keeping the named
+factors and specific volatilities fixed. The baseline uses $$R=I$$,
+which gives no credit for an offset between residuals. The other
+estimates start from the trailing 252-session residual correlations.
 
 For a principal direction $$q$$ with variance $$\lambda$$, its contribution is the matrix $$\lambda qq^\top$$. Let $$L$$ be the sum over the directions I keep. In the formulas below, $$\operatorname{diag}(U)$$ means a matrix with only the diagonal entries of $$U$$.
 
