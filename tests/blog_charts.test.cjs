@@ -57,6 +57,30 @@ test('fixed-notional P&L rebases additively, including its drawdown',()=>{
   assert.deepEqual(charts.additivePath([0,.1,-.2,.05],1,3),{equity:[0,-20,-15],drawdown:[0,-20,-15]});
 });
 
+test('fixed-capital losses and underwater sessions follow the plotted risk scale',()=>{
+  const bundle=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/equity-model-comparison/net-pnl.json')));
+  assert.notEqual(bundle.charts.pnl.statistics,false);
+  const ridge=bundle.series.find(s=>s.id==='ridge').values.slice(1).map(v=>v/bundle.scale);
+  const raw=charts.stats(ridge,bundle.annualization,true);
+  const matched=charts.stats(ridge.map(r=>r*.07/raw.volatility),bundle.annualization,true);
+  assert.equal(raw.drawdown.toFixed(4),'-0.1798');
+  assert.equal(matched.drawdown.toFixed(4),'-0.1547');
+  assert.equal(raw.underwater_sessions,686);
+  assert.equal(matched.underwater_sessions,686);
+  assert.ok(Math.abs(matched.volatility-.07)<1e-12);
+  assert.ok(Math.abs(raw.sharpe-matched.sharpe)<1e-12);
+});
+
+test('an exact recovery ends a drawdown and an unfinished decline counts to the window end',()=>{
+  assert.equal(charts.stats([.01,-.01,.001,.009,0,0],252,true).underwater_sessions,2);
+  assert.equal(charts.stats(Array(12).fill(.0001)).sharpe,null);
+  for(const additive of [false,true]) {
+    const values=additive?[-.25,.25,-.125,0,-.125]:[-.5,1,-.125,0,-.125];
+    assert.equal(charts.stats(values,252,additive).underwater_sessions,3);
+    assert.equal(charts.stats([0,0],252,additive).underwater_sessions,0);
+  }
+});
+
 test('predictor decile windows begin after the performance opening mark', () => {
   const read = name => JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/combining-predictors', name)));
   const deciles = read('deciles.json');

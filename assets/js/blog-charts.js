@@ -26,17 +26,24 @@
       font:{family:'Bricolage Grotesque, sans-serif',size:12,color:dark?'#dce3eb':'#27343d'}};
   }
 
-  function stats(values, annualization=252) {
+  function stats(values, annualization=252, additive=false) {
     if (values.length < 2) return null;
-    let growth=1, peak=1, dd=0;
-    const mean=values.reduce((a,b)=>a+b,0)/values.length;
-    const vol=Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/(values.length-1)*annualization);
-    for (const r of values) {
-      if (!Number.isFinite(r) || r <= -1) throw new Error('Invalid return');
-      growth*=1+r; peak=Math.max(peak,growth); dd=Math.min(dd,growth/peak-1);
+    const first=values[0];
+    const mean=first+values.reduce((sum,value)=>sum+(value-first),0)/values.length;
+    const volatility=Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/(values.length-1)*annualization);
+    let balance=additive?0:1, peak=balance, drawdown=0, underwater=0, longest=0;
+    for (const value of values) {
+      if (!Number.isFinite(value) || (!additive && value<=-1)) throw new Error('Invalid return');
+      balance=additive?balance+value:balance*(1+value);
+      peak=Math.max(peak,balance);
+      drawdown=Math.min(drawdown,additive?balance-peak:balance/peak-1);
+      // An exactly recovered peak can differ by a few rounding units after summation.
+      const tolerance=8*Number.EPSILON*(additive?Math.max(1,Math.abs(peak)):peak);
+      underwater=peak-balance>tolerance?underwater+1:0;
+      longest=Math.max(longest,underwater);
     }
-    return {annual_return:Math.expm1(Math.log(growth)*annualization/values.length),
-      volatility:vol, sharpe:vol ? mean*annualization/vol : null, drawdown:dd};
+    return {annual_return:additive?mean*annualization:Math.expm1(Math.log(balance)*annualization/values.length),
+      volatility, sharpe:volatility?mean*annualization/volatility:null, drawdown, underwater_sessions:longest};
   }
 
   function path(values, first, last, initial=100) {
@@ -395,24 +402,23 @@
       const table=element('table');tableWrap.append(table);
       table.setAttribute('aria-label','Selected-window statistics');
       const head=element('thead'),hr=element('tr');head.append(hr);table.append(head);
-      ['Series',cfg.additive?'Annual P&L / return':'Annual growth','Volatility','Sharpe','Max drawdown'].forEach(label=>{const th=element('th','',label);th.scope='col';hr.append(th);});
+      const headings=['Series',cfg.additive?'Annual P&L / return':'Annual growth','Ann. volatility','Sharpe','Max drawdown'];
+      if(cfg.drawdown)headings.push('Longest drawdown (sessions)');
+      headings.forEach(label=>{const th=element('th','',label);th.scope='col';hr.append(th);});
       const body=element('tbody');table.append(body);
-      statisticsPanel.append(element('p','blog-chart-note',cfg.note));
+      if(cfg.note)statisticsPanel.append(element('p','blog-chart-note',cfg.note));
+      if(cfg.drawdown)statisticsPanel.append(element('p','blog-chart-note','Longest drawdown counts consecutive trading sessions below the previous peak, including a decline still open at the end of the window.'));
       if(cfg.kind==='values'||cfg.statistics===false)statisticsPanel.hidden=true;
-      function updateTable(first,last) {
+      function updateTable(plottedSeries,first,last) {
         body.replaceChildren();
-        for(const s of series.filter(s=>visible.get(s.id)&&!s.contribution)) {
-          const m=stats(s.returns.slice(first+(bars?0:1),last+1),data.annualization);
-          if(m&&s.additive) {
-            const values=s.returns.slice(first+1,last+1);
-            m.annual_return=values.reduce((a,b)=>a+b,0)/values.length*data.annualization;
-            m.drawdown=Math.min(...additivePath(s.returns,first,last).drawdown)/100;
-          }
+        for(const s of plottedSeries.filter(s=>visible.get(s.id)&&!s.contribution)) {
+          const m=stats(s.returns.slice(first+(bars?0:1),last+1),data.annualization,s.additive);
           const row=element('tr'),label=element('th','',bars&&s.id.startsWith('decile_')?'Decile '+s.label:s.label);label.scope='row';row.append(label);
           for(const key of ['annual_return','volatility','sharpe','drawdown'])row.append(element('td','',m?(s.additive&&key==='drawdown'?(m[key]*100).toFixed(1)+' pp':format(m[key],key!=='sharpe')):'—'));
+          if(cfg.drawdown)row.append(element('td','',m?String(m.underwater_sessions):'—'));
           body.append(row);
         }
-        if(!body.children.length) {const row=element('tr'),td=element('td','','Choose a series to see its statistics.');td.colSpan=5;row.append(td);body.append(row);}
+        if(!body.children.length) {const row=element('tr'),td=element('td','','Choose a series to see its statistics.');td.colSpan=headings.length;row.append(td);body.append(row);}
       }
       function theme() {
         const dark=document.documentElement.dataset.theme==='dark';
@@ -437,6 +443,11 @@
             : [];
           const scaled=volatilities.length>0&&volatilities.every(value=>value>0&&Number.isFinite(value));
           if(scaleBox?.checked)scaleStatus.hidden=scaled;
+          const plottedSeries=scaled?series.map((s,index)=>{
+            if(!s.additive)return s;
+            const multiplier=volatilityTarget/volatilities[index];
+            return {...s,returns:s.returns.map(value=>value*multiplier)};
+          }):series;
           const mobile=host.clientWidth<550;
           const labelEnds=cfg.directLabels || (initialWealth===1 && host.clientWidth>=620);
           const showLegend=!sharedGroup && cfg.showLegend!==false && !(initialWealth===1 && labelEnds);
@@ -514,7 +525,7 @@
               if(cfg.contributionRange&&range[0]===full[0]&&range[1]===full[1])layout.yaxis2.range=cfg.contributionRange;
               heading(cfg.drawdown?(cfg.drawdownUnit||(cfg.additive?'Drawdown (points)':'Drawdown (%)')):'Linked book contributions (pp)',.29,8);
             }
-            for(const [index,s] of series.entries()) {
+            for(const s of plottedSeries) {
               if(s.contribution) {
                 const values=linked(s.returns,all.get(s.parent).returns,first,last);
                 const indices=displayIndices(dates,[values]);
@@ -523,11 +534,6 @@
                 traces.push(trace(s,dates,s.returns.slice(first,last+1)));
               } else {
                 const values=s.additive?additivePath(s.returns,first,last):path(s.returns,first,last,initialWealth);
-                if(scaled&&s.additive) {
-                  const multiplier=volatilityTarget/volatilities[index];
-                  values.equity=values.equity.map(value=>value*multiplier);
-                  values.drawdown=values.drawdown.map(value=>value*multiplier);
-                }
                 if(cfg.additive&&!s.additive)values.equity=values.equity.map(v=>v-100);
                 const indices=displayIndices(dates,[values.equity,values.drawdown]);
                 traces.push(trace(s,indices.map(i=>dates[i]),indices.map(i=>values.equity[i]),cfg.additive?{hovertemplate:'%{x|%d %b %Y}<br>%{y:.2f}'+(s.additive?' points':'%')+'<extra>%{fullData.name}</extra>'}:{}));
@@ -575,7 +581,7 @@
           }
           await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:mobile?false:'hover',displaylogo:false,scrollZoom:false,doubleClickDelay:300,
             modeBarButtonsToRemove:['select2d','lasso2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:'quant-notes-chart'}});
-          if(!statisticsPanel.hidden)updateTable(first,last);
+          if(!statisticsPanel.hidden)updateTable(plottedSeries,first,last);
           windowLabel.hidden=cfg.showWindow===false||(!cfg.showWindow&&range[0]===full[0]&&range[1]===full[1]);
           windowLabel.textContent=dates[0]+' – '+dates.at(-1);
           windowLabel.title=!showLegend?'Choose series under Explore.':'Click a legend entry to toggle; double-click to isolate.';
@@ -612,8 +618,7 @@
               if(busy)return;
               for(const s of series) {const tr=graph.data.find(t=>t.legendgroup===s.id||(s.group&&all.get(t.legendgroup)?.group===s.group));if(tr)visible.set(s.id,tr.visible!==false&&tr.visible!=='legendonly');}
               if(benchmarkBox)benchmarkBox.checked=visible.get(benchmark.id);
-              const a=data.dates.findIndex(d=>d>=range[0]);let b=data.dates.length-1;while(data.dates[b]>range[1])b--;
-              updateTable(a,b);
+              draw();
             });
             graph.on('plotly_doubleclick',()=>{if(!bars)setTimeout(()=>setRange(...full),0);});
           }

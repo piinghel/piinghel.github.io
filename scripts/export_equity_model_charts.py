@@ -141,9 +141,9 @@ def export_pnl(
     )
     start = date.fromisoformat(summary["first_date"])
     end = date.fromisoformat(summary["last_date"])
-    dates = [start - timedelta(days=1)]
+    opening = start - timedelta(days=1)
+    dates = [opening]
     lines = []
-    paths = []
     for model, label, role, *_ in models:
         daily = (
             pl.concat(
@@ -163,10 +163,9 @@ def export_pnl(
                 .alias("valid"),
             )
             .sort("date")
-            .with_columns((100 * pl.col("net").cum_sum()).alias("pnl"))
             .collect()
         )
-        model_dates = [start - timedelta(days=1), *daily["date"].to_list()]
+        model_dates = [opening, *daily["date"].to_list()]
         if (
             daily.height != int(summary["sessions"])
             or daily["observations"].min() != len(calendars)
@@ -179,7 +178,6 @@ def export_pnl(
             )
         dates = model_dates
         lines.append(series(model, label, role, [0.0, *daily["net"]], additive=True))
-        paths.append([0.0, *daily["pnl"]])
 
     chart = {
         "kind": "performance",
@@ -189,7 +187,7 @@ def export_pnl(
         "drawdown": True,
         "drawdownUnit": "Drawdown per $100 of capital",
         "volatilityTarget": 0.07,
-        "statistics": False,
+        "note": "Annual P&L is mean daily net P&L × 252 on fixed capital. Sharpe uses zero cash return. Maximum drawdown is the loss per $100 of capital.",
         "zeroReference": True,
         "episodes": [
             ["1999–2011", dates[0].isoformat(), "2011-12-30"],
@@ -204,6 +202,26 @@ def export_pnl(
         {"pnl": chart},
     )
 
+    render_pnl_fallbacks(
+        output,
+        dates=dates,
+        portfolios=[
+            (label, light, dark, [100 * total for total in accumulate(line["values"])])
+            for (_, label, _, light, dark), line in zip(models, lines, strict=True)
+        ],
+        pnl_unit=chart["unit"],
+        drawdown_unit=chart["drawdownUnit"],
+    )
+
+
+def render_pnl_fallbacks(
+    output: Path,
+    *,
+    dates: list[date],
+    portfolios: list[tuple[str, str, str, list[float]]],
+    pnl_unit: str,
+    drawdown_unit: str,
+) -> None:
     for mobile in (False, True):
         for dark in (False, True):
             ink, grid = ("#e4e7ea", "#313843") if dark else ("#25313a", "#dce3ea")
@@ -217,7 +235,7 @@ def export_pnl(
                     sharex=True,
                     height_ratios=(2, 1),
                 )
-                for (_, label, _, light, night), pnl in zip(models, paths, strict=True):
+                for label, light, night, pnl in portfolios:
                     color = night if dark else light
                     equity.plot(dates, pnl, label=label, color=color, linewidth=1.7)
                     loss = [
@@ -226,8 +244,8 @@ def export_pnl(
                     ]
                     drawdown.plot(dates, loss, color=color, linewidth=1.1)
                 for axis, title in (
-                    (equity, chart["unit"]),
-                    (drawdown, chart["drawdownUnit"]),
+                    (equity, pnl_unit),
+                    (drawdown, drawdown_unit),
                 ):
                     axis.set_title(title, loc="left", color=ink, fontsize=11)
                     axis.tick_params(length=0, colors=ink)

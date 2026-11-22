@@ -327,10 +327,11 @@ $100 of fixed capital, and LightGBM had earned about $365.
 Each portfolio took a different amount of risk along the way. The
 volatility toggle scales each line to 7% annualized realized volatility
 using the daily returns in the selected window. That puts the P&amp;L and
-drawdowns on the same risk scale for a visual comparison.
+drawdowns on the same risk scale. Open **Window statistics** below the chart
+to compare annual net P&L, volatility, Sharpe and drawdowns at either scale.
 
 <figure id="figure-2" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=2" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="2" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, with optional volatility scaling." %}
+  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=3" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="2" label="Cumulative net P&L and drawdown for Ridge, LightGBM and Kumo Medium, with optional volatility scaling." %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
 </figure>
 
