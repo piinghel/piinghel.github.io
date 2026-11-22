@@ -18,16 +18,16 @@ tuned tree ensembles on benchmark datasets.[^tree-benchmark][^new-benchmarks]
 As the newer models got better at handling larger tables, I wanted
 to see how one would do at ranking stocks.[^larger-tables]
 
-I give the foundation model, Ridge and LightGBM the same stock
-predictors and compare their rankings. Then I turn those rankings
-into long–short portfolios to see whether the differences still
-matter after I size the positions and pay to trade.
+An 8 km delivery is enough to see what each model needs to make
+a prediction. From there, I give Ridge, LightGBM and a tabular
+foundation model the same stock predictors and compare their
+rankings. Then I see whether a better ranking leads to a better
+portfolio after trading costs.
 
 ## A pretrained model for tables
 
-I’m still getting to know these models. What helped me was to follow
-the historical examples through a single prediction. For a deeper
-treatment, I’d recommend Christoph Molnar’s excellent
+I’m still getting to know these models. What helped me make sense
+of them was Christoph Molnar’s excellent
 [*Tabular Foundation Models*](https://tabularfoundationmodels.com/).
 
 ### What the model needs to make a prediction
@@ -37,17 +37,17 @@ Suppose I want to predict how long an 8 km delivery will take at
 day and actual delivery time for each one. For the new order,
 I know the distance and time of day. The delivery time is blank.
 
-With LightGBM, I use `fit()` to build trees from the completed
-deliveries. Once I have those trees, `predict()` only needs the new
-order’s distance and time of day. Whatever the model learned from
-the earlier deliveries is already in the trees. In Ridge, the
-fitted coefficients play that role.
+With Ridge, `fit()` learns coefficients from the completed
+deliveries. LightGBM fits trees from those examples. Either way,
+`predict()` only needs the new order’s distance and time of day.
+The coefficients or trees already carry what the model learned
+from the earlier deliveries.
 
-Think about k-nearest neighbors. To predict the new order’s
-delivery time, it looks up past orders with similar distances
-and times of day. If the two closest took 25 and 35 minutes, a
-two-neighbor forecast would be 30 minutes. The old rows and
-their delivery times are still part of making the prediction.
+A useful comparison here is k-nearest neighbors. To predict the
+delivery time, I go back to the table and look for past orders
+with a similar distance and start time. If the two nearest took
+25 and 35 minutes, I’d predict 30 minutes. I still need the old
+orders to make that prediction.
 
 A tabular foundation model also gets the past deliveries and
 their known outcomes at prediction time. Those rows are its
@@ -72,12 +72,9 @@ If I give the same network a different city’s deliveries, the
 same order can get a different estimate. The network weights
 stay fixed. That’s *in-context learning*.
 
-Tabular foundation models can still use the familiar `fit()` and
-`predict()` calls. Here, `fit()` can prepare the examples that
-`predict()` will use, with the network weights fixed. Molnar uses
-the k-nearest-neighbors analogy and shows what each model needs
-when it predicts in
-[*Tabular Foundation Models*, Chapter 4](https://tabularfoundationmodels.com/prediction#tfms-do-in-context-learning).
+Many tabular foundation models use `fit()` and `predict()` so
+the interface feels familiar if you’ve used scikit-learn. Here,
+`fit()` gets the examples ready for `predict()`.
 
 ### Pretraining across many tables
 
@@ -341,8 +338,8 @@ $$
 </figure>
 
 Both expanding Kumo runs had positive mean IC over 1999–2021 and
-again from 2022 to May 2026. In the later window, Medium’s mean IC
-was 0.040, below Ridge’s 0.044 and LightGBM’s 0.046. Medium’s IC
+again from 2022 to May 2026. In the later window, mean IC was 0.044
+for Ridge, 0.046 for LightGBM and 0.040 for Medium. Medium’s IC
 varied less from one date to the next than Ridge’s, so its ICIR was
 higher, 0.38 versus 0.34. LightGBM led on both measures. Six-week
 Small’s mean IC was 0.025, and Rolling Small’s was −0.010.
@@ -384,8 +381,8 @@ of the previous 21 sessions’ average daily dollar volume. The
 sizing method is in
 [*From Volatility Scaling to Joint Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget).
 
-The optimizer uses a turnover penalty of 5 basis points for
-LightGBM and Kumo and 2.5 for Ridge. This affects how much it
+The optimizer uses a turnover penalty of 2.5 basis points for
+Ridge and 5 for LightGBM and Kumo. This affects how much it
 trades. The simulated execution fees are 7.5 basis points on
 long trades and 10 on shorts through 2010, then 5 and 7.5.
 I use the same holdings for the before- and after-fee figures.
@@ -449,8 +446,8 @@ LightGBM gives a 95% interval of −0.99 to −0.40 for Medium’s net
 Sharpe minus LightGBM’s.
 
 From 2022 to May 2026, LightGBM still led on rank IC. With
-75 candidates per side, Medium had the highest net Sharpe,
-at 1.20 versus 1.04 for LightGBM and 0.79 for Ridge. The paired
+75 candidates per side, net Sharpe was 0.79 for Ridge, 1.04 for
+LightGBM and 1.20 for Medium, the highest of the five runs. The paired
 95% interval for Medium’s Sharpe minus LightGBM’s ran from −0.38
 to 0.71 using 21-session blocks.
 
