@@ -2,7 +2,7 @@
 layout: post
 interactive_charts: true
 title: "Can Tabular Foundation Models Rank Stocks?"
-description: "Ridge, LightGBM and NVIDIA Kumo Tabular on the same stock universe, from rank IC to net portfolio returns."
+description: "How tabular foundation models learn from examples, and how one compares with Ridge and LightGBM for stock ranking."
 date: 2026-11-21
 last_modified_at: 2026-11-22
 categories: ["Signals"]
@@ -27,93 +27,65 @@ to 50,000 with [TabPFN-2.5](https://arxiv.org/abs/2511.08667). That
 progress made me want to see whether a model like this could rank
 stocks, where the signal is weak.
 
-I tested NVIDIA’s Kumo Tabular, which was pretrained entirely on
-synthetic tables, alongside Ridge and LightGBM. All three use the
-80 stock predictors I describe in [*Combining Multiple Predictors:
-The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
-I first compare the rankings themselves. Then I use the sizing method
-from [*From Volatility Scaling to Joint
-Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
-to see how each ranking fares after trading costs.
-
 ## A pretrained model for tables
 
 ### What the historical examples do at prediction time
 
-Take a stock I want to score at today’s close. I know its momentum
-and the rest of its predictors. Its outcome will take another 20
-trading sessions to observe. Over those sessions, I divide its average
-daily return by its daily return volatility and rank the resulting
-ratio within its sector. Historical rows whose 20 sessions have
-already passed give me examples with known outcomes.
+Suppose I have a table with two predictors and an outcome column.
+Most rows have a known outcome. For a new row I have the predictors
+and want to fill in the outcome. With LightGBM, `fit()` takes the
+labeled rows and builds a series of trees. Each tree adds a correction
+to the predictions from the earlier trees. One tree might split the
+rows at a threshold in the first predictor and learn a different
+correction on each side. When I call `predict()`, the new row follows
+the branches in the fitted trees and I add the corrections. The trees
+carry forward what the model learned from the labeled rows. With Ridge,
+the coefficients play the same role.
 
-Figure 1 shows a small version of the problem. The historical rows
-are A and B. Stock C has positive momentum on session 55, and its
-outcome is still unknown. In the study I use 80 predictors. The sketch
-uses momentum alone so we can follow the same input through both models.
+An in-context tabular foundation model uses the labeled rows in a
+different place. To fill in the new outcome, the network uses the
+new row’s predictors together with the examples and their known
+outcomes. Those examples are its *context*. Give the same network
+different examples and its answer can change, even when the new
+row and the network’s weights stay the same. This is *in-context learning*.
 
-With LightGBM, I call `fit()` with the historical predictors and
-outcomes. Each tree adds a correction to what the earlier trees predict.
-A tree might split the rows at a momentum threshold and learn a
-different correction on either side. Once the trees are fitted,
-`predict()` takes C’s momentum, follows the corresponding branches and
-adds the corrections. The historical outcomes have already shaped the
-trees. Ridge works the same way in this respect. The historical data
-determine its coefficients, which it then applies to C’s predictors.
+As Christoph Molnar points out, both workflows can look like
+`fit()` followed by `predict()` in code. With boosted trees,
+`fit()` estimates the trees from your data. With a pretrained
+model such as TabPFN or TabICL, the call prepares the labeled rows
+so the network can use them when it predicts. The training that
+determined the network’s weights took place earlier.
+[*Tabular Foundation Models*, Chapters 2 and 4](https://tabularfoundationmodels.com/first-look).
 
-The Kumo API has the same two calls. Here, `fit()` processes the
-historical rows and saves information from them for reuse. When I call
-`predict()` with C’s momentum, the network also uses the saved
-information from A and B, including their known outcomes. This is the
-*context*. If I replace A and B with other historical examples, C’s
-score can change even though C’s momentum and Kumo’s network weights
-stay the same. That is *in-context learning*. Christoph Molnar uses
-the familiar interface as his starting point in
-[*Tabular Foundation Models*, Chapter 2](https://tabularfoundationmodels.com/first-look).
+### Pretraining across many tables
 
-<figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
-  <picture>
-    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}" width="1024" height="1536">
-    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}" width="1536" height="1024" loading="lazy" decoding="async" alt="LightGBM fits trees on labeled stocks A and B, then scores C from its momentum. Kumo scores C with A and B as context. The label cutoff is session 50, the context refresh is 51, the forecast is 55, and the simulated trade is 56.">
-  </picture>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
-</figure>
+During pretraining, the network sees one prediction problem after
+another. In each table, it gets the outcomes for some rows and has
+to predict the outcomes for the others. Its errors on those hidden
+outcomes are used to update the network weights.
 
-B is sampled at session 30, so its 20-session outcome is known at
-session 50. I refresh the context on 51 and reuse it for a block of
-forecasts, including the one for C on 55. The simulated trade takes
-place at the next close. At the start of each block I rebuild the
-context using the outcomes available by then.
-
-### What Kumo learns during pretraining
-
-How can a network trained on synthetic tables use stock history this
-way? During pretraining, NVIDIA repeatedly gave Kumo a new table, showed
-it the outcomes for some rows and asked it to predict the others. The
-relationship could change from one table to the next. One target might
-depend mainly on a single predictor. Another might depend on a
-combination of predictors, with different amounts of noise.
-
-NVIDIA used the errors on the hidden outcomes to update the network
-weights. Because those updates came from many different prediction
-problems, the network learned to use the labeled rows to figure out
-what kind of relationship might apply in a new table. When I use Kumo,
-that training is complete. The historical stock rows are the examples
-it uses to do the same job for the stock ranking.
-[Molnar’s chapter on pretraining](https://tabularfoundationmodels.com/pretraining)
-explains why varying the relationships across tables matters.
+The relationship between predictors and outcomes varies across the
+tables. In one synthetic table, the outcome might mostly depend on
+a single column. In another, two columns might matter together. If
+every table followed the same rule, the network could learn that
+rule and use it everywhere. Varying the rules gives the network a
+reason to use the labeled rows to work out which relationships are
+plausible in the table it has been given. At prediction time on a
+new table, the examples supply that evidence and the weights stay
+fixed. [Molnar, Pretraining](https://tabularfoundationmodels.com/pretraining).
 
 ### The Bayesian intuition
 
-To see what an example can tell us, imagine two possible rules.
-Under the first, high momentum usually goes with a high outcome.
-Under the second, the outcome is usually high only when both momentum
-and the value signal are high. Start by assigning a 50% probability
-to each rule. Suppose the usual outcome occurs nine times out of ten
-under either rule, with independent errors across rows.
+Return to the table with two predictors and imagine two possible rules.
+Under the first, a high value in the first column usually gives a high
+outcome. Under the second, both predictors usually need to be high.
+Start with a 50% probability for each rule. Suppose the usual outcome
+occurs nine times out of ten under either rule, with independent errors
+across rows.
 
-Now I see a row with high momentum, low value and a low outcome. That
-outcome is expected under the second rule and unusual under the first.
+Now I see a row where the first predictor is high, the second is low
+and the outcome is low. That outcome is expected under the second
+rule and unusual under the first.
 It is nine times as likely under the second rule, so I raise that
 rule’s probability to 90%. For a new row with the same predictors,
 there are two ways to get a low outcome. The second rule could be
@@ -130,6 +102,64 @@ teaches the network to approximate this kind of prediction from
 examples, across a much wider range of relationships.
 [Molnar’s chapter on prior-data fitted networks](https://tabularfoundationmodels.com/prior-data-fitted-networks)
 develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbNf9).
+
+## Testing a tabular foundation model on stocks
+
+Each row is a stock on a particular date. The predictors, such as
+momentum, are observable on that date. To get the outcome, I divide
+the stock’s average daily return over the next 20 trading sessions by
+its daily return volatility over the same period and rank the ratio
+within its sector.
+
+I used NVIDIA’s Kumo Tabular as one implementation of the in-context
+approach. It was pretrained on synthetic tables. I compared its stock
+rankings with those from Ridge and LightGBM using the same
+[80 stock predictors]({% link _posts/2025-02-09-combining-predictors.md %}#the-predictors).
+I kept the two previously fitted baselines as fixed reference points
+for the comparison.
+
+For **Ridge**, I reused the linear baseline with a penalty of $c=0.1$
+on the sum of squared coefficients, with the squared prediction error
+averaged across training rows. Many of the predictors overlap, such as
+momentum measured over nearby horizons. The penalty limits how much
+the fit can rely on large offsetting coefficients to exploit small
+differences between those predictors. In the earlier penalty sweep,
+$c=0.1$ cut the length of the coefficient vector to less than half
+its OLS value while leaving development rank IC and net Sharpe close
+to their OLS values.
+[*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#choosing-the-penalty).
+
+For **LightGBM**, I reused the boosted-tree baseline with 350 trees
+per fit, a maximum depth of five and a learning rate of 0.05. The
+depth lets the trees pick up interactions while limiting how finely
+any one tree can partition the data. The learning rate scales each
+tree’s correction by 0.05, and 350 rounds let those small corrections
+build up. Each tree considers a quarter of the predictors, giving
+other signals a chance to be used when a strong predictor is absent.
+
+I compare the rankings first, then use the portfolio sizing method
+from [*From Volatility Scaling to Joint Sizing*]({% link _posts/2026-08-29-joint-sizing.md %}#sizing-under-a-volatility-budget)
+to see how they fare after trading costs.
+
+Figure 1 uses momentum alone to show how both models score stock C on
+session 55. LightGBM fits trees on historical rows A and B and scores C
+by following its momentum through those trees. With Kumo, `fit()`
+prepares and caches information from A and B, and `predict()` uses
+that context alongside C’s momentum. C’s outcome is still unknown.
+
+<figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
+  <picture>
+    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}" width="1024" height="1536">
+    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}" width="1536" height="1024" loading="lazy" decoding="async" alt="LightGBM fits trees on labeled stocks A and B, then scores C from its momentum. Kumo scores C with A and B as context. The label cutoff is session 50, the context refresh is 51, the forecast is 55, and the simulated trade is 56.">
+  </picture>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
+</figure>
+
+B is sampled at session 30, so its outcome is known at session 50.
+I refresh the context on 51 and reuse it for a block of forecasts,
+including the one for C on 55. The simulated trade takes place at
+the next close. At the start of each block I rebuild the context
+using the outcomes available by then.
 
 ### How Kumo turns the examples into a score
 
