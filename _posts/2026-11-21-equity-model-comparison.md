@@ -10,22 +10,18 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-Random forests and boosted trees like LightGBM have long been strong
-choices for tabular data.[^tree-benchmark] That’s starting to change.
-Tabular foundation models such as TabPFN and TabICL are beating tuned
-tree ensembles on some broad benchmarks.[^new-benchmarks]
+For years, random forests and boosted trees like LightGBM were
+hard to beat on tabular data.[^tree-benchmark] More recently,
+tabular foundation models such as TabPFN and TabICL have been
+beating tuned tree ensembles on a range of
+benchmarks.[^new-benchmarks] They can also handle much larger
+tables than the early versions could.[^larger-tables]
 
-What caught my attention was how they use the data. LightGBM fits
-trees for the table in front of it. A tabular foundation model comes
-pretrained across many tables and reads examples from yours when it
-makes a prediction. When those pretraining tables are all synthetic,
-the stock history the model sees is the history I supply in the
-backtest.
-
-As these models started handling larger tables, I wanted to see how
-well that approach could rank stocks.[^larger-tables] I compare one
-with Ridge and LightGBM, first on the rankings and then on what those
-rankings deliver after trading costs.
+I wanted to see whether that progress would carry over to stock
+ranking. I give a tabular foundation model, Ridge and LightGBM
+the same predictors and compare their rankings. Then I use those
+rankings to build long–short portfolios and see what survives
+position sizing and trading costs.
 
 ## A pretrained model for tables
 
@@ -109,13 +105,12 @@ by the training data, if I can verify that date. Glasserman and Lin
 explore the issue for
 [*GPT-based news sentiment*](https://arxiv.org/abs/2309.17322).
 
-I chose NVIDIA’s Kumo Tabular for the stock test. Its generated
-tables teach it how to use examples, and the historical rows I
-give it supply the evidence about stocks
+I chose NVIDIA’s Kumo Tabular, which was pretrained entirely on
+generated tables
 ([Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)).
-I keep its weights fixed throughout the backtest. At each forecast
-I use predictors available on that date. A historical row can enter
-the context at a refresh only if its 20-session outcome is already known.
+I keep its weights fixed. On each forecast date, it gets that
+day’s predictors and a context of historical stock rows whose
+20-session outcomes were known at the last refresh.
 
 ### Research setup
 
@@ -186,8 +181,8 @@ A long history makes prediction expensive because Kumo has to
 prepare, store and use the context. Near the end of the 1999–2021
 run, sampling one historical date a week would have left Kumo Small
 with about 760,000 labeled rows, even after the tails cut below.
-I estimated that the main buffers alone would take about 35 GiB
-to prepare that context. My Mac has 16 GB of memory. NVIDIA recommends
+I estimated it would take about 35 GiB of memory just to prepare
+that context, well above what my Mac could provide. NVIDIA recommends
 a GPU for large contexts in its
 [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).
 I wanted to run the test on the CPU, so I reduced the context in
@@ -277,11 +272,7 @@ every eligible stock on those signal dates using the latest context.
 ## Running Kumo on a Mac
 
 I ran Kumo on the 10-core Apple M2 Pro CPU of my 14-inch MacBook Pro
-(2023), with 16 GB of unified memory. I started with Kumo Large because it
-had the best results in NVIDIA’s paper. Large and Small both hit my
-10 GiB memory limit on the first group of forecast dates, even with
-35,738 context rows for Small. Smaller batches during context
-preparation got both through.
+(2023), with 16 GB of unified memory.
 
 In the [TabICL example in Molnar’s classification
 chapter](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict),
@@ -291,23 +282,13 @@ context once and reusing it. For the largest Medium context in the
 1999–2021 test, that preparation took about 13 minutes and scoring
 took another eight.
 
-In the original 1999–2021 run, expanding Small took 1 hour 39
-minutes and Medium took 2 hours 52 minutes.
-I ran Large only on the first group of forecast dates. For Rolling
-Small, I sampled the history weekly in a window that grew from
-two to three years, then rolled forward. That run took just under
-two hours.
-
-Scoring on the three portfolios’ shared set of signal dates takes
-about a fifth as many scoring days as running daily forecasts.
-
 ## Ranking the whole cross-section
 
 Once I have the forecasts, the first thing I check is how well
-each model orders the stocks. On each signal date, I rank the model
-scores and the realized outcomes for the same stocks, then correlate
-the two ranks. That Spearman
-correlation is the information coefficient, or $\mathrm{IC}_t$.
+each model orders the stocks. For a signal date with known outcomes,
+I rank the model scores and the realized outcomes for the same stocks,
+then correlate the two ranks. That Spearman correlation is the
+information coefficient, or $\mathrm{IC}_t$.
 Figure 3 shows its mean, sample standard deviation and their ratio
 across signal dates. The ratio is left unannualized.
 
@@ -316,13 +297,9 @@ $$
                       {\operatorname{sd}_t(\mathrm{IC}_t)}
 $$
 
-The windows ending in 2021 use outcomes known by that year-end.
-The full history includes five more 2021 signals whose outcomes
-became known in 2022.
-
 <figure id="figure-3" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=5" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="6" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> The full-period rank metrics use 1,421 signal dates with realized outcomes. Each metric keeps the same scale across periods.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
 Both expanding Kumo runs had positive mean IC over 1999–2021 and
@@ -433,25 +410,17 @@ Resampling the same 21-session stretches of returns for Medium and
 LightGBM gives a 95% interval of −0.99 to −0.40 for Medium’s net
 Sharpe minus LightGBM’s.
 
-I split the difference in average daily P&L into longs, shorts and
-fees, then annualize so the pieces add up. LightGBM earned 7.1
-percentage points more per year than expanding Small on this
-measure. Longs contributed 3.2 points, shorts 2.7 and lower fees
-1.2. Medium earned 1.9 points more than expanding Small, with 1.5
-points from longs and 0.7 from lower fees, offset by a 0.3-point
-shortfall on the short side.
-
 From 2022 to May 2026, LightGBM still led on rank IC. With
 75 candidates per side, Medium had the highest net Sharpe,
 at 1.20 versus 1.04 for LightGBM and 0.79 for Ridge. The paired
 95% interval for Medium’s Sharpe minus LightGBM’s ran from −0.38
 to 0.71 using 21-session blocks.
 
-Medium’s higher average net P&L came from the long side. Relative
-to LightGBM, its long book contributed 5.5 percentage points more annualized
-arithmetic P&L and its short book gave up 3.2 points. It traded
-29.2 times capital per year versus 20.1 for LightGBM, and the
-extra fees cost another 0.6 points.
+Medium’s higher average net P&L came from the long side.
+I annualize the differences in average daily P&L so the long,
+short and fee contributions add up. Compared with LightGBM,
+Medium gained 5.5 percentage points on the long side, gave up
+3.2 points on the short side and paid 0.6 points more in fees.
 
 At 100 candidates per side, Medium and LightGBM were closer, with
 after-fee Sharpes of 1.18 and 1.14. At 150, LightGBM moved ahead,
@@ -465,20 +434,17 @@ the full history, LightGBM led on net Sharpe at every width.
 Two models can have similar results overall while ranking stocks
 differently. Table 2 shows how closely the rankings agreed and
 whether the portfolios made or lost money on the same days.
-The left side averages score
-rank correlations across all signal dates, including dates whose
-outcomes fall beyond the test period. The right side averages net
-daily return correlations across the three schedules.
+The left side averages score rank correlations across signal dates.
+The right side averages daily net return correlations across the
+three schedules.
 
 <div role="group" aria-labelledby="table-2">
-  <p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Correlations between models, 1999–May 2026.</span> Rankings use 1,429 signal dates. Net returns use 6,876 trading sessions.</p>
+  <p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Correlations between models, 1999–May 2026.</span></p>
   {% include equity-correlation-matrices.html %}
 </div>
 
-Ridge and LightGBM agree more on rankings than either agrees with
-expanding Small. Medium is closer to LightGBM than to Ridge
-on both rankings and daily returns. Rolling Small’s net daily
-returns had a correlation of −0.06 with expanding Small.
+Medium is closer to LightGBM than to Ridge on both the stock
+rankings and the daily portfolio returns.
 
 ## Comparing model sizes on the same context
 
@@ -493,24 +459,16 @@ the comparison also changes which examples it sees.
 
 If the relationships between predictors and outcomes change, recent
 examples might help more than old ones. I tried a rolling version of
-Small that sampled weekly and dropped older observations as it moved
-forward. It changed both the spacing of the dates and how far back the
-model could look.
+Small that sampled weekly, started with two years of history, and
+began dropping older observations once the window reached three
+years. That gave it more closely spaced examples from a shorter
+history.
 
-Over 1999–2021, Rolling Small’s ICIR was 0.45 below expanding
-Small’s and its net Sharpe was 0.85 lower.
-Even in 2012–2021, when the rolling equal-weight decile spread was
-less volatile, its Sharpe was lower than expanding Small’s. After
-sizing and fees, Rolling Small’s net Sharpe was 0.39 over 1999–2021
-and −0.04 in 2017–2021.
-
-The short book explains most of the original gap. The rolling variant
-gave up 5.9 percentage points of annualized arithmetic net P&L versus
-expanding Small. The short side cost 5.4 points more, the long side
-earned 0.7 points less, and lower fees recovered 0.2 points. From
-2022 to May 2026 the rolling book lost money before fees at
-every width. Its annual net return was −2.8% with 75 candidates
-per side and −3.9% with 150.
+Over 1999–2021, Rolling Small ranked stocks worse than expanding
+Small and had a net Sharpe of 0.39 versus 1.24. The short book
+accounted for most of the gap in average net P&L. From 2022 to
+May 2026, Rolling Small lost money before fees at every candidate
+width.
 
 ## How the P&L built up
 
