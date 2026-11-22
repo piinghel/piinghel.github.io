@@ -172,6 +172,7 @@ def export_rank(
     render_rank_fallbacks(
         base,
         labels=[label for _, label, _ in models],
+        is_kumo=[model.startswith("kumo_") for model, _, _ in models],
         panels=[
             (
                 label,
@@ -192,35 +193,36 @@ def render_rank_fallbacks(
     base: Path,
     *,
     labels: list[str],
+    is_kumo: list[bool],
     panels: list[tuple[str, int, list[float], list[float]]],
 ) -> None:
     for mobile in (False, True):
         for dark in (False, True):
-            ink, grid = ("#dce3eb", "#36404a") if dark else ("#27343d", "#e2e7eb")
-            fill = "#9db1c3" if dark else "#526c82"
+            ink, track = ("#dce3eb", "#2a323c") if dark else ("#27343d", "#eef1f3")
+            accent = "#83a7bc" if dark else "#63849a"
+            colors = [accent if model else "#83909b" for model in is_kumo]
             text_size = 8 if mobile else 10
             with plt.rc_context({"svg.hashsalt": "stock-rank-metrics", "font.size": text_size}):
                 figure, axes = plt.subplots(
                     1,
                     len(panels),
-                    figsize=(4.1 if mobile else 6.7, 2.8),
+                    figsize=(4.1 if mobile else 6.7, 2.35),
                     sharey=True,
                     layout="constrained",
                 )
                 for axis, (label, digits, values, all_values) in zip(axes, panels, strict=True):
                     lower, upper = min(0, *all_values), max(0, *all_values)
-                    axis.barh(labels, values, height=0.26, color=fill)
+                    span = upper - lower
+                    axis.barh(labels, [span] * len(labels), left=lower, height=0.23, color=track)
+                    axis.barh(labels, values, height=0.23, color=colors)
                     axis.set_title(label, loc="left", color=ink, fontsize=text_size)
-                    for index, value in enumerate(values):
-                        axis.annotate(f"{value:.{digits}f}", (lower, index), color=ink,
-                                      xytext=(1, 4), textcoords="offset points", va="bottom")
-                    axis.set_xlim(lower, upper * 1.06)
-                    axis.set_ylim(len(labels) - 0.5, -0.6)
-                    axis.xaxis.set_major_locator(plt.MaxNLocator(2 if mobile else 4))
+                    for label_row, value in zip(labels, values, strict=True):
+                        axis.text(1, label_row, f"{value:.{digits}f}", ha="right", va="center",
+                                  color=ink, transform=axis.get_yaxis_transform())
+                    axis.set_xlim(lower, upper + span * (1.55 if mobile else 0.55))
+                    axis.set_ylim(len(labels) - 0.55, -0.55)
+                    axis.set_xticks([])
                     axis.tick_params(length=0, colors=ink)
-                    axis.grid(axis="x", color=grid, linewidth=0.6)
-                    axis.axvline(0, color=ink, linewidth=0.5, alpha=0.5)
-                    axis.set_axisbelow(True)
                     axis.spines[:].set_visible(False)
                 save_svg(figure, svg_path(base, mobile=mobile, dark=dark), transparent=True)
 

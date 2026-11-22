@@ -325,10 +325,11 @@
   async function mount(host) {
     const status=host.querySelector('.blog-chart-status');
     try {
-      const [data]=await Promise.all([load(host.dataset.source),plotly()]);
+      const data=await load(host.dataset.source);
       if(data.version!==1) throw new Error('Unsupported chart version');
       const cfg=data.charts[host.dataset.chart], bars=['bars','grouped-bars'].includes(cfg.kind);
-      if(cfg.kind==='rank-bars'){await rankBars(host,cfg);return;}
+      if(cfg.kind==='rank-bars'){rankBars(host,cfg);return;}
+      await plotly();
       if(cfg.kind==='decile-profiles'){await decileProfiles(host,cfg);return;}
       if(cfg.kind==='matrix'){await matrix(host,cfg);return;}
       if(cfg.kind==='panels'){await panels(host,cfg);return;}
@@ -825,64 +826,56 @@
     await draw();new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
     let width=host.clientWidth;new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
-  async function rankBars(host,cfg) {
+  function rankBars(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');
     ui.hidden=false;
-    const graph=element('div','blog-chart-plot');
-    graph.setAttribute('role','img');
-    ui.append(graph);
-    let period=cfg.periods[0];
+    const chart=element('table','rank-metric-bars');
+    const headings=chart.createTHead().insertRow();
+    for(const label of ['Model',...cfg.metrics.map(metric=>metric.label)]) {
+      const heading=element('th','',label);
+      heading.scope='col';
+      headings.append(heading);
+    }
+    const body=chart.createTBody();
+    ui.append(chart);
+    const domains=cfg.metrics.map(metric=>{
+      const values=cfg.periods.flatMap(period=>cfg.series.map(item=>period.values[item.id][metric.id]));
+      return [Math.min(0,...values), Math.max(0,...values)];
+    });
     periodChoices(ui,cfg.periods.map(item=>item.label),index=>{
-      period=cfg.periods[index];
-      draw();
+      draw(cfg.periods[index]);
     });
 
-    async function draw() {
-      const dark=isDark(),ink=dark?'#dce3eb':'#27343d',grid=dark?'#36404a':'#e2e7eb';
-      const narrow=host.clientWidth<530,height=243,labels=cfg.series.map(item=>item.label);
-      const positions=labels.map((_,index)=>index);
-      const colors=cfg.series.map(item=>COLORS[item.role]),traces=[],metricDescriptions=[];
-      const layout={height,margin:{l:narrow?76:105,r:8,t:25,b:24},
-        font:{family:'Bricolage Grotesque, sans-serif',size:narrow?10.5:11.5,color:ink},
-        paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:plotSurface(),hoverlabel:hoverStyle(),
-        showlegend:false,dragmode:false,annotations:[],
-        yaxis:{range:[labels.length-.5,-.5],tickvals:positions,ticktext:labels,
-          showgrid:false,zeroline:false,fixedrange:true}};
-      graph.style.height=height+'px';
-
-      cfg.metrics.forEach((metric,index)=>{
-        const suffix=index?String(index+1):'',x='x'+suffix;
-        const values=cfg.series.map(item=>period.values[item.id][metric.id]);
-        const allValues=cfg.periods.flatMap(item=>cfg.series.map(model=>item.values[model.id][metric.id]));
-        const lower=Math.min(0,...allValues),upper=Math.max(0,...allValues),span=upper-lower;
-        const left=index*.347,domain=[left,left+.306];
-        const textValues=values.map(value=>value.toFixed(metric.digits).replace('-','−'));
-        const range=[lower-(lower<0?.04:0)*span,upper+.05*span];
-        layout['xaxis'+suffix]={domain,range,anchor:'y',tickformat:'~g',nticks:4,
-          tickvals:narrow?[0,Number((upper*.75).toPrecision(1))]:undefined,
-          fixedrange:true,gridcolor:grid,zerolinecolor:COLORS.comparison};
-        layout.annotations.push({text:metric.label,x:left,y:1,xref:'paper',yref:'paper',
-          xanchor:'left',yanchor:'bottom',yshift:5,showarrow:false});
-        textValues.forEach((value,row)=>{
-          layout.annotations.push({text:value,x:range[0],y:row,
-            xref:x,yref:'y',xanchor:'left',xshift:1,yshift:10,showarrow:false});
+    function draw(period) {
+      chart.setAttribute('aria-label','Rank metrics, '+period.label+', '+period.dates+' signal dates');
+      body.replaceChildren();
+      for(const item of cfg.series) {
+        const row=body.insertRow();
+        row.classList.toggle('rank-kumo',item.id.startsWith('kumo_'));
+        const label=element('th','',item.label);
+        label.scope='row';
+        row.append(label);
+        cfg.metrics.forEach((metric,index)=>{
+          const [lower,upper]=domains[index],span=upper-lower||1;
+          const value=period.values[item.id][metric.id];
+          const cell=element('div','rank-metric-cell');
+          const track=element('span','rank-metric-track');
+          track.setAttribute('aria-hidden','true');
+          track.style.setProperty('--zero',(-100*lower/span)+'%');
+          const bar=element('span','rank-metric-bar');
+          bar.style.left=(100*(Math.min(value,0)-lower)/span)+'%';
+          bar.style.width=(100*Math.abs(value)/span)+'%';
+          track.append(bar);
+          const number=element('span','rank-metric-value',value.toFixed(metric.digits).replace('-','−'));
+          cell.append(track,number);
+          row.insertCell().append(cell);
         });
-        traces.push({type:'bar',orientation:'h',x:values,xaxis:x,y:positions,
-          width:.24,customdata:labels,
-          marker:{color:colors,opacity:.86},text:textValues,textposition:'none',
-          hovertemplate:'%{customdata}<br>'+metric.label+': %{text}<extra></extra>'});
-        metricDescriptions.push(metric.label+': '+labels.map((label,row)=>label+' '+textValues[row]).join(', '));
-      });
-      graph.setAttribute('aria-label',period.label+' across '+period.dates+' signal dates. '+metricDescriptions.join('. ')+'.');
-      await Plotly.react(graph,traces,layout,{responsive:true,displayModeBar:false});
+      }
     }
 
-    await draw();
+    draw(cfg.periods[0]);
     host.querySelector('.blog-chart-status').hidden=true;
     host.querySelector('.blog-chart-fallback').hidden=true;
-    new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-    let width=host.clientWidth;
-    new ResizeObserver(()=>{if(width!==host.clientWidth){width=host.clientWidth;draw();}}).observe(host);
   }
   async function decileProfiles(host,cfg) {
     const ui=host.querySelector('.blog-chart-ui');
