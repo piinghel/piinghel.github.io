@@ -304,13 +304,9 @@ about a fifth as many scoring days as running daily forecasts.
 ## Ranking the whole cross-section
 
 Once I have the forecasts, the first thing I check is how well
-each model orders the stocks. The five configurations have
-1,387,790 stock forecasts in common across 1,429 signal dates.
-The full-period rank comparison uses the 1,421 dates with
-realized outcomes available by the end of the test.
-
-On each signal date, I rank the model scores and the realized outcomes
-for the same stocks, then correlate the two ranks. That Spearman
+each model orders the stocks. On each signal date, I rank the model
+scores and the realized outcomes for the same stocks, then correlate
+the two ranks. That Spearman
 correlation is the information coefficient, or $\mathrm{IC}_t$.
 Figure 3 shows its mean, sample standard deviation and their ratio
 across signal dates. The ratio is left unannualized.
@@ -326,7 +322,7 @@ became known in 2022.
 
 <figure id="figure-3" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=5" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="6" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> The full sample has 1,421 shared signal dates with known targets. Each metric keeps the same scale across periods.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> The full-period rank metrics use 1,421 signal dates with realized outcomes. Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
 Both expanding Kumo runs had positive mean IC over 1999–2021 and
