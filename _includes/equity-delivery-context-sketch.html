@@ -1,0 +1,33 @@
+{% assign past_deliveries = "6 km|14:00|20,8 km|16:45|25,9 km|17:00|35" | split: "," %}
+{% assign approaches = "k-nearest neighbors|Foundation model" | split: "|" %}
+<div class="model-sketch" role="img" aria-label="For a new 8 km order at 17:00, two-nearest-neighbor regression averages the two closest past times, 25 and 35 minutes, to give 30 minutes. The tabular foundation model uses all three labeled deliveries as context. The new order's delivery time is unknown in both cases.">
+  <div class="model-sketch__pair" aria-hidden="true">
+    {% for approach in approaches %}
+      {% assign nearest = forloop.first %}
+      <div>
+        <div class="model-sketch__label">{{ approach }}</div>
+        <table>
+          <thead><tr><th>Distance</th><th>Start</th><th>Minutes</th></tr></thead>
+          <tbody>
+            {% for delivery in past_deliveries %}
+              <tr{% if nearest == false or forloop.first == false %} class="model-sketch__marked"{% endif %}>
+                {% assign cells = delivery | split: "|" %}
+                {% for cell in cells %}<td>{{ cell }}</td>{% endfor %}
+              </tr>
+            {% endfor %}
+            <tr class="model-sketch__query"><td>8 km</td><td>17:00</td><td>?</td></tr>
+          </tbody>
+        </table>
+        <div class="model-sketch__step">
+          {% if nearest %}
+            <span class="model-sketch__arrow">↓</span> Average the two nearest
+            <div class="model-sketch__result">(25 + 35) / 2 = 30 min</div>
+          {% else %}
+            <span class="model-sketch__arrow">↓</span> Use all three as context
+            <div class="model-sketch__result">Predict the missing time</div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>

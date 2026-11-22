@@ -71,6 +71,56 @@ html[data-theme="dark"] .context-sampling { --selected-mark: #8bb3cc; }
   .context-sampling { grid-template-columns: 1fr; gap: 1.15rem; }
 }
 
+.model-sketch {
+  --sketch-mark: #3f6d77;
+  color: var(--ink);
+  font: 0.85rem/1.4 var(--font-sans);
+  padding: 0.2rem 0 0.45rem;
+}
+html[data-theme="dark"] .model-sketch { --sketch-mark: #91bec8; }
+.model-sketch__pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.95rem clamp(0.9rem, 3vw, 2.25rem);
+}
+.model-sketch__label { margin-bottom: 0.35rem; font-size: 0.9rem; font-weight: 500; }
+.post-content .model-sketch table {
+  margin: 0;
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.post-content .model-sketch :is(th, td) {
+  padding: 0.23rem 0.35rem;
+  border: 0;
+  text-align: left;
+}
+.post-content .model-sketch th {
+  color: var(--muted-ink);
+  border-bottom: 1px solid var(--rule);
+  font-weight: 500;
+}
+.model-sketch__marked { background: color-mix(in srgb, var(--sketch-mark) 11%, transparent); }
+.post-content .model-sketch__marked td:first-child {
+  box-shadow: inset 2px 0 var(--sketch-mark);
+}
+.post-content .model-sketch__query td { border-top: 1px dashed var(--sketch-mark); }
+.model-sketch__query td:last-child { color: var(--sketch-mark); font-weight: 600; }
+.model-sketch__step { margin-top: 0.5rem; color: var(--muted-ink); }
+.model-sketch__arrow { color: var(--sketch-mark); margin-right: 0.18rem; }
+.model-sketch__result { color: var(--ink); }
+.model-sketch__shared-step {
+  border-top: 1px solid var(--rule);
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  text-align: center;
+}
+@media (max-width: 27rem) {
+  .post-content .model-sketch :is(th, td) { padding-inline: 0.22rem; }
+}
+@media (max-width: 23rem) {
+  .model-sketch__pair { grid-template-columns: 1fr; }
+}
+
 .post-content .portfolio-path-figure { overflow: visible; scroll-margin-top: 1.25rem; }
 @media (min-width: 72rem) {
   .e-content > :is(.portfolio-path-figure, .regime-comparison-figure, .decile-profile-figure) { width: calc(100% + 5rem); }

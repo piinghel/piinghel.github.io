@@ -10,20 +10,24 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-For years, random forests and boosted trees like LightGBM were
-hard to beat on tabular data.[^tree-benchmark] More recently,
-tabular foundation models such as TabPFN and TabICL have been
-beating tuned tree ensembles on a range of
-benchmarks.[^new-benchmarks] They can also handle much larger
-tables than the early versions could.[^larger-tables]
+For years, a random forest or a boosted tree model like LightGBM
+was where I’d start with a new table.[^tree-benchmark] I started
+paying attention to tabular foundation models when I saw TabPFN
+and TabICL beat tuned tree ensembles on
+benchmarks.[^new-benchmarks]
 
-I wanted to see whether that progress would carry over to stock
-ranking. I give a tabular foundation model, Ridge and LightGBM
-the same predictors and compare their rankings. Then I use those
-rankings to build long–short portfolios and see what survives
-position sizing and trading costs.
+Once these models could handle bigger tables, I wanted to try one
+on stocks.[^larger-tables] I give it the same predictors as Ridge
+and LightGBM and compare how well they rank the stocks. Then I turn
+each ranking into a long–short portfolio to see which differences
+matter after trading costs.
 
 ## A pretrained model for tables
+
+I’m still getting to know these models. What helped me was to follow
+the historical examples through a single prediction. For a deeper
+treatment, I’d recommend Christoph Molnar’s excellent
+[*Tabular Foundation Models*](https://tabularfoundationmodels.com/).
 
 ### What the model needs to make a prediction
 
@@ -32,13 +36,11 @@ Suppose I want to predict how long an 8 km delivery will take at
 day and actual delivery time for each one. For the new order,
 I know the distance and time of day. The delivery time is blank.
 
-With LightGBM, I use the completed deliveries to fit a set of
-trees. A tree can learn to use a different estimate for short
-and long trips, or to use the time of day for some trips. Once
-the trees are fitted, I can give them the new order’s predictors
-and get an estimate. I’d have to fit the trees again for new delivery
-records to change that estimate. Ridge works the same way in this
-respect. The fitted coefficients carry forward what it learned.
+With LightGBM, I use `fit()` to build trees from the completed
+deliveries. Once I have those trees, `predict()` only needs the new
+order’s distance and time of day. Whatever the model learned from
+the earlier deliveries is already in the trees. In Ridge, the
+fitted coefficients play that role.
 
 Think about k-nearest neighbors. To predict the new order’s
 delivery time, it looks up past orders with similar distances
@@ -49,39 +51,62 @@ their delivery times are still part of making the prediction.
 A tabular foundation model also gets the past deliveries and
 their known outcomes at prediction time. Those rows are its
 *context*. With k-nearest neighbors, I choose what counts as
-a similar trip. The network has already learned how to weigh
-information from the examples. It can pick up, for instance,
-that rush hour matters more for long trips.
+a similar trip. The network has already learned how to combine
+information from the examples.
+
+Figure 1 shows what each approach brings into the prediction for
+the same new order.
+
+<figure id="figure-1" class="research-figure responsive-figure">
+  {% include equity-delivery-context-sketch.html %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Two ways to use the past deliveries.</span> Marked rows feed the prediction. The dashed line separates the new order from the completed deliveries.</figcaption>
+</figure>
+
+Inside the network, the new order and the historical examples
+become vectors it can compare. Through *attention*, the
+representation of the new order picks up information from the
+examples. One comparison might bring in useful information about
+similar distances. Another might help it pick up that rush hour
+matters more for long trips. The network turns the resulting
+representation into an estimate for the missing delivery time.
 
 If I give the same network a different city’s deliveries, the
 same order can get a different estimate. The network weights
 stay fixed. That’s *in-context learning*.
 
-The code can look like the same two calls, `fit()` and
-`predict()`. With LightGBM, `fit()` builds the trees.
-With a pretrained network, it can store or prepare the examples
-the network will use during `predict()`. Christoph Molnar uses
+Tabular foundation models can still use the familiar `fit()` and
+`predict()` calls. Here, `fit()` can prepare the examples that
+`predict()` will use, with the network weights fixed. Molnar uses
 the k-nearest-neighbors analogy and shows what each model needs
 when it predicts in
 [*Tabular Foundation Models*, Chapter 4](https://tabularfoundationmodels.com/prediction#tfms-do-in-context-learning).
 
 ### Pretraining across many tables
 
-The network learns to use examples by solving many prediction
-problems before it sees a table like the delivery data. In each
-practice table, some rows come with outcomes and others have blanks.
-The network tries to fill the blanks, and the errors update its weights.
+Many tabular foundation models are pretrained on synthetic data.
+A generator makes tables with different relationships between
+predictors and outcomes. In one table, a single predictor might
+explain most of the outcome. In another, the effect of one
+predictor might depend on a second.
 
-The practice tables can be generated. In one table, the first
-predictor might explain most of the outcome. In another, two
-predictors might matter together. The rule changes from one table
-to the next, so the network has to use the labeled rows to work
-out what matters in each table. That is the skill it brings to
-a new dataset.
+Figure 2 shows two such practice tables. The inputs are the same,
+but the generator has used a different rule to produce the outcomes
+in each table. The network sees some outcomes and tries to predict
+the missing ones. The training procedure knows the hidden outcomes
+and uses the resulting errors to update the network’s weights.
+
+<figure id="figure-2" class="research-figure responsive-figure">
+  {% include equity-synthetic-pretraining-sketch.html %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Two prediction tasks during pretraining.</span> Errors on the hidden outcomes update the same network.</figcaption>
+</figure>
+
+As the rules change from table to table, the useful skill is
+working out what matters from the labeled examples. Once trained,
+the network can use that skill on a new table with its weights fixed.
 Molnar shows how those tables are generated in
 [*Tabular Foundation Models*, Chapter 5](https://tabularfoundationmodels.com/pretraining).
 
-### The Bayesian intuition
+### How an example changes the forecast
 
 Go back to the deliveries and imagine two possible rules. Under
 the first, long routes usually take a long time. Under the second,
@@ -111,12 +136,13 @@ develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbN
 
 ### What the model could know on each date
 
-I chose NVIDIA’s Kumo Tabular, which was pretrained entirely on
-generated tables
+I picked NVIDIA’s Kumo Tabular for the stock test. NVIDIA
+pretrained it entirely on synthetic data
 ([Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)).
-I keep its weights fixed. On each forecast date, it gets that
-day’s predictors and a context of historical stock rows whose
-20-session outcomes were known at the last refresh.
+Each time I ask Kumo for a ranking, it sees the stock predictors
+for that day alongside examples from the past. I only include
+a past example once I know how the stock did over the following
+20 trading sessions.
 
 ### Research setup
 
@@ -128,8 +154,8 @@ I describe how I build the target and predictors in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
 Ridge and LightGBM fit on past data and score the dates that follow.
-I refresh Kumo’s context on the LightGBM refit dates. For Kumo,
-I test Small and Medium with expanding histories, where the pool
+I put together a new set of examples for Kumo whenever I fit
+LightGBM again. I test Small and Medium with expanding histories, where the pool
 of examples grows from the same January 1995 start. I also test
 Rolling Small, which keeps only recent history. The test runs from
 1999 through May 27, 2026. I show 2022 onward separately to see
@@ -148,22 +174,23 @@ giving different trees a chance to split on different inputs.
 
 ### A stock forecast with historical context
 
-Figure 1 uses momentum alone to show how both models score stock C on
+Figure 3 uses momentum alone to show how both models score stock C on
 session 55. LightGBM fits trees on historical rows A and B and scores C
 by following its momentum through those trees. With Kumo, `fit()`
 prepares and caches information from A and B, and `predict()` uses
 that context alongside C’s momentum. C’s outcome is still unknown.
 
-<figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
+<figure id="figure-3" class="research-figure responsive-figure stock-scoring-figure">
   <picture>
-    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}" width="1024" height="1536">
-    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}" width="1536" height="1024" loading="lazy" decoding="async" alt="LightGBM fits trees on labeled stocks A and B, then scores C from its momentum. Kumo scores C with A and B as context. The label cutoff is session 50, the context refresh is 51, the forecast is 55, and the simulated trade is 56.">
+    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}?v=2" width="1024" height="1536">
+    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}?v=2" width="1536" height="1024" loading="lazy" decoding="async" alt="LightGBM fits trees on labeled stocks A and B, then scores C from its momentum. Kumo scores C with A and B as context. Outcomes must be known by session 50. The context is built on 51, the forecast is on 55, and the simulated trade is on 56.">
   </picture>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
 </figure>
 
 B is sampled at session 30, so its outcome is known at session 50.
-It can enter the context refreshed on 51 and help score C on 55.
+I can include B when I put the examples together on session 51
+and use those same examples to score C on 55.
 The simulated trade takes place at the next close.
 
 ### How Kumo turns the examples into a score
@@ -219,12 +246,12 @@ Keeping the lowest and highest 20% of their training outcomes cut
 backtest time by roughly 60% and gave a similar return spread
 between the highest- and lowest-ranked portfolios.
 
-Figure 2 uses two illustrative grids. Sampling every 20 sessions
+Figure 4 uses two illustrative grids. Sampling every 20 sessions
 keeps four dates, and sampling every 30 keeps three. The tails filter
 keeps six of the ten stocks on each selected date, leaving 24 or 18
 labeled rows.
 
-<figure id="figure-2" class="research-figure responsive-figure">
+<figure id="figure-4" class="research-figure responsive-figure">
   <div class="context-sampling" role="img" aria-label="The 20-session grid selects historical sessions 0, 20, 40 and 60. The 30-session grid selects 0, 30 and 60. On each selected date, ten stocks are sorted by the realized prediction target. The lowest three and highest three are kept, and the middle four are skipped.">
     <div aria-hidden="true">
       <div class="context-sampling-heading">Historical dates</div>
@@ -266,10 +293,10 @@ labeled rows.
       </div>
     </div>
   </div>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
-At each context refresh, as in Figure 1, I apply these cuts to the
+When I put together a set of examples, I apply these cuts to the
 history with known outcomes. The portfolios have three staggered
 signal calendars, each with a rebalance roughly every three weeks.
 Even with six weeks between historical examples, Kumo can score
@@ -295,7 +322,7 @@ each model orders the stocks. For a signal date with known outcomes,
 I rank the model scores and the realized outcomes for the same stocks,
 then correlate the two ranks. That Spearman correlation is the
 information coefficient, or $\mathrm{IC}_t$.
-Figure 3 shows its mean, sample standard deviation and their ratio
+Figure 5 shows its mean, sample standard deviation and their ratio
 across signal dates. The ratio is left unannualized.
 
 $$
@@ -303,9 +330,9 @@ $$
                       {\operatorname{sd}_t(\mathrm{IC}_t)}
 $$
 
-<figure id="figure-3" class="research-figure responsive-figure">
+<figure id="figure-5" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=5" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="6" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
 Both expanding Kumo runs had positive mean IC over 1999–2021 and
@@ -328,9 +355,9 @@ returns, annualize using 252 sessions and use zero cash return for Sharpe.
 I use the same decile comparison for Ridge in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#figure-3).
 
-<figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
+<figure id="figure-6" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=4" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="9" label="Return, volatility and Sharpe by stock score decile from 1999 through May 2026, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Decile 10 holds the highest scores. All deciles are equal-weighted and shown before costs.</figcaption>
 </figure>
 
 Over the full history, LightGBM’s top decile earned about 18% a year
@@ -478,16 +505,16 @@ width.
 
 ## How the P&L built up
 
-Table 1 compounds returns. Figure 5 adds up daily net P&L as a
+Table 1 compounds returns. Figure 7 adds up daily net P&L as a
 share of fixed capital, so you can see when the gaps opened and
 how deep the drawdowns were. The chart starts with each path
 visually rescaled to 7% annualized volatility in the selected
 window. Clear the checkbox to see the original paths. Open
 **Explore** to add Rolling Small.
 
-<figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
+<figure id="figure-7" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=7" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="6" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 7.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
 </figure>
 
 LightGBM finished with the highest cumulative P&L over the full
