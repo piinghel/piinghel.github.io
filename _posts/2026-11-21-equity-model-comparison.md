@@ -38,25 +38,61 @@ to see how each ranking fares after trading costs.
 
 ## A pretrained model for tables
 
-Imagine two artificial tables with the same two predictors. In one,
-the outcome is high whenever the first predictor is high. In the
-other, both predictors have to be high. Now give the model a row with
-a high first value and a low second value. The first table suggests a
-high outcome. The second suggests a low one. The labeled rows are the
-context that tells the model which relationship applies.
+When I fit LightGBM to a table, each new tree tries to correct errors
+made by the trees already fitted. It might learn to split rows where
+a predictor crosses a threshold, then assign a different adjustment
+on each side. To score a new row, I follow its predictors down the
+trees and add their adjustments. The fitted trees already contain
+what the model learned from the table.
 
-During pretraining, each table is a separate prediction problem.
-The model sees some outcomes and tries to fill in the hidden ones.
-Its errors across many tables update its weights. It learns how to
-use examples to make a prediction in a table it has just been given
-([Molnar, Chapter 5](https://tabularfoundationmodels.com/pretraining)).
+### What the historical examples do at prediction time
 
-When a new table arrives, the pretrained weights stay fixed. The
-model encodes the table entries into numerical representations. As it
-scores a new row, attention lets it draw more information from some
-labeled examples than others. Changing those examples can change the
-score with the same model weights. That’s in-context learning
-([Molnar, Chapter 4](https://tabularfoundationmodels.com/prediction)).
+Imagine two tables with the same two predictors. In the first, a high
+value for the first predictor usually goes with a high outcome. In the
+second, the outcome is usually high only when both predictors are high.
+Now give the model a row with a high first value and a low second value.
+The likely answer depends on which table it came from. An example with
+the same predictor values and a known outcome helps tell the two cases
+apart.
+
+A tabular foundation model practices this kind of problem during
+pretraining. It sees many artificial tables, each with its own
+relationship between the predictors and the outcome. Some outcomes
+are hidden, and the model is asked to recover them using the labeled
+rows in the same table. Its mistakes update one set of weights across
+all of those practice problems. When I give it a new table, those
+weights stay fixed. The labeled rows now tell it about this particular
+table. That use of examples at prediction time is in-context learning
+([Christoph Molnar, *Tabular Foundation Models*, Chapters 4 and 5](https://tabularfoundationmodels.com/prediction)).
+
+### The Bayesian intuition
+
+Suppose I start out giving the two relationships equal weight, and
+each relationship generates its usual outcome nine times out of ten.
+I then see one row with a high first value, a low second value, and
+a low outcome. That evidence is nine times as likely under the
+second relationship, so its weight goes from 50% to 90%. For the
+next row with those same inputs, both relationships still contribute.
+The chance of a low outcome is 0.9 × 0.9 + 0.1 × 0.1, or 82%.
+
+The starting weights are the *prior*. The historical examples
+shift those weights, and the forecast averages over the
+relationships that remain plausible. In prior-data fitted networks,
+the way the artificial tables are generated defines the prior.
+Pretraining teaches the network to approximate this kind of prediction
+from examples in a new table. The two-rule calculation shows the idea
+on a small enough problem to do by hand
+([Müller et al., *Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9)).
+
+### How Kumo turns the examples into a score
+
+Kumo turns each row into a vector that summarizes its predictors and
+any known outcome. Its attention layers let the new row draw information
+from those labeled rows. Some examples have more influence than others,
+depending on what the model sees in the row it is scoring. The updated
+representation gives Kumo a distribution for the missing outcome
+([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
+I average its predicted quantiles to get one score for each stock.
 
 Each row in the study is a stock on a date. To get its realized outcome,
 I take the stock’s average daily return over the next 20 trading sessions,
@@ -445,24 +481,21 @@ earned 0.7 points less, and lower fees recovered 0.2 points.
 
 ## How the P&L built up
 
-Figure 5 shows when Medium, Ridge and LightGBM diverged. It opens
-with each portfolio rescaled to 7% annualized volatility over the
-selected window. On that scale, over 1999–2021 Medium earned
-about USD 251 per USD 100 of fixed capital, ahead of Ridge at
-USD 209. LightGBM pulled ahead early and finished at USD 366.
-The chart also shows six-week Small. Open **Explore** to add
-rolling Small.
+Figure 5 shows when the portfolios diverged. It opens with each
+portfolio rescaled to 7% annualized volatility over the selected
+window. The chart includes six-week Small. Open **Explore** to
+add rolling Small.
 
 <figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
-  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=5" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="4" label="Cumulative net P&L and drawdown for Ridge, LightGBM, Kumo Small and Kumo Medium, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I sum the mean daily P&amp;L of the three schedules per $100 of fixed capital. Drawdown is the loss from the previous P&amp;L peak within the chosen window.</figcaption>
+  {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=6" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="5" label="Cumulative net P&L and drawdown for Ridge, LightGBM, Kumo Small and Kumo Medium, rescaled to 7% annualized volatility by default." %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> I average daily P&amp;L across the three schedules and add it up. The chart shows P&amp;L and drawdown as percentages of fixed capital.</figcaption>
 </figure>
 
-At matched volatility, Medium’s worst drawdown was smaller than
-Ridge’s. LightGBM had the smallest drawdown of the three. Clear the
-checkbox to see the original paths. At their original volatilities,
-Medium and Ridge each earned about USD 244 per USD 100 of fixed
-capital, while LightGBM earned about USD 365.
+At matched volatility, LightGBM pulled ahead early and finished with
+the highest cumulative P&L. Medium finished ahead of Ridge and had
+a smaller worst drawdown. Clear the checkbox to see the original
+paths. At their original volatilities, Medium and Ridge finished with
+almost the same cumulative P&L.
 
 ## What I found and what I’d test next
 
@@ -472,18 +505,25 @@ rank IC in every period shown. Medium beat Ridge on net Sharpe,
 1.44 versus 1.21, while LightGBM led at 2.12. Rolling Small was the
 weakest result after fees.
 
-With more memory, I’d run the same Kumo model on the same dates with
-all eligible stocks and with just the tails. That would show how much
-memory and time the filter saves and whether it changes ranking quality.
-I’d also give Small, Medium and Large the same context across the full
-backtest. The comparison on the first block favored the larger models.
-Across the full run, models of different sizes used different amounts
-of history.
+I’d like to test Kumo Large over the full period, giving it the same
+historical rows as Small and Medium. Large ranked better on the
+first block of forecasts when all three sizes saw the same examples.
+The full-period comparison would tell me whether that early advantage
+holds up.
+
+I’d also like to give a fixed model more data. With more memory, I
+could sample dates more often and test all eligible stocks against
+keeping just the tails. Changing one of those at a time would show
+which extra examples improve the ranking and what they cost to
+process. As newer tabular foundation models come out, I’d run them
+through the same comparison to see whether they can use more history
+at a manageable cost and whether that shows up after trading fees.
 
 ## References
 
-- Coqueret, Guillaume, and Tony Guida (2020). “[Training Trees on Tails with Applications to Portfolio Choice](https://doi.org/10.1007/s10479-020-03539-2).” *Annals of Operations Research*, 288(1), 181–221.
-- Grinsztajn, Léo, et al. (2025). “[TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models](https://arxiv.org/abs/2511.08667).” Technical report, arXiv:2511.08667.
-- Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book. See [Chapter 4, “In-context Learning,” Figure 4.2](https://tabularfoundationmodels.com/prediction#fig-input-output), [Chapter 5, “Pretraining”](https://tabularfoundationmodels.com/pretraining), and [Chapter 6, “Classification”](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict).
-- NVIDIA. “[GPU Sizing Guide](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing).” *NVIDIA Kumo Documentation*.
-- Qu, Jingang, et al. (2026). “[NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction](https://arxiv.org/abs/2611.23001v1).” arXiv:2611.23001, version 1.
+- Coqueret, Guillaume, and Tony Guida (2020). [*Training Trees on Tails with Applications to Portfolio Choice*](https://doi.org/10.1007/s10479-020-03539-2). *Annals of Operations Research*, 288(1), 181–221.
+- Grinsztajn, Léo, et al. (2025). [*TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models*](https://arxiv.org/abs/2511.08667). Technical report, arXiv:2511.08667.
+- Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book. See [Chapter 4, Figure 4.2](https://tabularfoundationmodels.com/prediction#fig-input-output), [Chapter 5, Pretraining](https://tabularfoundationmodels.com/pretraining), and [Chapter 6, Classification](https://tabularfoundationmodels.com/classification#fit-is-faster-than-predict).
+- Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and Frank Hutter (2022). [*Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9). ICLR.
+- NVIDIA. [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing). *NVIDIA Kumo Documentation*.
+- Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.

@@ -313,12 +313,12 @@ def export_pnl(
         "kind": "performance",
         "series": [line["id"] for line in lines],
         "additive": True,
-        "unit": "Net P&L per $100 of capital",
+        "unit": "Cumulative net P&L (% of fixed capital)",
         "drawdown": True,
-        "drawdownUnit": "Drawdown per $100 of capital",
+        "drawdownUnit": "Drawdown (% of fixed capital)",
         "volatilityTarget": volatility_target,
         "matchVolatilityByDefault": True,
-        "note": f"Annual P&L is mean daily net P&L × {annualization} on fixed capital. Sharpe uses zero cash return. Maximum drawdown is the loss per $100 of capital.",
+        "note": f"Annual P&L is mean daily net P&L × {annualization}. P&L and drawdown are percentages of fixed capital. Sharpe uses zero cash return.",
         "zeroReference": True,
         "episodes": episodes,
     }
@@ -343,7 +343,7 @@ def export_pnl(
         output,
         dates=dates,
         portfolios=portfolios,
-        pnl_unit=f"Net P&L per $100 at {volatility_target * 100:g}% annualized volatility",
+        pnl_unit=f"Net P&L (% of capital) at {volatility_target * 100:g}% volatility",
         drawdown_unit=chart["drawdownUnit"],
     )
 
