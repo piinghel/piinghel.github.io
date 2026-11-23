@@ -232,13 +232,25 @@ and 17.9 minutes on the same inputs.
 
 ## Ranking the whole cross-section
 
-Once I have the forecasts, the first thing I check is how well
-each model orders the stocks. For a signal date with known outcomes,
-I rank the model scores and the realized outcomes for the same stocks,
-then correlate the two ranks. That Spearman correlation is the
-information coefficient, or $\mathrm{IC}_t$.
-Figure 4 shows its mean, sample standard deviation and their ratio
-across signal dates.
+For each signal date $t$, I take the stocks with a model score and a
+realized target. I rank the scores and the targets separately, from
+lowest to highest, across those same stocks. Let $S_{it}$ be stock
+$i$’s rank by model score and $R_{it}$ its rank by realized target.
+The **rank information coefficient** is the Spearman correlation
+between the rankings, computed as the Pearson correlation of the ranks.
+
+$$
+\mathrm{IC}_t =
+\frac{\sum_i (S_{it}-\bar S_t)(R_{it}-\bar R_t)}
+     {\sqrt{\sum_i (S_{it}-\bar S_t)^2}\,\sqrt{\sum_i (R_{it}-\bar R_t)^2}}
+$$
+
+The sums and mean ranks $\bar S_t$ and $\bar R_t$ are across stocks
+on that date. Identical rankings give an IC of 1. Reverse the order
+and it’s −1.
+
+Figure 4 shows the mean and sample standard deviation of these ICs
+across signal dates, along with their ratio, the ICIR.
 
 $$
 \mathrm{ICIR} = \frac{\operatorname{mean}_t(\mathrm{IC}_t)}
