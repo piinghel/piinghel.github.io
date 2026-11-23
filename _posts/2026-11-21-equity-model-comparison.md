@@ -10,22 +10,26 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
+Tree-based models such as LightGBM, XGBoost, and random forests have
+a long track record on tabular data. LightGBM and XGBoost in particular
+have repeatedly featured in top Kaggle solutions.[^tree-benchmark]
+
+Tabular foundation models such as TabPFN and TabICL caught my
+attention when they started beating tuned tree ensembles on some
+benchmarks.[^new-benchmarks] As these models got better at handling
+larger tables,[^larger-tables] I wanted to see whether the same
+approach could improve stock rankings. I give Kumo, Ridge, and
+LightGBM the same stock predictors, then compare their rankings
+and the portfolios they produce after trading costs.
+
+## Tabular foundation models
+
 A tabular foundation model is a neural network pretrained to make
 predictions across many different tables. To use it on a new table,
 I give it rows with known outcomes and rows I want to score. It uses
 the known outcomes as examples while keeping its pretrained weights
 fixed. For stock ranking, those examples are past stock-dates whose
 returns are already known.
-
-Tree-based models such as LightGBM, XGBoost, and random forests have
-a long track record on tabular data. LightGBM and XGBoost have
-repeatedly featured in top Kaggle solutions.[^tree-benchmark]
-TabPFN and TabICL caught my attention when they started beating tuned
-tree ensembles on some benchmarks.[^new-benchmarks] I wanted to see
-how a tabular foundation model would rank stocks against Ridge and
-LightGBM, and how the resulting portfolios would do after trading costs.
-
-## Tabular foundation models
 
 ### What goes into a table
 
@@ -483,3 +487,5 @@ candidate widths.
 [^tree-benchmark]: [LightGBM’s competition results](https://github.com/lightgbm-org/LightGBM/blob/main/examples/README.md) list winning solutions, and [Chen and Guestrin (2016)](https://arxiv.org/abs/1603.02754) document XGBoost’s early Kaggle results. [Ambrosm’s winning Kaggle write-up](https://www.kaggle.com/competitions/bench-tab-v2/writeups/ambrosm-1-solution) uses boosted trees and random forests.
 
 [^new-benchmarks]: See the comparisons with tuned tree models in the [TabPFN-2.5 report](https://arxiv.org/abs/2511.08667) and the [TabICLv2 paper](https://proceedings.mlr.press/v306/qu26a.html).
+
+[^larger-tables]: [TabPFN-2.5](https://arxiv.org/abs/2511.08667) extended the supported table size from 10,000 to 50,000 rows.
