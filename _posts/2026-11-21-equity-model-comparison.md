@@ -485,11 +485,17 @@ accounted for most of the gap in average net P&L. From 2022 to
 May 2026, Rolling Small lost money before fees at all three
 candidate widths.
 
-On my Mac, choosing which history to keep started as a question of
-what would fit in memory. Seeing two quite different portfolios come
-out of the same Small checkpoint made that choice feel more
-consequential. I came away paying more attention to which parts of
-the stock panel the model actually gets to see at prediction time.
+## What I took away
+
+I was surprised by how well Kumo Medium and Large ranked stocks.
+LightGBM is still the benchmark for me. It led on net Sharpe over
+the full backtest.
+
+I like Iain Dunning’s point about being open to new ideas and staying
+skeptical about what they add over simpler approaches.[^dunning] Kumo
+did enough here to keep me interested. I’d like to understand what it
+was picking up in the stock rankings and how much of that would hold
+up in another sample.
 
 ## References
 
@@ -506,3 +512,5 @@ the stock panel the model actually gets to see at prediction time.
 [^new-benchmarks]: See the comparisons with tuned tree models in the [TabPFN-2.5 report](https://arxiv.org/abs/2511.08667) and the [TabICLv2 paper](https://proceedings.mlr.press/v306/qu26a.html).
 
 [^larger-tables]: [TabPFN-2.5](https://arxiv.org/abs/2511.08667) extended the supported table size from 10,000 to 50,000 rows.
+
+[^dunning]: Iain Dunning, Hudson River Trading, May 2022. [*In Trading, Machine Learning Benchmarks Don’t Track What You Care About*](https://www.hudsonrivertrading.com/hrtbeat/trading-machine-learning/).
