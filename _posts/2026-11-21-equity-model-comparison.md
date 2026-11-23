@@ -238,7 +238,7 @@ I rank the model scores and the realized outcomes for the same stocks,
 then correlate the two ranks. That Spearman correlation is the
 information coefficient, or $\mathrm{IC}_t$.
 Figure 4 shows its mean, sample standard deviation and their ratio
-across signal dates. The ratio is left unannualized.
+across signal dates.
 
 $$
 \mathrm{ICIR} = \frac{\operatorname{mean}_t(\mathrm{IC}_t)}
