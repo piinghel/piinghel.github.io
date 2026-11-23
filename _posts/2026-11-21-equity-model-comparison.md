@@ -223,6 +223,8 @@ days. Keeping both rows gives Kumo examples based on almost the
 same returns. For expanding Small, I kept one date every 30
 trading days, or roughly six weeks. For Medium and Large, I
 kept one date every 40 trading days, or roughly eight weeks.
+Medium and Large used the same historical rows, 80 predictors
+and one estimator to score the same 1.39 million stock-dates.
 
 Even after spacing out the dates, there are still hundreds of
 stocks on each one. I sort them by their realized target, the
@@ -340,12 +342,17 @@ $$
   <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
-Expanding Small and Medium had positive mean IC in both periods.
 From 2022 to May 2026, mean IC was 0.044
 for Ridge, 0.046 for LightGBM and 0.040 for Medium. Medium’s IC
 varied less from one date to the next than Ridge’s, so its ICIR was
 higher, 0.38 versus 0.34. LightGBM led on both measures. Six-week
 Small’s mean IC was 0.025, and Rolling Small’s was −0.010.
+
+Large ranked stocks better than Medium in 1999–2021 and fell
+behind in 2022–May 2026. The full-period increase in mean rank IC
+was 0.0009, with a paired 95% interval of −0.0014 to +0.0032
+using blocks of 21 trading days.
+{: #does-the-larger-model-help}
 
 ## Return and risk by score decile
 
@@ -361,8 +368,8 @@ I use the same decile comparison for Ridge in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#figure-3).
 
 <figure id="figure-6" class="research-figure decile-profile-figure responsive-figure">
-  {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=4" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="9" label="Return, volatility and Sharpe by stock score decile from 1999 through May 2026, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> The original five runs use equal-weight deciles before costs. Decile 10 holds the highest scores.</figcaption>
+  {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=5" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="10" label="Return, volatility and Sharpe by stock score decile from 1999 through May 2026, with selectable periods and models." %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
 </figure>
 
 Over the full history, LightGBM’s top decile earned about 18% a year
@@ -394,9 +401,9 @@ schedule, then average across the three. Two-way turnover adds
 all dollars bought and sold across both sides, divides by fixed
 capital, and annualizes the average over trading days.
 
-For the original five runs, I also tried 100 and 150 new candidates
-per side. Table 1 changes how far into the ranking the optimizer
-can look while keeping the forecasts, sizing rules and fees fixed.
+Table 1 shows all six runs at 75 candidates per side. For the
+original five, I also tried 100 and 150 with the same forecasts,
+sizing rules and fees.
 
 <div id="table-5" class="equity-breadth">
 <fieldset class="equity-breadth-controls">
@@ -433,8 +440,8 @@ can look while keeping the forecasts, sizing rules and fees fixed.
 </div>
 </div>
 
-In the 1999–2021 decile spread, six-week Small had the higher
-Sharpe of the two expanding Kumo runs. Once I sized the portfolios
+In the 1999–2021 decile spread, six-week Small had a higher
+Sharpe than Medium. Once I sized the portfolios
 with 75 new candidates per side, Medium edged ahead before fees,
 1.76 versus 1.68. Small also traded
 more, at 42.3 times capital per year versus 31.8 for Medium.
@@ -447,9 +454,8 @@ Resampling the same blocks of 21 trading days for Medium and
 LightGBM gives a 95% interval of −0.99 to −0.40 for Medium’s net
 Sharpe minus LightGBM’s.
 
-From 2022 to May 2026, LightGBM still led on rank IC. With
-75 candidates per side, net Sharpe was 0.79 for Ridge, 1.04 for
-LightGBM and 1.20 for Medium. The paired
+From 2022 to May 2026, net Sharpe at 75 candidates per side was
+0.79 for Ridge, 1.04 for LightGBM and 1.20 for Medium. The paired
 95% interval for Medium’s Sharpe minus LightGBM’s ran from −0.38
 to 0.71 using blocks of 21 trading days.
 
@@ -458,6 +464,13 @@ I annualize the differences in average daily P&L so the long,
 short and fee contributions add up. Compared with LightGBM,
 Medium gained 5.5 percentage points on the long side, gave up
 3.2 points on the short side and paid 0.6 points more in fees.
+
+Large fell behind Medium in both equal-weight tails over that
+later window. Its top decile earned less and its bottom decile
+earned more. In the sized portfolios, Large gave up 4.58 percentage
+points of annualized P&L on the long side and 1.17 on the short side,
+and paid another 0.86 in fees. The paired 95% interval for the net
+Sharpe gap was −1.44 to −0.15 with 42-session blocks.
 
 At 100 candidates per side, Medium and LightGBM were closer, with
 after-fee Sharpes of 1.18 and 1.14. At 150, LightGBM moved ahead,
@@ -498,7 +511,7 @@ move together, averaging daily net return correlations across
 the three schedules.
 
 <div role="group" aria-labelledby="table-2">
-  <p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Correlations between the original five models, 1999–May 2026.</span></p>
+  <p id="table-2" class="table-caption"><span class="caption-number">Table 2.</span> <span class="caption-title">Correlations between models, 1999–May 2026.</span></p>
   {% include equity-correlation-matrices.html %}
 </div>
 
@@ -515,47 +528,6 @@ and had a net Sharpe of 0.39 versus 1.24. The short book
 accounted for most of the gap in average net P&L. From 2022 to
 May 2026, Rolling Small lost money before fees at all three
 candidate widths.
-
-## Does the larger model help?
-
-I gave Medium and Large the same expanding history, sampled at
-eight-week intervals. They saw the same rows from the two target
-tails and the same 80 predictors. Each used one estimator to score
-the same 1.39 million stock-dates.
-I reused the saved Medium scores and replayed Large with the same
-75-candidate portfolio recipe and trading costs.
-For rank IC, I use outcomes that were known by the end of each
-evaluation window.
-
-<div class="research-table-scroll" tabindex="0" role="region" aria-label="Medium and Large on matched stock dates and portfolios">
-<table id="table-3" class="research-table comparison-table compact-table">
-  <caption><span class="caption-number">Table 3.</span> <span class="caption-title">Medium and Large on the same historical rows.</span> Net Sharpe is the mean across the three schedules after fees.</caption>
-  <thead>
-    <tr><th scope="col">Model</th><th scope="col">Mean rank IC</th><th scope="col">ICIR</th><th scope="col">Net Sharpe</th></tr>
-  </thead>
-  {% for comparison in site.data.equity_model_size %}
-  <tbody>
-    <tr class="period-heading"><th colspan="4" scope="rowgroup">{{ comparison.period | escape }}</th></tr>
-    {% for model in comparison.models %}
-    <tr><th scope="row">{{ model.label | escape }}</th><td>{{ model.mean_ic | escape }}</td><td>{{ model.icir | escape }}</td><td>{{ model.net_sharpe | escape }}</td></tr>
-    {% endfor %}
-  </tbody>
-  {% endfor %}
-</table>
-</div>
-
-Large raised mean rank IC from 0.0458 to 0.0484 in 1999–2021.
-From 2022 to May 2026, Medium scored 0.0395 and Large 0.0324.
-Over the full history the increase was 0.0009. Resampling the same
-21-day blocks for both models gives a 95% interval of
-−0.0014 to +0.0032 for that difference.
-
-Full-period net Sharpe was 1.29 for Large and 1.39 for Medium.
-The clearest gap was in the later window, when net Sharpe was
-0.42 for Large and 1.20 for Medium. The paired 95% interval for
-Large minus Medium was −1.41 to −0.21 using 21-day blocks and
-−1.44 to −0.15 using 42-day blocks. Large had lower gross
-Sharpe and traded 43.4 times capital per year versus 29.2 for Medium.
 
 ## References
 
