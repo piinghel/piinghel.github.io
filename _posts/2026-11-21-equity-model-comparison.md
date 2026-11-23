@@ -228,8 +228,7 @@ I ran Kumo Small, Medium and Large on the CPU of my 2023 MacBook Pro,
 which has a 10-core M2 Pro and 16 GB of unified memory. In the last
 fold, Medium took 17.5 minutes to prepare the context and 11.5 minutes
 to score 84,243 stock-dates through May 2026. Large took 29.0 minutes
-and 17.9 minutes on the same inputs. Large’s peak resident memory
-across the full test was 9.3 GiB.
+and 17.9 minutes on the same inputs.
 
 ## Ranking the whole cross-section
 
