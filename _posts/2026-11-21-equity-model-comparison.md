@@ -162,9 +162,9 @@ keeps the coefficients from growing too large as a result. I go
 into the penalty choice in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#choosing-the-penalty).
 
-For **LightGBM**, I use 350 trees per fit, a maximum depth of five,
-a learning rate of 0.05 and a feature fraction of 0.25. The shallow
-trees can still pick up interactions.
+For **LightGBM**, I use 350 trees per fit and skip hyperparameter tuning
+for this comparison. Other settings I’ve tried have given similar
+performance, and I prefer to keep the benchmark fast and simple.
 
 ## Subsampling the historical context
 
