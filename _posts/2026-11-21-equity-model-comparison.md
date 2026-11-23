@@ -10,6 +10,10 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
+On each signal date, I have a row of predictors for every eligible
+stock. I want to use those rows to rank stocks by how they’re likely
+to do against their sector peers over the next 20 trading days.
+
 Tree-based models such as LightGBM, XGBoost, and random forests have
 a long track record on tabular data. LightGBM and XGBoost in particular
 have repeatedly featured in top Kaggle solutions.[^tree-benchmark]
@@ -43,8 +47,9 @@ with different columns, scales and relationships.
 
 ### Fit and predict
 
-The familiar scikit-learn interface hides a difference in what
-happens when I fit a model.
+The `fit()` and `predict()` calls look the same for each model.
+The difference is what each model takes from the historical rows
+and uses to score a new one.
 
 ```python
 model.fit(X_train, y_train)
@@ -75,11 +80,12 @@ sees some outcomes and tries to predict the rest. Prediction errors
 across these tasks update the same network. The idea is to learn how
 to use the examples in whichever table it is given next.
 
-The two tables in Figure 1 have identical predictors. In Table A,
-the target is twice the first predictor. In Table B, the second
-predictor adds three when it is one. The same last row has a target
-of 8 in Table A and 11 in Table B. The visible outcomes give the
-network a way to infer which relationship applies.
+Look at the last row in Figure 1. Its predictors are 4 and 1 in
+both tables. In Table A, the target is twice the first predictor,
+so the answer is 8. In Table B, the second predictor adds three
+when it is one, bringing the answer to 11. The second row gives
+the network a clue about which rule applies. Its outcome is 4 in
+Table A and 7 in Table B.
 
 <figure id="figure-1" class="research-figure responsive-figure">
   {% include equity-synthetic-pretraining-sketch.html %}
@@ -103,12 +109,11 @@ the new rows. That is *in-context learning*.
 
 ### From a table to a forecast
 
-Figure 2 shows how one tabular foundation model does this. The
-network turns cells into vectors and combines information down
-columns and across rows. The first gives a value context among other
-values of the same predictor. The second lets the model combine
-predictors for the same stock-date. The result is one vector, or
-*embedding*, per row.
+Follow the new stock-date through Figure 2. The network turns cells
+into vectors. It looks down each column to put a value in context
+with other values of the same predictor, and across each row to bring
+the predictors for that stock-date together. Each row ends up with
+one vector, or *embedding*.
 
 <figure id="figure-2" class="research-figure responsive-figure">
   {% include tabular-inference-diagram.html %}
