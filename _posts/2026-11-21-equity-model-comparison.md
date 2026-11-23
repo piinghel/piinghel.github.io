@@ -10,12 +10,12 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-LightGBM and XGBoost have long been regulars near the top of
-Kaggle’s tabular competitions, and random forests have featured
-in winning solutions too.[^tree-benchmark] That track record is
-what made me pay attention when tabular foundation models like
-TabPFN and TabICL started beating tuned tree ensembles on benchmark
-datasets.[^new-benchmarks] As these models got better at handling
+Tree-based models such as LightGBM, XGBoost, and random forests
+have long been strong baselines for tabular prediction. They’ve
+performed well on benchmarks and in Kaggle competitions.[^tree-benchmark]
+That’s why I took notice when tabular foundation models like TabPFN
+and TabICL started beating tuned tree ensembles on some
+benchmarks.[^new-benchmarks] As these models got better at handling
 larger tables, I wanted to see how one would do at ranking
 stocks.[^larger-tables]
 
