@@ -11,7 +11,8 @@
     blend:['#365e79','#8cbdd5'],
     equity_ridge:['#596877','#aab3bf'], equity_lightgbm:['#2262ab','#81b4f3'],
     equity_small_four:['#945614','#e9bc83'], equity_small_six:['#5c55a3','#b9b0fa'],
-    equity_medium:['#397744','#a9ccaa'], equity_rolling:['#9c3d58','#e3a2b3']};
+    equity_medium:['#397744','#a9ccaa'], equity_large:['#a35413','#f2bd7c'],
+    equity_rolling:['#9c3d58','#e3a2b3']};
   const isDark=()=>typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark';
   const COLORS = Object.freeze(Object.defineProperties({},Object.fromEntries(Object.entries(PALETTE).map(
     ([role,[light,dark]])=>[role,{enumerable:true,get:()=>isDark()?dark:light}]))));
