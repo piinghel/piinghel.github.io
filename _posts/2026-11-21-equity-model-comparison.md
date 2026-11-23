@@ -4,7 +4,7 @@ interactive_charts: true
 title: "Can Tabular Foundation Models Rank Stocks?"
 description: "How tabular foundation models learn from examples, and how one compares with Ridge and LightGBM for stock ranking."
 date: 2026-11-21
-last_modified_at: 2026-11-23
+last_modified_at: 2026-11-24
 categories: ["Signals"]
 article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
@@ -24,8 +24,8 @@ their rankings and the portfolios they produce after trading costs.
 
 ## Tabular foundation models
 
-A tabular foundation model is a neural network pretrained to make
-predictions across many different tables. To use it on a new table,
+A tabular foundation model (TFM) is a neural network pretrained to
+make predictions across many different tables. To use it on a new table,
 I give it rows with known outcomes and rows I want to score. It uses
 the known outcomes as examples while keeping its pretrained weights
 fixed. For stock ranking, those examples are past stock-dates whose
@@ -44,45 +44,41 @@ with different columns, scales and relationships.
 ### Fit and predict
 
 The `fit()` and `predict()` calls look the same for each model.
-The difference is what each model takes from the historical rows
-and uses to score a new one.
 
 ```python
 model.fit(X_train, y_train)
 scores = model.predict(X_test)
 ```
 
-Ridge learns a set of coefficients on the historical rows, with a
-penalty on large coefficients. To score a stock, it multiplies each
-predictor by its fitted coefficient, then adds the terms and the
-intercept. LightGBM grows trees in sequence, each aiming to improve
-on the ensemble so far. A stock follows the learned splits in each
-tree and its score is the sum of the leaf values it reaches. Both
-models learn a rule from this particular history. At prediction time
-they need that rule and the new predictors.
+Ridge fits regularized coefficients. LightGBM fits an ensemble of trees.
+Both score a stock by applying the fitted rule to its predictors.
 
-With k-nearest neighbors (kNN), the historical rows are part of
-the prediction itself. Its `fit()` keeps the rows and their
-outcomes. When a new row comes in, `predict()` finds the $k$
-closest examples by a chosen distance and, in the simplest
-regression version, averages their outcomes.
+K-nearest neighbors (kNN) gives a simple example of using historical
+rows directly to make predictions, as a TFM does. Its `fit()` keeps
+those rows and their outcomes. In simple kNN regression, `predict()`
+averages the outcomes of the $k$ nearest rows.
 
-### Pretraining across tables
+### Prior-data fitted networks
 
-With kNN, I choose how to measure the distance between rows. A
-tabular foundation model learns how to use examples during
-pretraining. One way to do this is to generate synthetic tables
-with different rules linking predictors to outcomes and varying
-amounts of noise and missing data. In each table, the network sees
-some outcomes and tries to predict the rest. Prediction errors
-across these tasks update the same network.
+With kNN, I choose how to measure distance. *Prior-data fitted
+networks* (PFNs), the approach behind TabPFN, learn during pretraining
+how to use labeled examples on new tables. Christoph Molnar calls
+this moving “up one level of abstraction.”[^pfn] Each pretraining
+example is a prediction task.
 
-Look at the last row in Figure 1. Its predictors are 4 and 1 in
-both tables. In Table A, the target is twice the first predictor,
-so the answer is 8. In Table B, the second predictor adds three
-when it is one, bringing the answer to 11. The second row gives
-the network a clue about which rule applies. Its outcome is 4 in
-Table A and 7 in Table B.
+A task is a table with a target column, split into training and test
+rows. The network sees the predictors for all rows and the targets
+for the training rows. A recipe for generating synthetic tables
+defines the *prior*, which determines the kinds of tasks the network
+sees and how often. The name comes from fitting the network on data
+drawn from that prior. Errors on the hidden test targets update the
+same weights across tasks.
+
+Look at the last row in Figure 1. Its predictors are 4 and 1 in both
+tables. In Table A, doubling the first predictor gives a target of 8.
+In Table B, the second predictor adds three when it’s one, giving 11.
+The clue is in the labeled rows. The second row has an outcome of 4
+in Table A and 7 in Table B.
 
 <figure id="figure-1" class="research-figure responsive-figure">
   {% include equity-synthetic-pretraining-sketch.html %}
@@ -91,18 +87,15 @@ Table A and 7 in Table B.
 
 ### Using the labeled rows at prediction time
 
-Go back to the last row of Table A, where the target is 8. If I use
-two nearest neighbors and measure distance along the first predictor,
-the closest values to 4 are 3 and 2. Their outcomes are 6 and 4,
-so kNN predicts $(6 + 4)/2 = 5$.
+Go back to Table A to see how kNN uses those labeled rows. Using two
+neighbors and measuring distance along the first predictor, the closest
+values to 4 are 3 and 2. Their outcomes are 6 and 4, so kNN predicts
+$(6 + 4)/2 = 5$.
 
-The foundation model also needs labeled examples when it scores
-a new row. In the backtest, its `fit()` prepares and caches the
-historical rows and their known outcomes as *context*. With Ridge
-or LightGBM, I re-estimate the coefficients or trees at each refit.
-With the foundation model, I refresh the context and keep the
-network weights fixed. `predict()` uses the prepared history to score
-the new rows. That is *in-context learning*.
+On a new table, the PFN uses labeled rows as *context* for its
+predictions and keeps its weights fixed. This is *in-context learning*
+(ICL). In the backtest, `fit()` prepares and caches that context.
+At each refit I refresh the examples that `predict()` uses.
 
 ### From a table to a forecast
 
@@ -117,7 +110,7 @@ one vector, or *embedding*.
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">From a table to a prediction.</span> The labeled rows feed into the new row’s representation. The output shows three of the predicted quantile levels.</figcaption>
 </figure>
 
-The model then uses *attention* to compare the new row with the
+The ICL step uses *attention* to compare the new row with the
 labeled rows and decide how much information to draw from each
 example. It uses the resulting row representation to predict
 quantiles for the target, giving a range of outcomes for the new
@@ -131,8 +124,7 @@ he draws out how the historical examples enter a prediction.
 ### NVIDIA Kumo Tabular
 
 For the stock test I use [NVIDIA Kumo Tabular](https://build.nvidia.com/nvidia/kumo-tabular/modelcard),
-the model behind Figure 2. It was pretrained on synthetic tables,
-and NVIDIA released the weights on Hugging Face on September 23, 2026.
+the model behind Figure 2. It was pretrained on synthetic tables.
 I test all three sizes. The regressors have about 28 million
 parameters in Small, 62 million in Medium and 216 million in Large.
 The wider Large model also needs more memory to represent each row.
@@ -511,3 +503,5 @@ and how much of that would hold up in another sample.
 [^new-benchmarks]: See the comparisons with tuned tree models in the [TabPFN-2.5 report](https://arxiv.org/abs/2511.08667) and the [TabICLv2 paper](https://proceedings.mlr.press/v306/qu26a.html).
 
 [^larger-tables]: [TabPFN-2.5](https://arxiv.org/abs/2511.08667) extended the supported table size from 10,000 to 50,000 rows.
+
+[^pfn]: See [Christoph Molnar’s chapter on prior-data fitted networks](https://tabularfoundationmodels.com/prior-data-fitted-networks) and [the original PFN paper by Müller et al.](https://openreview.net/pdf?id=KSugKcbNf9).
