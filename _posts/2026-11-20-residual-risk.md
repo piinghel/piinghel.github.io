@@ -3,7 +3,7 @@ layout: post
 title: "Factor Risk Models, Part 2: Residual Risk After Sectors and Styles"
 description: "I froze groups of stocks and principal directions learned from a year of residual returns, then followed them through the next year and into a long/short portfolio."
 date: 2026-11-20
-last_modified_at: 2026-11-22
+last_modified_at: 2026-11-23
 categories: ["Portfolio construction"]
 article_label: Factor risk · Part 2 of 2
 series_id: factor-risk
@@ -12,58 +12,50 @@ toc: false
 permalink: /quants/residual-risk.html
 ---
 
-Suppose two stocks, A and B, each beat the return implied by their
-factor exposures by half a percentage point. That gap is the stock’s
-residual. In the example from [*Factor Risk Models, Part
-1*]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example),
-I’m 50% long A and 50% short B, so those two residuals cancel.
+On the day we fitted in [*Factor Risk Models, Part 1*]({% link _posts/2026-11-20-factor-risk-sizing.md %}#a-three-stock-example), A and B both did half a percentage point better than their fitted returns. In a spread that’s 50% long A and 50% short B, those equal residuals cancel.
 
-If A and B rely on the same supplier, a disruption could push both
-below their fitted returns even after the model accounts for any sector
-move. If those residuals tend to move together, the short in B can cushion
-the residual moves in A. I want to know how much of that offset I can
-count on when sizing the Ridge portfolio.
+That happened on one day. Now imagine A and B rely on the same supplier. When it has a problem, both stocks might do worse than the market, sector and style moves would suggest. If that keeps happening, B might be a better hedge for A than a model with zero residual correlations would suggest. How much of that offset can we count on?
 
 ## Four days of residuals give one correlation
 
-A stock’s **residual volatility** tells me how much its residual varies
-from day to day. To see what that means for a spread, I also need to
-know whether the gaps line up across stocks on the same days.
+A stock’s **residual volatility** tells us how big its unexplained moves tend to be. Residual correlation tells us whether two stocks tend to make those moves on the same days. Start by looking at A on its own.
 
-Take four illustrative days. A’s residual returns are +3%, −1%, +3% and −1%. I subtract A’s four-day average of 1% to measure each day relative to its usual level. Then I divide by its 2% standard deviation to express each move in units of A’s own volatility. That gives +1, −1, +1 and −1. I do the same for B and C so a large move in a naturally volatile stock doesn’t dominate the comparison. In this example I divide by four when calculating the variances.
+A’s residual returns over four days are +3%, −1%, +3% and −1%. Subtract their average of 1% and divide by their standard deviation of 2%. The four returns become +1, −1, +1 and −1. Each entry now says how many of A’s own standard deviations it was above or below its average. Do the same for B and C and put the resulting series side by side in $$Z$$. For this example the variance calculation divides by four, the number of observations.
 
 {% assign example = site.data.factor_risk_example %}
 <div class="matrix-calculation" role="group" aria-label="Standardized daily stock residuals and the resulting correlation matrix">
   <div>
-    {% include worked-matrix.html matrix=example.standardized_residuals symbol="Z" label="Standardized residuals" mark_column="A" %}
+    {% include worked-matrix.html matrix=example.standardized_residuals symbol="Z" label="Standardized residuals" tone="residual" mark_column="A" %}
   </div>
   <div>
     <span class="matrix-operator" aria-hidden="true">→</span>
-    {% include worked-matrix.html matrix=example.residual_correlations symbol="S" label="Residual correlation" mark_row="A" mark_column="B" %}
+    {% include worked-matrix.html matrix=example.residual_correlations symbol="S" label="Residual correlation" tone="residual" mark_row="A" mark_column="B" %}
   </div>
 </div>
 
-On day 1, A and B are both above their own averages, so their standardized returns multiply to a positive number, $$1\times1.4=1.4$$. On day 2 they’re on opposite sides of their averages, so the product is $$-1\times0.2=-0.2$$. The four products are $$1.4,-0.2,-0.2,1.4$$. Their average is 0.6. A and B land on the same side of their respective averages on two days, and those days have the larger products. C’s products average to zero with either stock.
+Read across the first row of $$Z$$. A and B are both above their averages, so $$1\times1.4=1.4$$. On day 2 they’re on opposite sides, so $$-1\times0.2=-0.2$$. Do that for all four days and you get $$1.4,-0.2,-0.2,1.4$$. The moves on days 1 and 4 matter more here because their products are larger in magnitude. The average is 0.6, which goes in the A–B cell on the right. C’s products average to zero with either stock.
 
-The matrix $$Z$$ holds one row per day and one column per stock. Multiplying $$Z^\top Z$$ takes the sum of the same-day products for every pair of columns. Dividing by the number of days $$T$$ gives the sample correlation matrix $$S=Z^\top Z/T$$.
+Doing that for every pair gives $$S=Z^\top Z/T$$, the sample correlation matrix. The denominator $$T$$ is four in this example.
 
 ## The sign of the position changes the answer
 
 Take the same 50%-long A, 50%-short B spread. If both residuals are +2%, A adds one percentage point to the spread and the short in B takes one away. If A has a +2% residual and B has a −2% residual, both positions add a point. The variance forecast gives more credit to the hedge when A and B tend to move together.
 
-Part 1 gave the spread one unit of daily factor variance from momentum and two units of residual variance, one from each position. That estimate of 3 squared percentage points assumed zero residual correlation. Keep the factor risk and each stock’s residual volatility fixed at the original settings. For A, B and C the residual volatilities are 2%, 2% and 1%. Now give A and B the 0.6 correlation from the example.
+In Part 1 the spread had daily variance of 3 in squared percentage points. Momentum contributed 1, and each position added 1 of residual variance. Keep that factor risk and the stock residual volatilities of 2%, 2% and 1%. The only change is to give A and B the 0.6 correlation from the four-day example.
 
-I calculated correlation from returns expressed in units of each stock’s volatility. To get back to covariance in squared percentage points, multiply by both volatilities. For A and B that gives $$2\times0.6\times2=2.4$$. Across all pairs, the calculation is $$\Omega=DRD$$, where $$R$$ is the correlation matrix I use in the forecast and $$D=\operatorname{diag}(2,2,1)$$ contains the three residual volatilities. The first multiplication below applies the column stock’s volatility and the second applies the row stock’s.
+Correlation puts every stock on the same scale. Now we need to put the actual volatilities back in. Follow the A–B entry below. Start with the correlation of 0.6 and multiply by B’s volatility, 2%, to get 1.2. Then multiply by A’s volatility, also 2%, to get 2.4 in squared percentage points.
+
+The matrix $$R$$ contains the correlations I use in the forecast. The diagonal matrix $$D=\operatorname{diag}(2,2,1)$$ contains the three residual volatilities. Multiplying $$R$$ on the right by $$D$$ scales each column by its stock’s volatility. Multiplying that on the left by $$D$$ scales each row. The result is the residual covariance matrix $$\Omega=DRD$$.
 
 <div class="matrix-calculation" role="group" aria-label="Scale the columns of the residual correlation matrix by specific volatilities, then scale its rows">
-  <div>
-    {% include worked-matrix.html matrix=example.residual_correlations symbol="R" label="Residual correlation" mark_row="A" mark_column="B" %}
+  <div class="matrix-product">
+    {% include worked-matrix.html matrix=example.residual_correlations symbol="R" label="Residual correlation" tone="residual" mark_row="A" mark_column="B" %}
     <span class="matrix-operator" aria-hidden="true">→</span>
-    {% include worked-matrix.html matrix=example.scaled_correlations symbol="RD" label="Columns scaled" mark_row="A" mark_column="B" %}
+    {% include worked-matrix.html matrix=example.scaled_correlations symbol="RD" label="Columns scaled" tone="residual" mark_row="A" mark_column="B" %}
   </div>
   <div>
     <span class="matrix-operator" aria-hidden="true">→</span>
-    {% include worked-matrix.html matrix=example.residual_covariance symbol="DRD" label="Residual covariance" mark_row="A" mark_column="B" %}
+    {% include worked-matrix.html matrix=example.residual_covariance symbol="DRD" label="Residual covariance" tone="residual" mark_row="A" mark_column="B" %}
   </div>
 </div>
 
@@ -75,7 +67,13 @@ $$
 w^\top\Sigma w=\frac{9+9-2(5.4)}{4}=1.8.
 $$
 
-If I use 0.6 in the forecast, I’m counting on the full relationship to persist. Shrinking 0.6 halfway toward zero gives 0.3 and residual covariance of 1.2. That gives the spread half as much hedging credit and leaves variance of 2.4. If the relationship disappears, the spread’s variance is back at 3. The next tests look at what persists from one year to the next.
+Using all of the sample correlation assumes the relationship carries forward at full strength. Shrink 0.6 halfway toward zero and the spread gets half as much hedging credit. The three rows show how the choice feeds through from correlation to variance. Covariance and variance are both in squared percentage points.
+
+<div class="matrix-calculation" role="group" aria-label="Spread variance if the forecast uses zero, half, or all of the sample residual correlation">
+  {% include worked-matrix.html matrix=example.residual_spread_variance label="How much of the sample correlation to use" tone="residual" mark_column="Spread variance" %}
+</div>
+
+We can calculate all three forecasts from the same four days. To choose between them, we need to see how much of the relationship survives in the next window.
 
 ## Groups identified in one year still move together in the next
 
@@ -91,9 +89,9 @@ The first two heatmaps compare stock returns and residual returns on the same da
   <p class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Stock correlations before and after factor removal.</span> The same 850 stocks and December 2021 groups appear in all three panels. Tile colours saturate at ±40%. This cohort had the strongest forward gap.</p>
 </div>
 
-Removing the factors brought the average correlation from about 25% to near zero. Pairs in the same group were still about 8.5 correlation points more correlated than pairs in different groups. The gap shrank to about 5 points over the next 252 sessions with the groups held fixed.
+After removing the factors, average correlation fell from about 25% to near zero. Look within the blocks, though. Stocks in the same group were still about 8.5 correlation points more correlated than stocks in different groups. The difference was about 5 points in the next 252 sessions, using the same groups.
 
-Across all 27 cohorts, within-group correlation was about 5 points higher than between-group correlation in formation and about 2 points higher the next year. A group can look persistent simply because many of its names are in the same industry. I swap names within industries while preserving each group’s industry mix. The shuffled groups had a forward gap of less than half a point on average. The original groups beat the 95th percentile of the shuffles in all 27 cohorts.
+That heatmap shows the strongest year. Across all 27 formation years, the average gap was about 5 points in the year that formed the groups and about 2 points the next year. Some of that could come from having stocks from the same sectors in each group. To check, I shuffle group labels within sectors, keeping each group’s sector mix. The resulting gaps average less than half a point in the following year. In Figure 2, the dots for the original groups sit above the 95th percentile of the shuffles in all 27 years.
 
 <div id="figure-2" class="research-figure responsive-figure">
   {% include theme-svg-figure.html base="/assets/factor-risk-sizing/residuals" mobile="/assets/factor-risk-sizing/residuals_mobile" version="1" alt="Average stock correlation varies over time while average residual correlation stays near zero. Pairs in the same group were more correlated the following year than the sector-shuffle threshold in all 27 cohorts." %}
@@ -104,7 +102,7 @@ Most of the persistence was within sectors. In the 23 development cohorts the fo
 
 ## The shared directions persist at a smaller scale
 
-A group puts A and B together. Their four-day history still has days when they move apart. To measure both patterns, take their standardized residuals from the table above, add them for one series and subtract them for another. A large same-day move in both stocks shows up in the sum. A large gap between them shows up in the difference.
+A and B belong together in our example, but look back at their four days. On day 1, their standardized residuals are 1 and 1.4. Adding gives 2.4, and subtracting gives −0.4. On day 2 the residuals are −1 and 0.2. The sum is −0.8 and the difference is −1.2. The sum picks up what they do together. The difference picks up how far they move apart.
 
 Let $$z_A$$, $$z_B$$ and $$z_C$$ be the three columns of standardized residuals. Give each series weights whose squares sum to one so their variances can be compared with C on its own. Since A and B each have standardized variance one and correlation 0.6, the three combinations have these variances.
 
@@ -140,7 +138,7 @@ For a principal direction $$q$$ with variance $$\lambda$$, its contribution is t
 - Keep one principal component. Keep its contribution $$L$$ to residual correlation and return the remaining variance to each stock’s diagonal, giving $$R=L+\operatorname{diag}(S-L)$$.
 - Combine them. Keep one or five components in $$L$$, shrink the leftover matrix $$U=S-L$$ toward its diagonal and add $$L$$ back once. This gives $$R=L+(1-\delta)U+\delta\operatorname{diag}(U)$$ and keeps the diagonal at one.
 
-Return to A and B. The common component contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$ to their correlation. The opposing component contributes −0.2 because its stock weights have opposite signs. Together they give the sample correlation of 0.6. Keeping just the common component drops the −0.2 offset. The remaining variance goes back on each stock’s diagonal, so the stock vols stay at 2% and the new correlation is 0.8. That gives the spread more hedging credit and takes its total variance down to 1.4. In this example, keeping one component makes a more aggressive hedge estimate than using the whole sample.
+Return to A and B. The sample correlation of 0.6 comes from two pieces. The direction that moves them together contributes $$1.6(1/\sqrt{2})(1/\sqrt{2})=0.8$$. The direction that moves them apart contributes −0.2. Keep just the common component and the A–B correlation rises to 0.8. Each stock’s volatility stays at 2% because the remaining variance goes back on the diagonal. That gives the short more credit as a hedge and brings the spread’s variance down to 1.4. Keeping fewer components can make the hedge estimate more aggressive.
 
 Every year I compared each forecast with the same pairs’ correlations over the next 252 sessions. I use root mean squared error so large misses count for more, and the result stays in correlation points. Each cohort gets equal weight. For pairs in the same sector and group, carrying the trailing correlation forward reduced development error from about 17 to 12 correlation points against a forecast of zero. For pairs in different sectors and groups, predicting zero or using ordinary shrinkage gave errors of around 8 points, and keeping five components pushed the error higher. An individual cross-sector hedge can be sensitive to a miss of that size.
 

@@ -1,5 +1,5 @@
-<table class="worked-matrix">
-  <caption><span class="matrix-symbol">{{ include.symbol | escape }}</span> {{ include.label | escape }}</caption>
+<table class="worked-matrix{% if include.tone %} worked-matrix--{{ include.tone | escape }}{% endif %}">
+  <caption>{% if include.symbol %}<span class="matrix-symbol">{{ include.symbol | escape }}</span> {% endif %}{{ include.label | escape }}</caption>
   <thead>
     <tr><td></td>{% for matrix_column in include.matrix.columns %}<th scope="col">{{ matrix_column | escape }}</th>{% endfor %}</tr>
   </thead>

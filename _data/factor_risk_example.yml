@@ -23,10 +23,25 @@ factor_stock_covariance:
   columns: [A, B, C]
   values: [[5, 3, 4], [3, 5, 4], [4, 4, 4]]
 
+diagonal_residual_covariance:
+  rows: [A, B, C]
+  columns: [A, B, C]
+  values: [[4, 0, 0], [0, 4, 0], [0, 0, 1]]
+
 total_stock_covariance:
   rows: [A, B, C]
   columns: [A, B, C]
   values: [[9, 3, 4], [3, 9, 4], [4, 4, 5]]
+
+correlation_shrinkage:
+  rows: [Stock shrinkage, Factor target]
+  columns: [Historical, Target, Used]
+  values: [['0.40', '0.00', '0.20'], ['0.40', '0.30', '0.35']]
+
+reference_risk_scale:
+  rows: [Stock shrinkage, Factor target]
+  columns: [Before (%), Covariance multiplier, After (%)]
+  values: [[7, 1, 7], [10, 0.49, 7]]
 
 standardized_residuals:
   rows: [Day 1, Day 2, Day 3, Day 4]
@@ -47,3 +62,8 @@ residual_covariance:
   rows: [A, B, C]
   columns: [A, B, C]
   values: [[4, 2.4, 0], [2.4, 4, 0], [0, 0, 1]]
+
+residual_spread_variance:
+  rows: [Zero, Half, Full]
+  columns: [A–B correlation, A–B covariance, Spread variance]
+  values: [[0, 0, 3], [0.3, 1.2, 2.4], [0.6, 2.4, 1.8]]
