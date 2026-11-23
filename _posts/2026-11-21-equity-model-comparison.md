@@ -485,6 +485,12 @@ accounted for most of the gap in average net P&L. From 2022 to
 May 2026, Rolling Small lost money before fees at all three
 candidate widths.
 
+On my Mac, choosing which history to keep started as a question of
+what would fit in memory. Seeing two quite different portfolios come
+out of the same Small checkpoint made that choice feel more
+consequential. I came away paying more attention to which parts of
+the stock panel the model actually gets to see at prediction time.
+
 ## References
 
 - Coqueret, Guillaume, and Tony Guida (2020). [*Training Trees on Tails with Applications to Portfolio Choice*](https://doi.org/10.1007/s10479-020-03539-2). *Annals of Operations Research*, 288(1), 181–221.
