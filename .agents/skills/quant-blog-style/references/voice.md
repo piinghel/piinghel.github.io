@@ -9,6 +9,16 @@ preferences, not a required structure, tone quota or checklist for every post.
 These are readings of particular examples, not claims that the writers follow
 fixed formulas. Borrow the qualities, not their phrases or personas.
 
+- Giuseppe Paleologo’s *Advanced Portfolio Management* and *Elements of
+  Quantitative Investing* connect a model’s inputs, estimates and assumptions
+  to the calculation the reader needs to do. Make that chain visible.
+- Ray Zhang’s [*Modeling Equities Returns: The Linear Case*](https://www.hudsonrivertrading.com/hrtbeat/modeling-equities-returns/)
+  puts the return model and its notation up front. Define the symbols beside
+  the equation, and use a diagram when the relationships between terms matter.
+- Adrian Letchford’s [*A Quant’s Guide to Covariance Matrix Estimation*](https://osquant.com/papers/a-quants-guide-to-covariance-matrix-estimation/)
+  starts with a familiar estimate and introduces alternatives through the
+  specific problems they address. Let the mathematical argument motivate the
+  comparison.
 - [Sander Dieleman](https://sander.ai/2023/01/09/diffusion-language.html)
   starts from a puzzle and connects the technical explanation to why that
   puzzle remains unresolved. Let the reader follow the reasoning; introduce
@@ -25,9 +35,10 @@ fixed formulas. Borrow the qualities, not their phrases or personas.
   expectations, while separating returns from the quality of risk management.
   Explain what drove an outcome and what trade-off it reveals. A disappointing
   result is still worth explaining.
-- [Christoph Molnar’s Tabular Foundation Models](https://tabularfoundationmodels.com/prediction#fig-input-output)
-  makes in-context learning concrete by showing which cells enter a prediction.
-  Start with a small worked example and follow the data through each method.
+- Christoph Molnar starts with a familiar object and follows what happens to
+  it, step by step. Use a small example and define what the reader needs at
+  each step. For explanatory diagrams, use simple shapes and a little color to
+  make the quantities easy to follow. See [*Tabular Foundation Models*](https://tabularfoundationmodels.com/prediction#fig-data-transformation).
   Add implementation detail where it explains a choice in the research.
 
 ## Applying this voice

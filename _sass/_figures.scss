@@ -10,6 +10,34 @@
 .theme-svg-figure,
 .theme-svg-figure img { display: block; width: 100%; margin: 0; }
 .theme-svg-figure--dark { display: none; }
+.factor-return-figure svg {
+  display: block;
+  width: 100%;
+  max-width: 29rem;
+  margin-inline: auto;
+  color: var(--ink);
+  fill: currentColor;
+  font: 500 16px var(--font-sans);
+  text-anchor: middle;
+}
+.factor-return-figure {
+  --factor-fill: #eee5f4;
+  --factor-line: #9178a6;
+  --residual-fill: #faead6;
+  --residual-line: #a77f4c;
+}
+html[data-theme="dark"] .factor-return-figure {
+  --factor-fill: #30263b;
+  --factor-line: #a892ba;
+  --residual-fill: #372b20;
+  --residual-line: #b89265;
+}
+.factor-return-terms { fill: var(--factor-fill); stroke: var(--factor-line); }
+.factor-return-residual { fill: var(--residual-fill); stroke: var(--residual-line); }
+.factor-return-observed { fill: none; stroke: var(--muted-ink); }
+.factor-return-dividers { fill: none; stroke: currentColor; opacity: 0.22; }
+.factor-return-headings { font-weight: 600; }
+.factor-return-figure .figure-caption { margin-top: 0.65rem; }
 .stock-scoring-figure picture {
   display: block;
   max-width: 34rem;

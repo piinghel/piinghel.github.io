@@ -51,10 +51,11 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   invented training/test split.
 - Describe implementation only when it changes the research design, evidence
   or interpretation. Keep material limitations once, where they matter.
-- Use the Ridge model as a worked example to explain and stress-test ideas.
-  Lead with the mathematics, its assumptions and what the comparisons isolate.
-  Use portfolio results to explain mechanisms and trade-offs. Keep Python,
-  code structure and routine engineering details in the research repository.
+- Choose worked examples that expose the mechanism the article is about.
+  Define symbols where they first enter and show the steps that connect the
+  example to the general formula. Use portfolio results to explain mechanisms
+  and trade-offs. Keep Python, code structure and routine engineering details
+  in the research repository.
 - Carry small numerical examples through the calculation and back to the
   portfolio decision. Explain what each estimate means, why a choice matters
   and how the next comparison tests it.
