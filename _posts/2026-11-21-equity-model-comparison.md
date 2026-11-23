@@ -10,10 +10,6 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-On each signal date, I have a row of predictors for every eligible
-stock. I want to use those rows to rank stocks by how they’re likely
-to do against their sector peers over the next 20 trading days.
-
 Tree-based models such as LightGBM, XGBoost, and random forests have
 a long track record on tabular data. LightGBM and XGBoost in particular
 have repeatedly featured in top Kaggle solutions.[^tree-benchmark]
