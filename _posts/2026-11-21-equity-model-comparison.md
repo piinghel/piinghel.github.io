@@ -10,135 +10,57 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-Tree-based models such as LightGBM, XGBoost, and random forests
-have long been strong baselines for tabular prediction. They’ve
-performed well on benchmarks and in Kaggle competitions.[^tree-benchmark]
-That’s why I took notice when tabular foundation models like TabPFN
-and TabICL started beating tuned tree ensembles on some
-benchmarks.[^new-benchmarks]
+LightGBM sets a high bar in my stock-ranking tests. It belongs to a
+family of tree-based models, alongside XGBoost and random forests,
+with a long track record on tabular data.[^tree-benchmark]
 
-Once these models could handle larger tables,[^larger-tables] I wanted
-to see whether one could rank stocks better than Ridge or LightGBM.
-I gave Kumo, Ridge, and LightGBM the same stock predictors and
-checked how their rankings translated into portfolio returns after
-trading costs.
+TabPFN and TabICL caught my attention when they outperformed tuned
+tree ensembles on some benchmarks.[^new-benchmarks] Once tabular
+foundation models could handle larger tables,[^larger-tables] I wanted
+to see how one would fare on stocks. I gave Kumo, LightGBM, and Ridge
+the same predictors and compared their rankings and the portfolios
+they produced after trading costs.
 
-## A pretrained model for tables
+## What each model sees
 
-I’m still getting to know these models. What helped me make sense
-of them was Christoph Molnar’s excellent
-[*Tabular Foundation Models*](https://tabularfoundationmodels.com/).
+Suppose I want to score stock C on trading day 55. I know its
+momentum, and I have two historical examples, A and B, whose
+20-day outcomes are already known. Ridge estimates coefficients
+from those examples and LightGBM fits trees. Once fitted, both
+can score C from its momentum.
 
-### What the model needs to make a prediction
+Kumo scores C using its momentum and the historical examples. The
+predictors and known outcomes for A and B form the *context*. Kumo
+prepares this context once and reuses it across forecast dates until
+I refresh it.
 
-Suppose I want to predict how long an 8 km delivery will take at
-5 p.m. My table has past deliveries, with the distance, time of
-day and actual delivery time for each one. For the new order,
-I know the distance and time of day. The delivery time is blank.
-
-With Ridge, `fit()` learns coefficients from the completed
-deliveries. LightGBM fits trees from those examples. Either way,
-`predict()` only needs the new order’s distance and time of day.
-The coefficients or trees already carry what the model learned
-from the earlier deliveries.
-
-A useful comparison here is k-nearest neighbors. To predict the
-delivery time, I go back to the table and look for past orders
-with a similar distance and start time. If the two nearest took
-25 and 35 minutes, I’d predict 30 minutes. I still need the old
-orders to make that prediction.
-
-A tabular foundation model also gets the past deliveries and
-their known outcomes at prediction time. Those rows are its
-*context*. With k-nearest neighbors, I choose what counts as
-a similar trip. The network has already learned how to combine
-information from the examples.
-
-<figure id="figure-1" class="research-figure responsive-figure">
-  {% include equity-delivery-context-sketch.html %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Two ways to use the past deliveries.</span> The last row is the new order. The shaded rows are its two nearest neighbors.</figcaption>
+<figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
+  <picture>
+    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}?v=3" width="1024" height="1536">
+    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}?v=3" width="1536" height="1024" loading="lazy" decoding="async" alt="Stocks A and B are historical examples from trading days 10 and 30. LightGBM fits trees on A and B, then scores C from its momentum. Kumo scores C with A and B as context. Outcomes must be known by day 50. The context is built on day 51, the forecast is on day 55, and the simulated trade is on day 56.">
+  </picture>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
 </figure>
 
-Inside the network, the new order and the historical examples
-become vectors it can compare. Through *attention*, the
-representation of the new order picks up information from the
-examples. One comparison might bring in useful information about
-similar distances. Another might help it pick up that rush hour
-matters more for long trips. The network turns the resulting
-representation into an estimate for the missing delivery time.
+Stock B enters the context because its 20-day outcome is known by
+day 50, before I build the context on day 51. I score C on day 55
+and trade at the next close.
 
-If I give the same network a different city’s deliveries, the
-same order can get a different estimate. The network weights
-stay fixed. That’s *in-context learning*.
+### What Kumo learns in pretraining
 
-Many tabular foundation models use `fit()` and `predict()` so
-the interface feels familiar if you’ve used scikit-learn. Here,
-`fit()` gets the examples ready for `predict()`.
-
-### Pretraining across many tables
-
-Many tabular foundation models are pretrained on synthetic data.
-A generator makes tables with different relationships between
-predictors and outcomes. In one table, a single predictor might
-explain most of the outcome. In another, the effect of one
-predictor might depend on a second.
-
-Figure 2 shows two such practice tables. The inputs are the same,
-but the generator has used a different rule to produce the outcomes
-in each table. The network sees some outcomes and tries to predict
-the missing ones. The training procedure knows the hidden outcomes
-and uses the resulting errors to update the network’s weights.
-
-<figure id="figure-2" class="research-figure responsive-figure">
-  {% include equity-synthetic-pretraining-sketch.html %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Two prediction tasks during pretraining.</span> Errors on the hidden outcomes update the same network.</figcaption>
-</figure>
-
-As the rules change from table to table, the useful skill is
-working out what matters from the labeled examples. Once trained,
-the network can use that skill on a new table with its weights fixed.
-Molnar shows how those tables are generated in
-[*Tabular Foundation Models*, Chapter 5](https://tabularfoundationmodels.com/pretraining).
-
-### How an example changes the forecast
-
-Go back to the deliveries and imagine two possible rules. Under
-the first, long routes usually take a long time. Under the second,
-they usually take a long time during rush hour and are quick at
-other times. Start with both rules equally likely and suppose each
-rule gives the right outcome nine times out of ten, independently
-from one delivery to the next.
-
-Now I see a long route outside rush hour that was delivered quickly.
-That outcome is nine times as likely under the second rule, so I
-update its probability to 90%. For another long route outside rush
-hour, the probability of a quick delivery is 90% under the second
-rule and 10% under the first. Weight those forecasts by the new
-probabilities of the rules and I get 0.9 × 0.9 + 0.1 × 0.1, or 82%.
-
-The probabilities assigned to the rules before seeing the example
-are the *prior*. The updated probabilities are the *posterior*.
-Averaging each rule’s forecast using those probabilities gives the
-*posterior predictive distribution*. For a prior-data fitted network,
-the table generator sets the prior by choosing which relationships
-to show the network and how often. Pretraining teaches the network
-to approximate this kind of prediction directly from the examples.
-[Molnar’s chapter on prior-data fitted networks](https://tabularfoundationmodels.com/prior-data-fitted-networks)
-develops the idea from [Müller et al.](https://openreview.net/forum?id=KSugKcbNf9).
-
-## Testing a tabular foundation model on stocks
-
-### What the model could know on each date
-
-I picked NVIDIA’s Kumo Tabular for the stock test. NVIDIA
-pretrained it entirely on synthetic data
+NVIDIA pretrained Kumo on synthetic tables with different
+relationships between predictors and outcomes. The network learned
+to predict hidden outcomes from the labeled rows in each table
 ([Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)).
-Each time I ask Kumo for a ranking, it sees the stock predictors
-for that day alongside examples from the past. I only include
-a past example once I know how the stock did over the following
-20 trading days.
 
-### Research setup
+On the stock data, Kumo uses attention to combine information from
+the historical examples with the predictors for the stock it is
+scoring. Giving it different examples can change the forecast while
+the network weights stay fixed. This is *in-context learning*. Kumo
+predicts quantiles of the target, which I average to get one score
+per stock.
+
+## The stock-ranking test
 
 Ridge, LightGBM and Kumo all use the same 80 predictors. On each
 date, I cross-sectionally rank each predictor across the full
@@ -151,7 +73,6 @@ likely to do best against their sector peers.
 I describe the predictors and target in more detail in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
-Ridge and LightGBM fit on past data and score the dates that follow.
 I put together a new set of examples for Kumo whenever I fit
 LightGBM again. For the expanding Kumo runs, I let the history
 grow from the same January 1995 start. I also test
@@ -168,44 +89,6 @@ into the penalty choice in
 For **LightGBM**, I use 350 trees per fit, a maximum depth of five,
 a learning rate of 0.05 and a feature fraction of 0.25. The shallow
 trees can still pick up interactions.
-
-### A stock forecast with historical context
-
-Figure 3 follows stocks A and B from trading days 10 and 30, then
-scores a new stock, C, on day 55. The only predictor in the sketch
-is raw momentum.
-LightGBM fits trees on historical rows A and B and scores C
-by following its momentum through those trees. With Kumo, `fit()`
-prepares and caches information from A and B, and `predict()` uses
-that context alongside C’s momentum. C’s outcome is still unknown.
-
-<figure id="figure-3" class="research-figure responsive-figure stock-scoring-figure">
-  <picture>
-    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}?v=3" width="1024" height="1536">
-    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}?v=3" width="1536" height="1024" loading="lazy" decoding="async" alt="Stocks A and B are historical examples from trading days 10 and 30. LightGBM fits trees on A and B, then scores C from its momentum. Kumo scores C with A and B as context. Outcomes must be known by day 50. The context is built on day 51, the forecast is on day 55, and the simulated trade is on day 56.">
-  </picture>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
-</figure>
-
-B is sampled on trading day 30, so its outcome is known on day 50.
-I can include B when I put the examples together on day 51
-and use those same examples to score C on 55.
-The simulated trade takes place at the next close.
-
-### How Kumo turns the examples into a score
-
-Kumo turns the rows into vectors that represent their predictors
-and, for the historical rows, their known outcomes. In an attention
-layer, it compares C’s vector with those of A and B. That comparison
-determines how much information from each example goes into an
-updated vector for C. The next layer can use the updated vector
-to look at the examples again. The network learns how to make
-those comparisons during pretraining
-([Qu et al., *NVIDIA Kumo Tabular*, §§2 and 5](https://arxiv.org/html/2611.23001v1#S2)).
-Kumo can process A and B before it sees C, so it caches their
-representations for reuse on later forecasts. For C, it predicts
-quantiles from the low end of the outcome distribution to the high
-end. I average those quantiles to get one score per stock.
 
 ## Subsampling the historical context
 
@@ -245,12 +128,12 @@ test. I estimated just that preparation would need about 35 GiB
 of memory. Spacing the dates six weeks apart brought it down to
 about 127,000 rows, which fit on the Mac.
 
-Figure 4 uses two illustrative grids. Sampling every 20 trading days
+Figure 2 uses two illustrative grids. Sampling every 20 trading days
 keeps four dates, and sampling every 30 keeps three. The tails filter
 keeps six of the ten stocks on each selected date, leaving 24 or 18
 labeled rows.
 
-<figure id="figure-4" class="research-figure responsive-figure">
+<figure id="figure-2" class="research-figure responsive-figure">
   <div class="context-sampling" role="img" aria-label="Sampling every 20 trading days selects days 0, 20, 40 and 60. Sampling every 30 trading days selects days 0, 30 and 60. On each selected date, ten stocks are sorted by the realized prediction target. The lowest three and highest three are kept, and the middle four are skipped.">
     <div aria-hidden="true">
       <div class="context-sampling-heading">Historical dates</div>
@@ -292,7 +175,7 @@ labeled rows.
       </div>
     </div>
   </div>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
 When I put together a set of examples, I apply these cuts to the
@@ -327,7 +210,7 @@ each model orders the stocks. For a signal date with known outcomes,
 I rank the model scores and the realized outcomes for the same stocks,
 then correlate the two ranks. That Spearman correlation is the
 information coefficient, or $\mathrm{IC}_t$.
-Figure 5 shows its mean, sample standard deviation and their ratio
+Figure 3 shows its mean, sample standard deviation and their ratio
 across signal dates. The ratio is left unannualized.
 
 $$
@@ -335,9 +218,9 @@ $$
                       {\operatorname{sd}_t(\mathrm{IC}_t)}
 $$
 
-<figure id="figure-5" class="research-figure responsive-figure">
+<figure id="figure-3" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=6" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="7" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
 From 2022 to May 2026, mean IC was 0.044
@@ -365,9 +248,9 @@ returns, annualize using 252 trading days and use zero cash return for Sharpe.
 I use the same decile comparison for Ridge in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#figure-3).
 
-<figure id="figure-6" class="research-figure decile-profile-figure responsive-figure">
+<figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=5" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="10" label="Return, volatility and Sharpe by stock score decile from 1999 through May 2026, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 6.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
 </figure>
 
 Over the full history, LightGBM’s top decile earned about 18% a year
@@ -481,16 +364,16 @@ history and the later window.
 
 ## How the P&L built up
 
-Figure 7 shows when those gaps opened and how deep the drawdowns
+Figure 5 shows when those gaps opened and how deep the drawdowns
 were. The curves add up daily net P&L as a share of fixed capital.
 Table 1 gives compounded returns. The chart opens with each path
 rescaled to 7% annualized volatility in the selected window.
 Clear the checkbox to see the original paths. Open **Explore** to
 add Rolling Small.
 
-<figure id="figure-7" class="research-figure portfolio-path-figure responsive-figure">
+<figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=8" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="7" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 7.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
 </figure>
 
 LightGBM finished with the highest cumulative P&L over the full
@@ -533,7 +416,6 @@ candidate widths.
 - Grinsztajn, Léo, Edouard Oyallon, and Gaël Varoquaux (2022). [*Why Do Tree-Based Models Still Outperform Deep Learning on Typical Tabular Data?*](https://proceedings.neurips.cc/paper_files/paper/2022/hash/0378c7692da36807bdec87ab043cdadc-Abstract-Datasets_and_Benchmarks.html). *NeurIPS*, Datasets and Benchmarks Track.
 - Grinsztajn, Léo, et al. (2025). [*TabPFN-2.5: Advancing the State of the Art in Tabular Foundation Models*](https://arxiv.org/abs/2511.08667). Technical report, arXiv:2511.08667.
 - Molnar, Christoph. [*Tabular Foundation Models: A Short and Opinionated Guide*](https://tabularfoundationmodels.com/). Online book.
-- Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and Frank Hutter (2022). [*Transformers Can Do Bayesian Inference*](https://openreview.net/forum?id=KSugKcbNf9). ICLR.
 - NVIDIA. [*GPU Sizing Guide*](https://docs.nvidia.com/sdgm/structured-data-models/gpu-sizing). *NVIDIA Kumo Documentation*.
 - Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.
 - Qu, Jingang, David Holzmüller, Gaël Varoquaux, and Marine Le Morvan (2026). [*TabICLv2: A Better, Faster, Scalable, and Open Tabular Foundation Model*](https://proceedings.mlr.press/v306/qu26a.html). *ICML*, PMLR 306, 102477–102555.
