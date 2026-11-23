@@ -24,60 +24,150 @@ and the portfolios they produce after trading costs.
 
 ## Tabular foundation models
 
-A foundation model is pretrained on a broad range of data so it can
-be reused on new tasks. For the tabular models I’m looking at here,
-each pretraining task is a table with predictors and an outcome to
-predict. The network learns how to use the examples in that table.
-
-The diagrams in Christoph Molnar’s book helped this click for me.
-I especially like how he follows the table through the model so
-you can see what each step changes. I’d start with his
+Christoph Molnar’s book helped me make sense of these models. I
+especially like how his diagrams follow the data through the model.
+If you want to go further, I’d start with his
 [chapter on in-context learning](https://tabularfoundationmodels.com/prediction).
+
+### What goes into a table
+
+A table gives each observation a row and each variable a column.
+In this test, an observation is a stock on a particular date.
+Its row contains predictors such as momentum and volatility, plus
+the outcome I want to predict once that outcome is known. The
+rows I want to score today have the predictors available now and
+an outcome that will only be available later. The prediction task
+is to fill in that last piece using the historical rows.
+
+What makes a general model for tables hard to build is how much
+the columns can vary. Pixels in an image have a common meaning
+and a spatial relationship to their neighbors. Words in a sentence
+get part of their meaning from their order. In a table, the column
+next to volatility might hold a sector code or a date. If I move
+the volatility column and keep its identity, I still have the
+same measurement. A different table can have different columns,
+units, and relationships between predictors and outcomes.
+[Molnar, *Tabular Foundation Models*, Chapter 1](https://tabularfoundationmodels.com/introduction)
+
+### Fit and predict
+
+The interface looks familiar. With a model that follows the
+scikit-learn convention, I can write the same two calls for
+Ridge, LightGBM, k-nearest neighbors, or a tabular foundation model.
+
+```python
+model.fit(X_history, y_history)
+scores = model.predict(X_today)
+```
+
+For Ridge, `fit()` estimates a coefficient for each predictor by
+balancing the squared errors on the historical rows against a
+penalty on large coefficients. The fitted model carries those
+coefficients and an intercept into `predict()`. I can take a new
+stock’s predictors, multiply each by its coefficient, and add
+the results and the intercept to get a score.
+
+LightGBM fits a gradient-boosted ensemble of decision trees. It
+adds trees one at a time to improve the predictions from the
+trees already fitted. Each tree splits the predictor space into
+regions. At prediction time, a stock follows a path through each
+tree and receives a contribution from the leaf it lands in.
+LightGBM adds those contributions to produce the score. Ridge
+and LightGBM both carry a fitted rule into prediction, so the new
+stock’s predictors are enough to compute its score.
+
+K-nearest neighbors (kNN) is a useful bridge. Its `fit()` keeps the
+labeled examples, sometimes building an index to make the search
+faster. Each `predict()` finds the $k$ closest examples to the
+new row in predictor space. A simple regression version averages
+their outcomes. The choice of distance matters. If one predictor
+has a much larger numerical scale, it can dominate the search
+unless I rescale the inputs.
+[Molnar, *Tabular Foundation Models*, first look](https://tabularfoundationmodels.com/first-look)
 
 ### Pretraining across tables
 
-NVIDIA generated synthetic tables where the relationships between
-predictors and outcomes vary. Figure 1 shows why the variation
-matters. Both tables have the same predictors. In Table A only
-the first predictor matters. In Table B the second predictor
-matters too. The same last row has a target of 8 in one table
-and 11 in the other.
+A foundation model is pretrained on a broad range of data so it can
+be reused on new tasks. For the tabular models here, a single
+pretraining task is a table with some outcomes visible and some
+held back. The network gets the predictors for all those rows and
+uses the visible outcomes as examples. Its job is to predict the
+held-out outcomes. A training batch can include many tables, and
+the prediction errors from those tasks update the same network.
 
-During pretraining, Kumo predicts the hidden target using the
-labeled rows in that table. The training objective compares
-the prediction with the held-out outcome. Errors from many such
-tables update the same network. What carries over to a new table
-is the ability to work out a relationship from the examples it
-contains. [Qu et al., *NVIDIA Kumo Tabular*, §§3–4](https://arxiv.org/html/2611.23001v1#S3)
+Figure 1 shows why the variety of tables matters. The predictor
+values are identical in the two tables. In Table A the outcome is
+twice the first predictor. In Table B the second predictor adds
+three when it is one. The last row therefore has an outcome of
+8 in Table A and 11 in Table B. Its predictors are the same in
+both cases. The labeled rows are the information the network can
+use to work out which relationship applies.
 
 <figure id="figure-1" class="research-figure responsive-figure">
   {% include equity-synthetic-pretraining-sketch.html %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Two prediction tasks during pretraining.</span> The predictors are identical. The labeled rows give the model a clue about which relationship applies.</figcaption>
 </figure>
 
+NVIDIA pretrained Kumo on synthetic tables. The generator varies
+the rules linking columns and also varies things such as noise
+and missing observations. That choice matters because it determines
+the kinds of relationships the model gets to practice on. The stock
+test asks how well that way of using examples carries over to a
+different problem.
+[Qu et al., *NVIDIA Kumo Tabular*, §§3–4](https://arxiv.org/html/2611.23001v1#S3)
+
+### Using the labeled rows at prediction time
+
+Take the bottom row of Table A and run a two-nearest-neighbors
+regressor using only the first predictor to measure distance.
+From a value of 4, the two closest observed values are 3 and 2.
+Their outcomes are 6 and 4, so uniform averaging gives a
+prediction of $(6 + 4)/2 = 5$. Changing the distance rule or
+the number of neighbors could change the answer. This makes
+the idea of predicting from examples concrete.
+
+Kumo also draws on labeled examples when it makes a prediction.
+Their predictors and known outcomes form the *context*, much like
+the examples in a prompt. The network learned during pretraining
+how to represent the inputs and how to use those representations
+to combine information from the context. I can give it a different
+history and get a different forecast with the same network weights.
+That is *in-context learning*. In my backtest, Kumo’s `fit()`
+prepares the labeled history as context. The `predict()` call takes
+the new predictors and scores them using that prepared context.
+
 ### From a table to a forecast
 
-For a new task, the rows with known outcomes act like examples
-in a prompt. They form the *context*. The predictions can change
-when the examples change, with the same pretrained weights.
-That’s *in-context learning*.
-
-Kumo first encodes groups of cells as vectors of numbers. It
-combines information within rows and across columns to build one
-vector, or *embedding*, for each row. A new row then uses
-attention to compare its representation with the labeled rows.
-Those comparisons determine how much information it draws from
-each example. Kumo turns the updated vector into a set of
-predicted quantiles for that row. [Qu et al., *NVIDIA Kumo Tabular*, §2](https://arxiv.org/html/2611.23001v1#S2)
+Figure 2 follows the data through Kumo. It starts by representing
+groups of cells as vectors of numbers. The table encoder combines
+information along columns and within rows. Looking down a column
+helps represent a value relative to other values of the same
+predictor. Looking across a row lets the encoder represent several
+predictors together. It produces one vector, or *embedding*, for
+each row.
 
 <figure id="figure-2" class="research-figure responsive-figure">
   {% include tabular-inference-diagram.html %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">From a table to a prediction.</span> The labeled rows feed into the new row’s representation. The output shows three of the quantile levels Kumo predicts.</figcaption>
 </figure>
 
+The next stage uses *attention* to compare a new row’s embedding
+with the labeled rows, whose representations also carry their known
+outcomes. The comparisons give the model weights for gathering
+information from different examples. As the row passes through
+successive layers, it can update its vector and use the updated
+representation to make the next set of comparisons. Kumo reads
+out a set of target quantiles from the final vector. Those
+quantiles describe a range of outcomes given the predictors
+and the supplied history.
+[Qu et al., *NVIDIA Kumo Tabular*, §2](https://arxiv.org/html/2611.23001v1#S2)
+
 The labeled rows only attend to one another, so Kumo can cache
-their representations. I prepare the context once per refit and
-reuse it for the forecasts that follow.
+the information it needs from them. I reuse that cache to score
+each new cross-section until the next refit. A longer history
+gives the model more examples and a larger context to prepare
+and keep in memory. That trade-off matters when the table grows
+at each refit.
 
 ## The stock-ranking test
 
