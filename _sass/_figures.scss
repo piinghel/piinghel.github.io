@@ -132,6 +132,8 @@ html[data-theme="dark"] .model-sketch { --sketch-mark: #91bec8; }
   .model-sketch__pair { grid-template-columns: 1fr; }
 }
 
+.tabular-inference { --query-mark: #945614; }
+html[data-theme="dark"] .tabular-inference { --query-mark: #e9bc83; }
 .tabular-inference__flow {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.8fr);
@@ -158,11 +160,27 @@ html[data-theme="dark"] .model-sketch { --sketch-mark: #91bec8; }
   flex: none;
   background: repeating-linear-gradient(90deg, var(--sketch-mark) 0 21%, transparent 21% 25%);
 }
-.tabular-inference__vector--query { opacity: 0.55; }
+.tabular-inference__vector--query { --sketch-mark: var(--query-mark); }
+.tabular-inference__query td:last-child { color: var(--query-mark); }
 .tabular-inference__attention { color: var(--sketch-mark); font-size: 0.78rem; }
 .tabular-inference__prediction {
   border-top: 1px solid var(--rule);
   padding-top: 0.35rem;
+}
+@media (min-width: 36.01rem) {
+  .tabular-inference__stage:last-child::before { top: 4.75rem; }
+  .tabular-inference__prediction { margin-top: 1.6rem; }
+}
+.tabular-inference__quantiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+.tabular-inference__quantiles span {
+  border: 1px solid var(--query-mark);
+  padding: 0.12rem 0.3rem;
+  font-size: 0.78rem;
 }
 @media (max-width: 36rem) {
   .tabular-inference__flow { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }

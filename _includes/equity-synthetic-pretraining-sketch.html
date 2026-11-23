@@ -1,4 +1,4 @@
-{% assign tasks = "One predictor matters|4|8,Both predictors matter|7|11" | split: "," %}
+{% assign tasks = "Table A|4|8,Table B|7|11" | split: "," %}
 <div class="model-sketch" role="img" aria-label="Two synthetic tasks have the same predictors and different outcomes. In the first table the outcome is twice the first predictor. In the second table it also increases by three when the second predictor is one. The network predicts the hidden outcomes, then the training loss compares those predictions with the known values of 8 and 11 to update the network weights.">
   <div aria-hidden="true">
     <div class="model-sketch__pair">
@@ -15,12 +15,10 @@
               <tr class="model-sketch__query"><td>4</td><td>1</td><td>?</td></tr>
             </tbody>
           </table>
-          <div class="model-sketch__step">
-            <span class="model-sketch__arrow">↓</span> Check against {{ example[2] }}
-          </div>
+          <div class="model-sketch__step"><span class="model-sketch__arrow">↓</span> Held-out target {{ example[2] }}</div>
         </div>
       {% endfor %}
     </div>
-    <div class="model-sketch__result model-sketch__shared-step">Use the errors to update one network</div>
+    <div class="model-sketch__result model-sketch__shared-step">Prediction errors from both tables update the same weights</div>
   </div>
 </div>
