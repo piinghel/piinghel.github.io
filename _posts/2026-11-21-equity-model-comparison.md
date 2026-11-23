@@ -47,8 +47,8 @@ The familiar scikit-learn interface hides a difference in what
 happens when I fit a model.
 
 ```python
-model.fit(X_history, y_history)
-scores = model.predict(X_today)
+model.fit(X_train, y_train)
+scores = model.predict(X_test)
 ```
 
 Ridge learns a set of coefficients on the historical rows, with a
