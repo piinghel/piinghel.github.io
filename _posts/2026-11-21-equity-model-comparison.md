@@ -61,20 +61,21 @@ tree and its score is the sum of the leaf values it reaches. Both
 models learn a rule from this particular history. At prediction time
 they need that rule and the new predictors.
 
-K-nearest neighbors (kNN) is a useful bridge because it uses
-examples directly at prediction time. Its `fit()` keeps the
-historical rows and their outcomes. When a new row comes in,
-`predict()` finds the $k$ closest examples by a chosen distance
-and, in the simplest regression version, averages their outcomes.
+With k-nearest neighbors (kNN), the historical rows are part of
+the prediction itself. Its `fit()` keeps the rows and their
+outcomes. When a new row comes in, `predict()` finds the $k$
+closest examples by a chosen distance and, in the simplest
+regression version, averages their outcomes.
 
 ### Pretraining across tables
 
-One way to pretrain a tabular foundation model is to generate
-synthetic tables with different rules linking predictors to outcomes,
-and with varying noise and missing values. In each table, the network
-sees some outcomes and tries to predict the rest. Prediction errors
-across these tasks update the same network. The idea is to learn how
-to use the examples in whichever table it is given next.
+With kNN, I choose how to measure the distance between rows. A
+tabular foundation model learns how to use examples during
+pretraining. One way to do this is to generate synthetic tables
+with different rules linking predictors to outcomes and varying
+amounts of noise and missing data. In each table, the network sees
+some outcomes and tries to predict the rest. Prediction errors
+across these tasks update the same network.
 
 Look at the last row in Figure 1. Its predictors are 4 and 1 in
 both tables. In Table A, the target is twice the first predictor,
@@ -90,13 +91,13 @@ Table A and 7 in Table B.
 
 ### Using the labeled rows at prediction time
 
-Take the last row of Table A and use two nearest neighbors,
-measuring distance along the first predictor. The closest values
-to 4 are 3 and 2, with outcomes of 6 and 4. The kNN prediction is
-$(6 + 4)/2 = 5$.
+Go back to the last row of Table A, where the target is 8. If I use
+two nearest neighbors and measure distance along the first predictor,
+the closest values to 4 are 3 and 2. Their outcomes are 6 and 4,
+so kNN predicts $(6 + 4)/2 = 5$.
 
-The tabular foundation model learns how to weigh examples during
-pretraining. In the backtest, its `fit()` prepares and caches the
+The foundation model also needs labeled examples when it scores
+a new row. In the backtest, its `fit()` prepares and caches the
 historical rows and their known outcomes as *context*. With Ridge
 or LightGBM, I re-estimate the coefficients or trees at each refit.
 With the foundation model, I refresh the context and keep the
@@ -175,11 +176,11 @@ trees can still pick up interactions.
 
 ## Subsampling the historical context
 
-At the last refit, there were 7.34 million eligible daily rows
-with known outcomes. Kumo has to prepare and cache its context,
-so the number of rows matters for memory. To keep examples from
-across the full history on my Mac, I cut the number of rows in two
-steps and kept all 80 predictors.
+The expanding window gives Kumo more examples at each refit. At
+the last one, there were 7.34 million eligible daily rows with known
+outcomes. I wanted examples from across that history, and I wanted
+to run the test on my Mac. Kumo prepares and caches the rows it uses,
+so I kept all 80 predictors and cut the number of rows in two steps.
 
 First I spaced out the dates. Take the same stock on two consecutive
 trading days. A rolling predictor like one-month momentum changes
@@ -207,6 +208,7 @@ context and one estimator each. The six-week sample kept about 127,000
 rows in Small’s last 1999–2021 fold, which fit on my Mac. Weekly
 sampling with the same tails would have left about 760,000 rows in
 that fold. I estimated about 35 GiB just to prepare that context.
+That was asking quite a bit of a 16 GB Mac.
 
 Figure 3 uses two illustrative grids. Sampling every 20 trading days
 keeps four dates, and sampling every 30 keeps three. The tails filter
@@ -308,9 +310,10 @@ using blocks of 21 trading days.
 
 ## Return and risk by score decile
 
-Rank IC looks across the whole ranking. For the portfolios, I care
-especially about the stocks at either end. I sort each model’s
-scores into deciles on the signal date and trade at the next close.
+A model can rank much of the cross-section well and still give a weak
+long–short spread. To see how the stocks at either end of the ranking
+perform, I sort each model’s scores into deciles on the signal date
+and trade at the next close.
 If a decile has $n$ stocks with a return that day, its daily
 return is $\sum_i r_i / n$. I average these returns across
 the three schedules on days when all three are available. The spread
@@ -472,9 +475,10 @@ rankings and the daily portfolio returns.
 
 ## A shorter context with Rolling Small
 
-I tried sampling recent examples more frequently. Rolling Small
-sampled weekly, starting with two years of history and growing to
-three.
+For expanding Small, spacing out the dates made room for examples
+from the full history. With Rolling Small, I sampled recent dates
+weekly, starting with a two-year window and growing it to three years.
+
 Over 1999–2021, it ranked stocks worse than expanding Small
 and had a net Sharpe of 0.39 versus 1.24. The short book
 accounted for most of the gap in average net P&L. From 2022 to
