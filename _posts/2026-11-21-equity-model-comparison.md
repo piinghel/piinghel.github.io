@@ -14,56 +14,27 @@ Tree-based models such as LightGBM, XGBoost, and random forests have
 a long track record on tabular data. LightGBM and XGBoost in particular
 have repeatedly featured in top Kaggle solutions.[^tree-benchmark]
 
+Tabular foundation models such as TabPFN and TabICL caught my
+attention when they started beating tuned tree ensembles on some
+benchmarks.[^new-benchmarks] As these models got better at handling
+larger tables,[^larger-tables] I wanted to see whether the same
+approach could improve stock rankings. I give Kumo, Ridge, and
+LightGBM the same stock predictors, then compare their rankings
+and the portfolios they produce after trading costs.
+
+## Tabular foundation models
+
 A foundation model is pretrained on a broad range of data so it can
-be reused on new tasks. Tabular foundation models such as TabPFN and
-TabICL learn from many different tables. Give one a new table with some
-known outcomes, and it uses those rows as examples to predict the
-missing outcomes. I took notice when these models started beating
-tuned tree ensembles on some benchmarks.[^new-benchmarks]
+be reused on new tasks. For tabular models, that training spans many
+different tables. NVIDIA pretrained Kumo on synthetic tables where
+predictors and outcomes were related in different ways. It learned
+to predict hidden outcomes from the rows whose outcomes were given.
+[Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)
 
-As they got better at handling larger tables,[^larger-tables] I wanted
-to see whether the same approach could improve stock rankings. I give Kumo, Ridge,
-and LightGBM the same stock predictors, then compare their rankings and
-the portfolios they produce after trading costs.
-
-## What each model sees
-
-Suppose I want to score stock C on trading day 55. I know its
-momentum, and I have two historical examples, A and B, whose
-20-day outcomes are already known. Ridge estimates coefficients
-from those examples and LightGBM fits trees. Once fitted, both
-can score C from its momentum.
-
-Kumo scores C using its momentum and the historical examples. The
-predictors and known outcomes for A and B form the *context*. Kumo
-prepares this context once and reuses it across forecast dates until
-I refresh it.
-
-<figure id="figure-1" class="research-figure responsive-figure stock-scoring-figure">
-  <picture>
-    <source media="(max-width: 600px)" srcset="{{ '/assets/equity-model-comparison/in-context-sketch-mobile.webp' | relative_url }}?v=3" width="1024" height="1536">
-    <img src="{{ '/assets/equity-model-comparison/in-context-sketch.webp' | relative_url }}?v=3" width="1536" height="1024" loading="lazy" decoding="async" alt="Stocks A and B are historical examples from trading days 10 and 30. LightGBM fits trees on A and B, then scores C from its momentum. Kumo scores C with A and B as context. Outcomes must be known by day 50. The context is built on day 51, the forecast is on day 55, and the simulated trade is on day 56.">
-  </picture>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">How LightGBM and Kumo score a stock.</span> The sketch draws on Christoph Molnar’s explanation of prediction inputs in <a href="https://tabularfoundationmodels.com/prediction#fig-input-output"><em>Tabular Foundation Models</em>, Figure 4.2</a>.</figcaption>
-</figure>
-
-Stock B enters the context because its 20-day outcome is known by
-day 50, before I build the context on day 51. I score C on day 55
-and trade at the next close.
-
-### What Kumo learns in pretraining
-
-NVIDIA pretrained Kumo on synthetic tables with different
-relationships between predictors and outcomes. The network learned
-to predict hidden outcomes from the labeled rows in each table
-([Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)).
-
-On the stock data, Kumo uses attention to combine information from
-the historical examples with the predictors for the stock it is
-scoring. Giving it different examples can change the forecast while
-the network weights stay fixed. This is *in-context learning*. Kumo
-predicts quantiles of the target, which I average to get one score
-per stock.
+For a new task, the model takes a table of predictors with outcomes
+known for some rows. Those labeled rows form the *context*. The
+model uses them to predict outcomes for the other rows while its
+pretrained weights stay fixed. This is *in-context learning*.
 
 ## The stock-ranking test
 
@@ -74,13 +45,15 @@ stock universe and put the ranks on a −1 to +1 scale.
 For the target, I take each stock’s Sharpe ratio over the following
 20 trading days and rank it on the same scale within its sector
 on that date. The models are trying to identify which stocks are
-likely to do best against their sector peers.
+likely to do best against their sector peers. Kumo predicts a set
+of quantiles for this target, which I average into one score per stock.
 I describe the predictors and target in more detail in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
-I put together a new set of examples for Kumo whenever I fit
-LightGBM again. For the expanding Kumo runs, I let the history
-grow from the same January 1995 start. I also test
+I refresh Kumo’s context whenever I refit LightGBM, using only
+historical rows whose full 20-day outcome is already known.
+For the expanding Kumo runs, I let the history grow from the
+same January 1995 start. I also test
 Rolling Small, which keeps only recent history. The test runs from
 1999 through May 27, 2026. I show 2022 onward separately to see
 whether the same patterns turn up in the more recent years.
@@ -133,12 +106,12 @@ test. I estimated just that preparation would need about 35 GiB
 of memory. Spacing the dates six weeks apart brought it down to
 about 127,000 rows, which fit on the Mac.
 
-Figure 2 uses two illustrative grids. Sampling every 20 trading days
+Figure 1 uses two illustrative grids. Sampling every 20 trading days
 keeps four dates, and sampling every 30 keeps three. The tails filter
 keeps six of the ten stocks on each selected date, leaving 24 or 18
 labeled rows.
 
-<figure id="figure-2" class="research-figure responsive-figure">
+<figure id="figure-1" class="research-figure responsive-figure">
   <div class="context-sampling" role="img" aria-label="Sampling every 20 trading days selects days 0, 20, 40 and 60. Sampling every 30 trading days selects days 0, 30 and 60. On each selected date, ten stocks are sorted by the realized prediction target. The lowest three and highest three are kept, and the middle four are skipped.">
     <div aria-hidden="true">
       <div class="context-sampling-heading">Historical dates</div>
@@ -180,7 +153,7 @@ labeled rows.
       </div>
     </div>
   </div>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
 When I put together a set of examples, I apply these cuts to the
@@ -215,7 +188,7 @@ each model orders the stocks. For a signal date with known outcomes,
 I rank the model scores and the realized outcomes for the same stocks,
 then correlate the two ranks. That Spearman correlation is the
 information coefficient, or $\mathrm{IC}_t$.
-Figure 3 shows its mean, sample standard deviation and their ratio
+Figure 2 shows its mean, sample standard deviation and their ratio
 across signal dates. The ratio is left unannualized.
 
 $$
@@ -223,9 +196,9 @@ $$
                       {\operatorname{sd}_t(\mathrm{IC}_t)}
 $$
 
-<figure id="figure-3" class="research-figure responsive-figure">
+<figure id="figure-2" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=6" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="7" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
 From 2022 to May 2026, mean IC was 0.044
@@ -253,9 +226,9 @@ returns, annualize using 252 trading days and use zero cash return for Sharpe.
 I use the same decile comparison for Ridge in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#figure-3).
 
-<figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
+<figure id="figure-3" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=5" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="10" label="Return, volatility and Sharpe by stock score decile from 1999 through May 2026, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
 </figure>
 
 Over the full history, LightGBM’s top decile earned about 18% a year
@@ -369,16 +342,16 @@ history and the later window.
 
 ## How the P&L built up
 
-Figure 5 shows when those gaps opened and how deep the drawdowns
+Figure 4 shows when those gaps opened and how deep the drawdowns
 were. The curves add up daily net P&L as a share of fixed capital.
 Table 1 gives compounded returns. The chart opens with each path
 rescaled to 7% annualized volatility in the selected window.
 Clear the checkbox to see the original paths. Open **Explore** to
 add Rolling Small.
 
-<figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
+<figure id="figure-4" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=8" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="7" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
 </figure>
 
 LightGBM finished with the highest cumulative P&L over the full
