@@ -24,9 +24,10 @@ and the portfolios they produce after trading costs.
 
 ## Tabular foundation models
 
-Christoph Molnar’s book helped me make sense of these models. I
-especially like how his diagrams follow the data through the model.
-If you want to go further, I’d start with his
+I got a lot out of Christoph Molnar’s book *Tabular Foundation
+Models*. His diagrams helped me picture what happens to a table
+from the inputs all the way to the predictions. If you want to
+dig into that, I’d start with his
 [chapter on in-context learning](https://tabularfoundationmodels.com/prediction).
 
 ### What goes into a table
@@ -47,7 +48,6 @@ next to volatility might hold a sector code or a date. If I move
 the volatility column and keep its identity, I still have the
 same measurement. A different table can have different columns,
 units, and relationships between predictors and outcomes.
-[Molnar, *Tabular Foundation Models*, Chapter 1](https://tabularfoundationmodels.com/introduction)
 
 ### Fit and predict
 
@@ -83,7 +83,6 @@ new row in predictor space. A simple regression version averages
 their outcomes. The choice of distance matters. If one predictor
 has a much larger numerical scale, it can dominate the search
 unless I rescale the inputs.
-[Molnar, *Tabular Foundation Models*, first look](https://tabularfoundationmodels.com/first-look)
 
 ### Pretraining across tables
 
