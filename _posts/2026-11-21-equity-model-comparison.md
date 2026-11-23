@@ -15,15 +15,13 @@ have long been strong baselines for tabular prediction. They’ve
 performed well on benchmarks and in Kaggle competitions.[^tree-benchmark]
 That’s why I took notice when tabular foundation models like TabPFN
 and TabICL started beating tuned tree ensembles on some
-benchmarks.[^new-benchmarks] As these models got better at handling
-larger tables, I wanted to see how one would do at ranking
-stocks.[^larger-tables]
+benchmarks.[^new-benchmarks]
 
-An 8 km delivery is enough to see what each model needs to make
-a prediction. From there, I give Ridge, LightGBM and a tabular
-foundation model the same stock predictors and compare their
-rankings. Then I see whether a better ranking leads to a better
-portfolio after trading costs.
+Once these models could handle larger tables,[^larger-tables] I wanted
+to see whether one could rank stocks better than Ridge or LightGBM.
+I gave Kumo, Ridge, and LightGBM the same stock predictors and
+checked how their rankings translated into portfolio returns after
+trading costs.
 
 ## A pretrained model for tables
 
