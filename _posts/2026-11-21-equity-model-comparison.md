@@ -10,16 +10,21 @@ article_label: Signals · Tabular models
 permalink: /quants/equity-model-comparison.html
 ---
 
-LightGBM sets a high bar in my stock-ranking tests. It belongs to a
-family of tree-based models, alongside XGBoost and random forests,
-with a long track record on tabular data.[^tree-benchmark]
+Tree-based models such as LightGBM, XGBoost, and random forests have
+a long track record on tabular data. LightGBM and XGBoost in particular
+have repeatedly featured in top Kaggle solutions.[^tree-benchmark]
 
-TabPFN and TabICL caught my attention when they outperformed tuned
-tree ensembles on some benchmarks.[^new-benchmarks] Once tabular
-foundation models could handle larger tables,[^larger-tables] I wanted
-to see how one would fare on stocks. I gave Kumo, LightGBM, and Ridge
-the same predictors and compared their rankings and the portfolios
-they produced after trading costs.
+A foundation model is pretrained on a broad range of data so it can
+be reused on new tasks. Tabular foundation models such as TabPFN and
+TabICL learn from many different tables. Give one a new table with some
+known outcomes, and it uses those rows as examples to predict the
+missing outcomes. I took notice when these models started beating
+tuned tree ensembles on some benchmarks.[^new-benchmarks]
+
+As they got better at handling larger tables,[^larger-tables] I wanted
+to see whether the same approach could improve stock rankings. I give Kumo, Ridge,
+and LightGBM the same stock predictors, then compare their rankings and
+the portfolios they produce after trading costs.
 
 ## What each model sees
 
@@ -420,7 +425,7 @@ candidate widths.
 - Qu, Jingang, et al. (2026). [*NVIDIA Kumo Tabular: Pushing the Accuracy–Efficiency Frontier for Tabular Prediction*](https://arxiv.org/abs/2611.23001v1). arXiv:2611.23001, version 1.
 - Qu, Jingang, David Holzmüller, Gaël Varoquaux, and Marine Le Morvan (2026). [*TabICLv2: A Better, Faster, Scalable, and Open Tabular Foundation Model*](https://proceedings.mlr.press/v306/qu26a.html). *ICML*, PMLR 306, 102477–102555.
 
-[^tree-benchmark]: [Chen and Guestrin (2016)](https://arxiv.org/abs/1603.02754) document XGBoost’s early Kaggle results, and [Ambrosm’s winning Kaggle write-up](https://www.kaggle.com/competitions/bench-tab-v2/writeups/ambrosm-1-solution) uses boosted trees and random forests. [Grinsztajn, Oyallon and Varoquaux (2022)](https://proceedings.neurips.cc/paper_files/paper/2022/hash/0378c7692da36807bdec87ab043cdadc-Abstract-Datasets_and_Benchmarks.html) compare tree ensembles and neural networks across 45 datasets.
+[^tree-benchmark]: [LightGBM’s competition results](https://github.com/lightgbm-org/LightGBM/blob/main/examples/README.md) list winning solutions, and [Chen and Guestrin (2016)](https://arxiv.org/abs/1603.02754) document XGBoost’s early Kaggle results. [Ambrosm’s winning Kaggle write-up](https://www.kaggle.com/competitions/bench-tab-v2/writeups/ambrosm-1-solution) uses boosted trees and random forests.
 
 [^new-benchmarks]: See the comparisons with tuned tree models in the [TabPFN-2.5 report](https://arxiv.org/abs/2511.08667) and the [TabICLv2 paper](https://proceedings.mlr.press/v306/qu26a.html).
 
