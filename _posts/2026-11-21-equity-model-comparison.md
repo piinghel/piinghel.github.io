@@ -87,9 +87,8 @@ he draws out how the historical examples enter a prediction.
 
 ### NVIDIA Kumo Tabular
 
-For the stock test I use [NVIDIA Kumo Tabular](https://build.nvidia.com/nvidia/kumo-tabular/modelcard),
-the model behind Figure 2. It was pretrained on millions of synthetic
-tables.
+For the stock test I use [NVIDIA Kumo Tabular](https://build.nvidia.com/nvidia/kumo-tabular/modelcard).
+It was pretrained on millions of synthetic tables.
 I test all three sizes. The regressors have about 28 million
 parameters in Small, 62 million in Medium and 216 million in Large.
 The wider Large model also needs more memory to represent each row.
