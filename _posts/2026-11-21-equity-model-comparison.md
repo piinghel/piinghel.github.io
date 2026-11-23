@@ -33,28 +33,22 @@ price as the target.
 ### Fit and predict
 
 At each refit, I train Ridge and LightGBM from scratch on the
-historical rows for the stock-ranking task. To score a new
-stock-date, Ridge applies its fitted coefficients and LightGBM
-applies its fitted trees.
+historical stock rows. I then use each fitted model to score new rows
+from their predictors.
 
-With a tabular foundation model (TFM) such as TabPFN, I start with
-a network pretrained on millions of tables. It adapts to the
-stock-ranking task by using examples with known outcomes when it
-makes a prediction. The weights stay fixed. This is *in-context
-learning* (ICL).
-
-Using examples directly at prediction time is familiar from
-k-nearest neighbors (kNN), which scores a new row from the outcomes
-of similar historical rows.
+TabPFN is a tabular foundation model (TFM) pretrained on millions of
+tables. To use a model like this for stock ranking, I give it historical
+rows with known outcomes and new rows to score. It adapts to the task
+using those examples while keeping its weights fixed. That’s
+*in-context learning* (ICL).
 
 ### Prior-data fitted networks
 
-With kNN, I choose how to find similar rows. A *prior-data fitted
-network* (PFN), the approach behind TabPFN, learns how to use examples
-during pretraining. It sees some outcomes in a synthetic table and
-tries to predict the hidden ones. It does this across many different
-tables. The *prior* defines the mix of tasks it sees. The network is
-fitted on tables drawn from that prior.
+TabPFN takes its name from *prior-data fitted networks* (PFNs).
+During pretraining, the network sees some outcomes in a synthetic
+table and tries to predict the hidden ones. It does this across many
+different tables. The *prior* defines the mix of tasks it sees. The
+network is fitted on tables drawn from that prior.
 
 Christoph Molnar calls this moving “up one level of abstraction.”[^pfn]
 Each pretraining example is a whole prediction task. Across tasks,
