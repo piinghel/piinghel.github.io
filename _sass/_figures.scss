@@ -132,6 +132,47 @@ html[data-theme="dark"] .model-sketch { --sketch-mark: #91bec8; }
   .model-sketch__pair { grid-template-columns: 1fr; }
 }
 
+.tabular-inference__flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 1.65rem;
+}
+.tabular-inference__stage { position: relative; }
+.tabular-inference__stage + .tabular-inference__stage::before {
+  content: "→";
+  position: absolute;
+  inset-inline-start: -1.35rem;
+  top: 2.3rem;
+  color: var(--sketch-mark);
+}
+.tabular-inference__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.23rem 0;
+}
+.tabular-inference__vector {
+  width: 2.5rem;
+  height: 0.7rem;
+  flex: none;
+  background: repeating-linear-gradient(90deg, var(--sketch-mark) 0 21%, transparent 21% 25%);
+}
+.tabular-inference__vector--query { opacity: 0.55; }
+.tabular-inference__attention { color: var(--sketch-mark); font-size: 0.78rem; }
+.tabular-inference__prediction {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.35rem;
+}
+@media (max-width: 36rem) {
+  .tabular-inference__flow { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+  .tabular-inference__stage + .tabular-inference__stage::before {
+    content: "↓";
+    left: 0;
+    top: -1.4rem;
+  }
+}
+
 .post-content .portfolio-path-figure { overflow: visible; scroll-margin-top: 1.25rem; }
 @media (min-width: 72rem) {
   .e-content > :is(.portfolio-path-figure, .regime-comparison-figure, .decile-profile-figure) { width: calc(100% + 5rem); }

@@ -25,16 +25,32 @@ and the portfolios they produce after trading costs.
 ## Tabular foundation models
 
 A foundation model is pretrained on a broad range of data so it can
-be reused on new tasks. For tabular models, that training spans many
-different tables. NVIDIA pretrained Kumo on synthetic tables where
-predictors and outcomes were related in different ways. It learned
-to predict hidden outcomes from the rows whose outcomes were given.
-[Qu et al., *NVIDIA Kumo Tabular*, §3](https://arxiv.org/html/2611.23001v1#S3)
+be reused on new tasks. For a tabular model, each task is a table
+with its own predictors and an outcome to predict. NVIDIA generated
+synthetic tables that varied in how their predictors related to their
+outcomes. During pretraining, Kumo predicted the outcomes of some
+rows from the rows with known outcomes. The prediction errors
+updated the same network across many different tables. [Qu et al.,
+*NVIDIA Kumo Tabular*, §§3–4](https://arxiv.org/html/2611.23001v1#S3)
 
-For a new task, the model takes a table of predictors with outcomes
-known for some rows. Those labeled rows form the *context*. The
-model uses them to predict outcomes for the other rows while its
-pretrained weights stay fixed. This is *in-context learning*.
+What carries over to a new table is the ability to learn from
+examples. Think of the labeled rows as examples in a prompt. They
+help the model infer how the predictors relate to the outcome in
+that table. Change the examples and the prediction can change, with
+the same network weights. This is *in-context learning*. [Christoph Molnar,
+*Tabular Foundation Models*, Chapter 4](https://tabularfoundationmodels.com/prediction)
+
+Kumo turns groups of cells into vectors of numbers and combines
+them into one vector per row. These vectors are called *embeddings*.
+Attention lets a row being scored draw more information from some
+labeled rows than from others. Kumo reads the outcome prediction
+from the updated vector for each row it is scoring. [Qu et al.,
+*NVIDIA Kumo Tabular*, §2](https://arxiv.org/html/2611.23001v1#S2)
+
+<figure id="figure-1" class="research-figure responsive-figure">
+  {% include tabular-inference-diagram.html %}
+  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">From a table to a prediction.</span> The labeled rows supply the context for scoring new rows. The diagram follows the prediction stages described in <a href="https://tabularfoundationmodels.com/prediction#embed-transform-decode"><em>Tabular Foundation Models</em></a>.</figcaption>
+</figure>
 
 ## The stock-ranking test
 
@@ -50,13 +66,13 @@ of quantiles for this target, which I average into one score per stock.
 I describe the predictors and target in more detail in
 [*Combining Multiple Predictors: The Linear Case*]({% link _posts/2025-02-09-combining-predictors.md %}#what-i-ask-the-model-to-predict).
 
-I refresh Kumo’s context whenever I refit LightGBM, using only
-historical rows whose full 20-day outcome is already known.
-For the expanding Kumo runs, I let the history grow from the
-same January 1995 start. I also test
-Rolling Small, which keeps only recent history. The test runs from
-1999 through May 27, 2026. I show 2022 onward separately to see
-whether the same patterns turn up in the more recent years.
+The main test uses an expanding walk-forward window. The history
+starts in January 1995 and grows at each refit as more 20-day
+outcomes become known. I use each fit to score the dates that follow.
+I refresh Kumo’s context when I refit LightGBM. Rolling Small
+uses the same walk-forward setup with a rolling context. The
+test runs from 1999 through May 27, 2026, with 2022 onward
+shown separately.
 
 For **Ridge**, I use a penalty of $c=0.1$. Several predictors overlap,
 such as momentum measured over nearby horizons, and the penalty
@@ -104,14 +120,14 @@ With the same stock filter, weekly sampling would have left
 Kumo Small about 760,000 rows to prepare late in the 1999–2021
 test. I estimated just that preparation would need about 35 GiB
 of memory. Spacing the dates six weeks apart brought it down to
-about 127,000 rows, which fit on the Mac.
+about 127,000 rows, which fit on my Mac.
 
-Figure 1 uses two illustrative grids. Sampling every 20 trading days
+Figure 2 uses two illustrative grids. Sampling every 20 trading days
 keeps four dates, and sampling every 30 keeps three. The tails filter
 keeps six of the ten stocks on each selected date, leaving 24 or 18
 labeled rows.
 
-<figure id="figure-1" class="research-figure responsive-figure">
+<figure id="figure-2" class="research-figure responsive-figure">
   <div class="context-sampling" role="img" aria-label="Sampling every 20 trading days selects days 0, 20, 40 and 60. Sampling every 30 trading days selects days 0, 30 and 60. On each selected date, ten stocks are sorted by the realized prediction target. The lowest three and highest three are kept, and the middle four are skipped.">
     <div aria-hidden="true">
       <div class="context-sampling-heading">Historical dates</div>
@@ -153,7 +169,7 @@ labeled rows.
       </div>
     </div>
   </div>
-  <figcaption class="figure-caption"><span class="caption-number">Figure 1.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Which historical rows enter Kumo’s context.</span> Filled marks show the dates and stocks selected in this example.</figcaption>
 </figure>
 
 When I put together a set of examples, I apply these cuts to the
@@ -164,22 +180,13 @@ every eligible stock on those signal dates using the latest context.
 
 ## Running Kumo on a Mac
 
-I ran the backtests on the 10-core M2 Pro CPU of a 2023 MacBook Pro
-with 16 GB of unified memory. The last fold used 110,167 historical
-rows and scored 84,243 stock-dates through May 2026. Medium took
-17.5 minutes to prepare that context and another 11.5 to score it.
-Large took 29.0 minutes and 17.9 minutes on the same inputs. Its
-highest resident memory usage across all 15 folds was 9.3 GiB.
-
-I also tested Large on the Apple GPU using an earlier context
-with 13,459 historical rows and 954 stocks to score. On the same
-inputs, preparation took 53 seconds on the GPU and 74 on the CPU.
-Median scoring time over three calls was 2.86 seconds on the GPU
-and 4.56 on the CPU. I used CPU preprocessing and corrected some
-operations that produced different scores on the Apple GPU.
-After the fix, the stock ranks had a Spearman
-correlation above 0.999999 and the top and bottom 96 names agreed.
-All backtest results below use CPU forecasts.
+I ran the full Kumo Large backtest on my 2023 MacBook Pro, which has
+a 10-core M2 Pro CPU and 16 GB of unified memory. All 15 folds ran
+on the CPU. The last fold used 110,167 historical rows and scored
+84,243 stock-dates through May 2026. Medium took 17.5 minutes to
+prepare the context and 11.5 minutes to score the new rows. Large
+took 29.0 minutes and 17.9 minutes on the same inputs. Large’s peak
+resident memory across the full test was 9.3 GiB.
 
 ## Ranking the whole cross-section
 
@@ -188,7 +195,7 @@ each model orders the stocks. For a signal date with known outcomes,
 I rank the model scores and the realized outcomes for the same stocks,
 then correlate the two ranks. That Spearman correlation is the
 information coefficient, or $\mathrm{IC}_t$.
-Figure 2 shows its mean, sample standard deviation and their ratio
+Figure 3 shows its mean, sample standard deviation and their ratio
 across signal dates. The ratio is left unannualized.
 
 $$
@@ -196,9 +203,9 @@ $$
                       {\operatorname{sd}_t(\mathrm{IC}_t)}
 $$
 
-<figure id="figure-2" class="research-figure responsive-figure">
+<figure id="figure-3" class="research-figure responsive-figure">
   {% include blog-chart.html chart="rank" source="/assets/equity-model-comparison/rank-metrics.json?v=6" base="/assets/equity-model-comparison/rank-metrics" mobile="/assets/equity-model-comparison/rank-metrics_mobile" version="7" label="Bar plots for rank IC, standard deviation of IC and ICIR by model through May 2026, with selectable periods." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Rank metrics by period.</span> Each metric keeps the same scale across periods.</figcaption>
 </figure>
 
 From 2022 to May 2026, mean IC was 0.044
@@ -226,9 +233,9 @@ returns, annualize using 252 trading days and use zero cash return for Sharpe.
 I use the same decile comparison for Ridge in
 [*Combining Multiple Predictors*]({% link _posts/2025-02-09-combining-predictors.md %}#figure-3).
 
-<figure id="figure-3" class="research-figure decile-profile-figure responsive-figure">
+<figure id="figure-4" class="research-figure decile-profile-figure responsive-figure">
   {% include blog-chart.html chart="profiles" source="/assets/equity-model-comparison/deciles.json?v=5" base="/assets/equity-model-comparison/scheduled-decile-profile" mobile="/assets/equity-model-comparison/scheduled-decile-profile_mobile" version="10" label="Return, volatility and Sharpe by stock score decile from 1999 through May 2026, with selectable periods and models." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 3.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Return, volatility and Sharpe by score decile.</span> Deciles are equal weighted and before costs. Decile 10 holds the highest scores.</figcaption>
 </figure>
 
 Over the full history, LightGBM’s top decile earned about 18% a year
@@ -342,16 +349,16 @@ history and the later window.
 
 ## How the P&L built up
 
-Figure 4 shows when those gaps opened and how deep the drawdowns
+Figure 5 shows when those gaps opened and how deep the drawdowns
 were. The curves add up daily net P&L as a share of fixed capital.
 Table 1 gives compounded returns. The chart opens with each path
 rescaled to 7% annualized volatility in the selected window.
 Clear the checkbox to see the original paths. Open **Explore** to
 add Rolling Small.
 
-<figure id="figure-4" class="research-figure portfolio-path-figure responsive-figure">
+<figure id="figure-5" class="research-figure portfolio-path-figure responsive-figure">
   {% include blog-chart.html chart="pnl" source="/assets/equity-model-comparison/net-pnl.json?v=8" base="/assets/equity-model-comparison/net-pnl" mobile="/assets/equity-model-comparison/net-pnl_mobile" version="7" label="Cumulative net P&L and drawdown through May 2026, rescaled to 7% annualized volatility by default." %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 4.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 5.</span> <span class="caption-title">Cumulative P&amp;L and drawdown after fees.</span> These portfolios use 75 new candidates per side. I average daily P&amp;L across the three schedules and add it up. Both panels show percentages of fixed capital.</figcaption>
 </figure>
 
 LightGBM finished with the highest cumulative P&L over the full

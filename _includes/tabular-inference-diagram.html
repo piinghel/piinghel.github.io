@@ -1,0 +1,24 @@
+<div class="model-sketch tabular-inference" role="img" aria-label="The input table contains labeled rows with known outcomes and new rows with unknown outcomes. Kumo encodes each row as a vector. Attention passes information from the labeled rows to the rows being scored. The model turns the updated vectors into predictions.">
+  <div class="tabular-inference__flow" aria-hidden="true">
+    <div class="tabular-inference__stage">
+      <div class="model-sketch__label">Input table</div>
+      <table>
+        <thead><tr><th>Rows</th><th>Predictors</th><th>Outcome</th></tr></thead>
+        <tbody>
+          <tr class="model-sketch__marked"><td>Historical</td><td>Known</td><td>Known</td></tr>
+          <tr class="model-sketch__query"><td>To score</td><td>Known</td><td>?</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tabular-inference__stage">
+      <div class="model-sketch__label">Row embeddings</div>
+      <div class="tabular-inference__row"><span>Labeled rows</span><span class="tabular-inference__vector"></span></div>
+      <div class="tabular-inference__attention">↓ Attention</div>
+      <div class="tabular-inference__row"><span>Rows to score</span><span class="tabular-inference__vector tabular-inference__vector--query"></span></div>
+    </div>
+    <div class="tabular-inference__stage">
+      <div class="model-sketch__label">Output</div>
+      <div class="tabular-inference__prediction">Predicted outcomes</div>
+    </div>
+  </div>
+</div>
