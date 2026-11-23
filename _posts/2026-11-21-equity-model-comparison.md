@@ -24,55 +24,42 @@ their rankings and the portfolios they produce after trading costs.
 
 ## Tabular foundation models
 
-A tabular foundation model (TFM) is a neural network pretrained to
-make predictions across many different tables. To use it on a new table,
-I give it rows with known outcomes and rows I want to score. It uses
-the known outcomes as examples while keeping its pretrained weights
-fixed. For stock ranking, those examples are past stock-dates whose
-returns are already known.
-
-### What goes into a table
-
-One row in my table is a stock on a date. The columns hold predictors
-such as momentum and volatility, and a target based on the stock’s
-subsequent returns. On the forecast date I have the predictors and
-want to fill in that last column. A different table might hold house
-sales, with floor area and age as predictors and sale price as the
-target. A model that works across tables has to learn how to deal
-with different columns, scales and relationships.
+Stock ranking is one prediction task. Each row in my table is a
+stock on a date, with predictors such as momentum and volatility
+and a target based on subsequent returns. Predicting house prices
+would be another task, with predictors like floor area and sale
+price as the target.
 
 ### Fit and predict
 
-The `fit()` and `predict()` calls look the same for each model.
+At each refit, I train Ridge and LightGBM from scratch on the
+historical rows for the stock-ranking task. To score a new
+stock-date, Ridge applies its fitted coefficients and LightGBM
+applies its fitted trees.
 
-```python
-model.fit(X_train, y_train)
-scores = model.predict(X_test)
-```
+With a tabular foundation model (TFM) such as TabPFN, I start with
+a network pretrained on millions of tables. It adapts to the
+stock-ranking task by using examples with known outcomes when it
+makes a prediction. The weights stay fixed. This is *in-context
+learning* (ICL).
 
-Ridge fits regularized coefficients. LightGBM fits an ensemble of trees.
-Both score a stock by applying the fitted rule to its predictors.
-
-K-nearest neighbors (kNN) gives a simple example of using historical
-rows directly to make predictions, as a TFM does. Its `fit()` keeps
-those rows and their outcomes. In simple kNN regression, `predict()`
-averages the outcomes of the $k$ nearest rows.
+Using examples directly at prediction time is familiar from
+k-nearest neighbors (kNN), which scores a new row from the outcomes
+of similar historical rows.
 
 ### Prior-data fitted networks
 
-With kNN, I choose how to measure distance. *Prior-data fitted
-networks* (PFNs), the approach behind TabPFN, learn during pretraining
-how to use labeled examples on new tables. Christoph Molnar calls
-this moving “up one level of abstraction.”[^pfn] Each pretraining
-example is a prediction task.
+With kNN, I choose how to find similar rows. A *prior-data fitted
+network* (PFN), the approach behind TabPFN, learns how to use examples
+during pretraining. It sees some outcomes in a synthetic table and
+tries to predict the hidden ones. It does this across many different
+tables. The *prior* defines the mix of tasks it sees. The network is
+fitted on tables drawn from that prior.
 
-A task is a table with a target column, split into training and test
-rows. The network sees the predictors for all rows and the targets
-for the training rows. A recipe for generating synthetic tables
-defines the *prior*, which determines the kinds of tasks the network
-sees and how often. The name comes from fitting the network on data
-drawn from that prior. Errors on the hidden test targets update the
-same weights across tasks.
+Christoph Molnar calls this moving “up one level of abstraction.”[^pfn]
+Each pretraining example is a whole prediction task. Across tasks,
+the network learns a way to use labeled rows that it can carry over
+to a new table.
 
 Look at the last row in Figure 1. Its predictors are 4 and 1 in both
 tables. In Table A, doubling the first predictor gives a target of 8.
@@ -87,34 +74,17 @@ in Table A and 7 in Table B.
 
 ### Using the labeled rows at prediction time
 
-Go back to Table A to see how kNN uses those labeled rows. Using two
-neighbors and measuring distance along the first predictor, the closest
-values to 4 are 3 and 2. Their outcomes are 6 and 4, so kNN predicts
-$(6 + 4)/2 = 5$.
+For stock ranking, past stock-dates with known outcomes form the
+*context* the model uses to score new rows. I refresh that context
+as more outcomes become known.
 
-On a new table, the PFN uses labeled rows as *context* for its
-predictions and keeps its weights fixed. This is *in-context learning*
-(ICL). In the backtest, `fit()` prepares and caches that context.
-At each refit I refresh the examples that `predict()` uses.
-
-### From a table to a forecast
-
-Follow the new stock-date through Figure 2. The network turns cells
-into vectors. It looks down each column to put a value in context
-with other values of the same predictor, and across each row to bring
-the predictors for that stock-date together. Each row ends up with
-one vector, or *embedding*.
+Figure 2 follows a new stock-date from the input table to the
+prediction. The output is a set of quantiles for its target.
 
 <figure id="figure-2" class="research-figure responsive-figure">
   {% include tabular-inference-diagram.html %}
   <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">From a table to a prediction.</span> The labeled rows feed into the new row’s representation. The output shows three of the predicted quantile levels.</figcaption>
 </figure>
-
-The ICL step uses *attention* to compare the new row with the
-labeled rows and decide how much information to draw from each
-example. It uses the resulting row representation to predict
-quantiles for the target, giving a range of outcomes for the new
-stock-date.
 
 Christoph Molnar’s book *Tabular Foundation Models* helped me get
 an intuition for this. I’d start with his [chapter on in-context
@@ -124,7 +94,8 @@ he draws out how the historical examples enter a prediction.
 ### NVIDIA Kumo Tabular
 
 For the stock test I use [NVIDIA Kumo Tabular](https://build.nvidia.com/nvidia/kumo-tabular/modelcard),
-the model behind Figure 2. It was pretrained on synthetic tables.
+the model behind Figure 2. It was pretrained on millions of synthetic
+tables.
 I test all three sizes. The regressors have about 28 million
 parameters in Small, 62 million in Medium and 216 million in Large.
 The wider Large model also needs more memory to represent each row.
@@ -260,8 +231,7 @@ roughly every three weeks. Medium and Large each scored the same
 
 ## Running Kumo on a Mac
 
-I used the full pretrained Kumo Large checkpoint for all 15 folds
-of the backtest. I ran them on the CPU of my 2023 MacBook Pro,
+I ran Kumo Small, Medium and Large on the CPU of my 2023 MacBook Pro,
 which has a 10-core M2 Pro and 16 GB of unified memory. In the last
 fold, Medium took 17.5 minutes to prepare the context and 11.5 minutes
 to score 84,243 stock-dates through May 2026. Large took 29.0 minutes
