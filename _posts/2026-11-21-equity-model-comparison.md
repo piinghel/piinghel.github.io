@@ -18,9 +18,9 @@ Tabular foundation models such as TabPFN and TabICL caught my
 attention when they started beating tuned tree ensembles on some
 benchmarks.[^new-benchmarks] As these models got better at handling
 larger tables,[^larger-tables] I wanted to see whether the same
-approach could improve stock rankings. I give Kumo, Ridge, and
-LightGBM the same stock predictors, then compare their rankings
-and the portfolios they produce after trading costs.
+approach could improve stock rankings. I give a tabular foundation
+model the same stock predictors as Ridge and LightGBM, then compare
+their rankings and the portfolios they produce after trading costs.
 
 ## Tabular foundation models
 
@@ -60,20 +60,20 @@ tree and its score is the sum of the leaf values it reaches. Both
 models learn a rule from this particular history. At prediction time
 they need that rule and the new predictors.
 
-K-nearest neighbors (kNN) works differently. Its `fit()` stores the
-labeled rows. At `predict()` it looks up the $k$ closest rows by a
-chosen distance and, for simple regression, averages their outcomes.
-The historical examples are still part of the calculation when a new
-row comes in. That is the part kNN has in common with Kumo.
+K-nearest neighbors (kNN) is a useful bridge because it uses
+examples directly at prediction time. Its `fit()` keeps the
+historical rows and their outcomes. When a new row comes in,
+`predict()` finds the $k$ closest examples by a chosen distance
+and, in the simplest regression version, averages their outcomes.
 
 ### Pretraining across tables
 
-NVIDIA pretrained Kumo on synthetic tables with different rules
-linking predictors to outcomes, and with varying noise and
-missing values. In each table it exposed some outcomes and asked
-the network to predict the rest. Prediction errors across all these
-tasks updated the same network. The idea is to learn how to use
-the examples in whichever table it is given next.
+One way to pretrain a tabular foundation model is to generate
+synthetic tables with different rules linking predictors to outcomes,
+and with varying noise and missing values. In each table, the network
+sees some outcomes and tries to predict the rest. Prediction errors
+across these tasks update the same network. The idea is to learn how
+to use the examples in whichever table it is given next.
 
 The two tables in Figure 1 have identical predictors. In Table A,
 the target is twice the first predictor. In Table B, the second
@@ -93,30 +93,33 @@ measuring distance along the first predictor. The closest values
 to 4 are 3 and 2, with outcomes of 6 and 4. The kNN prediction is
 $(6 + 4)/2 = 5$.
 
-Kumo learns how to weigh the examples during pretraining. In the
-backtest, `fit()` prepares and caches the historical rows and their
-known outcomes as *context*. With Ridge or LightGBM, I re-estimate
-the coefficients or trees at each refit. With Kumo, I refresh the
-context and keep the network weights fixed. `predict()` uses the
-prepared history to score the new rows. That is *in-context learning*.
+The tabular foundation model learns how to weigh examples during
+pretraining. In the backtest, its `fit()` prepares and caches the
+historical rows and their known outcomes as *context*. With Ridge
+or LightGBM, I re-estimate the coefficients or trees at each refit.
+With the foundation model, I refresh the context and keep the
+network weights fixed. `predict()` uses the prepared history to score
+the new rows. That is *in-context learning*.
 
 ### From a table to a forecast
 
-Figure 2 follows the data through Kumo. The network turns cells into
-vectors and combines information down columns and across rows. The
-first gives a value context among other values of the same predictor.
-The second lets the model combine predictors for the same stock-date.
-The result is one vector, or *embedding*, per row.
+Figure 2 shows how one tabular foundation model does this. The
+network turns cells into vectors and combines information down
+columns and across rows. The first gives a value context among other
+values of the same predictor. The second lets the model combine
+predictors for the same stock-date. The result is one vector, or
+*embedding*, per row.
 
 <figure id="figure-2" class="research-figure responsive-figure">
   {% include tabular-inference-diagram.html %}
-  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">From a table to a prediction.</span> The labeled rows feed into the new row’s representation. The output shows three of the quantile levels Kumo predicts.</figcaption>
+  <figcaption class="figure-caption"><span class="caption-number">Figure 2.</span> <span class="caption-title">From a table to a prediction.</span> The labeled rows feed into the new row’s representation. The output shows three of the predicted quantile levels.</figcaption>
 </figure>
 
-Kumo then uses *attention* to compare the new row with the labeled
-rows and decide how much information to draw from each example.
-It uses the resulting row representation to predict quantiles for
-the target, giving a range of outcomes for the new stock-date.
+The model then uses *attention* to compare the new row with the
+labeled rows and decide how much information to draw from each
+example. It uses the resulting row representation to predict
+quantiles for the target, giving a range of outcomes for the new
+stock-date.
 
 Christoph Molnar’s book *Tabular Foundation Models* helped me get
 an intuition for this. I’d start with his [chapter on in-context
@@ -125,8 +128,9 @@ he draws out how the historical examples enter a prediction.
 
 ### NVIDIA Kumo Tabular
 
-For the stock test I use NVIDIA’s [Kumo Tabular](https://build.nvidia.com/nvidia/kumo-tabular/modelcard),
-released on Hugging Face on September 23, 2026.
+For the stock test I use [NVIDIA Kumo Tabular](https://build.nvidia.com/nvidia/kumo-tabular/modelcard),
+the model behind Figure 2. It was pretrained on synthetic tables,
+and NVIDIA released the weights on Hugging Face on September 23, 2026.
 I test all three sizes. The regressors have about 28 million
 parameters in Small, 62 million in Medium and 216 million in Large.
 The wider Large model also needs more memory to represent each row.
@@ -135,9 +139,12 @@ in memory alongside the weights.
 
 ## The stock-ranking test
 
-Ridge, LightGBM and Kumo all use the same 80 predictors. On each
-date, I cross-sectionally rank each predictor across the full
-stock universe and put the ranks on a −1 to +1 scale.
+The daily panel has 7.82 million rows from January 1995 through
+May 2026. Each row is one stock on one trading day. Ridge,
+LightGBM and Kumo all use the same 80 predictor columns, including
+measures of momentum, volatility and liquidity. On each date, I
+rank each predictor across the stock universe and put the ranks
+on a −1 to +1 scale.
 
 For the target, I take each stock’s Sharpe ratio over the following
 20 trading days and rank it on the same scale within its sector
@@ -167,39 +174,38 @@ trees can still pick up interactions.
 
 ## Subsampling the historical context
 
-I made the expanding context fit on my Mac by spacing out the
-historical dates and keeping fewer stocks on each selected date.
+At the last refit, there were 7.34 million eligible daily rows
+with known outcomes. Kumo has to prepare and cache its context,
+so the number of rows matters for memory. To keep examples from
+across the full history on my Mac, I cut the number of rows in two
+steps and kept all 80 predictors.
 
-Take the same stock on two consecutive trading days. Its two
-targets use 20 days of forward returns and share 19 of those
-days. Keeping both rows gives Kumo examples based on almost the
-same returns. For expanding Small, I kept one date every 30
-trading days, or roughly six weeks. For Medium and Large, I
-kept one date every 40 trading days, or roughly eight weeks.
-Medium and Large used the same historical rows and one estimator
-each, scoring the same 1.39 million stock-dates from a single view
-of the data per forecast.
+First I spaced out the dates. Take the same stock on two consecutive
+trading days. A rolling predictor like one-month momentum changes
+as one day enters the window and one drops out. The two targets
+also share 19 of their 20 forward returns. Moving the date forward
+one day gives me another row, but much of the information in it
+is shared with the first. For expanding Small I kept one date every
+30 trading days, or roughly six weeks. For Medium and Large I kept
+one every 40 trading days, or roughly eight weeks.
 
-Even after spacing out the dates, there are still hundreds of
-stocks on each one. I sort them by their realized target, the
-20-day Sharpe rank within each stock’s sector, and keep the lowest
-and highest 30% across the date. That cuts about 40% of the rows.
-I kept the extremes because the portfolio picks long and short
-candidates from the ends of the predicted ranking. The stocks in
-the middle may also carry useful information.
+Then I kept the tails on each selected date. The portfolios look
+for long and short candidates at the top and bottom of the predicted
+ranking, so I wanted Kumo to see examples of both kinds of outcome.
+On each date I sorted the stocks by their realized target and kept
+the lowest and highest 30%, dropping the middle 40%. Coqueret and
+Guida used a similar filter to speed up a boosted-tree backtest
+while keeping a similar return spread between their top and bottom
+portfolios. [*Training Trees on Tails with Applications to Portfolio
+Choice*](https://doi.org/10.1007/s10479-020-03539-2)
 
-In [*Training Trees on Tails with Applications to Portfolio
-Choice*](https://doi.org/10.1007/s10479-020-03539-2), Coqueret and
-Guida (2020) tested this idea with boosted trees.
-Keeping the lowest and highest 20% of their training outcomes cut
-backtest time by roughly 60% and gave a similar return spread
-between the highest- and lowest-ranked portfolios.
-
-With the same stock filter, weekly sampling would have left
-Kumo Small about 760,000 rows to prepare late in the 1999–2021
-test. I estimated just that preparation would need about 35 GiB
-of memory. Spacing the dates six weeks apart brought it down to
-about 127,000 rows, which fit on my Mac.
+In the last Medium and Large fold, spacing out the dates brought the
+7.34 million rows down to 183,564. Keeping the tails brought that
+down to 110,167 rows across 186 dates. Both models used that same
+context and one estimator each. The six-week sample kept about 127,000
+rows in Small’s last 1999–2021 fold, which fit on my Mac. Weekly
+sampling with the same tails would have left about 760,000 rows in
+that fold. I estimated about 35 GiB just to prepare that context.
 
 Figure 3 uses two illustrative grids. Sampling every 20 trading days
 keeps four dates, and sampling every 30 keeps three. The tails filter
@@ -254,18 +260,18 @@ labeled rows.
 These cuts apply to the history with known outcomes. For prediction
 I score every eligible stock on the dates needed by the portfolios.
 There are three staggered signal calendars, each with a rebalance
-roughly every three weeks.
+roughly every three weeks. Medium and Large each scored the same
+1.39 million stock-dates across the backtest.
 
 ## Running Kumo on a Mac
 
 I used the full pretrained Kumo Large checkpoint for all 15 folds
 of the backtest. I ran them on the CPU of my 2023 MacBook Pro,
-which has a 10-core M2 Pro and 16 GB of unified memory. The last
-fold used 110,167 historical rows and scored 84,243 stock-dates
-through May 2026. Medium took 17.5 minutes to prepare the context
-and 11.5 minutes to score the new rows. Large
-took 29.0 minutes and 17.9 minutes on the same inputs. Large’s peak
-resident memory across the full test was 9.3 GiB.
+which has a 10-core M2 Pro and 16 GB of unified memory. In the last
+fold, Medium took 17.5 minutes to prepare the context and 11.5 minutes
+to score 84,243 stock-dates through May 2026. Large took 29.0 minutes
+and 17.9 minutes on the same inputs. Large’s peak resident memory
+across the full test was 9.3 GiB.
 
 ## Ranking the whole cross-section
 
