@@ -1,5 +1,9 @@
 # Display standard
 
+Make the research comparison easy to understand at normal article width.
+General figure principles, including the role of color, live in
+`wilke-research-figures`; this file holds the site's own decisions.
+
 ## Typography and color
 
 Use one readable sans-serif font across research charts. DejaVu Sans is the
@@ -14,18 +18,13 @@ Put the variable and compact unit above the plotting area; if a y-axis title is
 needed, keep it very short. Keep headings and legends clear of data lines.
 On phones, allow text columns to wrap so names never run into numeric columns.
 
-Use a white canvas with slate text in light mode and the site's dark surface
-with light text in dark mode. Start with readable neutrals and use one accent
-for the focal series. Preserve the site's muted blue for longs and slate for
-shorts. Keep series labels and line patterns consistent. For a signed matrix,
-use balanced endpoints and a neutral midpoint at zero. Put the scale once
-beside the whole comparison.
-
-Color has one defined job within an encoding: distinguish categories, encode
-signed magnitude, or highlight a setting. Use line style, labels or symbols
-when color alone would make a key distinction fragile. Dark variants need
-contrast checks, not automatic inversion. Keep pale horizontal grids and
-meaningful zero/starting-value references; remove unrelated visual structure.
+Site palette: a white canvas with slate text in light mode and the site's dark
+surface with light text in dark mode; the site's muted blue for longs and slate
+for shorts. Dark variants need their own contrast checks, not automatic
+inversion. Put a color scale once beside the whole comparison. Keep pale
+horizontal grids and meaningful zero/starting-value references; remove
+unrelated visual structure. For color roles, accents, diverging scales and
+second cues, follow `wilke-research-figures`.
 
 ## Time paths and drawdowns
 
@@ -126,9 +125,14 @@ both ends of the scroll region and absence of page-level horizontal overflow.
 Do not impose a large global minimum width on every chart. Do not clip columns
 or convert comparison tables into cards that obscure cross-row comparisons.
 
-Open on the full sample with “Full history” and the named subperiods directly
-above the chart. Use “Full episode” for a bounded case study. Show the selection
-in grayscale and keep exact dates available under Explore. For a rebased path,
+## Period controls
+
+Date-selectable charts use the shared interactive chart helper with quiet
+defaults. Open on the full sample with “Full history” and the named subperiods
+as clickable buttons directly above the chart. Use “Full episode” for a bounded
+case study. Mark the active period with ink text and an ink underline, not
+color alone. Keep custom dates and other controls under Explore, keep
+statistics collapsed and omit miniature range previews. For a rebased path,
 label the period by the returns it includes and explain how drawdown resets.
 
 ## Export checks

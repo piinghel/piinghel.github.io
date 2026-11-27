@@ -10,12 +10,14 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   author's models as production models, live strategies, deployed systems or
   models used at work. Avoid related wording that implies actual trading,
   funded portfolios or operational use. Describe tests, backtests and research
-  preferences naturally, preserving the author's curiosity and opinions.
-  Apply this quietly; do not add disclaimers or announce the framing in the prose.
+  preferences naturally, as research judgments, preserving the author's
+  curiosity and opinions. Apply this quietly: do not add disclaimers, explain
+  what cannot be mentioned, or announce the framing in the prose.
 - Give every article the same structure: header, the small Contents list, an
   introduction that opens with the concrete problem, the analysis sections, a
-  closing section with the judgement, then references if any. Never add a
-  summary in any form. The homepage is newest first with explicit `home_after`
+  closing section with the judgment, then references if any. Never add a
+  summary in any form (summary box, key takeaways, TL;DR), at the top or
+  anywhere else. The homepage is newest first with explicit `home_after`
   continuations; Previous/Next follows `_data/reading_order.yml`. RSS remains
   chronological. Never show unpublished or unfinished articles on the site.
 - The author's requested article order takes precedence over publication dates.
@@ -28,7 +30,7 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Keep footnotes to one or two short sentences: a source or one clarification.
   Settings lists and caveat chains go into a small table or are cut.
 - Don't hedge with "noise" ("within noise", "can't distinguish from noise"). State
-  uncertainty once, as an interval or a plain judgement.
+  uncertainty once, as an interval or a plain judgment.
 - Write as a quant explaining a result (what was compared, what happened, why,
   what it means), not as a lab log of implementation steps and settings.
 - Recover the article's practical research question before rewriting. Keep
@@ -39,16 +41,19 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   the comparison. In the low-volatility article, retain the decile bar plot
   beside the discussion of return, volatility and Sharpe across deciles.
 - Open conversationally with the concrete problem and what the article will
-  try to resolve. Explain the evaluation design naturally where it matters:
-  development returns can be walk-forward out of sample relative to each fit,
-  while repeated research choices still adapt to that history. A separate later
-  test evaluates fixed specifications; scheduled refits may incorporate earlier
-  observations from that period once their outcomes are known. Check the actual
-  study's history before describing a test as untouched. Explain the distinction
-  fully in the modelling article, with brief study-specific context in related
-  articles rather than repeating a standard disclaimer in every post. Descriptive
-  attribution and full-history sizing examples need their own framing, not an
-  invented training/test split.
+  try to resolve.
+- Explain the evaluation design once, in the modelling article: development
+  returns can be walk-forward out of sample relative to each fit, while
+  repeated research choices still adapt to that history. A separate later test
+  evaluates fixed specifications; scheduled refits may incorporate earlier
+  observations from that period once their outcomes are known. Elsewhere, give
+  the study's context in a sentence. Add no recurring disclaimers about having
+  inspected or reused the later/test period, in prose, captions or footnotes,
+  and don't reintroduce them through synonyms such as "both periods shaped the
+  strategy." Preserve reporting dates and calculation conventions, and check the
+  actual study's history before describing any evidence as independent or
+  untouched. Descriptive attribution and full-history sizing examples need
+  their own framing, not an invented training/test split.
 - Describe implementation only when it changes the research design, evidence
   or interpretation. Keep material limitations once, where they matter.
 - Choose worked examples that expose the mechanism the article is about.
@@ -85,9 +90,9 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
 - Keep internal workflow out of public articles, including captions, footnotes
   and collapsed details. Do not narrate simulation defects, saved-run handling,
   pending reruns, missing checks, repairs or bookkeeping. Manage these in the
-  private research registry and engineering workflow. Resolve defects that
-  affect results before publishing those results; deleting a notice is not a
-  correction. Keep reader-relevant assumptions and limitations as concise
+  private research registry and engineering workflow, as do editing and
+  deployment. Resolve defects that affect results before publishing those
+  results; deleting a notice is not a correction. Keep reader-relevant assumptions and limitations as concise
   statements about the method or evidence, without a progress report or a
   promise of future work. Preserve useful failed research comparisons.
 - Keep facts shared across articles identical everywhere: the predictor set
@@ -142,9 +147,8 @@ This is a Jekyll site for concise, technically serious research articles. Keep p
   holdings-level attribution.
 - Keep figures minimal: restrained grids, subtle reference lines, no unnecessary axis pins, and no duplicate legends.
 - Use the shared interactive chart helper for finalized evidence, with quiet
-  defaults. Open on the full history with clickable periods visible above the
-  figure. Keep custom dates and other controls under Explore. Keep statistics collapsed and
-  omit miniature range previews. Retain reproducible light and dark SVG fallbacks
+  defaults; its period controls follow "Period controls" in the skill's
+  `references/displays.md`. Retain reproducible light and dark SVG fallbacks
   from one shared composition per viewport. Stack episode groups and multi-panel charts
   on phones when needed for readable labels; preserve scales and definitions.
   Keep the same table structure at every viewport width.

@@ -180,18 +180,16 @@ Keep limitations that affect the comparison, confidence or decision, usually
 once near the result. A failed research comparison can belong in the argument
 when it explains a substantive choice. Internal defects, solver warnings,
 missing checks and rerun status belong in the private workflow, following the
-publication rule in SKILL.md. Resolve issues affecting the evidence before
+publication rule in `AGENTS.md`. Resolve issues affecting the evidence before
 publishing the result. Describe remaining scientific limitations through the
 method's assumptions and scope, without a task-status narrative or promises
 of future updates.
 
-Prefer numbered footnotes for secondary methodological caveats, consolidating
-repeated hindsight or sample-reuse disclosures. Keep limitations that change
-the headline interpretation visible beside the claim; a concise existing
-in-sample box can still serve that purpose. Footnotes should improve flow
-without hiding material information. Close on what the evidence supports and
-where its reach ends. Link existing shareable code
-when useful; an invitation for feedback should be specific and natural, and
+Keep limitations that change the headline interpretation visible beside the
+claim; a concise existing in-sample box can still serve that purpose.
+Footnotes should improve flow without hiding material information. Close on
+what the evidence supports and where its reach ends. Link existing shareable
+code when useful; an invitation for feedback should be specific and natural, and
 never implies permission to publish private data.
 
 ## Examples, not reusable templates
